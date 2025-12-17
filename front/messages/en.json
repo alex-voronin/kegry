@@ -1,0 +1,47 @@
+{
+  "screens": {
+    "onboarding": {
+      "title": "Tell us about yourself",
+      "continue": "Continue"
+    },
+    "login": {
+      "tagline": "The best stories start off-screen",
+      "email": "Email",
+      "password": "Password",
+      "forgot": "Forgot?",
+      "orContinueWith": "Or continue with",
+      "google": "Google",
+      "facebook": "Facebook"
+    }
+  },
+  "components": {
+    "profile-sections": {
+      "name": {
+        "title": "Name",
+        "firstName": "First Name",
+        "lastName": "Last Name"
+      },
+      "age": {
+        "title": "Age",
+        "placeholder": "Your age"
+      },
+      "gender": {
+        "title": "Gender",
+        "male": "Male",
+        "female": "Female"
+      },
+      "bio": {
+        "title": "Bio",
+        "placeholder": "Write about yourself...",
+        "maxLength": 200
+      },
+      "hobbies": {
+        "title": "Hobbies",
+        "placeholder": "Select your hobbies...",
+        "volleyball": "🏐 Volleyball",
+        "boxing": "🥊 Boxing",
+        "camping": "⛺ Camping"
+      }
+    }
+  }
+}

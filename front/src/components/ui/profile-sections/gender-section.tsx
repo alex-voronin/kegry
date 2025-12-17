@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useTranslations } from "next-intl";
 import { FormSectionTitle } from "@/components/ui/form-section-title";
 import { SegmentedControl, SegmentedControlOption } from "@/components/ui/segmented-control";
 import stylesCommon from "@/components/ui/common.module.css";
@@ -18,9 +19,11 @@ export function GenderSection({
     onChange,
     readOnly = false,
 }: GenderSectionProps) {
+    const t = useTranslations("components.profile-sections.gender");
+
     return (
         <div className={stylesCommon.sectionContainer}>
-            <FormSectionTitle>Gender</FormSectionTitle>
+            <FormSectionTitle>{t("title")}</FormSectionTitle>
             <SegmentedControl
                 options={options}
                 value={value}

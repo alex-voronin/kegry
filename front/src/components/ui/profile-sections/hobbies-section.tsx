@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useTranslations } from "next-intl";
 import Select from "react-select";
 import { FormSectionTitle } from "@/components/ui/form-section-title";
 
@@ -8,12 +9,6 @@ export interface HobbyOption {
     value: string;
     label: string;
 }
-
-const HOBBY_OPTIONS: HobbyOption[] = [
-    { value: "volleyball", label: "🏐 Volleyball" },
-    { value: "boxing", label: "🥊 Boxing" },
-    { value: "camping", label: "⛺ Camping" },
-];
 
 export interface HobbiesSectionProps {
     value: HobbyOption[];
@@ -78,16 +73,24 @@ const readOnlySelectStyles = {
 };
 
 export function HobbiesSection({ value, onChange, readOnly = false }: HobbiesSectionProps) {
+    const t = useTranslations("components.profile-sections.hobbies");
+
+    const HOBBY_OPTIONS: HobbyOption[] = [
+        { value: "volleyball", label: t("volleyball") },
+        { value: "boxing", label: t("boxing") },
+        { value: "camping", label: t("camping") },
+    ];
+
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-            <FormSectionTitle>Hobbies</FormSectionTitle>
+            <FormSectionTitle>{t("title")}</FormSectionTitle>
             <Select
                 instanceId="hobby-select"
                 isMulti
                 options={HOBBY_OPTIONS}
                 value={value}
                 onChange={(selected) => onChange(selected as HobbyOption[])}
-                placeholder="Select your hobbies..."
+                placeholder={t("placeholder")}
                 classNamePrefix="hobby-select"
                 isDisabled={readOnly}
                 isClearable={!readOnly}

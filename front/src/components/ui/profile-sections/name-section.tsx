@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useTranslations } from "next-intl";
 import { FormSectionTitle } from "@/components/ui/form-section-title";
 import { Input } from "@/components/ui/input";
 import styles from "./name-section.module.css";
@@ -21,12 +22,14 @@ export function NameSection({
     onLastNameChange,
     readOnly = false,
 }: NameSectionProps) {
+    const t = useTranslations("components.profile-sections.name");
+
     return (
         <div className={stylesCommon.sectionContainer}>
-            <FormSectionTitle>Name</FormSectionTitle>
+            <FormSectionTitle>{t("title")}</FormSectionTitle>
             <div className={styles.nameFields}>
                 <Input
-                    placeholder="First Name"
+                    placeholder={t("firstName")}
                     className={stylesCommon.inputDark}
                     value={firstName}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
@@ -35,7 +38,7 @@ export function NameSection({
                     readOnly={readOnly}
                 />
                 <Input
-                    placeholder="Last Name"
+                    placeholder={t("lastName")}
                     className={stylesCommon.inputDark}
                     value={lastName}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
