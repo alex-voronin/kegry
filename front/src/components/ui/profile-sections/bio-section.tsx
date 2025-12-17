@@ -11,6 +11,8 @@ export interface BioSectionProps {
     onBioChange: (value: string) => void;
 }
 
+const MAX_BIO_LENGTH = 200;
+
 export function BioSection({
     bio,
     onBioChange,
@@ -19,15 +21,21 @@ export function BioSection({
     return (
         <div className={stylesCommon.sectionContainer}>
             <FormSectionTitle>Bio</FormSectionTitle>
-            <textarea
-                className={styles.textarea}
-                placeholder="Write about youself..."
-                value={bio}
-                onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
-                    onBioChange(event.target.value)
-                }
-                readOnly={readOnly}
-            />
+            <div className={styles.textareaWrapper}>
+                <textarea
+                    className={styles.textarea}
+                    placeholder="Write about youself..."
+                    value={bio}
+                    maxLength={MAX_BIO_LENGTH}
+                    onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
+                        onBioChange(event.target.value)
+                    }
+                    readOnly={readOnly}
+                />
+                <span className={styles.counter}>
+                    {bio.length}/{MAX_BIO_LENGTH}
+                </span>
+            </div>
         </div>
     );
 }

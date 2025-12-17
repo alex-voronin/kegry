@@ -1,7 +1,12 @@
 @reference "../../../app/globals.css";
 
+.textareaWrapper {
+    @apply relative;
+}
+
 .textarea {
     @apply w-full bg-form-element border-none rounded-none text-primary p-4 resize-none focus:outline-none h-32 placeholder:text-secondary block text-base font-normal font-sans;
+    padding-bottom: 2rem;
 }
 
 @media (min-width: 768px) {
@@ -10,4 +15,6 @@
     }
 }
 
-
+.counter {
+    @apply absolute bottom-2 right-4 text-secondary text-sm font-normal font-sans pointer-events-none;
+}
