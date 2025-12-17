@@ -1,11 +1,11 @@
 @reference "../../app/globals.css";
 
 .page {
-    @apply min-h-screen bg-[#303030] text-white flex justify-center items-center;
+    @apply min-h-screen bg-surface text-primary flex justify-center items-center;
 }
 
 .container {
-    @apply w-full max-w-[400px] p-8 flex flex-col h-screen md:h-auto md:min-h-[700px] justify-between md:justify-center gap-8 relative bg-[#303030];
+    @apply w-full max-w-[400px] p-8 flex flex-col h-screen md:h-auto md:min-h-[700px] justify-between md:justify-center gap-8 relative bg-surface;
 }
 
 .header {
@@ -25,11 +25,11 @@
 }
 
 .brandName {
-    @apply text-4xl md:text-5xl font-normal text-[#F9E2AF] tracking-wide -ml-5 md:-ml-6 leading-none mt-7 md:mt-10;
+    @apply text-4xl md:text-5xl font-normal text-brand tracking-wide -ml-5 md:-ml-6 leading-none mt-7 md:mt-10;
 }
 
 .tagline {
-    @apply text-base text-white font-light mt-4;
+    @apply text-base text-primary font-light mt-4;
 }
 
 .formSection {
@@ -37,7 +37,7 @@
 }
 
 .inputEmail {
-    @apply text-white;
+    @apply text-primary;
 }
 
 .passwordWrapper {
@@ -45,7 +45,7 @@
 }
 
 .forgotLink {
-    @apply absolute right-0 top-1/2 -translate-y-1/2 z-10 text-white/90 font-semibold text-sm hover:underline pointer-events-auto;
+    @apply absolute right-0 top-1/2 -translate-y-1/2 z-10 text-primary font-semibold text-sm hover:underline pointer-events-auto;
 }
 
 .footer {
@@ -57,7 +57,7 @@
 }
 
 .dividerText {
-    @apply text-white/40 text-sm font-light;
+    @apply text-secondary text-sm font-light;
 }
 
 .socialGrid {

@@ -39,7 +39,6 @@ export default function LoginPage() {
             <Input
               type="password"
               placeholder="Password"
-              label=""
             />
             <Link href="/forgot" className={styles.forgotLink}>
               Forgot?

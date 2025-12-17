@@ -1,45 +1,21 @@
 @reference "../../app/globals.css";
 
 .base {
-    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50;
 }
 
 /* Variants */
-.variantDefault {
-    @apply bg-white text-black shadow hover:bg-white/90;
-}
-
-.variantOutline {
-    @apply border border-white/20 bg-transparent shadow-sm hover:bg-white/10;
-}
-
 .variantGhost {
-    @apply hover:bg-white/10 hover:text-white;
-}
-
-.variantLink {
-    @apply text-white underline-offset-4 hover:underline;
+    @apply hover:bg-hover hover:text-primary;
 }
 
 .variantSocial {
-    @apply rounded-full border border-white/20 bg-transparent hover:bg-white/10 h-14 px-8 text-base font-normal;
+    @apply rounded-full border border-secondary bg-transparent hover:bg-hover h-14 px-8 text-base font-normal;
 }
 
 /* Sizes */
 .sizeDefault {
     @apply h-9 px-4 py-2;
-}
-
-.sizeSm {
-    @apply h-8 rounded-md px-3 text-xs;
-}
-
-.sizeLg {
-    @apply h-10 rounded-md px-8;
-}
-
-.sizeIcon {
-    @apply h-9 w-9;
 }
 
 .sizeXl {

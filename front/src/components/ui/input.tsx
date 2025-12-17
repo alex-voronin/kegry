@@ -2,15 +2,10 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import styles from "./input.module.css"
 
-export type InputProps = React.ComponentProps<"input"> & {
-    label?: string
-}
-
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-    ({ className, type, label, ...props }, ref) => {
+const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
+    ({ className, type, ...props }, ref) => {
         return (
             <div className={styles.container}>
-                {label && <label className={styles.label}>{label}</label>}
                 <div className={styles.inputWrapper}>
                     <input
                         type={type}
@@ -26,3 +21,4 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 Input.displayName = "Input"
 
 export { Input }
+
