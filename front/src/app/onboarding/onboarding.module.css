@@ -40,24 +40,6 @@
     @apply flex flex-col gap-0.5;
 }
 
-.genderGroup {
-    @apply flex items-center p-1 bg-form-element rounded-none h-[44px] gap-2;
-}
-
-@media (min-width: 768px) {
-    .genderGroup {
-        @apply rounded-xl;
-    }
-}
-
-.genderButton {
-    @apply w-[75px] h-[27px] rounded-full border border-secondary flex items-center justify-center text-center transition-colors text-secondary hover:bg-hover cursor-pointer bg-transparent font-sans text-base font-normal;
-}
-
-.genderButtonActive {
-    @apply bg-active text-primary shadow-sm;
-}
-
 .inputDark {
     @apply bg-form-element rounded-none px-4 border-none h-[44px] text-base font-normal font-sans;
 }

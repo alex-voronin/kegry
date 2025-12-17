@@ -1,0 +1,19 @@
+@reference "../../app/globals.css";
+
+.container {
+    @apply flex items-center p-1 bg-form-element rounded-none h-[44px] gap-2;
+}
+
+@media (min-width: 768px) {
+    .container {
+        @apply rounded-xl;
+    }
+}
+
+.option {
+    @apply h-[27px] rounded-full border border-secondary flex items-center justify-center text-center transition-colors text-secondary hover:bg-hover cursor-pointer bg-transparent font-sans text-base font-normal;
+}
+
+.optionActive {
+    @apply bg-active-segment text-primary shadow-sm;
+}

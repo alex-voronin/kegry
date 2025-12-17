@@ -18,7 +18,7 @@
 
   /* Interactive Colors */
   --color-hover: rgba(255, 255, 255, 0.1);
-  --color-active: rgba(255, 255, 255, 0.1);
+  --color-active-segment: rgba(255, 255, 255, 0.1);
 }
 
 @theme inline {
@@ -30,7 +30,7 @@
   --color-secondary: var(--color-secondary);
   --color-form-element: var(--color-form-element);
   --color-hover: var(--color-hover);
-  --color-active: var(--color-active);
+  --color-active-segment: var(--color-active-segment);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

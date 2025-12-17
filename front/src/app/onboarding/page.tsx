@@ -5,11 +5,16 @@ import Image from "next/image";
 import { Button, ButtonVariant } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormSectionTitle } from "@/components/ui/form-section-title";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import styles from "./onboarding.module.css";
-import { cn } from "@/lib/utils";
+
+const GENDER_OPTIONS = [
+    { value: "male", label: "Male", width: 75 },
+    { value: "female", label: "Female", width: 75 },
+];
 
 export default function OnboardingPage() {
-    const [gender, setGender] = useState<"male" | "female" | null>(null);
+    const [gender, setGender] = useState<string | null>(null);
 
     return (
         <div className={styles.page}>
@@ -48,28 +53,11 @@ export default function OnboardingPage() {
                     {/* Gender Section */}
                     <div className={styles.formGroup}>
                         <FormSectionTitle>Gender</FormSectionTitle>
-                        <div className={styles.genderGroup}>
-                            <button
-                                type="button"
-                                className={cn(
-                                    styles.genderButton,
-                                    gender === "male" && styles.genderButtonActive
-                                )}
-                                onClick={() => setGender("male")}
-                            >
-                                Male
-                            </button>
-                            <button
-                                type="button"
-                                className={cn(
-                                    styles.genderButton,
-                                    gender === "female" && styles.genderButtonActive
-                                )}
-                                onClick={() => setGender("female")}
-                            >
-                                Female
-                            </button>
-                        </div>
+                        <SegmentedControl
+                            options={GENDER_OPTIONS}
+                            value={gender}
+                            onChange={setGender}
+                        />
                     </div>
 
                     {/* Bio Section */}
