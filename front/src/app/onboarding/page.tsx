@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { Button, ButtonVariant } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { FormSectionTitle } from "@/components/ui/form-section-title";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { Input } from "@/components/ui/input";
+import { HobbiesSection } from "@/components/ui/sections/hobbies-section";
 import styles from "./onboarding.module.css";
 
 const GENDER_OPTIONS = [
@@ -15,6 +16,7 @@ const GENDER_OPTIONS = [
 
 export default function OnboardingPage() {
     const [gender, setGender] = useState<string | null>(null);
+    const [hobbies, setHobbies] = useState<{ value: string; label: string }[]>([]);
 
     return (
         <div className={styles.page}>
@@ -70,10 +72,7 @@ export default function OnboardingPage() {
                     </div>
 
                     {/* Hobbies Section */}
-                    <div className={styles.formGroup}>
-                        <FormSectionTitle>Hobbies</FormSectionTitle>
-                        <Input placeholder="Start typing to add a new hobby..." className={styles.inputDark} />
-                    </div>
+                    <HobbiesSection value={hobbies} onChange={setHobbies} />
 
                     {/* Footer */}
                     <div className={styles.footer}>
