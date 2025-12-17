@@ -61,7 +61,7 @@ export default function OnboardingPage() {
                     {/* Footer */}
                     <div className={styles.footer}>
                         <Button
-                            variant={ButtonVariant.Ghost}
+                            variant={ButtonVariant.Default}
                             className={styles.continueButton}
                         >
                             Continue

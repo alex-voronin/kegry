@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils"
 import styles from "./button.module.css"
 
 export enum ButtonVariant {
-    Ghost = "ghost",
+    Default = "default",
     Social = "social",
 }
 
@@ -18,7 +18,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className, variant = ButtonVariant.Ghost, size = ButtonSize.Default, ...props }, ref) => {
+    ({ className, variant = ButtonVariant.Default, size = ButtonSize.Default, ...props }, ref) => {
         return (
             <button
                 ref={ref}
@@ -26,7 +26,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
                     styles.base,
                     {
                         // Variants
-                        [styles.variantGhost]: variant === ButtonVariant.Ghost,
+                        [styles.variantGhost]: variant === ButtonVariant.Default,
                         [styles.variantSocial]: variant === ButtonVariant.Social,
 
                         // Sizes
