@@ -1,0 +1,13 @@
+@reference "../../../app/globals.css";
+
+.textarea {
+    @apply w-full bg-form-element border-none rounded-none text-primary p-4 resize-none focus:outline-none h-32 placeholder:text-secondary block text-base font-normal font-sans;
+}
+
+@media (min-width: 768px) {
+    .textarea {
+        @apply rounded-xl;
+    }
+}
+
+

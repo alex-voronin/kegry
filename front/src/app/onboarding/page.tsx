@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { Button, ButtonVariant } from "@/components/ui/button";
+import { ProfileImageSection } from "@/components/ui/profile-sections/profile-image-section";
+import { HobbiesSection } from "@/components/ui/profile-sections/hobbies-section";
 import { FormSectionTitle } from "@/components/ui/form-section-title";
-import { SegmentedControl } from "@/components/ui/segmented-control";
-import { Input } from "@/components/ui/input";
-import { HobbiesSection } from "@/components/ui/sections/hobbies-section";
+import { NameSection } from "@/components/ui/profile-sections/name-section";
+import { AgeSection } from "@/components/ui/profile-sections/age-section";
+import { GenderSection } from "@/components/ui/profile-sections/gender-section";
+import { BioSection } from "@/components/ui/profile-sections/bio-section";
 import styles from "./onboarding.module.css";
 
 const GENDER_OPTIONS = [
@@ -17,59 +19,41 @@ const GENDER_OPTIONS = [
 export default function OnboardingPage() {
     const [gender, setGender] = useState<string | null>(null);
     const [hobbies, setHobbies] = useState<{ value: string; label: string }[]>([]);
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [age, setAge] = useState("");
+    const [bio, setBio] = useState("");
 
     return (
         <div className={styles.page}>
             <div className={styles.container}>
                 <h1 className={styles.header}>Tell us about yourself</h1>
 
-                {/* Profile Picture Placeholder */}
-                <div className={styles.profileSection}>
-                    <div className={styles.profilePlaceholder}>
-                        <Image
-                            src="/assets/camera-placeholder.png"
-                            alt="Upload Profile Picture"
-                            width={64}
-                            height={64}
-                            className={styles.profileImage}
-                        />
-                    </div>
-                </div>
+                <ProfileImageSection src="/assets/camera-placeholder.png" />
 
                 <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
-                    {/* Name Section */}
-                    <div className={styles.formGroup}>
-                        <FormSectionTitle>Name</FormSectionTitle>
-                        <div className={styles.nameFields}>
-                            <Input placeholder="First Name" className={styles.inputDark} />
-                            <Input placeholder="Last Name" className={styles.inputDark} />
-                        </div>
-                    </div>
+                    <NameSection
+                        firstName={firstName}
+                        lastName={lastName}
+                        onFirstNameChange={setFirstName}
+                        onLastNameChange={setLastName}
+                    />
 
-                    {/* Age Section */}
-                    <div className={styles.formGroup}>
-                        <FormSectionTitle>Age</FormSectionTitle>
-                        <Input placeholder="Your age" type="number" className={styles.inputDark} />
-                    </div>
+                    <AgeSection
+                        age={age}
+                        onAgeChange={setAge}
+                    />
 
-                    {/* Gender Section */}
-                    <div className={styles.formGroup}>
-                        <FormSectionTitle>Gender</FormSectionTitle>
-                        <SegmentedControl
-                            options={GENDER_OPTIONS}
-                            value={gender}
-                            onChange={setGender}
-                        />
-                    </div>
+                    <GenderSection
+                        options={GENDER_OPTIONS}
+                        value={gender}
+                        onChange={setGender}
+                    />
 
-                    {/* Bio Section */}
-                    <div className={styles.formGroup}>
-                        <FormSectionTitle>Bio</FormSectionTitle>
-                        <textarea
-                            className={styles.textarea}
-                            placeholder="Write about youself..."
-                        />
-                    </div>
+                    <BioSection
+                        bio={bio}
+                        onBioChange={setBio}
+                    />
 
                     {/* Hobbies Section */}
                     <HobbiesSection value={hobbies} onChange={setHobbies} />

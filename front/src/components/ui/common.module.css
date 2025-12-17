@@ -1,0 +1,16 @@
+@reference "../../app/globals.css";
+
+.sectionContainer {
+  @apply flex flex-col gap-0.5;
+}
+
+
+.inputDark {
+  @apply bg-form-element rounded-none px-4 border-none h-[44px] text-base font-normal font-sans;
+}
+
+@media (min-width: 768px) {
+  .inputDark {
+    @apply rounded-xl;
+  }
+}
