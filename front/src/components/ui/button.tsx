@@ -1,46 +1,53 @@
-import * as React from "react"
-import { cn } from "@/lib/utils"
-import styles from "./button.module.css"
+import * as React from 'react';
+import { cn } from '@/lib/utils';
+import styles from './button.module.css';
 
 export enum ButtonVariant {
-    Default = "default",
-    Social = "social",
+  Default = 'default',
+  Social = 'social',
 }
 
 export enum ButtonSize {
-    Default = "default",
-    Xl = "xl",
+  Default = 'default',
+  Xl = 'xl',
 }
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: ButtonVariant
-    size?: ButtonSize
+  variant?: ButtonVariant;
+  size?: ButtonSize;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className, variant = ButtonVariant.Default, size = ButtonSize.Default, ...props }, ref) => {
-        return (
-            <button
-                ref={ref}
-                className={cn(
-                    styles.base,
-                    {
-                        // Variants
-                        [styles.variantGhost]: variant === ButtonVariant.Default,
-                        [styles.variantSocial]: variant === ButtonVariant.Social,
+  (
+    {
+      className,
+      variant = ButtonVariant.Default,
+      size = ButtonSize.Default,
+      ...props
+    },
+    ref,
+  ) => {
+    return (
+      <button
+        ref={ref}
+        className={cn(
+          styles.base,
+          {
+            // Variants
+            [styles.variantGhost]: variant === ButtonVariant.Default,
+            [styles.variantSocial]: variant === ButtonVariant.Social,
 
-                        // Sizes
-                        [styles.sizeDefault]: size === ButtonSize.Default,
-                        [styles.sizeXl]: size === ButtonSize.Xl,
-                    },
-                    className
-                )}
-                {...props}
-            />
-        )
-    }
-)
-Button.displayName = "Button"
+            // Sizes
+            [styles.sizeDefault]: size === ButtonSize.Default,
+            [styles.sizeXl]: size === ButtonSize.Xl,
+          },
+          className,
+        )}
+        {...props}
+      />
+    );
+  },
+);
+Button.displayName = 'Button';
 
-export { Button }
-
+export { Button };

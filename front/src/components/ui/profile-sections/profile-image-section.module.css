@@ -1,13 +1,13 @@
 @reference "../../../app/globals.css";
 
 .profileSection {
-    @apply relative w-48 h-48 flex justify-center items-center my-4;
+  @apply relative my-4 flex h-48 w-48 items-center justify-center;
 }
 
 .profilePlaceholder {
-    @apply w-full h-full rounded-full border border-secondary flex justify-center items-center;
+  @apply border-secondary flex h-full w-full items-center justify-center rounded-full border;
 }
 
 .profileImage {
-    @apply opacity-50;
+  @apply opacity-50;
 }

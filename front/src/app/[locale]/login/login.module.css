@@ -1,65 +1,65 @@
 @reference "../../globals.css";
 
 .page {
-    @apply min-h-screen bg-surface text-primary flex justify-center items-center;
+  @apply bg-surface text-primary flex min-h-screen items-center justify-center;
 }
 
 .container {
-    @apply w-full max-w-[400px] p-8 flex flex-col h-screen md:h-auto md:min-h-[700px] justify-between md:justify-center gap-8 relative bg-surface;
+  @apply bg-surface relative flex h-screen w-full max-w-[400px] flex-col justify-between gap-8 p-8 md:h-auto md:min-h-[700px] md:justify-center;
 }
 
 .header {
-    @apply flex flex-col items-center mt-24 md:mt-0;
+  @apply mt-24 flex flex-col items-center md:mt-0;
 }
 
 .logoRow {
-    @apply flex items-center justify-center;
+  @apply flex items-center justify-center;
 }
 
 .logoContainer {
-    @apply relative w-24 h-24 md:w-32 md:h-32;
+  @apply relative h-24 w-24 md:h-32 md:w-32;
 }
 
 .logoImage {
-    @apply object-contain;
+  @apply object-contain;
 }
 
 .brandName {
-    @apply text-4xl md:text-5xl font-normal text-brand tracking-wide -ml-5 md:-ml-6 leading-none mt-7 md:mt-10;
+  @apply text-brand mt-7 -ml-5 text-4xl leading-none font-normal tracking-wide md:mt-10 md:-ml-6 md:text-5xl;
 }
 
 .tagline {
-    @apply text-base text-primary font-light mt-4;
+  @apply text-primary mt-4 text-base font-light;
 }
 
 .formSection {
-    @apply flex flex-col gap-8 w-full mt-12 px-2;
+  @apply mt-12 flex w-full flex-col gap-8 px-2;
 }
 
 .inputEmail {
-    @apply text-primary;
+  @apply text-primary;
 }
 
 .passwordWrapper {
-    @apply relative w-full;
+  @apply relative w-full;
 }
 
 .forgotLink {
-    @apply absolute right-0 top-1/2 -translate-y-1/2 z-10 text-primary font-semibold text-sm hover:underline pointer-events-auto;
+  @apply text-primary pointer-events-auto absolute top-1/2 right-0 z-10 -translate-y-1/2 text-sm font-semibold hover:underline;
 }
 
 .footer {
-    @apply flex flex-col gap-8 mb-12 md:mb-0 px-2;
+  @apply mb-12 flex flex-col gap-8 px-2 md:mb-0;
 }
 
 .divider {
-    @apply relative text-center;
+  @apply relative text-center;
 }
 
 .dividerText {
-    @apply text-secondary text-sm font-light;
+  @apply text-secondary text-sm font-light;
 }
 
 .socialGrid {
-    @apply grid grid-cols-2 gap-4;
+  @apply grid grid-cols-2 gap-4;
 }

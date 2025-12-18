@@ -1,29 +1,29 @@
 @reference "../../globals.css";
 
 .page {
-    @apply min-h-screen bg-surface text-primary flex justify-center py-10;
+  @apply bg-surface text-primary flex min-h-screen justify-center py-10;
 }
 
 .container {
-    @apply w-full max-w-[500px] px-0 md:px-6 flex flex-col items-center gap-6;
+  @apply flex w-full max-w-[500px] flex-col items-center gap-6 px-0 md:px-6;
 }
 
 .header {
-    @apply text-xl font-normal text-primary mt-4 px-6 md:px-0;
+  @apply text-primary mt-4 px-6 text-xl font-normal md:px-0;
 }
 
 .form {
-    @apply w-full flex flex-col gap-2;
+  @apply flex w-full flex-col gap-2;
 }
 
 .row {
-    @apply flex gap-4;
+  @apply flex gap-4;
 }
 
 .footer {
-    @apply w-full flex justify-center mt-8 mb-10;
+  @apply mt-8 mb-10 flex w-full justify-center;
 }
 
 .continueButton {
-    @apply w-[298px] h-[40px] !rounded-[16px] border border-primary text-sm font-semibold font-sans;
+  @apply border-primary h-[40px] w-[298px] !rounded-[16px] border font-sans text-sm font-semibold;
 }
