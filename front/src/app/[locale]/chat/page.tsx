@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import styles from './chat.module.css';
@@ -7,6 +8,15 @@ import { Icon } from '@/components/ui/icon';
 
 export default function ChatScreen() {
   const t = useTranslations('screens.chat');
+  const [message, setMessage] = useState('');
+
+  const onMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const el = e.target;
+    setMessage(el.value);
+
+    el.style.height = 'inherit';
+    el.style.height = `${el.scrollHeight}px`;
+  };
 
   const messages = [
     {
@@ -90,17 +100,21 @@ export default function ChatScreen() {
 
       <footer className={styles.footer}>
         <Icon
+          className={styles.footerIcon}
           src="/assets/chat/smiley-icon.svg"
           alt="emoji"
           width={24}
           height={24}
         />
-        <input
+        <textarea
+          value={message}
+          onChange={(e) => onMessageChange(e)}
           className={styles.input}
           placeholder={t('messagePlaceholder')}
-          type="text"
+          rows={1}
         />
         <Icon
+          className={styles.footerIcon}
           src="/assets/chat/send-icon.svg"
           alt="send"
           width={28}

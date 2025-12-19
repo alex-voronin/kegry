@@ -65,9 +65,13 @@
 }
 
 .footer {
-  @apply bg-form-element absolute right-0 bottom-0 left-0 flex items-center gap-3 px-4 py-4 backdrop-blur-md;
+  @apply bg-form-element absolute right-0 bottom-0 left-0 flex items-end gap-3 px-4 py-3 backdrop-blur-md;
+}
+
+.footerIcon {
+  @apply mb-1;
 }
 
 .input {
-  @apply placeholder:text-secondary flex-1 border-none bg-transparent text-base outline-none;
+  @apply placeholder:text-secondary max-h-[150px] flex-1 resize-none border-none bg-transparent py-1 text-base outline-none;
 }
