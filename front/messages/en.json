@@ -1,9 +1,5 @@
 {
   "screens": {
-    "onboarding": {
-      "title": "Tell us about yourself",
-      "continue": "Continue"
-    },
     "login": {
       "tagline": "The best stories start off-screen",
       "email": "Email",
@@ -12,6 +8,13 @@
       "orContinueWith": "Or continue with",
       "google": "Google",
       "facebook": "Facebook"
+    },
+    "onboarding": {
+      "title": "Tell us about yourself",
+      "continue": "Continue"
+    },
+    "finder": {
+      "distance": "Distance: {km} km"
     }
   },
   "components": {

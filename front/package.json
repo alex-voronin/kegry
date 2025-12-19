@@ -13,6 +13,7 @@
     "next-intl": "^4.6.1",
     "react": "19.2.1",
     "react-dom": "19.2.1",
+    "react-flexible-star-rating": "^1.0.7",
     "react-select": "^5.10.2",
     "zustand": "^5.0.9"
   },

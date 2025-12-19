@@ -1,0 +1,65 @@
+@reference "../../globals.css";
+
+.wrapper {
+  @apply relative;
+}
+
+.content {
+  @apply relative mx-auto h-dvh w-full max-w-[500px];
+}
+
+.header {
+  @apply absolute top-0 right-0 left-0 z-20 flex items-center justify-between px-4 py-3;
+}
+
+.headerRightSideIconsWrapper {
+  @apply flex items-center gap-4;
+}
+
+.badge {
+  @apply absolute -top-1 -right-1 rounded-full bg-red-500 px-1 text-xs text-white;
+}
+
+.profileImage {
+  @apply z-0 object-cover;
+}
+
+.imageOverlay {
+  @apply absolute inset-0 bg-black/40;
+}
+
+.userInfo {
+  @apply pointer-events-none absolute right-0 bottom-28 left-0 z-10 px-4;
+}
+
+.ratingRow {
+  @apply pointer-events-none mb-2;
+}
+
+.name {
+  @apply text-primary text-2xl font-semibold;
+}
+
+.location {
+  @apply text-primary mt-1 flex items-center gap-1 text-base;
+}
+
+.tags {
+  @apply mt-3 flex flex-wrap gap-2;
+}
+
+.tag {
+  @apply border-primary rounded-full border px-3 py-1 text-base;
+}
+
+.actions {
+  @apply absolute right-0 bottom-4 left-0 z-20 flex items-center justify-center gap-6;
+}
+
+.actionButton {
+  @apply bg-surface flex h-14 w-14 items-center justify-center rounded-full hover:brightness-75 active:brightness-75;
+}
+
+.actionPrimary {
+  @apply bg-brand flex h-16 w-16 items-center justify-center rounded-full hover:brightness-75 active:brightness-75;
+}
