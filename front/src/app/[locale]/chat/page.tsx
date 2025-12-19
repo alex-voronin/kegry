@@ -1,0 +1,112 @@
+'use client';
+
+import Image from 'next/image';
+import { useTranslations } from 'next-intl';
+import styles from './chat.module.css';
+import { Icon } from '@/components/ui/icon';
+
+export default function ChatScreen() {
+  const t = useTranslations('screens.chat');
+
+  const messages = [
+    {
+      id: 1,
+      text: "Hi Gena! I'm doing well, thanks. Can't wait for the weekend!",
+      sender: 'other',
+      time: '10:30 AM',
+    },
+    {
+      id: 2,
+      text: 'I know, right? Weekend plans are the best. Any exciting plans on your end?',
+      sender: 'me',
+      time: '10:31 AM',
+    },
+  ];
+
+  return (
+    <div className={styles.wrapper}>
+      <header className={styles.header}>
+        <div className={styles.headerIcons}>
+          <Icon
+            src="/assets/finder/profile-icon.svg"
+            alt="profile"
+            width={30}
+            height={32}
+            priority
+          />
+          <div className={styles.headerActionsRight}>
+            <Icon
+              src="/assets/chat/mug-icon.png"
+              alt="status"
+              width={36}
+              height={38}
+              priority
+            />
+            <span className={styles.timer}>47:59</span>
+            <Icon
+              src="/assets/chat/more-icon.svg"
+              alt="more"
+              width={28}
+              height={28}
+              priority
+            />
+          </div>
+        </div>
+
+        <div className={styles.headerTitle}>
+          <div className={styles.avatarContainer}>
+            <Image
+              src="/assets/finder/profile-image.png"
+              alt="avatar"
+              fill
+              className="object-cover"
+            />
+          </div>
+          <p className={styles.userName}>Ivan Laptev</p>
+        </div>
+      </header>
+
+      <div className={styles.messageList}>
+        {messages.map((msg) => (
+          <div
+            key={msg.id}
+            className={`${styles.messageRow} ${
+              msg.sender === 'me'
+                ? styles.messageRowRight
+                : styles.messageRowLeft
+            }`}
+          >
+            <div
+              className={`${styles.messageBubble} ${
+                msg.sender === 'me' ? styles.bubbleRight : styles.bubbleLeft
+              }`}
+            >
+              {msg.text}
+            </div>
+            <span className={styles.timestamp}>{msg.time}</span>
+          </div>
+        ))}
+      </div>
+
+      <footer className={styles.footer}>
+        <Icon
+          src="/assets/chat/smiley-icon.svg"
+          alt="emoji"
+          width={24}
+          height={24}
+        />
+        <input
+          className={styles.input}
+          placeholder={t('messagePlaceholder')}
+          type="text"
+        />
+        <Icon
+          src="/assets/chat/send-icon.svg"
+          alt="send"
+          width={28}
+          height={28}
+        />
+      </footer>
+    </div>
+  );
+}

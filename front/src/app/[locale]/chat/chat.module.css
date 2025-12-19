@@ -1,0 +1,73 @@
+@reference "../../globals.css";
+
+.wrapper {
+  @apply bg-surface relative mx-auto flex h-dvh w-full max-w-[500px] flex-col overflow-hidden text-white sm:rounded-2xl;
+}
+
+.header {
+  @apply flex justify-between py-3;
+}
+
+.headerIcons {
+  @apply absolute top-4 flex w-full items-center justify-between px-4;
+}
+
+.headerTitle {
+  @apply relative m-auto text-center;
+}
+
+.avatarContainer {
+  @apply relative m-auto h-12 w-12 overflow-hidden rounded-full;
+}
+
+.userName {
+  @apply mt-1 text-sm;
+}
+
+.headerActionsRight {
+  @apply flex items-center gap-2;
+}
+
+.timer {
+  @apply text-base;
+}
+
+.messageList {
+  @apply flex-1 overflow-y-auto p-4 pb-24;
+}
+
+.messageRow {
+  @apply mb-4 flex w-full flex-col;
+}
+
+.messageRowLeft {
+  @apply items-start;
+}
+
+.messageRowRight {
+  @apply items-end;
+}
+
+.messageBubble {
+  @apply relative max-w-[85%] px-4 py-3 text-base leading-relaxed;
+}
+
+.bubbleLeft {
+  @apply rounded-2xl rounded-tl-none bg-[#292929];
+}
+
+.bubbleRight {
+  @apply rounded-2xl rounded-tr-none bg-[#00A3ff];
+}
+
+.timestamp {
+  @apply mt-1 px-1 text-[12px];
+}
+
+.footer {
+  @apply bg-form-element absolute right-0 bottom-0 left-0 flex items-center gap-3 px-4 py-4 backdrop-blur-md;
+}
+
+.input {
+  @apply placeholder:text-secondary flex-1 border-none bg-transparent text-base outline-none;
+}

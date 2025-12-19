@@ -15,6 +15,10 @@
     },
     "finder": {
       "distance": "Distance: {km} km"
+    },
+    "chat": {
+      "messagePlaceholder": "Message 1/30",
+      "timer": "{minutes}:{seconds}"
     }
   },
   "components": {
