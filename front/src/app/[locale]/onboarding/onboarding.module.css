@@ -5,11 +5,11 @@
 }
 
 .container {
-  @apply flex w-full max-w-[500px] flex-col items-center gap-6 px-0 md:px-6;
+  @apply flex w-full max-w-[500px] flex-col items-center gap-6 px-0 sm:px-6;
 }
 
 .header {
-  @apply text-primary mt-4 px-6 text-xl font-normal md:px-0;
+  @apply text-primary mt-4 px-6 text-xl font-normal sm:px-0;
 }
 
 .form {

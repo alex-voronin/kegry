@@ -8,7 +8,7 @@
   @apply bg-form-element h-[44px] rounded-none border-none px-4 font-sans text-base font-normal;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 500px) {
   .inputDark {
     @apply rounded-xl;
   }

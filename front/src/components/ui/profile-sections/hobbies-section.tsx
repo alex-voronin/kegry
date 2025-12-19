@@ -23,7 +23,7 @@ const selectStyles = {
     borderColor: 'transparent',
     minHeight: '44px',
     borderRadius: '0',
-    '@media (min-width: 768px)': {
+    '@media (min-width: 500px)': {
       borderRadius: '12px',
     },
   }),
