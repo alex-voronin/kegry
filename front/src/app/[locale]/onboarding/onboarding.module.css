@@ -17,5 +17,5 @@
 }
 
 .continueButton {
-  @apply border-primary h-[40px] w-[298px] !rounded-[16px] border font-sans text-sm font-semibold;
+  @apply h-[40px] w-[298px];
 }

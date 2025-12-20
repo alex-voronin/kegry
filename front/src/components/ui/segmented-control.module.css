@@ -15,5 +15,5 @@
 }
 
 .optionActive {
-  @apply bg-active-segment text-primary shadow-sm;
+  @apply bg-active text-primary shadow-sm;
 }

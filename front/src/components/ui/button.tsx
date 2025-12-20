@@ -34,7 +34,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           styles.base,
           {
             // Variants
-            [styles.variantGhost]: variant === ButtonVariant.Default,
+            [styles.variantDefault]: variant === ButtonVariant.Default,
             [styles.variantSocial]: variant === ButtonVariant.Social,
 
             // Sizes

@@ -5,8 +5,8 @@
 }
 
 /* Variants */
-.variantGhost {
-  @apply hover:bg-hover hover:text-primary;
+.variantDefault {
+  @apply hover:bg-hover hover:text-primary border-primary !rounded-[16px] border font-sans text-sm font-semibold;
 }
 
 .variantSocial {

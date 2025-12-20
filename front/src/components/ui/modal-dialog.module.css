@@ -1,0 +1,37 @@
+@reference "../../app/globals.css";
+
+.backdrop {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-300;
+}
+
+.modalContainer {
+  @apply bg-form-element w-full max-w-[500px] overflow-hidden rounded-[32px] p-7 text-center transition-transform duration-300 ease-out;
+}
+
+.modalEnter {
+  @apply translate-y-full;
+}
+
+.modalEnterTo {
+  @apply translate-y-0;
+}
+
+.modalLeave {
+  @apply translate-y-0;
+}
+
+.modalLeaveTo {
+  @apply translate-y-full;
+}
+
+.message {
+  @apply mb-8 text-lg font-medium;
+}
+
+.buttonGroup {
+  @apply flex items-center justify-center gap-4;
+}
+
+.button {
+  @apply w-[150px] flex-1 py-2 transition-all;
+}
