@@ -1,11 +1,7 @@
 @reference "../../globals.css";
 
 .wrapper {
-  @apply bg-surface m-auto flex min-h-screen w-full max-w-[500px] flex-col items-center justify-center sm:rounded-2xl;
-}
-
-.headerTitle {
-  @apply w-full text-xl font-normal;
+  @apply flex min-h-screen flex-col items-center;
 }
 
 .form {

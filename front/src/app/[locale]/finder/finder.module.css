@@ -1,11 +1,11 @@
 @reference "../../globals.css";
 
 .wrapper {
-  @apply relative;
+  @apply relative h-dvh overflow-hidden;
 }
 
 .content {
-  @apply relative mx-auto h-dvh w-full max-w-[500px];
+  @apply relative h-full w-full;
 }
 
 .header {

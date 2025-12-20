@@ -38,7 +38,11 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers locale={locale} messages={messages}>
-          {children}
+          <div className="flex min-h-screen w-full justify-center">
+            <main className="bg-surface text-foreground relative flex w-full max-w-[500px] flex-col sm:rounded-2xl">
+              {children}
+            </main>
+          </div>
         </Providers>
       </body>
     </html>

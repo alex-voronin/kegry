@@ -109,6 +109,7 @@ export default function ChatScreen() {
           alt="emoji"
           width={24}
           height={24}
+          priority
         />
         <textarea
           value={message}
@@ -123,6 +124,7 @@ export default function ChatScreen() {
           alt="send"
           width={28}
           height={28}
+          priority
         />
       </footer>
     </div>
