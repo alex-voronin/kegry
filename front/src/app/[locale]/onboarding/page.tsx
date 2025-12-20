@@ -10,6 +10,7 @@ import { AgeSection } from '@/components/ui/profile-sections/age-section';
 import { GenderSection } from '@/components/ui/profile-sections/gender-section';
 import { BioSection } from '@/components/ui/profile-sections/bio-section';
 import styles from './onboarding.module.css';
+import { Header } from '@/components/ui/header';
 
 export default function OnboardingPage() {
   const t = useTranslations('screens.onboarding');
@@ -29,42 +30,40 @@ export default function OnboardingPage() {
   ];
 
   return (
-    <div className={styles.page}>
-      <div className={styles.container}>
-        <h1 className={styles.header}>{t('title')}</h1>
+    <div className={styles.wrapper}>
+      <Header title={t('title')} />
 
-        <ProfileImageSection src="/assets/camera-placeholder.png" />
+      <ProfileImageSection src="/assets/camera-placeholder.png" />
 
-        <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
-          <NameSection
-            firstName={firstName}
-            lastName={lastName}
-            onFirstNameChange={setFirstName}
-            onLastNameChange={setLastName}
-          />
+      <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+        <NameSection
+          firstName={firstName}
+          lastName={lastName}
+          onFirstNameChange={setFirstName}
+          onLastNameChange={setLastName}
+        />
 
-          <AgeSection age={age} onAgeChange={setAge} />
+        <AgeSection age={age} onAgeChange={setAge} />
 
-          <GenderSection
-            options={GENDER_OPTIONS}
-            value={gender}
-            onChange={setGender}
-          />
+        <GenderSection
+          options={GENDER_OPTIONS}
+          value={gender}
+          onChange={setGender}
+        />
 
-          <BioSection bio={bio} onBioChange={setBio} />
+        <BioSection bio={bio} onBioChange={setBio} />
 
-          <HobbiesSection value={hobbies} onChange={setHobbies} />
+        <HobbiesSection value={hobbies} onChange={setHobbies} />
 
-          <div className={styles.footer}>
-            <Button
-              variant={ButtonVariant.Default}
-              className={styles.continueButton}
-            >
-              {t('continue')}
-            </Button>
-          </div>
-        </form>
-      </div>
+        <div className={styles.footer}>
+          <Button
+            variant={ButtonVariant.Default}
+            className={styles.continueButton}
+          >
+            {t('continue')}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

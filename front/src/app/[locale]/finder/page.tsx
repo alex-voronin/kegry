@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { StarRating } from 'react-flexible-star-rating';
 import styles from './finder.module.css';
+import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 
 export default function FinderScreen() {
@@ -12,33 +13,37 @@ export default function FinderScreen() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.content}>
-        <header className={styles.header}>
-          <Icon
-            src="/assets/finder/profile-icon.svg"
-            alt="profile"
-            width={30}
-            height={32}
-            priority
-          />
-          <div className={styles.headerRightSideIconsWrapper}>
+        <Header
+          left={
             <Icon
-              src="/assets/finder/filters-icon.svg"
-              alt="filters"
-              width={32}
+              src="/assets/finder/profile-icon.svg"
+              alt="profile"
+              width={30}
               height={32}
               priority
             />
-            <Icon
-              src="/assets/finder/notifications-icon.svg"
-              alt="notifications"
-              width={28}
-              height={30}
-              priority
-            >
-              <span className={styles.badge}>3</span>
-            </Icon>
-          </div>
-        </header>
+          }
+          right={
+            <div className={styles.headerRightSideIconsWrapper}>
+              <Icon
+                src="/assets/finder/filters-icon.svg"
+                alt="filters"
+                width={32}
+                height={32}
+                priority
+              />
+              <Icon
+                src="/assets/finder/notifications-icon.svg"
+                alt="notifications"
+                width={28}
+                height={30}
+                priority
+              >
+                <span className={styles.badge}>3</span>
+              </Icon>
+            </div>
+          }
+        />
 
         <div>
           <Image

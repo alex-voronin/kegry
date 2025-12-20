@@ -1,15 +1,11 @@
 @reference "../../globals.css";
 
-.page {
-  @apply bg-surface text-primary flex min-h-screen justify-center py-10;
+.wrapper {
+  @apply bg-surface m-auto flex min-h-screen w-full max-w-[500px] flex-col items-center justify-center sm:rounded-2xl;
 }
 
-.container {
-  @apply flex w-full max-w-[500px] flex-col items-center gap-6 px-0 sm:px-6;
-}
-
-.header {
-  @apply text-primary mt-4 px-6 text-xl font-normal sm:px-0;
+.headerTitle {
+  @apply w-full text-xl font-normal;
 }
 
 .form {

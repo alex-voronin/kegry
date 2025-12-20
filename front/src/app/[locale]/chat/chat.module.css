@@ -4,19 +4,11 @@
   @apply bg-surface relative mx-auto flex h-dvh w-full max-w-[500px] flex-col overflow-hidden text-white sm:rounded-2xl;
 }
 
-.header {
-  @apply flex justify-between py-3;
+.titleWrapper {
+  @apply flex flex-col items-center justify-between;
 }
 
-.headerIcons {
-  @apply absolute top-4 flex w-full items-center justify-between px-4;
-}
-
-.headerTitle {
-  @apply relative m-auto text-center;
-}
-
-.avatarContainer {
+.avatarCircle {
   @apply relative m-auto h-12 w-12 overflow-hidden rounded-full;
 }
 
@@ -24,12 +16,12 @@
   @apply mt-1 text-sm;
 }
 
-.headerActionsRight {
+.headerActionsWrapper {
   @apply flex items-center gap-2;
 }
 
 .timer {
-  @apply text-base;
+  @apply text-sm;
 }
 
 .messageList {

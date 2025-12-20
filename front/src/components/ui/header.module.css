@@ -1,0 +1,17 @@
+@reference "../../app/globals.css";
+
+.header {
+  @apply relative z-50 flex w-full items-start justify-between px-4 py-3;
+}
+
+.left {
+  @apply flex min-h-[40px] flex-2 items-center justify-start;
+}
+
+.title {
+  @apply flex flex-1 flex-col items-center justify-center text-center text-xl font-normal;
+}
+
+.right {
+  @apply flex min-h-[40px] flex-2 items-center justify-end gap-2;
+}

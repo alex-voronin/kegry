@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import styles from './chat.module.css';
+import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 
 export default function ChatScreen() {
@@ -35,8 +36,8 @@ export default function ChatScreen() {
 
   return (
     <div className={styles.wrapper}>
-      <header className={styles.header}>
-        <div className={styles.headerIcons}>
+      <Header
+        left={
           <Icon
             src="/assets/finder/profile-icon.svg"
             alt="profile"
@@ -44,7 +45,22 @@ export default function ChatScreen() {
             height={32}
             priority
           />
-          <div className={styles.headerActionsRight}>
+        }
+        title={
+          <div className={styles.titleWrapper}>
+            <div className={styles.avatarCircle}>
+              <Image
+                src="/assets/finder/profile-image.png"
+                alt="avatar"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <p className={styles.userName}>Ivan Laptev</p>
+          </div>
+        }
+        right={
+          <div className={styles.headerActionsWrapper}>
             <Icon
               src="/assets/chat/mug-icon.png"
               alt="status"
@@ -61,20 +77,8 @@ export default function ChatScreen() {
               priority
             />
           </div>
-        </div>
-
-        <div className={styles.headerTitle}>
-          <div className={styles.avatarContainer}>
-            <Image
-              src="/assets/finder/profile-image.png"
-              alt="avatar"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <p className={styles.userName}>Ivan Laptev</p>
-        </div>
-      </header>
+        }
+      />
 
       <div className={styles.messageList}>
         {messages.map((msg) => (
