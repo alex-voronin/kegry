@@ -34,7 +34,7 @@ export function Icon({
     >
       {src && alt && width && height && (
         <Image
-          className="pointer-events-none select-none"
+          className="pointer-events-none h-full w-full select-none"
           src={src}
           alt={alt}
           width={width}

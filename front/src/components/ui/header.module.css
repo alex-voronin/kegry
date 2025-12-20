@@ -5,13 +5,13 @@
 }
 
 .left {
-  @apply flex min-h-[40px] flex-2 items-center justify-start;
+  @apply flex min-h-[40px] w-fit flex-none items-center justify-start;
 }
 
 .title {
-  @apply flex flex-1 flex-col items-center justify-center text-center text-xl font-normal;
+  @apply absolute left-1/2 -translate-x-1/2 py-1 text-center text-xl font-normal;
 }
 
 .right {
-  @apply flex min-h-[40px] flex-2 items-center justify-end gap-2;
+  @apply flex min-h-[40px] w-fit flex-none items-center justify-end gap-2;
 }

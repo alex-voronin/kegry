@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import styles from './chat.module.css';
@@ -37,6 +37,7 @@ export default function ChatScreen() {
   return (
     <div className={styles.wrapper}>
       <Header
+        className="min-h-[80px]"
         left={
           <Icon
             src="/assets/finder/profile-icon.svg"
@@ -45,19 +46,6 @@ export default function ChatScreen() {
             height={32}
             priority
           />
-        }
-        title={
-          <div className={styles.titleWrapper}>
-            <div className={styles.avatarCircle}>
-              <Image
-                src="/assets/finder/profile-image.png"
-                alt="avatar"
-                fill
-                className="object-cover"
-              />
-            </div>
-            <p className={styles.userName}>Ivan Laptev</p>
-          </div>
         }
         right={
           <div className={styles.headerActionsWrapper}>
@@ -79,6 +67,18 @@ export default function ChatScreen() {
           </div>
         }
       />
+
+      <div className={styles.titleWrapper}>
+        <div className={styles.avatarCircle}>
+          <Image
+            src="/assets/finder/profile-image.png"
+            alt="avatar"
+            fill
+            className="object-cover"
+          />
+        </div>
+        <p className={styles.userName}>Ivan Laptev</p>
+      </div>
 
       <div className={styles.messageList}>
         {messages.map((msg) => (

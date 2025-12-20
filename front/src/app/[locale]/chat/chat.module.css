@@ -5,7 +5,7 @@
 }
 
 .titleWrapper {
-  @apply flex flex-col items-center justify-between;
+  @apply absolute left-1/2 flex -translate-x-1/2 flex-col items-center justify-between py-3;
 }
 
 .avatarCircle {

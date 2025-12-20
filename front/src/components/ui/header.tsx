@@ -11,10 +11,11 @@ interface HeaderProps {
 
 export function Header({ left, title, right, className }: HeaderProps) {
   return (
-    <header className={cn(styles.header, className)}>
-      {left && <div className={styles.left}>{left}</div>}
-      {title && <div className={styles.title}>{title}</div>}
-      {right && <div className={styles.right}>{right}</div>}
+    <header className={cn(styles.header, 'min-h-[40px]', className)}>
+      {/*We have to use min-h-[40px] here explicitly, as twMerge can't pick classes from styles.module.css */}
+      <div className={styles.left}>{left}</div>
+      <div className={styles.title}>{title}</div>
+      <div className={styles.right}>{right}</div>
     </header>
   );
 }

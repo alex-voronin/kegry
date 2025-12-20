@@ -19,6 +19,30 @@
     "chat": {
       "messagePlaceholder": "Message 1/30",
       "timer": "{minutes}:{seconds}"
+    },
+    "filters": {
+      "title": "Filters",
+      "when": "When",
+      "now": "Now",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "distance": "Search distance (km)",
+      "age": "Age",
+      "from": "From",
+      "to": "To",
+      "any": "any",
+      "gender": "Gender",
+      "genderAny": "Any",
+      "male": "Male",
+      "female": "Female",
+      "hobbies": "Hobbies",
+      "hobbyName": "Hobby name",
+      "apply": "Apply",
+      "applyDialog": {
+        "title": "Apply filters?",
+        "buttonYes": "Yes",
+        "buttonNo": "No"
+      }
     }
   },
   "components": {
