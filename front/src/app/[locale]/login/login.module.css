@@ -1,15 +1,15 @@
 @reference "../../globals.css";
 
 .page {
-  @apply bg-surface text-primary flex min-h-screen items-center justify-center;
+  @apply flex min-h-screen items-center justify-center;
 }
 
 .container {
-  @apply bg-surface relative flex h-screen w-full max-w-[400px] flex-col justify-between gap-8 p-8 sm:h-auto sm:min-h-[700px] sm:justify-center;
+  @apply relative flex h-screen w-full max-w-[500px] flex-col justify-between gap-8 p-8 sm:h-auto;
 }
 
 .header {
-  @apply mt-24 flex flex-col items-center sm:mt-0;
+  @apply mt-12 flex flex-col items-center sm:mt-0;
 }
 
 .logoRow {
@@ -53,7 +53,7 @@
 }
 
 .footer {
-  @apply mb-12 flex flex-col gap-8 px-2 sm:mb-0;
+  @apply mb-24 flex flex-col gap-8 px-2 sm:mb-0;
 }
 
 .divider {
