@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/routing';
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { ProfileImageSection } from '@/components/ui/profile-sections/profile-image-section';
 import { HobbiesSection } from '@/components/ui/profile-sections/hobbies-section';
@@ -14,6 +15,7 @@ import { Header } from '@/components/ui/header';
 
 export default function OnboardingPage() {
   const t = useTranslations('screens.onboarding');
+  const router = useRouter();
   const tGender = useTranslations('components.profile-sections.gender');
   const [gender, setGender] = useState<string | null>(null);
   const [hobbies, setHobbies] = useState<{ value: string; label: string }[]>(
@@ -59,6 +61,8 @@ export default function OnboardingPage() {
           <Button
             variant={ButtonVariant.Default}
             className={styles.continueButton}
+            type="button"
+            onClick={() => router.push('/finder')}
           >
             {t('continue')}
           </Button>

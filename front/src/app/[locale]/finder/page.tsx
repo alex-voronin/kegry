@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/routing';
 import { StarRating } from 'react-flexible-star-rating';
 import styles from './finder.module.css';
 import { Header } from '@/components/ui/header';
@@ -9,6 +10,7 @@ import { Icon } from '@/components/ui/icon';
 
 export default function FinderScreen() {
   const t = useTranslations('screens.finder');
+  const router = useRouter();
 
   return (
     <div className={styles.wrapper}>
@@ -31,6 +33,7 @@ export default function FinderScreen() {
                 width={32}
                 height={32}
                 priority
+                onClick={() => router.push('/finder/filters')}
               />
               <Icon
                 src="/assets/finder/notifications-icon.svg"
@@ -38,6 +41,7 @@ export default function FinderScreen() {
                 width={28}
                 height={30}
                 priority
+                onClick={() => router.push('/notifications')}
               >
                 <span className={styles.badge}>3</span>
               </Icon>
@@ -104,7 +108,10 @@ export default function FinderScreen() {
               priority
             />
           </button>
-          <button className={styles.actionPrimary}>
+          <button
+            className={styles.actionPrimary}
+            onClick={() => router.push('/chat')}
+          >
             <Image
               className="pointer-events-none"
               src="/assets/finder/invite-icon.png"

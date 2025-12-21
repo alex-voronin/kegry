@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { Link } from '@/i18n/routing';
+import { Link, useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { Button, ButtonVariant, ButtonSize } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,7 @@ import styles from './login.module.css';
 
 export default function LoginPage() {
   const t = useTranslations('screens.login');
+  const router = useRouter();
 
   return (
     <div className={styles.page}>
@@ -47,7 +48,7 @@ export default function LoginPage() {
         <Button
           variant={ButtonVariant.Default}
           className={styles.signInButton}
-          type="submit"
+          onClick={() => router.push('/onboarding')}
         >
           {t('signIn')}
         </Button>
@@ -58,11 +59,7 @@ export default function LoginPage() {
           </div>
 
           <div className={styles.socialGrid}>
-            <Button
-              variant={ButtonVariant.Social}
-              size={ButtonSize.Xl}
-              type="button"
-            >
+            <Button variant={ButtonVariant.Social} size={ButtonSize.Xl}>
               <Image
                 src="/assets/google.png"
                 alt={t('google')}
@@ -72,11 +69,7 @@ export default function LoginPage() {
               />
               {t('google')}
             </Button>
-            <Button
-              variant={ButtonVariant.Social}
-              size={ButtonSize.Xl}
-              type="button"
-            >
+            <Button variant={ButtonVariant.Social} size={ButtonSize.Xl}>
               <Image
                 src="/assets/facebook.png"
                 alt={t('facebook')}
