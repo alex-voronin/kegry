@@ -44,6 +44,21 @@
         "buttonYes": "Yes",
         "buttonNo": "No"
       }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "drinkInvitation": "Let's get a drink {time}!",
+      "today": "today",
+      "rightNow": "right now",
+      "tomorrow": "tomorrow",
+      "todayUntil": "today until {h}h",
+      "tomorrowUntil": "tomorrow until {h}h",
+      "ago": "{time} ago",
+      "menu": {
+        "accept": "Accept",
+        "ignore": "Ignore",
+        "block": "Block"
+      }
     }
   },
   "components": {

@@ -1,0 +1,41 @@
+@reference "../../../app/globals.css";
+
+.content {
+  @apply flex flex-col;
+}
+
+.notificationList {
+  @apply flex flex-col gap-0.5;
+}
+
+.notificationItem {
+  @apply bg-form-element hover:bg-hover flex items-center justify-between rounded-xl px-4 py-3;
+}
+
+.notificationItemLeft {
+  @apply flex items-center gap-4;
+}
+
+.profileImageWrapper {
+  @apply relative h-12 w-12 shrink-0 overflow-hidden rounded-full;
+}
+
+.notificationBody {
+  @apply flex flex-col;
+}
+
+.notificationTitle {
+  @apply text-base leading-tight font-normal;
+}
+
+.notificationTime {
+  @apply text-secondary text-sm leading-tight;
+}
+
+.moreButton {
+  @apply hover:bg-hover active:bg-active h-10 w-10 items-center justify-center rounded-full;
+}
+
+.notificationItemRight {
+  @apply flex items-center gap-2;
+}

@@ -29,6 +29,7 @@ export function Icon({
       onClick={onClick}
       className={cn(
         'relative hover:brightness-75 active:brightness-75',
+        `w-[${width}px] h-[${height}px]`,
         className,
       )}
     >
