@@ -1,7 +1,7 @@
 @reference "../../globals.css";
 
 .wrapper {
-  @apply flex min-h-screen flex-col items-center;
+  @apply flex min-h-screen flex-col items-center sm:p-4 sm:pt-0;
 }
 
 .form {

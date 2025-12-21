@@ -39,7 +39,7 @@ export default async function RootLayout({
       >
         <Providers locale={locale} messages={messages}>
           <div className="flex min-h-screen w-full justify-center">
-            <main className="bg-surface text-foreground relative flex w-full max-w-[500px] flex-col sm:rounded-2xl">
+            <main className="bg-surface text-foreground relative flex w-full max-w-[500px] flex-col sm:rounded-[16px]">
               {children}
             </main>
           </div>

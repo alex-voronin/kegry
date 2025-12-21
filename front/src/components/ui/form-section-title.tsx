@@ -12,5 +12,9 @@ export function FormSectionTitle({
   // Using inline Tailwind classes here as it's a very simple component,
   // but could be moved to a module if it grows.
   // Matching the "Name", "Age" text style from the screenshot (dark gray/white/50).
-  return <h3 className={`text-sm text-white/50 ${className}`}>{children}</h3>;
+  return (
+    <h3 className={`pl-2 text-sm text-white/50 sm:pl-0 ${className}`}>
+      {children}
+    </h3>
+  );
 }

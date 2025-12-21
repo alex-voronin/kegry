@@ -67,7 +67,7 @@ export default function FiltersScreen() {
   ];
 
   return (
-    <div className={styles.container}>
+    <div>
       <Header
         left={
           <Icon
@@ -81,90 +81,92 @@ export default function FiltersScreen() {
         title={t('title')}
       />
 
-      <div className={styles.content}>
-        <div className={styles.filterSection}>
-          <FormSectionTitle>{t('when')}</FormSectionTitle>
-          <SegmentedControl
-            options={timeOptions}
-            value={filters.when}
-            onChange={(val) => setFilters({ ...filters, when: val })}
-          />
-        </div>
+      <div className={styles.container}>
+        <div className={styles.content}>
+          <div className={styles.filterSection}>
+            <FormSectionTitle>{t('when')}</FormSectionTitle>
+            <SegmentedControl
+              options={timeOptions}
+              value={filters.when}
+              onChange={(val) => setFilters({ ...filters, when: val })}
+            />
+          </div>
 
-        <div className={styles.filterSection}>
-          <FormSectionTitle>{t('distance')}</FormSectionTitle>
-          <Input
-            type="number"
-            value={filters.distance}
-            onChange={(e) =>
-              setFilters({ ...filters, distance: e.target.value })
-            }
-            className={stylesCommon.inputDark}
-          />
-        </div>
+          <div className={styles.filterSection}>
+            <FormSectionTitle>{t('distance')}</FormSectionTitle>
+            <Input
+              type="number"
+              value={filters.distance}
+              onChange={(e) =>
+                setFilters({ ...filters, distance: e.target.value })
+              }
+              className={stylesCommon.inputDark}
+            />
+          </div>
 
-        <div className={styles.filterSection}>
-          <FormSectionTitle>{t('age')}</FormSectionTitle>
-          <div className={styles.ageRangeWrapper}>
-            <div className={styles.ageInputGroup}>
-              <span className={styles.ageLabel}>{t('from')}</span>
-              <Input
-                type="number"
-                value={filters.ageFrom}
-                placeholder={t('any')}
-                onChange={(e) =>
-                  setFilters({ ...filters, ageFrom: e.target.value })
-                }
-                className={styles.ageInput}
-              />
+          <div className={styles.filterSection}>
+            <FormSectionTitle>{t('age')}</FormSectionTitle>
+            <div className={styles.ageRangeWrapper}>
+              <div className={styles.ageInputGroup}>
+                <span className={styles.ageLabel}>{t('from')}</span>
+                <Input
+                  type="number"
+                  value={filters.ageFrom}
+                  placeholder={t('any')}
+                  onChange={(e) =>
+                    setFilters({ ...filters, ageFrom: e.target.value })
+                  }
+                  className={styles.ageInput}
+                />
+              </div>
+              <div className={styles.ageInputGroup}>
+                <span className={styles.ageLabel}>{t('to')}</span>
+                <Input
+                  type="number"
+                  value={filters.ageTo}
+                  placeholder={t('any')}
+                  onChange={(e) =>
+                    setFilters({ ...filters, ageTo: e.target.value })
+                  }
+                  className={styles.ageInput}
+                />
+              </div>
             </div>
-            <div className={styles.ageInputGroup}>
-              <span className={styles.ageLabel}>{t('to')}</span>
-              <Input
-                type="number"
-                value={filters.ageTo}
-                placeholder={t('any')}
-                onChange={(e) =>
-                  setFilters({ ...filters, ageTo: e.target.value })
-                }
-                className={styles.ageInput}
-              />
-            </div>
+          </div>
+
+          <div className={styles.filterSection}>
+            <FormSectionTitle>{t('gender')}</FormSectionTitle>
+            <SegmentedControl
+              options={genderOptions}
+              value={filters.gender}
+              onChange={(val) => setFilters({ ...filters, gender: val })}
+            />
+          </div>
+
+          <div className={styles.filterSection}>
+            <HobbiesSection
+              value={filters.hobbies}
+              onChange={(hobbies) => setFilters({ ...filters, hobbies })}
+            />
+          </div>
+
+          <div className={styles.applyButtonWrapper}>
+            <Button onClick={handleApply} className={styles.applyButton}>
+              {t('apply')}
+            </Button>
           </div>
         </div>
 
-        <div className={styles.filterSection}>
-          <FormSectionTitle>{t('gender')}</FormSectionTitle>
-          <SegmentedControl
-            options={genderOptions}
-            value={filters.gender}
-            onChange={(val) => setFilters({ ...filters, gender: val })}
-          />
-        </div>
-
-        <div className={styles.filterSection}>
-          <HobbiesSection
-            value={filters.hobbies}
-            onChange={(hobbies) => setFilters({ ...filters, hobbies })}
-          />
-        </div>
-
-        <div className={styles.applyButtonWrapper}>
-          <Button onClick={handleApply} className={styles.applyButton}>
-            {t('apply')}
-          </Button>
-        </div>
+        <ModalDialog
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          message={t('applyDialog.title')}
+          primaryButtonText={t('applyDialog.buttonYes')}
+          secondaryButtonText={t('applyDialog.buttonNo')}
+          onPrimaryAction={handleApply}
+          onSecondaryAction={handleDiscard}
+        />
       </div>
-
-      <ModalDialog
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        message={t('applyDialog.title')}
-        primaryButtonText={t('applyDialog.buttonYes')}
-        secondaryButtonText={t('applyDialog.buttonNo')}
-        onPrimaryAction={handleApply}
-        onSecondaryAction={handleDiscard}
-      />
     </div>
   );
 }

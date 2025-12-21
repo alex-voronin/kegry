@@ -1,7 +1,7 @@
 @reference "../../../app/globals.css";
 
 .content {
-  @apply flex flex-col;
+  @apply flex flex-col sm:p-4 sm:pt-0;
 }
 
 .notificationList {
@@ -9,7 +9,7 @@
 }
 
 .notificationItem {
-  @apply bg-form-element hover:bg-hover flex items-center justify-between rounded-xl px-4 py-3;
+  @apply bg-form-element hover:bg-hover flex items-center justify-between px-4 py-3 sm:rounded-xl;
 }
 
 .notificationItemLeft {
