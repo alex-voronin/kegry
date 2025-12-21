@@ -1,6 +1,5 @@
 'use client';
 
-import { Fragment } from 'react';
 import {
   Dialog,
   DialogBackdrop,
@@ -47,13 +46,12 @@ export function ModalDialog({
 
         <div className="fixed inset-0 z-50 flex items-end justify-center p-4">
           <TransitionChild
-            as={Fragment}
-            enter={styles.modalEnter}
-            enterFrom={styles.modalEnter}
-            enterTo={styles.modalEnterTo}
-            leave={styles.modalLeave}
-            leaveFrom={styles.modalLeave}
-            leaveTo={styles.modalLeaveTo}
+            enter="translate-y-full"
+            enterFrom="translate-y-full"
+            enterTo="translate-y-0"
+            leave="translate-y-0"
+            leaveFrom="translate-y-0"
+            leaveTo="translate-y-full"
           >
             <DialogPanel className={styles.modalContainer}>
               <DialogTitle className={styles.message}>{message}</DialogTitle>

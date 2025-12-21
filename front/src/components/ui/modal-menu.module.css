@@ -1,0 +1,25 @@
+@reference "../../app/globals.css";
+
+.backdrop {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-300;
+}
+
+.menuContainer {
+  @apply fixed inset-0 z-100 m-auto flex max-w-[500px] items-end justify-center;
+}
+
+.menuItems {
+  @apply bg-form-element w-full overflow-hidden rounded-t-[32px] p-2 shadow-lg transition-transform duration-300 ease-out;
+}
+
+.menuItem {
+  @apply hover:bg-hover active:bg-active flex w-full items-center gap-4 rounded-[32px] px-4 py-2 text-sm transition-colors;
+}
+
+.icon {
+  @apply flex h-6 w-6 items-center justify-center;
+}
+
+.label {
+  @apply text-lg font-normal;
+}
