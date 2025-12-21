@@ -37,11 +37,15 @@
 }
 
 .name {
-  @apply text-primary text-2xl font-semibold;
+  @apply text-primary text-3xl font-semibold;
 }
 
 .location {
   @apply text-primary mt-1 flex items-center gap-1 text-base;
+}
+
+.locationText {
+  @apply flex flex-col;
 }
 
 .tags {

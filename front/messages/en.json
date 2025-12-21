@@ -14,7 +14,8 @@
       "continue": "Continue"
     },
     "finder": {
-      "distance": "Distance: {km} km"
+      "availabilityTime": "Available: {time}",
+      "distance": "Distance: {km} {units}"
     },
     "chat": {
       "messagePlaceholder": "Message 1/30",

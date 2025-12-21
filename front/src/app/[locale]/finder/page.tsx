@@ -58,7 +58,7 @@ export default function FinderScreen() {
 
         <div className={styles.userInfo}>
           <div className={styles.ratingRow}>
-            <StarRating initialRating={4} isReadOnly dimension={20} />
+            <StarRating initialRating={4} isReadOnly dimension={12} />
           </div>
 
           <h1 className={styles.name}>Ivan Laptev</h1>
@@ -71,7 +71,19 @@ export default function FinderScreen() {
               height={32}
               priority
             />
-            <span>{t('distance', { km: 3 })}</span>
+            <div className={styles.locationText}>
+              <span>
+                {t('availabilityTime', {
+                  time: 'today',
+                })}
+              </span>
+              <span>
+                {t('distance', {
+                  km: 3,
+                  units: 'km',
+                })}
+              </span>
+            </div>
           </div>
 
           <div className={styles.tags}>
