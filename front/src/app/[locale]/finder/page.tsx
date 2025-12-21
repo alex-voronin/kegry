@@ -67,8 +67,8 @@ export default function FinderScreen() {
             <Image
               src="/assets/finder/location-icon.svg"
               alt="location"
-              width={32}
-              height={32}
+              width={24}
+              height={38}
               priority
             />
             <div className={styles.locationText}>

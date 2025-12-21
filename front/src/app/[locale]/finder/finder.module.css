@@ -45,7 +45,7 @@
 }
 
 .locationText {
-  @apply flex flex-col;
+  @apply flex flex-col pl-1;
 }
 
 .tags {
