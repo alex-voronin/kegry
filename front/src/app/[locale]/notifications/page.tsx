@@ -95,13 +95,13 @@ export default function NotificationsScreen() {
                   <span className={styles.notificationTitle}>
                     {notif.title}
                   </span>
-                  <span className={styles.notificationTime}>
-                    {notif.subtitle}
-                  </span>
                 </div>
               </div>
 
               <div className={styles.notificationItemRight}>
+                <span className={styles.notificationTime}>
+                  {notif.subtitle}
+                </span>
                 <Icon
                   src="/assets/notifications/accept-icon.png"
                   alt="accept"

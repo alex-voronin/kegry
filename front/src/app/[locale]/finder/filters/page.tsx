@@ -71,7 +71,7 @@ export default function FiltersScreen() {
       <Header
         left={
           <Icon
-            src="/assets/finder/filters/disclosure-left-icon.svg"
+            src="/assets/common/disclosure-left-icon.svg"
             alt="back"
             width={20}
             height={26}

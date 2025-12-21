@@ -44,6 +44,14 @@ export default function LoginPage() {
           </div>
         </div>
 
+        <Button
+          variant={ButtonVariant.Default}
+          className={styles.signInButton}
+          type="submit"
+        >
+          {t('signIn')}
+        </Button>
+
         <div className={styles.footer}>
           <div className={styles.divider}>
             <span className={styles.dividerText}>{t('orContinueWith')}</span>

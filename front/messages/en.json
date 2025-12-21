@@ -5,6 +5,7 @@
       "email": "Email",
       "password": "Password",
       "forgot": "Forgot?",
+      "signIn": "Sign In",
       "orContinueWith": "Or continue with",
       "google": "Google",
       "facebook": "Facebook"

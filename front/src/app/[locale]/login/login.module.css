@@ -48,6 +48,10 @@
   @apply text-primary pointer-events-auto absolute top-1/2 right-0 z-10 -translate-y-1/2 text-sm font-semibold hover:underline;
 }
 
+.signInButton {
+  @apply m-auto h-[48px] w-[152px];
+}
+
 .footer {
   @apply mb-12 flex flex-col gap-8 px-2 sm:mb-0;
 }
