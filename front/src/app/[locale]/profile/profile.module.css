@@ -1,0 +1,49 @@
+@reference "../../globals.css";
+
+.wrapper {
+  @apply flex min-h-screen flex-col items-center sm:p-4 sm:pt-0;
+}
+
+.content {
+  @apply flex w-full flex-col gap-0.5;
+}
+
+.avatarSection {
+  @apply mt-2 flex flex-col items-center;
+}
+
+.avatarContainer {
+  @apply relative h-48 w-48 overflow-hidden rounded-full;
+}
+
+.avatarImage {
+  @apply object-cover;
+}
+
+.userName {
+  @apply text-primary mt-6 text-center text-4xl font-bold;
+}
+
+.section {
+  @apply mt-2 flex flex-col gap-1;
+}
+
+.field {
+  @apply bg-form-element flex min-h-[48px] px-4 py-3 sm:rounded-xl;
+}
+
+.hobbiesField {
+  @apply flex-wrap gap-1;
+}
+
+.hobbyTag {
+  @apply border-primary flex h-8 items-center rounded-full border px-3 text-sm;
+}
+
+.settingsSection {
+  @apply mt-8;
+}
+
+.settingsField {
+  @apply hover:bg-hover active:bg-active justify-between;
+}

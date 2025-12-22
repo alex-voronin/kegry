@@ -1,13 +1,7 @@
 @reference "../../app/globals.css";
 
 .container {
-  @apply bg-form-element flex h-[44px] items-center gap-2 rounded-none p-1;
-}
-
-@media (min-width: 500px) {
-  .container {
-    @apply rounded-xl;
-  }
+  @apply bg-form-element flex h-[44px] items-center gap-2 p-1 sm:rounded-xl;
 }
 
 .option {

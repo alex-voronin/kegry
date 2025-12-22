@@ -5,14 +5,7 @@
 }
 
 .textarea {
-  @apply bg-form-element text-primary placeholder:text-secondary block h-32 w-full resize-none rounded-none border-none p-4 font-sans text-base font-normal focus:outline-none;
-  padding-bottom: 2rem;
-}
-
-@media (min-width: 500px) {
-  .textarea {
-    @apply rounded-xl;
-  }
+  @apply bg-form-element text-primary placeholder:text-secondary block h-32 w-full resize-none border-none p-4 pb-2 font-sans text-base font-normal focus:outline-none sm:rounded-xl;
 }
 
 .counter {

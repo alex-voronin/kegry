@@ -23,6 +23,7 @@ export default function FinderScreen() {
               width={30}
               height={32}
               priority
+              onClick={() => router.push('/profile')}
             />
           }
           right={

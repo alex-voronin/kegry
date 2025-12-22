@@ -1,11 +1,5 @@
 @reference "../../../app/globals.css";
 
 .nameFields {
-  @apply flex flex-col gap-0.5;
-}
-
-@media (min-width: 500px) {
-  .nameFields {
-    @apply rounded-xl;
-  }
+  @apply flex flex-col gap-0.5 sm:rounded-xl;
 }

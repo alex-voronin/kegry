@@ -60,6 +60,10 @@
         "ignore": "Ignore",
         "block": "Block"
       }
+    },
+    "profile": {
+      "title": "My Profile",
+      "settings": "Settings"
     }
   },
   "components": {
