@@ -63,7 +63,13 @@
     },
     "profile": {
       "title": "My Profile",
-      "settings": "Settings"
+      "settings": "Settings",
+      "menu": {
+        "edit": "Edit Profile",
+        "setPhoto": "Set Photo",
+        "logOut": "Log Out",
+        "delete": "Delete Account"
+      }
     }
   },
   "components": {

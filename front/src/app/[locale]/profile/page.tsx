@@ -1,20 +1,47 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
+import { ModalMenu } from '@/components/ui/modal-menu';
 import { cn } from '@/lib/utils';
 import styles from './profile.module.css';
 
 export default function ProfilePage() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const t = useTranslations('screens.profile');
   const tGender = useTranslations('components.profile-sections.gender');
   const tBio = useTranslations('components.profile-sections.bio');
   const tHobbies = useTranslations('components.profile-sections.hobbies');
   const router = useRouter();
+
+  const menuOptions = [
+    {
+      icon: '/assets/profile/edit-icon.svg',
+      label: t('menu.edit'),
+      onClick: () => console.log('Edit clicked'),
+    },
+    {
+      icon: '/assets/profile/set-photo-icon.svg',
+      label: t('menu.setPhoto'),
+      onClick: () => console.log('Set photo clicked'),
+    },
+    {
+      icon: '/assets/profile/logout-icon.svg',
+      label: t('menu.logOut'),
+      onClick: () => router.push('/login'),
+    },
+    {
+      icon: '/assets/profile/delete-icon.svg',
+      label: t('menu.delete'),
+      onClick: () => console.log('Delete clicked'),
+      isDestructive: true,
+    },
+  ];
 
   const handleEditProfile = () => {
     router.push('/edit-profile');
@@ -47,6 +74,7 @@ export default function ProfilePage() {
             alt="more"
             width={24}
             height={24}
+            onClick={() => setIsMenuOpen(true)}
           />
         }
       />
@@ -120,6 +148,12 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      <ModalMenu
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        options={menuOptions}
+      />
     </div>
   );
 }
