@@ -2,14 +2,18 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import styles from './chat.module.css';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
+import { ModalMenu } from '@/components/ui/modal-menu';
 
 export default function ChatScreen() {
   const t = useTranslations('screens.chat');
   const [message, setMessage] = useState('');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
 
   const onMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const el = e.target;
@@ -18,6 +22,14 @@ export default function ChatScreen() {
     el.style.height = 'inherit';
     el.style.height = `${el.scrollHeight}px`;
   };
+
+  const menuOptions = [
+    {
+      icon: '/assets/chat/cancel-icon.svg',
+      label: t('menu.cancel'),
+      onClick: () => router.push('/finder'),
+    },
+  ];
 
   const messages = [
     {
@@ -63,6 +75,7 @@ export default function ChatScreen() {
               width={28}
               height={28}
               priority
+              onClick={() => setIsMenuOpen(true)}
             />
           </div>
         }
@@ -127,6 +140,12 @@ export default function ChatScreen() {
           priority
         />
       </footer>
+
+      <ModalMenu
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        options={menuOptions}
+      />
     </div>
   );
 }

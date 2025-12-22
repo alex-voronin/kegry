@@ -20,7 +20,10 @@
     },
     "chat": {
       "messagePlaceholder": "Message 1/30",
-      "timer": "{minutes}:{seconds}"
+      "timer": "{minutes}:{seconds}",
+      "menu": {
+        "cancel": "Cancel meeting"
+      }
     },
     "filters": {
       "title": "Filters",
