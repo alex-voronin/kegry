@@ -69,6 +69,11 @@
         "setPhoto": "Set Photo",
         "logOut": "Log Out",
         "delete": "Delete Account"
+      },
+      "deleteAccountDialog": {
+        "title": "Are you sure you want to delete your account? This action cannot be undone.",
+        "buttonYes": "Yes",
+        "buttonNo": "No"
       }
     }
   },

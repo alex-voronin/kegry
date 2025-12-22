@@ -8,11 +8,14 @@ import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { ModalMenu } from '@/components/ui/modal-menu';
+import { ModalDialog } from '@/components/ui/modal-dialog';
 import { cn } from '@/lib/utils';
 import styles from './profile.module.css';
 
 export default function ProfilePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
+    useState(false);
   const t = useTranslations('screens.profile');
   const tGender = useTranslations('components.profile-sections.gender');
   const tBio = useTranslations('components.profile-sections.bio');
@@ -38,7 +41,7 @@ export default function ProfilePage() {
     {
       icon: '/assets/profile/delete-icon.svg',
       label: t('menu.delete'),
-      onClick: () => console.log('Delete clicked'),
+      onClick: () => setIsDeleteAccountModalOpen(true),
       isDestructive: true,
     },
   ];
@@ -153,6 +156,16 @@ export default function ProfilePage() {
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
         options={menuOptions}
+      />
+
+      <ModalDialog
+        isOpen={isDeleteAccountModalOpen}
+        onClose={() => setIsDeleteAccountModalOpen(false)}
+        message={t('deleteAccountDialog.title')}
+        primaryButtonText={t('deleteAccountDialog.buttonYes')}
+        secondaryButtonText={t('deleteAccountDialog.buttonNo')}
+        onPrimaryAction={() => console.log('Account deletion is confirmed')}
+        onSecondaryAction={() => console.log('Account deletion is canceled')}
       />
     </div>
   );
