@@ -6,18 +6,9 @@
 
 /* Variants */
 .variantDefault {
-  @apply hover:bg-hover hover:text-primary border-primary active:bg-active !rounded-[16px] border font-sans text-sm font-semibold select-none;
+  @apply hover:bg-hover hover:text-primary active:bg-active h-[40px] rounded-[16px] border px-4 py-2 font-sans text-sm font-semibold select-none;
 }
 
 .variantSocial {
-  @apply border-secondary hover:bg-hover active:bg-active !rounded-[16px] border bg-transparent px-8 text-base font-normal select-none;
-}
-
-/* Sizes */
-.sizeDefault {
-  @apply h-9 px-4 py-2;
-}
-
-.sizeXl {
-  @apply h-12 px-8 text-base;
+  @apply hover:bg-hover active:bg-active h-[40px] rounded-[16px] border bg-transparent px-8 text-base font-normal select-none;
 }

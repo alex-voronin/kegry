@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { Link, useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
-import { Button, ButtonVariant, ButtonSize } from '@/components/ui/button';
+import { Button, ButtonVariant } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import styles from './login.module.css';
 
@@ -34,11 +34,15 @@ export default function LoginPage() {
           <Input
             type="email"
             placeholder={t('email')}
-            className={styles.inputEmail}
+            className={styles.inputCredentials}
           />
 
           <div className={styles.passwordWrapper}>
-            <Input type="password" placeholder={t('password')} />
+            <Input
+              type="password"
+              placeholder={t('password')}
+              className={styles.inputCredentials}
+            />
             <Link href="/forgot" className={styles.forgotLink}>
               {t('forgot')}
             </Link>
@@ -59,7 +63,7 @@ export default function LoginPage() {
           </div>
 
           <div className={styles.socialGrid}>
-            <Button variant={ButtonVariant.Social} size={ButtonSize.Xl}>
+            <Button variant={ButtonVariant.Social}>
               <Image
                 src="/assets/google.png"
                 alt={t('google')}
@@ -69,7 +73,7 @@ export default function LoginPage() {
               />
               {t('google')}
             </Button>
-            <Button variant={ButtonVariant.Social} size={ButtonSize.Xl}>
+            <Button variant={ButtonVariant.Social}>
               <Image
                 src="/assets/facebook.png"
                 alt={t('facebook')}

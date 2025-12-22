@@ -1,15 +1,15 @@
 @reference "../../globals.css";
 
 .page {
-  @apply flex min-h-screen items-center justify-center;
+  @apply flex h-dvh min-h-screen items-center justify-center;
 }
 
 .container {
-  @apply relative flex h-screen w-full max-w-[500px] flex-col justify-between gap-8 p-8 sm:h-auto;
+  @apply relative flex w-full max-w-[500px] flex-col gap-8 p-8 sm:h-auto;
 }
 
 .header {
-  @apply mt-12 flex flex-col items-center sm:mt-0;
+  @apply flex flex-col items-center;
 }
 
 .logoRow {
@@ -36,8 +36,8 @@
   @apply mt-12 flex w-full flex-col gap-8 px-2;
 }
 
-.inputEmail {
-  @apply text-primary;
+.inputCredentials {
+  @apply border-secondary placeholder:text-secondary focus-visible:border-primary border-b;
 }
 
 .passwordWrapper {
@@ -49,11 +49,11 @@
 }
 
 .signInButton {
-  @apply m-auto h-[48px] w-[152px];
+  @apply m-auto w-[202px];
 }
 
 .footer {
-  @apply mb-24 flex flex-col gap-8 px-2 sm:mb-0;
+  @apply flex flex-col gap-8 px-2 sm:mb-0;
 }
 
 .divider {
