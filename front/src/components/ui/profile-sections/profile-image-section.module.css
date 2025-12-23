@@ -5,9 +5,9 @@
 }
 
 .profilePlaceholder {
-  @apply border-secondary flex h-full w-full items-center justify-center rounded-full border;
+  @apply border-secondary flex h-full w-full items-center justify-center overflow-hidden rounded-full border;
 }
 
 .profileImage {
-  @apply opacity-50;
+  @apply object-contain;
 }
