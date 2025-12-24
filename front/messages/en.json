@@ -14,7 +14,7 @@
       "title": "Tell us about yourself",
       "continue": "Continue"
     },
-    "finder": {
+    "feed": {
       "availabilityTime": "Available: {time}",
       "distance": "Distance: {km} {units}"
     },

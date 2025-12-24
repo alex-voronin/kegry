@@ -4,12 +4,12 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import { StarRating } from 'react-flexible-star-rating';
-import styles from './finder.module.css';
+import styles from './feed.module.css';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 
-export default function FinderScreen() {
-  const t = useTranslations('screens.finder');
+export default function FeedScreen() {
+  const t = useTranslations('screens.feed');
   const router = useRouter();
 
   return (
@@ -18,7 +18,7 @@ export default function FinderScreen() {
         <Header
           left={
             <Icon
-              src="/assets/finder/profile-icon.svg"
+              src="/assets/common/profile-icon.svg"
               alt="profile"
               width={30}
               height={32}
@@ -29,15 +29,15 @@ export default function FinderScreen() {
           right={
             <div className={styles.headerRightSideIconsWrapper}>
               <Icon
-                src="/assets/finder/filters-icon.svg"
+                src="/assets/feed/filters-icon.svg"
                 alt="filters"
                 width={32}
                 height={32}
                 priority
-                onClick={() => router.push('/finder/filters')}
+                onClick={() => router.push('/feed/filters')}
               />
               <Icon
-                src="/assets/finder/notifications-icon.svg"
+                src="/assets/feed/notifications-icon.svg"
                 alt="notifications"
                 width={28}
                 height={30}
@@ -52,7 +52,7 @@ export default function FinderScreen() {
 
         <div>
           <Image
-            src="/assets/finder/profile-image.png"
+            src="/assets/feed/profile-image.png"
             alt="profile"
             fill
             className={styles.profileImage}
@@ -70,7 +70,7 @@ export default function FinderScreen() {
 
           <div className={styles.location}>
             <Image
-              src="/assets/finder/location-icon.svg"
+              src="/assets/feed/location-icon.svg"
               alt="location"
               width={24}
               height={38}
@@ -102,7 +102,7 @@ export default function FinderScreen() {
           <button className={styles.actionButton}>
             <Image
               className="pointer-events-none"
-              src="/assets/finder/ignore-icon.svg"
+              src="/assets/feed/ignore-icon.svg"
               alt="ignore"
               width={29}
               height={29}
@@ -115,7 +115,7 @@ export default function FinderScreen() {
           >
             <Image
               className="pointer-events-none"
-              src="/assets/finder/invite-icon.png"
+              src="/assets/feed/invite-icon.png"
               alt="invite"
               width={40}
               height={42}
@@ -125,7 +125,7 @@ export default function FinderScreen() {
           <button className={styles.actionButton}>
             <Image
               className="pointer-events-none"
-              src="/assets/finder/temporary-block-icon.svg"
+              src="/assets/feed/temporary-block-icon.svg"
               alt="block"
               width={24}
               height={24}

@@ -27,7 +27,7 @@ export default function ChatScreen() {
     {
       icon: '/assets/chat/cancel-icon.svg',
       label: t('menu.cancel'),
-      onClick: () => router.push('/finder'),
+      onClick: () => router.push('/feed'),
     },
   ];
 
@@ -52,7 +52,7 @@ export default function ChatScreen() {
         className="min-h-[80px]"
         left={
           <Icon
-            src="/assets/finder/profile-icon.svg"
+            src="/assets/common/profile-icon.svg"
             alt="profile"
             width={30}
             height={32}
@@ -84,7 +84,7 @@ export default function ChatScreen() {
       <div className={styles.titleWrapper}>
         <div className={styles.avatarCircle}>
           <Image
-            src="/assets/finder/profile-image.png"
+            src="/assets/feed/profile-image.png"
             alt="avatar"
             fill
             className="object-cover"

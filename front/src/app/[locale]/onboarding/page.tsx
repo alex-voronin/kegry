@@ -35,7 +35,7 @@ export default function OnboardingPage() {
     <div className={styles.wrapper}>
       <Header title={t('title')} />
 
-      <ProfileImageSection src="/assets/camera-placeholder.png" />
+      <ProfileImageSection />
 
       <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
         <NameSection
@@ -62,7 +62,7 @@ export default function OnboardingPage() {
             variant={ButtonVariant.Default}
             className={styles.continueButton}
             type="button"
-            onClick={() => router.push('/finder')}
+            onClick={() => router.push('/feed')}
           >
             {t('continue')}
           </Button>

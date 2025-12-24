@@ -84,7 +84,7 @@ export default function NotificationsScreen() {
               <div className={styles.notificationItemLeft}>
                 <div className={styles.profileImageWrapper}>
                   <Image
-                    src="/assets/finder/profile-image.png"
+                    src="/assets/feed/profile-image.png"
                     alt="Profile"
                     width={48}
                     height={48}
