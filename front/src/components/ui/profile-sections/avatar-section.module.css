@@ -8,6 +8,6 @@
   @apply border-secondary flex h-full w-full items-center justify-center overflow-hidden rounded-full border;
 }
 
-.profileImage {
+.avatarImage {
   @apply object-contain;
 }

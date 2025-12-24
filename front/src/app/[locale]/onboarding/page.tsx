@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import { Button, ButtonVariant } from '@/components/ui/button';
-import { ProfileImageSection } from '@/components/ui/profile-sections/profile-image-section';
+import { AvatarSection } from '@/components/ui/profile-sections/avatar-section';
 import { HobbiesSection } from '@/components/ui/profile-sections/hobbies-section';
 import { NameSection } from '@/components/ui/profile-sections/name-section';
 import { AgeSection } from '@/components/ui/profile-sections/age-section';
@@ -35,7 +35,7 @@ export default function OnboardingPage() {
     <div className={styles.wrapper}>
       <Header title={t('title')} />
 
-      <ProfileImageSection />
+      <AvatarSection />
 
       <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
         <NameSection

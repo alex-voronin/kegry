@@ -1,20 +1,22 @@
 'use client';
 
 import Image from 'next/image';
-import styles from './profile-image-section.module.css';
+import styles from './avatar-section.module.css';
 import { useRef, useState } from 'react';
-import ProfileImageCropper from '../profile-image-cropper';
+import AvatarCropper from '../avatar-cropper';
 
 type ClickableImageProps = {
-  onProfileImageChange?: (base64Avatar: string) => void;
+  src?: string;
+  onAvatarChange?: (base64Avatar: string) => void;
 };
 
-export const ProfileImageSection = ({
-  onProfileImageChange,
+export const AvatarSection = ({
+  src = '/assets/common/camera-placeholder.svg',
+  onAvatarChange,
 }: ClickableImageProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [imageToCropSrc, setImageToCropSrc] = useState<string | null>(null);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [avatarImage, setAvatarImage] = useState<string | null>(null);
 
   const handleDivClick = () => {
     // hack to open file picker
@@ -29,15 +31,13 @@ export const ProfileImageSection = ({
   };
 
   const handleCrop = (base64Avatar: string) => {
-    setProfileImage(base64Avatar);
+    setAvatarImage(base64Avatar);
     setImageToCropSrc(null);
-    onProfileImageChange?.(base64Avatar);
+    onAvatarChange?.(base64Avatar);
   };
 
   if (imageToCropSrc)
-    return (
-      <ProfileImageCropper imageSrc={imageToCropSrc} onCrop={handleCrop} />
-    );
+    return <AvatarCropper imageSrc={imageToCropSrc} onCrop={handleCrop} />;
 
   return (
     <div className={styles.profileSection} onClick={handleDivClick}>
@@ -50,11 +50,11 @@ export const ProfileImageSection = ({
           className="hidden"
         />
         <Image
-          src={profileImage || '/assets/common/camera-placeholder.svg'}
-          alt={'Profile Image'}
+          src={avatarImage || src}
+          alt={'Avatar Image'}
           width={192}
           height={192}
-          className={styles.profileImage}
+          className={styles.avatarImage}
         />
       </div>
     </div>

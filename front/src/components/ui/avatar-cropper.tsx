@@ -37,12 +37,12 @@ function getCroppedImg(
   });
 }
 
-export default function ProfileImageCropper({
+export default function AvatarCropper({
   imageSrc,
   onCrop,
 }: {
   imageSrc: string;
-  onCrop: (base64ProfileImage: string) => void;
+  onCrop: (base64Avatar: string) => void;
 }) {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
