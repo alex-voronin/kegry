@@ -50,10 +50,6 @@ export default function ProfilePage() {
     router.push('/edit-profile');
   };
 
-  const handleSettings = () => {
-    router.push('/settings');
-  };
-
   const handleBack = () => {
     router.back();
   };
@@ -134,10 +130,10 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <div className={styles.settingsSection}>
+          <div className={styles.actionsSection}>
             <div
-              className={cn(styles.field, styles.settingsField)}
-              onClick={handleSettings}
+              className={cn(styles.field, styles.actionField)}
+              onClick={() => router.push('/settings')}
             >
               <span>{t('settings')}</span>
               <Icon
@@ -147,6 +143,12 @@ export default function ProfilePage() {
                 height={18}
                 priority
               />
+            </div>
+            <div
+              className={cn(styles.field, styles.actionField)}
+              onClick={() => router.push('/login')}
+            >
+              <span>{t('menu.logOut')}</span>
             </div>
           </div>
         </div>
