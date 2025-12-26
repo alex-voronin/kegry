@@ -29,7 +29,7 @@ public class ExceptionHandler : IExceptionHandler
             Error = exception.Message,
             Code = Enum.GetName(typeof(ErrorCode), errorCode) ?? nameof(ErrorCode.GeneralError),
         };
-        var response = new EmptyApiResult(apiError);
+        var response = new ApiResult.EmptyResult(apiError);
 
         httpContext.Response.StatusCode = statusCode;
         await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);

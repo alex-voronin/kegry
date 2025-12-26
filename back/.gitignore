@@ -1,3 +1,5 @@
+appsettings.Development.json
+*.DotSettings.User
 .idea
 bin/
 obj/

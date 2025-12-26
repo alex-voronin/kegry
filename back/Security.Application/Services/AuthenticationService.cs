@@ -19,7 +19,8 @@ public class AuthenticationService : IAuthenticationService
     private record LoginResult(User User, string AccessToken, string RefreshToken);
     private record SignupResult(User User, string ConfirmationToken);
     
-    private const int DefaultJwtDurationInDays = 30;
+    private const int DefaultAccessTokenDurationInDays = 7;
+    private const int DefaultRefreshTokenDurationInDays = 30;
 
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
@@ -43,31 +44,29 @@ public class AuthenticationService : IAuthenticationService
         _jwtHandler = new JwtSecurityTokenHandler();
     }
 
-    public async Task<SigninResult> SigninAsync(string email, string password)
+    public async Task<AuthResult> SigninAsync(string email, string password)
     {
         var existingUser = await _userManager.FindByEmailAsync(email);
         if (existingUser == null)
         {
             var signupResult = await Signup(email, password);
             // TODO: emit event for Notification service
-            return new SigninResult(
+            return new AuthResult(
                 User: signupResult.User, 
                 AccessToken: null, 
                 RefreshToken: null);
         }
-        else
-        {
-            var loginResult = await Login(email, password);
-            return new SigninResult(
-                User: loginResult.User, 
-                AccessToken: loginResult.AccessToken, 
-                RefreshToken: loginResult.RefreshToken);
-        }
+
+        var loginResult = await Login(email, password);
+        return new AuthResult(
+            User: loginResult.User, 
+            AccessToken: loginResult.AccessToken, 
+            RefreshToken: loginResult.RefreshToken);
     }
 
-    public async Task<User> ConfirmEmailAsync(long userId, string token)
+    public async Task<AuthResult> ConfirmEmailAsync(string userId, string token)
     {
-        var user = await _userManager.FindByIdAsync(userId.ToString());
+        var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
         {
             throw SecurityExceptions.UserNotFound(userId);
@@ -83,11 +82,14 @@ public class AuthenticationService : IAuthenticationService
         user.RequiredAction = RequiredAction.OnboardingCompletion;
         await _userManager.UpdateAsync(user);
         
-        await _signInManager.SignInAsync(user: user, isPersistent: true);
-        return user;
+        var (accessToken, refreshToken) = await GenerateTokensAsync(user);
+        return new AuthResult(
+            User: user, 
+            AccessToken: accessToken, 
+            RefreshToken: refreshToken);
     }
 
-    public async Task<RenewTokensResult> RenewTokensAsync(string refreshToken)
+    public async Task<AuthResult> RenewTokensAsync(string refreshToken)
     {
         if (string.IsNullOrEmpty(refreshToken))
         {
@@ -111,10 +113,10 @@ public class AuthenticationService : IAuthenticationService
 
         var (newAccessToken, newRefreshToken) = await GenerateTokensAsync(user);
 
-        return new RenewTokensResult(
-            AccessToken: newAccessToken,
-            RefreshToken: newRefreshToken
-        );
+        return new AuthResult(
+            User: user, 
+            AccessToken: newAccessToken, 
+            RefreshToken: newRefreshToken);
     }
 
     public async Task LogoutAsync()
@@ -180,10 +182,9 @@ public class AuthenticationService : IAuthenticationService
             throw SecurityExceptions.UserNotFound(email);
         }
 
-        var result = await _signInManager.PasswordSignInAsync(
+        var result = await _signInManager.CheckPasswordSignInAsync(
             user: user,
             password: password,
-            isPersistent: true,
             lockoutOnFailure: true);
         if (!result.Succeeded)
         {
@@ -202,8 +203,11 @@ public class AuthenticationService : IAuthenticationService
     private async Task<(string accessToken, string refreshToken)> GenerateTokensAsync(User user)
     {
         var jti = Guid.NewGuid();
-        var accessToken = GenerateJwt(jti: jti, user: user, durationInDays: DefaultJwtDurationInDays);
-        var refreshToken = await _refreshTokenService.CreateRefreshTokenAsync(user, jti);
+        var accessToken = GenerateJwt(jti: jti, user: user, durationInDays: DefaultAccessTokenDurationInDays);
+        var refreshToken = await _refreshTokenService.CreateRefreshTokenAsync(
+            user: user, 
+            jti: jti,
+            durationInDays: DefaultRefreshTokenDurationInDays);
         await _refreshTokenRepository.AddAsync(refreshToken);
         await _refreshTokenRepository.SaveChangesAsync();
         return (accessToken, accessToken);

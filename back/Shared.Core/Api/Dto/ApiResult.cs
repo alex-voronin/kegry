@@ -43,15 +43,15 @@ public class ApiResult<TResult>
     }
 }
 
-public sealed class EmptyApiResult : ApiResult<EmptyResponse>
-{
-    public EmptyApiResult() : base(EmptyResponse.Empty, Array.Empty<ApiError>()) { }
-    public EmptyApiResult(params string[] errors) : base(EmptyResponse.Empty, errors) { }
-    
-    public EmptyApiResult(params ApiError[] errors) : base(EmptyResponse.Empty, errors) { }
-}
-
 public static class ApiResult
 {
-    public static EmptyApiResult Empty { get; } = new EmptyApiResult();
+    public sealed class EmptyResult : ApiResult<EmptyResponse>
+    {
+        public EmptyResult() : base(EmptyResponse.Empty, Array.Empty<ApiError>()) { }
+        public EmptyResult(params string[] errors) : base(EmptyResponse.Empty, errors) { }
+    
+        public EmptyResult(params ApiError[] errors) : base(EmptyResponse.Empty, errors) { }
+    }
+    
+    public static EmptyResult Empty { get; } = new EmptyResult();
 }

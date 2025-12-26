@@ -113,6 +113,12 @@ public class SecurityStartup : AppModuleStartupBase<SecurityContext>
                 o.User.RequireUniqueEmail = false;
                 o.Lockout.MaxFailedAccessAttempts = 5;
                 o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                
+                o.SignIn.RequireConfirmedEmail = true;
+                // 6 digits TOTP, 9 minutes lifespan. If you need change the lifespan, it must be done manually by
+                // implementing your own TOTP Provider. See Microsoft.AspNetCore.Identity.EmailTokenProvider and
+                // Microsoft.AspNetCore.Identity.Rfc6238AuthenticationService
+                o.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
             })
             .AddEntityFrameworkStores<SecurityContext>()
             .AddDefaultTokenProviders();
