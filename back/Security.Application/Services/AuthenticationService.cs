@@ -18,15 +18,12 @@ public class AuthenticationService : IAuthenticationService
 {
     private record LoginResult(User User, string AccessToken, string RefreshToken);
     private record SignupResult(User User, string ConfirmationToken);
-    
-    private const int DefaultAccessTokenDurationInDays = 7;
-    private const int DefaultRefreshTokenDurationInDays = 30;
 
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
-    private readonly JwtSettings _jwtSettings;
+    private readonly AuthTokenSettings _authTokenSettings;
     private readonly JwtSecurityTokenHandler _jwtHandler;
 
     public AuthenticationService(
@@ -34,13 +31,13 @@ public class AuthenticationService : IAuthenticationService
         SignInManager<User> signInManager,
         IRefreshTokenService refreshTokenService,
         IRefreshTokenRepository refreshTokenRepository,
-        IOptions<JwtSettings> jwtSettingsOptions)
+        IOptions<AuthTokenSettings> authTokenSettingsOptions)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _refreshTokenService = refreshTokenService;
         _refreshTokenRepository = refreshTokenRepository;
-        _jwtSettings = jwtSettingsOptions.Value;
+        _authTokenSettings = authTokenSettingsOptions.Value;
         _jwtHandler = new JwtSecurityTokenHandler();
     }
 
@@ -203,11 +200,15 @@ public class AuthenticationService : IAuthenticationService
     private async Task<(string accessToken, string refreshToken)> GenerateTokensAsync(User user)
     {
         var jti = Guid.NewGuid();
-        var accessToken = GenerateJwt(jti: jti, user: user, durationInDays: DefaultAccessTokenDurationInDays);
+        var accessToken = GenerateJwt(
+            jti: jti, 
+            user: user, 
+            durationInDays: _authTokenSettings.AccessTokenDurationInDays);
         var refreshToken = await _refreshTokenService.CreateRefreshTokenAsync(
             user: user, 
             jti: jti,
-            durationInDays: DefaultRefreshTokenDurationInDays);
+            durationInDays: _authTokenSettings.RefreshTokenDurationInDays,
+            maxSimultaneousLoggedInDevices: _authTokenSettings.MaxSimultaneousLoggedInDevices);
         await _refreshTokenRepository.AddAsync(refreshToken);
         await _refreshTokenRepository.SaveChangesAsync();
         return (accessToken, accessToken);
@@ -221,12 +222,12 @@ public class AuthenticationService : IAuthenticationService
             new Claim(JwtRegisteredClaimNames.Jti, jti.ToString()),
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authTokenSettings.Secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _jwtSettings.Issuer,
-            audience: _jwtSettings.Audience,
+            issuer: _authTokenSettings.Issuer,
+            audience: _authTokenSettings.Audience,
             claims: claims,
             expires: DateTime.Now.AddDays(durationInDays),
             signingCredentials: creds);

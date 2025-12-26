@@ -7,18 +7,24 @@ namespace Security.Domain.Services;
 
 public interface IRefreshTokenService
 {
-    public Task<RefreshToken> CreateRefreshTokenAsync(User user, Guid jti, int durationInDays);
+    public Task<RefreshToken> CreateRefreshTokenAsync(
+        User user,
+        Guid jti,
+        int durationInDays,
+        int maxSimultaneousLoggedInDevices);
 }
 
 public class RefreshTokenService : DomainService<IRefreshTokenRepository>, IRefreshTokenService
 {
-    private const int MaxSimultaneousLoggedInDevices = 10;
-
     public RefreshTokenService(IRefreshTokenRepository repository) : base(repository)
     {
     }
 
-    public async Task<RefreshToken> CreateRefreshTokenAsync(User user, Guid jti, int durationInDays)
+    public async Task<RefreshToken> CreateRefreshTokenAsync(
+        User user, 
+        Guid jti, 
+        int durationInDays, 
+        int maxSimultaneousLoggedInDevices)
     {
         var existingToken = await Repository.GetByJtiAsync(jti.ToString());
         if (existingToken != null)
@@ -27,7 +33,7 @@ public class RefreshTokenService : DomainService<IRefreshTokenRepository>, IRefr
         }
 
         var tokensCount = await Repository.TokensCountAsync(user.Id);
-        if (tokensCount >= MaxSimultaneousLoggedInDevices)
+        if (tokensCount >= maxSimultaneousLoggedInDevices)
         {
             throw SecurityExceptions.AccessTokensLimitPerUserIsReached(user.Email!);
         }

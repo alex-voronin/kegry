@@ -37,14 +37,15 @@ public class SecurityStartup : AppModuleStartupBase<SecurityContext>
             containerBuilder.RegisterModule(new AutoRegistrationAutofacModule(ModuleAssemblies));
         });
 
-        var jwtSection = appBuilder.Configuration.GetSection("Authentication:JwtSettings");
-        appBuilder.Services.AddOptions<JwtSettings>()
-            .Bind(jwtSection)
+        var authTokenSettingsSection = appBuilder.Configuration
+            .GetSection($"Authentication:{nameof(AuthTokenSettings)}");
+        appBuilder.Services.AddOptions<AuthTokenSettings>()
+            .Bind(authTokenSettingsSection)
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
         RegisterEfCoreAsAuthenticationStore(appBuilder.Services);
-        appBuilder.Services.AddAuthorization(); 
+        appBuilder.Services.AddAuthorization();
         RegisterAuthenticationSchemes(appBuilder.Services, appBuilder.Configuration);
     }
 
@@ -52,7 +53,7 @@ public class SecurityStartup : AppModuleStartupBase<SecurityContext>
         IServiceCollection services,
         IConfigurationManager configuration)
     {
-        var jwtSection = configuration.GetSection("Authentication:JwtSettings");
+        var authTokenSettingsSection = configuration.GetSection($"Authentication:{nameof(AuthTokenSettings)}");
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -63,10 +64,11 @@ public class SecurityStartup : AppModuleStartupBase<SecurityContext>
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSection["Issuer"],
-                    ValidAudience = jwtSection["Audience"],
+                    ValidIssuer = authTokenSettingsSection["Issuer"],
+                    ValidAudience = authTokenSettingsSection["Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(jwtSection["Secret"]!)),
+                        Encoding.UTF8.GetBytes(authTokenSettingsSection["Secret"]!)
+                    )
                 };
             });
         // TODO: uncomment to allow Google and Apple login
@@ -113,7 +115,7 @@ public class SecurityStartup : AppModuleStartupBase<SecurityContext>
                 o.User.RequireUniqueEmail = false;
                 o.Lockout.MaxFailedAccessAttempts = 5;
                 o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-                
+
                 o.SignIn.RequireConfirmedEmail = true;
                 // 6 digits TOTP, 9 minutes lifespan. If you need change the lifespan, it must be done manually by
                 // implementing your own TOTP Provider. See Microsoft.AspNetCore.Identity.EmailTokenProvider and
