@@ -13,14 +13,13 @@
     <ItemGroup>
       <ProjectReference Include="..\Security.API\Security.API.csproj" />
       <ProjectReference Include="..\Security.Application\Security.Application.csproj" />
-      <ProjectReference Include="..\Shared.Infrastructure\Shared.Infrastructure.csproj" />
-      <ProjectReference Include="..\Shared.Setup\Shared.Setup.csproj" />
+      <ProjectReference Include="..\..\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\Shared\Shared.Setup\Shared.Setup.csproj" />
+      <ProjectReference Include="..\Security.Infrastructure\Security.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="Microsoft.Extensions.Hosting.Abstractions">
-        <HintPath>..\..\..\..\..\..\..\usr\local\share\dotnet\shared\Microsoft.AspNetCore.App\10.0.1\Microsoft.Extensions.Hosting.Abstractions.dll</HintPath>
-      </Reference>
+      <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
 
 </Project>

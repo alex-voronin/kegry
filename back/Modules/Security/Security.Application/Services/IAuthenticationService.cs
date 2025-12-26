@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using Security.Domain.Aggregates.User;
 
 namespace Security.Application.Services;

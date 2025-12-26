@@ -23,9 +23,9 @@
 
     <ItemGroup>
       <ProjectReference Include="..\hoppyfy.me.ServiceDefaults\hoppyfy.me.ServiceDefaults.csproj" />
-      <ProjectReference Include="..\Security.Setup\Security.Setup.csproj" />
-      <ProjectReference Include="..\Shared.Infrastructure\Shared.Infrastructure.csproj" />
-      <ProjectReference Include="..\Shared.Setup\Shared.Setup.csproj" />
+      <ProjectReference Include="..\Modules\Security\Security.Setup\Security.Setup.csproj" />
+      <ProjectReference Include="..\Modules\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
+      <ProjectReference Include="..\Modules\Shared\Shared.Setup\Shared.Setup.csproj" />
     </ItemGroup>
 
 </Project>
