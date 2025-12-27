@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Security.Application.Settings;
+namespace Security.Application.Configs;
 
-public class AuthTokenSettings
+public class AuthTokenConfig
 {
     [Required(AllowEmptyStrings = false)]
     public required string Secret { get; init; }

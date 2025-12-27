@@ -15,6 +15,13 @@ public class NotificationsModuleStartup : IFeatureStartup
         appBuilder.Services
             .AddHttpClient<MailgunEmailSender>()
             .AddStandardResilienceHandler();
+        
+        var authTokenConfigSection = appBuilder.Configuration
+            .GetSection($"Notifications:{nameof(EmailConfig)}");
+        appBuilder.Services.AddOptions<EmailConfig>()
+            .Bind(authTokenConfigSection)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         Assembly[] moduleAssemblies =
         [

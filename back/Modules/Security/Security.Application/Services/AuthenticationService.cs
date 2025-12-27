@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Security.Application.Settings;
+using Security.Application.Configs;
 using Security.Contracts.Events;
 using Security.Domain.Aggregates.RefreshToken;
 using Security.Domain.Aggregates.User;
@@ -26,7 +26,7 @@ public class AuthenticationService : IAuthenticationService
     private readonly SignInManager<User> _signInManager;
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
-    private readonly AuthTokenSettings _authTokenSettings;
+    private readonly AuthTokenConfig _authTokenConfig;
     private readonly IMessageBus _bus;
     private readonly JwtSecurityTokenHandler _jwtHandler;
 
@@ -35,14 +35,14 @@ public class AuthenticationService : IAuthenticationService
         SignInManager<User> signInManager,
         IRefreshTokenService refreshTokenService,
         IRefreshTokenRepository refreshTokenRepository,
-        IOptions<AuthTokenSettings> authTokenSettingsOptions,
+        IOptions<AuthTokenConfig> authTokenConfigOptions,
         IMessageBus bus)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _refreshTokenService = refreshTokenService;
         _refreshTokenRepository = refreshTokenRepository;
-        _authTokenSettings = authTokenSettingsOptions.Value;
+        _authTokenConfig = authTokenConfigOptions.Value;
         _bus = bus;
         _jwtHandler = new JwtSecurityTokenHandler();
     }
@@ -216,12 +216,12 @@ public class AuthenticationService : IAuthenticationService
         var accessToken = GenerateJwt(
             jti: jti,
             user: user,
-            durationInDays: _authTokenSettings.AccessTokenDurationInDays);
+            durationInDays: _authTokenConfig.AccessTokenDurationInDays);
         var refreshToken = await _refreshTokenService.CreateRefreshTokenAsync(
             user: user,
             jti: jti,
-            durationInDays: _authTokenSettings.RefreshTokenDurationInDays,
-            maxSimultaneousLoggedInDevices: _authTokenSettings.MaxSimultaneousLoggedInDevices);
+            durationInDays: _authTokenConfig.RefreshTokenDurationInDays,
+            maxSimultaneousLoggedInDevices: _authTokenConfig.MaxSimultaneousLoggedInDevices);
         await _refreshTokenRepository.AddAsync(refreshToken);
         await _refreshTokenRepository.SaveChangesAsync();
         return (accessToken, accessToken);
@@ -235,12 +235,12 @@ public class AuthenticationService : IAuthenticationService
             new Claim(JwtRegisteredClaimNames.Jti, jti.ToString()),
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authTokenSettings.Secret));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authTokenConfig.Secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _authTokenSettings.Issuer,
-            audience: _authTokenSettings.Audience,
+            issuer: _authTokenConfig.Issuer,
+            audience: _authTokenConfig.Audience,
             claims: claims,
             expires: DateTime.Now.AddDays(durationInDays),
             signingCredentials: creds);

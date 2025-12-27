@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Security.Application.Settings;
+using Security.Application.Configs;
 using Security.Domain.Aggregates.User;
 using Security.Infrastructure.Persistence;
 using Shared.Setup;
@@ -33,10 +33,10 @@ public class SecurityModuleStartup : AppModuleStartupBase<SecurityContext>
 
         appBuilder.Services.AutoRegisterAssemblies(ModuleAssemblies);
 
-        var authTokenSettingsSection = appBuilder.Configuration
-            .GetSection($"Authentication:{nameof(AuthTokenSettings)}");
-        appBuilder.Services.AddOptions<AuthTokenSettings>()
-            .Bind(authTokenSettingsSection)
+        var authTokenConfigSection = appBuilder.Configuration
+            .GetSection($"Authentication:{nameof(AuthTokenConfig)}");
+        appBuilder.Services.AddOptions<AuthTokenConfig>()
+            .Bind(authTokenConfigSection)
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
@@ -49,7 +49,7 @@ public class SecurityModuleStartup : AppModuleStartupBase<SecurityContext>
         IServiceCollection services,
         IConfigurationManager configuration)
     {
-        var authTokenSettingsSection = configuration.GetSection($"Authentication:{nameof(AuthTokenSettings)}");
+        var authTokenConfigSection = configuration.GetSection($"Authentication:{nameof(AuthTokenConfig)}");
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -60,10 +60,10 @@ public class SecurityModuleStartup : AppModuleStartupBase<SecurityContext>
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = authTokenSettingsSection["Issuer"],
-                    ValidAudience = authTokenSettingsSection["Audience"],
+                    ValidIssuer = authTokenConfigSection["Issuer"],
+                    ValidAudience = authTokenConfigSection["Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(authTokenSettingsSection["Secret"]!)
+                        Encoding.UTF8.GetBytes(authTokenConfigSection["Secret"]!)
                     )
                 };
             });

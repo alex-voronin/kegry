@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Application.Emails.Settings;
+namespace Notifications.Infrastructure.Transport.Email;
 
-public class EmailSettings
+public class EmailConfig
 {
     [Required(AllowEmptyStrings = false)]
     public required string Domain { get; init; }
