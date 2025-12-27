@@ -1,5 +1,4 @@
 using System.Text;
-using Autofac;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -13,9 +12,9 @@ using Shared.Setup;
 
 namespace Security.Setup;
 
-public class SecurityStartup : AppModuleStartupBase<SecurityContext>
+public class SecurityModuleStartup : AppModuleStartupBase<SecurityContext>
 {
-    public SecurityStartup(IConfigurationManager configuration) :
+    public SecurityModuleStartup(IConfigurationManager configuration) :
         base(configuration: configuration,
             moduleAssemblies:
             [
@@ -32,10 +31,7 @@ public class SecurityStartup : AppModuleStartupBase<SecurityContext>
     {
         base.Register(appBuilder, host);
 
-        host.ConfigureContainer<ContainerBuilder>((_, containerBuilder) =>
-        {
-            containerBuilder.RegisterModule(new AutoRegistrationAutofacModule(ModuleAssemblies));
-        });
+        appBuilder.Services.AutoRegisterAssemblies(ModuleAssemblies);
 
         var authTokenSettingsSection = appBuilder.Configuration
             .GetSection($"Authentication:{nameof(AuthTokenSettings)}");

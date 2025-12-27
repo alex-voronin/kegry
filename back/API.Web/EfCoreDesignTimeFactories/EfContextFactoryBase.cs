@@ -13,7 +13,7 @@ public class EfContextFactoryBase<TContext> : IDesignTimeDbContextFactory<TConte
             .AddJsonFile("appsettings.json")
             .Build();
         
-        var connectionString = configuration.GetConnectionString(Constants.DbName);
+        var connectionString = configuration.GetConnectionString(SharedConstants.DbName);
         Console.WriteLine("Connection string: {0}", connectionString);
         
         var optionsBuilder = new DbContextOptionsBuilder<TContext>();

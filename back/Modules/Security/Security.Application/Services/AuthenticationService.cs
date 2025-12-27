@@ -5,25 +5,29 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Security.Application.Settings;
+using Security.Contracts.Events;
 using Security.Domain.Aggregates.RefreshToken;
 using Security.Domain.Aggregates.User;
 using Security.Domain.Exceptions;
 using Security.Domain.Services;
 using Serilog;
 using SharedCore.Exceptions;
+using Wolverine;
 
 namespace Security.Application.Services;
 
 public class AuthenticationService : IAuthenticationService
 {
     private record LoginResult(User User, string AccessToken, string RefreshToken);
-    private record SignupResult(User User, string ConfirmationToken);
+
+    private record SignupResult(User User, string ConfirmationCode);
 
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly AuthTokenSettings _authTokenSettings;
+    private readonly IMessageBus _bus;
     private readonly JwtSecurityTokenHandler _jwtHandler;
 
     public AuthenticationService(
@@ -31,13 +35,15 @@ public class AuthenticationService : IAuthenticationService
         SignInManager<User> signInManager,
         IRefreshTokenService refreshTokenService,
         IRefreshTokenRepository refreshTokenRepository,
-        IOptions<AuthTokenSettings> authTokenSettingsOptions)
+        IOptions<AuthTokenSettings> authTokenSettingsOptions,
+        IMessageBus bus)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _refreshTokenService = refreshTokenService;
         _refreshTokenRepository = refreshTokenRepository;
         _authTokenSettings = authTokenSettingsOptions.Value;
+        _bus = bus;
         _jwtHandler = new JwtSecurityTokenHandler();
     }
 
@@ -47,17 +53,24 @@ public class AuthenticationService : IAuthenticationService
         if (existingUser == null)
         {
             var signupResult = await Signup(email, password);
-            // TODO: emit event for Notification service
+            await _bus.PublishAsync(
+                new AccountCreatedEvent
+                {
+                    Id = signupResult.User.Id,
+                    Email = email,
+                    ConfirmationCode = signupResult.ConfirmationCode
+                }
+            );
             return new AuthResult(
-                User: signupResult.User, 
-                AccessToken: null, 
+                User: signupResult.User,
+                AccessToken: null,
                 RefreshToken: null);
         }
-
+        
         var loginResult = await Login(email, password);
         return new AuthResult(
-            User: loginResult.User, 
-            AccessToken: loginResult.AccessToken, 
+            User: loginResult.User,
+            AccessToken: loginResult.AccessToken,
             RefreshToken: loginResult.RefreshToken);
     }
 
@@ -68,7 +81,7 @@ public class AuthenticationService : IAuthenticationService
         {
             throw SecurityExceptions.UserNotFound(userId);
         }
-        
+
         var result = await _userManager.ConfirmEmailAsync(user, token);
         if (!result.Succeeded)
         {
@@ -78,11 +91,11 @@ public class AuthenticationService : IAuthenticationService
 
         user.RequiredAction = RequiredAction.OnboardingCompletion;
         await _userManager.UpdateAsync(user);
-        
+
         var (accessToken, refreshToken) = await GenerateTokensAsync(user);
         return new AuthResult(
-            User: user, 
-            AccessToken: accessToken, 
+            User: user,
+            AccessToken: accessToken,
             RefreshToken: refreshToken);
     }
 
@@ -92,7 +105,7 @@ public class AuthenticationService : IAuthenticationService
         {
             throw SecurityExceptions.UnauthorizedAccess("Refresh token is missing");
         }
-        
+
         var storedToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
 
         if (storedToken == null || !storedToken.IsActive)
@@ -111,8 +124,8 @@ public class AuthenticationService : IAuthenticationService
         var (newAccessToken, newRefreshToken) = await GenerateTokensAsync(user);
 
         return new AuthResult(
-            User: user, 
-            AccessToken: newAccessToken, 
+            User: user,
+            AccessToken: newAccessToken,
             RefreshToken: newRefreshToken);
     }
 
@@ -165,7 +178,7 @@ public class AuthenticationService : IAuthenticationService
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         return new SignupResult(
             User: user,
-            ConfirmationToken: token
+            ConfirmationCode: token
         );
     }
 
@@ -201,11 +214,11 @@ public class AuthenticationService : IAuthenticationService
     {
         var jti = Guid.NewGuid();
         var accessToken = GenerateJwt(
-            jti: jti, 
-            user: user, 
+            jti: jti,
+            user: user,
             durationInDays: _authTokenSettings.AccessTokenDurationInDays);
         var refreshToken = await _refreshTokenService.CreateRefreshTokenAsync(
-            user: user, 
+            user: user,
             jti: jti,
             durationInDays: _authTokenSettings.RefreshTokenDurationInDays,
             maxSimultaneousLoggedInDevices: _authTokenSettings.MaxSimultaneousLoggedInDevices);

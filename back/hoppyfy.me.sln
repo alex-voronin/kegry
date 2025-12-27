@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Security", "Security", "{66
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Core", "Modules\Shared\Shared.Core\Shared.Core.csproj", "{1D33F24A-206B-4753-BBE0-EF746B0EF2DD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Notification", "Notification", "{41C00823-C731-4AB9-8905-7B73F8319DAC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Notifications", "Notifications", "{41C00823-C731-4AB9-8905-7B73F8319DAC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API.Web", "API.Web\API.Web.csproj", "{AE8A141E-3A98-475F-8C27-2F09CA1823B1}"
 EndProject
@@ -31,6 +31,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security.Application", "Modules\Security\Security.Application\Security.Application.csproj", "{202B81A3-61F8-43C0-834D-56C5D174F17E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security.API", "Modules\Security\Security.API\Security.API.csproj", "{0DCA3772-6B15-476E-A978-56E65FB2CE08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications.Infrastructure", "Modules\Notifications\Notifications.Infrastructure\Notifications.Infrastructure.csproj", "{943BFCDA-5951-485F-9E69-8D0111672A0C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications.Setup", "Modules\Notifications\Notifications.Setup\Notifications.Setup.csproj", "{8EAA4BA1-C123-4919-A410-DADEF750CF58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security.Contracts", "Modules\Security\Security.Contracts\Security.Contracts.csproj", "{919B9D1B-908F-4F7F-9A60-56F452A4C046}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications.Application", "Modules\Notifications\Notifications.Application\Notifications.Application.csproj", "{19D3DDF0-B36B-47DE-9770-5D7FFB628899}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -82,6 +90,22 @@ Global
 		{0DCA3772-6B15-476E-A978-56E65FB2CE08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DCA3772-6B15-476E-A978-56E65FB2CE08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DCA3772-6B15-476E-A978-56E65FB2CE08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{943BFCDA-5951-485F-9E69-8D0111672A0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{943BFCDA-5951-485F-9E69-8D0111672A0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{943BFCDA-5951-485F-9E69-8D0111672A0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{943BFCDA-5951-485F-9E69-8D0111672A0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EAA4BA1-C123-4919-A410-DADEF750CF58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EAA4BA1-C123-4919-A410-DADEF750CF58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EAA4BA1-C123-4919-A410-DADEF750CF58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EAA4BA1-C123-4919-A410-DADEF750CF58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{919B9D1B-908F-4F7F-9A60-56F452A4C046}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{919B9D1B-908F-4F7F-9A60-56F452A4C046}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{919B9D1B-908F-4F7F-9A60-56F452A4C046}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{919B9D1B-908F-4F7F-9A60-56F452A4C046}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19D3DDF0-B36B-47DE-9770-5D7FFB628899}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19D3DDF0-B36B-47DE-9770-5D7FFB628899}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19D3DDF0-B36B-47DE-9770-5D7FFB628899}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19D3DDF0-B36B-47DE-9770-5D7FFB628899}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1CBC6F16-BB39-4743-B8CB-50987C4B7F47} = {8B4727C6-1303-46DA-9FCC-E230A877807C}
@@ -97,5 +121,9 @@ Global
 		{0172068D-B217-4E66-A7DC-991F1C0E1DCB} = {66827915-F0D8-40A8-90A4-458CBB3BEC5E}
 		{202B81A3-61F8-43C0-834D-56C5D174F17E} = {66827915-F0D8-40A8-90A4-458CBB3BEC5E}
 		{0DCA3772-6B15-476E-A978-56E65FB2CE08} = {66827915-F0D8-40A8-90A4-458CBB3BEC5E}
+		{943BFCDA-5951-485F-9E69-8D0111672A0C} = {41C00823-C731-4AB9-8905-7B73F8319DAC}
+		{8EAA4BA1-C123-4919-A410-DADEF750CF58} = {41C00823-C731-4AB9-8905-7B73F8319DAC}
+		{919B9D1B-908F-4F7F-9A60-56F452A4C046} = {66827915-F0D8-40A8-90A4-458CBB3BEC5E}
+		{19D3DDF0-B36B-47DE-9770-5D7FFB628899} = {41C00823-C731-4AB9-8905-7B73F8319DAC}
 	EndGlobalSection
 EndGlobal

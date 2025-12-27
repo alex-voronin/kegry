@@ -1,6 +1,6 @@
 namespace Shared.Setup;
 
-public static class Constants
+public static class SharedConstants
 {
     public const string DbName = "hoppyfydb";
 }

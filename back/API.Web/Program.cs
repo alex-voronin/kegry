@@ -1,7 +1,8 @@
-using API.Web;
-using API.Web.Exceptions;
+using API.Web.Extensions;
 using API.Web.Startup;
 using Autofac.Extensions.DependencyInjection;
+using JasperFx;
+using Notifications.Setup;
 using Security.Setup;
 using Serilog;
 using Shared.Infrastructure.Interfaces;
@@ -12,48 +13,21 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Configuration(context.Configuration)
     .ReadFrom.Services(services)
     .Enrich.FromLogContext());
+builder.UseWolverineInMemoryMessageBus();
 
 var configuration = builder.Configuration;
 IFeatureStartup[] startups =
 [
-    new SecurityStartup(configuration),
+    new SecurityModuleStartup(configuration),
+    new NotificationsModuleStartup(),
     new SwaggerStartup(),
     new ResponseCompressionStartup()
 ];
-RegisterServices(builder, startups);
-StartupHelpers.AwaitDatabaseStartup(configuration: configuration, timeoutSeconds: 30);
+builder.RegisterServices(startups);
+builder.AwaitDatabaseStartup( timeoutSeconds: 30);
 
 var app = builder.Build();
-InitializeApp(app, startups);
+app.InitializeApp(startups);
+app.SeedData();
 
-StartupHelpers.SeedData(app.Services.CreateScope());
-
-app.Run();
-return;
-
-static void RegisterServices(WebApplicationBuilder builder, IFeatureStartup[] startups)
-{
-    foreach (var startup in startups)
-    {
-        startup.Register(builder, builder.Host);
-    }
-
-    builder.Services.AddExceptionHandler<ExceptionHandler>();
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddOpenApi();
-}
-
-static void InitializeApp(WebApplication app, IFeatureStartup[] startups)
-{
-    foreach (var startup in startups)
-    {
-        startup.Initialize(app);
-    }
-
-    app.UseSerilogRequestLogging();
-    app.UseExceptionHandler(_ => { });
-    app.UseStaticFiles();
-    app.UseRouting();
-    app.UseAuthentication();
-    app.UseAuthorization();
-}
+return await app.RunJasperFxCommands(args);

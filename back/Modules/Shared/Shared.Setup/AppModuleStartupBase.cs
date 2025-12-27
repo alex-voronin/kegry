@@ -16,7 +16,7 @@ public abstract class AppModuleStartupBase<TContext> : IFeatureStartup where TCo
 
     public AppModuleStartupBase(IConfigurationManager configuration, params Assembly[] moduleAssemblies)
     {
-        _dbConnectionString = configuration.GetConnectionString(Constants.DbName)!;
+        _dbConnectionString = configuration.GetConnectionString(SharedConstants.DbName)!;
         ModuleAssemblies = moduleAssemblies;
     }
 
