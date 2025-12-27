@@ -12,10 +12,6 @@ public class NotificationsModuleStartup : IFeatureStartup
 {
     public void Register(IHostApplicationBuilder appBuilder, IHostBuilder host)
     {
-        appBuilder.Services
-            .AddHttpClient<MailgunEmailSender>()
-            .AddStandardResilienceHandler();
-        
         var authTokenConfigSection = appBuilder.Configuration
             .GetSection($"Notifications:{nameof(EmailConfig)}");
         appBuilder.Services.AddOptions<EmailConfig>()

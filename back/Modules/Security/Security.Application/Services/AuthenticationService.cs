@@ -12,11 +12,12 @@ using Security.Domain.Exceptions;
 using Security.Domain.Services;
 using Serilog;
 using SharedCore.Exceptions;
+using SharedCore.Services.LifeTimes;
 using Wolverine;
 
 namespace Security.Application.Services;
 
-public class AuthenticationService : IAuthenticationService
+internal class AuthenticationService : IAuthenticationService, IScoped
 {
     private record LoginResult(User User, string AccessToken, string RefreshToken);
 

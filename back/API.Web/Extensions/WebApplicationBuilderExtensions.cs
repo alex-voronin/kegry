@@ -1,4 +1,6 @@
 using API.Web.Exceptions;
+using JasperFx.CodeGeneration;
+using JasperFx.CodeGeneration.Model;
 using JasperFx.Resources;
 using Notifications.Setup;
 using Npgsql;
@@ -31,7 +33,7 @@ public static class WebApplicationBuilderExtensions
         public void AwaitDatabaseStartup(int timeoutSeconds)
         {
             const string databaseNameConnectionParameter = "Database";
-            var dbConnectionString = builder.Configuration.GetConnectionString(Shared.Setup.SharedConstants.DbName)!;
+            var dbConnectionString = builder.Configuration.GetConnectionString(SharedConstants.DbName)!;
             var connectionParams = ConnectionStringToDictionary(dbConnectionString);
             var postgresConnectionString = string.Join(";",
                 connectionParams
@@ -76,7 +78,7 @@ public static class WebApplicationBuilderExtensions
                     {
                         x.Includes.WithAttribute<WolverineHandlerAttribute>();
                     });
-                    
+
                     opts.Include<SecurityModuleWolverineSetup>();
                     opts.Include<NotificationsModuleWolverineSetup>();
                 }

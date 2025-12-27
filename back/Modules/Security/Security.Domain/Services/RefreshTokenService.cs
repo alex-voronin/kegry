@@ -2,6 +2,7 @@ using Security.Domain.Exceptions;
 using SharedCore.Services;
 using Security.Domain.Aggregates.RefreshToken;
 using Security.Domain.Aggregates.User;
+using SharedCore.Services.LifeTimes;
 
 namespace Security.Domain.Services;
 
@@ -14,7 +15,7 @@ public interface IRefreshTokenService
         int maxSimultaneousLoggedInDevices);
 }
 
-public class RefreshTokenService : DomainService<IRefreshTokenRepository>, IRefreshTokenService
+internal class RefreshTokenService : DomainService<IRefreshTokenRepository>, IRefreshTokenService, IScoped
 {
     public RefreshTokenService(IRefreshTokenRepository repository) : base(repository)
     {

@@ -1,23 +1,24 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.Extensions.Options;
+using SharedCore.Services.LifeTimes;
 
 namespace Notifications.Infrastructure.Transport.Email;
 
-public interface IEmailSender
+internal interface IEmailSender
 {
-    public Task SendEmailAsync(string toEmail, string subject, string? htmlContent, string? textContent = "");
+    internal Task SendEmailAsync(string toEmail, string subject, string? htmlContent, string? textContent = "");
 }
 
-public class MailgunEmailSender : IEmailSender
+internal class MailgunEmailSender : IEmailSender, ISingleton
 {
     private readonly EmailConfig _emailConfig;
     private readonly HttpClient _httpClient;
 
-    public MailgunEmailSender(IOptions<EmailConfig> emailSettings, HttpClient httpClient)
+    public MailgunEmailSender(IOptions<EmailConfig> emailSettings, IHttpClientFactory httpClientFactory)
     {
         _emailConfig = emailSettings.Value;
-        _httpClient = httpClient;
+        _httpClient = httpClientFactory.CreateClient();
 
         var authToken = Encoding.ASCII.GetBytes($"api:{_emailConfig.ApiKey}");
         _httpClient.DefaultRequestHeaders.Authorization =

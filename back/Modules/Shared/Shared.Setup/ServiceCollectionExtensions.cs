@@ -1,5 +1,7 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using SharedCore.Interfaces;
+using SharedCore.Services.LifeTimes;
 
 namespace Shared.Setup;
 
@@ -10,9 +12,15 @@ public static class ServiceCollectionExtensions
         services.Scan(scan =>
         {
             scan.FromAssemblies(assemblies)
-                .AddClasses(classes => classes.Where(t => t.IsClass && t.IsPublic && t.GetInterfaces().Any()))
+                .AddClasses(c => c.AssignableTo<ITransient>(), publicOnly: false)
                 .AsImplementedInterfaces()
-                .WithScopedLifetime();
+                .WithTransientLifetime()
+                .AddClasses(c => c.AssignableToAny(typeof(IScoped), typeof(IRepository)), publicOnly: false)
+                .AsImplementedInterfaces()
+                .WithScopedLifetime()
+                .AddClasses(c => c.AssignableTo<ISingleton>(), publicOnly: false)
+                .AsImplementedInterfaces()
+                .WithSingletonLifetime();
         });
         return services;
     }
