@@ -1,16 +1,8 @@
 using API.Web.Exceptions;
-using JasperFx.CodeGeneration;
-using JasperFx.CodeGeneration.Model;
-using JasperFx.Resources;
-using Notifications.Setup;
 using Npgsql;
-using Security.Setup;
 using Serilog;
 using Shared.Infrastructure.Interfaces;
 using Shared.Setup;
-using Wolverine;
-using Wolverine.Attributes;
-using Wolverine.Postgresql;
 
 namespace API.Web.Extensions;
 
@@ -60,30 +52,6 @@ public static class WebApplicationBuilderExtensions
             }
 
             throw new InvalidOperationException($"PostgreSQL is not available after {elapsedSeconds} seconds.");
-        }
-
-        public void UseWolverineInMemoryMessageBus()
-        {
-            builder.UseWolverine(opts =>
-                {
-                    var dbConnectionString = builder.Configuration.GetConnectionString(SharedConstants.DbName)!;
-                    opts.PersistMessagesWithPostgresql(dbConnectionString);
-
-                    opts.Policies.UseDurableLocalQueues();
-                    opts.Durability.MessageStorageSchemaName = "wolverine";
-                    opts.MultipleHandlerBehavior = MultipleHandlerBehavior.Separated;
-
-                    opts.Discovery.DisableConventionalDiscovery();
-                    opts.Discovery.CustomizeHandlerDiscovery(x =>
-                    {
-                        x.Includes.WithAttribute<WolverineHandlerAttribute>();
-                    });
-
-                    opts.Include<SecurityModuleWolverineSetup>();
-                    opts.Include<NotificationsModuleWolverineSetup>();
-                }
-            );
-            builder.Host.UseResourceSetupOnStartup();
         }
     }
 

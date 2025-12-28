@@ -19,10 +19,11 @@ IFeatureStartup[] startups =
     new NotificationsModuleStartup(),
     new HttpClientsResilienceStartup(),
     new SwaggerStartup(),
-    new ResponseCompressionStartup()
+    new ResponseCompressionStartup(),
+    // wolverine must be registered after all modules to properly handle DI in handlers
+    new WolverineBusStartup()
 ];
 builder.RegisterServices(startups);
-builder.UseWolverineInMemoryMessageBus();
 builder.AwaitDatabaseStartup( timeoutSeconds: 30);
 
 var app = builder.Build();
