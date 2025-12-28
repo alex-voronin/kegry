@@ -11,7 +11,7 @@ public static class SecurityExceptions
         return new HttpCodeException(exMessage, HttpStatusCode.Forbidden, ErrorCode.NotFound);
     }
     
-    public static HttpCodeException UserNotFound(long id)
+    public static HttpCodeException UserNotFound(Guid id)
     {
         return new HttpCodeException($"User with id {id} not found", HttpStatusCode.NotFound, ErrorCode.NotFound);
     }

@@ -45,16 +45,16 @@ public abstract class AppModuleStartupBase<TContext> : IFeatureStartup where TCo
             context.Database.Migrate();
         }
     }
-    
+
     private static void MapModuleEndpoints(WebApplication app, Assembly[] assemblies)
     {
         var endpointTypes = assemblies.SelectMany(a => a.GetTypes())
-            .Where(t => t is { IsClass: true, IsAbstract: false } 
+            .Where(t => t is { IsClass: true, IsAbstract: false }
                         && t.IsAssignableTo(typeof(IEndpoints)));
-    
+
         foreach (var type in endpointTypes)
         {
-            var method = type.GetMethod(nameof(IEndpoints.MapEndpoints), 
+            var method = type.GetMethod(nameof(IEndpoints.MapEndpoints),
                 BindingFlags.Static | BindingFlags.Public);
             method?.Invoke(null, [app]);
         }

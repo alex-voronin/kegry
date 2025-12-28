@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using SharedCore.Interfaces;
 
@@ -14,14 +15,28 @@ public class Repository<TContext, TEntity> : IRepository<TEntity>
         Context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
-    public virtual async Task<TEntity?> GetByIdAsync(long id, bool asNoTracking = false, CancellationToken ct = default)
+    public virtual async Task<TEntity?> GetByIdAsync(
+        Guid id,
+        bool asNoTracking = false,
+        Expression<Func<TEntity, object>>[]? includes = null,
+        CancellationToken ct = default )
     {
+        IQueryable<TEntity> query = Context.Set<TEntity>();
+
         if (asNoTracking)
         {
-            throw new NotSupportedException("Currently we don't support support asNoTracking = true");
+            query = query.AsNoTracking();
         }
 
-        return await Context.Set<TEntity>().FindAsync(keyValues: [id], cancellationToken: ct);
+        if (includes != null)
+        {
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+        }
+
+        return await query.FirstOrDefaultAsync(e => EF.Property<Guid>(e, "Id") == id, ct);
     }
 
     public void Add(TEntity entity)

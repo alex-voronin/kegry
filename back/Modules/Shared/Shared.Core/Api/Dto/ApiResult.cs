@@ -28,7 +28,7 @@ public class ApiResult<TResult>
         Errors = apiErrors;
         Success = errors.Length == 0;
     }
-    
+
     [JsonConstructor]
     protected ApiResult(TResult result, params ApiError[] errors)
     {
@@ -47,11 +47,18 @@ public static class ApiResult
 {
     public sealed class EmptyResult : ApiResult<EmptyResponse>
     {
-        public EmptyResult() : base(EmptyResponse.Empty, Array.Empty<ApiError>()) { }
-        public EmptyResult(params string[] errors) : base(EmptyResponse.Empty, errors) { }
-    
-        public EmptyResult(params ApiError[] errors) : base(EmptyResponse.Empty, errors) { }
+        public EmptyResult() : base(EmptyResponse.Empty, Array.Empty<ApiError>())
+        {
+        }
+
+        public EmptyResult(params string[] errors) : base(EmptyResponse.Empty, errors)
+        {
+        }
+
+        public EmptyResult(params ApiError[] errors) : base(EmptyResponse.Empty, errors)
+        {
+        }
     }
-    
+
     public static EmptyResult Empty { get; } = new EmptyResult();
 }

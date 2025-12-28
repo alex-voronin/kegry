@@ -10,12 +10,12 @@ public static class DbContextExtensions
         {
             throw new ArgumentNullException(nameof(context), "Parameter cannot be null.");
         }
-        
+
         if (entity == null)
         {
             throw new ArgumentNullException(nameof(entity), "Parameter cannot be null.");
         }
-        
+
         var entry = context.Entry(entity);
         return entry.State != EntityState.Detached;
     }

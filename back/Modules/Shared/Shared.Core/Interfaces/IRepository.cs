@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace SharedCore.Interfaces;
 
 public interface IRepository
@@ -10,7 +12,11 @@ public interface IRepository
 
 public interface IRepository<TEntity> : IRepository where TEntity : class
 {
-    Task<TEntity?> GetByIdAsync(long id, bool asNoTracking = false, CancellationToken ct = default);
+    public Task<TEntity?> GetByIdAsync(
+        Guid id,
+        bool asNoTracking = false,
+        Expression<Func<TEntity, object>>[]? includes = null,
+        CancellationToken ct = default );
     public void Add(TEntity entity);
     public Task AddAsync(TEntity entity, CancellationToken ct = default);
     void Delete(TEntity entity);

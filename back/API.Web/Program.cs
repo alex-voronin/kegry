@@ -3,6 +3,7 @@ using API.Web.Startup;
 using JasperFx;
 using Notifications.Setup;
 using Security.Setup;
+using UserProfiles.Setup;
 using Serilog;
 using Shared.Infrastructure.Interfaces;
 
@@ -16,6 +17,7 @@ var configuration = builder.Configuration;
 IFeatureStartup[] startups =
 [
     new SecurityModuleStartup(configuration),
+    new UserProfilesModuleStartup(configuration),
     new NotificationsModuleStartup(),
     new HttpClientsResilienceStartup(),
     new SwaggerStartup(),

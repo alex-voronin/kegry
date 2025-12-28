@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\UserProfiles.API\UserProfiles.API.csproj" />
+      <ProjectReference Include="..\UserProfiles.Domain\UserProfiles.Domain.csproj" />
+      <ProjectReference Include="..\UserProfiles.Infrastructure\UserProfiles.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\Shared\Shared.Setup\Shared.Setup.csproj" />
+    </ItemGroup>
+
+</Project>
