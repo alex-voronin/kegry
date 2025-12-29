@@ -4,7 +4,7 @@ using UserProfiles.Domain.Aggregates;
 
 namespace UserProfiles.Infrastructure.Persistence.Repositories;
 
-public class EfCoreHobbyRepository : Repository<UserProfilesContext, Hobby>, IHobbyRepository
+internal class EfCoreHobbyRepository : Repository<UserProfilesContext, Hobby>, IHobbyRepository
 {
     public EfCoreHobbyRepository(UserProfilesContext context) : base(context)
     {

@@ -4,7 +4,7 @@ using Shared.Infrastructure.Persistence;
 
 namespace Security.Infrastructure.Persistence.Repositories;
 
-public class EfCoreRefreshTokenRepository : Repository<SecurityContext, RefreshToken>, IRefreshTokenRepository
+internal class EfCoreRefreshTokenRepository : Repository<SecurityContext, RefreshToken>, IRefreshTokenRepository
 {
     public EfCoreRefreshTokenRepository(SecurityContext context) : base(context)
     {
