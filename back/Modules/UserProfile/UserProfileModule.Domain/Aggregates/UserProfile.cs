@@ -10,19 +10,28 @@ public class UserProfile
     public required string FirstName
     {
         get;
-        set => field = ValidateRequiredString(nameof(FirstName), value, maxLength: 100);
+        set => field = ValidateRequiredString(
+            fieldName: nameof(FirstName), 
+            value: value, 
+            maxLength: ValidationParameters.FirstNameMaxLength);
     } = null!;
 
     public required string LastName
     {
         get;
-        set => field = ValidateRequiredString(nameof(LastName), value, maxLength: 100);
+        set => field = ValidateRequiredString(
+            fieldName: nameof(LastName), 
+            value: value, 
+            maxLength: ValidationParameters.LastNameMaxLength);
     } = null!;
 
     public required string Bio
     {
         get;
-        set => field = ValidateRequiredString(nameof(Bio), value, maxLength: 200);
+        set => field = ValidateRequiredString(
+            fieldName: nameof(Bio), 
+            value: value, 
+            maxLength: ValidationParameters.BioMaxLength);
     } = null!;
 
     public required string AvatarImageUrl
@@ -72,10 +81,9 @@ public class UserProfile
     private static DateOnly ValidateBirthday(string fieldName, DateOnly value)
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
-        var minAge = 18;
         Validation.ThrowIfInvalid(fieldName,
-            () => value < today.AddYears(-minAge),
-            $"A user must be older than {minAge} years old.");
+            () => value < today.AddYears(-ValidationParameters.MinAge),
+            $"A user must be older than {ValidationParameters.MinAge} years old.");
         Validation.ThrowIfInvalid(fieldName,
             () => value.Year > 1900,
             "Invalid birth date");
@@ -85,7 +93,7 @@ public class UserProfile
     private static List<Hobby> ValidateHobbies(string fieldName, Hobby[] value)
     {
         Validation.ThrowIfInvalid(fieldName,
-            isValid: () => value.Length <= 10,
+            isValid: () => value.Length <= ValidationParameters.MaxHobbiesCount,
             validationError: "Maximum number of Hobbies is 10");
         return value.ToList();
     }

@@ -32,6 +32,21 @@ public class UserProfileContext : DbContext
             .HasMany(u => u.Hobbies)
             .WithMany(h => h.UserProfiles)
             .UsingEntity(j => j.ToTable("user_profile_hobby_link"));
+        
+        modelBuilder.Entity<UserProfile>()
+            .Property(x => x.FirstName)
+            .IsRequired()
+            .HasMaxLength(ValidationParameters.FirstNameMaxLength);
+        
+        modelBuilder.Entity<UserProfile>()
+            .Property(x => x.LastName)
+            .IsRequired()
+            .HasMaxLength(ValidationParameters.LastNameMaxLength);
+        
+        modelBuilder.Entity<UserProfile>()
+            .Property(x => x.Bio)
+            .IsRequired()
+            .HasMaxLength(ValidationParameters.BioMaxLength);
 
         SeedData(modelBuilder);
     }
@@ -50,12 +65,5 @@ public class UserProfileContext : DbContext
             })
             .ToArray();
         modelBuilder.Entity<Hobby>().HasData(entities);
-    }
-    
-    private static Guid CreateGuidFromId(int id)
-    {
-        var bytes = new byte[16];
-        BitConverter.GetBytes(id).CopyTo(bytes, 0);
-        return new Guid(bytes);
     }
 }
