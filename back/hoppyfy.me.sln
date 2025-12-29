@@ -22,33 +22,33 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Setup", "Modules\Sha
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Infrastructure", "Modules\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj", "{5887B82F-0388-45D5-9100-8F88AA425469}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security.Setup", "Modules\Security\Security.Setup\Security.Setup.csproj", "{58A064E8-B9FC-4605-8668-F60BBE984FAD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecurityModule.Setup", "Modules\Security\SecurityModule.Setup\SecurityModule.Setup.csproj", "{58A064E8-B9FC-4605-8668-F60BBE984FAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security.Infrastructure", "Modules\Security\Security.Infrastructure\Security.Infrastructure.csproj", "{A52E8691-A753-4513-B173-41071D907D4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecurityModule.Infrastructure", "Modules\Security\SecurityModule.Infrastructure\SecurityModule.Infrastructure.csproj", "{A52E8691-A753-4513-B173-41071D907D4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security.Domain", "Modules\Security\Security.Domain\Security.Domain.csproj", "{0172068D-B217-4E66-A7DC-991F1C0E1DCB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecurityModule.Domain", "Modules\Security\SecurityModule.Domain\SecurityModule.Domain.csproj", "{0172068D-B217-4E66-A7DC-991F1C0E1DCB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security.Application", "Modules\Security\Security.Application\Security.Application.csproj", "{202B81A3-61F8-43C0-834D-56C5D174F17E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecurityModule.Application", "Modules\Security\SecurityModule.Application\SecurityModule.Application.csproj", "{202B81A3-61F8-43C0-834D-56C5D174F17E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security.API", "Modules\Security\Security.API\Security.API.csproj", "{0DCA3772-6B15-476E-A978-56E65FB2CE08}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecurityModule.API", "Modules\Security\SecurityModule.API\SecurityModule.API.csproj", "{0DCA3772-6B15-476E-A978-56E65FB2CE08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications.Infrastructure", "Modules\Notifications\Notifications.Infrastructure\Notifications.Infrastructure.csproj", "{943BFCDA-5951-485F-9E69-8D0111672A0C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationsModule.Infrastructure", "Modules\Notifications\NotificationsModule.Infrastructure\NotificationsModule.Infrastructure.csproj", "{943BFCDA-5951-485F-9E69-8D0111672A0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications.Setup", "Modules\Notifications\Notifications.Setup\Notifications.Setup.csproj", "{8EAA4BA1-C123-4919-A410-DADEF750CF58}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationsModule.Setup", "Modules\Notifications\NotificationsModule.Setup\NotificationsModule.Setup.csproj", "{8EAA4BA1-C123-4919-A410-DADEF750CF58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security.Contracts", "Modules\Security\Security.Contracts\Security.Contracts.csproj", "{919B9D1B-908F-4F7F-9A60-56F452A4C046}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecurityModule.Contracts", "Modules\Security\SecurityModule.Contracts\SecurityModule.Contracts.csproj", "{919B9D1B-908F-4F7F-9A60-56F452A4C046}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications.Application", "Modules\Notifications\Notifications.Application\Notifications.Application.csproj", "{19D3DDF0-B36B-47DE-9770-5D7FFB628899}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationsModule.Application", "Modules\Notifications\NotificationsModule.Application\NotificationsModule.Application.csproj", "{19D3DDF0-B36B-47DE-9770-5D7FFB628899}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserProfiles", "UserProfiles", "{B24AC6CC-4596-4759-B0C8-348A3547DE1C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserProfile", "UserProfile", "{B24AC6CC-4596-4759-B0C8-348A3547DE1C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserProfiles.Domain", "Modules\UserProfile\UserProfiles.Domain\UserProfiles.Domain.csproj", "{10669AB7-1E9E-4CF9-8499-4320CB05EEF6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserProfileModule.Domain", "Modules\UserProfile\UserProfileModule.Domain\UserProfileModule.Domain.csproj", "{10669AB7-1E9E-4CF9-8499-4320CB05EEF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserProfiles.Infrastructure", "Modules\UserProfile\UserProfiles.Infrastructure\UserProfiles.Infrastructure.csproj", "{01938C95-DA64-4662-A459-85C70D49CE0B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserProfileModule.Infrastructure", "Modules\UserProfile\UserProfileModule.Infrastructure\UserProfileModule.Infrastructure.csproj", "{01938C95-DA64-4662-A459-85C70D49CE0B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserProfiles.Setup", "Modules\UserProfile\UserProfiles.Setup\UserProfiles.Setup.csproj", "{BED54F74-3B12-4335-A262-3F214EEC4967}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserProfileModule.Setup", "Modules\UserProfile\UserProfileModule.Setup\UserProfileModule.Setup.csproj", "{BED54F74-3B12-4335-A262-3F214EEC4967}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserProfiles.API", "Modules\UserProfile\UserProfiles.API\UserProfiles.API.csproj", "{9E95336B-80FB-47CA-94B9-64BF395A269C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserProfileModule.API", "Modules\UserProfile\UserProfileModule.API\UserProfileModule.API.csproj", "{9E95336B-80FB-47CA-94B9-64BF395A269C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

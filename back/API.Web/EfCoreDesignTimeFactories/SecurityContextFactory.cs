@@ -1,4 +1,4 @@
-using Security.Infrastructure.Persistence;
+using SecurityModule.Infrastructure.Persistence;
 
 namespace API.Web.EfCoreDesignTimeFactories;
 

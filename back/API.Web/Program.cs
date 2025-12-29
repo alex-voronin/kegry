@@ -1,8 +1,8 @@
 using API.Web.Extensions;
 using API.Web.Startup;
 using JasperFx;
-using Notifications.Setup;
-using Security.Setup;
+using NotificationsModule.Setup;
+using SecurityModule.Setup;
 using UserProfiles.Setup;
 using Serilog;
 using Shared.Infrastructure.Interfaces;
@@ -17,12 +17,12 @@ var configuration = builder.Configuration;
 IFeatureStartup[] startups =
 [
     new SecurityModuleStartup(configuration),
-    new UserProfilesModuleStartup(configuration),
+    new UserProfileModuleStartup(configuration),
     new NotificationsModuleStartup(),
     new HttpClientsResilienceStartup(),
     new SwaggerStartup(),
     new ResponseCompressionStartup(),
-    // wolverine must be registered after all modules to properly handle DI in handlers
+    // wolverine must be registered after all modules to properly manage DI in handlers
     new WolverineBusStartup()
 ];
 builder.RegisterServices(startups);

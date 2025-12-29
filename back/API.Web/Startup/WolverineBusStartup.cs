@@ -1,6 +1,6 @@
 using JasperFx.Resources;
-using Notifications.Setup;
-using Security.Setup;
+using NotificationsModule.Setup;
+using SecurityModule.Setup;
 using Shared.Infrastructure.Interfaces;
 using Shared.Setup;
 using Wolverine;

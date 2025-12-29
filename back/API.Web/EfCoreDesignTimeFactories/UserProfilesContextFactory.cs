@@ -1,8 +1,7 @@
-using Security.Infrastructure.Persistence;
-using UserProfiles.Infrastructure.Persistence;
+using UserProfileModule.Infrastructure.Persistence;
 
 namespace API.Web.EfCoreDesignTimeFactories;
 
-public class UserProfilesContextFactory : EfContextFactoryBase<UserProfilesContext>
+public class UserProfilesContextFactory : EfContextFactoryBase<UserProfileContext>
 {
 }
