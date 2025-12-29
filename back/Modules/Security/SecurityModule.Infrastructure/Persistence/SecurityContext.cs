@@ -8,46 +8,43 @@ namespace SecurityModule.Infrastructure.Persistence;
 
 public class SecurityContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
-    public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     public SecurityContext(DbContextOptions<SecurityContext> options) : base(options)
     {
     }
 
-    protected override void OnModelCreating(ModelBuilder builder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        builder.HasDefaultSchema("security");
+        modelBuilder.HasDefaultSchema("security");
 
-        builder.Entity<User>()
+        modelBuilder.Entity<User>()
             .Property(u => u.Id)
             .ValueGeneratedNever();
 
-        builder.Entity<IdentityRole<Guid>>()
+        modelBuilder.Entity<IdentityRole<Guid>>()
             .Property(r => r.Id)
             .ValueGeneratedNever();
 
-        builder.Entity<RefreshToken>()
-            .HasIndex(t => t.Token)
-            .IsUnique();
-        builder.Entity<RefreshToken>()
-            .HasIndex(t => t.Jti)
-            .IsUnique();
+        modelBuilder.Entity<RefreshToken>(builder =>
+        {
+            builder.HasIndex(t => t.Token)
+                .IsUnique();
+            builder.HasIndex(t => t.Jti)
+                .IsUnique();
+            builder.Property(x => x.Token)
+                .IsRequired()
+                .HasMaxLength(40);
+            builder.Property(x => x.Jti)
+                .IsRequired()
+                .HasMaxLength(40);
 
-        builder.Entity<RefreshToken>()
-            .HasOne<User>()
-            .WithMany()
-            .HasForeignKey(rt => rt.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(rt => rt.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
 
-        builder.Entity<RefreshToken>()
-            .Property(x => x.Token)
-            .IsRequired()
-            .HasMaxLength(40);
-        builder.Entity<RefreshToken>()
-            .Property(x => x.Jti)
-            .IsRequired()
-            .HasMaxLength(40);
-
-        base.OnModelCreating(builder);
+        base.OnModelCreating(modelBuilder);
     }
 }

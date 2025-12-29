@@ -4,6 +4,7 @@ using JasperFx;
 using NotificationsModule.Setup;
 using SecurityModule.Setup;
 using UserProfiles.Setup;
+using Location.Setup;
 using Serilog;
 using Shared.Infrastructure.Interfaces;
 
@@ -18,6 +19,7 @@ IFeatureStartup[] startups =
 [
     new SecurityModuleStartup(configuration),
     new UserProfileModuleStartup(configuration),
+    new LocationModuleStartup(configuration),
     new NotificationsModuleStartup(),
     new HttpClientsResilienceStartup(),
     new SwaggerStartup(),

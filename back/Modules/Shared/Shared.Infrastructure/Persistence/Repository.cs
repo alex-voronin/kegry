@@ -19,7 +19,7 @@ public class Repository<TContext, TEntity> : IRepository<TEntity>
         Guid id,
         bool asNoTracking = false,
         Expression<Func<TEntity, object>>[]? includes = null,
-        CancellationToken ct = default )
+        CancellationToken ct = default)
     {
         IQueryable<TEntity> query = Context.Set<TEntity>();
 
@@ -36,7 +36,9 @@ public class Repository<TContext, TEntity> : IRepository<TEntity>
             }
         }
 
-        return await query.FirstOrDefaultAsync(e => EF.Property<Guid>(e, "Id") == id, ct);
+        var primaryKeyName = Context.Model.FindEntityType(typeof(TEntity))!
+            .FindPrimaryKey()!.Properties.Select(x => x.Name).Single();
+        return await query.FirstOrDefaultAsync(e => EF.Property<Guid>(e, primaryKeyName) == id, ct);
     }
 
     public void Add(TEntity entity)

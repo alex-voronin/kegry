@@ -15,4 +15,8 @@
       <ProjectReference Include="..\UserProfileModule.Domain\UserProfileModule.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Persistence\Migrations\" />
+    </ItemGroup>
+
 </Project>

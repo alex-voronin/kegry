@@ -12,7 +12,7 @@ using UserProfileModule.Infrastructure.Persistence;
 namespace UserProfileModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(UserProfileContext))]
-    [Migration("20251229113221_AddUserProfiles")]
+    [Migration("20251229225354_AddUserProfiles")]
     partial class AddUserProfiles
     {
         /// <inheritdoc />
@@ -44,7 +44,6 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("UserProfileModule.Domain.Aggregates.Hobby", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Name")
@@ -389,7 +388,6 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("UserProfileModule.Domain.Aggregates.UserProfile", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("AvatarImageUrl")
@@ -398,7 +396,8 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Bio")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<DateOnly>("Birthday")
                         .HasColumnType("date");
@@ -409,14 +408,16 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("Gender")
                         .HasColumnType("integer");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
 

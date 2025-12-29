@@ -35,9 +35,9 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    FirstName = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
-                    Bio = table.Column<string>(type: "text", nullable: false),
+                    FirstName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Bio = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     AvatarImageUrl = table.Column<string>(type: "text", nullable: false),
                     CoverImageUrl = table.Column<string>(type: "text", nullable: false),
                     Birthday = table.Column<DateOnly>(type: "date", nullable: false),

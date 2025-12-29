@@ -168,11 +168,13 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Jti")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");

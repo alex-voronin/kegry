@@ -12,7 +12,7 @@ using SecurityModule.Infrastructure.Persistence;
 namespace SecurityModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SecurityContext))]
-    [Migration("20251229115021_AddSecurity")]
+    [Migration("20251229225401_AddSecurity")]
     partial class AddSecurity
     {
         /// <inheritdoc />
@@ -171,11 +171,13 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Jti")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");

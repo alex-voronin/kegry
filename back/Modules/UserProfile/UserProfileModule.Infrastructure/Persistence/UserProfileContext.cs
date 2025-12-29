@@ -6,8 +6,8 @@ namespace UserProfileModule.Infrastructure.Persistence;
 
 public class UserProfileContext : DbContext
 {
-    public DbSet<UserProfile> UserProfiles { get; set; }
-    public DbSet<Hobby> Hobbies { get; set; }
+    public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
+    public DbSet<Hobby> Hobbies => Set<Hobby>();
     
     public UserProfileContext(DbContextOptions<UserProfileContext> options)
         : base(options)
@@ -17,36 +17,32 @@ public class UserProfileContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("users");
-        
-        modelBuilder.Entity<UserProfile>()
-            .ToTable("profiles");
-        
-        modelBuilder.Entity<Hobby>()
-            .ToTable("hobbies");
 
-        modelBuilder.Entity<Hobby>()
-            .HasIndex(h => h.Name)
-            .IsUnique();
-        
-        modelBuilder.Entity<UserProfile>()
-            .HasMany(u => u.Hobbies)
-            .WithMany(h => h.UserProfiles)
-            .UsingEntity(j => j.ToTable("user_profile_hobby_link"));
-        
-        modelBuilder.Entity<UserProfile>()
-            .Property(x => x.FirstName)
-            .IsRequired()
-            .HasMaxLength(ValidationParameters.FirstNameMaxLength);
-        
-        modelBuilder.Entity<UserProfile>()
-            .Property(x => x.LastName)
-            .IsRequired()
-            .HasMaxLength(ValidationParameters.LastNameMaxLength);
-        
-        modelBuilder.Entity<UserProfile>()
-            .Property(x => x.Bio)
-            .IsRequired()
-            .HasMaxLength(ValidationParameters.BioMaxLength);
+        modelBuilder.Entity<UserProfile>(builder =>
+        {
+            builder.ToTable("profiles");
+            builder.Property(up => up.Id).ValueGeneratedNever();
+            builder.Property(up => up.FirstName)
+                .IsRequired()
+                .HasMaxLength(ValidationParameters.FirstNameMaxLength);
+            builder.Property(up => up.LastName)
+                .IsRequired()
+                .HasMaxLength(ValidationParameters.LastNameMaxLength);
+            builder.Property(up => up.Bio)
+                .HasMaxLength(ValidationParameters.BioMaxLength);
+            
+            builder.HasMany(up => up.Hobbies)
+                .WithMany(h => h.UserProfiles)
+                .UsingEntity(j => j.ToTable("user_profile_hobby_link"));
+        });
+
+        modelBuilder.Entity<Hobby>(builder =>
+        {
+            builder.ToTable("hobbies");
+            builder.Property(h => h.Id).ValueGeneratedNever();
+            builder.HasIndex(h => h.Name)
+                .IsUnique();
+        });
 
         SeedData(modelBuilder);
     }
