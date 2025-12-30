@@ -6,7 +6,7 @@ namespace LocationModule.Domain.Services;
 
 internal class LocationService : DomainService<ILocationRepository>, ILocationService, IScoped
 {
-    private static class ValidationParameters
+    internal static class ValidationParameters
     {
         internal static readonly TimeSpan CurrentLocationTtl = TimeSpan.FromMinutes(45);
         internal const double ThresholdMeters = 750;
