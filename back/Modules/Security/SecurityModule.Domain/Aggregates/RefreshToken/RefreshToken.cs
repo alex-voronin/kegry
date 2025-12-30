@@ -18,12 +18,12 @@ public class RefreshToken
     [NotMapped]
     public bool IsActive => !IsExpired;
 
-    internal RefreshToken(Guid userId, string token, string jti, DateTime expires)
+    internal RefreshToken(Guid userId, string token, string jti, DateTime created, DateTime expires)
     {
         UserId = userId;
         Token = token;
         Jti = jti;
-        Created = DateTime.UtcNow;
+        Created = created;
         Expires = expires;
     }
 }

@@ -14,11 +14,11 @@ public class AuthTokenConfig
     public required string Audience { get; init; }
     
     [Range(1, 14)]
-    public int AccessTokenDurationInDays { get; init; }
+    public required int AccessTokenDurationInDays { get; init; }
     
     [Range(1, 180)]
-    public int RefreshTokenDurationInDays { get; init; }
+    public required int RefreshTokenDurationInDays { get; init; }
     
     [Range(1, 30)]
-    public int MaxSimultaneousLoggedInDevices { get; init; }
+    public required int MaxSimultaneousLoggedInDevices { get; init; }
 }

@@ -17,8 +17,11 @@ public interface IRefreshTokenService
 
 internal class RefreshTokenService : DomainService<IRefreshTokenRepository>, IRefreshTokenService, IScoped
 {
-    public RefreshTokenService(IRefreshTokenRepository repository) : base(repository)
+    private readonly TimeProvider _timeProvider;
+    
+    public RefreshTokenService(IRefreshTokenRepository repository, TimeProvider timeProvider) : base(repository)
     {
+        _timeProvider = timeProvider;
     }
 
     public async Task<RefreshToken> CreateRefreshTokenAsync(
@@ -44,11 +47,12 @@ internal class RefreshTokenService : DomainService<IRefreshTokenRepository>, IRe
             userId: user.Id,
             token: token,
             jti: jti.ToString(),
-            expires: DateTime.UtcNow.AddDays(durationInDays)
+            created: _timeProvider.GetUtcNow().DateTime,
+            expires: _timeProvider.GetUtcNow().DateTime.AddDays(durationInDays)
         );
     }
 
-    private string GenerateToken()
+    private static string GenerateToken()
     {
         var guid = Guid.NewGuid();
         return Convert.ToBase64String(guid.ToByteArray());
