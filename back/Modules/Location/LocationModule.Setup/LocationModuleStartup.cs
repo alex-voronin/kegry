@@ -1,9 +1,9 @@
+using LocationModule.Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Shared.Setup;
-using LocationModule.Infrastructure.Persistence;
 
-namespace Location.Setup;
+namespace LocationModule.Setup;
 
 public class LocationModuleStartup : AppModuleStartupBase<LocationContext>
 {
@@ -11,9 +11,9 @@ public class LocationModuleStartup : AppModuleStartupBase<LocationContext>
         base(configuration: configuration, 
             moduleAssemblies: 
             [
-                typeof(LocationModule.Infrastructure.AssemblyMarker).Assembly,
-                typeof(LocationModule.Domain.AssemblyMarker).Assembly,
-                typeof(LocationModule.API.AssemblyMarker).Assembly
+                typeof(Infrastructure.AssemblyMarker).Assembly,
+                typeof(Domain.AssemblyMarker).Assembly,
+                typeof(API.AssemblyMarker).Assembly
             ]
         )
     {

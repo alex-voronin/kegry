@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Shared.Setup;
 using UserProfileModule.Infrastructure.Persistence;
 
-namespace UserProfiles.Setup;
+namespace UserProfileModule.Setup;
 
 public class UserProfileModuleStartup : AppModuleStartupBase<UserProfileContext>
 {

@@ -1,10 +1,10 @@
 using API.Web.Extensions;
 using API.Web.Startup;
 using JasperFx;
+using LocationModule.Setup;
 using NotificationsModule.Setup;
 using SecurityModule.Setup;
-using UserProfiles.Setup;
-using Location.Setup;
+using UserProfileModule.Setup;
 using Serilog;
 using Shared.Infrastructure.Interfaces;
 
