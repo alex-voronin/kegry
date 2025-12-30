@@ -10,7 +10,7 @@ public class UserProfile
     public required string FirstName
     {
         get;
-        set => field = ValidateRequiredString(
+        set => field = ValidateName(
             fieldName: nameof(FirstName), 
             value: value, 
             maxLength: ValidationParameters.FirstNameMaxLength);
@@ -19,7 +19,7 @@ public class UserProfile
     public required string LastName
     {
         get;
-        set => field = ValidateRequiredString(
+        set => field = ValidateName(
             fieldName: nameof(LastName), 
             value: value, 
             maxLength: ValidationParameters.LastNameMaxLength);
@@ -28,7 +28,7 @@ public class UserProfile
     public required string Bio
     {
         get;
-        set => field = ValidateRequiredString(
+        set => field = ValidateBio(
             fieldName: nameof(Bio), 
             value: value, 
             maxLength: ValidationParameters.BioMaxLength);
@@ -64,9 +64,16 @@ public class UserProfile
 
     #region ================================= Validation =================================
 
-    private static string ValidateRequiredString(string fieldName, string value, int maxLength)
+    private static string ValidateName(string fieldName, string value, int maxLength)
     {
         Validation.ThrowIfNullOrWhiteSpace(fieldName, value);
+        Validation.ThrowIfLengthExceeded(fieldName, value, maxLength);
+        return value.Trim();
+    }
+    
+    private static string ValidateBio(string fieldName, string value, int maxLength)
+    {
+        Validation.ThrowIfNull(fieldName, value);
         Validation.ThrowIfLengthExceeded(fieldName, value, maxLength);
         return value.Trim();
     }

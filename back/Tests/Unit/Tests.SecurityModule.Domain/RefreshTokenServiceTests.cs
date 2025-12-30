@@ -8,19 +8,19 @@ using Shouldly;
 using SharedCore.Exceptions;
 using Tests.Shared.AutoFixture;
 
-namespace Tests.Security.Domain;
+namespace Tests.SecurityModule.Domain;
 
 public class RefreshTokenServiceTests
 {
     private const int MaxSimultaneousLoggedInDevices = 10;
     private const int RefreshTokenDurationInDays = 7;
     
-    private readonly User _user;
-
-    public RefreshTokenServiceTests()
+    private readonly User _user = new User()
     {
-        _user = new User { Id = Guid.NewGuid(), Email = "test@example.com", RequiredAction = RequiredAction.None };
-    }
+        Id = Guid.NewGuid(),
+        Email = "test@example.com", 
+        RequiredAction = RequiredAction.None
+    };
 
     [Theory, AutoNSubstituteData]
     internal async Task CreateRefreshTokenAsync_GivenUniqueJti_WhenLimitIsNotReached_ThenReturnValidToken(
