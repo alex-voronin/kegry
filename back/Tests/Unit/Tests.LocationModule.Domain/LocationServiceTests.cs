@@ -1,17 +1,19 @@
-using LocationModule.Domain.Aggregates;
 using LocationModule.Domain.Services;
+using NetTopologySuite.Geometries;
 using Shouldly;
+using Location = LocationModule.Domain.Aggregates.Location;
 
 namespace Tests.LocationModule.Domain;
 
 public class LocationServiceTests
 {
-    private readonly Location _currentLocation = new Location
+    private static readonly GeometryFactory GeometryFactory = new(new PrecisionModel(), 4326);
+    
+    private readonly Location _currentLocation = new()
     {
         UserId = Guid.NewGuid(),
-        Latitude = 50.0,
-        Longitude = 30.0,
-        Timestamp = DateTime.UtcNow
+        Coordinates = GeometryFactory.CreatePoint(new Coordinate(30.0, 50.0)),
+        Timestamp = DateTimeOffset.UtcNow
     };
 
     [Fact]

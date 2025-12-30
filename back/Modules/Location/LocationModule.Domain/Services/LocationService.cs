@@ -1,6 +1,8 @@
 using LocationModule.Domain.Aggregates;
+using NetTopologySuite.Geometries;
 using SharedCore.Services;
 using SharedCore.Services.LifeTimes;
+using Location = LocationModule.Domain.Aggregates.Location;
 
 namespace LocationModule.Domain.Services;
 
@@ -14,6 +16,7 @@ internal class LocationService : DomainService<ILocationRepository>, ILocationSe
     }
 
     private readonly TimeProvider _timeProvider;
+    private static readonly GeometryFactory GeometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
     public LocationService(ILocationRepository repository, TimeProvider timeProvider) : base(repository)
     {
@@ -22,7 +25,8 @@ internal class LocationService : DomainService<ILocationRepository>, ILocationSe
 
     public async Task UpdateLocation(Guid userId, double newLat, double newLong, CancellationToken ct = default)
     {
-        var now = _timeProvider.GetUtcNow().DateTime;
+        var now = _timeProvider.GetUtcNow();
+        var newCoordinates = GeometryFactory.CreatePoint(new Coordinate(newLong, newLat));
 
         var existingLocation = await Repository.GetByIdAsync(userId, ct: ct);
 
@@ -31,22 +35,23 @@ internal class LocationService : DomainService<ILocationRepository>, ILocationSe
             var newLocation = new Location
             {
                 UserId = userId,
-                Latitude = newLat,
-                Longitude = newLong,
+                Coordinates = newCoordinates,
                 Timestamp = now
             };
             await Repository.AddAsync(newLocation, ct: ct);
-            return;
+        }
+        else
+        {
+            if (CanUpdate(existingLocation, newLat, newLong, now))
+            {
+                existingLocation.Update(newCoordinates, now);
+            }
         }
 
-        if (CanUpdate(existingLocation, newLat, newLong, now))
-        {
-            existingLocation.Update(newLat, newLong, now);
-            await Repository.SaveChangesAsync(ct: ct);
-        }
+        await Repository.SaveChangesAsync(ct: ct);
     }
 
-    internal static bool CanUpdate(Location existing, double newLat, double newLong, DateTime now)
+    internal static bool CanUpdate(Location existing, double newLat, double newLong, DateTimeOffset now)
     {
         var dt = now - existing.Timestamp;
 

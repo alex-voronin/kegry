@@ -91,9 +91,4 @@ public class Repository<TContext, TEntity> : IRepository<TEntity>
 
         await Context.SaveChangesAsync(ct);
     }
-
-    public DbContext GetInternalContext()
-    {
-        return Context;
-    }
 }

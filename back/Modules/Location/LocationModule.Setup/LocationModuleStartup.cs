@@ -1,6 +1,8 @@
 using LocationModule.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using Shared.Setup;
 
 namespace LocationModule.Setup;
@@ -23,5 +25,10 @@ public class LocationModuleStartup : AppModuleStartupBase<LocationContext>
     {
         base.Register(appBuilder, host);
         appBuilder.Services.AutoRegisterAssemblies(ModuleAssemblies);
+    }
+
+    protected override void SetupEfCoreExtensions(NpgsqlDbContextOptionsBuilder npgsqlOptions)
+    {
+        npgsqlOptions.UseNetTopologySuite();
     }
 }

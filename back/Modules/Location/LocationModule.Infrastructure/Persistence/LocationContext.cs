@@ -14,11 +14,16 @@ public class LocationContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("location");
+        modelBuilder.HasPostgresExtension("postgis");
         
         modelBuilder.Entity<Location>(builder =>
         {
             builder.ToTable("locations");
             builder.HasKey(l => l.UserId);
+            
+            builder.Property(l => l.Coordinates)
+                .HasColumnType("geometry(Point, 4326)")
+                .IsRequired();
         });
     }
 }

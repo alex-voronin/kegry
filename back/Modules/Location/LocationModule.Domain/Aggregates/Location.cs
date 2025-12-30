@@ -1,34 +1,34 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using NetTopologySuite.Geometries;
+
 namespace LocationModule.Domain.Aggregates;
 
 public class Location
 {
     public required Guid UserId { get; init; }
     
-    private double _latitude;
-    public required double Latitude
+    private Point _coordinates = null!;
+    public required Point Coordinates
     {
-        get => _latitude; 
-        init => _latitude = value;
+        get => _coordinates;
+        init => _coordinates = value;
     }
     
-    private double _longitude;
-    public required double Longitude
-    {
-        get => _longitude; 
-        init => _longitude = value;
-    }
+    [NotMapped]
+    public double Latitude => Coordinates.Y;
+    [NotMapped]
+    public double Longitude => Coordinates.X;
     
-    private DateTime _timestamp;
-    public required DateTime Timestamp 
+    private DateTimeOffset _timestamp;
+    public required DateTimeOffset Timestamp 
     { 
         get => _timestamp; 
         init => _timestamp = value; 
     }
 
-    internal void Update(double newLat, double newLong, DateTime timestamp)
+    internal void Update(Point newCoordinates, DateTimeOffset timestamp)
     {
-        _latitude = newLat;
-        _longitude = newLong;
+        _coordinates = newCoordinates;
         _timestamp = timestamp;
     }
 }

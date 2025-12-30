@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using Shared.Infrastructure.Interfaces;
 using SharedCore.Api;
 
@@ -31,10 +32,18 @@ public abstract class AppModuleStartupBase<TContext> : IFeatureStartup where TCo
         MapModuleEndpoints(app, ModuleAssemblies);
     }
 
+    protected virtual void SetupEfCoreExtensions(NpgsqlDbContextOptionsBuilder npgsqlOptions)
+    {
+    }
+
     private void RegisterEfCoreContexts(IServiceCollection services)
     {
         services.AddDbContext<TContext>(options =>
-            options.UseNpgsql(_dbConnectionString));
+            options.UseNpgsql(_dbConnectionString, npgsqlOptions =>
+            {
+                SetupEfCoreExtensions(npgsqlOptions);
+            })
+        );
     }
 
     private void RunEfCoreMigrations(IServiceScope scope)

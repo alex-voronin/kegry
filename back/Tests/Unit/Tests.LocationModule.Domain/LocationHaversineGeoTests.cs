@@ -1,19 +1,22 @@
 using LocationModule.Domain.Aggregates;
+using NetTopologySuite.Geometries;
 using Shouldly;
+using Location = LocationModule.Domain.Aggregates.Location;
 
 namespace Tests.LocationModule.Domain;
 
 public class LocationHaversineGeoTests
 {
+    private static readonly GeometryFactory GeometryFactory = new(new PrecisionModel(), 4326);
+
     [Fact]
     public void DistanceMetersTo_GivenSamePoints_ThenReturnZero()
     {
         var location = new Location 
         { 
             UserId = Guid.NewGuid(),
-            Latitude = 50.0, 
-            Longitude = 30.0,
-            Timestamp = DateTime.UtcNow
+            Coordinates = GeometryFactory.CreatePoint(new Coordinate(30.0, 50.0)),
+            Timestamp = DateTimeOffset.UtcNow
         };
         
         var distance = location.DistanceMetersTo(location.Latitude, location.Longitude);
@@ -29,9 +32,8 @@ public class LocationHaversineGeoTests
         var berlin = new Location 
         { 
             UserId = Guid.NewGuid(),
-            Latitude = 52.5200, 
-            Longitude = 13.4050,
-            Timestamp = DateTime.UtcNow
+            Coordinates = GeometryFactory.CreatePoint(new Coordinate(13.4050, 52.5200)),
+            Timestamp = DateTimeOffset.UtcNow
         };
         
         var distance = berlin.DistanceMetersTo(48.8566, 2.3522);
@@ -45,9 +47,8 @@ public class LocationHaversineGeoTests
         var start = new Location 
         { 
             UserId = Guid.NewGuid(),
-            Latitude = 50.0, 
-            Longitude = 30.0,
-            Timestamp = DateTime.UtcNow
+            Coordinates = GeometryFactory.CreatePoint(new Coordinate(30.0, 50.0)),
+            Timestamp = DateTimeOffset.UtcNow
         };
         
         var distance = start.DistanceMetersTo(50.001, 30.0);
