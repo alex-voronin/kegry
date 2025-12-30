@@ -2,6 +2,7 @@ using System.Security.Claims;
 using LocationModule.API.Dto;
 using LocationModule.Domain.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using SharedCore.Api;
@@ -14,7 +15,9 @@ public class LocationEndpoints : IEndpoints
 {
     public static void MapEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/v1/location", UpdateLocation).RequireAuthorization();
+        app.MapPost("/api/v1/location", UpdateLocation)
+            .WithTags("Location API")
+            .RequireAuthorization();
     }
 
     private static async Task<ApiResult.EmptyResult> UpdateLocation(

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using SharedCore.Api;
 using SharedCore.Api.Dto;
@@ -11,9 +12,10 @@ public class HobbyEndpoints : IEndpoints
 {
     public static void MapEndpoints(IEndpointRouteBuilder app)
     {
-        var authGroup = app.MapGroup("")
+        var apiGroup = app.MapGroup("")
+            .WithTags("Hobby API")
             .RequireAuthorization();
-        authGroup.MapGet("/api/v1/hobby", GetHobbyList);
+        apiGroup.MapGet("/api/v1/hobby", GetHobbyList);
     }
 
     private static async Task<ApiResult<GetHobbyListResponse>> GetHobbyList(

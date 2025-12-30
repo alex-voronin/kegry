@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using SharedCore.Api;
@@ -15,11 +16,12 @@ public class UserProfileEndpoints : IEndpoints
 {
     public static void MapEndpoints(IEndpointRouteBuilder app)
     {
-        var authGroup = app.MapGroup("")
+        var apiGroup = app.MapGroup("")
+            .WithTags("User Profile API")
             .RequireAuthorization(); 
-        authGroup.MapPost("/api/v1/user-profile", CreateUserProfile);
-        authGroup.MapPut("/api/v1/user-profile", UpdateUserProfile);
-        authGroup.MapGet("/api/v1/user-profile/{id:guid?}", GetUserProfile);
+        apiGroup.MapPost("/api/v1/user-profile", CreateUserProfile);
+        apiGroup.MapPut("/api/v1/user-profile", UpdateUserProfile);
+        apiGroup.MapGet("/api/v1/user-profile/{id:guid?}", GetUserProfile);
     }
 
     private static async Task<ApiResult.EmptyResult> CreateUserProfile(

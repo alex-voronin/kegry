@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using SecurityModule.Application.Services;
@@ -13,13 +14,15 @@ public class AuthEndpoints : IEndpoints
     public static void MapEndpoints(IEndpointRouteBuilder app)
     {
         var anonymousGroup = app.MapGroup("")
+            .WithTags("Auth API")
             .AllowAnonymous();
         anonymousGroup.MapPost("/api/v1/auth/signin", Signin);
         anonymousGroup.MapPost("/api/v1/auth/renew-tokens", RenewTokens);
         anonymousGroup.MapPost("/api/v1/auth/confirm-email", ConfirmEmail);
         
         app.MapPost("/api/v1/auth/logout", Logout)
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithTags("Auth API");
     }
 
     private static async Task<ApiResult<AuthResponse>> Signin(
