@@ -11,9 +11,9 @@ public class UserProfileModuleStartup : AppModuleStartupBase<UserProfileContext>
         base(configuration: configuration,
             moduleAssemblies:
             [
-                typeof(UserProfileModule.Infrastructure.AssemblyMarker).Assembly,
-                typeof(UserProfileModule.Domain.AssemblyMarker).Assembly,
-                typeof(UserProfileModule.API.AssemblyMarker).Assembly
+                typeof(Infrastructure.AssemblyMarker).Assembly,
+                typeof(Domain.AssemblyMarker).Assembly,
+                typeof(API.AssemblyMarker).Assembly
             ]
         )
     {

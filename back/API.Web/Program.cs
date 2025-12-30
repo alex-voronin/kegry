@@ -17,6 +17,7 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 var configuration = builder.Configuration;
 IFeatureStartup[] startups =
 [
+    new HybridCacheStartup(),
     new SecurityModuleStartup(configuration),
     new UserProfileModuleStartup(configuration),
     new LocationModuleStartup(configuration),

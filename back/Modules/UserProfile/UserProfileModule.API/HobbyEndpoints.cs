@@ -13,8 +13,7 @@ public class HobbyEndpoints : IEndpoints
     {
         var authGroup = app.MapGroup("")
             .RequireAuthorization();
-        authGroup.MapGet("/api/v1/hobby", GetHobbyList)
-            .RequireAuthorization();
+        authGroup.MapGet("/api/v1/hobby", GetHobbyList);
     }
 
     private static async Task<ApiResult<GetHobbyListResponse>> GetHobbyList(
