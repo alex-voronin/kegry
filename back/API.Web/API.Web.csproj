@@ -26,6 +26,7 @@
       <ProjectReference Include="..\Modules\Notifications\NotificationsModule.Setup\NotificationsModule.Setup.csproj" />
       <ProjectReference Include="..\Modules\Security\SecurityModule.Setup\SecurityModule.Setup.csproj" />
       <ProjectReference Include="..\Modules\UserProfile\UserProfileModule.Setup\UserProfileModule.Setup.csproj" />
+      <ProjectReference Include="..\Modules\Feed\FeedModule.Setup\FeedModule.Setup.csproj" />
       <ProjectReference Include="..\Modules\Location\LocationModule.Setup\LocationModule.Setup.csproj" />
       <ProjectReference Include="..\Modules\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
       <ProjectReference Include="..\Modules\Shared\Shared.Setup\Shared.Setup.csproj" />

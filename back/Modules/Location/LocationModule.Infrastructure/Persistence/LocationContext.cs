@@ -24,6 +24,9 @@ public class LocationContext : DbContext
             builder.Property(l => l.Coordinates)
                 .HasColumnType("geometry(Point, 4326)")
                 .IsRequired();
+            
+            builder.HasIndex(l => l.Coordinates)
+                .HasMethod("gist");
         });
     }
 }

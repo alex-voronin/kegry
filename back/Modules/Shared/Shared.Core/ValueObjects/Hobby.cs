@@ -40,7 +40,7 @@ public enum Hobby
     Vegetarianism,
     StreetFood,
     Pastry,
-    BBQ,
+    Bbq,
     Seafood,
     SweetTooth,
 
@@ -68,12 +68,14 @@ public enum Hobby
     Design,
     Fashion,
     Tattoos,
+    Movies,
+    Animation,
 
     // Geek stuff
     Gaming,
     BoardGames,
     Chess,
-    Programming,
+    ItAndComputerScience,
     Anime,
     Busyness,
 

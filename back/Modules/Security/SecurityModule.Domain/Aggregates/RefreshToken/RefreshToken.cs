@@ -9,21 +9,21 @@ public class RefreshToken
     public string Token { get; init; }
     public string Jti { get; init; }
 
-    public DateTime Created { get; init; }
-    public DateTime Expires { get; init; }
+    public DateTime CreatedAt { get; init; }
+    public DateTime ExpiresAt { get; init; }
 
     [NotMapped]
-    public bool IsExpired => DateTime.UtcNow >= Expires;
+    public bool IsExpired => DateTime.UtcNow >= ExpiresAt;
 
     [NotMapped]
     public bool IsActive => !IsExpired;
 
-    internal RefreshToken(Guid userId, string token, string jti, DateTime created, DateTime expires)
+    internal RefreshToken(Guid userId, string token, string jti, DateTime createdAt, DateTime expiresAt)
     {
         UserId = userId;
         Token = token;
         Jti = jti;
-        Created = created;
-        Expires = expires;
+        CreatedAt = createdAt;
+        ExpiresAt = expiresAt;
     }
 }

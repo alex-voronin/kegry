@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using Shared.Infrastructure.Interfaces;
+using Shared.Infrastructure.Persistence;
 using SharedCore.Api;
 
 namespace Shared.Setup;
@@ -39,10 +40,7 @@ public abstract class AppModuleStartupBase<TContext> : IFeatureStartup where TCo
     private void RegisterEfCoreContexts(IServiceCollection services)
     {
         services.AddDbContext<TContext>(options =>
-            options.UseNpgsql(_dbConnectionString, npgsqlOptions =>
-            {
-                SetupEfCoreExtensions(npgsqlOptions);
-            })
+            options.UseNpgsql(_dbConnectionString, SetupEfCoreExtensions)
         );
     }
 
@@ -51,7 +49,14 @@ public abstract class AppModuleStartupBase<TContext> : IFeatureStartup where TCo
         using (scope)
         {
             var context = scope.ServiceProvider.GetRequiredService<TContext>();
-            context.Database.Migrate();
+            if (context is ReadonlyDbContext)
+            {
+                context.Database.EnsureCreated();
+            }
+            else
+            {
+                context.Database.Migrate();
+            }
         }
     }
 

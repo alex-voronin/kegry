@@ -2,6 +2,7 @@ using API.Web.Extensions;
 using API.Web.Startup;
 using JasperFx;
 using LocationModule.Setup;
+using FeedModule.Setup;
 using NotificationsModule.Setup;
 using SecurityModule.Setup;
 using UserProfileModule.Setup;
@@ -21,6 +22,7 @@ IFeatureStartup[] startups =
     new SecurityModuleStartup(configuration),
     new UserProfileModuleStartup(configuration),
     new LocationModuleStartup(configuration),
+    new FeedModuleStartup(configuration),
     new NotificationsModuleStartup(),
     new HttpClientsResilienceStartup(),
     new SwaggerStartup(),
@@ -29,7 +31,7 @@ IFeatureStartup[] startups =
     new WolverineBusStartup()
 ];
 builder.RegisterServices(startups);
-builder.AwaitDatabaseStartup( timeoutSeconds: 30);
+builder.AwaitDatabaseStartup(timeoutSeconds: 30);
 
 var app = builder.Build();
 app.InitializeApp(startups);

@@ -12,7 +12,7 @@ using UserProfileModule.Infrastructure.Persistence;
 namespace UserProfileModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(UserProfileContext))]
-    [Migration("20251229225354_AddUserProfiles")]
+    [Migration("20251231100956_AddUserProfiles")]
     partial class AddUserProfiles
     {
         /// <inheritdoc />
@@ -345,6 +345,16 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
+                            Id = new Guid("c544ba55-d348-afeb-d9f7-0e64a7f232b0"),
+                            Name = "movies"
+                        },
+                        new
+                        {
+                            Id = new Guid("ed251c6f-2315-2f96-1bbf-9dee9be5092b"),
+                            Name = "animation"
+                        },
+                        new
+                        {
                             Id = new Guid("ebf27e96-6334-a44b-18db-94dab610ba6f"),
                             Name = "gaming"
                         },
@@ -360,8 +370,8 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("67d0737e-f507-75fb-ec77-cc5f2bd9bb92"),
-                            Name = "programming"
+                            Id = new Guid("edfc980d-9520-f9bc-4be8-3f87521cc4eb"),
+                            Name = "itandcomputerscience"
                         },
                         new
                         {

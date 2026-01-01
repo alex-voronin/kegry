@@ -47,8 +47,8 @@ public class RefreshTokenServiceTests
         result.UserId.ShouldBe(_user.Id);
         result.Jti.ShouldBe(jti.ToString());
         result.Token.ShouldNotBeNullOrWhiteSpace();
-        result.Created.ShouldBe(fixedNow.UtcDateTime);
-        result.Expires.ShouldBe(fixedNow.UtcDateTime.AddDays(RefreshTokenDurationInDays));
+        result.CreatedAt.ShouldBe(fixedNow.UtcDateTime);
+        result.ExpiresAt.ShouldBe(fixedNow.UtcDateTime.AddDays(RefreshTokenDurationInDays));
     }
 
     [Theory, AutoNSubstituteData]
@@ -62,8 +62,8 @@ public class RefreshTokenServiceTests
             userId: _user.Id,
             token: "existing_token",
             jti: jti.ToString(),
-            created: default,
-            expires: default
+            createdAt: default,
+            expiresAt: default
         );
         repository.GetByJtiAsync(jti.ToString()).Returns(existingToken);
 
