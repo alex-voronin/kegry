@@ -17,7 +17,7 @@ public class LocationEndpoints : IEndpoints
     {
         app.MapPost("/api/v1/location", UpdateLocation)
             .WithTags("Location API")
-            .AllowAnonymous();
+            .RequireAuthorization();
     }
 
     private static async Task<ApiResult.EmptyResult> UpdateLocation(
@@ -25,7 +25,7 @@ public class LocationEndpoints : IEndpoints
         ClaimsPrincipal user,
         ILocationService locationService)
     {
-        await locationService.UpdateLocation("123".ToDeterministicGuid(),  request.Latitude, request.Longitude);
+        await locationService.UpdateLocation(user.GetId(),  request.Latitude, request.Longitude);
         return ApiResult.Empty;
     }
 }
