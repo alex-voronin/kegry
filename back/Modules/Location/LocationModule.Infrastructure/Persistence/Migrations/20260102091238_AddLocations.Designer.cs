@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LocationModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(LocationContext))]
-    [Migration("20251230225531_AddLocations")]
+    [Migration("20260102091238_AddLocations")]
     partial class AddLocations
     {
         /// <inheritdoc />
@@ -42,6 +42,10 @@ namespace LocationModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("Coordinates");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Coordinates"), "gist");
 
                     b.ToTable("locations", "location");
                 });

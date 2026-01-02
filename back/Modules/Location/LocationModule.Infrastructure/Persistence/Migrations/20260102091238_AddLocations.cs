@@ -31,6 +31,13 @@ namespace LocationModule.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_locations", x => x.UserId);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_locations_Coordinates",
+                schema: "location",
+                table: "locations",
+                column: "Coordinates")
+                .Annotation("Npgsql:IndexMethod", "gist");
         }
 
         /// <inheritdoc />

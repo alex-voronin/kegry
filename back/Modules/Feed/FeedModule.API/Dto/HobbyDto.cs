@@ -1,4 +1,4 @@
-namespace UserProfileModule.API.Dto;
+namespace FeedModule.API.Dto;
 
 public class HobbyDto
 {

@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Routing;
 using SharedCore.Api;
 using SharedCore.Api.Dto;
 using SharedCore.Extensions;
-using UserProfileModule.API.Dto;
 
 namespace FeedModule.API;
 

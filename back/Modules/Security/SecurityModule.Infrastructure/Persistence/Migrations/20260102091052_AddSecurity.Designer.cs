@@ -12,7 +12,7 @@ using SecurityModule.Infrastructure.Persistence;
 namespace SecurityModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SecurityContext))]
-    [Migration("20251229225401_AddSecurity")]
+    [Migration("20260102091052_AddSecurity")]
     partial class AddSecurity
     {
         /// <inheritdoc />
@@ -163,10 +163,10 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Created")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("Expires")
+                    b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Jti")

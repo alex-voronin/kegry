@@ -9,6 +9,7 @@ public class SwaggerStartup : IFeatureStartup
     {
         appBuilder.Services.AddSwaggerGen(c =>
         {
+            c.CustomSchemaIds(type => type.FullName);
             c.SwaggerDoc("v1", new OpenApiInfo
             {
                 Title = "hoppyfy.me API",

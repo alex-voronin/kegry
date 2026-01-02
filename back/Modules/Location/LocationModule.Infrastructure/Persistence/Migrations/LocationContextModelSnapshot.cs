@@ -40,6 +40,10 @@ namespace LocationModule.Infrastructure.Persistence.Migrations
 
                     b.HasKey("UserId");
 
+                    b.HasIndex("Coordinates");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Coordinates"), "gist");
+
                     b.ToTable("locations", "location");
                 });
 #pragma warning restore 612, 618

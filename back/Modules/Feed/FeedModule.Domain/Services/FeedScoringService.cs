@@ -6,14 +6,14 @@ using SharedCore.Services.LifeTimes;
 
 namespace FeedModule.Domain.Services;
 
-public sealed class FeedScoringService : IFeedScoringService, ISingleton
+internal sealed class FeedScoringService : IFeedScoringService, IScoped
 {
     private readonly IFeedCandidateRepository _feedCandidateRepository;
     private readonly ILocationRepository _locationRepository;
     private readonly IUserProfileRepository _userProfileRepository;
     private readonly IFilterRepository _filterRepository;
 
-    internal FeedScoringService(
+    public FeedScoringService(
         IFeedCandidateRepository feedCandidateRepository,
         ILocationRepository locationRepository,
         IUserProfileRepository userProfileRepository,

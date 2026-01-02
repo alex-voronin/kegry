@@ -86,6 +86,10 @@ public class FeedContext: DbContext
             builder.ToTable("locations", "location");
             builder.HasKey(e => e.UserId);
 
+            builder.Property(l => l.Coordinates)
+                .HasColumnType("geometry(Point, 4326)")
+                .IsRequired();
+
             builder.Metadata.SetIsTableExcludedFromMigrations(true);
         });
     }
