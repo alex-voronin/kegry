@@ -50,6 +50,11 @@ public class Repository<TContext, TEntity> : IRepository<TEntity>
     {
         await Context.Set<TEntity>().AddAsync(entity, ct);
     }
+    
+    public void Update(TEntity entity)
+    {
+         Context.Set<TEntity>().Update(entity);
+    }
 
     public void Delete(TEntity entity)
     {

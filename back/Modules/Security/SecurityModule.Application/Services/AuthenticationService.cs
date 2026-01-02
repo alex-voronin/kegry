@@ -213,7 +213,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
 
     private async Task<(string accessToken, string refreshToken)> GenerateTokensAsync(User user)
     {
-        var jti = Guid.NewGuid();
+        var jti = Guid.CreateVersion7();
         var accessToken = GenerateJwt(
             jti: jti,
             user: user,

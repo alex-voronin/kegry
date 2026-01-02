@@ -17,6 +17,7 @@
       <PackageReference Include="Npgsql" Version="10.0.1" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
       <PackageReference Include="WolverineFx" Version="5.9.2" />
+      <PackageReference Include="WolverineFx.EntityFrameworkCore" Version="5.9.2" />
     </ItemGroup>
 
     <ItemGroup>

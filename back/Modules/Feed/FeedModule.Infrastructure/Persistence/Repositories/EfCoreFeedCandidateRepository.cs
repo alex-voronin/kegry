@@ -60,6 +60,7 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
             )
             .Where(tuple => tuple.User.Id != userProfile.Id)
             .Where(tuple => tuple.FeedProfile == null || !tuple.FeedProfile.IsBlocked)
+            .Where(tuple => tuple.FeedProfile == null || !tuple.FeedProfile.IsInMeeting)
             .Where(tuple => tuple.FeedProfile == null || tuple.FeedProfile.SkippedAt < skipCutoff)
             .Where(tuple => tuple.FeedProfile == null || tuple.FeedProfile.MeetingTimeExpiresAt <= now);
 
@@ -89,7 +90,7 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
             .Select(tuple => new
             {
                 tuple.User,
-                tuple.FeedProfile!.Rating,
+                Rating = tuple.FeedProfile != null ? tuple.FeedProfile.Rating : (decimal?)null,
                 DistanceMeters =
                     PostgisFunctions.DistanceSphere(
                         tuple.Location.Coordinates,

@@ -58,6 +58,7 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                     OtherUserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Rating = table.Column<decimal>(type: "numeric(2,1)", nullable: false),
                     IsBlocked = table.Column<bool>(type: "boolean", nullable: false),
+                    IsInMeeting = table.Column<bool>(type: "boolean", nullable: false),
                     MeetingTimeExpiresAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     SkippedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     LastSeenAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
@@ -66,6 +67,21 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_profiles", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "unq_feed_profile_active_meeting_per_user",
+                schema: "feed",
+                table: "profiles",
+                column: "MyUserId",
+                unique: true,
+                filter: "\"IsInMeeting\" = true");
+
+            migrationBuilder.CreateIndex(
+                name: "unq_feed_profile_pair",
+                schema: "feed",
+                table: "profiles",
+                columns: new[] { "MyUserId", "OtherUserId" },
+                unique: true);
         }
 
         /// <inheritdoc />

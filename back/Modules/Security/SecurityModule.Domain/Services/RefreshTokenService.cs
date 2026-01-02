@@ -54,7 +54,7 @@ internal class RefreshTokenService : DomainService<IRefreshTokenRepository>, IRe
 
     private static string GenerateToken()
     {
-        var guid = Guid.NewGuid();
+        var guid = Guid.CreateVersion7();
         return Convert.ToBase64String(guid.ToByteArray());
     }
 }

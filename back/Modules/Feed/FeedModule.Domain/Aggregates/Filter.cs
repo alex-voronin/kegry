@@ -26,4 +26,16 @@ public class Filter
             HobbyIds = []
         };
     }
+    
+    public int GetMeetingExpirationMinutesFromNow()
+    {
+        var now = DateTimeOffset.UtcNow;
+        return MeetingDeadline switch
+        {
+            MeetingDeadline.Now => 240,
+            MeetingDeadline.Today => (int)(now.Date.AddDays(1) - now.DateTime).TotalMinutes,
+            MeetingDeadline.Tomorrow => (int)(now.Date.AddDays(2) - now.DateTime).TotalMinutes,
+            _ => throw new ArgumentOutOfRangeException(nameof(MeetingDeadline), MeetingDeadline, null)
+        };
+    }
 }

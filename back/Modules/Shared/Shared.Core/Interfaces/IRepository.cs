@@ -19,6 +19,7 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
         CancellationToken ct = default );
     public void Add(TEntity entity);
     public Task AddAsync(TEntity entity, CancellationToken ct = default);
+    public void Update(TEntity entity);
     void Delete(TEntity entity);
     Task SaveAsync(TEntity entity, CancellationToken ct);
 }

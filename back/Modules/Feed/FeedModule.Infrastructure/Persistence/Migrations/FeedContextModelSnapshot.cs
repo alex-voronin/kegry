@@ -45,6 +45,9 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsBlocked")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsInMeeting")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTimeOffset>("LastSeenAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -64,6 +67,15 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MyUserId")
+                        .IsUnique()
+                        .HasDatabaseName("unq_feed_profile_active_meeting_per_user")
+                        .HasFilter("\"IsInMeeting\" = true");
+
+                    b.HasIndex("MyUserId", "OtherUserId")
+                        .IsUnique()
+                        .HasDatabaseName("unq_feed_profile_pair");
 
                     b.ToTable("profiles", "feed");
                 });
