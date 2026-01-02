@@ -1,7 +1,8 @@
+using SecurityModule.Setup;
 using Wolverine;
 using Wolverine.Attributes;
 
-[assembly: WolverineModule]
+[assembly: WolverineModule(typeof(SecurityModuleWolverineSetup))]
 
 namespace SecurityModule.Setup;
 

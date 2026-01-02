@@ -1,7 +1,8 @@
+using NotificationsModule.Setup;
 using Wolverine;
 using Wolverine.Attributes;
 
-[assembly: WolverineModule]
+[assembly: WolverineModule(typeof(NotificationsModuleWolverineSetup))]
 
 namespace NotificationsModule.Setup;
 
