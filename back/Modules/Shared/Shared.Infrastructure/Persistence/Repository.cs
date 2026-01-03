@@ -15,11 +15,11 @@ public class Repository<TContext, TEntity> : IRepository<TEntity>
         Context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
-    public virtual async Task<TEntity?> GetByIdAsync(
-        Guid id,
+    public virtual async Task<TEntity?> GetByIdAsync<TId>(
+        TId id,
         bool asNoTracking = false,
         Expression<Func<TEntity, object>>[]? includes = null,
-        CancellationToken ct = default)
+        CancellationToken ct = default) where TId : IEquatable<TId>
     {
         IQueryable<TEntity> query = Context.Set<TEntity>();
 
@@ -38,7 +38,11 @@ public class Repository<TContext, TEntity> : IRepository<TEntity>
 
         var primaryKeyName = Context.Model.FindEntityType(typeof(TEntity))!
             .FindPrimaryKey()!.Properties.Select(x => x.Name).Single();
-        return await query.FirstOrDefaultAsync(e => EF.Property<Guid>(e, primaryKeyName) == id, ct);
+        return await query.FirstOrDefaultAsync(e =>
+            EqualityComparer<TId>.Default.Equals(
+                EF.Property<TId>(e, primaryKeyName),
+                id
+            ), ct);
     }
 
     public void Add(TEntity entity)
@@ -50,10 +54,10 @@ public class Repository<TContext, TEntity> : IRepository<TEntity>
     {
         await Context.Set<TEntity>().AddAsync(entity, ct);
     }
-    
+
     public void Update(TEntity entity)
     {
-         Context.Set<TEntity>().Update(entity);
+        Context.Set<TEntity>().Update(entity);
     }
 
     public void Delete(TEntity entity)

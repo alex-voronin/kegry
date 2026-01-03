@@ -2,6 +2,8 @@ namespace FeedModule.Contracts.Events;
 
 public class UsersMutuallyInvited
 {
-    public required Guid User1Id { get; set; }
-    public required Guid User2Id { get; set; }
+    public required Guid FirstUserId { get; init; }
+    public required string FirstUserFullName { get; init; }
+    public required Guid SecondUserId { get; init; }
+    public required string SecondUserFullName { get; init; }
 }

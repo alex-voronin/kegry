@@ -7,12 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="FirebaseAdmin" Version="3.4.0" />
       <PackageReference Include="WolverineFx.EntityFrameworkCore" Version="5.9.2" />
       <PackageReference Include="WolverineFx.Postgresql" Version="5.9.2" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\Shared\Shared.Core\Shared.Core.csproj" />
+      <ProjectReference Include="..\..\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
+      <ProjectReference Include="..\NotificationModule.Domain\NotificationModule.Domain.csproj" />
     </ItemGroup>
 
 </Project>

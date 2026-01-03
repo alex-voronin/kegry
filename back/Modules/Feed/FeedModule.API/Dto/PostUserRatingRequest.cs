@@ -1,6 +1,12 @@
+using Microsoft.AspNetCore.Mvc;
+
 namespace FeedModule.API.Dto;
 
 public class PostUserRatingRequest
 {
-    public decimal Rating { get; init; }
+    [FromRoute]
+    public required Guid Id { get; init; }
+
+    [FromBody]
+    public required UserRatingDto Rating { get; init; }
 }

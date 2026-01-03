@@ -12,11 +12,11 @@ public interface IRepository
 
 public interface IRepository<TEntity> : IRepository where TEntity : class
 {
-    public Task<TEntity?> GetByIdAsync(
-        Guid id,
+    public Task<TEntity?> GetByIdAsync<TId>(
+        TId id,
         bool asNoTracking = false,
         Expression<Func<TEntity, object>>[]? includes = null,
-        CancellationToken ct = default );
+        CancellationToken ct = default ) where TId: IEquatable<TId>;
     public void Add(TEntity entity);
     public Task AddAsync(TEntity entity, CancellationToken ct = default);
     public void Update(TEntity entity);

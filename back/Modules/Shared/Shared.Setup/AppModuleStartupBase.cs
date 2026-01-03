@@ -8,6 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using Shared.Infrastructure.Interfaces;
 using Shared.Infrastructure.Persistence;
 using SharedCore.Api;
+using Wolverine.EntityFrameworkCore;
 
 namespace Shared.Setup;
 
@@ -24,7 +25,7 @@ public abstract class AppModuleStartupBase<TContext> : IFeatureStartup where TCo
 
     public virtual void Register(IHostApplicationBuilder appBuilder, IHostBuilder host)
     {
-        RegisterEfCoreContexts(appBuilder.Services);
+        RegisterEfCoreContexts(appBuilder.Services, _dbConnectionString);
     }
 
     public virtual void Initialize(WebApplication app)
@@ -33,14 +34,10 @@ public abstract class AppModuleStartupBase<TContext> : IFeatureStartup where TCo
         MapModuleEndpoints(app, ModuleAssemblies);
     }
 
-    protected virtual void SetupEfCoreExtensions(NpgsqlDbContextOptionsBuilder npgsqlOptions)
-    {
-    }
-
-    private void RegisterEfCoreContexts(IServiceCollection services)
+    protected virtual void RegisterEfCoreContexts(IServiceCollection services, string dbConnectionString)
     {
         services.AddDbContext<TContext>(options =>
-            options.UseNpgsql(_dbConnectionString, SetupEfCoreExtensions)
+            options.UseNpgsql(dbConnectionString)
         );
     }
 

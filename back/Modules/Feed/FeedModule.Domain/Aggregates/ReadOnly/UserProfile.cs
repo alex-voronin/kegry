@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using SharedCore.ValueObjects;
 
 namespace FeedModule.Domain.Aggregates.ReadOnly;
@@ -9,9 +10,12 @@ public class UserProfile
     public string LastName { get; init; } = null!;
     public string CoverImageUrl { get; init; } = null!;
     public DateOnly Birthday { get; init; }
-    public required Gender Gender { get; set; }
+    public Gender Gender { get; init; }
     
     public ICollection<Hobby> Hobbies { get; init; } = new List<Hobby>();
+    
+    [NotMapped]
+    public string FullName => $"{FirstName} {LastName}";
 
     internal UserProfile()
     {

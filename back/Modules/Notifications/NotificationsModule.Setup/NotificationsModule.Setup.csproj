@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
       <ProjectReference Include="..\..\Shared\Shared.Setup\Shared.Setup.csproj" />
+      <ProjectReference Include="..\NotificationsModule.API\NotificationsModule.API.csproj" />
       <ProjectReference Include="..\NotificationsModule.Application\NotificationsModule.Application.csproj" />
       <ProjectReference Include="..\NotificationsModule.Infrastructure\NotificationsModule.Infrastructure.csproj" />
     </ItemGroup>

@@ -1,10 +1,10 @@
 using FeedModule.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using Shared.Setup;
-
+using Wolverine.EntityFrameworkCore;
 
 namespace FeedModule.Setup;
 
@@ -27,8 +27,10 @@ public class FeedModuleStartup : AppModuleStartupBase<FeedContext>
         appBuilder.Services.AutoRegisterAssemblies(ModuleAssemblies);
     }
     
-    protected override void SetupEfCoreExtensions(NpgsqlDbContextOptionsBuilder npgsqlOptions)
+    protected override void RegisterEfCoreContexts(IServiceCollection services, string dbConnectionString)
     {
-        npgsqlOptions.UseNetTopologySuite();
+        services.AddDbContextWithWolverineIntegration<FeedContext>(options =>
+            options.UseNpgsql(dbConnectionString, npgsqlOptions => npgsqlOptions.UseNetTopologySuite())
+        );
     }
 }

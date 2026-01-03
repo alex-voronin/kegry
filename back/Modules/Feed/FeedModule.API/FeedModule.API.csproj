@@ -8,7 +8,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Shared\Shared.Core\Shared.Core.csproj" />
-      <ProjectReference Include="..\FeedModule.Application\FeedModule.Application.csproj" />
       <ProjectReference Include="..\FeedModule.Domain\FeedModule.Domain.csproj" />
     </ItemGroup>
 

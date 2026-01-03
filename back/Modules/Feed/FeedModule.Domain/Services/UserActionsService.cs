@@ -1,23 +1,27 @@
+using FeedModule.Application.Services;
 using FeedModule.Contracts.Events;
 using FeedModule.Domain.Aggregates;
 using FeedModule.Domain.Repositories;
 using SharedCore.Services.LifeTimes;
 
-namespace FeedModule.Application.Services;
+namespace FeedModule.Domain.Services;
 
-public sealed class UserActionsService : IUserActionsService, IScoped
+internal sealed class UserActionsService : IUserActionsService, IScoped
 {
     private readonly IFeedProfileRepository _feedProfileRepository;
     private readonly IFilterRepository _filterRepository;
+    private readonly IUserProfileRepository _userProfileRepository;
     private readonly TimeProvider _timeProvider;
 
-    internal UserActionsService(
+    public UserActionsService(
         IFeedProfileRepository feedProfileRepository,
         IFilterRepository filterRepository,
+        IUserProfileRepository userProfileRepository,
         TimeProvider timeProvider)
     {
         _feedProfileRepository = feedProfileRepository;
         _filterRepository = filterRepository;
+        _userProfileRepository = userProfileRepository;
         _timeProvider = timeProvider;
     }
 
@@ -72,11 +76,15 @@ public sealed class UserActionsService : IUserActionsService, IScoped
                 // is fixed by unq_feed_profile_active_meeting_per_user index
             }
 
+            var me = await _userProfileRepository.GetByIdAsync(myUserId, asNoTracking: true, ct:ct);
+            var other = await _userProfileRepository.GetByIdAsync(otherUserId, asNoTracking: true, ct:ct);
             await _feedProfileRepository.PublishEventAsync(
                 new UsersMutuallyInvited
                 {
-                    User1Id = myUserId,
-                    User2Id = otherUserId,
+                    FirstUserId = myUserId,
+                    FirstUserFullName = me!.FullName,
+                    SecondUserId = otherUserId,
+                    SecondUserFullName = other!.FullName
                 }, ct: ct);
         }
 

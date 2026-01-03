@@ -7,11 +7,10 @@ public class FeedProfile
     public required Guid Id { get; init; }
     public required Guid MyUserId { get; init; }
     public required Guid OtherUserId { get; init; }
-    private decimal _rating;
 
     public required decimal Rating
     {
-        get => _rating;
+        get;
         set
         {
             Validation.ThrowIfInvalid(
@@ -19,7 +18,7 @@ public class FeedProfile
                 () => value >= 1 && value <= 5 && value % 0.5m != 0,
                 "Rating value must be between 1 and 5 with 0.5 step"
             );
-            _rating = value;
+            field = value;
         }
     }
 

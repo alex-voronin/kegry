@@ -57,19 +57,18 @@ public class FeedEndpoints : IEndpoints
     }
 
     private static async Task<ApiResult.EmptyResult> PostUserRating(
+        [AsParameters] PostUserRatingRequest request,
         ClaimsPrincipal user,
-        [FromRoute] Guid id,
-        [FromBody] PostUserRatingRequest request,
         IUserActionsService userActionsService,
         CancellationToken ct)
     {
-        await userActionsService.RateUserAsync(user.GetId(), id, request.Rating, ct);
+        await userActionsService.RateUserAsync(user.GetId(), request.Id, request.Rating.Value, ct);
         return ApiResult.Empty;
     }
 
     private static async Task<ApiResult.EmptyResult> BlockUser(
-        ClaimsPrincipal user,
         [FromRoute] Guid id,
+        ClaimsPrincipal user,
         IUserActionsService userActionsService,
         CancellationToken ct)
     {
@@ -78,8 +77,8 @@ public class FeedEndpoints : IEndpoints
     }
 
     private static async Task<ApiResult.EmptyResult> SkipUser(
-        ClaimsPrincipal user,
         [FromRoute] Guid id,
+        ClaimsPrincipal user,
         IUserActionsService userActionsService,
         CancellationToken ct)
     {
@@ -88,8 +87,8 @@ public class FeedEndpoints : IEndpoints
     }
 
     private static async Task<ApiResult.EmptyResult> InviteUser(
-        ClaimsPrincipal user,
         [FromRoute] Guid id,
+        ClaimsPrincipal user,
         IUserActionsService userActionsService,
         CancellationToken ct)
     {
