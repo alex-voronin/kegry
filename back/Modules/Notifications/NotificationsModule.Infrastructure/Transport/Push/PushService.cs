@@ -13,9 +13,16 @@ public interface IPushService
 
 internal class FcmPushService : IPushService, ISingleton
 {
+    private readonly IFcmPushBuilder _pushBuilder;
+
+    public FcmPushService(IFcmPushBuilder pushBuilder)
+    {
+        _pushBuilder = pushBuilder;
+    }
+
     public async Task<SendResult> SendInvitationAcceptedPush(string[] fcmTokens, string userName)
     {
-        var pushMessage = FcmPushBuilder.BuildInvitationAcceptedPush(fcmTokens, userName);
+        var pushMessage = _pushBuilder.BuildInvitationAcceptedPush(fcmTokens, userName);
         return await SendPushMessage(pushMessage);
     }
 

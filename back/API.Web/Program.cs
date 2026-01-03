@@ -19,6 +19,7 @@ var configuration = builder.Configuration;
 IFeatureStartup[] startups =
 [
     new HybridCacheStartup(),
+    new LocalizationStartup(),
     new SecurityModuleStartup(configuration),
     new UserProfileModuleStartup(configuration),
     new LocationModuleStartup(configuration),

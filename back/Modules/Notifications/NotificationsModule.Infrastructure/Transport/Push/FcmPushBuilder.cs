@@ -1,17 +1,35 @@
 using FirebaseAdmin.Messaging;
+using Microsoft.Extensions.Localization;
+using NotificationsModule.Infrastructure.Resources;
+using SharedCore.Services.LifeTimes;
 
 namespace NotificationsModule.Infrastructure.Transport.Push;
 
 internal record PushMessage(Message? UnicastMessage, MulticastMessage? MulticastMessage);
 
-internal static class FcmPushBuilder
+internal interface IFcmPushBuilder
 {
-    internal static PushMessage BuildInvitationAcceptedPush(string[] fcmTokens, string userName)
+    PushMessage BuildInvitationAcceptedPush(string[] fcmTokens, string userName);
+}
+
+internal class FcmPushBuilder : IFcmPushBuilder, ISingleton
+{
+    private readonly IStringLocalizer<Pushes> _localizer;
+
+    public FcmPushBuilder(IStringLocalizer<Pushes> localizer)
     {
+        _localizer = localizer;
+    }
+
+    public PushMessage BuildInvitationAcceptedPush(string[] fcmTokens, string userName)
+    {
+        var title = _localizer["InvitationAcceptedTitle"];
+        var body = _localizer["InvitationAcceptedBody", userName];
+
         var notification = new Notification()
         {
-            Title = "Invitation accepted!",
-            Body = $"{userName} is ready to chat"
+            Title = title,
+            Body = body
         };
         var data = new Dictionary<string, string>()
         {

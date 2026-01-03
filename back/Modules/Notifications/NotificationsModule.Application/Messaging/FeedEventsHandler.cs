@@ -1,6 +1,7 @@
 using FeedModule.Contracts.Events;
 using NotificationModule.Domain.Aggregates;
 using NotificationsModule.Infrastructure.Transport.Push;
+using Serilog;
 using Wolverine.Attributes;
 
 namespace NotificationsModule.Application.Messaging;
@@ -36,10 +37,26 @@ public class FeedEventsHandler
         IPushService pushService,
         CancellationToken ct = default)
     {
+        var fcmTokens = await LoadFcmTokensForUser(userId, deviceRepository, ct);
+        if (fcmTokens.Length > 0)
+        {
+            var sendResult = await pushService.SendInvitationAcceptedPush(fcmTokens, otherUserFullName);
+            await DeleteExpiredTokens(sendResult.ExpiredTokens, deviceRepository, ct);
+        }
+    }
+
+    private static async Task<string[]> LoadFcmTokensForUser(
+        Guid userId, 
+        IDeviceRepository deviceRepository, 
+        CancellationToken ct = default)
+    {
         var devices = await deviceRepository.GetByUserIdAsync(userId, ct);
         var fcmTokens = devices.Select(d => d.FcmToken).Distinct().ToArray();
-        var sendResult = await pushService.SendInvitationAcceptedPush(fcmTokens, otherUserFullName);
-        await DeleteExpiredTokens(sendResult.ExpiredTokens, deviceRepository, ct);
+        if (fcmTokens.Length == 0)
+        {
+            Log.Error("User {0} doesn't have any FCM token", userId);
+        }
+        return fcmTokens;
     }
 
     private static async Task DeleteExpiredTokens(
