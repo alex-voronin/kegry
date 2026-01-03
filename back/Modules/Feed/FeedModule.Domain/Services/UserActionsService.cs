@@ -57,34 +57,25 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         var filter = await _filterRepository.GetByIdAsync(myUserId, asNoTracking: true, ct: ct);
         filter ??= Filter.CreateDefault(myUserId);
 
+        var now = _timeProvider.GetUtcNow();
         var myProfile = await GetOrCreateProfile(myUserId, otherUserId, ct);
         myProfile.MeetingTimeExpiresAt =
             _timeProvider.GetUtcNow().AddMinutes(filter.GetMeetingExpirationMinutesFromNow());
-        myProfile.LastSeenAt = _timeProvider.GetUtcNow();
+        myProfile.LastSeenAt = now;
         _feedProfileRepository.Update(myProfile);
 
         var otherProfile = await _feedProfileRepository.GetAsync(otherUserId, myUserId, false, ct);
-        if (otherProfile != null && otherProfile.MeetingTimeExpiresAt < myProfile.LastSeenAt)
+        if (otherProfile != null && !otherProfile.IsMeetingExpired(now))
         {
-            var isInMeeting = await _feedProfileRepository.IsInMeetingAsync(otherUserId, ct);
-            if (!isInMeeting)
-            {
-                otherProfile.MeetingTimeExpiresAt = myProfile.MeetingTimeExpiresAt;
-                otherProfile.IsInMeeting = true;
-                myProfile.IsInMeeting = true;
-                // the potential race condition when multiple users invite the same user at the same time
-                // is fixed by unq_feed_profile_active_meeting_per_user index
-            }
-
-            var me = await _userProfileRepository.GetByIdAsync(myUserId, asNoTracking: true, ct:ct);
-            var other = await _userProfileRepository.GetByIdAsync(otherUserId, asNoTracking: true, ct:ct);
+            await TryArrangeMeeting(otherProfile, myProfile, ct);
+        }
+        else
+        {
             await _feedProfileRepository.PublishEventAsync(
-                new UsersMutuallyInvited
+                new UserInvitedEvent()
                 {
-                    FirstUserId = myUserId,
-                    FirstUserFullName = me!.FullName,
-                    SecondUserId = otherUserId,
-                    SecondUserFullName = other!.FullName
+                    UserId = otherUserId,
+                    ByUserId = myUserId,
                 }, ct: ct);
         }
 
@@ -112,5 +103,32 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         }
 
         return profile;
+    }
+
+    private async Task<bool> TryArrangeMeeting(FeedProfile myProfile, FeedProfile otherProfile, CancellationToken ct)
+    {
+        var isInMeeting = await _feedProfileRepository.IsInMeetingAsync(myProfile.OtherUserId, ct);
+        if (isInMeeting)
+        {
+            return false;
+        }
+
+        otherProfile.MeetingTimeExpiresAt = myProfile.MeetingTimeExpiresAt;
+        otherProfile.IsInMeeting = true;
+        myProfile.IsInMeeting = true;
+        // the potential race condition when multiple users invite the same user at the same time
+        // is fixed by unq_feed_profile_active_meeting_per_user index
+
+        var me = await _userProfileRepository.GetByIdAsync(myProfile.MyUserId, asNoTracking: true, ct: ct);
+        var other = await _userProfileRepository.GetByIdAsync(myProfile.OtherUserId, asNoTracking: true, ct: ct);
+        await _feedProfileRepository.PublishEventAsync(
+            new MeetingArrangedEvent
+            {
+                FirstUserId = myProfile.MyUserId,
+                FirstUserFullName = me!.FullName,
+                SecondUserId = myProfile.OtherUserId,
+                SecondUserFullName = other!.FullName
+            }, ct: ct);
+        return true;
     }
 }

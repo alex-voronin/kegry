@@ -9,7 +9,8 @@ internal record PushMessage(Message? UnicastMessage, MulticastMessage? Multicast
 
 internal interface IFcmPushBuilder
 {
-    PushMessage BuildInvitationAcceptedPush(string[] fcmTokens, string userName);
+    PushMessage BuildMeetingArrangedPush(string[] fcmTokens, string otherUserName);
+    PushMessage BuildUserInvitedPush(string[] fcmTokens);
 }
 
 internal class FcmPushBuilder : IFcmPushBuilder, ISingleton
@@ -21,10 +22,10 @@ internal class FcmPushBuilder : IFcmPushBuilder, ISingleton
         _localizer = localizer;
     }
 
-    public PushMessage BuildInvitationAcceptedPush(string[] fcmTokens, string userName)
+    public PushMessage BuildMeetingArrangedPush(string[] fcmTokens, string otherUserName)
     {
-        var title = _localizer["InvitationAcceptedTitle"];
-        var body = _localizer["InvitationAcceptedBody", userName];
+        var title = _localizer["MeetingArrangedTitle"];
+        var body = _localizer["MeetingArrangedBody", otherUserName];
 
         var notification = new Notification()
         {
@@ -34,6 +35,24 @@ internal class FcmPushBuilder : IFcmPushBuilder, ISingleton
         var data = new Dictionary<string, string>()
         {
             { "action", "open_chat" }
+        };
+
+        return BuildPushMessages(fcmTokens, notification, data);
+    }
+
+    public PushMessage BuildUserInvitedPush(string[] fcmTokens)
+    {
+        var title = _localizer["UserInvitedTitle"];
+        var body = _localizer["UserInvitedBody"];
+
+        var notification = new Notification()
+        {
+            Title = title,
+            Body = body
+        };
+        var data = new Dictionary<string, string>()
+        {
+            { "user_action", "open_notifications" }
         };
 
         return BuildPushMessages(fcmTokens, notification, data);

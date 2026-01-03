@@ -11,10 +11,16 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="InvitationAcceptedBody" xml:space="preserve">
+    <data name="MeetingArrangedBody" xml:space="preserve">
+        <value>{0} is ready to chat</value>
+    </data>
+    <data name="MeetingArrangedTitle" xml:space="preserve">
         <value>Invitation accepted!</value>
     </data>
-    <data name="InvitationAcceptedTitle" xml:space="preserve">
-        <value>{0} is ready to chat</value>
+    <data name="UserInvitedTitle" xml:space="preserve">
+        <value>New invitation!</value>
+    </data>
+    <data name="UserInvitedBody" xml:space="preserve">
+        <value>Open Notifications to view details</value>
     </data>
 </root>

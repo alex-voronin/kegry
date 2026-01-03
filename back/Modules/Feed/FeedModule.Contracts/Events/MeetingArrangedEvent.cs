@@ -1,6 +1,6 @@
 namespace FeedModule.Contracts.Events;
 
-public class UsersMutuallyInvited
+public class MeetingArrangedEvent
 {
     public required Guid FirstUserId { get; init; }
     public required string FirstUserFullName { get; init; }

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using SharedCore.Validation;
 
 namespace FeedModule.Domain.Aggregates;
@@ -27,4 +28,6 @@ public class FeedProfile
     public required DateTimeOffset MeetingTimeExpiresAt { get; set; }
     public required DateTimeOffset SkippedAt { get; set; }
     public required DateTimeOffset LastSeenAt { get; set; }
+    
+    public bool IsMeetingExpired(DateTimeOffset dateTime) => MeetingTimeExpiresAt < dateTime;
 }

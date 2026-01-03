@@ -10,27 +10,41 @@ namespace NotificationsModule.Application.Messaging;
 public class FeedEventsHandler
 {
     public static async Task HandleAsync(
-        UsersMutuallyInvited @event,
+        MeetingArrangedEvent @event,
         IDeviceRepository deviceRepository,
         IPushService pushService,
         CancellationToken ct = default)
     {
-        await NotifyMutuallyInvitedUsers(
+        await NotifyMeetingArranged(
             userId: @event.FirstUserId,
             otherUserFullName: @event.SecondUserFullName,
             deviceRepository: deviceRepository,
             pushService: pushService,
             ct: ct);
 
-        await NotifyMutuallyInvitedUsers(
+        await NotifyMeetingArranged(
             userId: @event.SecondUserId,
             otherUserFullName: @event.FirstUserFullName,
             deviceRepository: deviceRepository,
             pushService: pushService,
             ct: ct);
     }
+    
+    public static async Task HandleAsync(
+        UserInvitedEvent @event,
+        IDeviceRepository deviceRepository,
+        IPushService pushService,
+        CancellationToken ct = default)
+    {
+        var fcmTokens = await LoadFcmTokensForUser(@event.UserId, deviceRepository, ct);
+        if (fcmTokens.Length > 0)
+        {
+            var sendResult = await pushService.SendUserInvitedPush(fcmTokens);
+            await DeleteExpiredTokens(sendResult.ExpiredTokens, deviceRepository, ct);
+        }
+    }
 
-    private static async Task NotifyMutuallyInvitedUsers(
+    private static async Task NotifyMeetingArranged(
         Guid userId,
         string otherUserFullName,
         IDeviceRepository deviceRepository,
@@ -40,7 +54,7 @@ public class FeedEventsHandler
         var fcmTokens = await LoadFcmTokensForUser(userId, deviceRepository, ct);
         if (fcmTokens.Length > 0)
         {
-            var sendResult = await pushService.SendInvitationAcceptedPush(fcmTokens, otherUserFullName);
+            var sendResult = await pushService.SendMeetingArrangedPush(fcmTokens, otherUserFullName);
             await DeleteExpiredTokens(sendResult.ExpiredTokens, deviceRepository, ct);
         }
     }

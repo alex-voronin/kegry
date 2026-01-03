@@ -8,7 +8,8 @@ public record SendResult(bool Success, string[] ExpiredTokens);
 
 public interface IPushService
 {
-    public Task<SendResult> SendInvitationAcceptedPush(string[] fcmTokens, string userName);
+    public Task<SendResult> SendMeetingArrangedPush(string[] fcmTokens, string otherUserName);
+    public Task<SendResult> SendUserInvitedPush(string[] fcmTokens);
 }
 
 internal class FcmPushService : IPushService, ISingleton
@@ -20,9 +21,15 @@ internal class FcmPushService : IPushService, ISingleton
         _pushBuilder = pushBuilder;
     }
 
-    public async Task<SendResult> SendInvitationAcceptedPush(string[] fcmTokens, string userName)
+    public async Task<SendResult> SendMeetingArrangedPush(string[] fcmTokens, string otherUserName)
     {
-        var pushMessage = _pushBuilder.BuildInvitationAcceptedPush(fcmTokens, userName);
+        var pushMessage = _pushBuilder.BuildMeetingArrangedPush(fcmTokens, otherUserName);
+        return await SendPushMessage(pushMessage);
+    }
+
+    public async Task<SendResult> SendUserInvitedPush(string[] fcmTokens)
+    {
+        var pushMessage = _pushBuilder.BuildUserInvitedPush(fcmTokens);
         return await SendPushMessage(pushMessage);
     }
 
