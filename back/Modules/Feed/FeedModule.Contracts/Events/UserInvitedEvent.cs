@@ -1,7 +1,8 @@
+using SharedCore.Events;
+
 namespace FeedModule.Contracts.Events;
 
-public class UserInvitedEvent
+public class UserInvitedEvent : UserEvent
 {
-    public required Guid UserId { get; init; }
     public required Guid ByUserId { get; init; }
 }

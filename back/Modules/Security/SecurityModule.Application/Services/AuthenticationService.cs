@@ -57,7 +57,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
             await _bus.PublishAsync(
                 new AccountCreatedEvent
                 {
-                    Id = signupResult.User.Id,
+                    UserId = signupResult.User.Id,
                     Email = email,
                     ConfirmationCode = signupResult.ConfirmationCode
                 }

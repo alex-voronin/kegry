@@ -5,15 +5,15 @@ using SharedCore.Services.LifeTimes;
 
 namespace NotificationsModule.Infrastructure.Transport.Push;
 
-internal record PushMessage(Message? UnicastMessage, MulticastMessage? MulticastMessage);
+public record PushMessage(Message? UnicastMessage, MulticastMessage? MulticastMessage);
 
-internal interface IFcmPushBuilder
+public interface IPushBuilder
 {
     PushMessage BuildMeetingArrangedPush(string[] fcmTokens, string otherUserName);
     PushMessage BuildUserInvitedPush(string[] fcmTokens);
 }
 
-internal class FcmPushBuilder : IFcmPushBuilder, ISingleton
+internal class FcmPushBuilder : IPushBuilder, ISingleton
 {
     private readonly IStringLocalizer<Pushes> _localizer;
 

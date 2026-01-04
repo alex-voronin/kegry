@@ -6,38 +6,25 @@ namespace NotificationsModule.Infrastructure.Transport.Push;
 
 public record SendResult(bool Success, string[] ExpiredTokens);
 
-public interface IPushService
+public interface IPushSender
 {
-    public Task<SendResult> SendMeetingArrangedPush(string[] fcmTokens, string otherUserName);
-    public Task<SendResult> SendUserInvitedPush(string[] fcmTokens);
+    public Task<SendResult> SendPushMessage(PushMessage pushMessage);
 }
 
-internal class FcmPushService : IPushService, ISingleton
+internal class FcmPushSender : IPushSender, ISingleton
 {
-    private readonly IFcmPushBuilder _pushBuilder;
+    private readonly IPushBuilder _pushBuilder;
 
-    public FcmPushService(IFcmPushBuilder pushBuilder)
+    public FcmPushSender(IPushBuilder pushBuilder)
     {
         _pushBuilder = pushBuilder;
     }
 
-    public async Task<SendResult> SendMeetingArrangedPush(string[] fcmTokens, string otherUserName)
-    {
-        var pushMessage = _pushBuilder.BuildMeetingArrangedPush(fcmTokens, otherUserName);
-        return await SendPushMessage(pushMessage);
-    }
-
-    public async Task<SendResult> SendUserInvitedPush(string[] fcmTokens)
-    {
-        var pushMessage = _pushBuilder.BuildUserInvitedPush(fcmTokens);
-        return await SendPushMessage(pushMessage);
-    }
-
-    private async Task<SendResult> SendPushMessage(PushMessage pushMessage)
+    public async Task<SendResult> SendPushMessage(PushMessage pushMessage)
     {
         if (pushMessage.UnicastMessage != null)
         {
-            return await SendUincastMessage(pushMessage.UnicastMessage);
+            return await SendUnicastMessage(pushMessage.UnicastMessage);
         }
 
         if (pushMessage.MulticastMessage != null)
@@ -48,7 +35,7 @@ internal class FcmPushService : IPushService, ISingleton
         return new SendResult(false, []);
     }
 
-    private async Task<SendResult> SendUincastMessage(Message message)
+    private async Task<SendResult> SendUnicastMessage(Message message)
     {
         try
         {

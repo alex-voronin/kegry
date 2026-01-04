@@ -3,10 +3,10 @@ using NotificationsModule.Infrastructure.Transport.Email.Emails;
 using SecurityModule.Contracts.Events;
 using Wolverine.Attributes;
 
-namespace NotificationsModule.Application.Messaging;
+namespace NotificationsModule.Application.Messaging.Account;
 
 [WolverineHandler]
-public static class AccountEventsHandler
+public static class AccountEventHandlers
 {
     public static async Task HandleAsync(AccountCreatedEvent @event, IEmailService emailService)
     {
