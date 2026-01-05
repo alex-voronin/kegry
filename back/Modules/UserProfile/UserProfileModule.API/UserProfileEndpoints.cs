@@ -7,6 +7,7 @@ using SharedCore.Api;
 using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 using UserProfileModule.API.Dto;
+using UserProfileModule.Contracts.Events;
 using UserProfileModule.Domain.Aggregates;
 using UserProfileModule.Domain.Exceptions;
 
@@ -18,7 +19,7 @@ public class UserProfileEndpoints : IEndpoints
     {
         var apiGroup = app.MapGroup("")
             .WithTags("User Profile API")
-            .RequireAuthorization(); 
+            .RequireAuthorization();
         apiGroup.MapPost("/api/v1/user-profile", CreateUserProfile);
         apiGroup.MapPut("/api/v1/user-profile", UpdateUserProfile);
         apiGroup.MapGet("/api/v1/user-profile/{id:guid?}", GetUserProfile);
@@ -48,7 +49,10 @@ public class UserProfileEndpoints : IEndpoints
             Gender = request.Gender,
             Hobbies = hobbyStubs
         };
-        await profileRepository.SaveAsync(profile, ct);
+
+        var @event = BuildUserChangedEvent(user, profile);
+        await profileRepository.PublishEventAsync(@event, ct);
+        await profileRepository.SaveChangesAndFlushMessagesAsync(ct);
 
         return ApiResult.Empty;
     }
@@ -79,7 +83,10 @@ public class UserProfileEndpoints : IEndpoints
         userProfile.Gender = request.Gender;
         userProfile.Hobbies = hobbyStubs;
 
-        await profileRepository.SaveAsync(userProfile, ct);
+        var @event = BuildUserChangedEvent(user, userProfile);
+        await profileRepository.PublishEventAsync(@event, ct);
+        await profileRepository.SaveChangesAndFlushMessagesAsync(ct);
+
         return ApiResult.Empty;
     }
 
@@ -123,5 +130,17 @@ public class UserProfileEndpoints : IEndpoints
                 UserProfile = dto
             }
         );
+    }
+
+    private static UserProfileChangedEvent BuildUserChangedEvent(ClaimsPrincipal user, UserProfile profile)
+    {
+        return new UserProfileChangedEvent
+        {
+            UserId = user.GetId(),
+            Email = user.GetEmail(),
+            FirstName = profile.FirstName,
+            LastName = profile.LastName,
+            AvatarImageUrl = profile.AvatarImageUrl
+        };
     }
 }

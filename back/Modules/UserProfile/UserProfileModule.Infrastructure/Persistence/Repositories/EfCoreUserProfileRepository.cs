@@ -1,11 +1,12 @@
 using Shared.Infrastructure.Persistence;
 using UserProfileModule.Domain.Aggregates;
+using Wolverine.EntityFrameworkCore;
 
 namespace UserProfileModule.Infrastructure.Persistence.Repositories;
 
-internal class EfCoreUserProfileRepository : Repository<UserProfileContext, UserProfile>, IUserProfileRepository
+internal class EfCoreUserProfileRepository : RepositoryOutbox<UserProfileContext, UserProfile>, IUserProfileRepository
 {
-    public EfCoreUserProfileRepository(UserProfileContext context) : base(context)
+    public EfCoreUserProfileRepository(IDbContextOutbox<UserProfileContext> contextOutbox) : base(contextOutbox)
     {
     }
 }

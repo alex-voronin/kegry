@@ -90,6 +90,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationModule.Domain",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationsModule.API", "Modules\Notifications\NotificationsModule.API\NotificationsModule.API.csproj", "{5CA11DD8-F9FA-417D-9A33-70D39AE4DBD3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserProfileModule.Contracts", "Modules\UserProfile\UserProfileModule.Contracts\UserProfileModule.Contracts.csproj", "{DFD280E0-C40D-4D45-853B-ECD06894C9B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -232,6 +234,10 @@ Global
 		{5CA11DD8-F9FA-417D-9A33-70D39AE4DBD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CA11DD8-F9FA-417D-9A33-70D39AE4DBD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5CA11DD8-F9FA-417D-9A33-70D39AE4DBD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFD280E0-C40D-4D45-853B-ECD06894C9B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFD280E0-C40D-4D45-853B-ECD06894C9B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFD280E0-C40D-4D45-853B-ECD06894C9B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFD280E0-C40D-4D45-853B-ECD06894C9B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1CBC6F16-BB39-4743-B8CB-50987C4B7F47} = {8B4727C6-1303-46DA-9FCC-E230A877807C}
@@ -275,5 +281,6 @@ Global
 		{966A37E1-00EE-43E0-AD7B-5573B81A8CE3} = {2ED903D6-2067-49C1-BAFD-60F471404905}
 		{3E431437-79FA-4BD8-8306-4365ADD99F7C} = {41C00823-C731-4AB9-8905-7B73F8319DAC}
 		{5CA11DD8-F9FA-417D-9A33-70D39AE4DBD3} = {41C00823-C731-4AB9-8905-7B73F8319DAC}
+		{DFD280E0-C40D-4D45-853B-ECD06894C9B7} = {B24AC6CC-4596-4759-B0C8-348A3547DE1C}
 	EndGlobalSection
 EndGlobal

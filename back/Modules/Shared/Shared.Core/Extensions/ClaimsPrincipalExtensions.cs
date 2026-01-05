@@ -6,14 +6,28 @@ namespace SharedCore.Extensions;
 
 public static class ClaimsPrincipalExtensions
 {
-    public static Guid GetId(this ClaimsPrincipal user)
+    extension(ClaimsPrincipal user)
     {
-        var userIdStr = user.FindFirstValue(JwtRegisteredClaimNames.Sub);
-        if (string.IsNullOrEmpty(userIdStr) || !Guid.TryParse(userIdStr, out var userId))
+        public Guid GetId()
         {
-            throw CommonExceptions.InternalError("User not found");
+            var userIdStr = user.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            if (string.IsNullOrEmpty(userIdStr) || !Guid.TryParse(userIdStr, out var userId))
+            {
+                throw CommonExceptions.InternalError("User id is not found");
+            }
+
+            return userId;
         }
 
-        return userId;
+        public string GetEmail()
+        {
+            var userEmail = user.FindFirstValue(JwtRegisteredClaimNames.Email);
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                throw CommonExceptions.InternalError("Email is not found");
+            }
+
+            return userEmail;
+        }
     }
 }

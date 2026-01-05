@@ -242,7 +242,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Name, user.UserName!),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email!),
             new Claim(JwtRegisteredClaimNames.Jti, jti.ToString()),
         };
 
