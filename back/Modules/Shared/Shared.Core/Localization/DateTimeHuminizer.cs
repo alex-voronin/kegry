@@ -25,7 +25,7 @@ public class DateTimeHumanizer : IDateTimeHumanizer
     {
         var now = DateTimeOffset.UtcNow;
         var span = dateTime - now;
-        var duration = span.Duration().Humanize(culture: _culture);
+        var duration = span.Duration().Humanize(culture: _culture, maxUnit: TimeUnit.Year);
         
         if (span.TotalSeconds >= 0)
         {

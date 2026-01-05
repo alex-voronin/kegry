@@ -22,6 +22,6 @@
         <value>within {0}</value>
     </data>
     <data name="PastDate" xml:space="preserve">
-        <value>{0} past</value>
+        <value>{0} ago</value>
     </data>
 </root>
