@@ -24,6 +24,10 @@
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>qqq.Designer.cs</LastGenOutput>
       </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Notifications.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Notifications.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -36,6 +40,11 @@
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
         <DependentUpon>Pushes1.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Resources\Notifications.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Notifications.resx</DependentUpon>
       </Compile>
     </ItemGroup>
 

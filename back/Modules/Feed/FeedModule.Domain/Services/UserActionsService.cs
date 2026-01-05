@@ -59,7 +59,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
 
         var now = _timeProvider.GetUtcNow();
         var myProfile = await GetOrCreateProfile(myUserId, otherUserId, ct);
-        myProfile.MeetingTimeExpiresAt =
+        myProfile.MeetingExpiresAt =
             _timeProvider.GetUtcNow().AddMinutes(filter.GetMeetingExpirationMinutesFromNow());
         myProfile.LastSeenAt = now;
         _feedProfileRepository.Update(myProfile);
@@ -76,6 +76,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
                 {
                     UserId = otherUserId,
                     ByUserId = myUserId,
+                    MeetingExpiresAt = myProfile.MeetingExpiresAt
                 }, ct: ct);
         }
 
@@ -95,7 +96,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
                 Rating = 0,
                 IsBlocked = false,
                 IsInMeeting = false,
-                MeetingTimeExpiresAt = DateTimeOffset.MinValue,
+                MeetingExpiresAt = DateTimeOffset.MinValue,
                 SkippedAt = DateTimeOffset.MinValue,
                 LastSeenAt = _timeProvider.GetUtcNow()
             };
@@ -113,7 +114,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
             return false;
         }
 
-        otherProfile.MeetingTimeExpiresAt = myProfile.MeetingTimeExpiresAt;
+        otherProfile.MeetingExpiresAt = myProfile.MeetingExpiresAt;
         otherProfile.IsInMeeting = true;
         myProfile.IsInMeeting = true;
         // the potential race condition when multiple users invite the same user at the same time

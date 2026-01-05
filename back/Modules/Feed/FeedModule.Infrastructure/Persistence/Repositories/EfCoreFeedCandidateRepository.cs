@@ -62,7 +62,7 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
             .Where(tuple => tuple.FeedProfile == null || !tuple.FeedProfile.IsBlocked)
             .Where(tuple => tuple.FeedProfile == null || !tuple.FeedProfile.IsInMeeting)
             .Where(tuple => tuple.FeedProfile == null || tuple.FeedProfile.SkippedAt < skipCutoff)
-            .Where(tuple => tuple.FeedProfile == null || tuple.FeedProfile.MeetingTimeExpiresAt <= now);
+            .Where(tuple => tuple.FeedProfile == null || tuple.FeedProfile.MeetingExpiresAt <= now);
 
         if (filter.Gender.HasValue)
         {

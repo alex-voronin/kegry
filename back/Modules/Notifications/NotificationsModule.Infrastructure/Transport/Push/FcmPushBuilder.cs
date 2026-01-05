@@ -24,8 +24,8 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
 
     public PushMessage BuildMeetingArrangedPush(string[] fcmTokens, string otherUserName)
     {
-        var title = _localizer["MeetingArrangedTitle"];
-        var body = _localizer["MeetingArrangedBody", otherUserName];
+        var title = _localizer.GetString("MeetingArrangedTitle");
+        var body = _localizer.GetString("MeetingArrangedBody", otherUserName);
 
         var notification = new Notification()
         {
@@ -42,8 +42,8 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
 
     public PushMessage BuildUserInvitedPush(string[] fcmTokens)
     {
-        var title = _localizer["UserInvitedTitle"];
-        var body = _localizer["UserInvitedBody"];
+        var title = _localizer.GetString("UserInvitedTitle");
+        var body = _localizer.GetString("UserInvitedBody");
 
         var notification = new Notification()
         {

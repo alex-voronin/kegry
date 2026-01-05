@@ -51,7 +51,7 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                     b.Property<DateTimeOffset>("LastSeenAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset>("MeetingTimeExpiresAt")
+                    b.Property<DateTimeOffset>("MeetingExpiresAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("MyUserId")

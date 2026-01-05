@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Feed\FeedModule.Contracts\FeedModule.Contracts.csproj" />
       <ProjectReference Include="..\..\Security\SecurityModule.Contracts\SecurityModule.Contracts.csproj" />
+      <ProjectReference Include="..\..\UserProfile\UserProfileModule.Contracts\UserProfileModule.Contracts.csproj" />
       <ProjectReference Include="..\NotificationsModule.Infrastructure\NotificationsModule.Infrastructure.csproj" />
       <ProjectReference Include="..\NotificationModule.Domain\NotificationModule.Domain.csproj" />
       <ProjectReference Include="..\..\Shared\Shared.Core\Shared.Core.csproj" />

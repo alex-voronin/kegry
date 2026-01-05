@@ -25,9 +25,9 @@ public class FeedProfile
 
     public required bool IsBlocked { get; set; }
     public required bool IsInMeeting { get; set; }
-    public required DateTimeOffset MeetingTimeExpiresAt { get; set; }
+    public required DateTimeOffset MeetingExpiresAt { get; set; }
     public required DateTimeOffset SkippedAt { get; set; }
     public required DateTimeOffset LastSeenAt { get; set; }
     
-    public bool IsMeetingExpired(DateTimeOffset dateTime) => MeetingTimeExpiresAt < dateTime;
+    public bool IsMeetingExpired(DateTimeOffset dateTime) => MeetingExpiresAt < dateTime;
 }

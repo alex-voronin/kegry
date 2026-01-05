@@ -28,15 +28,15 @@ public interface IDebouncedEventHandler<TEvent> where TEvent : UserEvent
 
 public abstract class BaseDebouncedEventHandler<TEvent> : IDebouncedEventHandler<TEvent> where TEvent : UserEvent
 {
+    protected readonly TimeProvider TimeProvider;
     private readonly int _debounceDurationSeconds = 180;
-    private readonly TimeProvider _timeProvider;
     private readonly HybridCache _cache;
     private readonly IMessageBus _messageBus;
     private readonly HybridCacheEntryOptions _cacheTtlOptions;
 
     public BaseDebouncedEventHandler(TimeProvider timeProvider, HybridCache cache, IMessageBus messageBus)
     {
-        _timeProvider = timeProvider;
+        TimeProvider = timeProvider;
         _cache = cache;
         _messageBus = messageBus;
         _cacheTtlOptions = new HybridCacheEntryOptions()
@@ -60,7 +60,7 @@ public abstract class BaseDebouncedEventHandler<TEvent> : IDebouncedEventHandler
         var isNewContext = context.Id == newContext.Id;
         if (isNewContext)
         {
-            await InternalHandleEventAsync(@event, ct);
+            await HandleDebouncedEventAsync(@event, ct);
         }
         else
         {
@@ -86,14 +86,14 @@ public abstract class BaseDebouncedEventHandler<TEvent> : IDebouncedEventHandler
             value: BuildContext(),
             options:_cacheTtlOptions,
             cancellationToken: ct);
-        await InternalHandleEventAsync(message.Event, ct);
+        await HandleDebouncedEventAsync(message.Event, ct);
     }
     
-    private EventContext BuildContext() => new EventContext(Guid.NewGuid(), _timeProvider.GetUtcNow());
+    private EventContext BuildContext() => new EventContext(Guid.NewGuid(), TimeProvider.GetUtcNow());
 
     private static string BuildCacheKey(Guid userId) => $"event:context:{typeof(TEvent)}:{userId}";
 
-    protected abstract Task InternalHandleEventAsync(TEvent @event, CancellationToken ct);
+    protected abstract Task HandleDebouncedEventAsync(TEvent @event, CancellationToken ct);
     
     public abstract Task HandleAsync(TEvent @event, CancellationToken ct);
     public abstract Task HandleAsync(ScheduledEventMessage<TEvent> message, CancellationToken ct);
