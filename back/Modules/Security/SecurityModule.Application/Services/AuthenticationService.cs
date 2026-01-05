@@ -10,6 +10,7 @@ using SecurityModule.Domain.Aggregates.User;
 using SecurityModule.Domain.Exceptions;
 using SecurityModule.Domain.Services;
 using SecurityModule.Application.Configs;
+using SecurityModule.Infrastructure.Service;
 using Serilog;
 using SharedCore.Exceptions;
 using SharedCore.Services.LifeTimes;
@@ -30,6 +31,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
     private readonly AuthTokenConfig _authTokenConfig;
     private readonly IMessageBus _bus;
     private readonly JwtSecurityTokenHandler _jwtHandler;
+    private readonly IEmailExistenceChecker _emailExistenceChecker;
 
     public AuthenticationService(
         UserManager<User> userManager,
@@ -37,7 +39,8 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         IRefreshTokenService refreshTokenService,
         IRefreshTokenRepository refreshTokenRepository,
         IOptions<AuthTokenConfig> authTokenConfigOptions,
-        IMessageBus bus)
+        IMessageBus bus, 
+        IEmailExistenceChecker emailExistenceChecker)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -45,6 +48,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         _refreshTokenRepository = refreshTokenRepository;
         _authTokenConfig = authTokenConfigOptions.Value;
         _bus = bus;
+        _emailExistenceChecker = emailExistenceChecker;
         _jwtHandler = new JwtSecurityTokenHandler();
     }
 
@@ -53,6 +57,11 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         var existingUser = await _userManager.FindByEmailAsync(email);
         if (existingUser == null)
         {
+            var exists = await _emailExistenceChecker.CheckDomainExists(email);
+            if (!exists)
+            {
+                throw SecurityExceptions.EmailDoesNotExist(email);
+            }
             var signupResult = await Signup(email, password);
             await _bus.PublishAsync(
                 new AccountCreatedEvent
