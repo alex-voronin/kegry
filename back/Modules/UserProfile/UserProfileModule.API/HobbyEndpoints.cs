@@ -23,17 +23,7 @@ public class HobbyEndpoints : IEndpoints
         CancellationToken ct)
     {
         var hobbies = await hobbyRepository.GetAll(ct);
-        var dtos = hobbies.Select(h => new HobbyDto()
-            {
-                Id = h.Id,
-                Name = h.Name,
-            })
-            .ToArray();
-        return ApiResult<GetHobbyListResponse>.Build(
-            new GetHobbyListResponse
-            {
-                Hobbies = dtos
-            }
-        );
+        var dtos = hobbies.Select(h => new HobbyDto(Id: h.Id, Name: h.Name)).ToArray();
+        return ApiResult<GetHobbyListResponse>.Build(new GetHobbyListResponse(dtos));
     }
 }

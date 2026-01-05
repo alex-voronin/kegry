@@ -108,28 +108,18 @@ public class UserProfileEndpoints : IEndpoints
             throw UserProfileExceptions.ProfileNotFound(userId);
         }
 
-        var dto = new UserProfileDto()
-        {
-            FirstName = profile.FirstName,
-            LastName = profile.LastName,
-            Bio = profile.Bio,
-            AvatarImageUrl = profile.AvatarImageUrl,
-            CoverImageUrl = profile.CoverImageUrl,
-            Birthday = profile.Birthday,
-            Gender = profile.Gender,
-            Hobbies = profile.Hobbies.Select(h => new HobbyDto()
-                {
-                    Id = h.Id,
-                    Name = h.Name,
-                })
-                .ToArray()
-        };
-        return ApiResult<GetUserProfileResponse>.Build(
-            new GetUserProfileResponse
-            {
-                UserProfile = dto
-            }
+        var dto = new UserProfileDto(
+            FirstName: profile.FirstName,
+            LastName: profile.LastName,
+            Bio: profile.Bio,
+            AvatarImageUrl: profile.AvatarImageUrl,
+            CoverImageUrl: profile.CoverImageUrl,
+            Birthday: profile.Birthday,
+            Gender: profile.Gender,
+            Hobbies: profile.Hobbies.Select(h => new HobbyDto(Id: h.Id, Name: h.Name)).ToArray()
         );
+
+        return ApiResult<GetUserProfileResponse>.Build(new GetUserProfileResponse(dto));
     }
 
     private static UserProfileChangedEvent BuildUserChangedEvent(ClaimsPrincipal user, UserProfile profile)

@@ -1,6 +1,3 @@
 namespace UserProfileModule.API.Dto;
 
-public class GetHobbyListResponse
-{
-    public required HobbyDto[] Hobbies { get; init; }
-}
+public record GetHobbyListResponse(HobbyDto[] Hobbies);

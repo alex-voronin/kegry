@@ -32,27 +32,27 @@ public class FeedEndpoints : IEndpoints
         CancellationToken ct)
     {
         var feed = await feedScoringService.GetFeedAsync(user.GetId(), ct: ct);
-        var dtos = feed.Select(f => new UserProfileDto
-            {
-                Id = f.User.Id,
-                FirstName = f.User.FirstName,
-                LastName = f.User.LastName,
-                Rating = f.Rating,
-                DistanceMeters = f.DistanceMeters,
-                Hobbies = f.User.Hobbies.Select(h => new HobbyDto
-                    {
-                        Id = h.Id,
-                        Name = h.Name
-                    })
-                    .ToArray()
-            })
+        var dtos = feed.Select(f =>
+                new UserProfileDto(
+                    Id: f.User.Id,
+                    FirstName: f.User.FirstName,
+                    LastName: f.User.LastName,
+                    Rating: f.Rating,
+                    DistanceMeters: f.DistanceMeters,
+                    Hobbies: f.User.Hobbies.Select(h =>
+                            new HobbyDto
+                            (
+                                Id: h.Id,
+                                Name: h.Name
+                            )
+                        )
+                        .ToArray()
+                )
+            )
             .ToArray();
 
         return ApiResult<GetFeedResponse>.Build(
-            new GetFeedResponse
-            {
-                Feed = dtos
-            }
+            new GetFeedResponse(Feed: dtos)
         );
     }
 

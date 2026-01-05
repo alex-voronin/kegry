@@ -68,13 +68,12 @@ public class AuthEndpoints : IEndpoints
 
     private static AuthResponse AuthResultToResponse(AuthResult result)
     {
-        return new AuthResponse
-        {
-            UserId = result.User.Id.ToString(),
-            RequiredAction = result.User.RequiredAction,
-            AccessToken = result.AccessToken,
-            RefreshToken = result.RefreshToken,
-        };
+        return new AuthResponse(
+            UserId: result.User.Id.ToString(),
+            RequiredAction: result.User.RequiredAction,
+            AccessToken: result.AccessToken,
+            RefreshToken: result.RefreshToken
+        );
     }
 
     #endregion
