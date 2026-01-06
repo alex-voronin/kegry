@@ -103,6 +103,8 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
             value: daysDifference / 365.0, 
             origin: 0, 
             standardDeviation:6.0);
+        
+        //TODO: add rating and inactivity time to the scoring calculation formula
 
         return FeedScoringParameters.DistanceWeightInScoring * distanceScore + 
                FeedScoringParameters.HobbiesWeightInScoring * hobbiesScore +
