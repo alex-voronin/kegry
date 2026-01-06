@@ -3,7 +3,7 @@ using SharedCore.ValueObjects;
 
 namespace FeedModule.Domain.Aggregates;
 
-public class Filter
+public record Filter
 {
     public required Guid UserId { get; init; }
     public required int RadiusMeters { get; init; }

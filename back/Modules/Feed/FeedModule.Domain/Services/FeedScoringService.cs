@@ -2,6 +2,7 @@ using FeedModule.Domain.Aggregates;
 using FeedModule.Domain.Aggregates.ReadOnly;
 using FeedModule.Domain.Exceptions;
 using FeedModule.Domain.Repositories;
+using SharedCore.Math;
 using SharedCore.Services.LifeTimes;
 
 namespace FeedModule.Domain.Services;
@@ -27,7 +28,8 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
 
     public async Task<FeedCandidate[]> GetFeedAsync(
         Guid userId,
-        CancellationToken ct)
+        int limit = 30,
+        CancellationToken ct = default)
     {
         var filter = await _filterRepository.GetByIdAsync(userId, asNoTracking:true, ct: ct); 
         filter ??= Filter.CreateDefault(userId);
@@ -54,27 +56,34 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
             filter: filter,
             ct: ct);
 
-        return RankCandidates(userProfile, candidates);
+        return RankCandidates(userProfile, candidates, filter, limit);
     }
     
     private FeedCandidate[] RankCandidates(
         UserProfile userProfile,
-        FeedCandidate[] candidates)
+        FeedCandidate[] candidates,
+        Filter filter,
+        int limit)
     {
         return candidates
             .Select(c => new
             {
                 Candidate = c,
-                Score = CalculateScore(userProfile, c)
+                Score = CalculateScore(userProfile, c, filter)
             })
             .OrderByDescending(x => x.Score)
+            .Take(limit)
             .Select(candidateAndScore => candidateAndScore.Candidate)
             .ToArray();
     }
-    private static double CalculateScore(UserProfile userProfile, FeedCandidate candidate)
+    
+    internal static double CalculateScore(UserProfile userProfile, FeedCandidate candidate, Filter filter)
     {
         // distance scoring
-        var distanceScore = 1.0 / (1.0 + candidate.DistanceMeters);
+        var distanceScore = MathFunctions.Gaussian(
+            value: candidate.DistanceMeters, 
+            origin: 0, 
+            standardDeviation: filter.RadiusMeters / 2.0);;
         
         // hobbies scoring
         var hobbiesScore = 0.0;
@@ -90,7 +99,10 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
         // age scoring
         var daysDifference = Math.Abs(userProfile.Birthday.ToDateTime(TimeOnly.MinValue).Ticks - 
                                       candidate.User.Birthday.ToDateTime(TimeOnly.MinValue).Ticks) / TimeSpan.TicksPerDay;
-        var ageScore = 1.0 / (1.0 + (daysDifference / 365.0));
+        var ageScore = MathFunctions.Gaussian(
+            value: daysDifference / 365.0, 
+            origin: 0, 
+            standardDeviation:6.0);
 
         return FeedScoringParameters.DistanceWeightInScoring * distanceScore + 
                FeedScoringParameters.HobbiesWeightInScoring * hobbiesScore +

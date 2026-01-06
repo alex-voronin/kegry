@@ -10,7 +10,7 @@ public class LocationHaversineGeoTests
     private static readonly GeometryFactory GeometryFactory = new(new PrecisionModel(), 4326);
 
     [Fact]
-    public void DistanceMetersTo_GivenSamePoints_ThenReturnZero()
+    public void DistanceMetersTo_WhenSamePoints_ThenReturnZero()
     {
         var location = new Location 
         { 
@@ -24,7 +24,7 @@ public class LocationHaversineGeoTests
     }
 
     [Fact]
-    public void DistanceMetersTo_GivenBerlinToParis_ThenReturnCorrectDistance()
+    public void DistanceMetersTo_WhenBerlinToParis_ThenReturnCorrectDistance()
     {
         // Berlin: 52.5200, 13.4050
         // Paris: 48.8566, 2.3522
@@ -41,7 +41,7 @@ public class LocationHaversineGeoTests
     }
 
     [Fact]
-    public void DistanceMetersTo_GivenSmallMovement_ThenReturnCorrectDistance()
+    public void DistanceMetersTo_WhenSmallMovement_ThenReturnCorrectDistance()
     {
         // ~111 meters per 0.001 deg lat
         var start = new Location 

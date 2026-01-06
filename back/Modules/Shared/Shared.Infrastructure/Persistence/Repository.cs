@@ -18,7 +18,7 @@ public class Repository<TContext, TEntity> : IRepository<TEntity>
     public virtual async Task<TEntity?> GetByIdAsync<TId>(
         TId id,
         bool asNoTracking = false,
-        Expression<Func<TEntity, object>>[]? includes = null,
+        Expression<Func<TEntity, object?>>[]? includes = null,
         CancellationToken ct = default) where TId : IEquatable<TId>
     {
         IQueryable<TEntity> query = Context.Set<TEntity>();

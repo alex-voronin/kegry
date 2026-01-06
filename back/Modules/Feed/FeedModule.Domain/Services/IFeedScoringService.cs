@@ -4,5 +4,6 @@ public interface IFeedScoringService
 {
     public Task<FeedCandidate[]> GetFeedAsync(
         Guid userId,
-        CancellationToken ct);
+        int limit = 30,
+        CancellationToken ct = default);
 }
