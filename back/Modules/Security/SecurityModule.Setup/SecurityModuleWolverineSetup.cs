@@ -12,7 +12,7 @@ public class SecurityModuleWolverineSetup : IWolverineExtension
     {
         options.Publish(rule =>
         {
-            rule.MessagesFromNamespace(typeof(SecurityModuleStartup).Namespace!);
+            rule.MessagesFromNamespace(typeof(Contracts.AssemblyMarker).Namespace!);
             rule.ToLocalQueue("account-events");
         });
     }
