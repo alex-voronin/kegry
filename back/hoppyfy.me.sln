@@ -96,6 +96,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Shared.Core", "Tests\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.FeedModule.Domain", "Tests\Unit\Tests.FeedModule.Domain\Tests.FeedModule.Domain.csproj", "{A5866099-1076-4EC1-937B-4C2378B39FD4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.NotificationsModule.Application", "Tests\Unit\Tests.NotificationsModule.Application\Tests.NotificationsModule.Application.csproj", "{BD2477C8-8366-4111-90C3-A90538EF1D17}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -250,6 +252,10 @@ Global
 		{A5866099-1076-4EC1-937B-4C2378B39FD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5866099-1076-4EC1-937B-4C2378B39FD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5866099-1076-4EC1-937B-4C2378B39FD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD2477C8-8366-4111-90C3-A90538EF1D17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD2477C8-8366-4111-90C3-A90538EF1D17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD2477C8-8366-4111-90C3-A90538EF1D17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD2477C8-8366-4111-90C3-A90538EF1D17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1CBC6F16-BB39-4743-B8CB-50987C4B7F47} = {8B4727C6-1303-46DA-9FCC-E230A877807C}
@@ -296,5 +302,6 @@ Global
 		{DFD280E0-C40D-4D45-853B-ECD06894C9B7} = {B24AC6CC-4596-4759-B0C8-348A3547DE1C}
 		{A196BE34-09D3-442E-BB53-ECD135F20B91} = {C3914593-5A01-44A0-BA1A-02A6F72DBAB8}
 		{A5866099-1076-4EC1-937B-4C2378B39FD4} = {C3914593-5A01-44A0-BA1A-02A6F72DBAB8}
+		{BD2477C8-8366-4111-90C3-A90538EF1D17} = {C3914593-5A01-44A0-BA1A-02A6F72DBAB8}
 	EndGlobalSection
 EndGlobal

@@ -28,8 +28,8 @@ public interface IDebouncedEventHandler<TEvent> where TEvent : UserEvent
 
 public abstract class BaseDebouncedEventHandler<TEvent> : IDebouncedEventHandler<TEvent> where TEvent : UserEvent
 {
+    internal readonly int DebounceDurationSeconds = 180;
     protected readonly TimeProvider TimeProvider;
-    private readonly int _debounceDurationSeconds = 180;
     private readonly HybridCache _cache;
     private readonly IMessageBus _messageBus;
     private readonly HybridCacheEntryOptions _cacheTtlOptions;
@@ -41,8 +41,8 @@ public abstract class BaseDebouncedEventHandler<TEvent> : IDebouncedEventHandler
         _messageBus = messageBus;
         _cacheTtlOptions = new HybridCacheEntryOptions()
         {
-            Expiration = TimeSpan.FromSeconds(_debounceDurationSeconds),
-            LocalCacheExpiration = TimeSpan.FromSeconds(_debounceDurationSeconds),
+            Expiration = TimeSpan.FromSeconds(DebounceDurationSeconds),
+            LocalCacheExpiration = TimeSpan.FromSeconds(DebounceDurationSeconds),
         };
     }
 
@@ -66,7 +66,7 @@ public abstract class BaseDebouncedEventHandler<TEvent> : IDebouncedEventHandler
         {
             if (!context.IsScheduledAfterDebounce)
             {
-                var scheduledTime = context.LastSentAt.AddSeconds(_debounceDurationSeconds);
+                var scheduledTime = context.LastSentAt.AddSeconds(DebounceDurationSeconds);
                 await _messageBus.ScheduleAsync(new ScheduledEventMessage<TEvent>(@event), scheduledTime);
                 // TODO: this leads to a race condition which can be ignored for now.
                 // We can use a distributed lock here to fix it
@@ -91,7 +91,7 @@ public abstract class BaseDebouncedEventHandler<TEvent> : IDebouncedEventHandler
     
     private EventContext BuildContext() => new EventContext(Guid.NewGuid(), TimeProvider.GetUtcNow());
 
-    private static string BuildCacheKey(Guid userId) => $"event:context:{typeof(TEvent)}:{userId}";
+    internal static string BuildCacheKey(Guid userId) => $"event:context:{typeof(TEvent)}:{userId}";
 
     protected abstract Task HandleDebouncedEventAsync(TEvent @event, CancellationToken ct);
     

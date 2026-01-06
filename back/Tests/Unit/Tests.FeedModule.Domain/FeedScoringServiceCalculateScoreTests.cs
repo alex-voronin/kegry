@@ -46,6 +46,38 @@ public class FeedScoringServiceCalculateScoreTests
         var expectedScore = DistanceWeight + HobbiesWeight + AgeWeight;
         score.ShouldBe(expectedScore, tolerance: 0.0001);
     }
+    
+    [Fact]
+    public void CalculateScore_WhenGoodMatch_ReturnsGoodScore()
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var hobbyId = Guid.NewGuid();
+        var userProfile = new UserProfile
+        {
+            Id = Guid.NewGuid(),
+            Birthday = today,
+            Hobbies = [new Hobby { Id = hobbyId, Name = "H1" }, new Hobby { Id = hobbyId, Name = "H2" }]
+        };
+
+        var candidate = new FeedCandidate
+        {
+            DistanceMeters = 15000,
+            Rating = 5,
+            User = new UserProfile
+            {
+                Id = Guid.NewGuid(),
+                Birthday = userProfile.Birthday.AddYears(5),
+                Hobbies = [new Hobby { Id = hobbyId, Name = "H1" }]
+            }
+        };
+
+        var score = FeedScoringService.CalculateScore(
+            userProfile,
+            candidate,
+            Filter.CreateDefault(userProfile.Id));
+        
+        score.ShouldBeGreaterThan(0.8);
+    }
 
     [Fact]
     public void CalculateScore_WhenWorstMatch_ReturnsLowScore()
