@@ -52,14 +52,17 @@ public class BaseDebouncedEventHandlerTests
 
     [Theory, AutoNSubstituteData]
     public async Task HandleAsync_WhenNoCacheEntry_ThenCreatesContextAndHandlesEvent(
+        [Frozen] FakeTimeProvider timeProvider,
         [Frozen] HybridCache cache,
         [Frozen] IMessageBus messageBus,
         TestDebouncedEventHandler handler,
         Guid userId)
     {
+        timeProvider.AutoAdvanceAmount = TimeSpan.Zero;
         var @event = new TestEvent(userId);
         var expectedCacheKey = TestDebouncedEventHandler.BuildCacheKey(userId);
-        
+
+        EventContext? eventContext = null;
         cache.GetOrCreateAsync(
                 expectedCacheKey, 
                 Arg.Any<Func<CancellationToken, ValueTask<EventContext>>>(),
@@ -71,11 +74,14 @@ public class BaseDebouncedEventHandlerTests
             {
                 var state = callInfo.ArgAt<Func<CancellationToken, ValueTask<EventContext>>>(1);
                 var factory = callInfo.ArgAt<Func<Func<CancellationToken, ValueTask<EventContext>>, CancellationToken, ValueTask<EventContext>>>(2);
-                return factory(state, CancellationToken.None);
+                var task = factory(state, CancellationToken.None);
+                eventContext = task.Result;
+                return task;
             });
         
         await handler.HandleAsync(@event, CancellationToken.None);
         
+        eventContext!.LastSentAt.ShouldBe(timeProvider.GetUtcNow());
         handler.HandleDebouncedEventCalled.ShouldBeTrue();
         handler.LastHandledEvent.ShouldBe(@event);
         await messageBus.DidNotReceiveWithAnyArgs().SendAsync(Arg.Any<object>(), Arg.Any<DeliveryOptions>());

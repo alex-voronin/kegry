@@ -53,7 +53,7 @@ public abstract class BaseDebouncedEventHandler<TEvent> : IDebouncedEventHandler
         var newContext = BuildContext();
         var context = await _cache.GetOrCreateAsync<EventContext>(
             key: cacheKey,
-            factory: async _ => await Task.FromResult(newContext),
+            factory: async _ => await ValueTask.FromResult(newContext),
             options: _cacheTtlOptions,
             cancellationToken: ct);
 

@@ -7,8 +7,8 @@ public interface INotificationManager : INotificationStrategy;
 
 internal class NotificationManager : INotificationManager, IScoped
 {
-    private const bool DefaultPushesEnabled = true;
-    private const bool DefaultEmailsEnabled = false;
+    internal const bool DefaultPushesEnabled = true;
+    internal const bool DefaultEmailsEnabled = false;
     
     private readonly INotificationsSettingsRepository _notificationsSettingsRepository;
     private readonly IEmailNotificationStrategy _emailNotificationStrategy;
@@ -51,7 +51,7 @@ internal class NotificationManager : INotificationManager, IScoped
             ct: ct
         );
         var pushesEnabled = notificationsSettings?.PushesEnabled ?? DefaultPushesEnabled;
-        var emailsEnabled = notificationsSettings?.PushesEnabled ?? DefaultEmailsEnabled;
+        var emailsEnabled = notificationsSettings?.EmailsEnabled ?? DefaultEmailsEnabled;
         
         var strategies = new List<INotificationStrategy>();
         if (pushesEnabled)
