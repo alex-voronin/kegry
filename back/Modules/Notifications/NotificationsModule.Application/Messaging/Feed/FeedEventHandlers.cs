@@ -9,11 +9,11 @@ public class FeedEventHandlers
 {
     public static async Task HandleAsync(
         MeetingArrangedEvent @event,
-        IPushService pushService,
+        INotificationManager notificationManager,
         CancellationToken ct = default)
     {
         // there is no need to debounce this event, as it can’t happen frequently.
-        await pushService.SendMeetingArrangedPush(@event.FirstUserId, @event.SecondUserFullName, ct);
-        await pushService.SendMeetingArrangedPush(@event.SecondUserId, @event.FirstUserFullName, ct);
+        await notificationManager.SendMeetingArranged(@event.FirstUserId, @event.SecondUserFullName, ct);
+        await notificationManager.SendMeetingArranged(@event.SecondUserId, @event.FirstUserFullName, ct);
     }
 }

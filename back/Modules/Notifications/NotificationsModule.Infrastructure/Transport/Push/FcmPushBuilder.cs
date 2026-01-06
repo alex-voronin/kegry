@@ -15,17 +15,17 @@ public interface IPushBuilder
 
 internal class FcmPushBuilder : IPushBuilder, ISingleton
 {
-    private readonly IStringLocalizer<Pushes> _localizer;
+    private readonly IStringLocalizer<NotificationsLocalization> _localizer;
 
-    public FcmPushBuilder(IStringLocalizer<Pushes> localizer)
+    public FcmPushBuilder(IStringLocalizer<NotificationsLocalization> localizer)
     {
         _localizer = localizer;
     }
 
     public PushMessage BuildMeetingArrangedPush(string[] fcmTokens, string otherUserName)
     {
-        var title = _localizer.GetString("MeetingArrangedTitle");
-        var body = _localizer.GetString("MeetingArrangedBody", otherUserName);
+        var title = _localizer.GetString("Push.MeetingArranged.Title");
+        var body = _localizer.GetString("Push.MeetingArranged.Body", otherUserName);
 
         var notification = new Notification()
         {
@@ -42,8 +42,8 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
 
     public PushMessage BuildUserInvitedPush(string[] fcmTokens)
     {
-        var title = _localizer.GetString("UserInvitedTitle");
-        var body = _localizer.GetString("UserInvitedBody");
+        var title = _localizer.GetString("Push.UserInvited.Title");
+        var body = _localizer.GetString("Push.UserInvited.Body");
 
         var notification = new Notification()
         {

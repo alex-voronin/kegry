@@ -24,7 +24,7 @@
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>qqq.Designer.cs</LastGenOutput>
       </EmbeddedResource>
-      <EmbeddedResource Update="Resources\Notifications.resx">
+      <EmbeddedResource Update="Resources\NotificationsLocalization.resx">
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>Notifications.Designer.cs</LastGenOutput>
       </EmbeddedResource>

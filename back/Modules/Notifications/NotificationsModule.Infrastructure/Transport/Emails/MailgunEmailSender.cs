@@ -4,11 +4,11 @@ using Microsoft.Extensions.Options;
 using NotificationsModule.Infrastructure.Transport.Email.Configs;
 using SharedCore.Services.LifeTimes;
 
-namespace NotificationsModule.Infrastructure.Transport.Email;
+namespace NotificationsModule.Infrastructure.Transport.Emails;
 
-internal interface IEmailSender
+public interface IEmailSender
 {
-    internal Task SendEmailAsync(string toEmail, string subject, string? htmlContent, string? textContent = "");
+    public Task SendEmailAsync(Email email, CancellationToken ct);
 }
 
 internal class MailgunEmailSender : IEmailSender, ISingleton
@@ -26,21 +26,21 @@ internal class MailgunEmailSender : IEmailSender, ISingleton
             new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authToken));
     }
 
-    public async Task SendEmailAsync(string toEmail, string subject, string? htmlContent, string? textContent = "")
+    public async Task SendEmailAsync(Email email, CancellationToken ct)
     {
         var formContent = new FormUrlEncodedContent(
             new Dictionary<string, string>
             {
                 { "from", $"Hoppyfy.me <{_emailConfig.FromEmail}>" },
-                { "to", toEmail },
-                { "subject", subject },
-                { "text", textContent ?? "" },
-                { "html", htmlContent ?? "" }
+                { "to", email.ToEmail },
+                { "subject", email.Subject },
+                { "text", email.IsHtml ? "" : email.Body },
+                { "html", email.IsHtml ? email.Body : "" }
             });
 
         using var result = await _httpClient.PostAsync(
             $"https://api.mailgun.net/v3/{_emailConfig.Domain}/messages",
-            formContent);
+            formContent, ct);
         result.EnsureSuccessStatusCode();
     }
 }

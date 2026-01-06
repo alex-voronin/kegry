@@ -5,26 +5,25 @@ using SharedCore.Services.LifeTimes;
 
 namespace NotificationsModule.Application.Services;
 
-public interface IPushService
-{
-    public Task SendMeetingArrangedPush(Guid userId, string otherUserName, CancellationToken ct = default);
-    public Task SendUserInvitedPush(Guid userId, CancellationToken ct = default);
-}
+public interface IPushNotificationStrategy : INotificationStrategy;
 
-internal class FcmPushService : IPushService, IScoped
+internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
 {
     private readonly IDeviceRepository _deviceRepository;
     private readonly IPushBuilder _pushBuilder;
     private readonly IPushSender _pushSender;
 
-    public FcmPushService(IDeviceRepository deviceRepository, IPushBuilder pushBuilder, IPushSender pushSender)
+    public FcmPushNotificationStrategy(
+        IDeviceRepository deviceRepository, 
+        IPushBuilder pushBuilder,
+        IPushSender pushSender)
     {
         _deviceRepository = deviceRepository;
         _pushBuilder = pushBuilder;
         _pushSender = pushSender;
     }
 
-    public async Task SendMeetingArrangedPush(Guid userId, string otherUserName, CancellationToken ct = default)
+    public async Task SendMeetingArranged(Guid userId, string otherUserName, CancellationToken ct = default)
     {
         await SendPush(
             userId: userId,
@@ -32,24 +31,12 @@ internal class FcmPushService : IPushService, IScoped
             ct: ct);
     }
 
-    public async Task SendUserInvitedPush(Guid userId, CancellationToken ct = default)
+    public async Task SendUserInvited(Guid userId, CancellationToken ct = default)
     {
         await SendPush(
             userId: userId,
             factory: fcmTokens => _pushBuilder.BuildUserInvitedPush(fcmTokens),
             ct: ct);
-    }
-
-    public async Task<SendResult> SendMeetingArrangedPush(string[] fcmTokens, string otherUserName)
-    {
-        var pushMessage = _pushBuilder.BuildMeetingArrangedPush(fcmTokens, otherUserName);
-        return await _pushSender.SendPushMessage(pushMessage);
-    }
-
-    public async Task<SendResult> SendUserInvitedPush(string[] fcmTokens)
-    {
-        var pushMessage = _pushBuilder.BuildUserInvitedPush(fcmTokens);
-        return await _pushSender.SendPushMessage(pushMessage);
     }
 
     private async Task SendPush(Guid userId, Func<string[], PushMessage> factory,

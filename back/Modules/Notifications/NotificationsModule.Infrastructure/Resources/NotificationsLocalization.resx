@@ -18,7 +18,25 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="UserInvitedNotification.PrimaryText" xml:space="preserve">
+    <data name="App.UserInvitedNotification.PrimaryText" xml:space="preserve">
         <value>Hi! Let's get a drink!</value>
+    </data>
+    <data name="Push.MeetingArranged.Body" xml:space="preserve">
+        <value>{0} is ready to chat</value>
+    </data>
+    <data name="Push.MeetingArranged.Title" xml:space="preserve">
+        <value>Invitation accepted!</value>
+    </data>
+    <data name="Push.UserInvited.Title" xml:space="preserve">
+        <value>New invitation!</value>
+    </data>
+    <data name="Push.UserInvited.Body" xml:space="preserve">
+        <value>Open Notifications to view details</value>
+    </data>
+    <data name="Email.ConfirmEmail.Subject" xml:space="preserve">
+        <value>Confirm your email</value>
+    </data>
+    <data name="Email.ConfirmEmail.Body" xml:space="preserve">
+        <value>Your confirmation code is {0}</value>
     </data>
 </root>

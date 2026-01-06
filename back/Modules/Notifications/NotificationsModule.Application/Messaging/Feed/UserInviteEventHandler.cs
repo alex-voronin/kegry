@@ -16,23 +16,23 @@ namespace NotificationsModule.Application.Messaging.Feed;
 public class UserInviteEventHandler : BaseDebouncedEventHandler<UserInvitedEvent>, IScoped
 {
     private readonly IDateTimeHumanizer _dateTimeHumanizer;
-    private readonly IStringLocalizer<Notifications> _localizer;
+    private readonly IStringLocalizer<NotificationsLocalization> _localizer;
     private readonly INotificationRepository _notificationRepository;
-    private readonly IPushService _pushService;
+    private readonly INotificationManager _notificationManager;
 
     public UserInviteEventHandler(
         TimeProvider timeProvider,
         HybridCache cache,
         IMessageBus messageBus,
         IDateTimeHumanizer dateTimeHumanizer,
-        IStringLocalizer<Notifications> localizer,
+        IStringLocalizer<NotificationsLocalization> localizer,
         INotificationRepository notificationRepository,
-        IPushService pushService) : base(timeProvider, cache, messageBus)
+        INotificationManager notificationManager) : base(timeProvider, cache, messageBus)
     {
         _dateTimeHumanizer = dateTimeHumanizer;
         _localizer = localizer;
         _notificationRepository = notificationRepository;
-        _pushService = pushService;
+        _notificationManager = notificationManager;
     }
 
     [Transactional]
@@ -44,7 +44,7 @@ public class UserInviteEventHandler : BaseDebouncedEventHandler<UserInvitedEvent
             UserId = @event.UserId,
             FromUserId = @event.ByUserId,
             CreatedAt = TimeProvider.GetUtcNow(),
-            PrimaryText = _localizer.GetString("UserInvitedNotification.PrimaryText"),
+            PrimaryText = _localizer.GetString("InApp.UserInvitedNotification.PrimaryText"),
             SecondaryText = _dateTimeHumanizer.Humanize(@event.MeetingExpiresAt), 
             IsSeen = false
         };
@@ -62,6 +62,6 @@ public class UserInviteEventHandler : BaseDebouncedEventHandler<UserInvitedEvent
 
     protected override async Task HandleDebouncedEventAsync(UserInvitedEvent @event, CancellationToken ct)
     {
-        await _pushService.SendUserInvitedPush(@event.UserId, ct);
+        await _notificationManager.SendUserInvited(@event.UserId, ct);
     }
 }
