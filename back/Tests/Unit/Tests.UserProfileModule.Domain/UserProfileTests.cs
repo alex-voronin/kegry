@@ -22,7 +22,7 @@ public class UserProfileTests
         profile.CoverImageUrl.ShouldBe("https://example.com/cover.jpg");
         profile.Birthday.ShouldBe(new DateOnly(1990, 1, 1));
         profile.Gender.ShouldBe(Gender.Male);
-        profile.Hobbies.Length.ShouldBe(1);
+        profile.Hobbies.Count.ShouldBe(1);
     }
     
     [Fact]
@@ -55,7 +55,7 @@ public class UserProfileTests
         profile.CoverImageUrl.ShouldBe(coverUrl);
         profile.Birthday.ShouldBe(birthday);
         profile.Gender.ShouldBe(gender);
-        profile.Hobbies.Length.ShouldBe(hobbies.Length);
+        profile.Hobbies.Count.ShouldBe(hobbies.Length);
         profile.Hobbies[0].Id.ShouldBe(hobbies[0].Id);
     }
 

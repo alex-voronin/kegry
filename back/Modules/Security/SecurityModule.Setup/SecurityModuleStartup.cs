@@ -55,6 +55,9 @@ public class SecurityModuleStartup : AppModuleStartupBase<SecurityContext>
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
+                // disable automatic claims mapping to legacy names
+                options.MapInboundClaims = false;
+                
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -102,7 +105,7 @@ public class SecurityModuleStartup : AppModuleStartupBase<SecurityContext>
 
     private static void RegisterEfCoreAsAuthenticationStore(IServiceCollection services)
     {
-        services.AddIdentity<User, IdentityRole<Guid>>(o =>
+        services.AddIdentityCore<User>(o =>
             {
                 o.Password.RequireDigit = true;
                 o.Password.RequireLowercase = true;
@@ -119,7 +122,9 @@ public class SecurityModuleStartup : AppModuleStartupBase<SecurityContext>
                 // Microsoft.AspNetCore.Identity.Rfc6238AuthenticationService
                 o.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
             })
+            .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<SecurityContext>()
-            .AddDefaultTokenProviders();
+            .AddDefaultTokenProviders()
+            .AddSignInManager();
     }
 }

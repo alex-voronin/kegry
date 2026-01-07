@@ -43,11 +43,7 @@ public class Repository<TContext, TEntity> : RepositoryBase, IRepository<TEntity
 
         var primaryKeyName = Context.Model.FindEntityType(typeof(TEntity))!
             .FindPrimaryKey()!.Properties.Select(x => x.Name).Single();
-        return await query.FirstOrDefaultAsync(e =>
-            EqualityComparer<TId>.Default.Equals(
-                EF.Property<TId>(e, primaryKeyName),
-                id
-            ), ct);
+        return await query.FirstOrDefaultAsync(e => EF.Property<TId>(e, primaryKeyName).Equals(id), ct);
     }
 
     public void Add(TEntity entity)

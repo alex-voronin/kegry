@@ -49,6 +49,7 @@ public class UserProfileEndpoints : IEndpoints
             Gender = request.Gender,
             Hobbies = hobbyStubs
         };
+        await profileRepository.AddAsync(profile, ct);
 
         var @event = BuildUserChangedEvent(user, profile);
         await profileRepository.PublishEventAsync(@event, ct);

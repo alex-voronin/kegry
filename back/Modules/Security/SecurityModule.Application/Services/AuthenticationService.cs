@@ -234,7 +234,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
             maxSimultaneousLoggedInDevices: _authTokenConfig.MaxSimultaneousLoggedInDevices);
         await _refreshTokenRepository.AddAsync(refreshToken);
         await _refreshTokenRepository.SaveChangesAsync();
-        return (accessToken, accessToken);
+        return (accessToken, refreshToken.Token);
     }
 
     private string GenerateJwt(Guid jti, User user, int durationInDays)
@@ -253,7 +253,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
             issuer: _authTokenConfig.Issuer,
             audience: _authTokenConfig.Audience,
             claims: claims,
-            expires: DateTime.Now.AddDays(durationInDays),
+            expires: DateTime.UtcNow.AddDays(durationInDays),
             signingCredentials: creds);
         return _jwtHandler.WriteToken(token);
     }

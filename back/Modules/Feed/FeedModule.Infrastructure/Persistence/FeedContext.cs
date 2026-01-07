@@ -107,14 +107,14 @@ public class FeedContext : DbContext
 
         modelBuilder.Entity<UserProfile>(builder =>
         {
-            builder.ToTable("user_profiles", "users");
-            builder.HasKey(e => e.Id);
+            builder.ToTable("profiles", "users");
+            builder.HasKey(up => up.Id);
 
             builder.HasMany(up => up.Hobbies)
                 .WithMany(h => h.UserProfiles)
                 .UsingEntity(j =>
                 {
-                    j.ToTable("user_profile_hobby_link");
+                    j.ToTable("user_profile_hobby_link", "users");
                     j.Metadata.SetIsTableExcludedFromMigrations(true);
                 });
 

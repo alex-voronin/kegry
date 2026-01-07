@@ -56,9 +56,9 @@ public class UserProfile
 
     private List<Hobby> _hobbies = new();
 
-    public Hobby[] Hobbies
+    public IReadOnlyList<Hobby> Hobbies
     {
-        get => _hobbies.ToArray();
+        get => _hobbies;
         set => _hobbies = ValidateHobbies(nameof(Hobbies), value);
     }
 
@@ -97,10 +97,10 @@ public class UserProfile
         return value;
     }
 
-    private static List<Hobby> ValidateHobbies(string fieldName, Hobby[] value)
+    private static List<Hobby> ValidateHobbies(string fieldName, IEnumerable<Hobby> value)
     {
         Validation.ThrowIfInvalid(fieldName,
-            isValid: () => value.Length <= ValidationParameters.MaxHobbiesCount,
+            isValid: () => value.Count() <= ValidationParameters.MaxHobbiesCount,
             validationError: "Maximum number of Hobbies is 10");
         return value.ToList();
     }

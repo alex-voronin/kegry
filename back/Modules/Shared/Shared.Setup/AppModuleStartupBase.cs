@@ -4,11 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using Shared.Infrastructure.Interfaces;
 using Shared.Infrastructure.Persistence;
 using SharedCore.Api;
-using Wolverine.EntityFrameworkCore;
 
 namespace Shared.Setup;
 

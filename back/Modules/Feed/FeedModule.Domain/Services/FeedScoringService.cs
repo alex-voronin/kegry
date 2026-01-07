@@ -38,7 +38,7 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
         {
             throw FeedExceptions.UserLocationIsUnknown(userId);
         }
-
+        
         var userProfile = await _userProfileRepository.GetByIdAsync(userId,
             asNoTracking: true,
             includes: [u => u.Hobbies],

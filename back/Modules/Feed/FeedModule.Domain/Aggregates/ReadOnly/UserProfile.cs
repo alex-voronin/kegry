@@ -12,7 +12,7 @@ public class UserProfile
     public DateOnly Birthday { get; init; }
     public Gender Gender { get; init; }
     
-    public ICollection<Hobby> Hobbies { get; init; } = new List<Hobby>();
+    public IReadOnlyList<Hobby> Hobbies { get; init; } = new List<Hobby>();
     
     [NotMapped]
     public string FullName => $"{FirstName} {LastName}";

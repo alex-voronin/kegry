@@ -47,8 +47,8 @@ internal class RefreshTokenService : DomainService<IRefreshTokenRepository>, IRe
             userId: user.Id,
             token: token,
             jti: jti.ToString(),
-            createdAt: _timeProvider.GetUtcNow().DateTime,
-            expiresAt: _timeProvider.GetUtcNow().DateTime.AddDays(durationInDays)
+            createdAt: _timeProvider.GetUtcNow().UtcDateTime,
+            expiresAt: _timeProvider.GetUtcNow().UtcDateTime.AddDays(durationInDays)
         );
     }
 

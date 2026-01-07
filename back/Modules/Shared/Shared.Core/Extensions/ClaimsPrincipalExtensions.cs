@@ -19,7 +19,7 @@ public static class ClaimsPrincipalExtensions
 
     public static string GetEmail(this ClaimsPrincipal user)
     {
-        var userEmail = user.FindFirstValue(JwtRegisteredClaimNames.Name);
+        var userEmail = user.FindFirstValue(JwtRegisteredClaimNames.Email);
         if (string.IsNullOrEmpty(userEmail))
         {
             throw CommonExceptions.InternalError("Email is not found");

@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(FeedContext))]
-    [Migration("20260107140637_AddFeed")]
+    [Migration("20260107211103_AddFeed")]
     partial class AddFeed
     {
         /// <inheritdoc />
@@ -210,9 +210,9 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .HasColumnName("last_name");
 
                     b.HasKey("Id")
-                        .HasName("pk_user_profiles");
+                        .HasName("pk_profiles");
 
-                    b.ToTable("user_profiles", "users", t =>
+                    b.ToTable("profiles", "users", t =>
                         {
                             t.ExcludeFromMigrations();
                         });
@@ -254,7 +254,7 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                     b.HasIndex("UserProfilesId")
                         .HasDatabaseName("ix_user_profile_hobby_link_user_profiles_id");
 
-                    b.ToTable("user_profile_hobby_link", null, t =>
+                    b.ToTable("user_profile_hobby_link", "users", t =>
                         {
                             t.ExcludeFromMigrations();
                         });
@@ -274,7 +274,7 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .HasForeignKey("UserProfilesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_user_profile_hobby_link_user_profiles_user_profiles_id");
+                        .HasConstraintName("fk_user_profile_hobby_link_profiles_user_profiles_id");
                 });
 #pragma warning restore 612, 618
         }
