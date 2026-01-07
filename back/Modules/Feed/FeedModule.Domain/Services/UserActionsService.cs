@@ -8,48 +8,61 @@ namespace FeedModule.Domain.Services;
 
 internal sealed class UserActionsService : IUserActionsService, IScoped
 {
-    private readonly IFeedProfileRepository _feedProfileRepository;
+    private readonly IFeedUserRelationRepository _feedUserRelationRepository;
     private readonly IFilterRepository _filterRepository;
     private readonly IUserProfileRepository _userProfileRepository;
+    private readonly IUserRatingRepository _userRatingRepository;
     private readonly TimeProvider _timeProvider;
 
     public UserActionsService(
-        IFeedProfileRepository feedProfileRepository,
+        IFeedUserRelationRepository feedUserRelationRepository,
         IFilterRepository filterRepository,
         IUserProfileRepository userProfileRepository,
+        IUserRatingRepository userRatingRepository,
         TimeProvider timeProvider)
     {
-        _feedProfileRepository = feedProfileRepository;
+        _feedUserRelationRepository = feedUserRelationRepository;
         _filterRepository = filterRepository;
         _userProfileRepository = userProfileRepository;
+        _userRatingRepository = userRatingRepository;
         _timeProvider = timeProvider;
     }
 
     public async Task RateUserAsync(Guid myUserId, Guid otherUserId, decimal rating, CancellationToken ct)
     {
-        var profile = await GetOrCreateProfile(myUserId, otherUserId, ct);
-        profile.Rating = rating;
-        profile.LastSeenAt = _timeProvider.GetUtcNow();
-        _feedProfileRepository.Update(profile);
-        await _feedProfileRepository.SaveChangesAsync(ct);
+        var transaction = await _userRatingRepository
+            .And(_feedUserRelationRepository)
+            .StartTransactionAsync(ct);
+        
+        var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
+        
+        var oldRating = feedUserRelation.Rating;
+        await _userRatingRepository.UpsertRatingAtomic(otherUserId, rating, oldRating, ct);
+        
+        feedUserRelation.Rating = rating;
+        feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
+        _feedUserRelationRepository.Update(feedUserRelation);
+
+        await transaction.SaveChangesAsync(ct);
+        await transaction.CommitAsync(ct);
     }
 
     public async Task BlockUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
     {
-        var profile = await GetOrCreateProfile(myUserId, otherUserId, ct);
-        profile.IsBlocked = true;
-        profile.LastSeenAt = _timeProvider.GetUtcNow();
-        _feedProfileRepository.Update(profile);
-        await _feedProfileRepository.SaveChangesAsync(ct);
+        var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
+        feedUserRelation.IsBlocked = true;
+        feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
+        _feedUserRelationRepository.Update(feedUserRelation);
+        await _feedUserRelationRepository.SaveChangesAsync(ct);
     }
 
     public async Task SkipUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
     {
-        var profile = await GetOrCreateProfile(myUserId, otherUserId, ct);
-        profile.SkippedAt = _timeProvider.GetUtcNow();
-        profile.LastSeenAt = _timeProvider.GetUtcNow();
-        _feedProfileRepository.Update(profile);
-        await _feedProfileRepository.SaveChangesAsync(ct);
+        var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
+        feedUserRelation.SkippedAt = _timeProvider.GetUtcNow();
+        feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
+        _feedUserRelationRepository.Update(feedUserRelation);
+        await _feedUserRelationRepository.SaveChangesAsync(ct);
     }
 
     public async Task InviteUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
@@ -58,37 +71,37 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         filter ??= Filter.CreateDefault(myUserId);
 
         var now = _timeProvider.GetUtcNow();
-        var myProfile = await GetOrCreateProfile(myUserId, otherUserId, ct);
-        myProfile.MeetingExpiresAt =
+        var meToOtherUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
+        meToOtherUserRelation.MeetingExpiresAt =
             _timeProvider.GetUtcNow().AddMinutes(filter.GetMeetingExpirationMinutesFromNow());
-        myProfile.LastSeenAt = now;
-        _feedProfileRepository.Update(myProfile);
+        meToOtherUserRelation.LastSeenAt = now;
+        _feedUserRelationRepository.Update(meToOtherUserRelation);
 
-        var otherProfile = await _feedProfileRepository.GetAsync(otherUserId, myUserId, false, ct);
-        if (otherProfile != null && !otherProfile.IsMeetingExpired(now))
+        var otherToMeUserRelation = await _feedUserRelationRepository.GetAsync(otherUserId, myUserId, false, ct);
+        if (otherToMeUserRelation != null && !otherToMeUserRelation.IsMeetingExpired(now))
         {
-            await TryArrangeMeeting(otherProfile, myProfile, ct);
+            await TryArrangeMeeting(otherToMeUserRelation, meToOtherUserRelation, ct);
         }
         else
         {
-            await _feedProfileRepository.PublishEventAsync(
+            await _feedUserRelationRepository.PublishEventAsync(
                 new UserInvitedEvent()
                 {
                     UserId = otherUserId,
                     ByUserId = myUserId,
-                    MeetingExpiresAt = myProfile.MeetingExpiresAt
+                    MeetingExpiresAt = meToOtherUserRelation.MeetingExpiresAt
                 }, ct: ct);
         }
 
-        await _feedProfileRepository.SaveChangesAndFlushMessagesAsync(ct);
+        await _feedUserRelationRepository.SaveChangesAndFlushMessagesAsync(ct);
     }
 
-    private async Task<FeedProfile> GetOrCreateProfile(Guid myUserId, Guid otherUserId, CancellationToken ct)
+    private async Task<FeedUserRelation> GetOrCreateUserRelation(Guid myUserId, Guid otherUserId, CancellationToken ct)
     {
-        var profile = await _feedProfileRepository.GetAsync(myUserId, otherUserId, false, ct);
-        if (profile == null)
+        var feedUserRelation = await _feedUserRelationRepository.GetAsync(myUserId, otherUserId, false, ct);
+        if (feedUserRelation == null)
         {
-            profile = new FeedProfile
+            feedUserRelation = new FeedUserRelation
             {
                 Id = Guid.CreateVersion7(),
                 MyUserId = myUserId,
@@ -100,34 +113,38 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
                 SkippedAt = DateTimeOffset.MinValue,
                 LastSeenAt = _timeProvider.GetUtcNow()
             };
-            await _feedProfileRepository.AddAsync(profile, ct);
+            await _feedUserRelationRepository.AddAsync(feedUserRelation, ct);
         }
 
-        return profile;
+        return feedUserRelation;
     }
 
-    private async Task<bool> TryArrangeMeeting(FeedProfile myProfile, FeedProfile otherProfile, CancellationToken ct)
+    private async Task<bool> TryArrangeMeeting(
+        FeedUserRelation meToOtherUserRelation,
+        FeedUserRelation otherToMeUserRelation,
+        CancellationToken ct)
     {
-        var isInMeeting = await _feedProfileRepository.IsInMeetingAsync(myProfile.OtherUserId, ct);
+        var isInMeeting = await _feedUserRelationRepository.IsInMeetingAsync(meToOtherUserRelation.OtherUserId, ct);
         if (isInMeeting)
         {
             return false;
         }
 
-        otherProfile.MeetingExpiresAt = myProfile.MeetingExpiresAt;
-        otherProfile.IsInMeeting = true;
-        myProfile.IsInMeeting = true;
+        otherToMeUserRelation.MeetingExpiresAt = meToOtherUserRelation.MeetingExpiresAt;
+        otherToMeUserRelation.IsInMeeting = true;
+        meToOtherUserRelation.IsInMeeting = true;
         // the potential race condition when multiple users invite the same user at the same time
-        // is fixed by unq_feed_profile_active_meeting_per_user index
+        // is fixed by unq_feed_user_relation_active_meeting_per_user index
 
-        var me = await _userProfileRepository.GetByIdAsync(myProfile.MyUserId, asNoTracking: true, ct: ct);
-        var other = await _userProfileRepository.GetByIdAsync(myProfile.OtherUserId, asNoTracking: true, ct: ct);
-        await _feedProfileRepository.PublishEventAsync(
+        var me = await _userProfileRepository.GetByIdAsync(meToOtherUserRelation.MyUserId, asNoTracking: true, ct: ct);
+        var other = await _userProfileRepository.GetByIdAsync(meToOtherUserRelation.OtherUserId, asNoTracking: true,
+            ct: ct);
+        await _feedUserRelationRepository.PublishEventAsync(
             new MeetingArrangedEvent
             {
-                FirstUserId = myProfile.MyUserId,
+                FirstUserId = meToOtherUserRelation.MyUserId,
                 FirstUserFullName = me!.FullName,
-                SecondUserId = myProfile.OtherUserId,
+                SecondUserId = meToOtherUserRelation.OtherUserId,
                 SecondUserFullName = other!.FullName
             }, ct: ct);
         return true;

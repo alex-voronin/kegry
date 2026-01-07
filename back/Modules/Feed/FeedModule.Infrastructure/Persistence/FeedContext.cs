@@ -7,9 +7,10 @@ namespace FeedModule.Infrastructure.Persistence;
 public class FeedContext : DbContext
 {
     // rw
-    public DbSet<FeedProfile> FeedProfiles => Set<FeedProfile>();
+    public DbSet<FeedUserRelation> FeedUserRelations => Set<FeedUserRelation>();
     public DbSet<Filter> Filters => Set<Filter>();
     public DbSet<DisplaySettings> DisplaySettings => Set<DisplaySettings>();
+    public DbSet<UserRating> UserRatings => Set<UserRating>();
 
     //ro
     public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
@@ -54,22 +55,22 @@ public class FeedContext : DbContext
             .HasName("ST_DistanceSphere")
             .HasSchema("public");
 
-        modelBuilder.Entity<FeedProfile>(builder =>
+        modelBuilder.Entity<FeedUserRelation>(builder =>
         {
-            builder.ToTable("profiles", "feed");
+            builder.ToTable("user_relations", "feed");
             builder.Property(fp => fp.Id)
                 .ValueGeneratedNever();
             builder.Property(fp => fp.Rating)
                 .HasColumnType("numeric(2,1)");
             
             builder.HasIndex(fp => fp.MyUserId)
-                .HasFilter("\"IsInMeeting\" = true")  
+                .HasFilter("\"is_in_meeting\" = true")  
                 .IsUnique()
-                .HasDatabaseName("unq_feed_profile_active_meeting_per_user");
+                .HasDatabaseName("unq_feed_user_state_active_meeting_per_user");
             
             builder.HasIndex(fp => new { fp.MyUserId, fp.OtherUserId })
                 .IsUnique()
-                .HasDatabaseName("unq_feed_profile_pair");
+                .HasDatabaseName("unq_feed_user_state_pair");
         });
 
         modelBuilder.Entity<Filter>(builder =>
@@ -87,6 +88,15 @@ public class FeedContext : DbContext
         modelBuilder.Entity<DisplaySettings>(builder =>
         {
             builder.ToTable("display_settings", "feed");
+            builder.HasKey(ds => ds.UserId);
+
+            builder.Property(ds => ds.UserId)
+                .ValueGeneratedNever();
+        });
+        
+        modelBuilder.Entity<UserRating>(builder =>
+        {
+            builder.ToTable("user_ratings", "feed");
             builder.HasKey(ds => ds.UserId);
 
             builder.Property(ds => ds.UserId)

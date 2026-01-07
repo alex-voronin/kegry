@@ -4,7 +4,12 @@ using SharedCore.Interfaces;
 
 namespace Shared.Infrastructure.Persistence;
 
-public class Repository<TContext, TEntity> : IRepository<TEntity>
+public abstract class RepositoryBase
+{
+    internal abstract DbContext GetContext();
+}
+
+public class Repository<TContext, TEntity> : RepositoryBase, IRepository<TEntity>
     where TEntity : class
     where TContext : DbContext
 {
@@ -99,5 +104,15 @@ public class Repository<TContext, TEntity> : IRepository<TEntity>
         }
 
         await Context.SaveChangesAsync(ct);
+    }
+
+    public IDbContextCollection And(IRepository otherRepository)
+    {
+        return new DbContextCollection(this);
+    }
+
+    internal override DbContext GetContext()
+    {
+        return Context;
     }
 }

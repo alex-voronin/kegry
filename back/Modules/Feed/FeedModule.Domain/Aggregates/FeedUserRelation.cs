@@ -1,9 +1,8 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using SharedCore.Validation;
 
 namespace FeedModule.Domain.Aggregates;
 
-public class FeedProfile
+public class FeedUserRelation
 {
     public required Guid Id { get; init; }
     public required Guid MyUserId { get; init; }
@@ -16,8 +15,8 @@ public class FeedProfile
         {
             Validation.ThrowIfInvalid(
                 nameof(Rating),
-                () => value >= 1 && value <= 5 && value % 0.5m != 0,
-                "Rating value must be between 1 and 5 with 0.5 step"
+                () => value >= 0.5m && value <= 5 && value % 0.5m != 0,
+                "Rating value must be between 0.5 and 5 with 0.5 step"
             );
             field = value;
         }

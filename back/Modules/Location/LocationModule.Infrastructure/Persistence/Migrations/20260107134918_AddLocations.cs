@@ -23,20 +23,20 @@ namespace LocationModule.Infrastructure.Persistence.Migrations
                 schema: "location",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Coordinates = table.Column<Point>(type: "geometry(Point, 4326)", nullable: false),
-                    Timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    coordinates = table.Column<Point>(type: "geometry(Point, 4326)", nullable: false),
+                    timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_locations", x => x.UserId);
+                    table.PrimaryKey("pk_locations", x => x.user_id);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_locations_Coordinates",
+                name: "ix_locations_coordinates",
                 schema: "location",
                 table: "locations",
-                column: "Coordinates")
+                column: "coordinates")
                 .Annotation("Npgsql:IndexMethod", "gist");
         }
 

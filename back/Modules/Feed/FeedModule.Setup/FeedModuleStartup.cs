@@ -30,7 +30,9 @@ public class FeedModuleStartup : AppModuleStartupBase<FeedContext>
     protected override void RegisterEfCoreContexts(IServiceCollection services, string dbConnectionString)
     {
         services.AddDbContextWithWolverineIntegration<FeedContext>(options =>
-            options.UseNpgsql(dbConnectionString, npgsqlOptions => npgsqlOptions.UseNetTopologySuite())
+            options
+                .UseNpgsql(dbConnectionString, npgsqlOptions => npgsqlOptions.UseNetTopologySuite())
+                .UseSnakeCaseNamingConvention()
         );
     }
 }

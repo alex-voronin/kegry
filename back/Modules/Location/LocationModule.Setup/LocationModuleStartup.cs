@@ -31,7 +31,9 @@ public class LocationModuleStartup : AppModuleStartupBase<LocationContext>
     protected override void RegisterEfCoreContexts(IServiceCollection services, string dbConnectionString)
     {
         services.AddDbContext<LocationContext>(options =>
-            options.UseNpgsql(dbConnectionString, npgsqlOptions => npgsqlOptions.UseNetTopologySuite())
+            options
+                .UseNpgsql(dbConnectionString, npgsqlOptions => npgsqlOptions.UseNetTopologySuite())
+                .UseSnakeCaseNamingConvention()
         );
     }
 }

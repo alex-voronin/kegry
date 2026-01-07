@@ -36,67 +36,79 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
                 _context.Locations.AsNoTracking(),
                 u => u.Id,
                 l => l.UserId,
-                (u, l) => new { u, l }
+                (u, l) => new { User = u, Location = l }
             )
             .LeftJoin(
-                _context.FeedProfiles.AsNoTracking()
-                    .Where(fp => fp.MyUserId == userProfile.Id),
-                ul => ul.u.Id,
+                _context.FeedUserRelations.AsNoTracking()
+                    .Where(fur => fur.MyUserId == userProfile.Id),
+                j => j.User.Id,
                 fp => fp.OtherUserId,
-                (ul, fp) => new
+                (j, fur) => new
                 {
-                    User = ul.u, 
-                    Location = ul.l, 
-                    FeedProfile = fp // can be null
+                    j.User,
+                    j.Location, 
+                    FeedUserRelation = fur
                 }
             )
-            .Where(tuple =>
+            .LeftJoin(
+                _context.UserRatings.AsNoTracking(),
+                j => j.User.Id,
+                ur => ur.UserId,
+                (j, ur) => new
+                {
+                    j.User,
+                    j.Location,
+                    j.FeedUserRelation,
+                    UserRating = ur 
+                }
+            )
+            .Where(j =>
                 EF.Functions.IsWithinDistance(
-                    geometry: tuple.Location.Coordinates,
+                    geometry: j.Location.Coordinates,
                     anotherGeometry: userCoordinates,
                     distance: filter.RadiusMeters,
                     useSpheroid: false
                 )
             )
-            .Where(tuple => tuple.User.Id != userProfile.Id)
-            .Where(tuple => tuple.FeedProfile == null || !tuple.FeedProfile.IsBlocked)
-            .Where(tuple => tuple.FeedProfile == null || !tuple.FeedProfile.IsInMeeting)
-            .Where(tuple => tuple.FeedProfile == null || tuple.FeedProfile.SkippedAt < skipCutoff)
-            .Where(tuple => tuple.FeedProfile == null || tuple.FeedProfile.MeetingExpiresAt <= now);
+            .Where(j => j.User.Id != userProfile.Id)
+            .Where(j => j.FeedUserRelation == null || !j.FeedUserRelation.IsBlocked)
+            .Where(j => j.FeedUserRelation == null || !j.FeedUserRelation.IsInMeeting)
+            .Where(j => j.FeedUserRelation == null || j.FeedUserRelation.SkippedAt < skipCutoff)
+            .Where(j => j.FeedUserRelation == null || j.FeedUserRelation.MeetingExpiresAt <= now);
 
         if (filter.Gender.HasValue)
         {
-            query = query.Where(x => x.User.Gender == filter.Gender.Value);
+            query = query.Where(j => j.User.Gender == filter.Gender.Value);
         }
 
         if (filter.AgeFrom.HasValue)
         {
             var minBirthDate = today.AddYears(-filter.AgeFrom.Value);
-            query = query.Where(x => x.User.Birthday <= minBirthDate);
+            query = query.Where(j => j.User.Birthday <= minBirthDate);
         }
 
         if (filter.AgeTo.HasValue)
         {
             var maxBirthDate = today.AddYears(-(filter.AgeTo.Value + 1)).AddDays(1);
-            query = query.Where(x => x.User.Birthday >= maxBirthDate);
+            query = query.Where(j => j.User.Birthday >= maxBirthDate);
         }
 
         if (filter.HobbyIds.Length > 0)
         {
-            query = query.Where(x => x.User.Hobbies.Any(h => filter.HobbyIds.Contains(h.Id)));
+            query = query.Where(j => j.User.Hobbies.Any(h => filter.HobbyIds.Contains(h.Id)));
         }
 
         var resultsQuery = query
-            .Select(tuple => new
+            .Select(j => new
             {
-                tuple.User,
-                Rating = tuple.FeedProfile != null ? tuple.FeedProfile.Rating : (decimal?)null,
+                j.User,
+                j.UserRating!.Rating,
                 DistanceMeters =
                     PostgisFunctions.DistanceSphere(
-                        tuple.Location.Coordinates,
+                        j.Location.Coordinates,
                         userCoordinates
                     ),
-                LastSeenAt = tuple.FeedProfile != null ? tuple.FeedProfile.LastSeenAt : (DateTimeOffset?)null
+                LastSeenAt = j.FeedUserRelation != null ? j.FeedUserRelation.LastSeenAt : (DateTimeOffset?)null
             })
             .OrderBy(candidate => candidate.LastSeenAt.HasValue ? 1 : 0)
             .ThenBy(candidate => candidate.DistanceMeters);

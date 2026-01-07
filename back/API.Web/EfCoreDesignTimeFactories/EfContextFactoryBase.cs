@@ -18,7 +18,9 @@ public class EfContextFactoryBase<TContext> : IDesignTimeDbContextFactory<TConte
         Console.WriteLine("Connection string: {0}", connectionString);
 
         var optionsBuilder = new DbContextOptionsBuilder<TContext>();
-        optionsBuilder.UseNpgsql(connectionString, SetupEfCoreExtensions);
+        optionsBuilder
+            .UseNpgsql(connectionString, SetupEfCoreExtensions)
+            .UseSnakeCaseNamingConvention();
 
         return (TContext)Activator.CreateInstance(typeof(TContext), optionsBuilder.Options)!;
     }

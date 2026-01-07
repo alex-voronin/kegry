@@ -19,15 +19,15 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                 schema: "notifications",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    FirstName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    AvatarImageUrl = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false)
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    first_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    last_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    avatar_image_url = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_users", x => x.Id);
+                    table.PrimaryKey("pk_users", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -35,20 +35,20 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                 schema: "notifications",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    FcmToken = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    id = table.Column<string>(type: "text", nullable: false),
+                    fcm_token = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_devices", x => x.Id);
+                    table.PrimaryKey("pk_devices", x => x.id);
                     table.ForeignKey(
-                        name: "FK_devices_users_UserId",
-                        column: x => x.UserId,
+                        name: "fk_devices_users_user_id",
+                        column: x => x.user_id,
                         principalSchema: "notifications",
                         principalTable: "users",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -57,19 +57,19 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                 schema: "notifications",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    PushesEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    EmailsEnabled = table.Column<bool>(type: "boolean", nullable: false)
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    pushes_enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    emails_enabled = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_notification_settings", x => x.UserId);
+                    table.PrimaryKey("pk_notification_settings", x => x.user_id);
                     table.ForeignKey(
-                        name: "FK_notification_settings_users_UserId",
-                        column: x => x.UserId,
+                        name: "fk_notification_settings_users_user_id",
+                        column: x => x.user_id,
                         principalSchema: "notifications",
                         principalTable: "users",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -78,49 +78,49 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                 schema: "notifications",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    FromUserId = table.Column<Guid>(type: "uuid", nullable: true),
-                    PrimaryText = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
-                    SecondaryText = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
-                    IsSeen = table.Column<bool>(type: "boolean", nullable: false)
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    from_user_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    primary_text = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
+                    secondary_text = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
+                    is_seen = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_notifications", x => x.Id);
+                    table.PrimaryKey("pk_notifications", x => x.id);
                     table.ForeignKey(
-                        name: "FK_notifications_users_FromUserId",
-                        column: x => x.FromUserId,
+                        name: "fk_notifications_users_from_user_id",
+                        column: x => x.from_user_id,
                         principalSchema: "notifications",
                         principalTable: "users",
-                        principalColumn: "Id");
+                        principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_notifications_users_UserId",
-                        column: x => x.UserId,
+                        name: "fk_notifications_users_user_id",
+                        column: x => x.user_id,
                         principalSchema: "notifications",
                         principalTable: "users",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_devices_UserId",
+                name: "ix_devices_user_id",
                 schema: "notifications",
                 table: "devices",
-                column: "UserId");
+                column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_notifications_FromUserId",
+                name: "ix_notifications_from_user_id",
                 schema: "notifications",
                 table: "notifications",
-                column: "FromUserId");
+                column: "from_user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_notifications_UserId",
+                name: "ix_notifications_user_id",
                 schema: "notifications",
                 table: "notifications",
-                column: "UserId");
+                column: "user_id");
         }
 
         /// <inheritdoc />

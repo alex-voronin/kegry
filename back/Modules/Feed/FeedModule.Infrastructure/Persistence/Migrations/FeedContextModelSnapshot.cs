@@ -27,84 +27,105 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("FeedModule.Domain.Aggregates.DisplaySettings", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
                     b.Property<int>("DistanceUnits")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("distance_units");
 
-                    b.HasKey("UserId");
+                    b.HasKey("UserId")
+                        .HasName("pk_display_settings");
 
                     b.ToTable("display_settings", "feed");
                 });
 
-            modelBuilder.Entity("FeedModule.Domain.Aggregates.FeedProfile", b =>
+            modelBuilder.Entity("FeedModule.Domain.Aggregates.FeedUserRelation", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<bool>("IsBlocked")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_blocked");
 
                     b.Property<bool>("IsInMeeting")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_in_meeting");
 
                     b.Property<DateTimeOffset>("LastSeenAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_seen_at");
 
                     b.Property<DateTimeOffset>("MeetingExpiresAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("meeting_expires_at");
 
                     b.Property<Guid>("MyUserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("my_user_id");
 
                     b.Property<Guid>("OtherUserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("other_user_id");
 
                     b.Property<decimal>("Rating")
-                        .HasColumnType("numeric(2,1)");
+                        .HasColumnType("numeric(2,1)")
+                        .HasColumnName("rating");
 
                     b.Property<DateTimeOffset>("SkippedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("skipped_at");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_user_relations");
 
                     b.HasIndex("MyUserId")
                         .IsUnique()
-                        .HasDatabaseName("unq_feed_profile_active_meeting_per_user")
-                        .HasFilter("\"IsInMeeting\" = true");
+                        .HasDatabaseName("unq_feed_user_state_active_meeting_per_user")
+                        .HasFilter("\"is_in_meeting\" = true");
 
                     b.HasIndex("MyUserId", "OtherUserId")
                         .IsUnique()
-                        .HasDatabaseName("unq_feed_profile_pair");
+                        .HasDatabaseName("unq_feed_user_state_pair");
 
-                    b.ToTable("profiles", "feed");
+                    b.ToTable("user_relations", "feed");
                 });
 
             modelBuilder.Entity("FeedModule.Domain.Aggregates.Filter", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
                     b.Property<int?>("AgeFrom")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("age_from");
 
                     b.Property<int?>("AgeTo")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("age_to");
 
                     b.Property<int?>("Gender")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("gender");
 
                     b.PrimitiveCollection<Guid[]>("HobbyIds")
                         .IsRequired()
-                        .HasColumnType("uuid[]");
+                        .HasColumnType("uuid[]")
+                        .HasColumnName("hobby_ids");
 
                     b.Property<int>("MeetingDeadline")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("meeting_deadline");
 
                     b.Property<int>("RadiusMeters")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("radius_meters");
 
-                    b.HasKey("UserId");
+                    b.HasKey("UserId")
+                        .HasName("pk_filters");
 
                     b.ToTable("filters", "feed");
                 });
@@ -113,13 +134,16 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_hobbies");
 
                     b.ToTable("hobbies", "users", t =>
                         {
@@ -131,16 +155,20 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                 {
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
                     b.Property<Point>("Coordinates")
                         .IsRequired()
-                        .HasColumnType("geometry(Point, 4326)");
+                        .HasColumnType("geometry(Point, 4326)")
+                        .HasColumnName("coordinates");
 
                     b.Property<DateTime>("Timestamp")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("timestamp");
 
-                    b.HasKey("UserId");
+                    b.HasKey("UserId")
+                        .HasName("pk_locations");
 
                     b.ToTable("locations", "location", t =>
                         {
@@ -152,27 +180,34 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateOnly>("Birthday")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("birthday");
 
                     b.Property<string>("CoverImageUrl")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("cover_image_url");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("first_name");
 
                     b.Property<int>("Gender")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("gender");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("last_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_user_profiles");
 
                     b.ToTable("user_profiles", "users", t =>
                         {
@@ -180,17 +215,41 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("FeedModule.Domain.Aggregates.UserRating", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("numeric")
+                        .HasColumnName("rating");
+
+                    b.Property<int>("ReviewersCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("reviewers_count");
+
+                    b.HasKey("UserId")
+                        .HasName("pk_user_ratings");
+
+                    b.ToTable("user_ratings", "feed");
+                });
+
             modelBuilder.Entity("HobbyUserProfile", b =>
                 {
                     b.Property<Guid>("HobbiesId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("hobbies_id");
 
                     b.Property<Guid>("UserProfilesId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_profiles_id");
 
-                    b.HasKey("HobbiesId", "UserProfilesId");
+                    b.HasKey("HobbiesId", "UserProfilesId")
+                        .HasName("pk_user_profile_hobby_link");
 
-                    b.HasIndex("UserProfilesId");
+                    b.HasIndex("UserProfilesId")
+                        .HasDatabaseName("ix_user_profile_hobby_link_user_profiles_id");
 
                     b.ToTable("user_profile_hobby_link", null, t =>
                         {
@@ -204,13 +263,15 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("HobbiesId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_profile_hobby_link_hobbies_hobbies_id");
 
                     b.HasOne("FeedModule.Domain.Aggregates.ReadOnly.UserProfile", null)
                         .WithMany()
                         .HasForeignKey("UserProfilesId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_profile_hobby_link_user_profiles_user_profiles_id");
                 });
 #pragma warning restore 612, 618
         }

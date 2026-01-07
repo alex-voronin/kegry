@@ -21,12 +21,12 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                 schema: "users",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_hobbies", x => x.Id);
+                    table.PrimaryKey("pk_hobbies", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -34,18 +34,18 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                 schema: "users",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    FirstName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Bio = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    AvatarImageUrl = table.Column<string>(type: "text", nullable: false),
-                    CoverImageUrl = table.Column<string>(type: "text", nullable: false),
-                    Birthday = table.Column<DateOnly>(type: "date", nullable: false),
-                    Gender = table.Column<int>(type: "integer", nullable: false)
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    first_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    last_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    bio = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    avatar_image_url = table.Column<string>(type: "text", nullable: false),
+                    cover_image_url = table.Column<string>(type: "text", nullable: false),
+                    birthday = table.Column<DateOnly>(type: "date", nullable: false),
+                    gender = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_profiles", x => x.Id);
+                    table.PrimaryKey("pk_profiles", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -53,32 +53,32 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                 schema: "users",
                 columns: table => new
                 {
-                    HobbiesId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserProfilesId = table.Column<Guid>(type: "uuid", nullable: false)
+                    hobbies_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_profiles_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_user_profile_hobby_link", x => new { x.HobbiesId, x.UserProfilesId });
+                    table.PrimaryKey("pk_user_profile_hobby_link", x => new { x.hobbies_id, x.user_profiles_id });
                     table.ForeignKey(
-                        name: "FK_user_profile_hobby_link_hobbies_HobbiesId",
-                        column: x => x.HobbiesId,
+                        name: "fk_user_profile_hobby_link_hobbies_hobbies_id",
+                        column: x => x.hobbies_id,
                         principalSchema: "users",
                         principalTable: "hobbies",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_user_profile_hobby_link_profiles_UserProfilesId",
-                        column: x => x.UserProfilesId,
+                        name: "fk_user_profile_hobby_link_profiles_user_profiles_id",
+                        column: x => x.user_profiles_id,
                         principalSchema: "users",
                         principalTable: "profiles",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
                 schema: "users",
                 table: "hobbies",
-                columns: new[] { "Id", "Name" },
+                columns: new[] { "id", "name" },
                 values: new object[,]
                 {
                     { new Guid("0a8c471e-2262-afd2-c393-099f413bce5f"), "skating" },
@@ -151,17 +151,17 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_hobbies_Name",
+                name: "ix_hobbies_name",
                 schema: "users",
                 table: "hobbies",
-                column: "Name",
+                column: "name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_user_profile_hobby_link_UserProfilesId",
+                name: "ix_user_profile_hobby_link_user_profiles_id",
                 schema: "users",
                 table: "user_profile_hobby_link",
-                column: "UserProfilesId");
+                column: "user_profiles_id");
         }
 
         /// <inheritdoc />

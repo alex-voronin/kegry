@@ -29,18 +29,23 @@ namespace LocationModule.Infrastructure.Persistence.Migrations
                 {
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
                     b.Property<Point>("Coordinates")
                         .IsRequired()
-                        .HasColumnType("geometry(Point, 4326)");
+                        .HasColumnType("geometry(Point, 4326)")
+                        .HasColumnName("coordinates");
 
                     b.Property<DateTimeOffset>("Timestamp")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("timestamp");
 
-                    b.HasKey("UserId");
+                    b.HasKey("UserId")
+                        .HasName("pk_locations");
 
-                    b.HasIndex("Coordinates");
+                    b.HasIndex("Coordinates")
+                        .HasDatabaseName("ix_locations_coordinates");
 
                     NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Coordinates"), "gist");
 

@@ -26,22 +26,28 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("NotificationModule.Domain.Aggregates.Device", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("id");
 
                     b.Property<string>("FcmToken")
                         .IsRequired()
                         .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
+                        .HasColumnType("character varying(512)")
+                        .HasColumnName("fcm_token");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_devices");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_devices_user_id");
 
                     b.ToTable("devices", "notifications");
                 });
@@ -49,35 +55,45 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("NotificationModule.Domain.Aggregates.Notification", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<Guid?>("FromUserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("from_user_id");
 
                     b.Property<bool>("IsSeen")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_seen");
 
                     b.Property<string>("PrimaryText")
                         .IsRequired()
                         .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)");
+                        .HasColumnType("character varying(1024)")
+                        .HasColumnName("primary_text");
 
                     b.Property<string>("SecondaryText")
                         .IsRequired()
                         .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)");
+                        .HasColumnType("character varying(1024)")
+                        .HasColumnName("secondary_text");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_notifications");
 
-                    b.HasIndex("FromUserId");
+                    b.HasIndex("FromUserId")
+                        .HasDatabaseName("ix_notifications_from_user_id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_notifications_user_id");
 
                     b.ToTable("notifications", "notifications");
                 });
@@ -85,15 +101,19 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("NotificationModule.Domain.Aggregates.NotificationsSettings", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
                     b.Property<bool>("EmailsEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("emails_enabled");
 
                     b.Property<bool>("PushesEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("pushes_enabled");
 
-                    b.HasKey("UserId");
+                    b.HasKey("UserId")
+                        .HasName("pk_notification_settings");
 
                     b.ToTable("notification_settings", "notifications");
                 });
@@ -101,29 +121,35 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("NotificationModule.Domain.Aggregates.User", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("AvatarImageUrl")
                         .IsRequired()
                         .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)");
+                        .HasColumnType("character varying(1024)")
+                        .HasColumnName("avatar_image_url");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("email");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("first_name");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("last_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_users");
 
                     b.ToTable("users", "notifications");
                 });
@@ -134,20 +160,23 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                         .WithMany("Devices")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_devices_users_user_id");
                 });
 
             modelBuilder.Entity("NotificationModule.Domain.Aggregates.Notification", b =>
                 {
                     b.HasOne("NotificationModule.Domain.Aggregates.User", "FromUser")
                         .WithMany()
-                        .HasForeignKey("FromUserId");
+                        .HasForeignKey("FromUserId")
+                        .HasConstraintName("fk_notifications_users_from_user_id");
 
                     b.HasOne("NotificationModule.Domain.Aggregates.User", null)
                         .WithMany("Notifications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_notifications_users_user_id");
 
                     b.Navigation("FromUser");
                 });
@@ -158,7 +187,8 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                         .WithOne("NotificationsSettings")
                         .HasForeignKey("NotificationModule.Domain.Aggregates.NotificationsSettings", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_notification_settings_users_user_id");
                 });
 
             modelBuilder.Entity("NotificationModule.Domain.Aggregates.User", b =>

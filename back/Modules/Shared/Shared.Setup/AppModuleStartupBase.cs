@@ -38,6 +38,7 @@ public abstract class AppModuleStartupBase<TContext> : IFeatureStartup where TCo
     {
         services.AddDbContext<TContext>(options =>
             options.UseNpgsql(dbConnectionString)
+                .UseSnakeCaseNamingConvention()
         );
     }
 

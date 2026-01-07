@@ -26,14 +26,18 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("HobbyUserProfile", b =>
                 {
                     b.Property<Guid>("HobbiesId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("hobbies_id");
 
                     b.Property<Guid>("UserProfilesId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_profiles_id");
 
-                    b.HasKey("HobbiesId", "UserProfilesId");
+                    b.HasKey("HobbiesId", "UserProfilesId")
+                        .HasName("pk_user_profile_hobby_link");
 
-                    b.HasIndex("UserProfilesId");
+                    b.HasIndex("UserProfilesId")
+                        .HasDatabaseName("ix_user_profile_hobby_link_user_profiles_id");
 
                     b.ToTable("user_profile_hobby_link", "users");
                 });
@@ -41,16 +45,20 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("UserProfileModule.Domain.Aggregates.Hobby", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_hobbies");
 
                     b.HasIndex("Name")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_hobbies_name");
 
                     b.ToTable("hobbies", "users");
 
@@ -395,38 +403,47 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("UserProfileModule.Domain.Aggregates.UserProfile", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("AvatarImageUrl")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("avatar_image_url");
 
                     b.Property<string>("Bio")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("bio");
 
                     b.Property<DateOnly>("Birthday")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("birthday");
 
                     b.Property<string>("CoverImageUrl")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("cover_image_url");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("first_name");
 
                     b.Property<int>("Gender")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("gender");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("last_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_profiles");
 
                     b.ToTable("profiles", "users");
                 });
@@ -437,13 +454,15 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("HobbiesId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_profile_hobby_link_hobbies_hobbies_id");
 
                     b.HasOne("UserProfileModule.Domain.Aggregates.UserProfile", null)
                         .WithMany()
                         .HasForeignKey("UserProfilesId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_profile_hobby_link_profiles_user_profiles_id");
                 });
 #pragma warning restore 612, 618
         }

@@ -3,9 +3,9 @@ using SharedCore.Interfaces;
 
 namespace FeedModule.Domain.Repositories;
 
-public interface IFeedProfileRepository : IRepositoryOutbox<FeedProfile>
+public interface IFeedUserRelationRepository : IRepositoryOutbox<FeedUserRelation>
 {
-    public Task<FeedProfile?> GetAsync(
+    public Task<FeedUserRelation?> GetAsync(
         Guid myUserId,
         Guid otherUserId,
         bool asNoTracking = false,
