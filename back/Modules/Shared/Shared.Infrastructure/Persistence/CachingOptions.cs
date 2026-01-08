@@ -4,9 +4,9 @@ namespace Shared.Infrastructure.Persistence;
 
 public static class CachingOptions
 {
-    public static readonly HybridCacheEntryOptions Forever = new HybridCacheEntryOptions
+    public static readonly HybridCacheEntryOptions Week = new HybridCacheEntryOptions
     {
-        Expiration = TimeSpan.FromDays(365 * 100),
-        LocalCacheExpiration = TimeSpan.FromDays(365 * 100)
+        Expiration = TimeSpan.FromDays(7),
+        LocalCacheExpiration = TimeSpan.FromDays(7)
     };
 }

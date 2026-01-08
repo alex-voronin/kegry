@@ -11,9 +11,9 @@ internal class EfCoreHobbyRepository : CachingRepository<UserProfileContext, Hob
     {
     }
 
-    public async Task<Hobby[]> GetAll(CancellationToken ct = default)
+    public ValueTask<Hobby[]> GetAll(CancellationToken ct = default)
     {
-        return await Cache.GetOrCreateAsync(
+        return Cache.GetOrCreateAsync(
             key: "hobby-list",
             factory: async cancel =>
             {
@@ -22,8 +22,21 @@ internal class EfCoreHobbyRepository : CachingRepository<UserProfileContext, Hob
                     .OrderBy(h => h.Name)
                     .ToArrayAsync(cancel);
             },
-            options: CachingOptions.Forever,
+            options: CachingOptions.Week,
             cancellationToken: ct
         );
+    }
+
+    public async ValueTask<IReadOnlyCollection<Guid>> GetNonExistingIds(Guid[] hobbyIds, CancellationToken ct = default)
+    {
+        if (hobbyIds.Length == 0)
+        {
+            return [];
+        }
+        var allHobbies = await GetAll(ct); // it's cheap because of caching
+        var existingKeySet = allHobbies.Select(x => x.Id).ToHashSet();
+        var validatedKeySet = hobbyIds.ToHashSet();
+        validatedKeySet.ExceptWith(existingKeySet);
+        return validatedKeySet;
     }
 }

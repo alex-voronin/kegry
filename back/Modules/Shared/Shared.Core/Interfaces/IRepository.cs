@@ -20,6 +20,7 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
         bool asNoTracking = false,
         Expression<Func<TEntity, object?>>[]? includes = null,
         CancellationToken ct = default ) where TId: IEquatable<TId>;
+    public void Attach(TEntity entity);
     public void Add(TEntity entity);
     public Task AddAsync(TEntity entity, CancellationToken ct = default);
     public void Update(TEntity entity);

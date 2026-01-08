@@ -10,6 +10,7 @@ using UserProfileModule.API.Dto;
 using UserProfileModule.Contracts.Events;
 using UserProfileModule.Domain.Aggregates;
 using UserProfileModule.Domain.Exceptions;
+using UserProfileModule.Domain.Services;
 
 namespace UserProfileModule.API;
 
@@ -29,14 +30,11 @@ public class UserProfileEndpoints : IEndpoints
         [FromBody] CreateUserProfileRequest request,
         ClaimsPrincipal user,
         IUserProfileRepository profileRepository,
+        IHobbyService hobbyService,
         CancellationToken ct)
     {
         var userId = user.GetId();
-
-        var hobbyStubs = request.HobbyIds
-            .Select(id => new Hobby { Id = id })
-            .ToArray();
-
+        var hobbyStubs = await hobbyService.BuildHobbyStubs(request.HobbyIds, ct);
         var profile = new UserProfile
         {
             Id = userId,
@@ -62,6 +60,7 @@ public class UserProfileEndpoints : IEndpoints
         [FromBody] UpdateUserProfileRequest request,
         ClaimsPrincipal user,
         IUserProfileRepository profileRepository,
+        IHobbyService hobbyService,
         CancellationToken ct)
     {
         var userId = user.GetId();
@@ -71,9 +70,7 @@ public class UserProfileEndpoints : IEndpoints
             throw UserProfileExceptions.ProfileNotFound(userId);
         }
 
-        var hobbyStubs = request.HobbyIds
-            .Select(id => new Hobby { Id = id })
-            .ToArray();
+        var hobbyStubs = await hobbyService.BuildHobbyStubs(request.HobbyIds, ct);
 
         userProfile.FirstName = request.FirstName;
         userProfile.LastName = request.LastName;

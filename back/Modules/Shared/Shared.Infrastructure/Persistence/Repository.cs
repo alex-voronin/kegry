@@ -46,6 +46,11 @@ public class Repository<TContext, TEntity> : RepositoryBase, IRepository<TEntity
         return await query.FirstOrDefaultAsync(e => EF.Property<TId>(e, primaryKeyName).Equals(id), ct);
     }
 
+    public void Attach(TEntity entity)
+    {
+        Context.Attach(entity);
+    }
+    
     public void Add(TEntity entity)
     {
         Context.Set<TEntity>().Add(entity);

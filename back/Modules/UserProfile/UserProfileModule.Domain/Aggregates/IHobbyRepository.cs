@@ -4,5 +4,6 @@ namespace UserProfileModule.Domain.Aggregates;
 
 public interface IHobbyRepository : IRepository<Hobby>
 {
-    Task<Hobby[]> GetAll(CancellationToken ct = default);
+    public ValueTask<Hobby[]> GetAll(CancellationToken ct = default);
+    public ValueTask<IReadOnlyCollection<Guid>> GetNonExistingIds(Guid[] hobbyIds, CancellationToken ct = default);
 }

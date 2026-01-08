@@ -17,7 +17,7 @@ public class ExceptionHandler : IExceptionHandler
         {
             ArgumentNullException => (StatusCodes.Status400BadRequest, ErrorCode.GeneralError),
             UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, ErrorCode.GeneralError),
-            HttpCodeException httpCodeException => ((int)httpCodeException.HttpStatusCode, ErrorCode.GeneralError),
+            HttpCodeException httpCodeException => ((int)httpCodeException.HttpStatusCode, httpCodeException.ErrorCode),
             _ => (StatusCodes.Status500InternalServerError, ErrorCode.GeneralError)
         };
 
