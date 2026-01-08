@@ -7,7 +7,7 @@ public interface IUserRatingRepository : IRepository<UserRating>
 {
     public Task UpsertRatingAtomic(
         Guid userId,
-        decimal? oldRating,
+        decimal oldRating,
         decimal newRating,
         CancellationToken ct = default);
 }

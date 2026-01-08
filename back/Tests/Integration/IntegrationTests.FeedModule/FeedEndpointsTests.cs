@@ -1,10 +1,7 @@
 using FeedModule.API.Dto;
 using IntegrationTests.Shared;
-using LocationModule.API.Dto;
 using SharedCore.Api.Dto;
-using SharedCore.ValueObjects;
 using Shouldly;
-using UserProfileModule.API.Dto;
 
 namespace IntegrationTests.FeedModule;
 
@@ -22,41 +19,48 @@ public class FeedEndpointsTests : IAsyncLifetime
     public async Task DisposeAsync() => await _factory.ResetDatabaseAsync();
 
     [Fact]
-    public async Task GetFeed_ShouldReturnFeed_WhenUserAuthenticated()
+    public async Task GivenOneUser_WhenTheyOpenFeed_ThenThereNoUsers()
     {
-        // 1. Sign in
         var email = "feedtest@example.com";
         var password = "Password123!";
-        var accessToken = await _factory.AuthManager.CreateAndLoginUserAsync(email, password);
+        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync(email, password);
+        _factory.ApiClient.SetAuth(authResponse);
         
-        // 2. Use access token in following requests 
-        accessToken.ShouldNotBeNullOrEmpty();
-        _factory.ApiClient.DefaultRequestHeaders.Authorization =
-            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
         
-        // 3. Create the profile
-        await _factory.ApiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>("/api/v1/user-profile",
-            new CreateUserProfileRequest(
-                FirstName:"FirstName",
-                LastName:"LastName",
-                Bio:"Bio",
-                AvatarImageUrl:"http://my-image-url/avatar.jpg",
-                CoverImageUrl:"http://my-image-url/cover-image-url.jpg",
-                Birthday: new DateOnly(1980, 1, 1),
-                Gender: Gender.Male,
-                HobbyIds:[]
-            )
-        );
-
-        // 4. Submit our location as it necessary to load a feed
-        await _factory.ApiClient.PostAsync<UpdateLocationRequest, ApiResult.EmptyResult>("/api/v1/location",
-            new UpdateLocationRequest(Latitude: 0.0, Longitude: 0.0));
-
-        // 5. Get Feed
         var feedResponse = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>("/api/v1/feed");
-
         feedResponse.Success.ShouldBeTrue();
         feedResponse.Result.ShouldNotBeNull();
         feedResponse.Result.Feed.ShouldNotBeNull();
+        feedResponse.Result.Feed.Length.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task GivenTwoUsers_WhenUserRatesAnotherUser_ThenTheUserSeesRateOnFeed()
+    {
+        // 1. Sign in User A (Rater)
+        var authResponseA = await _factory.AuthManager.CreateAndLoginUserAsync("rater@example.com", "Password123!");
+        _factory.ApiClient.SetAuth(authResponseA);
+        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        
+        // 2. Create User B (Rated)
+        var authResponseB = await _factory.AuthManager.CreateAndLoginUserAsync("ratee@example.com", "Password123!");
+        var userBId = authResponseB.UserId;
+        _factory.ApiClient.SetAuth(authResponseB);
+        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 3. User A rates User B
+        _factory.ApiClient.SetAuth(authResponseA);
+        var rating = 4.5m;
+        var ratingRequest = new UserRatingDto(rating);
+        var response = await _factory.ApiClient.PostAsync<UserRatingDto, ApiResult.EmptyResult>(
+            $"/api/v1/feed/{userBId}/rating", ratingRequest);
+        
+        response.Success.ShouldBeTrue(
+            $"Rating failed with errors: {string.Join(", ", response.Errors.Select(e => e.Error))}");
+        
+        // 4. Get Feed and check rating
+        var feedResponse = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>("/api/v1/feed");
+        feedResponse.Result.Feed.First().Rating.ShouldBe(rating);
     }
 }

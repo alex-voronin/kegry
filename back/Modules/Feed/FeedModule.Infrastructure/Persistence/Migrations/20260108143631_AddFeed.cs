@@ -70,7 +70,7 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     my_user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     other_user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    rating = table.Column<decimal>(type: "numeric(2,1)", nullable: false),
+                    rating = table.Column<decimal>(type: "numeric(2,1)", nullable: true),
                     is_blocked = table.Column<bool>(type: "boolean", nullable: false),
                     is_in_meeting = table.Column<bool>(type: "boolean", nullable: false),
                     meeting_expires_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),

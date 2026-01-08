@@ -100,7 +100,7 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
 
         _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
         {
-            SchemasToInclude = ["feed", "security", "users", "location", "notifications", "public"],
+            SchemasToInclude = ["feed", "security", "users", "location", "notifications", "wolverine"],
             DbAdapter = DbAdapter.Postgres
         });
     }

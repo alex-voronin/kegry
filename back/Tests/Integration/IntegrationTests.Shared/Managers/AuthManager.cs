@@ -1,10 +1,13 @@
 using System.Net.Http.Json;
+using LocationModule.API.Dto;
 using Microsoft.Extensions.DependencyInjection;
 using SecurityModule.API.Dto;
 using SecurityModule.Domain.Aggregates.User;
 using SecurityModule.Infrastructure.Persistence;
 using SharedCore.Api.Dto;
+using SharedCore.ValueObjects;
 using Shouldly;
+using UserProfileModule.API.Dto;
 
 namespace IntegrationTests.Shared.Managers;
 
@@ -19,7 +22,7 @@ public class AuthManager
         _serviceProvider = serviceProvider;
     }
 
-    public async Task<string> CreateAndLoginUserAsync(string email, string password)
+    public async Task<AuthResponse> CreateAndLoginUserAsync(string email, string password)
     {
         // 1. Sign up
         var request = new SignInRequest(email, password);
@@ -49,6 +52,25 @@ public class AuthManager
             $"Login failed with errors: {string.Join(", ", loginResponse.Errors.Select(e => e.Error))}");
         loginResponse.Result.AccessToken.ShouldNotBeNullOrEmpty();
         
-        return loginResponse.Result.AccessToken;
+        return loginResponse.Result;
+    }
+
+    public async Task CreateDefaultProfileAndSubmitLocation()
+    {
+        await _apiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>("/api/v1/user-profile",
+            new CreateUserProfileRequest(
+                FirstName:"FirstName",
+                LastName:"LastName",
+                Bio:"Bio",
+                AvatarImageUrl:"http://my-image-url/avatar.jpg",
+                CoverImageUrl:"http://my-image-url/cover-image-url.jpg",
+                Birthday: new DateOnly(1980, 1, 1),
+                Gender: Gender.Male,
+                HobbyIds:[]
+            )
+        );
+        
+        await _apiClient.PostAsync<UpdateLocationRequest, ApiResult.EmptyResult>("/api/v1/location",
+            new UpdateLocationRequest(Latitude: 0.0, Longitude: 0.0));
     }
 }

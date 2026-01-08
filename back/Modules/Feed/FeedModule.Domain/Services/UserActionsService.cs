@@ -36,12 +36,15 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         
         var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
         
-        var oldRating = feedUserRelation.Rating;
-        await _userRatingRepository.UpsertRatingAtomic(otherUserId, rating, oldRating, ct);
+        var oldRating = feedUserRelation.Rating ?? 0.0m;
+        await _userRatingRepository.UpsertRatingAtomic(
+            userId: otherUserId,
+            oldRating: oldRating,
+            newRating: rating, 
+            ct: ct);
         
         feedUserRelation.Rating = rating;
         feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
-        _feedUserRelationRepository.Update(feedUserRelation);
 
         await transaction.SaveChangesAsync(ct);
         await transaction.CommitAsync(ct);
@@ -52,7 +55,6 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
         feedUserRelation.IsBlocked = true;
         feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
-        _feedUserRelationRepository.Update(feedUserRelation);
         await _feedUserRelationRepository.SaveChangesAsync(ct);
     }
 
@@ -61,7 +63,6 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
         feedUserRelation.SkippedAt = _timeProvider.GetUtcNow();
         feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
-        _feedUserRelationRepository.Update(feedUserRelation);
         await _feedUserRelationRepository.SaveChangesAsync(ct);
     }
 
@@ -106,7 +107,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
                 Id = Guid.CreateVersion7(),
                 MyUserId = myUserId,
                 OtherUserId = otherUserId,
-                Rating = 0,
+                Rating = null,
                 IsBlocked = false,
                 IsInMeeting = false,
                 MeetingExpiresAt = DateTimeOffset.MinValue,

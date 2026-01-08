@@ -70,7 +70,7 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("other_user_id");
 
-                    b.Property<decimal>("Rating")
+                    b.Property<decimal?>("Rating")
                         .HasColumnType("numeric(2,1)")
                         .HasColumnName("rating");
 

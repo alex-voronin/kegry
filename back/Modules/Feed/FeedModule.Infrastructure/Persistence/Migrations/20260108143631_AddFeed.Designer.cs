@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(FeedContext))]
-    [Migration("20260107211103_AddFeed")]
+    [Migration("20260108143631_AddFeed")]
     partial class AddFeed
     {
         /// <inheritdoc />
@@ -73,7 +73,7 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("other_user_id");
 
-                    b.Property<decimal>("Rating")
+                    b.Property<decimal?>("Rating")
                         .HasColumnType("numeric(2,1)")
                         .HasColumnName("rating");
 

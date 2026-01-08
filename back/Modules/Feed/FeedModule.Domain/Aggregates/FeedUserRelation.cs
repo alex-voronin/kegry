@@ -8,14 +8,14 @@ public class FeedUserRelation
     public required Guid MyUserId { get; init; }
     public required Guid OtherUserId { get; init; }
 
-    public required decimal Rating
+    public required decimal? Rating
     {
         get;
         set
         {
             Validation.ThrowIfInvalid(
                 nameof(Rating),
-                () => value >= 0.5m && value <= 5 && value % 0.5m != 0,
+                () => value == null || (value >= 0.5m && value <= 5 && value % 0.5m == 0),
                 "Rating value must be between 0.5 and 5 with 0.5 step"
             );
             field = value;

@@ -20,7 +20,7 @@ public class AuthenticationTests : IAsyncLifetime
     }
     
     [Fact]
-    public async Task AuthenticationTests_SignupShouldSuccess_WhenUserNotExists()
+    public async Task GivenNoUsers_WhenUserSignsUp_ThenUserIsRedirectedToEmailVerification()
     {
         var request = new SignInRequest(Email: "asd@gmail.com", Password: "123456789Qwe");
         

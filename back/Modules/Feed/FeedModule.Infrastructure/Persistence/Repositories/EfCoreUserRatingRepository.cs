@@ -13,22 +13,22 @@ public class EfCoreUserRatingRepository : Repository<FeedContext, UserRating>, I
 
     public async Task UpsertRatingAtomic(
         Guid userId,
-        decimal? oldRating,
+        decimal oldRating,
         decimal newRating,
         CancellationToken ct = default)
     {
-        var deltaRating = newRating - (oldRating ?? 0m);
-        var deltaReviewersCount = oldRating.HasValue ? 0 : 1;
+        var deltaRating = newRating - oldRating;
+        var deltaReviewersCount = oldRating > 0m ? 0 : 1;
         
         await Context.Database.ExecuteSqlInterpolatedAsync(
             $"""
-                INSERT INTO user_ratings (user_id, rating, reviewers_count)
+                INSERT INTO feed.user_ratings (user_id, rating, reviewers_count)
                 VALUES ({userId}, {newRating}, {deltaReviewersCount})
                 ON CONFLICT (user_id)
                 DO UPDATE SET
-                    rating = (user_ratings.rating * user_ratings.reviewers_count + {deltaRating}) /
-                             (user_ratings.reviewers_count + {deltaReviewersCount}),
-                    reviewers_count = user_ratings.reviewers_count + {deltaReviewersCount}
+                    rating = (feed.user_ratings.rating * feed.user_ratings.reviewers_count + {deltaRating}) /
+                             (feed.user_ratings.reviewers_count + {deltaReviewersCount}),
+                    reviewers_count = feed.user_ratings.reviewers_count + {deltaReviewersCount}
             """, ct);
     }
 }

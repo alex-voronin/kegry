@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using SecurityModule.API.Dto;
 
 namespace IntegrationTests.Shared;
 
@@ -33,4 +34,9 @@ public class IntegrationApiClient
     }
 
     public HttpRequestHeaders DefaultRequestHeaders => _client.DefaultRequestHeaders;
+
+    public void SetAuth(AuthResponse authResponse)
+    {
+        DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResponse.AccessToken);
+    }
 }
