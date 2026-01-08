@@ -1,10 +1,6 @@
 using FeedModule.API.Dto;
-using IntegrationTests.Shared.Setup;
+using IntegrationTests.Shared;
 using LocationModule.API.Dto;
-using Microsoft.Extensions.DependencyInjection;
-using SecurityModule.API.Dto;
-using SecurityModule.Domain.Aggregates.User;
-using SecurityModule.Infrastructure.Persistence;
 using SharedCore.Api.Dto;
 using SharedCore.ValueObjects;
 using Shouldly;
@@ -28,42 +24,17 @@ public class FeedEndpointsTests : IAsyncLifetime
     [Fact]
     public async Task GetFeed_ShouldReturnFeed_WhenUserAuthenticated()
     {
-        // 1. Sign up
+        // 1. Sign in
         var email = "feedtest@example.com";
         var password = "Password123!";
-        var request = new SignInRequest(email, password);
-
-        var signinResponse = await _factory.ApiClient.PostAsync<SignInRequest, ApiResult<AuthResponse>>(
-            "/api/v1/auth/signin", request);
-
-        signinResponse.Success.ShouldBeTrue();
-        var userId = Guid.Parse(signinResponse.Result.UserId);
-
-        // 2. Manually verify user in DB
-        using (var scope = _factory.Services.CreateScope())
-        {
-            var context = scope.ServiceProvider.GetRequiredService<SecurityContext>();
-            var user = await context.Users.FindAsync(userId);
-            user.ShouldNotBeNull();
-            user.RequiredAction = RequiredAction.None;
-            user.EmailConfirmed = true;
-            await context.SaveChangesAsync();
-        }
+        var accessToken = await _factory.AuthManager.CreateAndLoginUserAsync(email, password);
         
-        // 3. Sign in again to get Valid Token
-        var loginResponse = await _factory.ApiClient.PostAsync<SignInRequest, ApiResult<AuthResponse>>(
-            "/api/v1/auth/signin", request);
-
-        loginResponse.Success.ShouldBeTrue(
-            $"Login failed with errors: {string.Join(", ", loginResponse.Errors.Select(e => e.Error))}");
-
-        // 4. Use access token in following requests 
-        var accessToken = loginResponse.Result.AccessToken;
+        // 2. Use access token in following requests 
         accessToken.ShouldNotBeNullOrEmpty();
         _factory.ApiClient.DefaultRequestHeaders.Authorization =
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
         
-        // 5. Create the profile
+        // 3. Create the profile
         await _factory.ApiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>("/api/v1/user-profile",
             new CreateUserProfileRequest(
                 FirstName:"FirstName",
@@ -77,11 +48,11 @@ public class FeedEndpointsTests : IAsyncLifetime
             )
         );
 
-        // 6. Submit our location as it necessary to load a feed
+        // 4. Submit our location as it necessary to load a feed
         await _factory.ApiClient.PostAsync<UpdateLocationRequest, ApiResult.EmptyResult>("/api/v1/location",
             new UpdateLocationRequest(Latitude: 0.0, Longitude: 0.0));
 
-        // 7. Get Feed
+        // 5. Get Feed
         var feedResponse = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>("/api/v1/feed");
 
         feedResponse.Success.ShouldBeTrue();

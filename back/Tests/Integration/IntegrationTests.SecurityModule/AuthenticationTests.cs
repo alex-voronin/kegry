@@ -1,4 +1,4 @@
-﻿using IntegrationTests.Shared.Setup;
+﻿using IntegrationTests.Shared;
 using SecurityModule.API.Dto;
 using SecurityModule.Domain.Aggregates.User;
 using SharedCore.Api.Dto;

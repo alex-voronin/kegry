@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace IntegrationTests.Shared.Setup;
+namespace IntegrationTests.Shared;
 
 public class IntegrationApiClient
 {

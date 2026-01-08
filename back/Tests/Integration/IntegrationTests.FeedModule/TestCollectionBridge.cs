@@ -1,4 +1,4 @@
-using IntegrationTests.Shared.Setup;
+using IntegrationTests.Shared;
 using Xunit;
 
 namespace IntegrationTests.FeedModule;
