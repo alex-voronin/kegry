@@ -7,11 +7,11 @@ namespace Shared.Infrastructure.Persistence;
 
 public class MultiRepositoryTransaction : IMultiRepositoryTransaction
 {
-    private readonly DbContextCollection _dbContextCollection;
+    private readonly IDbContextCollection _dbContextCollection;
     private readonly IDbContextTransaction _transaction;
     private bool _isSaved;
 
-    internal MultiRepositoryTransaction(DbContextCollection dbContextCollection, IDbContextTransaction transaction)
+    internal MultiRepositoryTransaction(IDbContextCollection dbContextCollection, IDbContextTransaction transaction)
     {
         _dbContextCollection = dbContextCollection;
         _transaction = transaction;
@@ -41,7 +41,6 @@ internal class DbContextCollection : IDbContextCollection
     {
         _contexts.Add(repositoryBase.GetContext());
     }
-
     
     public IDbContextCollection And(IRepository repository)
     {
@@ -59,10 +58,10 @@ internal class DbContextCollection : IDbContextCollection
 
     public async Task<IMultiRepositoryTransaction> StartTransactionAsync(CancellationToken ct = default)
     {
-        var tx = await _contexts.First().Database.BeginTransactionAsync();
+        var tx = await BeginTransaction(_contexts.First(), ct);
         foreach (var context in _contexts)
         {
-            await context.Database.UseTransactionAsync(tx.GetDbTransaction(), ct);
+            await ApplyTransaction(context, tx, ct);
         }
         return new MultiRepositoryTransaction(this, tx);
     }
@@ -77,6 +76,19 @@ internal class DbContextCollection : IDbContextCollection
         await SaveDbContextsAsync(_contexts, ct);
     }
 
+    protected virtual async Task<IDbContextTransaction> BeginTransaction(DbContext dbContext, CancellationToken ct)
+    {
+        return await _contexts.First().Database.BeginTransactionAsync(ct);
+    }
+
+    protected virtual async Task ApplyTransaction(
+        DbContext context, 
+        IDbContextTransaction transaction, 
+        CancellationToken ct =default)
+    {
+        await context.Database.UseTransactionAsync(transaction.GetDbTransaction(), ct);
+    }
+    
     private static void SaveDbContexts(IEnumerable<DbContext> contexts)
     {
         foreach (var context in contexts)
