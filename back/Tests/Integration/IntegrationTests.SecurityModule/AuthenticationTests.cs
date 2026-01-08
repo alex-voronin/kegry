@@ -7,6 +7,7 @@ using NSubstitute;
 using SecurityModule.API.Dto;
 using SecurityModule.Domain.Aggregates;
 using SharedCore.Api.Dto;
+using SharedCore.Exceptions;
 using Shouldly;
 
 namespace IntegrationTests.SecurityModule;
@@ -46,6 +47,19 @@ public class AuthenticationTests : IAsyncLifetime
                 Arg.Any<CancellationToken>());
     }
 
+    [Fact]
+    public async Task GivenNoUsers_WhenUserSignsUpAndPassesInvalidEmail_ThenEmailErrorIsReturned()
+    {
+        var email = "asd@asldk.com";
+        var request = new SignUpRequest(Email: email, Password: "123456789Qwe");
+
+        var signinResponse = await _factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
+            "/api/v1/auth/signup", request);
+
+        signinResponse.Success.ShouldBeFalse();
+        signinResponse.Errors.First().Code.ShouldBe(nameof(ErrorCode.DoesNotExist));
+    }
+    
     [Fact]
     public async Task GivenNoUsers_WhenUserSignsIn_ThenUserIsRedirectedToSignup()
     {
