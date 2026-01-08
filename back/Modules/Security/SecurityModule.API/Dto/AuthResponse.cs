@@ -1,4 +1,4 @@
-using SecurityModule.Domain.Aggregates.User;
+using SecurityModule.Domain.Aggregates;
 
 namespace SecurityModule.API.Dto;
 

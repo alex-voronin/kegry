@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using SecurityModule.Domain.Aggregates.RefreshToken;
+using SecurityModule.Domain.Aggregates;
+using SecurityModule.Domain.Repositories;
 using Shared.Infrastructure.Persistence;
 
 namespace SecurityModule.Infrastructure.Persistence.Repositories;

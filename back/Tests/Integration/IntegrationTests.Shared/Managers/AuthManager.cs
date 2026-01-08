@@ -2,7 +2,7 @@ using System.Net.Http.Json;
 using LocationModule.API.Dto;
 using Microsoft.Extensions.DependencyInjection;
 using SecurityModule.API.Dto;
-using SecurityModule.Domain.Aggregates.User;
+using SecurityModule.Domain.Aggregates;
 using SecurityModule.Infrastructure.Persistence;
 using SharedCore.Api.Dto;
 using SharedCore.ValueObjects;
@@ -25,13 +25,12 @@ public class AuthManager
     public async Task<AuthResponse> CreateAndLoginUserAsync(string email, string password)
     {
         // 1. Sign up
-        var request = new SignInRequest(email, password);
+        var signupRequest = new SignUpRequest(email, password);
+        var signupResponse = await _apiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
+            "/api/v1/auth/signup", signupRequest);
 
-        var signinResponse = await _apiClient.PostAsync<SignInRequest, ApiResult<AuthResponse>>(
-            "/api/v1/auth/signin", request);
-
-        signinResponse.Success.ShouldBeTrue();
-        var userId = Guid.Parse(signinResponse.Result.UserId);
+        signupResponse.Success.ShouldBeTrue();
+        var userId = Guid.Parse(signupResponse.Result.UserId);
 
         // 2. Manually verify user in DB
         using (var scope = _serviceProvider.CreateScope())
@@ -45,14 +44,16 @@ public class AuthManager
         }
         
         // 3. Sign in again to get access token
-        var loginResponse = await _apiClient.PostAsync<SignInRequest, ApiResult<AuthResponse>>(
-            "/api/v1/auth/signin", request);
+        var signinRequest = new SignInRequest(email, password);
+        var signinResponse = await _apiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
+            "/api/v1/auth/signin", signinRequest);
 
-        loginResponse.Success.ShouldBeTrue(
-            $"Login failed with errors: {string.Join(", ", loginResponse.Errors.Select(e => e.Error))}");
-        loginResponse.Result.AccessToken.ShouldNotBeNullOrEmpty();
+        signinResponse.Success.ShouldBeTrue(
+            $"Login failed with errors: {string.Join(", ", signinResponse.Errors.Select(e => e.Error))}");
+        signinResponse.Result.Auth.ShouldNotBeNull();
+        signinResponse.Result.Auth.AccessToken.ShouldNotBeNullOrEmpty();
         
-        return loginResponse.Result;
+        return signinResponse.Result.Auth;
     }
 
     public async Task CreateDefaultProfileAndSubmitLocation()

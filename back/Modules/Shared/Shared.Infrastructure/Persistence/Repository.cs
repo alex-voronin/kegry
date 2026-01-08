@@ -51,9 +51,9 @@ public class Repository<TContext, TEntity> : RepositoryBase, IRepository<TEntity
         Context.Set<TEntity>().Add(entity);
     }
 
-    public async Task AddAsync(TEntity entity, CancellationToken ct = default)
+    public Task AddAsync(TEntity entity, CancellationToken ct = default)
     {
-        await Context.Set<TEntity>().AddAsync(entity, ct);
+        return Context.Set<TEntity>().AddAsync(entity, ct).AsTask();
     }
 
     public void Update(TEntity entity)
@@ -71,9 +71,9 @@ public class Repository<TContext, TEntity> : RepositoryBase, IRepository<TEntity
         return Context.Set<TEntity>().Count();
     }
 
-    public async Task<int> CountAsync(CancellationToken ct = default)
+    public Task<int> CountAsync(CancellationToken ct = default)
     {
-        return await Context.Set<TEntity>().CountAsync(ct);
+        return Context.Set<TEntity>().CountAsync(ct);
     }
 
     public void SaveChanges()
@@ -81,12 +81,12 @@ public class Repository<TContext, TEntity> : RepositoryBase, IRepository<TEntity
         Context.SaveChanges();
     }
 
-    public async Task SaveChangesAsync(CancellationToken ct = default)
+    public Task SaveChangesAsync(CancellationToken ct = default)
     {
-        await Context.SaveChangesAsync(ct);
+        return Context.SaveChangesAsync(ct);
     }
 
-    public async Task SaveAsync(TEntity entity, CancellationToken ct)
+    public Task SaveAsync(TEntity entity, CancellationToken ct)
     {
         var entry = Context.Entry(entity);
         switch (entry.State)
@@ -99,7 +99,7 @@ public class Repository<TContext, TEntity> : RepositoryBase, IRepository<TEntity
                 break;
         }
 
-        await Context.SaveChangesAsync(ct);
+        return Context.SaveChangesAsync(ct);
     }
 
     public IDbContextCollection And(IRepository otherRepository)

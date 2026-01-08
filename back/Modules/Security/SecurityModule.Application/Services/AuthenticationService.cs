@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SecurityModule.Contracts.Events;
-using SecurityModule.Domain.Aggregates.RefreshToken;
-using SecurityModule.Domain.Aggregates.User;
 using SecurityModule.Domain.Exceptions;
 using SecurityModule.Domain.Services;
 using SecurityModule.Application.Configs;
+using SecurityModule.Domain.Aggregates;
+using SecurityModule.Domain.Repositories;
 using SecurityModule.Infrastructure.Service;
 using Serilog;
 using SharedCore.Exceptions;
@@ -20,14 +20,11 @@ namespace SecurityModule.Application.Services;
 
 internal class AuthenticationService : IAuthenticationService, IScoped
 {
-    private record LoginResult(User User, string AccessToken, string RefreshToken);
-
-    private record SignupResult(User User, string ConfirmationCode);
-
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
+    private readonly IUserRepository _userRepository;
     private readonly AuthTokenConfig _authTokenConfig;
     private readonly IMessageBus _bus;
     private readonly JwtSecurityTokenHandler _jwtHandler;
@@ -38,6 +35,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         SignInManager<User> signInManager,
         IRefreshTokenService refreshTokenService,
         IRefreshTokenRepository refreshTokenRepository,
+        IUserRepository userRepository,
         IOptions<AuthTokenConfig> authTokenConfigOptions,
         IMessageBus bus, 
         IEmailExistenceChecker emailExistenceChecker)
@@ -46,10 +44,66 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         _signInManager = signInManager;
         _refreshTokenService = refreshTokenService;
         _refreshTokenRepository = refreshTokenRepository;
+        _userRepository = userRepository;
         _authTokenConfig = authTokenConfigOptions.Value;
         _bus = bus;
         _emailExistenceChecker = emailExistenceChecker;
         _jwtHandler = new JwtSecurityTokenHandler();
+    }
+    
+    public Task<bool> IsUserExistAsync(string email)
+    {
+        return _userRepository.IsUserExistAsync(email);
+    }
+    
+    public async Task<AuthResult> SignupAsync(string email, string password)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user != null && user.EmailConfirmed)
+        {
+            throw SecurityExceptions.UserAlreadyExists(email);
+        }
+
+        if (user == null)
+        {
+            var exists = await _emailExistenceChecker.CheckDomainExists(email);
+            if (!exists)
+            {
+                throw SecurityExceptions.EmailDoesNotExist(email);
+            }
+            
+            user = new User
+            {
+                Id = Guid.CreateVersion7(),
+                UserName = email,
+                Email = email,
+                RequiredAction = RequiredAction.EmailVerification,
+            };
+            var result = await _userManager.CreateAsync(user, password);
+
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(e => e.Description).ToArray();
+                throw SecurityExceptions.InternalError(string.Join(";", errors));
+            }
+        }
+
+        var confirmationCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        
+        await _bus.PublishAsync(
+            new AccountCreatedEvent
+            {
+                UserId = user.Id,
+                Email = email,
+                ConfirmationCode = confirmationCode
+            }
+        );
+        
+        return new AuthResult(
+            User: user,
+            AccessToken: null,
+            RefreshToken: null);
     }
 
     public async Task<AuthResult> SigninAsync(string email, string password)
@@ -57,31 +111,38 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         var existingUser = await _userManager.FindByEmailAsync(email);
         if (existingUser == null)
         {
-            var exists = await _emailExistenceChecker.CheckDomainExists(email);
-            if (!exists)
-            {
-                throw SecurityExceptions.EmailDoesNotExist(email);
-            }
-            var signupResult = await Signup(email, password);
-            await _bus.PublishAsync(
-                new AccountCreatedEvent
-                {
-                    UserId = signupResult.User.Id,
-                    Email = email,
-                    ConfirmationCode = signupResult.ConfirmationCode
-                }
-            );
+            throw SecurityExceptions.UserNotFound(email);
+        }
+        
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            throw SecurityExceptions.UserNotFound(email);
+        }
+
+        if (!user.EmailConfirmed)
+        {
             return new AuthResult(
-                User: signupResult.User,
+                User: user,
                 AccessToken: null,
                 RefreshToken: null);
         }
         
-        var loginResult = await Login(email, password);
+        var result = await _signInManager.CheckPasswordSignInAsync(
+            user: user,
+            password: password,
+            lockoutOnFailure: true);
+        if (!result.Succeeded)
+        {
+            throw CommonExceptions.InternalError(result.ToString());
+        }
+
+        var (accessToken, refreshToken) = await GenerateTokensAsync(user);
+        
         return new AuthResult(
-            User: loginResult.User,
-            AccessToken: loginResult.AccessToken,
-            RefreshToken: loginResult.RefreshToken);
+            User: user,
+            AccessToken: accessToken,
+            RefreshToken: refreshToken);
     }
 
     public async Task<AuthResult> ConfirmEmailAsync(string userId, string token)
@@ -154,70 +215,6 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         }
 
         await _signInManager.SignOutAsync();
-    }
-
-    private async Task<SignupResult> Signup(
-        string email,
-        string password)
-    {
-        var user = await _userManager.FindByEmailAsync(email);
-
-        if (user != null && user.EmailConfirmed)
-        {
-            throw SecurityExceptions.UserAlreadyExists(email);
-        }
-
-        if (user == null)
-        {
-            user = new User
-            {
-                Id = Guid.CreateVersion7(),
-                UserName = email,
-                Email = email,
-                RequiredAction = RequiredAction.EmailVerification,
-            };
-            var result = await _userManager.CreateAsync(user, password);
-
-            if (!result.Succeeded)
-            {
-                var errors = result.Errors.Select(e => e.Description).ToArray();
-                throw SecurityExceptions.InternalError(string.Join(";", errors));
-            }
-        }
-
-        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        return new SignupResult(
-            User: user,
-            ConfirmationCode: token
-        );
-    }
-
-    private async Task<LoginResult> Login(
-        string email,
-        string password)
-    {
-        var user = await _userManager.FindByEmailAsync(email);
-        if (user == null)
-        {
-            throw SecurityExceptions.UserNotFound(email);
-        }
-
-        var result = await _signInManager.CheckPasswordSignInAsync(
-            user: user,
-            password: password,
-            lockoutOnFailure: true);
-        if (!result.Succeeded)
-        {
-            throw CommonExceptions.InternalError(result.ToString());
-        }
-
-        var (accessToken, refreshToken) = await GenerateTokensAsync(user);
-
-        return new LoginResult(
-            User: user,
-            AccessToken: accessToken,
-            RefreshToken: refreshToken
-        );
     }
 
     private async Task<(string accessToken, string refreshToken)> GenerateTokensAsync(User user)

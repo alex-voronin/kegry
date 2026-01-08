@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace SecurityModule.Domain.Aggregates.User;
+namespace SecurityModule.Domain.Aggregates;
 
 public enum RequiredAction
 {

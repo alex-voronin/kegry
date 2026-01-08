@@ -1,6 +1,7 @@
+using SecurityModule.Domain.Aggregates;
 using SharedCore.Interfaces;
 
-namespace SecurityModule.Domain.Aggregates.RefreshToken;
+namespace SecurityModule.Domain.Repositories;
 
 public interface IRefreshTokenRepository : IRepository<RefreshToken>
 {

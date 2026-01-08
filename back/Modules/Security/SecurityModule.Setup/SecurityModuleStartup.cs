@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using SecurityModule.Application.Configs;
-using SecurityModule.Domain.Aggregates.User;
+using SecurityModule.Domain.Aggregates;
 using SecurityModule.Infrastructure;
 using SecurityModule.Infrastructure.Persistence;
 using Shared.Setup;

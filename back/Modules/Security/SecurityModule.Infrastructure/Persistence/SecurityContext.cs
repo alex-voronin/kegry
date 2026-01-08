@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SecurityModule.Domain.Aggregates.RefreshToken;
-using SecurityModule.Domain.Aggregates.User;
+using SecurityModule.Domain.Aggregates;
 
 namespace SecurityModule.Infrastructure.Persistence;
 

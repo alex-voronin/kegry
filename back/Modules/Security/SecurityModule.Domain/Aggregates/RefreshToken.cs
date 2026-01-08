@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SecurityModule.Domain.Aggregates.RefreshToken;
+namespace SecurityModule.Domain.Aggregates;
 
 public class RefreshToken
 {

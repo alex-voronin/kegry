@@ -1,8 +1,8 @@
 using AutoFixture.Xunit2;
 using Microsoft.Extensions.Time.Testing;
 using NSubstitute;
-using SecurityModule.Domain.Aggregates.RefreshToken;
-using SecurityModule.Domain.Aggregates.User;
+using SecurityModule.Domain.Aggregates;
+using SecurityModule.Domain.Repositories;
 using SecurityModule.Domain.Services;
 using Shouldly;
 using SharedCore.Exceptions;

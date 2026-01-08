@@ -1,7 +1,7 @@
+using SecurityModule.Domain.Aggregates;
 using SharedCore.Services;
-using SecurityModule.Domain.Aggregates.RefreshToken;
-using SecurityModule.Domain.Aggregates.User;
 using SecurityModule.Domain.Exceptions;
+using SecurityModule.Domain.Repositories;
 using SharedCore.Services.LifeTimes;
 
 namespace SecurityModule.Domain.Services;

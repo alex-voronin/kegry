@@ -1,6 +1,6 @@
 ﻿using IntegrationTests.Shared;
 using SecurityModule.API.Dto;
-using SecurityModule.Domain.Aggregates.User;
+using SecurityModule.Domain.Aggregates;
 using SharedCore.Api.Dto;
 using Shouldly;
 
@@ -22,10 +22,10 @@ public class AuthenticationTests : IAsyncLifetime
     [Fact]
     public async Task GivenNoUsers_WhenUserSignsUp_ThenUserIsRedirectedToEmailVerification()
     {
-        var request = new SignInRequest(Email: "asd@gmail.com", Password: "123456789Qwe");
+        var request = new SignUpRequest(Email: "asd@gmail.com", Password: "123456789Qwe");
         
-        var signinResponse = await _factory.ApiClient.PostAsync<SignInRequest, ApiResult<AuthResponse>>(
-            "/api/v1/auth/signin", request);
+        var signinResponse = await _factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
+            "/api/v1/auth/signup", request);
 
         signinResponse.Success.ShouldBeTrue();
         signinResponse.Result.RequiredAction.ShouldBe(RequiredAction.EmailVerification);
