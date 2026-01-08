@@ -34,14 +34,14 @@ public class AuthEndpoints : IEndpoints
         if (!isExist)
         {
             return ApiResult<SigninResponse>.Build(
-                new SigninResponse(NeedSignup: true, Auth: null)
+                new SigninResponse(IsSignupRequired: true, Auth: null)
             );
         }
 
         var result = await authenticationService.SigninAsync(email: request.Email, password: request.Password);
         return ApiResult<SigninResponse>.Build(
             new SigninResponse(
-                NeedSignup: false,
+                IsSignupRequired: false,
                 Auth: AuthResultToResponse(result)
             )
         );

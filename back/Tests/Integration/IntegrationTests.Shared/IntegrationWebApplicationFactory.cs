@@ -6,9 +6,14 @@ using JasperFx.CommandLine;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NotificationsModule.Infrastructure.Transport.Emails;
+using NotificationsModule.Infrastructure.Transport.Push;
 using Npgsql;
+using NSubstitute;
 using Respawn;
 using Xunit;
 
@@ -16,28 +21,27 @@ namespace IntegrationTests.Shared;
 
 public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private const string DbUser = "postgres";
-    private const string DbPassword = "admin";
-    private const string DbName = "hoppyfydb";
-    private const int DbHostPort = 54321;
-    private const int DbContainerPort = 5432;
-
-    private static readonly string DbConnectionString = $"Host=localhost;Port={DbHostPort};Username={DbUser};" +
-                                                        $"Password={DbPassword};Database={DbName}";
+    private static readonly string DbConnectionString = $"Host=localhost;" +
+                                                        $"Port={TestConfig.Db.HostPort};" +
+                                                        $"Username={TestConfig.Db.User};" +
+                                                        $"Password={TestConfig.Db.Password};" +
+                                                        $"Database={TestConfig.Db.DbName}";
 
     private DbConnection _dbConnection = null!;
     private Respawner _respawner = null!;
+
     public IntegrationApiClient ApiClient { get; private set; } = null!;
     public AuthManager AuthManager { get; private set; } = null!;
+    public NotificationManager NotificationManager { get; private set; } = null!;
 
     private readonly IContainer _dbContainer =
         new ContainerBuilder("kartoza/postgis:18-3.6--v2025.11.24")
-            .WithEnvironment("POSTGRES_USER", DbUser)
-            .WithEnvironment("POSTGRES_PASSWORD", DbPassword)
-            .WithEnvironment("POSTGRES_DB", DbName)
-            .WithPortBinding(DbHostPort, DbContainerPort)
+            .WithEnvironment("POSTGRES_USER", TestConfig.Db.User)
+            .WithEnvironment("POSTGRES_PASSWORD", TestConfig.Db.Password)
+            .WithEnvironment("POSTGRES_DB", TestConfig.Db.DbName)
+            .WithPortBinding(TestConfig.Db.HostPort, TestConfig.Db.ContainerPort)
             .WithWaitStrategy(Wait.ForUnixContainer()
-                .UntilInternalTcpPortIsAvailable(DbContainerPort))
+                .UntilInternalTcpPortIsAvailable(TestConfig.Db.ContainerPort))
             .Build();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -51,13 +55,30 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
         {
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["Authentication:AuthTokenConfig:Secret"] = "super-secret-key-that-is-at-least-32-chars-long!",
-                ["Authentication:AuthTokenConfig:Issuer"] = "hoppyfy.me",
-                ["Authentication:AuthTokenConfig:Audience"] = "hoppyfy.me",
-                ["Authentication:AuthTokenConfig:AccessTokenDurationInDays"] = "1",
-                ["Authentication:AuthTokenConfig:RefreshTokenDurationInDays"] = "7",
-                ["Authentication:AuthTokenConfig:MaxSimultaneousLoggedInDevices"] = "5"
+                ["Authentication:AuthTokenConfig:Secret"] = TestConfig.AuthToken.Secret,
+                ["Authentication:AuthTokenConfig:Issuer"] = TestConfig.AuthToken.Issuer,
+                ["Authentication:AuthTokenConfig:Audience"] = TestConfig.AuthToken.Audience,
+                ["Authentication:AuthTokenConfig:AccessTokenDurationInDays"] =
+                    TestConfig.AuthToken.AccessTokenDurationInDays,
+                ["Authentication:AuthTokenConfig:RefreshTokenDurationInDays"] =
+                    TestConfig.AuthToken.RefreshTokenDurationInDays,
+                ["Authentication:AuthTokenConfig:MaxSimultaneousLoggedInDevices"] =
+                    TestConfig.AuthToken.MaxSimultaneousLoggedInDevices
             });
+        });
+
+        // mocks for notification transports 
+        builder.ConfigureServices(services =>
+        {
+            services.RemoveAll<IEmailSender>();
+            var emailSender = Substitute.For<IEmailSender>();
+            services.AddSingleton(emailSender);
+
+            services.RemoveAll<IPushSender>();
+            var pushSender = Substitute.For<IPushSender>();
+            services.AddSingleton(pushSender);
+
+            NotificationManager = new NotificationManager(emailSender: emailSender, pushSender: pushSender);
         });
     }
 
