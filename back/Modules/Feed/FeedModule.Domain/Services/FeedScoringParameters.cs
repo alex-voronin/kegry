@@ -4,7 +4,8 @@ internal static class FeedScoringParameters
 {
     internal const int UserLimitPerDatabaseQuery = 1000;
     internal const int SkippedUserCutOffInDays = 1;
-    internal const double DistanceWeightInScoring = 0.2;
-    internal const double HobbiesWeightInScoring = 0.45;
-    internal const double AgeWeightInScoring = 0.35;
+    internal const double DistanceWeightInScore = 0.19;
+    internal const double HobbiesWeightInScore = 0.43;
+    internal const double AgeWeightInScore = 0.32;
+    internal const double RatingWeightInScore = 0.05;
 }

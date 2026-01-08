@@ -9,9 +9,10 @@ namespace Tests.FeedModule.Domain;
 
 public class FeedScoringServiceCalculateScoreTests
 {
-    private const double DistanceWeight = FeedScoringParameters.DistanceWeightInScoring;
-    private const double HobbiesWeight = FeedScoringParameters.HobbiesWeightInScoring;
-    private const double AgeWeight = FeedScoringParameters.AgeWeightInScoring;
+    private const double DistanceWeight = FeedScoringParameters.DistanceWeightInScore;
+    private const double HobbiesWeight = FeedScoringParameters.HobbiesWeightInScore;
+    private const double AgeWeight = FeedScoringParameters.AgeWeightInScore;
+    private const double RatingWeightInScore = FeedScoringParameters.RatingWeightInScore;
     private const int FilterDistance = 30000;
 
     [Fact]
@@ -43,7 +44,7 @@ public class FeedScoringServiceCalculateScoreTests
             candidate,
             Filter.CreateDefault(userProfile.Id));
 
-        var expectedScore = DistanceWeight + HobbiesWeight + AgeWeight;
+        var expectedScore = DistanceWeight + HobbiesWeight + AgeWeight + RatingWeightInScore;
         score.ShouldBe(expectedScore, tolerance: 0.0001);
     }
     
@@ -93,7 +94,7 @@ public class FeedScoringServiceCalculateScoreTests
         var candidate = new FeedCandidate
         {
             DistanceMeters = 100000,
-            Rating = 5,
+            Rating = 0.5m,
             User = new UserProfile
             {
                 Id = Guid.NewGuid(),
@@ -128,7 +129,7 @@ public class FeedScoringServiceCalculateScoreTests
         var candidate = new FeedCandidate
         {
             DistanceMeters = distanceMeters,
-            Rating = 5,
+            Rating = 0.5m,
             User = new UserProfile
             {
                 Id = Guid.NewGuid(),
@@ -173,7 +174,7 @@ public class FeedScoringServiceCalculateScoreTests
         var candidate = new FeedCandidate
         {
             DistanceMeters = 100000,
-            Rating = 5,
+            Rating = 0.5m,
             User = new UserProfile
             {
                 Id = Guid.NewGuid(),
@@ -209,7 +210,7 @@ public class FeedScoringServiceCalculateScoreTests
         var candidate = new FeedCandidate
         {
             DistanceMeters = 100000,
-            Rating = 5,
+            Rating = 0.5m,
             User = new UserProfile
             {
                 Id = Guid.NewGuid(),

@@ -83,7 +83,7 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
         var distanceScore = MathFunctions.Gaussian(
             value: candidate.DistanceMeters, 
             origin: 0, 
-            standardDeviation: filter.RadiusMeters / 2.0);;
+            standardDeviation: filter.RadiusMeters / 2.0);
         
         // hobbies scoring
         var hobbiesScore = 0.0;
@@ -104,10 +104,14 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
             origin: 0, 
             standardDeviation:6.0);
         
-        //TODO: add rating and inactivity time to the scoring calculation formula
+        // rating scoring
+        var ratingScore = (candidate.Rating.HasValue ? (double)candidate.Rating : 4.0) / 5.0;
+        
+        //TODO: add inactivity time to the scoring calculation formula
 
-        return FeedScoringParameters.DistanceWeightInScoring * distanceScore + 
-               FeedScoringParameters.HobbiesWeightInScoring * hobbiesScore +
-               FeedScoringParameters.AgeWeightInScoring * ageScore;
+        return FeedScoringParameters.DistanceWeightInScore * distanceScore + 
+               FeedScoringParameters.HobbiesWeightInScore * hobbiesScore +
+               FeedScoringParameters.AgeWeightInScore * ageScore + 
+               FeedScoringParameters.RatingWeightInScore * ratingScore;
     }
 }
