@@ -18,7 +18,8 @@ public class IntegrationApiClient
 
     public async Task<TResp> GetAsync<TResp>(string url)
     {
-        return (await _client.GetFromJsonAsync<TResp>(url, _options))!;
+        var response = await _client.GetAsync(url);
+        return (await response.Content.ReadFromJsonAsync<TResp>(_options))!;
     }
 
     public async Task<TResp> PostAsync<TReq, TResp>(string url, TReq data)

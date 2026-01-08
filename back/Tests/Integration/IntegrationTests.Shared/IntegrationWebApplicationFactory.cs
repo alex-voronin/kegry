@@ -15,6 +15,7 @@ using NotificationsModule.Infrastructure.Transport.Push;
 using Npgsql;
 using NSubstitute;
 using Respawn;
+using Respawn.Graph;
 using Xunit;
 
 namespace IntegrationTests.Shared;
@@ -121,8 +122,9 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
 
         _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
         {
+            DbAdapter = DbAdapter.Postgres,
             SchemasToInclude = ["feed", "security", "users", "location", "notifications", "wolverine"],
-            DbAdapter = DbAdapter.Postgres
+            TablesToIgnore = [new Table(schema: "users", name: "hobbies")]
         });
     }
 }
