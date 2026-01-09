@@ -11,8 +11,7 @@ public interface IStorageService
     Task<string> GetPresignedUploadUrlAsync(
         string key,
         string contentType,
-        TimeSpan expires,
-        CancellationToken ct = default);
+        TimeSpan expires);
 }
 
 internal class S3StorageService : IStorageService, ISingleton
@@ -23,21 +22,21 @@ internal class S3StorageService : IStorageService, ISingleton
     public S3StorageService(IOptions<S3Config> config)
     {
         _config = config.Value;
-        
+
         var s3Config = new AmazonS3Config
         {
             ServiceURL = _config.ServiceUrl,
+            UseHttp = _config.UseHttp,
             ForcePathStyle = true // Required for R2
         };
 
         _s3Client = new AmazonS3Client(_config.AccessKey, _config.SecretKey, s3Config);
     }
 
-    public async Task<string> GetPresignedUploadUrlAsync(
+    public Task<string> GetPresignedUploadUrlAsync(
         string key,
         string contentType,
-        TimeSpan expires,
-        CancellationToken ct = default)
+        TimeSpan expires)
     {
         var request = new GetPreSignedUrlRequest
         {
@@ -48,6 +47,11 @@ internal class S3StorageService : IStorageService, ISingleton
             Expires = DateTime.UtcNow.Add(expires)
         };
 
-        return await Task.Run(() => _s3Client.GetPreSignedURL(request), ct);
+        if (_s3Client.Config.UseHttp)
+        {
+            request.Protocol = Protocol.HTTP;
+        }
+
+        return _s3Client.GetPreSignedURLAsync(request);
     }
 }
