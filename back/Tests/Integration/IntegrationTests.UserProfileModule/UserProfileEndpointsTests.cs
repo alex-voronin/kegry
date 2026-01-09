@@ -19,7 +19,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
     }
 
     public Task InitializeAsync() => Task.CompletedTask;
-    public async Task DisposeAsync() => await _factory.ResetDatabaseAsync();
+    public Task DisposeAsync() => _factory.ResetDatabaseAsync();
 
     [Fact]
     public async Task GivenAuthenticatedUser_WhenUserCreatesProfile_ThenProfileCreated()
@@ -129,20 +129,20 @@ public class UserProfileEndpointsTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task GivenAuthenticatedUser_WhenGetAvatarUploadUrl_ThenReturnsUrl()
+    public async Task GivenAuthenticatedUser_WhenUserGetsAvatarUploadUrl_ThenReturnsUrl()
     {
         // 1. Sign in
         var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
         _factory.ApiClient.SetAuth(authResponse);
 
         // 2. Get upload url
-        var response = await _factory.ApiClient.PostAsync<object?, ApiResult<GetUrlResponse>>(
+        var response = await _factory.ApiClient.PostAsync<object?, ApiResult<GetPresignedUrlResponse>>(
             "/api/v1/user-profile/avatar/upload-url", null);
 
         // 3. Check response
         response.Success.ShouldBeTrue();
-        response.Result.Url.ShouldNotBeNullOrEmpty();
-        response.Result.Url.ShouldContain("test-bucket");
+        response.Result.UploadUrl.ShouldNotBeNullOrEmpty();
+        response.Result.UploadUrl.ShouldContain("test-bucket");
     }
 
     [Fact]
@@ -153,12 +153,40 @@ public class UserProfileEndpointsTests : IAsyncLifetime
         _factory.ApiClient.SetAuth(authResponse);
 
         // 2. Get upload url
-        var response = await _factory.ApiClient.PostAsync<object?, ApiResult<GetUrlResponse>>(
+        var response = await _factory.ApiClient.PostAsync<object?, ApiResult<GetPresignedUrlResponse>>(
             "/api/v1/user-profile/cover/upload-url", null);
 
         // 3. Check response
         response.Success.ShouldBeTrue();
-        response.Result.Url.ShouldNotBeNullOrEmpty();
-        response.Result.Url.ShouldContain("test-bucket");
+        response.Result.UploadUrl.ShouldNotBeNullOrEmpty();
+        response.Result.UploadUrl.ShouldContain("test-bucket");
+    }
+
+    [Fact]
+    public async Task GivenAuthenticatedUser_WhenUserUploadsImageToS3_ThenTheyCanDownloadIt()
+    {
+        // 1. Sign in
+        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
+        _factory.ApiClient.SetAuth(authResponse);
+
+        // 2. Get upload url
+        var response = await _factory.ApiClient.PostAsync<object?, ApiResult<GetPresignedUrlResponse>>(
+            "/api/v1/user-profile/avatar/upload-url", null);
+
+        // 3. Check response
+        response.Success.ShouldBeTrue();
+        var uploadUrl = response.Result.UploadUrl;
+        uploadUrl.ShouldNotBeNullOrEmpty();
+        var downloadUrl = response.Result.PublicDownloadUrl;
+        downloadUrl.ShouldNotBeNullOrEmpty();
+
+        // 4. Upload dummy image
+        var imageToUpload = "dummy image content"u8.ToArray();
+        var uploadResponse = await _factory.S3Client.UploadAsync(uploadUrl, imageToUpload, "image/jpeg");
+        uploadResponse.EnsureSuccessStatusCode();
+
+        // 5. Verify in Minio (S3)
+        var downloadedImage = await _factory.S3Client.Download(downloadUrl);
+        downloadedImage.ShouldBe(imageToUpload);
     }
 }

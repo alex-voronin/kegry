@@ -31,6 +31,7 @@ public static class TestConfig
         ServiceUrl = "https://test.r2.cloudflarestorage.com",
         BucketName = "test-bucket",
         PublicUrl = "https://test.r2.cloudflarestorage.com",
-        KeySalt = "test-salt"
+        KeySalt = "test-salt",
+        UseHttp = true
     };
 }

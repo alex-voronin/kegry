@@ -1,4 +1,4 @@
-using System.Net.Http.Json;
+using IntegrationTests.Shared.HttpClients;
 using LocationModule.API.Dto;
 using Microsoft.Extensions.DependencyInjection;
 using SecurityModule.API.Dto;

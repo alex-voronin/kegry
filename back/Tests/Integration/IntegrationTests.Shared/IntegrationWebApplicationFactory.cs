@@ -16,6 +16,9 @@ using Npgsql;
 using NSubstitute;
 using Respawn;
 using Respawn.Graph;
+using Amazon.S3;
+using Amazon.S3.Model;
+using IntegrationTests.Shared.HttpClients;
 using Xunit;
 
 namespace IntegrationTests.Shared;
@@ -32,6 +35,7 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
     private Respawner _respawner = null!;
 
     public IntegrationApiClient ApiClient { get; private set; } = null!;
+    public S3Client S3Client { get; init; } = new S3Client();
     public AuthManager AuthManager { get; private set; } = null!;
     public NotificationManager NotificationManager { get; private set; } = null!;
 
@@ -43,6 +47,16 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
             .WithPortBinding(TestConfig.Db.HostPort, TestConfig.Db.ContainerPort)
             .WithWaitStrategy(Wait.ForUnixContainer()
                 .UntilInternalTcpPortIsAvailable(TestConfig.Db.ContainerPort))
+            .Build();
+
+    private readonly IContainer _minioContainer =
+        new ContainerBuilder("minio/minio")
+            .WithCommand("server", "/data")
+            .WithEnvironment("MINIO_ROOT_USER", TestConfig.S3.AccessKey)
+            .WithEnvironment("MINIO_ROOT_PASSWORD", TestConfig.S3.SecretKey)
+            .WithPortBinding(9000, true)
+            .WithWaitStrategy(Wait.ForUnixContainer()
+                .UntilInternalTcpPortIsAvailable(9000))
             .Build();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -67,10 +81,13 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
                     TestConfig.AuthToken.MaxSimultaneousLoggedInDevices.ToString(),
                 ["Storage:S3Config:AccessKey"] = TestConfig.S3.AccessKey,
                 ["Storage:S3Config:SecretKey"] = TestConfig.S3.SecretKey,
-                ["Storage:S3Config:ServiceUrl"] = TestConfig.S3.ServiceUrl,
-                ["Storage:S3Config:PublicUrl"] = TestConfig.S3.PublicUrl,
+                ["Storage:S3Config:ServiceUrl"] =
+                    $"http://{_minioContainer.Hostname}:{_minioContainer.GetMappedPublicPort(9000)}",
+                ["Storage:S3Config:PublicUrl"] =
+                    $"http://{_minioContainer.Hostname}:{_minioContainer.GetMappedPublicPort(9000)}",
                 ["Storage:S3Config:BucketName"] = TestConfig.S3.BucketName,
-                ["Storage:S3Config:KeySalt"] = TestConfig.S3.SecretKey
+                ["Storage:S3Config:KeySalt"] = TestConfig.S3.SecretKey,
+                ["Storage:S3Config:UseHttp"] = TestConfig.S3.UseHttp.ToString()
             });
         });
 
@@ -105,6 +122,10 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
     public async Task InitializeAsync()
     {
         await _dbContainer.StartAsync();
+
+        await _minioContainer.StartAsync();
+        await CreateTestBucketAsync();
+
         var httpClient = CreateClient();
 
         ApiClient = new IntegrationApiClient(httpClient);
@@ -113,12 +134,44 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
         await InitializeRespawnerAsync(DbConnectionString);
     }
 
+    private async Task CreateTestBucketAsync()
+    {
+        var serviceUrl = $"http://{_minioContainer.Hostname}:{_minioContainer.GetMappedPublicPort(9000)}";
+        var s3Config = new AmazonS3Config
+        {
+            ServiceURL = serviceUrl,
+            ForcePathStyle = true
+        };
+
+        var policyJson = $@"
+            {{
+                ""Version"": ""2012-10-17"",
+                ""Statement"": [
+                    {{
+                        ""Effect"": ""Allow"",
+                        ""Principal"": {{ ""AWS"": [""*""] }},
+                        ""Action"": [""s3:GetObject""],
+                        ""Resource"": [""arn:aws:s3:::{TestConfig.S3.BucketName}/*""]
+                    }}
+                ]
+            }}";
+
+        using var client = new AmazonS3Client(TestConfig.S3.AccessKey, TestConfig.S3.SecretKey, s3Config);
+        await client.PutBucketAsync(new PutBucketRequest { BucketName = TestConfig.S3.BucketName });
+        await client.PutBucketPolicyAsync(new PutBucketPolicyRequest
+        {
+            BucketName = TestConfig.S3.BucketName,
+            Policy = policyJson
+        });
+    }
+
     public new async Task DisposeAsync()
     {
         await base.DisposeAsync();
 
         await _dbConnection.DisposeAsync();
         await _dbContainer.DisposeAsync();
+        await _minioContainer.DisposeAsync();
     }
 
     private async Task InitializeRespawnerAsync(string dbConnectionString)
