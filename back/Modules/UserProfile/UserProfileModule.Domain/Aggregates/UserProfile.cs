@@ -11,8 +11,8 @@ public class UserProfile
     {
         get;
         set => field = ValidateName(
-            fieldName: nameof(FirstName), 
-            value: value, 
+            fieldName: nameof(FirstName),
+            value: value,
             maxLength: ValidationParameters.FirstNameMaxLength);
     } = null!;
 
@@ -20,8 +20,8 @@ public class UserProfile
     {
         get;
         set => field = ValidateName(
-            fieldName: nameof(LastName), 
-            value: value, 
+            fieldName: nameof(LastName),
+            value: value,
             maxLength: ValidationParameters.LastNameMaxLength);
     } = null!;
 
@@ -29,8 +29,8 @@ public class UserProfile
     {
         get;
         set => field = ValidateBio(
-            fieldName: nameof(Bio), 
-            value: value, 
+            fieldName: nameof(Bio),
+            value: value,
             maxLength: ValidationParameters.BioMaxLength);
     } = null!;
 
@@ -70,7 +70,7 @@ public class UserProfile
         Validation.ThrowIfLengthExceeded(fieldName, value, maxLength);
         return value.Trim();
     }
-    
+
     private static string ValidateBio(string fieldName, string value, int maxLength)
     {
         Validation.ThrowIfNull(fieldName, value);

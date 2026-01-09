@@ -5,7 +5,7 @@ using Shared.Infrastructure.Persistence;
 
 namespace SecurityModule.Infrastructure.Persistence.Repositories;
 
-public class EfCoreUserRepository : Repository<SecurityContext ,User>, IUserRepository
+public class EfCoreUserRepository : Repository<SecurityContext, User>, IUserRepository
 {
     public EfCoreUserRepository(SecurityContext context) : base(context)
     {

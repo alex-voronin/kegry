@@ -25,7 +25,7 @@ public class LocationEndpoints : IEndpoints
         ClaimsPrincipal user,
         ILocationService locationService)
     {
-        await locationService.UpdateLocation(user.GetId(),  request.Latitude, request.Longitude);
+        await locationService.UpdateLocation(user.GetId(), request.Latitude, request.Longitude);
         return ApiResult.Empty;
     }
 }

@@ -11,7 +11,7 @@ public record Filter
     public required int? AgeFrom { get; init; }
     public required int? AgeTo { get; init; }
     public required Gender? Gender { get; init; }
-    public required Guid[] HobbyIds  { get; init; }
+    public required Guid[] HobbyIds { get; init; }
 
     public static Filter CreateDefault(Guid userId)
     {
@@ -26,7 +26,7 @@ public record Filter
             HobbyIds = []
         };
     }
-    
+
     public int GetMeetingExpirationMinutesFromNow()
     {
         var now = DateTimeOffset.UtcNow;

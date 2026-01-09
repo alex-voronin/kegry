@@ -12,7 +12,7 @@ public class WolverineBusStartup : IFeatureStartup
     public void Register(IHostApplicationBuilder appBuilder, IHostBuilder host)
     {
         host.UseWolverine(
-            discovery: ExtensionDiscovery.Automatic, 
+            discovery: ExtensionDiscovery.Automatic,
             overrides: opts =>
             {
                 var dbConnectionString = appBuilder.Configuration.GetConnectionString(SharedConstants.DbName)!;

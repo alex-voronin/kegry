@@ -12,13 +12,13 @@ public class LocationHaversineGeoTests
     [Fact]
     public void DistanceMetersTo_WhenSamePoints_ThenReturnZero()
     {
-        var location = new Location 
-        { 
+        var location = new Location
+        {
             UserId = Guid.NewGuid(),
             Coordinates = GeometryFactory.CreatePoint(new Coordinate(30.0, 50.0)),
             Timestamp = DateTimeOffset.UtcNow
         };
-        
+
         var distance = location.DistanceMetersTo(location.Latitude, location.Longitude);
         distance.ShouldBe(0, 0.001);
     }
@@ -29,13 +29,13 @@ public class LocationHaversineGeoTests
         // Berlin: 52.5200, 13.4050
         // Paris: 48.8566, 2.3522
         // Distance is ~878 km
-        var berlin = new Location 
-        { 
+        var berlin = new Location
+        {
             UserId = Guid.NewGuid(),
             Coordinates = GeometryFactory.CreatePoint(new Coordinate(13.4050, 52.5200)),
             Timestamp = DateTimeOffset.UtcNow
         };
-        
+
         var distance = berlin.DistanceMetersTo(48.8566, 2.3522);
         distance.ShouldBeInRange(877000, 879000);
     }
@@ -44,13 +44,13 @@ public class LocationHaversineGeoTests
     public void DistanceMetersTo_WhenSmallMovement_ThenReturnCorrectDistance()
     {
         // ~111 meters per 0.001 deg lat
-        var start = new Location 
-        { 
+        var start = new Location
+        {
             UserId = Guid.NewGuid(),
             Coordinates = GeometryFactory.CreatePoint(new Coordinate(30.0, 50.0)),
             Timestamp = DateTimeOffset.UtcNow
         };
-        
+
         var distance = start.DistanceMetersTo(50.001, 30.0);
         distance.ShouldBeInRange(110, 112);
     }

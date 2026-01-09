@@ -9,11 +9,11 @@ public static class UserProfileExceptions
     {
         return new HttpCodeException($"Profile with id {id} not found", HttpStatusCode.NotFound, ErrorCode.NotFound);
     }
-    
+
     public static HttpCodeException InvalidHobbies(IReadOnlyCollection<Guid> hobbies)
     {
-        return new HttpCodeException($"Invalid hobby ids: {string.Join(", ",hobbies)}",
-            HttpStatusCode.NotFound, 
+        return new HttpCodeException($"Invalid hobby ids: {string.Join(", ", hobbies)}",
+            HttpStatusCode.NotFound,
             ErrorCode.NotFound);
     }
 }

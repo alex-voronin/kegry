@@ -9,7 +9,7 @@ public interface IAuthenticationService
     public Task<AuthResult> SigninAsync(
         string email,
         string password);
-    
+
     public Task<AuthResult> SignupAsync(
         string email,
         string password);

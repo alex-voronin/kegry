@@ -15,10 +15,10 @@ public class DateTimeHumanizerTests
         services.AddLogging();
         services.AddLocalization();
         services.AddTransient<IDateTimeHumanizer, DateTimeHumanizer>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         _dateTimeHumanizer = serviceProvider.GetRequiredService<IDateTimeHumanizer>();
-        
+
         CultureInfo.CurrentUICulture = new CultureInfo("en-US");
     }
 

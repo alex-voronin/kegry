@@ -17,21 +17,21 @@ public class EmailNotificationStrategy : IEmailNotificationStrategy, IScoped
     private readonly IEmailSender _emailSender;
 
     public EmailNotificationStrategy(
-        IUserRepository userRepository, 
-        IEmailBuilder emailBuilder, 
+        IUserRepository userRepository,
+        IEmailBuilder emailBuilder,
         IEmailSender emailSender)
     {
         _userRepository = userRepository;
         _emailBuilder = emailBuilder;
         _emailSender = emailSender;
     }
-    
+
     public async Task SendConfirmEmail(string toEmail, string confirmationCode, CancellationToken ct = default)
     {
         var email = _emailBuilder.BuildConfirmEmail(toEmail: toEmail, confirmationCode: confirmationCode);
         await _emailSender.SendEmailAsync(email, ct);
     }
-    
+
     public async Task SendMeetingArranged(Guid userId, string otherUserName, CancellationToken ct = default)
     {
         await SendEmail(
@@ -47,17 +47,17 @@ public class EmailNotificationStrategy : IEmailNotificationStrategy, IScoped
             factory: email => _emailBuilder.BuildUserInvitedEmail(email),
             ct: ct);
     }
-    
+
     private async Task SendEmail(Guid userId, Func<string, Email> factory,
         CancellationToken ct = default)
     {
-        var user = await _userRepository.GetByIdAsync(userId, asNoTracking:true, ct:ct);
+        var user = await _userRepository.GetByIdAsync(userId, asNoTracking: true, ct: ct);
         if (user == null)
         {
             Log.Error("Unable to send an email! User not found {0}", userId);
             return;
         }
-       
+
         var email = factory.Invoke(user.Email);
         await _emailSender.SendEmailAsync(email, ct);
     }

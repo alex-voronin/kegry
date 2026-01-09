@@ -11,9 +11,9 @@ public class UserProfile
     public string CoverImageUrl { get; init; } = null!;
     public DateOnly Birthday { get; init; }
     public Gender Gender { get; init; }
-    
+
     public IReadOnlyList<Hobby> Hobbies { get; init; } = new List<Hobby>();
-    
+
     [NotMapped]
     public string FullName => $"{FirstName} {LastName}";
 

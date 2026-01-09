@@ -8,12 +8,12 @@ namespace NotificationsModule.Application.Messaging.UserProfile;
 public static class UserProfileEventHandlers
 {
     public static async Task HandleAsync(
-        UserProfileChangedEvent @event, 
+        UserProfileChangedEvent @event,
         IUserRepository userRepository,
         CancellationToken ct)
     {
         var user = await userRepository.GetByIdAsync(@event.UserId, ct: ct);
-        
+
         if (user == null)
         {
             user = new User

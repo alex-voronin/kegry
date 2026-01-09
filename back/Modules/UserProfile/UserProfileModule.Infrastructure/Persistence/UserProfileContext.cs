@@ -8,7 +8,7 @@ public class UserProfileContext : DbContext
 {
     public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
     public DbSet<Hobby> Hobbies => Set<Hobby>();
-    
+
     public UserProfileContext(DbContextOptions<UserProfileContext> options)
         : base(options)
     {
@@ -30,7 +30,7 @@ public class UserProfileContext : DbContext
                 .HasMaxLength(ValidationParameters.LastNameMaxLength);
             builder.Property(up => up.Bio)
                 .HasMaxLength(ValidationParameters.BioMaxLength);
-            
+
             builder.HasMany(up => up.Hobbies)
                 .WithMany(h => h.UserProfiles)
                 .UsingEntity(j => j.ToTable("user_profile_hobby_link"));

@@ -26,7 +26,7 @@ public class NotificationsContext : DbContext
             builder.Property(x => x.FcmToken).IsRequired().HasMaxLength(512);
             builder.Property(x => x.UserId).IsRequired();
             builder.Property(x => x.UpdatedAt).IsRequired();
-            
+
             builder.HasIndex(x => x.UserId);
         });
 
@@ -39,7 +39,7 @@ public class NotificationsContext : DbContext
             builder.Property(x => x.FirstName).HasMaxLength(100);
             builder.Property(x => x.LastName).HasMaxLength(100);
             builder.Property(x => x.AvatarImageUrl).HasMaxLength(1024);
-            
+
             builder.HasMany(x => x.Devices)
                 .WithOne()
                 .HasForeignKey(x => x.UserId);
@@ -70,10 +70,10 @@ public class NotificationsContext : DbContext
             builder.Property(x => x.SecondaryText).IsRequired().HasMaxLength(1024);
             builder.Property(x => x.CreatedAt).IsRequired();
             builder.Property(x => x.IsSeen).IsRequired();
-            
+
             builder.HasIndex(x => x.UserId);
             builder.HasIndex(x => x.FromUserId);
-            
+
             builder.HasOne(x => x.FromUser)
                 .WithMany()
                 .HasForeignKey(x => x.FromUserId);

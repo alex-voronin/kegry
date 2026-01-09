@@ -59,7 +59,7 @@ public class AuthenticationTests : IAsyncLifetime
         signinResponse.Success.ShouldBeFalse();
         signinResponse.Errors.First().Code.ShouldBe(nameof(ErrorCode.DoesNotExist));
     }
-    
+
     [Fact]
     public async Task GivenNoUsers_WhenUserSignsIn_ThenUserIsRedirectedToSignup()
     {
@@ -98,7 +98,7 @@ public class AuthenticationTests : IAsyncLifetime
             ),
             ValidateLifetime = true,
         };
-        
+
         var principal = handler.ValidateToken(authResponse.AccessToken, parameters, out var validated);
         validated.ShouldBeAssignableTo(typeof(JwtSecurityToken));
         principal.Claims.ShouldContain(claim => claim.Type == JwtRegisteredClaimNames.Sub &&

@@ -33,16 +33,16 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         var transaction = await _userRatingRepository
             .And(_feedUserRelationRepository)
             .StartTransactionAsync(ct);
-        
+
         var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
-        
+
         var oldRating = feedUserRelation.Rating ?? 0.0m;
         await _userRatingRepository.UpsertRatingAtomic(
             userId: otherUserId,
             oldRating: oldRating,
-            newRating: rating, 
+            newRating: rating,
             ct: ct);
-        
+
         feedUserRelation.Rating = rating;
         feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
 

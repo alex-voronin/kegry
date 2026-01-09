@@ -10,9 +10,9 @@ namespace LocationModule.Setup;
 
 public class LocationModuleStartup : AppModuleStartupBase<LocationContext>
 {
-    public LocationModuleStartup(IConfigurationManager configuration) : 
-        base(configuration: configuration, 
-            moduleAssemblies: 
+    public LocationModuleStartup(IConfigurationManager configuration) :
+        base(configuration: configuration,
+            moduleAssemblies:
             [
                 typeof(Infrastructure.AssemblyMarker).Assembly,
                 typeof(Domain.AssemblyMarker).Assembly,

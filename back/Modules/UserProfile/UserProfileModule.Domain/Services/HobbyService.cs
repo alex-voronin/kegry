@@ -13,7 +13,7 @@ internal class HobbyService : IHobbyService, IScoped
 {
     private readonly IHobbyRepository _hobbyRepository;
 
-    public HobbyService(IHobbyRepository hobbyRepository) 
+    public HobbyService(IHobbyRepository hobbyRepository)
     {
         this._hobbyRepository = hobbyRepository;
     }
@@ -25,13 +25,13 @@ internal class HobbyService : IHobbyService, IScoped
         {
             throw UserProfileExceptions.InvalidHobbies(nonExistingIds);
         }
-        
+
         var hobbyStubs = hobbyIds
             .Select(id => new Hobby { Id = id })
             .ToArray();
         foreach (var hobbyStub in hobbyStubs)
         {
-            _hobbyRepository.Attach(hobbyStub);   
+            _hobbyRepository.Attach(hobbyStub);
         }
         return hobbyStubs;
     }

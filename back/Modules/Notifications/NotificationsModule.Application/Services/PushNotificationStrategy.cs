@@ -14,7 +14,7 @@ internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
     private readonly IPushSender _pushSender;
 
     public FcmPushNotificationStrategy(
-        IDeviceRepository deviceRepository, 
+        IDeviceRepository deviceRepository,
         IPushBuilder pushBuilder,
         IPushSender pushSender)
     {

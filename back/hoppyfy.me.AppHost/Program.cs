@@ -12,7 +12,7 @@ var passwordParam = builder.AddParameter("password", postgresPassword!);
 var postgres = builder
     .AddPostgres("postgres", usernameParam, passwordParam)
     .WithImageTag(DockerContainers.PostgresVersion);
-    // .WithBindMount(postgresDataDirectory, "/var/lib/postgresql", false); // TODO: uncomment
+// .WithBindMount(postgresDataDirectory, "/var/lib/postgresql", false); // TODO: uncomment
 
 // TODO: find a way to share a constant with the database name between Aspire project and main backend 
 var hoppyfyDb = postgres.AddDatabase("hoppyfydb");

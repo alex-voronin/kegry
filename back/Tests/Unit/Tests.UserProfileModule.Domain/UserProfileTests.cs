@@ -24,7 +24,7 @@ public class UserProfileTests
         profile.Gender.ShouldBe(Gender.Male);
         profile.Hobbies.Count.ShouldBe(1);
     }
-    
+
     [Fact]
     public void UserProfile_WhenValidValues_ThenProfileIsUpdated()
     {
@@ -36,9 +36,9 @@ public class UserProfileTests
         var birthday = new DateOnly(1995, 5, 5);
         var gender = Gender.Male;
         var hobbies = new[] { new Hobby { Id = Guid.NewGuid(), Name = "Hiking" } };
-        
+
         var profile = CreateValidProfile();
-        
+
         profile.FirstName = firstName;
         profile.LastName = lastName;
         profile.Bio = bio;
@@ -47,7 +47,7 @@ public class UserProfileTests
         profile.Birthday = birthday;
         profile.Gender = gender;
         profile.Hobbies = hobbies;
-        
+
         profile.FirstName.ShouldBe(firstName);
         profile.LastName.ShouldBe(lastName);
         profile.Bio.ShouldBe(bio);
@@ -70,7 +70,7 @@ public class UserProfileTests
         Should.Throw<HttpCodeException>(() => profile.FirstName = invalidName!)
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
-    
+
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
@@ -92,7 +92,7 @@ public class UserProfileTests
         Should.Throw<HttpCodeException>(() => profile.FirstName = longName)
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
-    
+
     [Fact]
     public void LastName_WhenLengthExceeded_ThenThrows()
     {
@@ -102,7 +102,7 @@ public class UserProfileTests
         Should.Throw<HttpCodeException>(() => profile.LastName = longName)
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
-    
+
     [Fact]
     public void Bio_WhenLengthExceeded_ThenThrows()
     {
@@ -125,7 +125,7 @@ public class UserProfileTests
         Should.Throw<HttpCodeException>(() => profile.AvatarImageUrl = invalidUrl!)
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
-    
+
     [Theory]
     [InlineData("invalid-url")]
     [InlineData("ftp://example.com")]

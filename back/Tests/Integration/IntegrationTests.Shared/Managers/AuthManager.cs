@@ -42,7 +42,7 @@ public class AuthManager
             user.EmailConfirmed = true;
             await context.SaveChangesAsync();
         }
-        
+
         // 3. Sign in again to get access token
         var signinRequest = new SignInRequest(email, password);
         var signinResponse = await _apiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
@@ -52,7 +52,7 @@ public class AuthManager
             $"Login failed with errors: {string.Join(", ", signinResponse.Errors.Select(e => e.Error))}");
         signinResponse.Result.Auth.ShouldNotBeNull();
         signinResponse.Result.Auth.AccessToken.ShouldNotBeNullOrEmpty();
-        
+
         return signinResponse.Result.Auth;
     }
 
@@ -60,17 +60,17 @@ public class AuthManager
     {
         await _apiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>("/api/v1/user-profile",
             new CreateUserProfileRequest(
-                FirstName:"FirstName",
-                LastName:"LastName",
-                Bio:"Bio",
-                AvatarImageUrl:"http://my-image-url/avatar.jpg",
-                CoverImageUrl:"http://my-image-url/cover-image-url.jpg",
+                FirstName: "FirstName",
+                LastName: "LastName",
+                Bio: "Bio",
+                AvatarImageUrl: "http://my-image-url/avatar.jpg",
+                CoverImageUrl: "http://my-image-url/cover-image-url.jpg",
                 Birthday: new DateOnly(1980, 1, 1),
                 Gender: Gender.Male,
-                HobbyIds:[]
+                HobbyIds: []
             )
         );
-        
+
         await _apiClient.PostAsync<UpdateLocationRequest, ApiResult.EmptyResult>("/api/v1/location",
             new UpdateLocationRequest(Latitude: 0.0, Longitude: 0.0));
     }

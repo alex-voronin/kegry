@@ -86,7 +86,7 @@ public class DbContextCollectionTests
         var context2 = Substitute.For<DbContext>();
         var repo2 = Substitute.For<RepositoryBase, IRepository>();
         repo2.GetContext().Returns(context2);
-        
+
 
         var collection = (TestDbContextCollection)new TestDbContextCollection(repo1).And((IRepository)repo2);
         var result = await collection.StartTransactionAsync();

@@ -174,7 +174,7 @@ public class FeedScoringServiceTests
                 Arg.Any<CancellationToken>())
             .Returns([candidate2, candidate1]);
         var result = await service.GetFeedAsync(userId);
-        
+
         result.Length.ShouldBe(2);
         result[0].User.Id.ShouldBe(candidate1.User.Id);
         result[1].User.Id.ShouldBe(candidate2.User.Id);
@@ -226,7 +226,7 @@ public class FeedScoringServiceTests
             Birthday = new DateOnly(1990, 1, 1),
             Hobbies = [new Hobby { Id = Guid.NewGuid(), Name = "Hiking" }]
         };
-        userProfileRepository.GetByIdAsync(userId, 
+        userProfileRepository.GetByIdAsync(userId,
                 asNoTracking: true,
                 includes: Arg.Any<Expression<Func<UserProfile, object?>>[]>())
             .Returns(userProfile);

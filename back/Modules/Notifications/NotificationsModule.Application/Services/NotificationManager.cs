@@ -9,14 +9,14 @@ internal class NotificationManager : INotificationManager, IScoped
 {
     internal const bool DefaultPushesEnabled = true;
     internal const bool DefaultEmailsEnabled = false;
-    
+
     private readonly INotificationsSettingsRepository _notificationsSettingsRepository;
     private readonly IEmailNotificationStrategy _emailNotificationStrategy;
     private readonly IPushNotificationStrategy _pushNotificationStrategy;
 
     public NotificationManager(
-        INotificationsSettingsRepository notificationsSettingsRepository, 
-        IEmailNotificationStrategy emailNotificationStrategy, 
+        INotificationsSettingsRepository notificationsSettingsRepository,
+        IEmailNotificationStrategy emailNotificationStrategy,
         IPushNotificationStrategy pushNotificationStrategy)
     {
         _notificationsSettingsRepository = notificationsSettingsRepository;
@@ -39,20 +39,20 @@ internal class NotificationManager : INotificationManager, IScoped
             ct: ct
         );
     }
-    
+
     private async Task SendNotifications(
-        Guid userId, 
-        Func<INotificationStrategy, Task> sendFunc, 
+        Guid userId,
+        Func<INotificationStrategy, Task> sendFunc,
         CancellationToken ct = default)
     {
         var notificationsSettings = await _notificationsSettingsRepository.GetByIdAsync(
-            userId, 
+            userId,
             asNoTracking: true,
             ct: ct
         );
         var pushesEnabled = notificationsSettings?.PushesEnabled ?? DefaultPushesEnabled;
         var emailsEnabled = notificationsSettings?.EmailsEnabled ?? DefaultEmailsEnabled;
-        
+
         var strategies = new List<INotificationStrategy>();
         if (pushesEnabled)
         {

@@ -10,5 +10,5 @@ public class CamelCaseNameRewriter : INameRewriter
         => _culture = culture;
 
     public string RewriteName(string name)
-        => string.IsNullOrEmpty(name) ? name: char.ToLower(name[0], _culture) + name.Substring(1);
+        => string.IsNullOrEmpty(name) ? name : char.ToLower(name[0], _culture) + name.Substring(1);
 }

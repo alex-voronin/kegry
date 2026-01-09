@@ -8,7 +8,7 @@ public class ResponseCompressionStartup : IFeatureStartup
     public void Register(IHostApplicationBuilder appBuilder, IHostBuilder host)
     {
         var services = appBuilder.Services;
-            
+
         services.AddResponseCompression(options =>
         {
             options.EnableForHttps = true;

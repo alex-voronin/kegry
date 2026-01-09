@@ -37,7 +37,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         IRefreshTokenRepository refreshTokenRepository,
         IUserRepository userRepository,
         IOptions<AuthTokenConfig> authTokenConfigOptions,
-        IMessageBus bus, 
+        IMessageBus bus,
         IEmailExistenceChecker emailExistenceChecker)
     {
         _userManager = userManager;
@@ -50,12 +50,12 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         _emailExistenceChecker = emailExistenceChecker;
         _jwtHandler = new JwtSecurityTokenHandler();
     }
-    
+
     public Task<bool> IsUserExistAsync(string email)
     {
         return _userRepository.IsUserExistAsync(email);
     }
-    
+
     public async Task<AuthResult> SignupAsync(string email, string password)
     {
         var user = await _userManager.FindByEmailAsync(email);
@@ -72,7 +72,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
             {
                 throw SecurityExceptions.EmailDoesNotExist(email);
             }
-            
+
             user = new User
             {
                 Id = Guid.CreateVersion7(),
@@ -90,7 +90,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         }
 
         var confirmationCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        
+
         await _bus.PublishAsync(
             new AccountCreatedEvent
             {
@@ -99,7 +99,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
                 ConfirmationCode = confirmationCode
             }
         );
-        
+
         return new AuthResult(
             User: user,
             AccessToken: null,
@@ -113,7 +113,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         {
             throw SecurityExceptions.UserNotFound(email);
         }
-        
+
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
         {
@@ -127,7 +127,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
                 AccessToken: null,
                 RefreshToken: null);
         }
-        
+
         var result = await _signInManager.CheckPasswordSignInAsync(
             user: user,
             password: password,
@@ -138,7 +138,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         }
 
         var (accessToken, refreshToken) = await GenerateTokensAsync(user);
-        
+
         return new AuthResult(
             User: user,
             AccessToken: accessToken,

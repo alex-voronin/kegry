@@ -8,7 +8,7 @@ public static class LocationHaversineGeoExtensions
     {
         return DistanceMeters(first.Latitude, first.Longitude, latitude, longitude);
     }
-    
+
     private static double DistanceMeters(
         double lat1, double lon1,
         double lat2, double lon2)

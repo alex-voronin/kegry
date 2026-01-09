@@ -6,10 +6,10 @@ public class EmailConfig
 {
     [Required(AllowEmptyStrings = false)]
     public required string Domain { get; init; }
-    
+
     [Required(AllowEmptyStrings = false)]
     public required string FromEmail { get; init; }
-    
+
     [Required(AllowEmptyStrings = false)]
     public required string ApiKey { get; init; }
 }

@@ -18,16 +18,16 @@ public interface IRefreshTokenService
 internal class RefreshTokenService : DomainService<IRefreshTokenRepository>, IRefreshTokenService, IScoped
 {
     private readonly TimeProvider _timeProvider;
-    
+
     public RefreshTokenService(IRefreshTokenRepository repository, TimeProvider timeProvider) : base(repository)
     {
         _timeProvider = timeProvider;
     }
 
     public async Task<RefreshToken> CreateRefreshTokenAsync(
-        User user, 
-        Guid jti, 
-        int durationInDays, 
+        User user,
+        Guid jti,
+        int durationInDays,
         int maxSimultaneousLoggedInDevices)
     {
         var existingToken = await Repository.GetByJtiAsync(jti.ToString());

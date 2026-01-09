@@ -8,7 +8,7 @@ using SharedCore.Services.LifeTimes;
 
 namespace FeedModule.Infrastructure.Persistence.Repositories;
 
-internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped 
+internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
 {
     private readonly FeedContext _context;
     private TimeProvider _timeProvider;
@@ -30,7 +30,7 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
         var today = DateOnly.FromDateTime(_timeProvider.GetUtcNow().DateTime);
         var now = _timeProvider.GetUtcNow();
         var skipCutoff = now.AddDays(skippedUserCutOffInDays);
-        
+
         var query = _context.UserProfiles.AsNoTracking()
             .Join(
                 _context.Locations.AsNoTracking(),
@@ -46,7 +46,7 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
                 (j, fur) => new
                 {
                     j.User,
-                    j.Location, 
+                    j.Location,
                     FeedUserRelation = fur
                 }
             )
@@ -59,7 +59,7 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
                     j.User,
                     j.Location,
                     j.FeedUserRelation,
-                    UserRating = ur 
+                    UserRating = ur
                 }
             )
             .Where(j =>

@@ -50,7 +50,7 @@ public class Repository<TContext, TEntity> : RepositoryBase, IRepository<TEntity
     {
         Context.Attach(entity);
     }
-    
+
     public void Add(TEntity entity)
     {
         Context.Set<TEntity>().Add(entity);

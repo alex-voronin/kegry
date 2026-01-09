@@ -25,9 +25,9 @@ public class FeedEndpointsTests : IAsyncLifetime
         var password = "Password123!";
         var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync(email, password);
         _factory.ApiClient.SetAuth(authResponse);
-        
+
         await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
-        
+
         var feedResponse = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>("/api/v1/feed");
         feedResponse.Success.ShouldBeTrue();
         feedResponse.Result.ShouldNotBeNull();
@@ -42,7 +42,7 @@ public class FeedEndpointsTests : IAsyncLifetime
         var authResponseA = await _factory.AuthManager.CreateAndLoginUserAsync("rater@example.com", "Password123!");
         _factory.ApiClient.SetAuth(authResponseA);
         await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
-        
+
         // 2. Create User B (Rated)
         var authResponseB = await _factory.AuthManager.CreateAndLoginUserAsync("ratee@example.com", "Password123!");
         var userBId = authResponseB.UserId;
@@ -55,10 +55,10 @@ public class FeedEndpointsTests : IAsyncLifetime
         var ratingRequest = new UserRatingDto(rating);
         var response = await _factory.ApiClient.PostAsync<UserRatingDto, ApiResult.EmptyResult>(
             $"/api/v1/feed/{userBId}/rating", ratingRequest);
-        
+
         response.Success.ShouldBeTrue(
             $"Rating failed with errors: {string.Join(", ", response.Errors.Select(e => e.Error))}");
-        
+
         // 4. Get Feed and check rating
         var feedResponse = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>("/api/v1/feed");
         feedResponse.Result.Feed.First().Rating.ShouldBe(rating);

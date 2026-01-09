@@ -13,7 +13,7 @@ public class NamingConventionsOptionsExtension : IDbContextOptionsExtension
     private NamingConvention _namingConvention;
     private CultureInfo? _culture;
 
-    public NamingConventionsOptionsExtension() {}
+    public NamingConventionsOptionsExtension() { }
     protected NamingConventionsOptionsExtension(NamingConventionsOptionsExtension copyFrom)
     {
         _namingConvention = copyFrom._namingConvention;
@@ -74,7 +74,7 @@ public class NamingConventionsOptionsExtension : IDbContextOptionsExtension
         return clone;
     }
 
-    public void Validate(IDbContextOptions options) {}
+    public void Validate(IDbContextOptions options) { }
 
     public void ApplyServices(IServiceCollection services)
         => services.AddEntityFrameworkNamingConventions();
@@ -83,7 +83,7 @@ public class NamingConventionsOptionsExtension : IDbContextOptionsExtension
     {
         private string? _logFragment;
 
-        public ExtensionInfo(IDbContextOptionsExtension extension) : base(extension) {}
+        public ExtensionInfo(IDbContextOptionsExtension extension) : base(extension) { }
 
         private new NamingConventionsOptionsExtension Extension
             => (NamingConventionsOptionsExtension)base.Extension;

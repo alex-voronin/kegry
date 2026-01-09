@@ -14,11 +14,11 @@ public class RefreshTokenServiceTests
 {
     private const int MaxSimultaneousLoggedInDevices = 10;
     private const int RefreshTokenDurationInDays = 7;
-    
+
     private readonly User _user = new User()
     {
         Id = Guid.NewGuid(),
-        Email = "test@example.com", 
+        Email = "test@example.com",
         RequiredAction = RequiredAction.None
     };
 

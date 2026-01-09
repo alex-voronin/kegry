@@ -52,7 +52,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
         {
             Log.Error(response.Errors.First().Error);
         }
-        
+
         // 3. Check response
         response.Success.ShouldBeTrue();
         var getResponse = await _factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>("/api/v1/user-profile");
@@ -91,7 +91,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
 
         var response = await _factory.ApiClient.PutAsync<UpdateUserProfileRequest, ApiResult.EmptyResult>(
             "/api/v1/user-profile", request);
-        
+
         if (!response.Success)
         {
             Log.Error(response.Errors.First().Error);

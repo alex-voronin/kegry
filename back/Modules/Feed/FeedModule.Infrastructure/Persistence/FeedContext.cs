@@ -62,12 +62,12 @@ public class FeedContext : DbContext
                 .ValueGeneratedNever();
             builder.Property(fp => fp.Rating)
                 .HasColumnType("numeric(2,1)");
-            
+
             builder.HasIndex(fp => fp.MyUserId)
-                .HasFilter("\"is_in_meeting\" = true")  
+                .HasFilter("\"is_in_meeting\" = true")
                 .IsUnique()
                 .HasDatabaseName("unq_feed_user_state_active_meeting_per_user");
-            
+
             builder.HasIndex(fp => new { fp.MyUserId, fp.OtherUserId })
                 .IsUnique()
                 .HasDatabaseName("unq_feed_user_state_pair");
@@ -93,7 +93,7 @@ public class FeedContext : DbContext
             builder.Property(ds => ds.UserId)
                 .ValueGeneratedNever();
         });
-        
+
         modelBuilder.Entity<UserRating>(builder =>
         {
             builder.ToTable("user_ratings", "feed");

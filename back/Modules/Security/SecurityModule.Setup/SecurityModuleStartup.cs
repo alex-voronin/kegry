@@ -57,7 +57,7 @@ public class SecurityModuleStartup : AppModuleStartupBase<SecurityContext>
             {
                 // disable automatic claims mapping to legacy names
                 options.MapInboundClaims = false;
-                
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,

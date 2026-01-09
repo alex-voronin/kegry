@@ -29,7 +29,7 @@ internal class FcmPushSender : IPushSender, ISingleton
 
         if (pushMessage.MulticastMessage != null)
         {
-           return await SendMulticastMessage(pushMessage.MulticastMessage);
+            return await SendMulticastMessage(pushMessage.MulticastMessage);
         }
 
         return new SendResult(false, []);

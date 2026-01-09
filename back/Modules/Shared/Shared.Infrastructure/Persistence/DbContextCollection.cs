@@ -36,12 +36,12 @@ public class MultiRepositoryTransaction : IMultiRepositoryTransaction
 internal class DbContextCollection : IDbContextCollection
 {
     private readonly HashSet<DbContext> _contexts = new HashSet<DbContext>();
-    
+
     internal DbContextCollection(RepositoryBase repositoryBase)
     {
         _contexts.Add(repositoryBase.GetContext());
     }
-    
+
     public IDbContextCollection And(IRepository repository)
     {
         if (repository is RepositoryBase repositoryBase)
@@ -52,7 +52,7 @@ internal class DbContextCollection : IDbContextCollection
         {
             throw new InvalidOperationException("Unknown repository type");
         }
-        
+
         return this;
     }
 
@@ -82,13 +82,13 @@ internal class DbContextCollection : IDbContextCollection
     }
 
     protected virtual async Task ApplyTransaction(
-        DbContext context, 
-        IDbContextTransaction transaction, 
-        CancellationToken ct =default)
+        DbContext context,
+        IDbContextTransaction transaction,
+        CancellationToken ct = default)
     {
         await context.Database.UseTransactionAsync(transaction.GetDbTransaction(), ct);
     }
-    
+
     private static void SaveDbContexts(IEnumerable<DbContext> contexts)
     {
         foreach (var context in contexts)

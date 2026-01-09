@@ -21,12 +21,12 @@ public class NotificationManagerTests
     {
         settingsRepository.GetByIdAsync(userId, asNoTracking: true, ct: Arg.Any<CancellationToken>())
             .Returns((NotificationsSettings?)null);
-        
+
         await manager.SendMeetingArranged(userId, otherUserName);
-        
+
         NotificationManager.DefaultPushesEnabled.ShouldBeTrue();
         await pushStrategy.Received(1).SendMeetingArranged(userId, otherUserName, Arg.Any<CancellationToken>());
-        
+
         NotificationManager.DefaultEmailsEnabled.ShouldBeFalse();
         await emailStrategy.DidNotReceive().SendMeetingArranged(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
@@ -43,9 +43,9 @@ public class NotificationManagerTests
         var settings = new NotificationsSettings { UserId = userId, PushesEnabled = false, EmailsEnabled = false };
         settingsRepository.GetByIdAsync(userId, asNoTracking: true, ct: Arg.Any<CancellationToken>())
             .Returns(settings);
-        
+
         await manager.SendMeetingArranged(userId, otherUserName);
-        
+
         await pushStrategy.DidNotReceive().SendMeetingArranged(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
         await emailStrategy.DidNotReceive().SendMeetingArranged(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
@@ -64,7 +64,7 @@ public class NotificationManagerTests
             .Returns(settings);
 
         await manager.SendMeetingArranged(userId, otherUserName);
-        
+
         await pushStrategy.Received(1).SendMeetingArranged(userId, otherUserName, Arg.Any<CancellationToken>());
         await emailStrategy.Received(1).SendMeetingArranged(userId, otherUserName, Arg.Any<CancellationToken>());
     }
@@ -82,7 +82,7 @@ public class NotificationManagerTests
             .Returns(settings);
 
         await manager.SendUserInvited(userId);
-        
+
         await pushStrategy.DidNotReceive().SendUserInvited(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         await emailStrategy.Received(1).SendUserInvited(userId, Arg.Any<CancellationToken>());
     }

@@ -9,12 +9,12 @@ public class RepositoryOutbox<TContext, TEntity> : Repository<TContext, TEntity>
     where TContext : DbContext
 {
     private readonly IDbContextOutbox<TContext> _contextOutbox;
-    
+
     public RepositoryOutbox(IDbContextOutbox<TContext> contextOutbox) : base(contextOutbox.DbContext)
     {
         _contextOutbox = contextOutbox;
     }
-    
+
     public async Task PublishEventAsync<T>(T @event, CancellationToken ct = default)
     {
         await _contextOutbox.PublishAsync(@event);

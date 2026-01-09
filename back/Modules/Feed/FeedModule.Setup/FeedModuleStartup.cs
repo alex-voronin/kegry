@@ -26,7 +26,7 @@ public class FeedModuleStartup : AppModuleStartupBase<FeedContext>
         base.Register(appBuilder, host);
         appBuilder.Services.AutoRegisterAssemblies(ModuleAssemblies);
     }
-    
+
     protected override void RegisterEfCoreContexts(IServiceCollection services, string dbConnectionString)
     {
         services.AddDbContextWithWolverineIntegration<FeedContext>(options =>

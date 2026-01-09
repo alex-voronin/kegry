@@ -7,7 +7,7 @@ public class HybridCacheStartup : IFeatureStartup
 {
     public void Register(IHostApplicationBuilder appBuilder, IHostBuilder host)
     {
-        appBuilder.Services.AddHybridCache(options => 
+        appBuilder.Services.AddHybridCache(options =>
         {
             options.DefaultEntryOptions = new HybridCacheEntryOptions
             {

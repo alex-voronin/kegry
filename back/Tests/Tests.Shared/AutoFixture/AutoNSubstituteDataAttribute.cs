@@ -7,10 +7,10 @@ namespace Tests.Shared.AutoFixture;
 
 public class AutoNSubstituteDataAttribute() : AutoDataAttribute(() =>
     {
-       var fixture = new Fixture().Customize(new AutoNSubstituteCustomization());
-       var fakeTimeProvider = new FakeTimeProvider();
-       fixture.Inject<TimeProvider>(fakeTimeProvider);
-       fixture.Inject<FakeTimeProvider>(fakeTimeProvider);
-       return fixture;
+        var fixture = new Fixture().Customize(new AutoNSubstituteCustomization());
+        var fakeTimeProvider = new FakeTimeProvider();
+        fixture.Inject<TimeProvider>(fakeTimeProvider);
+        fixture.Inject<FakeTimeProvider>(fakeTimeProvider);
+        return fixture;
     }
 );

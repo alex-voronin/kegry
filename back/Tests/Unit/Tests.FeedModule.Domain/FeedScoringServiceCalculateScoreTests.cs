@@ -47,7 +47,7 @@ public class FeedScoringServiceCalculateScoreTests
         var expectedScore = DistanceWeight + HobbiesWeight + AgeWeight + RatingWeightInScore;
         score.ShouldBe(expectedScore, tolerance: 0.0001);
     }
-    
+
     [Fact]
     public void CalculateScore_WhenGoodMatch_ReturnsGoodScore()
     {
@@ -76,7 +76,7 @@ public class FeedScoringServiceCalculateScoreTests
             userProfile,
             candidate,
             Filter.CreateDefault(userProfile.Id));
-        
+
         score.ShouldBeGreaterThan(0.8);
     }
 

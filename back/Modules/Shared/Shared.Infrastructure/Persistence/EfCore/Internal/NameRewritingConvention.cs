@@ -237,19 +237,19 @@ public class NameRewritingConvention :
         {
             // The inheritance strategy is changing, e.g. the entity type is being made part of (or is leaving) a TPH/TPT/TPC hierarchy.
             case RelationalAnnotationNames.MappingStrategy:
-            {
-                ProcessHierarchyChange(entityTypeBuilder);
-                return;
-            }
+                {
+                    ProcessHierarchyChange(entityTypeBuilder);
+                    return;
+                }
 
             case RelationalAnnotationNames.ContainerColumnName:
-            {
-                // TODO: Support de-JSON-ification?
-                var foreignKey = entityTypeBuilder.Metadata.FindOwnership();
-                Debug.Assert(foreignKey is not null, "ContainerColumnName annotation changed but FindOwnership returned null");
-                ProcessOwnershipChange(foreignKey, context);
-                return;
-            }
+                {
+                    // TODO: Support de-JSON-ification?
+                    var foreignKey = entityTypeBuilder.Metadata.FindOwnership();
+                    Debug.Assert(foreignKey is not null, "ContainerColumnName annotation changed but FindOwnership returned null");
+                    ProcessOwnershipChange(foreignKey, context);
+                    return;
+                }
 
             // If the View/SqlQuery/Function name is being set on the entity type, and its table name is set by convention, then we assume
             // we're the one who set the table name back when the entity type was originally added. We now undo this as the entity type
@@ -257,101 +257,101 @@ public class NameRewritingConvention :
             case RelationalAnnotationNames.ViewName or RelationalAnnotationNames.SqlQuery or RelationalAnnotationNames.FunctionName
                 when annotation?.Value is not null
                 && entityType.GetTableNameConfigurationSource() == ConfigurationSource.Convention:
-            {
-                entityType.SetTableName(null);
-                return;
-            }
+                {
+                    entityType.SetTableName(null);
+                    return;
+                }
 
             // The table's name is changing - rewrite keys, index names
             case RelationalAnnotationNames.TableName
                 when StoreObjectIdentifier.Create(entityType, StoreObjectType.Table) is StoreObjectIdentifier tableIdentifier:
-            {
-                var mappingStrategy = entityType.GetMappingStrategy();
-
-                if (entityType.FindPrimaryKey() is IConventionKey primaryKey)
                 {
-                    // We need to rewrite the PK name.
-                    // However, this isn't yet supported with TPT, see https://github.com/dotnet/efcore/issues/23444.
-                    // So we need to check if the entity is within a TPT hierarchy, or is an owned entity within a TPT hierarchy.
+                    var mappingStrategy = entityType.GetMappingStrategy();
 
-                    var rootType = entityType.GetRootType();
-                    var isTPT = rootType.GetDerivedTypes().FirstOrDefault() is { } derivedType
-                        && derivedType.GetTableName() != rootType.GetTableName();
+                    if (entityType.FindPrimaryKey() is IConventionKey primaryKey)
+                    {
+                        // We need to rewrite the PK name.
+                        // However, this isn't yet supported with TPT, see https://github.com/dotnet/efcore/issues/23444.
+                        // So we need to check if the entity is within a TPT hierarchy, or is an owned entity within a TPT hierarchy.
 
-                    if (entityType.FindRowInternalForeignKeys(tableIdentifier).FirstOrDefault() is null && !isTPT)
-                    {
-                        if (primaryKey.GetDefaultName() is { } primaryKeyName)
+                        var rootType = entityType.GetRootType();
+                        var isTPT = rootType.GetDerivedTypes().FirstOrDefault() is { } derivedType
+                            && derivedType.GetTableName() != rootType.GetTableName();
+
+                        if (entityType.FindRowInternalForeignKeys(tableIdentifier).FirstOrDefault() is null && !isTPT)
                         {
-                            primaryKey.Builder.HasName(_namingNameRewriter.RewriteName(primaryKeyName));
-                        }
-                    }
-                    else
-                    {
-                        // This hierarchy is being transformed into TPT via the explicit setting of the table name.
-                        // We not only have to reset our own key name, but also the parents'. Otherwise, the parent's key name
-                        // is used as the child's (see RelationalKeyExtensions.GetName), and we get a "duplicate key name in database" error
-                        // since both parent and child have the same key name;
-                        foreach (var type in entityType.GetRootType().GetDerivedTypesInclusive())
-                        {
-                            if (type.FindPrimaryKey() is IConventionKey pk)
+                            if (primaryKey.GetDefaultName() is { } primaryKeyName)
                             {
-                                pk.Builder.HasNoAnnotation(RelationalAnnotationNames.Name);
+                                primaryKey.Builder.HasName(_namingNameRewriter.RewriteName(primaryKeyName));
+                            }
+                        }
+                        else
+                        {
+                            // This hierarchy is being transformed into TPT via the explicit setting of the table name.
+                            // We not only have to reset our own key name, but also the parents'. Otherwise, the parent's key name
+                            // is used as the child's (see RelationalKeyExtensions.GetName), and we get a "duplicate key name in database" error
+                            // since both parent and child have the same key name;
+                            foreach (var type in entityType.GetRootType().GetDerivedTypesInclusive())
+                            {
+                                if (type.FindPrimaryKey() is IConventionKey pk)
+                                {
+                                    pk.Builder.HasNoAnnotation(RelationalAnnotationNames.Name);
+                                }
                             }
                         }
                     }
+
+                    foreach (var foreignKey in entityType.GetDeclaredForeignKeys())
+                    {
+                        // See note in ProcessHierarchyChange on indexes and foreign keys in TPC hierarchies
+                        if (mappingStrategy == RelationalAnnotationNames.TpcMappingStrategy && entityType.GetDerivedTypes().Any())
+                        {
+                            foreignKey.Builder.HasNoAnnotation(RelationalAnnotationNames.Name);
+                        }
+                        else if (foreignKey.GetDefaultName() is { } foreignKeyName)
+                        {
+                            foreignKey.Builder.HasConstraintName(_namingNameRewriter.RewriteName(foreignKeyName));
+                        }
+                    }
+
+                    foreach (var index in entityType.GetDeclaredIndexes())
+                    {
+                        // See note in ProcessHierarchyChange on indexes and foreign keys in TPC hierarchies
+                        if (mappingStrategy == RelationalAnnotationNames.TpcMappingStrategy && entityType.GetDerivedTypes().Any())
+                        {
+                            index.Builder.HasNoAnnotation(RelationalAnnotationNames.TableName);
+                        }
+                        else if (index.GetDefaultDatabaseName() is { } indexName)
+                        {
+                            index.Builder.HasDatabaseName(_namingNameRewriter.RewriteName(indexName));
+                        }
+                    }
+
+                    if (annotation?.Value is not null
+                        && entityType.FindOwnership() is IConventionForeignKey ownership
+                        && (string)annotation.Value != ownership.PrincipalEntityType.GetTableName())
+                    {
+                        // An owned entity's table is being set explicitly - this is the trigger to undo table splitting (which is the default).
+
+                        // When the entity became owned, we prefixed all of its properties - we must now undo that.
+                        foreach (var property in entityType.GetProperties()
+                                     .Except(entityType.FindPrimaryKey()?.Properties ?? Array.Empty<IConventionProperty>())
+                                     .Where(p => p.Builder.CanSetColumnName(null)))
+                        {
+                            RewriteColumnName(property.Builder);
+                        }
+
+                        // We previously rewrote the owned entity's primary key name, when the owned entity was still in table splitting.
+                        // Now that its getting its own table, rewrite the primary key constraint name again.
+                        if (entityType.FindPrimaryKey() is IConventionKey key
+                            && key.GetDefaultName() is { } keyName)
+                        {
+                            key.Builder.HasName(_namingNameRewriter.RewriteName(keyName));
+                        }
+                    }
+
+                    return;
                 }
-
-                foreach (var foreignKey in entityType.GetDeclaredForeignKeys())
-                {
-                    // See note in ProcessHierarchyChange on indexes and foreign keys in TPC hierarchies
-                    if (mappingStrategy == RelationalAnnotationNames.TpcMappingStrategy && entityType.GetDerivedTypes().Any())
-                    {
-                        foreignKey.Builder.HasNoAnnotation(RelationalAnnotationNames.Name);
-                    }
-                    else if (foreignKey.GetDefaultName() is { } foreignKeyName)
-                    {
-                        foreignKey.Builder.HasConstraintName(_namingNameRewriter.RewriteName(foreignKeyName));
-                    }
-                }
-
-                foreach (var index in entityType.GetDeclaredIndexes())
-                {
-                    // See note in ProcessHierarchyChange on indexes and foreign keys in TPC hierarchies
-                    if (mappingStrategy == RelationalAnnotationNames.TpcMappingStrategy && entityType.GetDerivedTypes().Any())
-                    {
-                        index.Builder.HasNoAnnotation(RelationalAnnotationNames.TableName);
-                    }
-                    else if (index.GetDefaultDatabaseName() is { } indexName)
-                    {
-                        index.Builder.HasDatabaseName(_namingNameRewriter.RewriteName(indexName));
-                    }
-                }
-
-                if (annotation?.Value is not null
-                    && entityType.FindOwnership() is IConventionForeignKey ownership
-                    && (string)annotation.Value != ownership.PrincipalEntityType.GetTableName())
-                {
-                    // An owned entity's table is being set explicitly - this is the trigger to undo table splitting (which is the default).
-
-                    // When the entity became owned, we prefixed all of its properties - we must now undo that.
-                    foreach (var property in entityType.GetProperties()
-                                 .Except(entityType.FindPrimaryKey()?.Properties ?? Array.Empty<IConventionProperty>())
-                                 .Where(p => p.Builder.CanSetColumnName(null)))
-                    {
-                        RewriteColumnName(property.Builder);
-                    }
-
-                    // We previously rewrote the owned entity's primary key name, when the owned entity was still in table splitting.
-                    // Now that its getting its own table, rewrite the primary key constraint name again.
-                    if (entityType.FindPrimaryKey() is IConventionKey key
-                        && key.GetDefaultName() is { } keyName)
-                    {
-                        key.Builder.HasName(_namingNameRewriter.RewriteName(keyName));
-                    }
-                }
-
-                return;
-            }
         }
     }
 

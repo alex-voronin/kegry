@@ -27,6 +27,6 @@ public class FeedUserRelation
     public required DateTimeOffset MeetingExpiresAt { get; set; }
     public required DateTimeOffset SkippedAt { get; set; }
     public required DateTimeOffset LastSeenAt { get; set; }
-    
+
     public bool IsMeetingExpired(DateTimeOffset dateTime) => MeetingExpiresAt < dateTime;
 }

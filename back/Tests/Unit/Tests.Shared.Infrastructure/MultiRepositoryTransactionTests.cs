@@ -23,7 +23,7 @@ public class MultiRepositoryTransactionTests
     {
         var ct = CancellationToken.None;
         await _multiRepositoryTransaction.SaveChangesAsync(ct);
-        
+
         await _dbContextCollection.Received(1).SaveChangesAsync(ct);
     }
 
@@ -32,7 +32,7 @@ public class MultiRepositoryTransactionTests
     {
         var ct = CancellationToken.None;
         await _multiRepositoryTransaction.CommitAsync(ct);
-        
+
         await _dbContextCollection.Received(1).SaveChangesAsync(ct);
         await _internalTransaction.Received(1).CommitAsync(ct);
     }
@@ -44,7 +44,7 @@ public class MultiRepositoryTransactionTests
         await _multiRepositoryTransaction.SaveChangesAsync(ct);
         _dbContextCollection.ClearReceivedCalls();
         await _multiRepositoryTransaction.CommitAsync(ct);
-        
+
         await _dbContextCollection.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
         await _internalTransaction.Received(1).CommitAsync(ct);
     }

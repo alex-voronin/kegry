@@ -19,7 +19,7 @@ public class EfCoreUserRatingRepository : Repository<FeedContext, UserRating>, I
     {
         var deltaRating = newRating - oldRating;
         var deltaReviewersCount = oldRating > 0m ? 0 : 1;
-        
+
         await Context.Database.ExecuteSqlInterpolatedAsync(
             $"""
                 INSERT INTO feed.user_ratings (user_id, rating, reviewers_count)

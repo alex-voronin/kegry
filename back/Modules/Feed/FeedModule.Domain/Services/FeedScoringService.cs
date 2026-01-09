@@ -31,14 +31,14 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
         int limit = 30,
         CancellationToken ct = default)
     {
-        var filter = await _filterRepository.GetByIdAsync(userId, asNoTracking:true, ct: ct); 
+        var filter = await _filterRepository.GetByIdAsync(userId, asNoTracking: true, ct: ct);
         filter ??= Filter.CreateDefault(userId);
         var userLocation = await _locationRepository.GetByIdAsync(userId, asNoTracking: true, ct: ct);
         if (userLocation == null)
         {
             throw FeedExceptions.UserLocationIsUnknown(userId);
         }
-        
+
         var userProfile = await _userProfileRepository.GetByIdAsync(userId,
             asNoTracking: true,
             includes: [u => u.Hobbies],
@@ -47,18 +47,18 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
         {
             throw FeedExceptions.UserProfileIsNotFound(userId);
         }
-        
+
         var candidates = await _feedCandidateRepository.GetFeedCandidatesInRadius(
             userProfile: userProfile,
             userCoordinates: userLocation.Coordinates,
-            limit: FeedScoringParameters.UserLimitPerDatabaseQuery, 
+            limit: FeedScoringParameters.UserLimitPerDatabaseQuery,
             skippedUserCutOffInDays: FeedScoringParameters.SkippedUserCutOffInDays,
             filter: filter,
             ct: ct);
 
         return RankCandidates(userProfile, candidates, filter, limit);
     }
-    
+
     private FeedCandidate[] RankCandidates(
         UserProfile userProfile,
         FeedCandidate[] candidates,
@@ -76,20 +76,20 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
             .Select(candidateAndScore => candidateAndScore.Candidate)
             .ToArray();
     }
-    
+
     internal static double CalculateScore(UserProfile userProfile, FeedCandidate candidate, Filter filter)
     {
         // distance scoring
         var distanceScore = MathFunctions.Gaussian(
-            value: candidate.DistanceMeters, 
-            origin: 0, 
+            value: candidate.DistanceMeters,
+            origin: 0,
             standardDeviation: filter.RadiusMeters / 2.0);
-        
+
         // hobbies scoring
         var hobbiesScore = 0.0;
         if (userProfile.Hobbies.Count > 0)
         {
-            var hobbyIds  = userProfile.Hobbies.Select(hobby => hobby.Id).ToHashSet();
+            var hobbyIds = userProfile.Hobbies.Select(hobby => hobby.Id).ToHashSet();
             var matches = candidate.User.Hobbies
                 .Count(h => hobbyIds.Contains(h.Id));
 
@@ -97,21 +97,21 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
         }
 
         // age scoring
-        var daysDifference = Math.Abs(userProfile.Birthday.ToDateTime(TimeOnly.MinValue).Ticks - 
+        var daysDifference = Math.Abs(userProfile.Birthday.ToDateTime(TimeOnly.MinValue).Ticks -
                                       candidate.User.Birthday.ToDateTime(TimeOnly.MinValue).Ticks) / TimeSpan.TicksPerDay;
         var ageScore = MathFunctions.Gaussian(
-            value: daysDifference / 365.0, 
-            origin: 0, 
-            standardDeviation:6.0);
-        
+            value: daysDifference / 365.0,
+            origin: 0,
+            standardDeviation: 6.0);
+
         // rating scoring
         var ratingScore = (candidate.Rating.HasValue ? (double)candidate.Rating : 4.0) / 5.0;
-        
+
         //TODO: add inactivity time to the scoring calculation formula
 
-        return FeedScoringParameters.DistanceWeightInScore * distanceScore + 
+        return FeedScoringParameters.DistanceWeightInScore * distanceScore +
                FeedScoringParameters.HobbiesWeightInScore * hobbiesScore +
-               FeedScoringParameters.AgeWeightInScore * ageScore + 
+               FeedScoringParameters.AgeWeightInScore * ageScore +
                FeedScoringParameters.RatingWeightInScore * ratingScore;
     }
 }

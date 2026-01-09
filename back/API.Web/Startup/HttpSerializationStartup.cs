@@ -12,7 +12,7 @@ public class HttpSerializationStartup : IFeatureStartup
         {
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });
-        
+
         // configure serializer for minimal API
         appBuilder.Services.ConfigureHttpJsonOptions(options =>
         {

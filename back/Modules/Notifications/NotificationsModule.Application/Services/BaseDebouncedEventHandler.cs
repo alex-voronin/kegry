@@ -84,17 +84,17 @@ public abstract class BaseDebouncedEventHandler<TEvent> : IDebouncedEventHandler
         await _cache.SetAsync(
             key: cacheKey,
             value: BuildContext(),
-            options:_cacheTtlOptions,
+            options: _cacheTtlOptions,
             cancellationToken: ct);
         await HandleDebouncedEventAsync(message.Event, ct);
     }
-    
+
     private EventContext BuildContext() => new EventContext(Guid.NewGuid(), TimeProvider.GetUtcNow());
 
     internal static string BuildCacheKey(Guid userId) => $"event:context:{typeof(TEvent)}:{userId}";
 
     protected abstract Task HandleDebouncedEventAsync(TEvent @event, CancellationToken ct);
-    
+
     public abstract Task HandleAsync(TEvent @event, CancellationToken ct);
     public abstract Task HandleAsync(ScheduledEventMessage<TEvent> message, CancellationToken ct);
 }

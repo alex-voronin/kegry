@@ -23,7 +23,7 @@ public static class NamingConventionsExtensions
     }
 
     public static DbContextOptionsBuilder<TContext> UseSnakeCaseNamingConvention<TContext>(
-        this DbContextOptionsBuilder<TContext> optionsBuilder , CultureInfo? culture = null)
+        this DbContextOptionsBuilder<TContext> optionsBuilder, CultureInfo? culture = null)
         where TContext : DbContext
         => (DbContextOptionsBuilder<TContext>)UseSnakeCaseNamingConvention((DbContextOptionsBuilder)optionsBuilder, culture);
 
@@ -46,7 +46,7 @@ public static class NamingConventionsExtensions
         this DbContextOptionsBuilder<TContext> optionsBuilder,
         CultureInfo? culture = null)
         where TContext : DbContext
-        => (DbContextOptionsBuilder<TContext>)UseLowerCaseNamingConvention((DbContextOptionsBuilder)optionsBuilder ,culture);
+        => (DbContextOptionsBuilder<TContext>)UseLowerCaseNamingConvention((DbContextOptionsBuilder)optionsBuilder, culture);
 
     public static DbContextOptionsBuilder UseUpperCaseNamingConvention(
         this DbContextOptionsBuilder optionsBuilder,
