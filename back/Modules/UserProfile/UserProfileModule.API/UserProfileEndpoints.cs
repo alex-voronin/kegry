@@ -24,6 +24,10 @@ public class UserProfileEndpoints : IEndpoints
         apiGroup.MapPost("/api/v1/user-profile", CreateUserProfile);
         apiGroup.MapPut("/api/v1/user-profile", UpdateUserProfile);
         apiGroup.MapGet("/api/v1/user-profile/{id:guid?}", GetUserProfile);
+
+        // Presigned URLs are better obtained via POST requests because this is semantically correct:
+        // we create a new resource (so, these requests aren't idempotent),
+        // and it helps avoid caching at the browser and CDN levels.
         apiGroup.MapPost("/api/v1/user-profile/avatar/upload-url", GetAvatarUploadUrl);
         apiGroup.MapPost("/api/v1/user-profile/cover/upload-url", GetCoverUploadUrl);
     }
