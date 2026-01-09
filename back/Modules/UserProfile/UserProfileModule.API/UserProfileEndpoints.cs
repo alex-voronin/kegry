@@ -22,7 +22,6 @@ public class UserProfileEndpoints : IEndpoints
             .WithTags("User Profile API")
             .RequireAuthorization();
         apiGroup.MapPost("/api/v1/user-profile", CreateUserProfile);
-        apiGroup.MapPut("/api/v1/user-profile", UpdateUserProfile);
         apiGroup.MapPatch("/api/v1/user-profile", PatchUserProfile);
         apiGroup.MapGet("/api/v1/user-profile/{id:guid?}", GetUserProfile);
 
@@ -61,43 +60,6 @@ public class UserProfileEndpoints : IEndpoints
         await profileRepository.SaveChangesAndFlushMessagesAsync(ct);
 
         return ApiResult.Empty;
-    }
-
-    private static async Task<ApiResult.EmptyResult> UpdateUserProfile(
-        [FromBody] UpdateUserProfileRequest request,
-        ClaimsPrincipal user,
-        IUserProfileRepository profileRepository,
-        IHobbyService hobbyService,
-        CancellationToken ct)
-    {
-        var userId = user.GetId();
-        var userProfile = await profileRepository.GetByIdAsync(userId, ct: ct);
-        if (userProfile == null)
-        {
-            throw UserProfileExceptions.ProfileNotFound(userId);
-        }
-
-        var hobbyStubs = await hobbyService.BuildHobbyStubs(request.HobbyIds, ct);
-
-        userProfile.FirstName = request.FirstName;
-        userProfile.LastName = request.LastName;
-        userProfile.Bio = request.Bio;
-        userProfile.AvatarImageUrl = request.AvatarImageUrl;
-        userProfile.CoverImageUrl = request.CoverImageUrl;
-        userProfile.Birthday = request.Birthday;
-        userProfile.Gender = request.Gender;
-        userProfile.Hobbies = hobbyStubs;
-
-        var @event = BuildUserChangedEvent(user, userProfile);
-        await profileRepository.PublishEventAsync(@event, ct);
-        await profileRepository.SaveChangesAndFlushMessagesAsync(ct);
-
-        return ApiResult.Empty;
-    }
-
-    static void UpdateIfNotNull<T>(ref T target, T value)
-    {
-        if (value != null) target = value;
     }
     
     private static async Task<ApiResult.EmptyResult> PatchUserProfile(
