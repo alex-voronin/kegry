@@ -24,6 +24,8 @@ public class UserProfileEndpoints : IEndpoints
         apiGroup.MapPost("/api/v1/user-profile", CreateUserProfile);
         apiGroup.MapPut("/api/v1/user-profile", UpdateUserProfile);
         apiGroup.MapGet("/api/v1/user-profile/{id:guid?}", GetUserProfile);
+        apiGroup.MapPost("/api/v1/user-profile/avatar/upload-url", GetAvatarUploadUrl);
+        apiGroup.MapPost("/api/v1/user-profile/cover/upload-url", GetCoverUploadUrl);
     }
 
     private static async Task<ApiResult.EmptyResult> CreateUserProfile(
@@ -118,6 +120,30 @@ public class UserProfileEndpoints : IEndpoints
         );
 
         return ApiResult<GetUserProfileResponse>.Build(new GetUserProfileResponse(dto));
+    }
+
+    private static async Task<ApiResult<GetUrlResponse>> GetAvatarUploadUrl(
+        ClaimsPrincipal user,
+        IProfileImageService imageService,
+        CancellationToken ct)
+    {
+        var userId = user.GetId();
+        var url = await imageService.GetAvatarUploadUrlAsync(userId, ct);
+        return ApiResult<GetUrlResponse>.Build(
+            new GetUrlResponse(url)
+        );
+    }
+
+    private static async Task<ApiResult<GetUrlResponse>> GetCoverUploadUrl(
+        ClaimsPrincipal user,
+        IProfileImageService imageService,
+        CancellationToken ct)
+    {
+        var userId = user.GetId();
+        var url = await imageService.GetCoverUploadUrlAsync(userId, ct);
+        return ApiResult<GetUrlResponse>.Build(
+            new GetUrlResponse(url)
+        );
     }
 
     private static UserProfileChangedEvent BuildUserChangedEvent(ClaimsPrincipal user, UserProfile profile)

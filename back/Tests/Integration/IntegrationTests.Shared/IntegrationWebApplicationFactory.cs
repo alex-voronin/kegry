@@ -60,11 +60,17 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
                 ["Authentication:AuthTokenConfig:Issuer"] = TestConfig.AuthToken.Issuer,
                 ["Authentication:AuthTokenConfig:Audience"] = TestConfig.AuthToken.Audience,
                 ["Authentication:AuthTokenConfig:AccessTokenDurationInDays"] =
-                    TestConfig.AuthToken.AccessTokenDurationInDays,
+                    TestConfig.AuthToken.AccessTokenDurationInDays.ToString(),
                 ["Authentication:AuthTokenConfig:RefreshTokenDurationInDays"] =
-                    TestConfig.AuthToken.RefreshTokenDurationInDays,
+                    TestConfig.AuthToken.RefreshTokenDurationInDays.ToString(),
                 ["Authentication:AuthTokenConfig:MaxSimultaneousLoggedInDevices"] =
-                    TestConfig.AuthToken.MaxSimultaneousLoggedInDevices
+                    TestConfig.AuthToken.MaxSimultaneousLoggedInDevices.ToString(),
+                ["Storage:S3Config:AccessKey"] = TestConfig.S3.AccessKey,
+                ["Storage:S3Config:SecretKey"] = TestConfig.S3.SecretKey,
+                ["Storage:S3Config:ServiceUrl"] = TestConfig.S3.ServiceUrl,
+                ["Storage:S3Config:PublicUrl"] = TestConfig.S3.PublicUrl,
+                ["Storage:S3Config:BucketName"] = TestConfig.S3.BucketName,
+                ["Storage:S3Config:KeySalt"] = TestConfig.S3.SecretKey
             });
         });
 

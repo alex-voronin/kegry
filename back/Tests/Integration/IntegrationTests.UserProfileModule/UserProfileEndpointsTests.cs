@@ -22,10 +22,10 @@ public class UserProfileEndpointsTests : IAsyncLifetime
     public async Task DisposeAsync() => await _factory.ResetDatabaseAsync();
 
     [Fact]
-    public async Task GivenAuthenticatedUser_WhenCreateProfile_ThenProfileCreated()
+    public async Task GivenAuthenticatedUser_WhenUserCreatesProfile_ThenProfileCreated()
     {
         // 1. Sign in
-        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test1@example.com", "Password123!");
+        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
         _factory.ApiClient.SetAuth(authResponse);
 
         // 2. Create profile
@@ -70,10 +70,10 @@ public class UserProfileEndpointsTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task GivenExistingProfile_WhenUpdateProfile_ThenProfileUpdated()
+    public async Task GivenExistingProfile_WhenUserUpdatesProfile_ThenProfileUpdated()
     {
         // 1. Sign in and create profile
-        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test2@example.com", "Password123!");
+        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
         _factory.ApiClient.SetAuth(authResponse);
         await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
@@ -114,10 +114,10 @@ public class UserProfileEndpointsTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task GivenNoProfile_WhenGetProfile_ThenReturnsNotFound()
+    public async Task GivenNoProfile_WhenUserGetsProfile_ThenReturnsNotFound()
     {
         // 1. Sign in
-        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test3@example.com", "Password123!");
+        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
         _factory.ApiClient.SetAuth(authResponse);
 
         // 2. Get profile
@@ -126,5 +126,39 @@ public class UserProfileEndpointsTests : IAsyncLifetime
         // 3. Check response
         response.Success.ShouldBeFalse();
         response.Errors.First().Code.ShouldBe(nameof(ErrorCode.NotFound));
+    }
+
+    [Fact]
+    public async Task GivenAuthenticatedUser_WhenGetAvatarUploadUrl_ThenReturnsUrl()
+    {
+        // 1. Sign in
+        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
+        _factory.ApiClient.SetAuth(authResponse);
+
+        // 2. Get upload url
+        var response = await _factory.ApiClient.PostAsync<object?, ApiResult<GetUrlResponse>>(
+            "/api/v1/user-profile/avatar/upload-url", null);
+
+        // 3. Check response
+        response.Success.ShouldBeTrue();
+        response.Result.Url.ShouldNotBeNullOrEmpty();
+        response.Result.Url.ShouldContain("test-bucket");
+    }
+
+    [Fact]
+    public async Task GivenAuthenticatedUser_WhenUserGetsCoverUploadUrl_ThenReturnsUrl()
+    {
+        // 1. Sign in
+        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
+        _factory.ApiClient.SetAuth(authResponse);
+
+        // 2. Get upload url
+        var response = await _factory.ApiClient.PostAsync<object?, ApiResult<GetUrlResponse>>(
+            "/api/v1/user-profile/cover/upload-url", null);
+
+        // 3. Check response
+        response.Success.ShouldBeTrue();
+        response.Result.Url.ShouldNotBeNullOrEmpty();
+        response.Result.Url.ShouldContain("test-bucket");
     }
 }
