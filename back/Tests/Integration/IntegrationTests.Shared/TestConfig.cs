@@ -3,6 +3,12 @@ using UserProfileModule.Infrastructure.Storage.Configs;
 
 namespace IntegrationTests.Shared;
 
+public class S3TestConfig : S3Config
+{
+    public required int HostPort { get; init; }
+    public required int ContainerPort { get; init; }
+}
+
 public static class TestConfig
 {
     public static class Db
@@ -24,14 +30,16 @@ public static class TestConfig
         MaxSimultaneousLoggedInDevices = 5
     };
 
-    public static S3Config S3 = new S3Config
+    public static S3TestConfig S3 = new S3TestConfig()
     {
         AccessKey = "test-access-key",
         SecretKey = "test-secret-key",
-        ServiceUrl = "https://test.r2.cloudflarestorage.com",
+        ServiceUrl =  "http://localhost:9000",
         BucketName = "test-bucket",
-        PublicUrl = "https://test.r2.cloudflarestorage.com",
+        PublicUrl = "http://localhost:9000",
         KeySalt = "test-salt",
-        UseHttp = true
+        UseHttp = true,
+        HostPort = 9000,
+        ContainerPort = 9000,
     };
 }

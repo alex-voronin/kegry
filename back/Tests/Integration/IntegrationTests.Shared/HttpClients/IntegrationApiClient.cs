@@ -35,6 +35,12 @@ public class IntegrationApiClient
         var response = await _apiHttpClient.PutAsJsonAsync(url, data, _options);
         return (await response.Content.ReadFromJsonAsync<TResp>(_options))!;
     }
+    
+    public async Task<TResp> PatchAsync<TReq, TResp>(string url, TReq data)
+    {
+        var response = await _apiHttpClient.PatchAsJsonAsync(url, data, _options);
+        return (await response.Content.ReadFromJsonAsync<TResp>(_options))!;
+    }
 
     public void SetAuth(AuthResponse authResponse)
     {

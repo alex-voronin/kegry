@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UserProfileModule.Infrastructure.Storage.Configs;
 
-public record S3Config
+public class S3Config
 {
     [Required]
     public required string AccessKey { get; init; }

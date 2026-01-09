@@ -54,9 +54,9 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
             .WithCommand("server", "/data")
             .WithEnvironment("MINIO_ROOT_USER", TestConfig.S3.AccessKey)
             .WithEnvironment("MINIO_ROOT_PASSWORD", TestConfig.S3.SecretKey)
-            .WithPortBinding(9000, true)
+            .WithPortBinding(TestConfig.S3.HostPort, TestConfig.S3.ContainerPort)
             .WithWaitStrategy(Wait.ForUnixContainer()
-                .UntilInternalTcpPortIsAvailable(9000))
+                .UntilInternalTcpPortIsAvailable(TestConfig.S3.HostPort))
             .Build();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -81,10 +81,8 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
                     TestConfig.AuthToken.MaxSimultaneousLoggedInDevices.ToString(),
                 ["Storage:S3Config:AccessKey"] = TestConfig.S3.AccessKey,
                 ["Storage:S3Config:SecretKey"] = TestConfig.S3.SecretKey,
-                ["Storage:S3Config:ServiceUrl"] =
-                    $"http://{_minioContainer.Hostname}:{_minioContainer.GetMappedPublicPort(9000)}",
-                ["Storage:S3Config:PublicUrl"] =
-                    $"http://{_minioContainer.Hostname}:{_minioContainer.GetMappedPublicPort(9000)}",
+                ["Storage:S3Config:ServiceUrl"] = TestConfig.S3.ServiceUrl,
+                ["Storage:S3Config:PublicUrl"] = TestConfig.S3.PublicUrl,
                 ["Storage:S3Config:BucketName"] = TestConfig.S3.BucketName,
                 ["Storage:S3Config:KeySalt"] = TestConfig.S3.SecretKey,
                 ["Storage:S3Config:UseHttp"] = TestConfig.S3.UseHttp.ToString()
@@ -136,10 +134,9 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
 
     private async Task CreateTestBucketAsync()
     {
-        var serviceUrl = $"http://{_minioContainer.Hostname}:{_minioContainer.GetMappedPublicPort(9000)}";
         var s3Config = new AmazonS3Config
         {
-            ServiceURL = serviceUrl,
+            ServiceURL = TestConfig.S3.ServiceUrl,
             ForcePathStyle = true
         };
 

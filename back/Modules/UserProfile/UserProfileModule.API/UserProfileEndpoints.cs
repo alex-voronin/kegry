@@ -23,6 +23,7 @@ public class UserProfileEndpoints : IEndpoints
             .RequireAuthorization();
         apiGroup.MapPost("/api/v1/user-profile", CreateUserProfile);
         apiGroup.MapPut("/api/v1/user-profile", UpdateUserProfile);
+        apiGroup.MapPatch("/api/v1/user-profile", PatchUserProfile);
         apiGroup.MapGet("/api/v1/user-profile/{id:guid?}", GetUserProfile);
 
         // Presigned URLs are better obtained via POST requests because this is semantically correct:
@@ -86,6 +87,45 @@ public class UserProfileEndpoints : IEndpoints
         userProfile.Birthday = request.Birthday;
         userProfile.Gender = request.Gender;
         userProfile.Hobbies = hobbyStubs;
+
+        var @event = BuildUserChangedEvent(user, userProfile);
+        await profileRepository.PublishEventAsync(@event, ct);
+        await profileRepository.SaveChangesAndFlushMessagesAsync(ct);
+
+        return ApiResult.Empty;
+    }
+
+    static void UpdateIfNotNull<T>(ref T target, T value)
+    {
+        if (value != null) target = value;
+    }
+    
+    private static async Task<ApiResult.EmptyResult> PatchUserProfile(
+        [FromBody] PatchUserProfileRequest request,
+        ClaimsPrincipal user,
+        IUserProfileRepository profileRepository,
+        IHobbyService hobbyService,
+        CancellationToken ct)
+    {
+        var userId = user.GetId();
+        var userProfile = await profileRepository.GetByIdAsync(userId, ct: ct);
+        if (userProfile == null)
+        {
+            throw UserProfileExceptions.ProfileNotFound(userId);
+        }
+
+        userProfile.FirstName = request.FirstName ?? userProfile.FirstName;
+        userProfile.LastName = request.LastName ?? userProfile.LastName;
+        userProfile.Bio = request.Bio ?? userProfile.Bio;
+        userProfile.AvatarImageUrl = request.AvatarImageUrl ?? userProfile.AvatarImageUrl;
+        userProfile.CoverImageUrl = request.CoverImageUrl ?? userProfile.CoverImageUrl;
+        userProfile.Birthday = request.Birthday ?? userProfile.Birthday;
+        userProfile.Gender = request.Gender ?? userProfile.Gender;
+        if (request.HobbyIds != null)
+        {
+            var hobbyStubs = await hobbyService.BuildHobbyStubs(request.HobbyIds, ct);
+            userProfile.Hobbies = hobbyStubs;
+        }
 
         var @event = BuildUserChangedEvent(user, userProfile);
         await profileRepository.PublishEventAsync(@event, ct);

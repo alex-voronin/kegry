@@ -78,7 +78,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
         await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Update profile
-        var request = new UpdateUserProfileRequest(
+        var request = new PatchUserProfileRequest(
             FirstName: "UpdatedName",
             LastName: "UpdatedLastName",
             Bio: "Updated bio",
@@ -89,7 +89,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
             HobbyIds: [Guid.Parse("33b2bf1f-e351-0658-5139-5ab721f5e935")]
         );
 
-        var response = await _factory.ApiClient.PutAsync<UpdateUserProfileRequest, ApiResult.EmptyResult>(
+        var response = await _factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
             "/api/v1/user-profile", request);
 
         if (!response.Success)
@@ -107,9 +107,107 @@ public class UserProfileEndpointsTests : IAsyncLifetime
             p => p.Bio.ShouldBe(request.Bio),
             p => p.AvatarImageUrl.ShouldBe(request.AvatarImageUrl),
             p => p.CoverImageUrl.ShouldBe(request.CoverImageUrl),
-            p => p.Birthday.ShouldBe(request.Birthday),
-            p => p.Gender.ShouldBe(request.Gender),
+            p => p.Birthday.ShouldBe(request.Birthday!.Value),
+            p => p.Gender.ShouldBe(request.Gender!.Value),
             p => p.Hobbies.Select(h => h.Id).ShouldBe(request.HobbyIds, ignoreOrder: true)
+        );
+    }
+    
+    [Fact]
+    public async Task GivenExistingProfile_WhenUserUpdatesAvatar_ThenOnlyAvatarUpdated()
+    {
+        // 1. Sign in and create profile
+        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
+        _factory.ApiClient.SetAuth(authResponse);
+        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Get profile before update
+        var getBeforeUpdateResponse = await _factory.ApiClient
+            .GetAsync<ApiResult<GetUserProfileResponse>>("/api/v1/user-profile");
+        
+        // 3. Update profile
+        var request = new PatchUserProfileRequest(
+            FirstName: null,
+            LastName: null,
+            Bio: null,
+            AvatarImageUrl: "http://example.com/updated.jpg",
+            CoverImageUrl: null,
+            Birthday: null,
+            Gender: null,
+            HobbyIds: null
+        );
+
+        var response = await _factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
+            "/api/v1/user-profile", request);
+
+        if (!response.Success)
+        {
+            Log.Error(response.Errors.First().Error);
+        }
+        response.Success.ShouldBeTrue();
+
+        // 3. Check response
+        var getAfterUpdateResponse = await _factory.ApiClient
+            .GetAsync<ApiResult<GetUserProfileResponse>>("/api/v1/user-profile");
+        getAfterUpdateResponse.Success.ShouldBeTrue();
+        getAfterUpdateResponse.Result.UserProfile.ShouldSatisfyAllConditions(
+            p => p.FirstName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.FirstName),
+            p => p.LastName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.LastName),
+            p => p.Bio.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Bio),
+            p => p.AvatarImageUrl.ShouldBe(request.AvatarImageUrl),
+            p => p.CoverImageUrl.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.CoverImageUrl),
+            p => p.Birthday.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Birthday),
+            p => p.Gender.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Gender),
+            p => p.Hobbies.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Hobbies, ignoreOrder: true)
+        );
+    }
+    
+     [Fact]
+    public async Task GivenExistingProfile_WhenUserUpdatesCoverImage_ThenOnlyCoverImageUpdated()
+    {
+        // 1. Sign in and create profile
+        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
+        _factory.ApiClient.SetAuth(authResponse);
+        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Get profile before update
+        var getBeforeUpdateResponse = await _factory.ApiClient
+            .GetAsync<ApiResult<GetUserProfileResponse>>("/api/v1/user-profile");
+        
+        // 3. Update profile
+        var request = new PatchUserProfileRequest(
+            FirstName: null,
+            LastName: null,
+            Bio: null,
+            AvatarImageUrl: null,
+            CoverImageUrl: "http://example.com/updated.jpg",
+            Birthday: null,
+            Gender: null,
+            HobbyIds: null
+        );
+
+        var response = await _factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
+            "/api/v1/user-profile", request);
+
+        if (!response.Success)
+        {
+            Log.Error(response.Errors.First().Error);
+        }
+        response.Success.ShouldBeTrue();
+
+        // 3. Check response
+        var getAfterUpdateResponse = await _factory.ApiClient
+            .GetAsync<ApiResult<GetUserProfileResponse>>("/api/v1/user-profile");
+        getAfterUpdateResponse.Success.ShouldBeTrue();
+        getAfterUpdateResponse.Result.UserProfile.ShouldSatisfyAllConditions(
+            p => p.FirstName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.FirstName),
+            p => p.LastName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.LastName),
+            p => p.Bio.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Bio),
+            p => p.AvatarImageUrl.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.AvatarImageUrl),
+            p => p.CoverImageUrl.ShouldBe(request.CoverImageUrl),
+            p => p.Birthday.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Birthday),
+            p => p.Gender.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Gender),
+            p => p.Hobbies.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Hobbies, ignoreOrder: true)
         );
     }
 
