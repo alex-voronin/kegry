@@ -39,6 +39,7 @@ public class FeedEndpoints : IEndpoints
                     LastName: f.User.LastName,
                     Rating: f.Rating,
                     DistanceMeters: f.DistanceMeters,
+                    CoverImageUrl: f.User.CoverImageUrl,
                     Hobbies: f.User.Hobbies.Select(h =>
                             new HobbyDto
                             (

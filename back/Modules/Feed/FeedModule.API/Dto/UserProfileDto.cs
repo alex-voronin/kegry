@@ -6,5 +6,6 @@ public record UserProfileDto(
     string LastName,
     decimal? Rating,
     int DistanceMeters,
+    string CoverImageUrl,
     HobbyDto[] Hobbies
 );
