@@ -33,10 +33,22 @@
     <data name="Push.UserInvited.Body" xml:space="preserve">
         <value>Open Notifications to view details</value>
     </data>
+    <data name="Email.UserInvited.Title" xml:space="preserve">
+        <value>New invitation!</value>
+    </data>
+    <data name="Email.UserInvited.Body" xml:space="preserve">
+        <value>You have received an invitation from another user! Open &lt;a href=&quot;https://hoppyfy.me/notifications&quot;&gt;Notifications&lt;/a&gt; to view details.</value>
+    </data>
     <data name="Email.ConfirmEmail.Subject" xml:space="preserve">
         <value>Confirm your email</value>
     </data>
     <data name="Email.ConfirmEmail.Body" xml:space="preserve">
         <value>Your confirmation code is {0}</value>
+    </data>
+    <data name="Email.Common.UnsubscribeText" xml:space="preserve">
+        <value>You are receiving this email because you are subscribed to email notifications.</value>
+    </data>
+    <data name="Email.Common.UnsubscribeLink" xml:space="preserve">
+        <value>Unsubscribe</value>
     </data>
 </root>

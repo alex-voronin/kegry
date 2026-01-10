@@ -5,7 +5,7 @@ using SharedCore.Services.LifeTimes;
 
 namespace NotificationsModule.Infrastructure.Transport.Emails;
 
-public record Email(string ToEmail, string Subject, string Body, bool IsHtml);
+public record Email(string ToEmail, string Subject, string Body, bool IsImportant);
 
 public interface IEmailBuilder
 {
@@ -28,20 +28,20 @@ internal class EmailBuilder : IEmailBuilder, ISingleton
     {
         var title = _localizer.GetString("Email.ConfirmEmail.Subject");
         var body = _localizer.GetString("Email.ConfirmEmail.Body", confirmationCode);
-        return new Email(ToEmail: toEmail, Subject: title, Body: body, IsHtml: false);
+        return new Email(ToEmail: toEmail, Subject: title, Body: body, IsImportant: true);
     }
 
     public Email BuildMeetingArrangedEmail(string toEmail, string otherUserName)
     {
         var title = _localizer.GetString("Push.MeetingArranged.Title");
         var body = _localizer.GetString("Push.MeetingArranged.Body", otherUserName);
-        return new Email(ToEmail: toEmail, Subject: title, Body: body, IsHtml: false);
+        return new Email(ToEmail: toEmail, Subject: title, Body: body, IsImportant: false);
     }
 
     public Email BuildUserInvitedEmail(string toEmail)
     {
-        var title = _localizer.GetString("Push.UserInvited.Title");
-        var body = _localizer.GetString("Push.UserInvited.Body");
-        return new Email(ToEmail: toEmail, Subject: title, Body: body, IsHtml: false);
+        var title = _localizer.GetString("Email.UserInvited.Title");
+        var body = _localizer.GetString("Email.UserInvited.Body");
+        return new Email(ToEmail: toEmail, Subject: title, Body: body, IsImportant: false);
     }
 }

@@ -21,7 +21,6 @@
     <ItemGroup>
       <EmbeddedResource Update="Localization\DateTimeHumanizer.resx">
         <Generator>ResXFileCodeGenerator</Generator>
-        <LastGenOutput>DateTimeHumanizer.Designer.cs</LastGenOutput>
       </EmbeddedResource>
     </ItemGroup>
 
