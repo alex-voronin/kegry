@@ -8,7 +8,7 @@ public class UserProfile
     public Guid Id { get; init; }
     public string FirstName { get; init; } = null!;
     public string LastName { get; init; } = null!;
-    public string CoverImageUrl { get; init; } = null!;
+    public string CoverImageS3Key { get; init; } = null!;
     public DateOnly Birthday { get; init; }
     public Gender Gender { get; init; }
 

@@ -33,8 +33,8 @@ public class UserProfileEndpointsTests : IAsyncLifetime
             FirstName: "John",
             LastName: "Doe",
             Bio: "My bio",
-            AvatarImageUrl: "http://example.com/avatar.jpg",
-            CoverImageUrl: "http://example.com/cover.jpg",
+            AvatarImageUrl: TestConfig.S3.PublicUrl + "/avatar.jpg",
+            CoverImageUrl: TestConfig.S3.PublicUrl + "/cover.jpg",
             Birthday: new DateOnly(1990, 1, 1),
             Gender: Gender.Male,
             HobbyIds:
@@ -82,8 +82,8 @@ public class UserProfileEndpointsTests : IAsyncLifetime
             FirstName: "UpdatedName",
             LastName: "UpdatedLastName",
             Bio: "Updated bio",
-            AvatarImageUrl: "http://example.com/updated.jpg",
-            CoverImageUrl: "http://example.com/updated_cover.jpg",
+            AvatarImageUrl: TestConfig.S3.PublicUrl + "/updated.jpg",
+            CoverImageUrl: TestConfig.S3.PublicUrl + "/updated_cover.jpg",
             Birthday: new DateOnly(1991, 2, 2),
             Gender: Gender.Female,
             HobbyIds: [Guid.Parse("33b2bf1f-e351-0658-5139-5ab721f5e935")]
@@ -112,7 +112,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
             p => p.Hobbies.Select(h => h.Id).ShouldBe(request.HobbyIds, ignoreOrder: true)
         );
     }
-    
+
     [Fact]
     public async Task GivenExistingProfile_WhenUserUpdatesAvatar_ThenOnlyAvatarUpdated()
     {
@@ -124,13 +124,13 @@ public class UserProfileEndpointsTests : IAsyncLifetime
         // 2. Get profile before update
         var getBeforeUpdateResponse = await _factory.ApiClient
             .GetAsync<ApiResult<GetUserProfileResponse>>("/api/v1/user-profile");
-        
+
         // 3. Update profile
         var request = new PatchUserProfileRequest(
             FirstName: null,
             LastName: null,
             Bio: null,
-            AvatarImageUrl: "http://example.com/updated.jpg",
+            AvatarImageUrl: TestConfig.S3.PublicUrl + "/updated.jpg",
             CoverImageUrl: null,
             Birthday: null,
             Gender: null,
@@ -161,8 +161,8 @@ public class UserProfileEndpointsTests : IAsyncLifetime
             p => p.Hobbies.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Hobbies, ignoreOrder: true)
         );
     }
-    
-     [Fact]
+
+    [Fact]
     public async Task GivenExistingProfile_WhenUserUpdatesCoverImage_ThenOnlyCoverImageUpdated()
     {
         // 1. Sign in and create profile
@@ -173,14 +173,14 @@ public class UserProfileEndpointsTests : IAsyncLifetime
         // 2. Get profile before update
         var getBeforeUpdateResponse = await _factory.ApiClient
             .GetAsync<ApiResult<GetUserProfileResponse>>("/api/v1/user-profile");
-        
+
         // 3. Update profile
         var request = new PatchUserProfileRequest(
             FirstName: null,
             LastName: null,
             Bio: null,
             AvatarImageUrl: null,
-            CoverImageUrl: "http://example.com/updated.jpg",
+            CoverImageUrl: TestConfig.S3.PublicUrl + "/updated.jpg",
             Birthday: null,
             Gender: null,
             HobbyIds: null

@@ -30,6 +30,10 @@ public class UserProfileContext : DbContext
                 .HasMaxLength(ValidationParameters.LastNameMaxLength);
             builder.Property(up => up.Bio)
                 .HasMaxLength(ValidationParameters.BioMaxLength);
+            builder.Property(up => up.AvatarImageS3Key)
+                .HasMaxLength(ValidationParameters.S3KeyMaxLength);
+            builder.Property(up => up.CoverImageS3Key)
+                .HasMaxLength(ValidationParameters.S3KeyMaxLength);
 
             builder.HasMany(up => up.Hobbies)
                 .WithMany(h => h.UserProfiles)

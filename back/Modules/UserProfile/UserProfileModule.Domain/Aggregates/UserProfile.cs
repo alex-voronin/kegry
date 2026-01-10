@@ -34,16 +34,16 @@ public class UserProfile
             maxLength: ValidationParameters.BioMaxLength);
     } = null!;
 
-    public required string AvatarImageUrl
+    public required string AvatarImageS3Key
     {
         get;
-        set => field = ValidateImageUrl(nameof(AvatarImageUrl), value);
+        set => field = ValidateS3Key(nameof(AvatarImageS3Key), value);
     } = null!;
 
-    public required string CoverImageUrl
+    public required string CoverImageS3Key
     {
         get;
-        set => field = ValidateImageUrl(nameof(CoverImageUrl), value);
+        set => field = ValidateS3Key(nameof(CoverImageS3Key), value);
     } = null!;
 
     public required DateOnly Birthday
@@ -78,10 +78,11 @@ public class UserProfile
         return value.Trim();
     }
 
-    private static string ValidateImageUrl(string fieldName, string value)
+    private static string ValidateS3Key(string fieldName, string value)
     {
         Validation.ThrowIfNullOrWhiteSpace(fieldName, value);
-        Validation.ThrowIfInvalidUrl(fieldName, value);
+        Validation.ThrowIfLengthExceeded(fieldName, value, ValidationParameters.S3KeyMaxLength);
+        Validation.ThrowIfInvalid(fieldName, () => !value.StartsWith('/'), "S3 key shouldn't start with /");
         return value.Trim();
     }
 

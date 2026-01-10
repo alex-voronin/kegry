@@ -8,6 +8,7 @@ using SecurityModule.Setup;
 using UserProfileModule.Setup;
 using Serilog;
 using Shared.Infrastructure.Interfaces;
+using Shared.Setup;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, services, configuration) => configuration
@@ -20,6 +21,7 @@ IFeatureStartup[] startups =
 [
     new HybridCacheStartup(),
     new LocalizationStartup(),
+    new SharedCoreModuleStartup(),
     new SecurityModuleStartup(configuration),
     new UserProfileModuleStartup(configuration),
     new LocationModuleStartup(configuration),

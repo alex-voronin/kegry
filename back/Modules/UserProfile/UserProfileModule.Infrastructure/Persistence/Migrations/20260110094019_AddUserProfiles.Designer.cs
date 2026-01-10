@@ -12,7 +12,7 @@ using UserProfileModule.Infrastructure.Persistence;
 namespace UserProfileModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(UserProfileContext))]
-    [Migration("20260107134909_AddUserProfiles")]
+    [Migration("20260110094019_AddUserProfiles")]
     partial class AddUserProfiles
     {
         /// <inheritdoc />
@@ -409,10 +409,11 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<string>("AvatarImageUrl")
+                    b.Property<string>("AvatarImageS3Key")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("avatar_image_url");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("avatar_image_s3key");
 
                     b.Property<string>("Bio")
                         .IsRequired()
@@ -424,10 +425,11 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("date")
                         .HasColumnName("birthday");
 
-                    b.Property<string>("CoverImageUrl")
+                    b.Property<string>("CoverImageS3Key")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("cover_image_url");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("cover_image_s3key");
 
                     b.Property<string>("FirstName")
                         .IsRequired()

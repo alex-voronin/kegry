@@ -7,4 +7,5 @@ public static class ValidationParameters
     public const int BioMaxLength = 200;
     public const int MinAge = 18;
     public const int MaxHobbiesCount = 18;
+    public const int S3KeyMaxLength = 128;
 }

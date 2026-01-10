@@ -1,9 +1,7 @@
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using UserProfileModule.Infrastructure.Persistence;
 using Shared.Setup;
-using UserProfileModule.Infrastructure.Storage.Configs;
 
 namespace UserProfileModule.Setup;
 
@@ -25,11 +23,5 @@ public class UserProfileModuleStartup : AppModuleStartupBase<UserProfileContext>
     {
         base.Register(appBuilder, host);
         appBuilder.Services.AutoRegisterAssemblies(ModuleAssemblies);
-
-        var s3Section = appBuilder.Configuration.GetSection("Storage:S3Config");
-        appBuilder.Services.AddOptions<S3Config>()
-            .Bind(s3Section)
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
     }
 }

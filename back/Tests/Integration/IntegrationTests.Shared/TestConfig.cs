@@ -1,5 +1,5 @@
 using SecurityModule.Application.Configs;
-using UserProfileModule.Infrastructure.Storage.Configs;
+using Shared.Infrastructure.Storage.Configs;
 
 namespace IntegrationTests.Shared;
 
@@ -34,9 +34,9 @@ public static class TestConfig
     {
         AccessKey = "test-access-key",
         SecretKey = "test-secret-key",
-        ServiceUrl =  "http://localhost:9000",
+        ServiceUrl = "http://localhost:9000",
         BucketName = "test-bucket",
-        PublicUrl = "http://localhost:9000",
+        PublicUrl = "http://localhost:9000/test-bucket",
         KeySalt = "test-salt",
         UseHttp = true,
         HostPort = 9000,

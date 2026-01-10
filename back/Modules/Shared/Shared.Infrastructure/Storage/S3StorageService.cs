@@ -1,20 +1,23 @@
 using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.Extensions.Options;
+using Shared.Infrastructure.Storage.Configs;
 using SharedCore.Services.LifeTimes;
-using UserProfileModule.Infrastructure.Storage.Configs;
 
-namespace UserProfileModule.Infrastructure.Storage;
+namespace Shared.Infrastructure.Storage;
 
-public interface IStorageService
+public interface IS3StorageService
 {
+    public string PublicFileUrlToS3Key(string publicFileUrl);
+    public string S3KeyToPublicFileUrl(string s3Key);
+
     Task<string> GetPresignedUploadUrlAsync(
         string key,
         string contentType,
         TimeSpan expires);
 }
 
-internal class S3StorageService : IStorageService, ISingleton
+internal class S3StorageService : IS3StorageService, ISingleton
 {
     private readonly S3Config _config;
     private readonly IAmazonS3 _s3Client;
@@ -31,6 +34,16 @@ internal class S3StorageService : IStorageService, ISingleton
         };
 
         _s3Client = new AmazonS3Client(_config.AccessKey, _config.SecretKey, s3Config);
+    }
+
+    public string PublicFileUrlToS3Key(string publicFileUrl)
+    {
+        return publicFileUrl.Substring(_config.PublicUrl.Length + 1);
+    }
+
+    public string S3KeyToPublicFileUrl(string s3Key)
+    {
+        return $"{_config.PublicUrl}/{s3Key}";
     }
 
     public Task<string> GetPresignedUploadUrlAsync(

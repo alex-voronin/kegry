@@ -1,18 +1,19 @@
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Options;
+using Shared.Infrastructure.Storage;
+using Shared.Infrastructure.Storage.Configs;
 using SharedCore.Services.LifeTimes;
 using UserProfileModule.Domain.Services;
-using UserProfileModule.Infrastructure.Storage.Configs;
 
 namespace UserProfileModule.Infrastructure.Storage;
 
 internal class ProfileImageService : IProfileImageService, ISingleton
 {
-    private readonly IStorageService _storageService;
+    private readonly IS3StorageService _storageService;
     private readonly S3Config _config;
 
-    public ProfileImageService(IStorageService storageService, IOptions<S3Config> config)
+    public ProfileImageService(IS3StorageService storageService, IOptions<S3Config> config)
     {
         _storageService = storageService;
         _config = config.Value;
@@ -25,7 +26,7 @@ internal class ProfileImageService : IProfileImageService, ISingleton
             key,
             "image/jpeg",
             TimeSpan.FromMinutes(10));
-        var publicUrl = BuildPublicUrl(key);
+        var publicUrl = _storageService.S3KeyToPublicFileUrl(key);
         return new StorageUrls(presignedUrl, publicUrl);
     }
 
@@ -36,7 +37,7 @@ internal class ProfileImageService : IProfileImageService, ISingleton
             key,
             "image/jpeg",
             TimeSpan.FromMinutes(10));
-        var publicUrl = BuildPublicUrl(key);
+        var publicUrl = _storageService.S3KeyToPublicFileUrl(key);
         return new StorageUrls(presignedUrl, publicUrl);
     }
 
@@ -44,11 +45,6 @@ internal class ProfileImageService : IProfileImageService, ISingleton
     {
         var hash = Hash(userId.ToString() + _config.KeySalt);
         return $"user_{hash}/ {fileName}.jpg";
-    }
-
-    private string BuildPublicUrl(string key)
-    {
-        return $"{_config.PublicUrl}/{_config.BucketName}/{key}";
     }
 
     private static string Hash(string input)

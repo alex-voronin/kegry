@@ -63,15 +63,16 @@ public class AuthManager
                 FirstName: "FirstName",
                 LastName: "LastName",
                 Bio: "Bio",
-                AvatarImageUrl: "http://my-image-url/avatar.jpg",
-                CoverImageUrl: "http://my-image-url/cover-image-url.jpg",
+                AvatarImageUrl: TestConfig.S3.PublicUrl + "new-avatar.jpg",
+                CoverImageUrl: TestConfig.S3.PublicUrl + "new-cover-image.jpg",
                 Birthday: new DateOnly(1980, 1, 1),
                 Gender: Gender.Male,
                 HobbyIds: []
             )
         );
 
-        await _apiClient.PostAsync<UpdateLocationRequest, ApiResult.EmptyResult>("/api/v1/location",
+        var response = await _apiClient.PostAsync<UpdateLocationRequest, ApiResult.EmptyResult>("/api/v1/location",
             new UpdateLocationRequest(Latitude: 0.0, Longitude: 0.0));
+        response.Success.ShouldBeTrue();
     }
 }

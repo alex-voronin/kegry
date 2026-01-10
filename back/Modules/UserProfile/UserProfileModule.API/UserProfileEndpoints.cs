@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Shared.Infrastructure.Storage;
 using SharedCore.Api;
 using SharedCore.Api.Dto;
 using SharedCore.Extensions;
@@ -37,6 +38,7 @@ public class UserProfileEndpoints : IEndpoints
         ClaimsPrincipal user,
         IUserProfileRepository profileRepository,
         IHobbyService hobbyService,
+        IS3StorageService storageService,
         CancellationToken ct)
     {
         var userId = user.GetId();
@@ -47,8 +49,8 @@ public class UserProfileEndpoints : IEndpoints
             FirstName = request.FirstName,
             LastName = request.LastName,
             Bio = request.Bio,
-            AvatarImageUrl = request.AvatarImageUrl,
-            CoverImageUrl = request.CoverImageUrl,
+            AvatarImageS3Key = storageService.PublicFileUrlToS3Key(request.AvatarImageUrl),
+            CoverImageS3Key = storageService.PublicFileUrlToS3Key(request.CoverImageUrl),
             Birthday = request.Birthday,
             Gender = request.Gender,
             Hobbies = hobbyStubs
@@ -61,12 +63,13 @@ public class UserProfileEndpoints : IEndpoints
 
         return ApiResult.Empty;
     }
-    
+
     private static async Task<ApiResult.EmptyResult> PatchUserProfile(
         [FromBody] PatchUserProfileRequest request,
         ClaimsPrincipal user,
         IUserProfileRepository profileRepository,
         IHobbyService hobbyService,
+        IS3StorageService storageService,
         CancellationToken ct)
     {
         var userId = user.GetId();
@@ -79,10 +82,19 @@ public class UserProfileEndpoints : IEndpoints
         userProfile.FirstName = request.FirstName ?? userProfile.FirstName;
         userProfile.LastName = request.LastName ?? userProfile.LastName;
         userProfile.Bio = request.Bio ?? userProfile.Bio;
-        userProfile.AvatarImageUrl = request.AvatarImageUrl ?? userProfile.AvatarImageUrl;
-        userProfile.CoverImageUrl = request.CoverImageUrl ?? userProfile.CoverImageUrl;
         userProfile.Birthday = request.Birthday ?? userProfile.Birthday;
         userProfile.Gender = request.Gender ?? userProfile.Gender;
+
+        if (request.AvatarImageUrl != null)
+        {
+            userProfile.AvatarImageS3Key = storageService.PublicFileUrlToS3Key(request.AvatarImageUrl);
+        }
+
+        if (request.CoverImageUrl != null)
+        {
+            userProfile.CoverImageS3Key = storageService.PublicFileUrlToS3Key(request.CoverImageUrl);
+        }
+
         if (request.HobbyIds != null)
         {
             var hobbyStubs = await hobbyService.BuildHobbyStubs(request.HobbyIds, ct);
@@ -100,6 +112,7 @@ public class UserProfileEndpoints : IEndpoints
         [FromQuery] Guid? id,
         ClaimsPrincipal user,
         IUserProfileRepository profileRepository,
+        IS3StorageService storageService,
         CancellationToken ct)
     {
         var userId = id ?? user.GetId();
@@ -118,8 +131,8 @@ public class UserProfileEndpoints : IEndpoints
             FirstName: profile.FirstName,
             LastName: profile.LastName,
             Bio: profile.Bio,
-            AvatarImageUrl: profile.AvatarImageUrl,
-            CoverImageUrl: profile.CoverImageUrl,
+            AvatarImageUrl: storageService.S3KeyToPublicFileUrl(profile.AvatarImageS3Key),
+            CoverImageUrl: storageService.S3KeyToPublicFileUrl(profile.CoverImageS3Key),
             Birthday: profile.Birthday,
             Gender: profile.Gender,
             Hobbies: profile.Hobbies.Select(h => new HobbyDto(Id: h.Id, Name: h.Name)).ToArray()
@@ -160,7 +173,7 @@ public class UserProfileEndpoints : IEndpoints
             Email = user.GetEmail(),
             FirstName = profile.FirstName,
             LastName = profile.LastName,
-            AvatarImageUrl = profile.AvatarImageUrl
+            AvatarImageUrl = profile.AvatarImageS3Key
         };
     }
 }

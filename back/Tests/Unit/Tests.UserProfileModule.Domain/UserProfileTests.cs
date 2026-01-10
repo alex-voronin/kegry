@@ -18,8 +18,8 @@ public class UserProfileTests
         profile.FirstName.ShouldBe("John");
         profile.LastName.ShouldBe("Doe");
         profile.Bio.ShouldBe("A brief bio about John.");
-        profile.AvatarImageUrl.ShouldBe("https://example.com/avatar.jpg");
-        profile.CoverImageUrl.ShouldBe("https://example.com/cover.jpg");
+        profile.AvatarImageS3Key.ShouldBe("avatar.jpg");
+        profile.CoverImageS3Key.ShouldBe("cover.jpg");
         profile.Birthday.ShouldBe(new DateOnly(1990, 1, 1));
         profile.Gender.ShouldBe(Gender.Male);
         profile.Hobbies.Count.ShouldBe(1);
@@ -31,8 +31,8 @@ public class UserProfileTests
         var firstName = "Jack";
         var lastName = "Smith";
         var bio = string.Empty;
-        var avatarUrl = "https://example.com/new-avatar.jpg";
-        var coverUrl = "https://example.com/new-cover.jpg";
+        var avatarUrl = "dir/new-avatar.jpg";
+        var coverUrl = "dir/new-cover.jpg";
         var birthday = new DateOnly(1995, 5, 5);
         var gender = Gender.Male;
         var hobbies = new[] { new Hobby { Id = Guid.NewGuid(), Name = "Hiking" } };
@@ -42,8 +42,8 @@ public class UserProfileTests
         profile.FirstName = firstName;
         profile.LastName = lastName;
         profile.Bio = bio;
-        profile.AvatarImageUrl = avatarUrl;
-        profile.CoverImageUrl = coverUrl;
+        profile.AvatarImageS3Key = avatarUrl;
+        profile.CoverImageS3Key = coverUrl;
         profile.Birthday = birthday;
         profile.Gender = gender;
         profile.Hobbies = hobbies;
@@ -51,8 +51,8 @@ public class UserProfileTests
         profile.FirstName.ShouldBe(firstName);
         profile.LastName.ShouldBe(lastName);
         profile.Bio.ShouldBe(bio);
-        profile.AvatarImageUrl.ShouldBe(avatarUrl);
-        profile.CoverImageUrl.ShouldBe(coverUrl);
+        profile.AvatarImageS3Key.ShouldBe(avatarUrl);
+        profile.CoverImageS3Key.ShouldBe(coverUrl);
         profile.Birthday.ShouldBe(birthday);
         profile.Gender.ShouldBe(gender);
         profile.Hobbies.Count.ShouldBe(hobbies.Length);
@@ -114,28 +114,26 @@ public class UserProfileTests
     }
 
     [Theory]
-    [InlineData("invalid-url")]
-    [InlineData("ftp://example.com")]
+    [InlineData("/example.com")]
     [InlineData(null)]
     [InlineData("")]
     public void AvatarImageUrl_WhenInvalidUrl_ThenThrows(string? invalidUrl)
     {
         var profile = CreateValidProfile();
 
-        Should.Throw<HttpCodeException>(() => profile.AvatarImageUrl = invalidUrl!)
+        Should.Throw<HttpCodeException>(() => profile.AvatarImageS3Key = invalidUrl!)
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 
     [Theory]
-    [InlineData("invalid-url")]
-    [InlineData("ftp://example.com")]
+    [InlineData("/example.com")]
     [InlineData(null)]
     [InlineData("")]
     public void CoverImageUrl_WhenInvalidUrl_ThenThrows(string? invalidUrl)
     {
         var profile = CreateValidProfile();
 
-        Should.Throw<HttpCodeException>(() => profile.AvatarImageUrl = invalidUrl!)
+        Should.Throw<HttpCodeException>(() => profile.AvatarImageS3Key = invalidUrl!)
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 
@@ -172,8 +170,8 @@ public class UserProfileTests
             FirstName = "John",
             LastName = "Doe",
             Bio = "A brief bio about John.",
-            AvatarImageUrl = "https://example.com/avatar.jpg",
-            CoverImageUrl = "https://example.com/cover.jpg",
+            AvatarImageS3Key = "avatar.jpg",
+            CoverImageS3Key = "cover.jpg",
             Birthday = new DateOnly(1990, 1, 1),
             Gender = Gender.Male,
             Hobbies = new[] { new Hobby { Id = Guid.NewGuid(), Name = "Coding" } }

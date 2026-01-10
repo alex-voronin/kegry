@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace UserProfileModule.Infrastructure.Storage.Configs;
+namespace Shared.Infrastructure.Storage.Configs;
 
 public class S3Config
 {

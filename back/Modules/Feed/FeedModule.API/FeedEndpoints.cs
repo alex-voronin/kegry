@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Shared.Infrastructure.Storage;
 using SharedCore.Api;
 using SharedCore.Api.Dto;
 using SharedCore.Extensions;
@@ -29,6 +30,7 @@ public class FeedEndpoints : IEndpoints
     private static async Task<ApiResult<GetFeedResponse>> GetFeed(
         ClaimsPrincipal user,
         IFeedScoringService feedScoringService,
+        IS3StorageService storageService,
         CancellationToken ct)
     {
         var feed = await feedScoringService.GetFeedAsync(user.GetId(), ct: ct);
@@ -39,7 +41,7 @@ public class FeedEndpoints : IEndpoints
                     LastName: f.User.LastName,
                     Rating: f.Rating,
                     DistanceMeters: f.DistanceMeters,
-                    CoverImageUrl: f.User.CoverImageUrl,
+                    CoverImageUrl: storageService.S3KeyToPublicFileUrl(f.User.CoverImageS3Key),
                     Hobbies: f.User.Hobbies.Select(h =>
                             new HobbyDto
                             (

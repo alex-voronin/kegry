@@ -38,8 +38,8 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                     first_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     last_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     bio = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    avatar_image_url = table.Column<string>(type: "text", nullable: false),
-                    cover_image_url = table.Column<string>(type: "text", nullable: false),
+                    avatar_image_s3key = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    cover_image_s3key = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     birthday = table.Column<DateOnly>(type: "date", nullable: false),
                     gender = table.Column<int>(type: "integer", nullable: false)
                 },
