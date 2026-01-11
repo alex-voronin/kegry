@@ -10,7 +10,7 @@ public record PushMessage(Message? UnicastMessage, MulticastMessage? MulticastMe
 
 public interface IPushBuilder
 {
-    PushMessage BuildMeetingArrangedPush(string[] fcmTokens, string otherUserName);
+    PushMessage BuildMeetingArrangedPush(string[] fcmTokens, string otherUserFullName);
     PushMessage BuildUserInvitedPush(string[] fcmTokens);
     PushMessage BuildChatMessageReceivedPush(string[] fcmTokens, ChatMessageSentEvent @event);
     PushMessage BuildChatMessageReceivedSilentPush(string[] fcmTokens, ChatMessageSentEvent @event);
@@ -25,10 +25,10 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         _localizer = localizer;
     }
 
-    public PushMessage BuildMeetingArrangedPush(string[] fcmTokens, string otherUserName)
+    public PushMessage BuildMeetingArrangedPush(string[] fcmTokens, string otherUserFullName)
     {
         var title = _localizer.GetString("Push.MeetingArranged.Title");
-        var body = _localizer.GetString("Push.MeetingArranged.Body", otherUserName);
+        var body = _localizer.GetString("Push.MeetingArranged.Body", otherUserFullName);
 
         var notification = new Notification()
         {

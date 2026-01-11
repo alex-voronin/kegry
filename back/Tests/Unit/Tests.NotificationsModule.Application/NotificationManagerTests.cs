@@ -1,5 +1,6 @@
 using AutoFixture.Xunit2;
 using NotificationModule.Domain.Aggregates;
+using NotificationModule.Domain.Repositories;
 using NotificationsModule.Application.Services;
 using NSubstitute;
 using Shouldly;

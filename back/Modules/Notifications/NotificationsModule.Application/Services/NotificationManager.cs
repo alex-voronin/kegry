@@ -1,5 +1,6 @@
 using ChatModule.Contracts.Events;
 using NotificationModule.Domain.Aggregates;
+using NotificationModule.Domain.Repositories;
 using SharedCore.Services.LifeTimes;
 
 namespace NotificationsModule.Application.Services;
@@ -25,10 +26,10 @@ internal class NotificationManager : INotificationManager, IScoped
         _pushNotificationStrategy = pushNotificationStrategy;
     }
 
-    public Task SendMeetingArranged(Guid userId, string otherUserName, CancellationToken ct = default)
+    public Task SendMeetingArranged(Guid userId, string otherUserFullName, CancellationToken ct = default)
     {
         return SendNotifications(userId,
-            sendFunc: strategy => strategy.SendMeetingArranged(userId, otherUserName, ct),
+            sendFunc: strategy => strategy.SendMeetingArranged(userId, otherUserFullName, ct),
             ct: ct
         );
     }

@@ -33,11 +33,11 @@ public class EmailNotificationStrategy : IEmailNotificationStrategy, IScoped
         return _emailSender.SendEmailAsync(email, ct);
     }
 
-    public Task SendMeetingArranged(Guid userId, string otherUserName, CancellationToken ct = default)
+    public Task SendMeetingArranged(Guid userId, string otherUserFullName, CancellationToken ct = default)
     {
         return SendEmail(
             userId: userId,
-            factory: email => _emailBuilder.BuildMeetingArrangedEmail(email, otherUserName),
+            factory: email => _emailBuilder.BuildMeetingArrangedEmail(email, otherUserFullName),
             ct: ct);
     }
 

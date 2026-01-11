@@ -24,11 +24,11 @@ internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
         _pushSender = pushSender;
     }
 
-    public Task SendMeetingArranged(Guid userId, string otherUserName, CancellationToken ct = default)
+    public Task SendMeetingArranged(Guid userId, string otherUserFullName, CancellationToken ct = default)
     {
         return SendPush(
             userId: userId,
-            factory: fcmTokens => _pushBuilder.BuildMeetingArrangedPush(fcmTokens, otherUserName),
+            factory: fcmTokens => _pushBuilder.BuildMeetingArrangedPush(fcmTokens, otherUserFullName),
             ct: ct);
     }
 

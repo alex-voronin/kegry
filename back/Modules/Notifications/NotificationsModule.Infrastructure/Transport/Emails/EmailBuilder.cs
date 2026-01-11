@@ -10,7 +10,7 @@ public record Email(string ToEmail, string Subject, string Body, bool IsImportan
 public interface IEmailBuilder
 {
     public Email BuildConfirmEmail(string toEmail, string confirmationCode);
-    public Email BuildMeetingArrangedEmail(string toEmail, string otherUserName);
+    public Email BuildMeetingArrangedEmail(string toEmail, string otherUserFullName);
     public Email BuildUserInvitedEmail(string toEmail);
     public Email BuildChatMessageReceivedEmail(string toEmail, ChatMessageSentEvent @event);
 }
@@ -32,10 +32,10 @@ internal class EmailBuilder : IEmailBuilder, ISingleton
         return new Email(ToEmail: toEmail, Subject: title, Body: body, IsImportant: true);
     }
 
-    public Email BuildMeetingArrangedEmail(string toEmail, string otherUserName)
+    public Email BuildMeetingArrangedEmail(string toEmail, string otherUserFullName)
     {
         var title = _localizer.GetString("Push.MeetingArranged.Title");
-        var body = _localizer.GetString("Push.MeetingArranged.Body", otherUserName);
+        var body = _localizer.GetString("Push.MeetingArranged.Body", otherUserFullName);
         return new Email(ToEmail: toEmail, Subject: title, Body: body, IsImportant: false);
     }
 
