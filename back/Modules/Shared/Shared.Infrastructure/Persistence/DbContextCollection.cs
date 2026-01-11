@@ -17,13 +17,13 @@ public class MultiRepositoryTransaction : IMultiRepositoryTransaction
         _transaction = transaction;
     }
 
-    public async Task SaveChangesAsync(CancellationToken ct)
+    public async Task SaveChangesAsync(CancellationToken ct = default)
     {
         await _dbContextCollection.SaveChangesAsync(ct);
         _isSaved = true;
     }
 
-    public async Task CommitAsync(CancellationToken ct)
+    public async Task CommitAsync(CancellationToken ct = default)
     {
         if (!_isSaved)
         {

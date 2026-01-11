@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NotificationsModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NotificationsContext))]
-    [Migration("20260107134933_AddNotifications")]
+    [Migration("20260110215618_AddNotifications")]
     partial class AddNotifications
     {
         /// <inheritdoc />
@@ -127,11 +127,11 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<string>("AvatarImageUrl")
+                    b.Property<string>("AvatarImageS3Key")
                         .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)")
-                        .HasColumnName("avatar_image_url");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("avatar_image_s3key");
 
                     b.Property<string>("Email")
                         .IsRequired()

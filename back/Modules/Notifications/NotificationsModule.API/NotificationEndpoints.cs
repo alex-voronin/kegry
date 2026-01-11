@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Routing;
 using NotificationModule.Domain.Aggregates;
 using NotificationModule.Domain.Repositories;
 using NotificationsModule.API.Dto;
+using Shared.Infrastructure.Storage;
 using SharedCore.Api;
 using SharedCore.Api.Dto;
 using SharedCore.Extensions;
@@ -58,6 +59,7 @@ public class NotificationEndpoints : IEndpoints
         [AsParameters] PaginatedRequest request,
         ClaimsPrincipal user,
         INotificationRepository notificationRepository,
+        IS3StorageService storageService,
         CancellationToken ct = default)
     {
         var userId = user.GetId();
@@ -79,7 +81,9 @@ public class NotificationEndpoints : IEndpoints
             new NotificationDto(
                 Id: x.Id,
                 FromUserId: x.FromUserId,
-                AvatarImageUrl: x.FromUser?.AvatarImageUrl,
+                AvatarImageUrl: x.FromUser != null
+                    ? storageService.S3KeyToPublicFileUrl(x.FromUser.AvatarImageS3Key)
+                    : null,
                 PrimaryText: x.PrimaryText,
                 SecondaryText: x.SecondaryText,
                 CreatedAt: x.CreatedAt

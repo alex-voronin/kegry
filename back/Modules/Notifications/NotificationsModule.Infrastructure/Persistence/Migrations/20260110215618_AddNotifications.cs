@@ -23,7 +23,7 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                     email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     first_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     last_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    avatar_image_url = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false)
+                    avatar_image_s3key = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false)
                 },
                 constraints: table =>
                 {

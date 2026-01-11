@@ -6,6 +6,7 @@ using FeedModule.Setup;
 using NotificationsModule.Setup;
 using SecurityModule.Setup;
 using UserProfileModule.Setup;
+using ChatModule.Setup;
 using Serilog;
 using Shared.Infrastructure.Interfaces;
 using Shared.Setup;
@@ -27,6 +28,7 @@ IFeatureStartup[] startups =
     new LocationModuleStartup(configuration),
     new FeedModuleStartup(configuration),
     new NotificationsModuleStartup(configuration),
+    new ChatModuleStartup(configuration),
     new HttpSerializationStartup(),
     new HttpClientsResilienceStartup(),
     new SwaggerStartup(),

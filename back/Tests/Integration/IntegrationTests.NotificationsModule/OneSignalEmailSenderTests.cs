@@ -1,5 +1,4 @@
 using IntegrationTests.Shared;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
@@ -29,7 +28,7 @@ public class OneSignalEmailSenderTests : IAsyncLifetime
 
         var emailBuilder = _factory.Services.GetRequiredService<IEmailBuilder>();
         var email = emailBuilder.BuildUserInvitedEmail(toEmail);
-        
+
         var config = _factory.Services.GetRequiredService<IOptions<EmailConfig>>();
         var localizer = _factory.Services.GetRequiredService<IStringLocalizer<NotificationsLocalization>>();
         var emailSender = new OneSignalEmailSender(config, localizer);

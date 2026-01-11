@@ -22,14 +22,14 @@ public static class UserProfileEventHandlers
                 Email = @event.Email,
                 FirstName = @event.FirstName,
                 LastName = @event.LastName,
-                AvatarImageUrl = @event.AvatarImageUrl
+                AvatarImageS3Key = @event.AvatarImageS3Key
             };
         }
         else
         {
             user.FirstName = @event.FirstName;
             user.LastName = @event.LastName;
-            user.AvatarImageUrl = @event.AvatarImageUrl;
+            user.AvatarImageS3Key = @event.AvatarImageS3Key;
         }
 
         await userRepository.SaveAsync(user, ct);

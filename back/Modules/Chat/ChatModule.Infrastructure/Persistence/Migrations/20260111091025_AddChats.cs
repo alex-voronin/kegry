@@ -1,0 +1,148 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace ChatModule.Infrastructure.Persistence.Migrations
+{
+    /// <inheritdoc />
+    public partial class AddChats : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.EnsureSchema(
+                name: "meetings");
+
+            migrationBuilder.CreateTable(
+                name: "chats",
+                schema: "meetings",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_chats", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "users",
+                schema: "meetings",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    first_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    last_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    avatar_image_s3key = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_users", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "chat_messages",
+                schema: "meetings",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    chat_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    from_user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    message_text = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_chat_messages", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_chat_messages_chats_chat_id",
+                        column: x => x.chat_id,
+                        principalSchema: "meetings",
+                        principalTable: "chats",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "active_chat_user_links",
+                schema: "meetings",
+                columns: table => new
+                {
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    chat_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    chat_id1 = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_active_chat_user_links", x => x.user_id);
+                    table.ForeignKey(
+                        name: "fk_active_chat_user_links_chats_chat_id",
+                        column: x => x.chat_id,
+                        principalSchema: "meetings",
+                        principalTable: "chats",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_active_chat_user_links_chats_chat_id1",
+                        column: x => x.chat_id1,
+                        principalSchema: "meetings",
+                        principalTable: "chats",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "fk_active_chat_user_links_users_user_id",
+                        column: x => x.user_id,
+                        principalSchema: "meetings",
+                        principalTable: "users",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_active_chat_user_links_chat_id",
+                schema: "meetings",
+                table: "active_chat_user_links",
+                column: "chat_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_active_chat_user_links_chat_id1",
+                schema: "meetings",
+                table: "active_chat_user_links",
+                column: "chat_id1");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_chat_messages_chat_id",
+                schema: "meetings",
+                table: "chat_messages",
+                column: "chat_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_chats_id",
+                schema: "meetings",
+                table: "chats",
+                column: "id",
+                filter: "\"is_deleted\" = false");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "active_chat_user_links",
+                schema: "meetings");
+
+            migrationBuilder.DropTable(
+                name: "chat_messages",
+                schema: "meetings");
+
+            migrationBuilder.DropTable(
+                name: "users",
+                schema: "meetings");
+
+            migrationBuilder.DropTable(
+                name: "chats",
+                schema: "meetings");
+        }
+    }
+}

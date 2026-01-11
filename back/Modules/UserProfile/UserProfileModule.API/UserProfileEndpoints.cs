@@ -173,7 +173,7 @@ public class UserProfileEndpoints : IEndpoints
             Email = user.GetEmail(),
             FirstName = profile.FirstName,
             LastName = profile.LastName,
-            AvatarImageUrl = profile.AvatarImageS3Key
+            AvatarImageS3Key = profile.AvatarImageS3Key
         };
     }
 }

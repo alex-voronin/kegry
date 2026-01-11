@@ -124,11 +124,11 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<string>("AvatarImageUrl")
+                    b.Property<string>("AvatarImageS3Key")
                         .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)")
-                        .HasColumnName("avatar_image_url");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("avatar_image_s3key");
 
                     b.Property<string>("Email")
                         .IsRequired()

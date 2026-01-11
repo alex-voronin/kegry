@@ -8,6 +8,7 @@ using OneSignalApi.Model;
 using Polly;
 using Polly.Retry;
 using Serilog;
+using SharedCore.Services.LifeTimes;
 
 namespace NotificationsModule.Infrastructure.Transport.Emails;
 
@@ -16,7 +17,7 @@ public interface IEmailSender
     public Task SendEmailAsync(Email email, CancellationToken ct);
 }
 
-internal class OneSignalEmailSender : IEmailSender
+internal class OneSignalEmailSender : IEmailSender, ISingleton
 {
     private readonly EmailConfig _emailConfig;
     private readonly DefaultApi _onesignalApi;
@@ -82,7 +83,7 @@ internal class OneSignalEmailSender : IEmailSender
                 <p style='font-size: 16px'>{text}</p>
                 """;
     }
-    
+
     private string BuildUnsubscribeLink()
     {
         return $"""

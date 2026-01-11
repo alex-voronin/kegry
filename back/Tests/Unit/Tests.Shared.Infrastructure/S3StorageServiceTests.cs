@@ -32,7 +32,7 @@ public class S3StorageServiceTests
     {
         var key = "folder/image.jpg";
         var publicUrl = $"{_config.PublicUrl}/{key}";
-        
+
         var result = _sut.PublicFileUrlToS3Key(publicUrl);
         result.ShouldBe(key);
     }
@@ -41,7 +41,7 @@ public class S3StorageServiceTests
     public void S3KeyToPublicFileUrl_ShouldReturnUrl_WhenKeyIsProvided()
     {
         var key = "folder/image.jpg";
-        
+
         var result = _sut.S3KeyToPublicFileUrl(key);
         result.ShouldBe($"{_config.PublicUrl}/{key}");
     }

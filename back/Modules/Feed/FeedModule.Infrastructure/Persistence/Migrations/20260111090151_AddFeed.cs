@@ -83,19 +83,19 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "unq_feed_user_state_active_meeting_per_user",
+                name: "unq_feed_user_relation_pair",
+                schema: "feed",
+                table: "user_relations",
+                columns: new[] { "my_user_id", "other_user_id" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "unq_feed_user_relation_state_active_meeting_per_user",
                 schema: "feed",
                 table: "user_relations",
                 column: "my_user_id",
                 unique: true,
                 filter: "\"is_in_meeting\" = true");
-
-            migrationBuilder.CreateIndex(
-                name: "unq_feed_user_state_pair",
-                schema: "feed",
-                table: "user_relations",
-                columns: new[] { "my_user_id", "other_user_id" },
-                unique: true);
         }
 
         /// <inheritdoc />

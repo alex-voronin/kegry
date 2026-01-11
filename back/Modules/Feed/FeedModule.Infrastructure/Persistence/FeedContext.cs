@@ -66,11 +66,11 @@ public class FeedContext : DbContext
             builder.HasIndex(fp => fp.MyUserId)
                 .HasFilter("\"is_in_meeting\" = true")
                 .IsUnique()
-                .HasDatabaseName("unq_feed_user_state_active_meeting_per_user");
+                .HasDatabaseName("unq_feed_user_relation_state_active_meeting_per_user");
 
             builder.HasIndex(fp => new { fp.MyUserId, fp.OtherUserId })
                 .IsUnique()
-                .HasDatabaseName("unq_feed_user_state_pair");
+                .HasDatabaseName("unq_feed_user_relation_pair");
         });
 
         modelBuilder.Entity<Filter>(builder =>

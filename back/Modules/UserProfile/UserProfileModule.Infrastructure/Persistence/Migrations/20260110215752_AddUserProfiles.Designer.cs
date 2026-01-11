@@ -12,7 +12,7 @@ using UserProfileModule.Infrastructure.Persistence;
 namespace UserProfileModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(UserProfileContext))]
-    [Migration("20260110094019_AddUserProfiles")]
+    [Migration("20260110215752_AddUserProfiles")]
     partial class AddUserProfiles
     {
         /// <inheritdoc />

@@ -83,12 +83,12 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("MyUserId")
                         .IsUnique()
-                        .HasDatabaseName("unq_feed_user_state_active_meeting_per_user")
+                        .HasDatabaseName("unq_feed_user_relation_state_active_meeting_per_user")
                         .HasFilter("\"is_in_meeting\" = true");
 
                     b.HasIndex("MyUserId", "OtherUserId")
                         .IsUnique()
-                        .HasDatabaseName("unq_feed_user_state_pair");
+                        .HasDatabaseName("unq_feed_user_relation_pair");
 
                     b.ToTable("user_relations", "feed");
                 });
@@ -187,10 +187,10 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("date")
                         .HasColumnName("birthday");
 
-                    b.Property<string>("CoverImageUrl")
+                    b.Property<string>("CoverImageS3Key")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("cover_image_url");
+                        .HasColumnName("cover_image_s3key");
 
                     b.Property<string>("FirstName")
                         .IsRequired()

@@ -28,6 +28,7 @@
       <ProjectReference Include="..\Modules\UserProfile\UserProfileModule.Setup\UserProfileModule.Setup.csproj" />
       <ProjectReference Include="..\Modules\Feed\FeedModule.Setup\FeedModule.Setup.csproj" />
       <ProjectReference Include="..\Modules\Location\LocationModule.Setup\LocationModule.Setup.csproj" />
+      <ProjectReference Include="..\Modules\Chat\ChatModule.Setup\ChatModule.Setup.csproj" />
       <ProjectReference Include="..\Modules\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
       <ProjectReference Include="..\Modules\Shared\Shared.Setup\Shared.Setup.csproj" />
     </ItemGroup>
