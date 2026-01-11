@@ -10,10 +10,5 @@ public class UserProfileModuleWolverineSetup : IWolverineExtension
 {
     public void Configure(WolverineOptions options)
     {
-        options.Publish(rule =>
-        {
-            rule.MessagesFromNamespace(typeof(Contracts.AssemblyMarker).Namespace!);
-            rule.ToLocalQueue("user-events");
-        });
     }
 }

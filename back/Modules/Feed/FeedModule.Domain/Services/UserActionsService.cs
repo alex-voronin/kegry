@@ -76,7 +76,6 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         meToOtherUserRelation.MeetingExpiresAt =
             _timeProvider.GetUtcNow().AddMinutes(filter.GetMeetingExpirationMinutesFromNow());
         meToOtherUserRelation.LastSeenAt = now;
-        _feedUserRelationRepository.Update(meToOtherUserRelation);
 
         var otherToMeUserRelation = await _feedUserRelationRepository.GetAsync(otherUserId, myUserId, false, ct);
         if (otherToMeUserRelation != null && !otherToMeUserRelation.IsMeetingExpired(now))
@@ -99,7 +98,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
 
     private async Task<FeedUserRelation> GetOrCreateUserRelation(Guid myUserId, Guid otherUserId, CancellationToken ct)
     {
-        var feedUserRelation = await _feedUserRelationRepository.GetAsync(myUserId, otherUserId, false, ct);
+        var feedUserRelation = await _feedUserRelationRepository.GetAsync(myUserId, otherUserId, ct: ct);
         if (feedUserRelation == null)
         {
             feedUserRelation = new FeedUserRelation

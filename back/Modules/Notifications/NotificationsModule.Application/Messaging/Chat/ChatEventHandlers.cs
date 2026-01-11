@@ -1,4 +1,5 @@
 using ChatModule.Contracts.Events;
+using NotificationsModule.Application.Services;
 using Wolverine.Attributes;
 
 namespace NotificationsModule.Application.Messaging.Chat;
@@ -8,7 +9,7 @@ public class ChatEventHandlers
 {
     public static async Task HandleAsync(
         ChatCreatedEvent @event,
-        MeetingArrangedEventHandler eventHandler,
+        IDebouncedEventHandler<MeetingArrangedNotificationEvent> eventHandler,
         CancellationToken ct = default)
     {
         await eventHandler.HandleAsync(

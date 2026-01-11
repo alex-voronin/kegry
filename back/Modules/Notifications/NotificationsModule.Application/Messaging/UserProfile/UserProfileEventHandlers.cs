@@ -1,4 +1,5 @@
 using NotificationModule.Domain.Aggregates;
+using NotificationModule.Domain.Repositories;
 using UserProfileModule.Contracts.Events;
 using Wolverine.Attributes;
 

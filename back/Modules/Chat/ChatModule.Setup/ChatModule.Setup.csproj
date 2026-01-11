@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ChatModule.API\ChatModule.API.csproj" />
+      <ProjectReference Include="..\ChatModule.Application\ChatModule.Application.csproj" />
       <ProjectReference Include="..\ChatModule.Domain\ChatModule.Domain.csproj" />
       <ProjectReference Include="..\ChatModule.Infrastructure\ChatModule.Infrastructure.csproj" />
       <ProjectReference Include="..\..\Shared\Shared.Setup\Shared.Setup.csproj" />

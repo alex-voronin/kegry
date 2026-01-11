@@ -6,7 +6,7 @@ using Wolverine.Attributes;
 namespace ChatModule.Application.Messaging.UserProfile;
 
 [WolverineHandler]
-public static class UserProfileEventHandlers
+public static class ChatUserProfileEventHandlers
 {
     public static async Task HandleAsync(
         UserProfileChangedEvent @event,

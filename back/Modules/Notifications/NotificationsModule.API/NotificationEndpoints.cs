@@ -28,7 +28,7 @@ public class NotificationEndpoints : IEndpoints
         apiGroup.MapGet("/api/v1/notifications/unseen/count", GetUnseenCount);
     }
 
-    private static async Task UpdateFcmToken(
+    private static async Task<ApiResult.EmptyResult> UpdateFcmToken(
         [FromBody] UpdateFcmTokenRequest request,
         ClaimsPrincipal user,
         IDeviceRepository deviceRepository,
@@ -53,6 +53,8 @@ public class NotificationEndpoints : IEndpoints
         }
 
         await deviceRepository.SaveChangesAsync(ct);
+
+        return ApiResult.Empty;
     }
 
     private static async Task<ApiResult<PaginatedResponse<NotificationDto>>> GetNotifications(

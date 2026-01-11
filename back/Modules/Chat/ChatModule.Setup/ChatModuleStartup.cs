@@ -13,6 +13,7 @@ public class ChatModuleStartup : AppModuleStartupBase<ChatContext>
             [
                 typeof(Infrastructure.AssemblyMarker).Assembly,
                 typeof(Domain.AssemblyMarker).Assembly,
+                typeof(Application.AssemblyMarker).Assembly,
                 typeof(API.AssemblyMarker).Assembly
             ]
         )

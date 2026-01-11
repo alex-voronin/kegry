@@ -98,6 +98,8 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
 
             services.RemoveAll<IPushSender>();
             var pushSender = Substitute.For<IPushSender>();
+            pushSender.SendPushMessage(Arg.Any<PushMessage>())
+                .Returns(new SendResult(true, []));
             services.AddSingleton(pushSender);
 
             NotificationManager = new NotificationManager(emailSender: emailSender, pushSender: pushSender);
