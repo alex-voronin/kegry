@@ -3,7 +3,7 @@ using SharedCore.Interfaces;
 
 namespace ChatModule.Domain.Repositories;
 
-public interface IChatRepository : IRepository<Chat>
+public interface IChatRepository : IRepositoryOutbox<Chat>
 {
     Task<Chat?> GetActiveChatByUserId(Guid userId, CancellationToken ct = default);
 }

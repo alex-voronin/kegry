@@ -21,6 +21,7 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    expires_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -51,7 +52,7 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     chat_id = table.Column<Guid>(type: "uuid", nullable: false),
                     from_user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    message_text = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
+                    text = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>

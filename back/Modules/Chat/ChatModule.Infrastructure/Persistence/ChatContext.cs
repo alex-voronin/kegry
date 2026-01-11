@@ -65,7 +65,7 @@ public class ChatContext : DbContext
         {
             builder.ToTable("chat_messages");
             builder.Property(x => x.Id).ValueGeneratedNever();
-            builder.Property(x => x.MessageText).HasMaxLength(ValidationParameters.MaxMessageLength);
+            builder.Property(x => x.Text).HasMaxLength(ValidationParameters.MaxMessageLength);
 
             builder.HasOne(x => x.Chat)
                 .WithMany(x => x.Messages)

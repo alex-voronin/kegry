@@ -1,3 +1,4 @@
+using ChatModule.Contracts.Events;
 using NotificationModule.Domain.Aggregates;
 using NotificationsModule.Infrastructure.Transport.Emails;
 using Serilog;
@@ -26,26 +27,40 @@ public class EmailNotificationStrategy : IEmailNotificationStrategy, IScoped
         _emailSender = emailSender;
     }
 
-    public async Task SendConfirmEmail(string toEmail, string confirmationCode, CancellationToken ct = default)
+    public Task SendConfirmEmail(string toEmail, string confirmationCode, CancellationToken ct = default)
     {
         var email = _emailBuilder.BuildConfirmEmail(toEmail: toEmail, confirmationCode: confirmationCode);
-        await _emailSender.SendEmailAsync(email, ct);
+        return _emailSender.SendEmailAsync(email, ct);
     }
 
-    public async Task SendMeetingArranged(Guid userId, string otherUserName, CancellationToken ct = default)
+    public Task SendMeetingArranged(Guid userId, string otherUserName, CancellationToken ct = default)
     {
-        await SendEmail(
+        return SendEmail(
             userId: userId,
             factory: email => _emailBuilder.BuildMeetingArrangedEmail(email, otherUserName),
             ct: ct);
     }
 
-    public async Task SendUserInvited(Guid userId, CancellationToken ct = default)
+    public Task SendUserInvited(Guid userId, CancellationToken ct = default)
     {
-        await SendEmail(
+        return SendEmail(
             userId: userId,
             factory: email => _emailBuilder.BuildUserInvitedEmail(email),
             ct: ct);
+    }
+
+    public Task SendChatMessageReceived(ChatMessageSentEvent @event, CancellationToken ct = default)
+    {
+        return SendEmail(
+            userId: @event.ToUserId,
+            factory: email => _emailBuilder.BuildChatMessageReceivedEmail(email, @event),
+            ct: ct);
+    }
+
+    public Task SendChatMessageReceivedSilent(ChatMessageSentEvent @event, CancellationToken ct = default)
+    {
+        // email transport doesn't support silent notifications
+        throw new NotImplementedException();
     }
 
     private async Task SendEmail(Guid userId, Func<string, Email> factory,

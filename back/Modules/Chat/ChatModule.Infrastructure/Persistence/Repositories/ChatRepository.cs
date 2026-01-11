@@ -2,12 +2,13 @@ using ChatModule.Domain.Aggregates;
 using ChatModule.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Shared.Infrastructure.Persistence;
+using Wolverine.EntityFrameworkCore;
 
 namespace ChatModule.Infrastructure.Persistence.Repositories;
 
-public class ChatRepository : Repository<ChatContext, Chat>, IChatRepository
+public class ChatRepository : RepositoryOutbox<ChatContext, Chat>, IChatRepository
 {
-    public ChatRepository(ChatContext context) : base(context)
+    public ChatRepository(IDbContextOutbox<ChatContext> contextOutbox) : base(contextOutbox)
     {
     }
 

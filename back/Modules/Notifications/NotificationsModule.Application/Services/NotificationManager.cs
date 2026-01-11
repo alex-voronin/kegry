@@ -1,3 +1,4 @@
+using ChatModule.Contracts.Events;
 using NotificationModule.Domain.Aggregates;
 using SharedCore.Services.LifeTimes;
 
@@ -24,20 +25,33 @@ internal class NotificationManager : INotificationManager, IScoped
         _pushNotificationStrategy = pushNotificationStrategy;
     }
 
-    public async Task SendMeetingArranged(Guid userId, string otherUserName, CancellationToken ct = default)
+    public Task SendMeetingArranged(Guid userId, string otherUserName, CancellationToken ct = default)
     {
-        await SendNotifications(userId,
+        return SendNotifications(userId,
             sendFunc: strategy => strategy.SendMeetingArranged(userId, otherUserName, ct),
             ct: ct
         );
     }
 
-    public async Task SendUserInvited(Guid userId, CancellationToken ct = default)
+    public Task SendUserInvited(Guid userId, CancellationToken ct = default)
     {
-        await SendNotifications(userId,
+        return SendNotifications(userId,
             sendFunc: strategy => strategy.SendUserInvited(userId, ct),
             ct: ct
         );
+    }
+
+    public Task SendChatMessageReceived(ChatMessageSentEvent @event, CancellationToken ct = default)
+    {
+        return SendNotifications(@event.ToUserId,
+                sendFunc: strategy => strategy.SendChatMessageReceived(@event, ct),
+                ct: ct
+            );
+    }
+
+    public Task SendChatMessageReceivedSilent(ChatMessageSentEvent @event, CancellationToken ct = default)
+    {
+        return _pushNotificationStrategy.SendChatMessageReceivedSilent(@event, ct);
     }
 
     private async Task SendNotifications(

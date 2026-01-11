@@ -19,22 +19,22 @@ internal class EventContext
 
 public record ScheduledEventMessage<T>(T Event);
 
-public interface IDebouncedEventHandler<TEvent> where TEvent : UserEvent
+public interface IDebouncedEventHandler<TEvent> where TEvent : IdempotentEventBase
 {
     // subclasses must implement these methods to allow wolverine auto-discover the handlers
     Task HandleAsync(TEvent @event, CancellationToken ct);
     Task HandleAsync(ScheduledEventMessage<TEvent> message, CancellationToken ct);
 }
 
-public abstract class BaseDebouncedEventHandler<TEvent> : IDebouncedEventHandler<TEvent> where TEvent : UserEvent
+public abstract class BaseDebouncedEventHandler<TEvent> : IDebouncedEventHandler<TEvent> where TEvent : IdempotentEventBase
 {
-    internal readonly int DebounceDurationSeconds = 180;
+    internal int DebounceDurationSeconds { get; init; } = 300;
     protected readonly TimeProvider TimeProvider;
     private readonly HybridCache _cache;
     private readonly IMessageBus _messageBus;
     private readonly HybridCacheEntryOptions _cacheTtlOptions;
 
-    public BaseDebouncedEventHandler(TimeProvider timeProvider, HybridCache cache, IMessageBus messageBus)
+    protected BaseDebouncedEventHandler(TimeProvider timeProvider, HybridCache cache, IMessageBus messageBus)
     {
         TimeProvider = timeProvider;
         _cache = cache;
@@ -46,9 +46,9 @@ public abstract class BaseDebouncedEventHandler<TEvent> : IDebouncedEventHandler
         };
     }
 
-    protected async Task DebounceEventAsync(TEvent @event, CancellationToken ct = default)
+    protected async Task<bool> DebounceEventAsync(TEvent @event, CancellationToken ct = default)
     {
-        var cacheKey = BuildCacheKey(@event.UserId);
+        var cacheKey = BuildCacheKey(@event.IdempotencyKey());
 
         var newContext = BuildContext();
         var context = await _cache.GetOrCreateAsync<EventContext>(
@@ -74,13 +74,15 @@ public abstract class BaseDebouncedEventHandler<TEvent> : IDebouncedEventHandler
                 await _cache.SetAsync(key: cacheKey, value: context, cancellationToken: ct);
             }
         }
+
+        return isNewContext;
     }
 
     protected async Task HandleScheduledMessageAsync(
         ScheduledEventMessage<TEvent> message,
         CancellationToken ct = default)
     {
-        var cacheKey = BuildCacheKey(message.Event.UserId);
+        var cacheKey = BuildCacheKey(message.Event.IdempotencyKey());
         await _cache.SetAsync(
             key: cacheKey,
             value: BuildContext(),

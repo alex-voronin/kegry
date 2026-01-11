@@ -1,3 +1,4 @@
+using ChatModule.Contracts.Events;
 using FirebaseAdmin.Messaging;
 using Microsoft.Extensions.Localization;
 using NotificationsModule.Infrastructure.Resources;
@@ -11,6 +12,8 @@ public interface IPushBuilder
 {
     PushMessage BuildMeetingArrangedPush(string[] fcmTokens, string otherUserName);
     PushMessage BuildUserInvitedPush(string[] fcmTokens);
+    PushMessage BuildChatMessageReceivedPush(string[] fcmTokens, ChatMessageSentEvent @event);
+    PushMessage BuildChatMessageReceivedSilentPush(string[] fcmTokens, ChatMessageSentEvent @event);
 }
 
 internal class FcmPushBuilder : IPushBuilder, ISingleton
@@ -34,7 +37,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         };
         var data = new Dictionary<string, string>()
         {
-            { "action", "open_chat" }
+            { "action", "openChat" }
         };
 
         return BuildPushMessages(fcmTokens, notification, data);
@@ -52,15 +55,50 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         };
         var data = new Dictionary<string, string>()
         {
-            { "user_action", "open_notifications" }
+            { "userAction", "openNotifications" }
         };
 
         return BuildPushMessages(fcmTokens, notification, data);
     }
 
+    public PushMessage BuildChatMessageReceivedPush(string[] fcmTokens, ChatMessageSentEvent @event)
+    {
+        var title = _localizer.GetString("Push.ChatMessageReceived.Title");
+        var body = _localizer.GetString("Push.ChatMessageReceived.Body", @event.FromUserName);
+
+        var notification = new Notification()
+        {
+            Title = title,
+            Body = body,
+            ImageUrl = @event.FromUserAvatarUrl
+        };
+        var data = new Dictionary<string, string>()
+        {
+            { "userAction", "openChat" },
+            { "fromUserId", @event.FromUserId.ToString() },
+            { "messageText", @event.MessageText },
+            { "createdAt", @event.CreatedAt.ToString("o") },
+        };
+
+        return BuildPushMessages(fcmTokens, notification, data);
+    }
+
+    public PushMessage BuildChatMessageReceivedSilentPush(string[] fcmTokens, ChatMessageSentEvent @event)
+    {
+        var data = new Dictionary<string, string>()
+        {
+            { "userAction", "openChat" },
+            { "fromUserId", @event.FromUserId.ToString() },
+            { "messageText", @event.MessageText },
+            { "createdAt", @event.CreatedAt.ToString("o") },
+        };
+
+        return BuildPushMessages(fcmTokens, null, data);
+    }
+
     private static PushMessage BuildPushMessages(
         string[] fcmTokens,
-        Notification notification,
+        Notification? notification,
         Dictionary<string, string> data)
     {
         return fcmTokens.Length > 1

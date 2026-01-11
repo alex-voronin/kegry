@@ -59,6 +59,10 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
@@ -91,11 +95,11 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("from_user_id");
 
-                    b.Property<string>("MessageText")
+                    b.Property<string>("Text")
                         .IsRequired()
                         .HasMaxLength(2048)
                         .HasColumnType("character varying(2048)")
-                        .HasColumnName("message_text");
+                        .HasColumnName("text");
 
                     b.HasKey("Id")
                         .HasName("pk_chat_messages");

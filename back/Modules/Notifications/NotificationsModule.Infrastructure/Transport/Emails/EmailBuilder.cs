@@ -1,4 +1,4 @@
-using FirebaseAdmin.Messaging;
+using ChatModule.Contracts.Events;
 using Microsoft.Extensions.Localization;
 using NotificationsModule.Infrastructure.Resources;
 using SharedCore.Services.LifeTimes;
@@ -12,6 +12,7 @@ public interface IEmailBuilder
     public Email BuildConfirmEmail(string toEmail, string confirmationCode);
     public Email BuildMeetingArrangedEmail(string toEmail, string otherUserName);
     public Email BuildUserInvitedEmail(string toEmail);
+    public Email BuildChatMessageReceivedEmail(string toEmail, ChatMessageSentEvent @event);
 }
 
 internal class EmailBuilder : IEmailBuilder, ISingleton
@@ -42,6 +43,13 @@ internal class EmailBuilder : IEmailBuilder, ISingleton
     {
         var title = _localizer.GetString("Email.UserInvited.Title");
         var body = _localizer.GetString("Email.UserInvited.Body");
+        return new Email(ToEmail: toEmail, Subject: title, Body: body, IsImportant: false);
+    }
+
+    public Email BuildChatMessageReceivedEmail(string toEmail, ChatMessageSentEvent @event)
+    {
+        var title = _localizer.GetString("Email.ChatMessageReceived.Title");
+        var body = _localizer.GetString("Email.ChatMessageReceived.Body", @event.FromUserName);
         return new Email(ToEmail: toEmail, Subject: title, Body: body, IsImportant: false);
     }
 }

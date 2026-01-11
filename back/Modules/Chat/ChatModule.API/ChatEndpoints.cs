@@ -99,7 +99,7 @@ public class ChatEndpoints : IEndpoints
     {
         return new ChatMessageDto(
             Id: message.Id,
-            MessageText: message.MessageText,
+            MessageText: message.Text,
             CreatedAt: message.CreatedAt,
             IsMine: message.FromUserId == userId
         );

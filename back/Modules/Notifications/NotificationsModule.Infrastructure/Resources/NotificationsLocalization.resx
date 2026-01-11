@@ -51,4 +51,16 @@
     <data name="Email.Common.UnsubscribeLink" xml:space="preserve">
         <value>Unsubscribe</value>
     </data>
+    <data name="Push.ChatMessageReceived.Title" xml:space="preserve">
+        <value>You have received a new message from {0}</value>
+    </data>
+    <data name="Push.ChatMessageReceived.Body" xml:space="preserve">
+        <value>New message!</value>
+    </data>
+    <data name="Email.ChatMessageReceived.Title" xml:space="preserve">
+        <value>You have received a new message from {}! Open &lt;a href=&quot;https://hoppyfy.me/chat&quot;&gt;Chat&lt;/a&gt; to view details.</value>
+    </data>
+    <data name="Email.ChatMessageReceived.Body" xml:space="preserve">
+        <value>New message!</value>
+    </data>
 </root>

@@ -55,13 +55,13 @@ public class UserInvitedEventHandler : BaseDebouncedEventHandler<UserInvitedEven
         await _notificationRepository.SaveChangesAsync(ct);
     }
 
-    public override async Task HandleAsync(ScheduledEventMessage<UserInvitedEvent> message, CancellationToken ct)
+    public override Task HandleAsync(ScheduledEventMessage<UserInvitedEvent> message, CancellationToken ct)
     {
-        await HandleScheduledMessageAsync(message, ct);
+        return HandleScheduledMessageAsync(message, ct);
     }
 
-    protected override async Task HandleDebouncedEventAsync(UserInvitedEvent @event, CancellationToken ct)
+    protected override Task HandleDebouncedEventAsync(UserInvitedEvent @event, CancellationToken ct)
     {
-        await _notificationManager.SendUserInvited(@event.UserId, ct);
+        return _notificationManager.SendUserInvited(@event.UserId, ct);
     }
 }

@@ -1,3 +1,4 @@
+using ChatModule.Contracts.Events;
 using NotificationModule.Domain.Aggregates;
 using NotificationsModule.Infrastructure.Transport.Push;
 using Serilog;
@@ -23,19 +24,35 @@ internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
         _pushSender = pushSender;
     }
 
-    public async Task SendMeetingArranged(Guid userId, string otherUserName, CancellationToken ct = default)
+    public Task SendMeetingArranged(Guid userId, string otherUserName, CancellationToken ct = default)
     {
-        await SendPush(
+        return SendPush(
             userId: userId,
             factory: fcmTokens => _pushBuilder.BuildMeetingArrangedPush(fcmTokens, otherUserName),
             ct: ct);
     }
 
-    public async Task SendUserInvited(Guid userId, CancellationToken ct = default)
+    public Task SendUserInvited(Guid userId, CancellationToken ct = default)
     {
-        await SendPush(
+        return SendPush(
             userId: userId,
             factory: fcmTokens => _pushBuilder.BuildUserInvitedPush(fcmTokens),
+            ct: ct);
+    }
+
+    public Task SendChatMessageReceived(ChatMessageSentEvent @event, CancellationToken ct = default)
+    {
+        return SendPush(
+            userId: @event.ToUserId,
+            factory: fcmTokens => _pushBuilder.BuildChatMessageReceivedPush(fcmTokens, @event),
+            ct: ct);
+    }
+
+    public Task SendChatMessageReceivedSilent(ChatMessageSentEvent @event, CancellationToken ct = default)
+    {
+        return SendPush(
+            userId: @event.ToUserId,
+            factory: fcmTokens => _pushBuilder.BuildChatMessageReceivedPush(fcmTokens, @event),
             ct: ct);
     }
 

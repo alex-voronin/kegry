@@ -6,6 +6,7 @@ public class Chat
 {
     public required Guid Id { get; init; }
     public required DateTimeOffset CreatedAt { get; init; }
+    public required DateTimeOffset ExpiresAt { get; init; }
     public bool IsDeleted { get; set; }
 
     private readonly List<ActiveChatUserLink> _userLinks = new List<ActiveChatUserLink>();

@@ -8,11 +8,11 @@ public class ChatMessage
     public required Guid ChatId { get; init; }
     public required Guid FromUserId { get; init; }
 
-    public required string MessageText
+    public required string Text
     {
         get;
         init => field = ValidateMessageText(
-            fieldName: nameof(MessageText),
+            fieldName: nameof(Text),
             value: value);
     }
     public required DateTimeOffset CreatedAt { get; init; }
