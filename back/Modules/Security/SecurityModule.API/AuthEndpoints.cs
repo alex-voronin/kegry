@@ -20,6 +20,8 @@ public class AuthEndpoints : IEndpoints
         anonymousGroup.MapPost("/api/v1/auth/signup", Signup);
         anonymousGroup.MapPost("/api/v1/auth/renew-tokens", RenewTokens);
         anonymousGroup.MapPost("/api/v1/auth/confirm-email", ConfirmEmail);
+        anonymousGroup.MapPost("/api/v1/auth/request-password-reset", RequestPasswordReset);
+        anonymousGroup.MapPost("/api/v1/auth/confirm-password-reset", ConfirmPasswordReset);
 
         app.MapPost("/api/v1/auth/logout", Logout)
             .RequireAuthorization()
@@ -83,6 +85,22 @@ public class AuthEndpoints : IEndpoints
         IAuthenticationService service)
     {
         await service.LogoutAsync();
+        return ApiResult.Empty;
+    }
+
+    private static async Task<ApiResult.EmptyResult> RequestPasswordReset(
+        [FromBody] RequestPasswordResetRequest request,
+        IAuthenticationService service)
+    {
+        await service.RequestPasswordResetAsync(request.Email);
+        return ApiResult.Empty;
+    }
+
+    private static async Task<ApiResult.EmptyResult> ConfirmPasswordReset(
+        [FromBody] ConfirmPasswordResetRequest request,
+        IAuthenticationService service)
+    {
+        await service.ConfirmPasswordResetAsync(request.UserId, request.Token, request.NewPassword);
         return ApiResult.Empty;
     }
 

@@ -18,4 +18,7 @@ public interface IAuthenticationService
     public Task<AuthResult> ConfirmEmailAsync(string userId, string token);
     public Task<AuthResult> RenewTokensAsync(string refreshToken);
     public Task LogoutAsync();
+    
+    public Task RequestPasswordResetAsync(string email);
+    public Task ConfirmPasswordResetAsync(string userId, string token, string newPassword);
 }

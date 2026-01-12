@@ -217,6 +217,43 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         await _signInManager.SignOutAsync();
     }
 
+    public async Task RequestPasswordResetAsync(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            // Don't reveal that user doesn't exist for security reasons
+            return;
+        }
+
+        var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+        await _bus.PublishAsync(
+            new PasswordResetRequestedEvent
+            {
+                UserId = user.Id,
+                Email = email,
+                ResetToken = resetToken
+            }
+        );
+    }
+
+    public async Task ConfirmPasswordResetAsync(string userId, string token, string newPassword)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            throw SecurityExceptions.UserNotFound(userId);
+        }
+
+        var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+        if (!result.Succeeded)
+        {
+            var message = result.Errors.FirstOrDefault()?.Description ?? "Password reset failed";
+            throw CommonExceptions.InternalError(message);
+        }
+    }
+
     private async Task<(string accessToken, string refreshToken)> GenerateTokensAsync(User user)
     {
         var jti = Guid.CreateVersion7();
