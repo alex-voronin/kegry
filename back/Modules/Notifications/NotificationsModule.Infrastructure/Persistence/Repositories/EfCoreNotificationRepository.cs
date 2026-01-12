@@ -5,9 +5,9 @@ using Shared.Infrastructure.Persistence;
 
 namespace NotificationsModule.Infrastructure.Persistence.Repositories;
 
-internal class NotificationRepository : Repository<NotificationsContext, Notification>, INotificationRepository
+internal class EfCoreNotificationRepository : Repository<NotificationsContext, Notification>, INotificationRepository
 {
-    public NotificationRepository(NotificationsContext context) : base(context)
+    public EfCoreNotificationRepository(NotificationsContext context) : base(context)
     {
     }
 

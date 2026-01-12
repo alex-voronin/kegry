@@ -3,9 +3,7 @@ using NotificationModule.Domain.Aggregates;
 using NotificationModule.Domain.Repositories;
 using NotificationsModule.Application.Services;
 using NSubstitute;
-using Shouldly;
 using Tests.Shared.AutoFixture;
-using Xunit;
 
 namespace Tests.NotificationsModule.Application;
 
@@ -20,16 +18,14 @@ public class NotificationManagerTests
         Guid userId,
         string otherUserName)
     {
-        settingsRepository.GetByIdAsync(userId, asNoTracking: true, ct: Arg.Any<CancellationToken>())
-            .Returns((NotificationsSettings?)null);
+        settingsRepository.GetNotificationsEnabledById(userId, ct: Arg.Any<CancellationToken>())
+            .Returns((pushesEnabled: true, emailsEnabled: false));
 
         await manager.SendMeetingArranged(userId, otherUserName);
 
-        NotificationManager.DefaultPushesEnabled.ShouldBeTrue();
         await pushStrategy.Received(1).SendMeetingArranged(userId, otherUserName, Arg.Any<CancellationToken>());
-
-        NotificationManager.DefaultEmailsEnabled.ShouldBeFalse();
-        await emailStrategy.DidNotReceive().SendMeetingArranged(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+        await emailStrategy.DidNotReceive()
+            .SendMeetingArranged(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
     [Theory, AutoNSubstituteData]
@@ -47,8 +43,10 @@ public class NotificationManagerTests
 
         await manager.SendMeetingArranged(userId, otherUserName);
 
-        await pushStrategy.DidNotReceive().SendMeetingArranged(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
-        await emailStrategy.DidNotReceive().SendMeetingArranged(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+        await pushStrategy.DidNotReceive()
+            .SendMeetingArranged(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+        await emailStrategy.DidNotReceive()
+            .SendMeetingArranged(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
     [Theory, AutoNSubstituteData]
@@ -60,9 +58,8 @@ public class NotificationManagerTests
         Guid userId,
         string otherUserName)
     {
-        var settings = new NotificationsSettings { UserId = userId, PushesEnabled = true, EmailsEnabled = true };
-        settingsRepository.GetByIdAsync(userId, asNoTracking: true, ct: Arg.Any<CancellationToken>())
-            .Returns(settings);
+        settingsRepository.GetNotificationsEnabledById(userId, ct: Arg.Any<CancellationToken>())
+            .Returns((pushesEnabled: true, emailsEnabled: true));
 
         await manager.SendMeetingArranged(userId, otherUserName);
 
@@ -78,9 +75,8 @@ public class NotificationManagerTests
         NotificationManager manager,
         Guid userId)
     {
-        var settings = new NotificationsSettings { UserId = userId, PushesEnabled = false, EmailsEnabled = true };
-        settingsRepository.GetByIdAsync(userId, asNoTracking: true, ct: Arg.Any<CancellationToken>())
-            .Returns(settings);
+        settingsRepository.GetNotificationsEnabledById(userId, ct: Arg.Any<CancellationToken>())
+            .Returns((pushesEnabled: false, emailsEnabled: true));
 
         await manager.SendUserInvited(userId);
 

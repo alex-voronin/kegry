@@ -4,10 +4,10 @@ using Shared.Infrastructure.Persistence;
 
 namespace ChatModule.Infrastructure.Persistence.Repositories;
 
-public class ActiveChatUserLinkRepository : Repository<ChatContext, ActiveChatUserLink>,
+public class EfCoreActiveChatUserLinkRepository : Repository<ChatContext, ActiveChatUserLink>,
     IActiveChatUserLinkRepository
 {
-    public ActiveChatUserLinkRepository(ChatContext context) : base(context)
+    public EfCoreActiveChatUserLinkRepository(ChatContext context) : base(context)
     {
     }
 }

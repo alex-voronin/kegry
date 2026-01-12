@@ -19,7 +19,7 @@ public class FeedEventHandlers
             secondUserId: @event.SecondUserId,
             expiresAt: @event.MeetingExpiresAt,
             ct: ct);
-        
+
         return new ChatCreatedEvent()
         {
             FirstUserId = @event.FirstUserId,

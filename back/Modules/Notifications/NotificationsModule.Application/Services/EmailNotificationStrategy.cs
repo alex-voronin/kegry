@@ -58,12 +58,6 @@ public class EmailNotificationStrategy : IEmailNotificationStrategy, IScoped
             ct: ct);
     }
 
-    public Task SendChatMessageReceivedSilent(ChatMessageSentEvent @event, CancellationToken ct = default)
-    {
-        // email transport doesn't support silent notifications
-        throw new NotImplementedException();
-    }
-
     private async Task SendEmail(Guid userId, Func<string, Email> factory,
         CancellationToken ct = default)
     {

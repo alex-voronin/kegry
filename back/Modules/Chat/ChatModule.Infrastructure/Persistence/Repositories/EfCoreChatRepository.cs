@@ -6,9 +6,9 @@ using Wolverine.EntityFrameworkCore;
 
 namespace ChatModule.Infrastructure.Persistence.Repositories;
 
-public class ChatRepository : RepositoryOutbox<ChatContext, Chat>, IChatRepository
+public class EfCoreChatRepository : RepositoryOutbox<ChatContext, Chat>, IChatRepository
 {
-    public ChatRepository(IDbContextOutbox<ChatContext> contextOutbox) : base(contextOutbox)
+    public EfCoreChatRepository(IDbContextOutbox<ChatContext> contextOutbox) : base(contextOutbox)
     {
     }
 

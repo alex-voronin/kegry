@@ -17,9 +17,9 @@ public class MeetingArrangedEventHandler : BaseDebouncedEventHandler<MeetingArra
 
 
     public MeetingArrangedEventHandler(
-        TimeProvider timeProvider, 
-        HybridCache cache, 
-        IMessageBus messageBus, 
+        TimeProvider timeProvider,
+        HybridCache cache,
+        IMessageBus messageBus,
         INotificationManager notificationManager) : base(timeProvider, cache, messageBus)
     {
         this.notificationManager = notificationManager;
@@ -34,7 +34,7 @@ public class MeetingArrangedEventHandler : BaseDebouncedEventHandler<MeetingArra
     {
         return HandleScheduledMessageAsync(message, ct);
     }
-    
+
     protected override Task HandleDebouncedEventAsync(MeetingArrangedNotificationEvent @event, CancellationToken ct)
     {
         return notificationManager.SendMeetingArranged(@event.UserId, @event.OtherUserFullName, ct);

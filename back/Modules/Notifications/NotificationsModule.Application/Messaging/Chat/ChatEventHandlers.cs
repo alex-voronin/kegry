@@ -18,7 +18,7 @@ public class ChatEventHandlers
                 UserId = @event.FirstUserId,
                 OtherUserFullName = @event.SecondUserFullName
             }, ct);
-        
+
         await eventHandler.HandleAsync(
             new MeetingArrangedNotificationEvent
             {

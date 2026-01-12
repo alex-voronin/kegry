@@ -1,5 +1,4 @@
 using ChatModule.Contracts.Events;
-using NotificationModule.Domain.Aggregates;
 using NotificationModule.Domain.Repositories;
 using SharedCore.Services.LifeTimes;
 
@@ -9,9 +8,6 @@ public interface INotificationManager : INotificationStrategy;
 
 internal class NotificationManager : INotificationManager, IScoped
 {
-    internal const bool DefaultPushesEnabled = true;
-    internal const bool DefaultEmailsEnabled = false;
-
     private readonly INotificationsSettingsRepository _notificationsSettingsRepository;
     private readonly IEmailNotificationStrategy _emailNotificationStrategy;
     private readonly IPushNotificationStrategy _pushNotificationStrategy;
@@ -60,13 +56,8 @@ internal class NotificationManager : INotificationManager, IScoped
         Func<INotificationStrategy, Task> sendFunc,
         CancellationToken ct = default)
     {
-        var notificationsSettings = await _notificationsSettingsRepository.GetByIdAsync(
-            userId,
-            asNoTracking: true,
-            ct: ct
-        );
-        var pushesEnabled = notificationsSettings?.PushesEnabled ?? DefaultPushesEnabled;
-        var emailsEnabled = notificationsSettings?.EmailsEnabled ?? DefaultEmailsEnabled;
+        var (pushesEnabled, emailsEnabled) = await _notificationsSettingsRepository
+            .GetNotificationsEnabledById(userId, ct);
 
         var strategies = new List<INotificationStrategy>();
         if (pushesEnabled)

@@ -36,7 +36,7 @@ public class NotificationManager
 
                 return new SendResult(true, []);
             });
-        
+
         await eventProcessedTcs.Task.WaitAsync(TimeSpan.FromSeconds(timeoutSeconds));
         return expectedCalls;
     }

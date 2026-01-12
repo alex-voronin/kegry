@@ -6,7 +6,10 @@ using SharedCore.Services.LifeTimes;
 
 namespace NotificationsModule.Application.Services;
 
-public interface IPushNotificationStrategy : INotificationStrategy;
+public interface IPushNotificationStrategy : INotificationStrategy
+{
+    public Task SendChatMessageReceivedSilent(ChatMessageSentEvent @event, CancellationToken ct = default);
+}
 
 internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
 {

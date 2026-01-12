@@ -11,6 +11,6 @@ public class ChatModuleWolverineSetup : IWolverineExtension
     public void Configure(WolverineOptions options)
     {
         options.Discovery.IncludeAssembly(typeof(Application.AssemblyMarker).Assembly);
-        
+
     }
 }

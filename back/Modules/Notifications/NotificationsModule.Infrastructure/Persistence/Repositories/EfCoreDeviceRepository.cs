@@ -4,9 +4,9 @@ using Shared.Infrastructure.Persistence;
 
 namespace NotificationsModule.Infrastructure.Persistence.Repositories;
 
-internal class DeviceRepository : Repository<NotificationsContext, Device>, IDeviceRepository
+internal class EfCoreDeviceRepository : Repository<NotificationsContext, Device>, IDeviceRepository
 {
-    public DeviceRepository(NotificationsContext context) : base(context)
+    public EfCoreDeviceRepository(NotificationsContext context) : base(context)
     {
     }
 
