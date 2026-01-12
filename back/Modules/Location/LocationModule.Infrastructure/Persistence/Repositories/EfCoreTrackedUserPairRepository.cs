@@ -25,4 +25,10 @@ internal class EfCoreTrackedUserPairRepository : RepositoryOutbox<LocationContex
             .Where(tp => userIds.Contains(tp.FirstUserId) || userIds.Contains(tp.SecondUserId))
             .ExecuteDeleteAsync(ct);
     }
+
+    public Task DeleteExpired(CancellationToken ct = default)
+    {
+        return Context.TrackedUsers.Where(tp => tp.ExpiresAt < DateTimeOffset.Now)
+            .ExecuteDeleteAsync(ct);
+    }
 }

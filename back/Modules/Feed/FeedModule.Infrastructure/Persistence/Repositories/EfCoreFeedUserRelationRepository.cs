@@ -47,7 +47,7 @@ internal class EfCoreFeedUserRelationRepository : RepositoryOutbox<FeedContext, 
     public Task ResetExpiredMeetingsAsync(CancellationToken ct = default)
     {
         return Context.FeedUserRelations
-            .Where(r => r.MeetingExpiresAt > DateTimeOffset.UtcNow)
+            .Where(r => r.MeetingExpiresAt < DateTimeOffset.UtcNow)
             .ExecuteUpdateAsync(setter =>
                     setter.SetProperty(r => r.IsInMeeting, false)
                         .SetProperty(r => r.MeetingExpiresAt, DateTimeOffset.MinValue),

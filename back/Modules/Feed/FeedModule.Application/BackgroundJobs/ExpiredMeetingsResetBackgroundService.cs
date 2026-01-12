@@ -5,12 +5,12 @@ using Serilog;
 
 namespace FeedModule.Application.BackgroundJobs;
 
-public class ExpiredMeetingsResetService : BackgroundService
+public class ExpiredMeetingsResetBackgroundService : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly PeriodicTimer _timer = new(TimeSpan.FromHours(12));
 
-    public ExpiredMeetingsResetService(IServiceScopeFactory scopeFactory)
+    public ExpiredMeetingsResetBackgroundService(IServiceScopeFactory scopeFactory)
     {
         _scopeFactory = scopeFactory;
     }

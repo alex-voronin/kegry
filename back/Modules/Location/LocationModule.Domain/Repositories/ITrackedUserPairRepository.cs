@@ -7,4 +7,5 @@ public interface ITrackedUserPairRepository : IRepositoryOutbox<TrackedUserPair>
 {
     Task<TrackedUserPair[]> GetByUserIdAsync(Guid userId, CancellationToken ct = default);
     Task DeleteByUserIds(Guid[] userIds, CancellationToken ct = default);
+    Task DeleteExpired(CancellationToken ct = default);
 }

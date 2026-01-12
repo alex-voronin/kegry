@@ -6,12 +6,12 @@ using Serilog;
 
 namespace ChatModule.Application.BackgroundJobs;
 
-public class ExpiredChatsCollectorService : BackgroundService
+public class ExpiredChatsCollectorBackgroundService : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly PeriodicTimer _timer = new(TimeSpan.FromHours(1));
 
-    public ExpiredChatsCollectorService(IServiceScopeFactory scopeFactory)
+    public ExpiredChatsCollectorBackgroundService(IServiceScopeFactory scopeFactory)
     {
         _scopeFactory = scopeFactory;
     }

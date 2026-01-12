@@ -26,7 +26,7 @@ public class EfCoreChatRepository : RepositoryOutbox<ChatContext, Chat>, IChatRe
     public async Task MarkExpiredChatsAsDeleted(CancellationToken ct = default)
     {
         await Context.Chats
-            .Where(c => c.ExpiresAt > DateTimeOffset.UtcNow)
+            .Where(c => c.ExpiresAt < DateTimeOffset.UtcNow)
             .ExecuteUpdateAsync(setters => setters
                 .SetProperty(c => c.IsDeleted, true), ct);
     }
