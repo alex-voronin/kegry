@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace NotificationsModule.Infrastructure.Transport.Email.Configs;
+namespace NotificationsModule.Infrastructure.Transport.Emails.Configs;
 
 public class EmailConfig
 {

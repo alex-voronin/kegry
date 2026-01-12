@@ -1,4 +1,6 @@
+using System.Text;
 using ChatModule.Contracts.Events;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
 using NotificationsModule.Infrastructure.Resources;
 using SharedCore.Services.LifeTimes;
@@ -13,6 +15,7 @@ public interface IEmailBuilder
     public Email BuildMeetingArrangedEmail(string toEmail, string otherUserFullName);
     public Email BuildUserInvitedEmail(string toEmail);
     public Email BuildChatMessageReceivedEmail(string toEmail, ChatMessageSentEvent @event);
+    public Email BuildPasswordResetEmail(string toEmail, string resetToken);
 }
 
 internal class EmailBuilder : IEmailBuilder, ISingleton
@@ -51,5 +54,13 @@ internal class EmailBuilder : IEmailBuilder, ISingleton
         var title = _localizer.GetString("Email.ChatMessageReceived.Title");
         var body = _localizer.GetString("Email.ChatMessageReceived.Body", @event.FromUserName);
         return new Email(ToEmail: toEmail, Subject: title, Body: body, IsImportant: false);
+    }
+
+    public Email BuildPasswordResetEmail(string toEmail, string resetToken)
+    {
+        var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(resetToken));
+        var title = _localizer.GetString("Email.PasswordReset.Subject");
+        var body = _localizer.GetString("Email.PasswordReset.Body", encodedToken);
+        return new Email(ToEmail: toEmail, Subject: title, Body: body, IsImportant: true);
     }
 }

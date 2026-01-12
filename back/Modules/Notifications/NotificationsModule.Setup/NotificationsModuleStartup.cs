@@ -3,10 +3,10 @@ using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NotificationsModule.Infrastructure.Transport.Email.Configs;
 using NotificationsModule.Infrastructure.Persistence;
 using Shared.Setup;
 using Microsoft.Extensions.Configuration;
+using NotificationsModule.Infrastructure.Transport.Emails.Configs;
 
 namespace NotificationsModule.Setup;
 

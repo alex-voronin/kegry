@@ -10,6 +10,7 @@ namespace NotificationsModule.Application.Services;
 public interface IEmailNotificationStrategy : INotificationStrategy
 {
     public Task SendConfirmEmail(string toEmail, string confirmationCode, CancellationToken ct = default);
+    public Task SendPasswordReset(string toEmail, string resetToken, CancellationToken ct = default);
 }
 
 public class EmailNotificationStrategy : IEmailNotificationStrategy, IScoped
@@ -31,6 +32,12 @@ public class EmailNotificationStrategy : IEmailNotificationStrategy, IScoped
     public Task SendConfirmEmail(string toEmail, string confirmationCode, CancellationToken ct = default)
     {
         var email = _emailBuilder.BuildConfirmEmail(toEmail: toEmail, confirmationCode: confirmationCode);
+        return _emailSender.SendEmailAsync(email, ct);
+    }
+
+    public Task SendPasswordReset(string toEmail, string resetToken, CancellationToken ct = default)
+    {
+        var email = _emailBuilder.BuildPasswordResetEmail(toEmail: toEmail, resetToken: resetToken);
         return _emailSender.SendEmailAsync(email, ct);
     }
 

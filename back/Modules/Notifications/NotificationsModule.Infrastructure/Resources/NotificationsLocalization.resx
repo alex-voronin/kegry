@@ -63,4 +63,10 @@
     <data name="Email.ChatMessageReceived.Body" xml:space="preserve">
         <value>New message!</value>
     </data>
+    <data name="Email.PasswordReset.Subject" xml:space="preserve">
+        <value>Reset your password</value>
+    </data>
+    <data name="Email.PasswordReset.Body" xml:space="preserve">
+        <value>You requested a password reset. Follow the link to reset your password: &lt;a href=&quot;https://hoppyfy.me/password-reset?token={0}&quot;&gt;https://hoppyfy.me/password-reset?token={0}&lt;/a&gt;</value>
+    </data>
 </root>

@@ -13,4 +13,11 @@ public static class AccountEventHandlers
     {
         await emailNotificationStrategy.SendConfirmEmail(@event.Email, @event.ConfirmationCode);
     }
+
+    public static async Task HandleAsync(
+        PasswordResetRequestedEvent @event,
+        IEmailNotificationStrategy emailNotificationStrategy)
+    {
+        await emailNotificationStrategy.SendPasswordReset(@event.Email, @event.ResetToken);
+    }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using NotificationsModule.Infrastructure.Resources;
-using NotificationsModule.Infrastructure.Transport.Email.Configs;
+using NotificationsModule.Infrastructure.Transport.Emails.Configs;
 using OneSignalApi.Api;
 using OneSignalApi.Client;
 using OneSignalApi.Model;
