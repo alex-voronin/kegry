@@ -1,5 +1,6 @@
+using LocationModule.Domain.Aggregates;
 using SharedCore.Interfaces;
 
-namespace LocationModule.Domain.Aggregates;
+namespace LocationModule.Domain.Repositories;
 
 public interface ILocationRepository : IRepository<Location>;

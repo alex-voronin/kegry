@@ -39,7 +39,7 @@ internal class ChatService : DomainService<IChatRepository>, IChatService, IScop
     {
         if (userIds.Length != 2)
         {
-            throw new InvalidOperationException("Currently we support only direct user-to-user chats");
+            throw new ArgumentException("Only two participants are supported");
         }
 
         if (userIds.ToHashSet().Count < 2)
@@ -124,6 +124,13 @@ internal class ChatService : DomainService<IChatRepository>, IChatService, IScop
         {
             _activeChatUserLinkRepository.Delete(activeChatUserLink);
         }
+
+        var participantIds = activeChatUserLinks.Select(l => l.UserId).ToArray();
+        var @event = new ChatsDeletedEvent()
+        {
+            ParticipantIdsFromDeletedChats = [participantIds]
+        };
+        await Repository.PublishEventAsync(@event, ct);
 
         await transaction.SaveChangesAsync(ct);
         await transaction.CommitAsync(ct);

@@ -141,7 +141,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         await _feedUserRelationRepository.PublishEventAsync(
             new MeetingArrangedEvent
             {
-                MeetingExpiresAt = meToOtherUserRelation.MeetingExpiresAt,
+                ExpiresAt = meToOtherUserRelation.MeetingExpiresAt,
                 Participants =
                 [
                     new MeetingArrangedEvent.Participant(meToOtherUserRelation.MyUserId, me!.FullName),

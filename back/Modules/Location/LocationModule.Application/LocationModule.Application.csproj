@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Chat\ChatModule.Contracts\ChatModule.Contracts.csproj" />
+      <ProjectReference Include="..\..\Shared\Shared.Core\Shared.Core.csproj" />
+      <ProjectReference Include="..\..\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
+      <ProjectReference Include="..\LocationModule.Domain\LocationModule.Domain.csproj" />
+      <ProjectReference Include="..\..\Feed\FeedModule.Contracts\FeedModule.Contracts.csproj" />
+    </ItemGroup>
+
+</Project>

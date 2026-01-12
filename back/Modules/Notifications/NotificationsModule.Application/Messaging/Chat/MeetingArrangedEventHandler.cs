@@ -14,7 +14,7 @@ public class MeetingArrangedNotificationEvent : UserEvent
 public class MeetingArrangedEventHandler : DebouncedEventHandlerBase<MeetingArrangedNotificationEvent>, IScoped
 {
     private readonly INotificationManager _notificationManager;
-    
+
     public MeetingArrangedEventHandler(
         TimeProvider timeProvider,
         HybridCache cache,

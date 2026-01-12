@@ -4,5 +4,6 @@ public class ChatCreatedEvent
 {
     public record Participant(Guid UserId, string FullName);
 
-    public Participant[] Participants { get; init; } = [];
+    public required DateTimeOffset ExpiresAt { get; init; }
+    public required Participant[] Participants { get; init; } = [];
 }

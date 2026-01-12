@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\LocationModule.API\LocationModule.API.csproj" />
+      <ProjectReference Include="..\LocationModule.Application\LocationModule.Application.csproj" />
       <ProjectReference Include="..\LocationModule.Domain\LocationModule.Domain.csproj" />
       <ProjectReference Include="..\LocationModule.Infrastructure\LocationModule.Infrastructure.csproj" />
       <ProjectReference Include="..\..\Shared\Shared.Setup\Shared.Setup.csproj" />

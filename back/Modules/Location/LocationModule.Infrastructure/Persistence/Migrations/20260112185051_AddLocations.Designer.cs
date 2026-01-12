@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LocationModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(LocationContext))]
-    [Migration("20260107134918_AddLocations")]
+    [Migration("20260112185051_AddLocations")]
     partial class AddLocations
     {
         /// <inheritdoc />
@@ -53,6 +53,35 @@ namespace LocationModule.Infrastructure.Persistence.Migrations
                     NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Coordinates"), "gist");
 
                     b.ToTable("locations", "location");
+                });
+
+            modelBuilder.Entity("LocationModule.Domain.Aggregates.TrackedUserPair", b =>
+                {
+                    b.Property<Guid>("FirstUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("first_user_id");
+
+                    b.Property<Guid>("SecondUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("second_user_id");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at");
+
+                    b.HasKey("FirstUserId", "SecondUserId")
+                        .HasName("pk_tracked_users");
+
+                    b.HasIndex("ExpiresAt")
+                        .HasDatabaseName("ix_tracked_users_expires_at");
+
+                    b.HasIndex("FirstUserId")
+                        .HasDatabaseName("ix_tracked_users_first_user_id");
+
+                    b.HasIndex("SecondUserId")
+                        .HasDatabaseName("ix_tracked_users_second_user_id");
+
+                    b.ToTable("tracked_users", "location");
                 });
 #pragma warning restore 612, 618
         }

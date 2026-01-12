@@ -16,6 +16,7 @@ public class LocationModuleStartup : AppModuleStartupBase<LocationContext>
             [
                 typeof(Infrastructure.AssemblyMarker).Assembly,
                 typeof(Domain.AssemblyMarker).Assembly,
+                typeof(Application.AssemblyMarker).Assembly,
                 typeof(API.AssemblyMarker).Assembly
             ]
         )

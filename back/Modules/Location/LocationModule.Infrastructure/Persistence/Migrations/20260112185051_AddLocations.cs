@@ -32,12 +32,44 @@ namespace LocationModule.Infrastructure.Persistence.Migrations
                     table.PrimaryKey("pk_locations", x => x.user_id);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "tracked_users",
+                schema: "location",
+                columns: table => new
+                {
+                    first_user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    second_user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    expires_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_tracked_users", x => new { x.first_user_id, x.second_user_id });
+                });
+
             migrationBuilder.CreateIndex(
                 name: "ix_locations_coordinates",
                 schema: "location",
                 table: "locations",
                 column: "coordinates")
                 .Annotation("Npgsql:IndexMethod", "gist");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tracked_users_expires_at",
+                schema: "location",
+                table: "tracked_users",
+                column: "expires_at");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tracked_users_first_user_id",
+                schema: "location",
+                table: "tracked_users",
+                column: "first_user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tracked_users_second_user_id",
+                schema: "location",
+                table: "tracked_users",
+                column: "second_user_id");
         }
 
         /// <inheritdoc />
@@ -45,6 +77,10 @@ namespace LocationModule.Infrastructure.Persistence.Migrations
         {
             migrationBuilder.DropTable(
                 name: "locations",
+                schema: "location");
+
+            migrationBuilder.DropTable(
+                name: "tracked_users",
                 schema: "location");
         }
     }

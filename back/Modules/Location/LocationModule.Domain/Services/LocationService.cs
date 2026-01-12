@@ -1,4 +1,6 @@
+using LocationModule.Contracts.Events;
 using LocationModule.Domain.Aggregates;
+using LocationModule.Domain.Repositories;
 using NetTopologySuite.Geometries;
 using SharedCore.Services;
 using SharedCore.Services.LifeTimes;
@@ -13,13 +15,19 @@ internal class LocationService : DomainService<ILocationRepository>, ILocationSe
         internal static readonly TimeSpan CurrentLocationTtl = TimeSpan.FromMinutes(45);
         internal const double ThresholdMeters = 750;
         internal const double MaxSpeedMps = 100; // 360 km/h
+        internal const double MetThresholdMeters = 50;
     }
 
+    private readonly ITrackedUserPairRepository _trackedUserPairRepository;
     private readonly TimeProvider _timeProvider;
     private static readonly GeometryFactory GeometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
-    public LocationService(ILocationRepository repository, TimeProvider timeProvider) : base(repository)
+    public LocationService(
+        ILocationRepository repository,
+        ITrackedUserPairRepository trackedUserPairRepository,
+        TimeProvider timeProvider) : base(repository)
     {
+        _trackedUserPairRepository = trackedUserPairRepository;
         _timeProvider = timeProvider;
     }
 
@@ -28,27 +36,66 @@ internal class LocationService : DomainService<ILocationRepository>, ILocationSe
         var now = _timeProvider.GetUtcNow();
         var newCoordinates = GeometryFactory.CreatePoint(new Coordinate(newLong, newLat));
 
-        var existingLocation = await Repository.GetByIdAsync(userId, ct: ct);
-
-        if (existingLocation == null)
+        var location = await Repository.GetByIdAsync(userId, ct: ct);
+        if (location == null)
         {
-            var newLocation = new Location
+            location = new Location
             {
                 UserId = userId,
                 Coordinates = newCoordinates,
                 Timestamp = now
             };
-            await Repository.AddAsync(newLocation, ct: ct);
+            await Repository.AddAsync(location, ct: ct);
         }
         else
         {
-            if (CanUpdate(existingLocation, newLat, newLong, now))
+            if (CanUpdate(location, newLat, newLong, now))
             {
-                existingLocation.Update(newCoordinates, now);
+                location.Update(newCoordinates, now);
             }
         }
 
-        await Repository.SaveChangesAsync(ct: ct);
+        await Repository.SaveChangesAsync(ct);
+
+        await CheckProximityAsync(userId, location, ct);
+    }
+
+    private async Task CheckProximityAsync(Guid userId, Location currentLocation, CancellationToken ct)
+    {
+        var trackedPairs = await _trackedUserPairRepository.GetByUserIdAsync(userId, ct);
+        if (trackedPairs.Length == 0) return;
+
+        var pairsRemoved = false;
+        foreach (var pair in trackedPairs)
+        {
+            var otherUserId = pair.FirstUserId == userId ? pair.SecondUserId : pair.FirstUserId;
+            var otherLocation = await Repository.GetByIdAsync(otherUserId, ct: ct);
+
+            if (otherLocation == null)
+            {
+                continue;
+            }
+
+            var dist = currentLocation.DistanceMetersTo(otherLocation.Latitude, otherLocation.Longitude);
+            if (dist > ValidationParameters.MetThresholdMeters)
+            {
+                continue;
+            }
+
+            await _trackedUserPairRepository.PublishEventAsync(
+                new ChatParticipantsMetEvent
+                {
+                    ParticipantIds = [pair.FirstUserId, pair.SecondUserId]
+                }, ct);
+
+            _trackedUserPairRepository.Delete(pair);
+            pairsRemoved = true;
+        }
+
+        if (pairsRemoved)
+        {
+            await _trackedUserPairRepository.SaveChangesAsync(ct);
+        }
     }
 
     internal static bool CanUpdate(Location existing, double newLat, double newLong, DateTimeOffset now)

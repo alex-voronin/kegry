@@ -16,11 +16,12 @@ public class FeedEventHandlers
     {
         await chatService.CreateChatAsync(
             userIds: @event.Participants.Select(p => p.UserId).ToArray(),
-            expiresAt: @event.MeetingExpiresAt,
+            expiresAt: @event.ExpiresAt,
             ct: ct);
 
         return new ChatCreatedEvent()
         {
+            ExpiresAt = @event.ExpiresAt,
             Participants = @event.Participants
                 .Select(p => new ChatCreatedEvent.Participant(p.UserId, p.FullName))
                 .ToArray()

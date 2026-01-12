@@ -202,7 +202,7 @@ public class DebouncedEventHandlerBaseTests
         //4. Call scheduled message handler
         var scheduledMessage = scheduledCall.GetArguments().OfType<ScheduledEventMessage<TestEvent>>().First();
         await handler.HandleAsync(scheduledMessage, CancellationToken.None);
-        
+
         handler.HandleDebouncedEventCalled.ShouldBeTrue("Event should be handled when scheduled message is processed");
         handler.LastHandledEvent.ShouldBe(@event); // Should be the same event object as in the message
         await cache.Received(1).SetAsync(

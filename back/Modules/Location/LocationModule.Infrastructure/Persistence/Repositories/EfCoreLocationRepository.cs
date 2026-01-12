@@ -1,4 +1,6 @@
 using LocationModule.Domain.Aggregates;
+using LocationModule.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Shared.Infrastructure.Persistence;
 
 namespace LocationModule.Infrastructure.Persistence.Repositories;

@@ -6,6 +6,7 @@ namespace LocationModule.Infrastructure.Persistence;
 public class LocationContext : DbContext
 {
     public DbSet<Location> Locations => Set<Location>();
+    public DbSet<TrackedUserPair> TrackedUsers => Set<TrackedUserPair>();
 
     public LocationContext(DbContextOptions<LocationContext> options) : base(options)
     {
@@ -27,6 +28,15 @@ public class LocationContext : DbContext
 
             builder.HasIndex(l => l.Coordinates)
                 .HasMethod("gist");
+        });
+
+        modelBuilder.Entity<TrackedUserPair>(builder =>
+        {
+            builder.ToTable("tracked_users");
+            builder.HasKey(tp => new { tp.FirstUserId, tp.SecondUserId });
+            builder.HasIndex(tp => tp.FirstUserId);
+            builder.HasIndex(tp => tp.SecondUserId);
+            builder.HasIndex(tp => tp.ExpiresAt);
         });
     }
 }
