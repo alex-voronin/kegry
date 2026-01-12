@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using System.Security.Claims;
 using SecurityModule.Application.Services;
 using SecurityModule.API.Dto;
 using SharedCore.Api;
 using SharedCore.Api.Dto;
+using SharedCore.Extensions;
 
 namespace SecurityModule.API;
 
@@ -23,9 +25,11 @@ public class AuthEndpoints : IEndpoints
         anonymousGroup.MapPost("/api/v1/auth/request-password-reset", RequestPasswordReset);
         anonymousGroup.MapPost("/api/v1/auth/confirm-password-reset", ConfirmPasswordReset);
 
-        app.MapPost("/api/v1/auth/logout", Logout)
-            .RequireAuthorization()
-            .WithTags("Auth API");
+        var authGroup = app.MapGroup("")
+            .WithTags("Auth API")
+            .RequireAuthorization();
+        authGroup.MapPost("/api/v1/auth/logout", Logout);
+        authGroup.MapDelete("/api/v1/auth/account", DeleteAccount);
     }
 
     private static async Task<ApiResult<SigninResponse>> Signin(
@@ -101,6 +105,15 @@ public class AuthEndpoints : IEndpoints
         IAuthenticationService service)
     {
         await service.ConfirmPasswordResetAsync(request.UserId, request.Token, request.NewPassword);
+        return ApiResult.Empty;
+    }
+
+    private static async Task<ApiResult.EmptyResult> DeleteAccount(
+        ClaimsPrincipal user,
+        IAuthenticationService service)
+    {
+        var userId = user.GetId();
+        await service.DeleteAccountAsync(userId.ToString());
         return ApiResult.Empty;
     }
 

@@ -254,6 +254,24 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         }
     }
 
+    public async Task DeleteAccountAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            throw SecurityExceptions.UserNotFound(userId);
+        }
+
+        var result = await _userManager.DeleteAsync(user);
+        if (!result.Succeeded)
+        {
+            var message = result.Errors.FirstOrDefault()?.Description ?? "Account deletion failed";
+            throw CommonExceptions.InternalError(message);
+        }
+
+        await _bus.PublishAsync(new AccountDeletedEvent { Id = user.Id });
+    }
+
     private async Task<(string accessToken, string refreshToken)> GenerateTokensAsync(User user)
     {
         var jti = Guid.CreateVersion7();
