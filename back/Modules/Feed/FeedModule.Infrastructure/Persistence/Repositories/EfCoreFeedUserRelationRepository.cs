@@ -34,13 +34,23 @@ internal class EfCoreFeedUserRelationRepository : RepositoryOutbox<FeedContext, 
         return await Context.FeedUserRelations.AnyAsync(fp => fp.MyUserId == userId && fp.IsInMeeting, ct);
     }
 
-    public Task ResetInMeetingAsync(Guid[] userIds, CancellationToken ct = default)
+    public Task ResetMeetingsAsync(Guid[] userIds, CancellationToken ct = default)
     {
         return Context.FeedUserRelations
             .Where(r => userIds.Contains(r.MyUserId))
             .ExecuteUpdateAsync(setter =>
                     setter.SetProperty(r => r.IsInMeeting, false)
-                        .SetProperty(r => r.MeetingExpiresAt, DateTimeOffset.MinValue)
-                , ct);
+                        .SetProperty(r => r.MeetingExpiresAt, DateTimeOffset.MinValue),
+                ct);
+    }
+
+    public Task ResetExpiredMeetingsAsync(CancellationToken ct = default)
+    {
+        return Context.FeedUserRelations
+            .Where(r => r.MeetingExpiresAt > DateTimeOffset.UtcNow)
+            .ExecuteUpdateAsync(setter =>
+                    setter.SetProperty(r => r.IsInMeeting, false)
+                        .SetProperty(r => r.MeetingExpiresAt, DateTimeOffset.MinValue),
+                ct);
     }
 }

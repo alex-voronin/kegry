@@ -12,6 +12,6 @@ public class ChatEventHandlers
         IFeedUserRelationRepository userRelationRepository,
         CancellationToken ct = default)
     {
-        return userRelationRepository.ResetInMeetingAsync(@event.UserIdsInDeletedChats, ct);
+        return userRelationRepository.ResetMeetingsAsync(@event.UserIdsInDeletedChats, ct);
     }
 }

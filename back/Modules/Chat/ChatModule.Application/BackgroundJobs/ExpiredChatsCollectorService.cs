@@ -2,6 +2,7 @@ using ChatModule.Contracts.Events;
 using ChatModule.Domain.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace ChatModule.Application.BackgroundJobs;
 
@@ -25,6 +26,7 @@ public class ExpiredChatsCollectorService : BackgroundService
 
     private async Task CollectExpiredChats(CancellationToken ct)
     {
+        Log.Information("Collecting expired chat has started");
         using var scope = _scopeFactory.CreateScope();
         var chatRepository = scope.ServiceProvider.GetRequiredService<IChatRepository>();
         var activeChatUserLinkRepository = scope.ServiceProvider.GetRequiredService<IActiveChatUserLinkRepository>();
@@ -47,5 +49,6 @@ public class ExpiredChatsCollectorService : BackgroundService
 
         await transaction.SaveChangesAsync(ct);
         await transaction.CommitAsync(ct);
+        Log.Information("Collecting expired chat has finished");
     }
 }
