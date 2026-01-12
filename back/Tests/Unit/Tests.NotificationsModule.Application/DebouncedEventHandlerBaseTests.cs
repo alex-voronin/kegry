@@ -11,7 +11,7 @@ using Wolverine;
 
 namespace Tests.NotificationsModule.Application;
 
-public class BaseDebouncedEventHandlerTests
+public class DebouncedEventHandlerBaseTests
 {
     public class TestEvent : UserEvent
     {
@@ -22,12 +22,12 @@ public class BaseDebouncedEventHandlerTests
         }
     }
 
-    public class TestDebouncedEventHandler : BaseDebouncedEventHandler<TestEvent>
+    public class Test : DebouncedEventHandlerBase<TestEvent>
     {
         public bool HandleDebouncedEventCalled { get; private set; }
         public TestEvent? LastHandledEvent { get; private set; }
 
-        public TestDebouncedEventHandler(TimeProvider timeProvider, HybridCache cache, IMessageBus messageBus)
+        public Test(TimeProvider timeProvider, HybridCache cache, IMessageBus messageBus)
             : base(timeProvider, cache, messageBus)
         {
         }
@@ -55,12 +55,12 @@ public class BaseDebouncedEventHandlerTests
         [Frozen] FakeTimeProvider timeProvider,
         [Frozen] HybridCache cache,
         [Frozen] IMessageBus messageBus,
-        TestDebouncedEventHandler handler,
+        Test handler,
         Guid userId)
     {
         timeProvider.AutoAdvanceAmount = TimeSpan.Zero;
         var @event = new TestEvent(userId);
-        var expectedCacheKey = TestDebouncedEventHandler.BuildCacheKey(userId);
+        var expectedCacheKey = Test.BuildCacheKey(userId);
 
         EventContext? eventContext = null;
         cache.GetOrCreateAsync(
@@ -91,13 +91,13 @@ public class BaseDebouncedEventHandlerTests
     public async Task HandleAsync_WhenCacheEntryExistsAndNotScheduled_ThenSchedulesMessage(
         [Frozen] HybridCache cache,
         [Frozen] IMessageBus messageBus,
-        TestDebouncedEventHandler handler,
+        Test handler,
         Guid userId)
     {
         var @event = new TestEvent(userId);
         var lastSentAt = DateTimeOffset.UtcNow.AddMinutes(-1);
         var existingContext = new EventContext(Guid.NewGuid(), lastSentAt) { IsScheduledAfterDebounce = false };
-        var expectedCacheKey = TestDebouncedEventHandler.BuildCacheKey(userId);
+        var expectedCacheKey = Test.BuildCacheKey(userId);
 
         cache.GetOrCreateAsync(
                 expectedCacheKey,
@@ -133,12 +133,12 @@ public class BaseDebouncedEventHandlerTests
     public async Task HandleAsync_WhenCacheEntryExistsAndAlreadyScheduled_ThenDoesNothing(
         [Frozen] HybridCache cache,
         [Frozen] IMessageBus messageBus,
-        TestDebouncedEventHandler handler,
+        Test handler,
         Guid userId)
     {
         var @event = new TestEvent(userId);
         var existingContext = new EventContext(Guid.NewGuid(), DateTimeOffset.UtcNow) { IsScheduledAfterDebounce = true };
-        var expectedCacheKey = TestDebouncedEventHandler.BuildCacheKey(userId);
+        var expectedCacheKey = Test.BuildCacheKey(userId);
 
         cache.GetOrCreateAsync(
                 expectedCacheKey,
@@ -160,14 +160,14 @@ public class BaseDebouncedEventHandlerTests
         [Frozen] FakeTimeProvider timeProvider,
         [Frozen] HybridCache cache,
         [Frozen] IMessageBus messageBus,
-        TestDebouncedEventHandler handler,
+        Test handler,
         Guid userId)
     {
         timeProvider.AutoAdvanceAmount = TimeSpan.Zero;
         var @event = new TestEvent(userId);
         var lastSentAt = new DateTimeOffset(2024, 1, 1, 12, 0, 0, TimeSpan.Zero);
         var existingContext = new EventContext(Guid.NewGuid(), lastSentAt) { IsScheduledAfterDebounce = false };
-        var expectedCacheKey = TestDebouncedEventHandler.BuildCacheKey(userId);
+        var expectedCacheKey = Test.BuildCacheKey(userId);
 
         // 1. Setup cache the way we already received the event, but haven't scheduled debounce
         cache.GetOrCreateAsync(
@@ -199,11 +199,10 @@ public class BaseDebouncedEventHandlerTests
         options.ScheduledTime.ShouldBe(expectedScheduledTime);
         timeProvider.SetUtcNow(expectedScheduledTime);
 
-        //4. call scheduled message handler
+        //4. Call scheduled message handler
         var scheduledMessage = scheduledCall.GetArguments().OfType<ScheduledEventMessage<TestEvent>>().First();
         await handler.HandleAsync(scheduledMessage, CancellationToken.None);
-
-
+        
         handler.HandleDebouncedEventCalled.ShouldBeTrue("Event should be handled when scheduled message is processed");
         handler.LastHandledEvent.ShouldBe(@event); // Should be the same event object as in the message
         await cache.Received(1).SetAsync(

@@ -9,7 +9,7 @@ using Wolverine.Attributes;
 namespace NotificationsModule.Application.Messaging.Chat;
 
 [WolverineHandler]
-public class ChatMessageSentEventHandlerPushes : BaseDebouncedEventHandler<ChatMessageSentEvent>, IScoped
+public class ChatMessageSentEventHandlerPushes : DebouncedEventHandlerBase<ChatMessageSentEvent>, IScoped
 {
     private readonly IPushNotificationStrategy _pushNotificationStrategy;
     private readonly INotificationsSettingsRepository _notificationsSettingsRepository;

@@ -14,6 +14,7 @@ public interface IPushBuilder
     PushMessage BuildUserInvitedPush(string[] fcmTokens);
     PushMessage BuildChatMessageReceivedPush(string[] fcmTokens, ChatMessageSentEvent @event);
     PushMessage BuildChatMessageReceivedSilentPush(string[] fcmTokens, ChatMessageSentEvent @event);
+    PushMessage BuildGoToRateUserScreenSilentPush(string[] fcmTokens, Guid rateeUserId);
 }
 
 internal class FcmPushBuilder : IPushBuilder, ISingleton
@@ -37,7 +38,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         };
         var data = new Dictionary<string, string>()
         {
-            { "action", "openChat" }
+            { "action", "openChatScreen" }
         };
 
         return BuildPushMessages(fcmTokens, notification, data);
@@ -55,7 +56,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         };
         var data = new Dictionary<string, string>()
         {
-            { "userAction", "openNotifications" }
+            { "userAction", "openNotificationsScreen" }
         };
 
         return BuildPushMessages(fcmTokens, notification, data);
@@ -74,7 +75,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         };
         var data = new Dictionary<string, string>()
         {
-            { "userAction", "openChat" },
+            { "userAction", "openChatScreen" },
             { "fromUserId", @event.FromUserId.ToString() },
             { "messageText", @event.MessageText },
             { "createdAt", @event.CreatedAt.ToString("o") },
@@ -87,12 +88,22 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
     {
         var data = new Dictionary<string, string>()
         {
-            { "userAction", "openChat" },
+            { "userAction", "openChatScreen" },
             { "fromUserId", @event.FromUserId.ToString() },
             { "messageText", @event.MessageText },
             { "createdAt", @event.CreatedAt.ToString("o") },
         };
 
+        return BuildPushMessages(fcmTokens, null, data);
+    }
+
+    public PushMessage BuildGoToRateUserScreenSilentPush(string[] fcmTokens, Guid rateeUserId)
+    {
+        var data = new Dictionary<string, string>()
+        {
+            { "userAction", "openRateUserScreen" },
+            { "rateeId", rateeUserId.ToString() },
+        };
         return BuildPushMessages(fcmTokens, null, data);
     }
 

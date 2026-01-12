@@ -11,18 +11,17 @@ public class MeetingArrangedNotificationEvent : UserEvent
     public required string OtherUserFullName { get; init; }
 }
 
-public class MeetingArrangedEventHandler : BaseDebouncedEventHandler<MeetingArrangedNotificationEvent>, IScoped
+public class MeetingArrangedEventHandler : DebouncedEventHandlerBase<MeetingArrangedNotificationEvent>, IScoped
 {
-    private readonly INotificationManager notificationManager;
-
-
+    private readonly INotificationManager _notificationManager;
+    
     public MeetingArrangedEventHandler(
         TimeProvider timeProvider,
         HybridCache cache,
         IMessageBus messageBus,
         INotificationManager notificationManager) : base(timeProvider, cache, messageBus)
     {
-        this.notificationManager = notificationManager;
+        _notificationManager = notificationManager;
     }
 
     public override Task HandleAsync(MeetingArrangedNotificationEvent @event, CancellationToken ct)
@@ -37,6 +36,6 @@ public class MeetingArrangedEventHandler : BaseDebouncedEventHandler<MeetingArra
 
     protected override Task HandleDebouncedEventAsync(MeetingArrangedNotificationEvent @event, CancellationToken ct)
     {
-        return notificationManager.SendMeetingArranged(@event.UserId, @event.OtherUserFullName, ct);
+        return _notificationManager.SendMeetingArranged(@event.UserId, @event.OtherUserFullName, ct);
     }
 }

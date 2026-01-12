@@ -35,17 +35,17 @@ public class ExpiredChatsCollectorService : BackgroundService
             .StartTransactionAsync(ct);
         await chatRepository.MarkExpiredChatsAsDeleted(ct);
 
-        Guid[] userIdsFromDeletedChats;
+        IReadOnlyList<Guid[]> userIdsFromDeletedChats;
         do
         {
             userIdsFromDeletedChats = await activeChatUserLinkRepository
                 .BatchDeleteLinksToDeletedChats(100, ct);
             var @event = new ChatsDeletedEvent()
             {
-                UserIdsInDeletedChats = userIdsFromDeletedChats
+                ParticipantIdsFromDeletedChats = userIdsFromDeletedChats
             };
             await chatRepository.PublishEventAsync(@event, ct);
-        } while (userIdsFromDeletedChats.Length > 0);
+        } while (userIdsFromDeletedChats.Count > 0);
 
         await transaction.SaveChangesAsync(ct);
         await transaction.CommitAsync(ct);

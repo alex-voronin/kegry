@@ -5,5 +5,5 @@ namespace ChatModule.Domain.Repositories;
 
 public interface IActiveChatUserLinkRepository : IRepository<ActiveChatUserLink>
 {
-    public Task<Guid[]> BatchDeleteLinksToDeletedChats(int limit, CancellationToken ct = default);
+    public Task<IReadOnlyList<Guid[]>> BatchDeleteLinksToDeletedChats(int limit, CancellationToken ct = default);
 }

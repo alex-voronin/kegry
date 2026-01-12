@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using ChatModule.Domain.Entities;
 using ChatModule.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ public class EfCoreActiveChatUserLinkRepository : Repository<ChatContext, Active
     {
     }
 
-    public async Task<Guid[]> BatchDeleteLinksToDeletedChats(int limit = 100, CancellationToken ct = default)
+    public async Task<IReadOnlyList<Guid[]>> BatchDeleteLinksToDeletedChats(int limit = 100, CancellationToken ct = default)
     {
         var linksToDelete = await Context.ActiveChatUserLinks
             .Where(l => l.Chat.IsDeleted)
@@ -27,6 +28,7 @@ public class EfCoreActiveChatUserLinkRepository : Repository<ChatContext, Active
             .Where(l => chatIds.Contains(l.ChatId))
             .ExecuteDeleteAsync(ct);
 
-        return linksToDelete.Select(x => x.UserId).ToArray();
+        return linksToDelete.GroupBy(l => l.ChatId)
+            .Select(g => g.Select(l => l.UserId).ToArray()).ToArray();
     }
 }

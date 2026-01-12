@@ -26,7 +26,7 @@ public interface IDebouncedEventHandler<TEvent> where TEvent : IdempotentEventBa
     Task HandleAsync(ScheduledEventMessage<TEvent> message, CancellationToken ct);
 }
 
-public abstract class BaseDebouncedEventHandler<TEvent> : IDebouncedEventHandler<TEvent> where TEvent : IdempotentEventBase
+public abstract class DebouncedEventHandlerBase<TEvent> : IDebouncedEventHandler<TEvent> where TEvent : IdempotentEventBase
 {
     internal int DebounceDurationSeconds { get; init; } = 300;
     protected readonly TimeProvider TimeProvider;
@@ -34,7 +34,7 @@ public abstract class BaseDebouncedEventHandler<TEvent> : IDebouncedEventHandler
     private readonly IMessageBus _messageBus;
     private readonly HybridCacheEntryOptions _cacheTtlOptions;
 
-    protected BaseDebouncedEventHandler(TimeProvider timeProvider, HybridCache cache, IMessageBus messageBus)
+    protected DebouncedEventHandlerBase(TimeProvider timeProvider, HybridCache cache, IMessageBus messageBus)
     {
         TimeProvider = timeProvider;
         _cache = cache;

@@ -13,7 +13,7 @@ using Wolverine.Attributes;
 namespace NotificationsModule.Application.Messaging.Feed;
 
 [WolverineHandler]
-public class UserInvitedEventHandler : BaseDebouncedEventHandler<UserInvitedEvent>, IScoped
+public class UserInvitedEventHandler : DebouncedEventHandlerBase<UserInvitedEvent>, IScoped
 {
     private readonly IDateTimeHumanizer _dateTimeHumanizer;
     private readonly IStringLocalizer<NotificationsLocalization> _localizer;
