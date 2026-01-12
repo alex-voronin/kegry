@@ -22,4 +22,12 @@ public class EfCoreChatRepository : RepositoryOutbox<ChatContext, Chat>, IChatRe
             .Include(c => c.Messages)
             .FirstOrDefaultAsync(ct);
     }
+
+    public async Task MarkExpiredChatsAsDeleted(CancellationToken ct = default)
+    {
+        await Context.Chats
+            .Where(c => c.ExpiresAt > DateTime.UtcNow)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(c => c.IsDeleted, true), ct);
+    }
 }

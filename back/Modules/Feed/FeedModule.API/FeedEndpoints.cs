@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using FeedModule.API.Dto;
-using FeedModule.Application.Services;
 using FeedModule.Domain.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

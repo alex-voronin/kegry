@@ -15,17 +15,15 @@ public class FeedEventHandlers
         CancellationToken ct = default)
     {
         await chatService.CreateChatAsync(
-            firstUserId: @event.FirstUserId,
-            secondUserId: @event.SecondUserId,
+            userIds: @event.Participants.Select(p => p.UserId).ToArray(),
             expiresAt: @event.MeetingExpiresAt,
             ct: ct);
 
         return new ChatCreatedEvent()
         {
-            FirstUserId = @event.FirstUserId,
-            FirstUserFullName = @event.FirstUserFullName,
-            SecondUserId = @event.SecondUserId,
-            SecondUserFullName = @event.SecondUserFullName
+            Participants = @event.Participants
+                .Select(p => new ChatCreatedEvent.Participant(p.UserId, p.FullName))
+                .ToArray()
         };
     }
 }

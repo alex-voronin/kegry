@@ -11,6 +11,7 @@
       <ProjectReference Include="..\FeedModule.Domain\FeedModule.Domain.csproj" />
       <ProjectReference Include="..\FeedModule.Infrastructure\FeedModule.Infrastructure.csproj" />
       <ProjectReference Include="..\..\Shared\Shared.Setup\Shared.Setup.csproj" />
+      <ProjectReference Include="..\FeedModule.Application\FeedModule.Application.csproj" />
     </ItemGroup>
 
 </Project>

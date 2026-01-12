@@ -11,11 +11,7 @@ namespace ChatModule.Domain.Services;
 
 public interface IChatService
 {
-    public Task<Chat> CreateChatAsync(
-        Guid firstUserId,
-        Guid secondUserId,
-        DateTimeOffset expiresAt,
-        CancellationToken ct = default);
+    public Task<Chat> CreateChatAsync(Guid[] userIds, DateTimeOffset expiresAt, CancellationToken ct = default);
 
     public Task<Chat?> GetActiveChatAsync(Guid userId, CancellationToken ct = default);
     public Task AddNewMessageAsync(Guid userId, string messageText, CancellationToken ct = default);
@@ -39,13 +35,14 @@ internal class ChatService : DomainService<IChatRepository>, IChatService, IScop
         _timeProvider = timeProvider;
     }
 
-    public async Task<Chat> CreateChatAsync(
-        Guid firstUserId,
-        Guid secondUserId,
-        DateTimeOffset expiresAt,
-        CancellationToken ct = default)
+    public async Task<Chat> CreateChatAsync(Guid[] userIds, DateTimeOffset expiresAt, CancellationToken ct = default)
     {
-        if (firstUserId == secondUserId)
+        if (userIds.Length != 2)
+        {
+            throw new InvalidOperationException("Currently we support only direct user-to-user chats");
+        }
+
+        if (userIds.ToHashSet().Count < 2)
         {
             throw new InvalidOperationException("Users must be different");
         }
@@ -58,8 +55,10 @@ internal class ChatService : DomainService<IChatRepository>, IChatService, IScop
             IsDeleted = false
         };
 
-        chat.AddUserLink(new ActiveChatUserLink { UserId = firstUserId, ChatId = chat.Id });
-        chat.AddUserLink(new ActiveChatUserLink { UserId = secondUserId, ChatId = chat.Id });
+        foreach (var userId in userIds)
+        {
+            chat.AddUserLink(new ActiveChatUserLink { UserId = userId, ChatId = chat.Id });
+        }
 
         await Repository.AddAsync(chat, ct);
         await Repository.SaveChangesAsync(ct);

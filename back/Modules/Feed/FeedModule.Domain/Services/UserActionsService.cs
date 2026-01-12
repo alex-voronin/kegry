@@ -1,4 +1,3 @@
-using FeedModule.Application.Services;
 using FeedModule.Contracts.Events;
 using FeedModule.Domain.Aggregates;
 using FeedModule.Domain.Repositories;
@@ -143,10 +142,11 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
             new MeetingArrangedEvent
             {
                 MeetingExpiresAt = meToOtherUserRelation.MeetingExpiresAt,
-                FirstUserId = meToOtherUserRelation.MyUserId,
-                FirstUserFullName = me!.FullName,
-                SecondUserId = meToOtherUserRelation.OtherUserId,
-                SecondUserFullName = other!.FullName
+                Participants =
+                [
+                    new MeetingArrangedEvent.Participant(meToOtherUserRelation.MyUserId, me!.FullName),
+                    new MeetingArrangedEvent.Participant(meToOtherUserRelation.OtherUserId, other!.FullName)
+                ]
             }, ct: ct);
         return true;
     }

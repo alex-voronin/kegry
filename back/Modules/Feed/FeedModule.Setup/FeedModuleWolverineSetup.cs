@@ -10,5 +10,6 @@ public class FeedModuleWolverineSetup : IWolverineExtension
 {
     public void Configure(WolverineOptions options)
     {
+        options.Discovery.IncludeAssembly(typeof(Application.AssemblyMarker).Assembly);
     }
 }

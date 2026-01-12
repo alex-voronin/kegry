@@ -12,18 +12,14 @@ public class ChatEventHandlers
         IDebouncedEventHandler<MeetingArrangedNotificationEvent> eventHandler,
         CancellationToken ct = default)
     {
-        await eventHandler.HandleAsync(
-            new MeetingArrangedNotificationEvent
-            {
-                UserId = @event.FirstUserId,
-                OtherUserFullName = @event.SecondUserFullName
-            }, ct);
-
-        await eventHandler.HandleAsync(
-            new MeetingArrangedNotificationEvent
-            {
-                UserId = @event.SecondUserId,
-                OtherUserFullName = @event.FirstUserFullName
-            }, ct);
+        foreach (var participant in @event.Participants)
+        {
+            await eventHandler.HandleAsync(
+                new MeetingArrangedNotificationEvent
+                {
+                    UserId = participant.UserId,
+                    OtherUserFullName = participant.FullName
+                }, ct);
+        }
     }
 }

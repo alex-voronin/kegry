@@ -7,7 +7,8 @@ using Wolverine.EntityFrameworkCore;
 
 namespace FeedModule.Infrastructure.Persistence.Repositories;
 
-internal class EfCoreFeedUserRelationRepository : RepositoryOutbox<FeedContext, FeedUserRelation>, IFeedUserRelationRepository, IScoped
+internal class EfCoreFeedUserRelationRepository : RepositoryOutbox<FeedContext, FeedUserRelation>,
+    IFeedUserRelationRepository, IScoped
 {
     private readonly IDbContextOutbox<FeedContext> _contextOutbox;
 
@@ -16,7 +17,8 @@ internal class EfCoreFeedUserRelationRepository : RepositoryOutbox<FeedContext, 
         _contextOutbox = contextOutbox;
     }
 
-    public async Task<FeedUserRelation?> GetAsync(Guid myUserId, Guid otherUserId, bool asNoTracking = false, CancellationToken ct = default)
+    public async Task<FeedUserRelation?> GetAsync(Guid myUserId, Guid otherUserId, bool asNoTracking = false,
+        CancellationToken ct = default)
     {
         var query = Context.FeedUserRelations.AsQueryable();
         if (asNoTracking)
@@ -30,5 +32,15 @@ internal class EfCoreFeedUserRelationRepository : RepositoryOutbox<FeedContext, 
     public async Task<bool> IsInMeetingAsync(Guid userId, CancellationToken ct = default)
     {
         return await Context.FeedUserRelations.AnyAsync(fp => fp.MyUserId == userId && fp.IsInMeeting, ct);
+    }
+
+    public Task ResetInMeetingAsync(Guid[] userIds, CancellationToken ct = default)
+    {
+        return Context.FeedUserRelations
+            .Where(r => userIds.Contains(r.MyUserId))
+            .ExecuteUpdateAsync(setter =>
+                    setter.SetProperty(r => r.IsInMeeting, false)
+                        .SetProperty(r => r.MeetingExpiresAt, DateTimeOffset.MinValue)
+                , ct);
     }
 }

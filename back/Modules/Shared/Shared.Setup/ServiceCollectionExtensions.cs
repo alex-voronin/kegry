@@ -1,5 +1,6 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using SharedCore.Interfaces;
 using SharedCore.Services.LifeTimes;
 
@@ -19,6 +20,9 @@ public static class ServiceCollectionExtensions
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
                 .AddClasses(c => c.AssignableTo<ISingleton>(), publicOnly: false)
+                .AsImplementedInterfaces()
+                .WithSingletonLifetime()
+                .AddClasses(c => c.AssignableTo<BackgroundService>(), publicOnly: false)
                 .AsImplementedInterfaces()
                 .WithSingletonLifetime();
         });

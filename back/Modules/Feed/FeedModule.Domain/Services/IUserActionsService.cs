@@ -1,4 +1,4 @@
-namespace FeedModule.Application.Services;
+namespace FeedModule.Domain.Services;
 
 public interface IUserActionsService
 {
