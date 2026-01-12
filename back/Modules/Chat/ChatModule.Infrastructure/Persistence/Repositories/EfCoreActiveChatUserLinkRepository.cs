@@ -1,4 +1,5 @@
 using ChatModule.Domain.Aggregates;
+using ChatModule.Domain.Entities;
 using ChatModule.Domain.Repositories;
 using Shared.Infrastructure.Persistence;
 

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using ChatModule.API.Dto;
 using ChatModule.Domain.Aggregates;
+using ChatModule.Domain.Entities;
 using ChatModule.Domain.Exceptions;
 using ChatModule.Domain.Services;
 using Microsoft.AspNetCore.Builder;

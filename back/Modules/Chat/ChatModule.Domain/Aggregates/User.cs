@@ -1,3 +1,5 @@
+using ChatModule.Domain.Entities;
+
 namespace ChatModule.Domain.Aggregates;
 
 public class User

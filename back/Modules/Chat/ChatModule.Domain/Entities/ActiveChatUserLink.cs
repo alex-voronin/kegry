@@ -1,4 +1,6 @@
-namespace ChatModule.Domain.Aggregates;
+using ChatModule.Domain.Aggregates;
+
+namespace ChatModule.Domain.Entities;
 
 public class ActiveChatUserLink
 {

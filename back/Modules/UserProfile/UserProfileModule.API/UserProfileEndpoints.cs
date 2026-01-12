@@ -11,6 +11,7 @@ using UserProfileModule.API.Dto;
 using UserProfileModule.Contracts.Events;
 using UserProfileModule.Domain.Aggregates;
 using UserProfileModule.Domain.Exceptions;
+using UserProfileModule.Domain.Repostories;
 using UserProfileModule.Domain.Services;
 
 namespace UserProfileModule.API;

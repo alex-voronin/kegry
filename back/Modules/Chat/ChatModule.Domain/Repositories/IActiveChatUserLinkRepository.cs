@@ -1,4 +1,4 @@
-using ChatModule.Domain.Aggregates;
+using ChatModule.Domain.Entities;
 using SharedCore.Interfaces;
 
 namespace ChatModule.Domain.Repositories;

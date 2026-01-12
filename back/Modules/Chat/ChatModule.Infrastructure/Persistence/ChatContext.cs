@@ -1,4 +1,5 @@
 using ChatModule.Domain.Aggregates;
+using ChatModule.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatModule.Infrastructure.Persistence;

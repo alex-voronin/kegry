@@ -1,6 +1,7 @@
+using ChatModule.Domain.Aggregates;
 using SharedCore.Validation;
 
-namespace ChatModule.Domain.Aggregates;
+namespace ChatModule.Domain.Entities;
 
 public class ChatMessage
 {

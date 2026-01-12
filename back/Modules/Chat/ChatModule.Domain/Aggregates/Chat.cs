@@ -1,3 +1,4 @@
+using ChatModule.Domain.Entities;
 using SharedCore.Validation;
 
 namespace ChatModule.Domain.Aggregates;

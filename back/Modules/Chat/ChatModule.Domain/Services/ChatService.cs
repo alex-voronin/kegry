@@ -1,5 +1,6 @@
 using ChatModule.Contracts.Events;
 using ChatModule.Domain.Aggregates;
+using ChatModule.Domain.Entities;
 using ChatModule.Domain.Exceptions;
 using ChatModule.Domain.Repositories;
 using Shared.Infrastructure.Storage;
