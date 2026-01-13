@@ -4,7 +4,7 @@ using Shared.Infrastructure.Persistence;
 
 namespace FeedModule.Infrastructure.Persistence.Repositories;
 
-internal class EfCoreUserProfileRepository : Repository<FeedContext, UserProfile>, IUserProfileRepository
+internal class EfCoreUserProfileRepository : Repository<FeedContext, User>, IUserProfileRepository
 {
     public EfCoreUserProfileRepository(FeedContext context) : base(context)
     {

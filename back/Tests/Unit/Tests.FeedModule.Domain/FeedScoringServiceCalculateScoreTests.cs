@@ -20,7 +20,7 @@ public class FeedScoringServiceCalculateScoreTests
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var hobbyId = Guid.NewGuid();
-        var userProfile = new UserProfile
+        var userProfile = new User
         {
             Id = Guid.NewGuid(),
             Birthday = today,
@@ -31,7 +31,7 @@ public class FeedScoringServiceCalculateScoreTests
         {
             DistanceMeters = 0,
             Rating = 5,
-            User = new UserProfile
+            User = new User
             {
                 Id = Guid.NewGuid(),
                 Birthday = today,
@@ -53,7 +53,7 @@ public class FeedScoringServiceCalculateScoreTests
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var hobbyId = Guid.NewGuid();
-        var userProfile = new UserProfile
+        var userProfile = new User
         {
             Id = Guid.NewGuid(),
             Birthday = today,
@@ -64,7 +64,7 @@ public class FeedScoringServiceCalculateScoreTests
         {
             DistanceMeters = 15000,
             Rating = 5,
-            User = new UserProfile
+            User = new User
             {
                 Id = Guid.NewGuid(),
                 Birthday = userProfile.Birthday.AddYears(5),
@@ -84,7 +84,7 @@ public class FeedScoringServiceCalculateScoreTests
     public void CalculateScore_WhenWorstMatch_ReturnsLowScore()
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        var userProfile = new UserProfile
+        var userProfile = new User
         {
             Id = Guid.NewGuid(),
             Birthday = today,
@@ -95,7 +95,7 @@ public class FeedScoringServiceCalculateScoreTests
         {
             DistanceMeters = 100000,
             Rating = 0.5m,
-            User = new UserProfile
+            User = new User
             {
                 Id = Guid.NewGuid(),
                 Birthday = today.AddYears(20),
@@ -119,7 +119,7 @@ public class FeedScoringServiceCalculateScoreTests
     public void CalculateScore_DistanceImpact(int distanceMeters, double expectedDistanceScore)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        var userProfile = new UserProfile
+        var userProfile = new User
         {
             Id = Guid.NewGuid(),
             Birthday = today,
@@ -130,7 +130,7 @@ public class FeedScoringServiceCalculateScoreTests
         {
             DistanceMeters = distanceMeters,
             Rating = 0.5m,
-            User = new UserProfile
+            User = new User
             {
                 Id = Guid.NewGuid(),
                 Birthday = today.AddYears(1000),
@@ -164,7 +164,7 @@ public class FeedScoringServiceCalculateScoreTests
     public void CalculateScore_AgeImpact(int daysDiff, double expectedAgeScore)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        var userProfile = new UserProfile
+        var userProfile = new User
         {
             Id = Guid.NewGuid(),
             Birthday = today,
@@ -175,7 +175,7 @@ public class FeedScoringServiceCalculateScoreTests
         {
             DistanceMeters = 100000,
             Rating = 0.5m,
-            User = new UserProfile
+            User = new User
             {
                 Id = Guid.NewGuid(),
                 Birthday = today.AddDays(-daysDiff),
@@ -200,7 +200,7 @@ public class FeedScoringServiceCalculateScoreTests
         var h2 = new Hobby { Id = Guid.NewGuid(), Name = "H2" };
         var h3 = new Hobby { Id = Guid.NewGuid(), Name = "H3" };
 
-        var userProfile = new UserProfile
+        var userProfile = new User
         {
             Id = Guid.NewGuid(),
             Birthday = today,
@@ -211,7 +211,7 @@ public class FeedScoringServiceCalculateScoreTests
         {
             DistanceMeters = 100000,
             Rating = 0.5m,
-            User = new UserProfile
+            User = new User
             {
                 Id = Guid.NewGuid(),
                 Birthday = today.AddYears(20),

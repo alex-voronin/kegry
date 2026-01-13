@@ -3,7 +3,7 @@ using SharedCore.ValueObjects;
 
 namespace UserProfileModule.Domain.Aggregates;
 
-public class UserProfile
+public class User
 {
     public Guid Id { get; init; }
 

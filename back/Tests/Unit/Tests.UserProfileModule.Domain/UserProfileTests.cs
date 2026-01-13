@@ -6,7 +6,7 @@ using Hobby = UserProfileModule.Domain.Aggregates.Hobby;
 
 namespace Tests.UserProfileModule.Domain;
 
-public class UserProfileTests
+public class UserTests
 {
     [Fact]
     public void UserProfile_GivenValidData_WhenInitialized_ThenReturnValidProfile()
@@ -161,10 +161,10 @@ public class UserProfileTests
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 
-    private static UserProfile CreateValidProfile(Guid? id = null)
+    private static User CreateValidProfile(Guid? id = null)
     {
         id ??= Guid.CreateVersion7();
-        return new UserProfile
+        return new User
         {
             Id = id.Value,
             FirstName = "John",

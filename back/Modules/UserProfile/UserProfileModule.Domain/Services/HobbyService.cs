@@ -1,7 +1,7 @@
 using SharedCore.Services.LifeTimes;
 using UserProfileModule.Domain.Aggregates;
 using UserProfileModule.Domain.Exceptions;
-using UserProfileModule.Domain.Repostories;
+using UserProfileModule.Domain.Repositories;
 
 namespace UserProfileModule.Domain.Services;
 

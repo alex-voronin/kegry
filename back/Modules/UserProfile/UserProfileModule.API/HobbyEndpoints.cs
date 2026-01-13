@@ -5,7 +5,7 @@ using SharedCore.Api;
 using SharedCore.Api.Dto;
 using UserProfileModule.API.Dto;
 using UserProfileModule.Domain.Aggregates;
-using UserProfileModule.Domain.Repostories;
+using UserProfileModule.Domain.Repositories;
 
 namespace UserProfileModule.API;
 

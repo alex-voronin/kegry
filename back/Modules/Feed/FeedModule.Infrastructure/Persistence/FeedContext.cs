@@ -13,7 +13,7 @@ public class FeedContext : DbContext
     public DbSet<UserRating> UserRatings => Set<UserRating>();
 
     //ro
-    public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
+    public DbSet<User> Users => Set<User>();
     public DbSet<Hobby> Hobbies => Set<Hobby>();
     public DbSet<Location> Locations => Set<Location>();
 
@@ -35,7 +35,7 @@ public class FeedContext : DbContext
 
     private void ThrowOnReadOnlyEntityModification()
     {
-        Type[] readOnlyTypes = [typeof(UserProfile), typeof(Hobby), typeof(Location)];
+        Type[] readOnlyTypes = [typeof(User), typeof(Hobby), typeof(Location)];
 
         var forbiddenChanges = ChangeTracker.Entries()
             .Where(e => readOnlyTypes.Contains(e.Entity.GetType()) &&
@@ -105,16 +105,16 @@ public class FeedContext : DbContext
 
         // Read-only entities configuration
 
-        modelBuilder.Entity<UserProfile>(builder =>
+        modelBuilder.Entity<User>(builder =>
         {
-            builder.ToTable("profiles", "users");
+            builder.ToTable("users", "user_profile");
             builder.HasKey(up => up.Id);
 
             builder.HasMany(up => up.Hobbies)
-                .WithMany(h => h.UserProfiles)
+                .WithMany(h => h.Users)
                 .UsingEntity(j =>
                 {
-                    j.ToTable("user_profile_hobby_link", "users");
+                    j.ToTable("user_hobby_link", "user_profile");
                     j.Metadata.SetIsTableExcludedFromMigrations(true);
                 });
 
@@ -123,7 +123,7 @@ public class FeedContext : DbContext
 
         modelBuilder.Entity<Hobby>(builder =>
         {
-            builder.ToTable("hobbies", "users");
+            builder.ToTable("hobbies", "user_profile");
             builder.HasKey(e => e.Id);
 
             builder.Metadata.SetIsTableExcludedFromMigrations(true);

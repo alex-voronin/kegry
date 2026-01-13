@@ -6,7 +6,7 @@ namespace UserProfileModule.Infrastructure.Persistence;
 
 public class UserProfileContext : DbContext
 {
-    public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
+    public DbSet<User> Users => Set<User>();
     public DbSet<Hobby> Hobbies => Set<Hobby>();
 
     public UserProfileContext(DbContextOptions<UserProfileContext> options)
@@ -16,11 +16,11 @@ public class UserProfileContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("users");
+        modelBuilder.HasDefaultSchema("user_profile");
 
-        modelBuilder.Entity<UserProfile>(builder =>
+        modelBuilder.Entity<User>(builder =>
         {
-            builder.ToTable("profiles");
+            builder.ToTable("users");
             builder.Property(up => up.Id).ValueGeneratedNever();
             builder.Property(up => up.FirstName)
                 .IsRequired()
@@ -36,8 +36,8 @@ public class UserProfileContext : DbContext
                 .HasMaxLength(ValidationParameters.S3KeyMaxLength);
 
             builder.HasMany(up => up.Hobbies)
-                .WithMany(h => h.UserProfiles)
-                .UsingEntity(j => j.ToTable("user_profile_hobby_link"));
+                .WithMany(h => h.Users)
+                .UsingEntity(j => j.ToTable("user_hobby_link"));
         });
 
         modelBuilder.Entity<Hobby>(builder =>

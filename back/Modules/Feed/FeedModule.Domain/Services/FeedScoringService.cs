@@ -49,7 +49,7 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
         }
 
         var candidates = await _feedCandidateRepository.GetFeedCandidatesInRadius(
-            userProfile: userProfile,
+            user: userProfile,
             userCoordinates: userLocation.Coordinates,
             limit: FeedScoringParameters.UserLimitPerDatabaseQuery,
             skippedUserCutOffInDays: FeedScoringParameters.SkippedUserCutOffInDays,
@@ -60,7 +60,7 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
     }
 
     private FeedCandidate[] RankCandidates(
-        UserProfile userProfile,
+        User user,
         FeedCandidate[] candidates,
         Filter filter,
         int limit)
@@ -69,7 +69,7 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
             .Select(c => new
             {
                 Candidate = c,
-                Score = CalculateScore(userProfile, c, filter)
+                Score = CalculateScore(user, c, filter)
             })
             .OrderByDescending(x => x.Score)
             .Take(limit)
@@ -77,7 +77,7 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
             .ToArray();
     }
 
-    internal static double CalculateScore(UserProfile userProfile, FeedCandidate candidate, Filter filter)
+    internal static double CalculateScore(User user, FeedCandidate candidate, Filter filter)
     {
         // distance scoring
         var distanceScore = MathFunctions.Gaussian(
@@ -87,9 +87,9 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
 
         // hobbies scoring
         var hobbiesScore = 0.0;
-        if (userProfile.Hobbies.Count > 0)
+        if (user.Hobbies.Count > 0)
         {
-            var hobbyIds = userProfile.Hobbies.Select(hobby => hobby.Id).ToHashSet();
+            var hobbyIds = user.Hobbies.Select(hobby => hobby.Id).ToHashSet();
             var matches = candidate.User.Hobbies
                 .Count(h => hobbyIds.Contains(h.Id));
 
@@ -97,7 +97,7 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
         }
 
         // age scoring
-        var daysDifference = Math.Abs(userProfile.Birthday.ToDateTime(TimeOnly.MinValue).Ticks -
+        var daysDifference = Math.Abs(user.Birthday.ToDateTime(TimeOnly.MinValue).Ticks -
                                       candidate.User.Birthday.ToDateTime(TimeOnly.MinValue).Ticks) / TimeSpan.TicksPerDay;
         var ageScore = MathFunctions.Gaussian(
             value: daysDifference / 365.0,

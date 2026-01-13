@@ -8,7 +8,7 @@ namespace FeedModule.Domain.Repositories;
 public interface IFeedCandidateRepository
 {
     public Task<FeedCandidate[]> GetFeedCandidatesInRadius(
-        UserProfile userProfile,
+        User user,
         Point userCoordinates,
         Filter filter,
         int skippedUserCutOffInDays,

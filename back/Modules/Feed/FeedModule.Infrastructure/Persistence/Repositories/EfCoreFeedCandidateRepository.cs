@@ -20,7 +20,7 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
     }
 
     public async Task<FeedCandidate[]> GetFeedCandidatesInRadius(
-        UserProfile userProfile,
+        User user,
         Point userCoordinates,
         Filter filter,
         int skippedUserCutOffInDays,
@@ -31,7 +31,7 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
         var now = _timeProvider.GetUtcNow();
         var skipCutoff = now.AddDays(skippedUserCutOffInDays);
 
-        var query = _context.UserProfiles.AsNoTracking()
+        var query = _context.Users.AsNoTracking()
             .Join(
                 _context.Locations.AsNoTracking(),
                 u => u.Id,
@@ -40,7 +40,7 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
             )
             .LeftJoin(
                 _context.FeedUserRelations.AsNoTracking()
-                    .Where(fur => fur.MyUserId == userProfile.Id),
+                    .Where(fur => fur.MyUserId == user.Id),
                 j => j.User.Id,
                 fp => fp.OtherUserId,
                 (j, fur) => new
@@ -70,7 +70,7 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
                     useSpheroid: false
                 )
             )
-            .Where(j => j.User.Id != userProfile.Id)
+            .Where(j => j.User.Id != user.Id)
             .Where(j => j.FeedUserRelation == null || !j.FeedUserRelation.IsBlocked)
             .Where(j => j.FeedUserRelation == null || !j.FeedUserRelation.IsInMeeting)
             .Where(j => j.FeedUserRelation == null || j.FeedUserRelation.SkippedAt < skipCutoff)

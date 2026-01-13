@@ -11,7 +11,7 @@ using UserProfileModule.API.Dto;
 using UserProfileModule.Contracts.Events;
 using UserProfileModule.Domain.Aggregates;
 using UserProfileModule.Domain.Exceptions;
-using UserProfileModule.Domain.Repostories;
+using UserProfileModule.Domain.Repositories;
 using UserProfileModule.Domain.Services;
 
 namespace UserProfileModule.API;
@@ -44,7 +44,7 @@ public class UserProfileEndpoints : IEndpoints
     {
         var userId = user.GetId();
         var hobbyStubs = await hobbyService.BuildHobbyStubs(request.HobbyIds, ct);
-        var profile = new UserProfile
+        var profile = new User
         {
             Id = userId,
             FirstName = request.FirstName,
@@ -166,7 +166,7 @@ public class UserProfileEndpoints : IEndpoints
         );
     }
 
-    private static UserProfileChangedEvent BuildUserChangedEvent(ClaimsPrincipal user, UserProfile profile)
+    private static UserProfileChangedEvent BuildUserChangedEvent(ClaimsPrincipal user, User profile)
     {
         return new UserProfileChangedEvent
         {

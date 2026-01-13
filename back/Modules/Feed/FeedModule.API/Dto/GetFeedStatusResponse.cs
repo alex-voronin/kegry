@@ -1,3 +1,3 @@
 namespace FeedModule.API.Dto;
 
-public record GetFeedStatusResponse(bool IsInMeeting, Guid? UserIdToRate );
+public record GetFeedStatusResponse(bool IsInMeeting, Guid? UserIdToRate);

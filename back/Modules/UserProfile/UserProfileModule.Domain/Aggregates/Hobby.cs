@@ -5,5 +5,5 @@ public class Hobby
     public Guid Id { get; init; }
     public string Name { get; init; } = null!;
 
-    public List<UserProfile> UserProfiles { get; init; } = new();
+    public List<User> Users { get; init; } = new();
 }

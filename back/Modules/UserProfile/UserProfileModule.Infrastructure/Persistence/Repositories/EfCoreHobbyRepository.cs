@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using Shared.Infrastructure.Persistence;
 using UserProfileModule.Domain.Aggregates;
-using UserProfileModule.Domain.Repostories;
+using UserProfileModule.Domain.Repositories;
 
 namespace UserProfileModule.Infrastructure.Persistence.Repositories;
 

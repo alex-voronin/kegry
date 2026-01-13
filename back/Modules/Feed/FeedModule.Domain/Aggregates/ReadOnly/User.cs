@@ -3,7 +3,7 @@ using SharedCore.ValueObjects;
 
 namespace FeedModule.Domain.Aggregates.ReadOnly;
 
-public class UserProfile
+public class User
 {
     public Guid Id { get; init; }
     public string FirstName { get; init; } = null!;
@@ -17,7 +17,7 @@ public class UserProfile
     [NotMapped]
     public string FullName => $"{FirstName} {LastName}";
 
-    internal UserProfile()
+    internal User()
     {
     }
 }

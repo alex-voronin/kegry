@@ -35,7 +35,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
 
         var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
         feedUserRelation.ShouldRate = false;
-        
+
         if (rating != null)
         {
             var oldRating = feedUserRelation.Rating ?? 0.0m;

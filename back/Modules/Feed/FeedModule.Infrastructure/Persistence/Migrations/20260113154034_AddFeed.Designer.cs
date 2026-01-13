@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(FeedContext))]
-    [Migration("20260113145515_AddFeed")]
+    [Migration("20260113154034_AddFeed")]
     partial class AddFeed
     {
         /// <inheritdoc />
@@ -152,7 +152,7 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_hobbies");
 
-                    b.ToTable("hobbies", "users", t =>
+                    b.ToTable("hobbies", "user_profile", t =>
                         {
                             t.ExcludeFromMigrations();
                         });
@@ -183,7 +183,7 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("FeedModule.Domain.Aggregates.ReadOnly.UserProfile", b =>
+            modelBuilder.Entity("FeedModule.Domain.Aggregates.ReadOnly.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -214,9 +214,9 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .HasColumnName("last_name");
 
                     b.HasKey("Id")
-                        .HasName("pk_profiles");
+                        .HasName("pk_users");
 
-                    b.ToTable("profiles", "users", t =>
+                    b.ToTable("users", "user_profile", t =>
                         {
                             t.ExcludeFromMigrations();
                         });
@@ -242,43 +242,43 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                     b.ToTable("user_ratings", "feed");
                 });
 
-            modelBuilder.Entity("HobbyUserProfile", b =>
+            modelBuilder.Entity("HobbyUser", b =>
                 {
                     b.Property<Guid>("HobbiesId")
                         .HasColumnType("uuid")
                         .HasColumnName("hobbies_id");
 
-                    b.Property<Guid>("UserProfilesId")
+                    b.Property<Guid>("UsersId")
                         .HasColumnType("uuid")
-                        .HasColumnName("user_profiles_id");
+                        .HasColumnName("users_id");
 
-                    b.HasKey("HobbiesId", "UserProfilesId")
-                        .HasName("pk_user_profile_hobby_link");
+                    b.HasKey("HobbiesId", "UsersId")
+                        .HasName("pk_user_hobby_link");
 
-                    b.HasIndex("UserProfilesId")
-                        .HasDatabaseName("ix_user_profile_hobby_link_user_profiles_id");
+                    b.HasIndex("UsersId")
+                        .HasDatabaseName("ix_user_hobby_link_users_id");
 
-                    b.ToTable("user_profile_hobby_link", "users", t =>
+                    b.ToTable("user_hobby_link", "user_profile", t =>
                         {
                             t.ExcludeFromMigrations();
                         });
                 });
 
-            modelBuilder.Entity("HobbyUserProfile", b =>
+            modelBuilder.Entity("HobbyUser", b =>
                 {
                     b.HasOne("FeedModule.Domain.Aggregates.ReadOnly.Hobby", null)
                         .WithMany()
                         .HasForeignKey("HobbiesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_user_profile_hobby_link_hobbies_hobbies_id");
+                        .HasConstraintName("fk_user_hobby_link_hobbies_hobbies_id");
 
-                    b.HasOne("FeedModule.Domain.Aggregates.ReadOnly.UserProfile", null)
+                    b.HasOne("FeedModule.Domain.Aggregates.ReadOnly.User", null)
                         .WithMany()
-                        .HasForeignKey("UserProfilesId")
+                        .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_user_profile_hobby_link_profiles_user_profiles_id");
+                        .HasConstraintName("fk_user_hobby_link_users_users_id");
                 });
 #pragma warning restore 612, 618
         }

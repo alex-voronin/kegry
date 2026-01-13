@@ -14,11 +14,11 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "users");
+                name: "user_profile");
 
             migrationBuilder.CreateTable(
                 name: "hobbies",
-                schema: "users",
+                schema: "user_profile",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -30,8 +30,8 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "profiles",
-                schema: "users",
+                name: "users",
+                schema: "user_profile",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -45,38 +45,38 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_profiles", x => x.id);
+                    table.PrimaryKey("pk_users", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "user_profile_hobby_link",
-                schema: "users",
+                name: "user_hobby_link",
+                schema: "user_profile",
                 columns: table => new
                 {
                     hobbies_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    user_profiles_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    users_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_profile_hobby_link", x => new { x.hobbies_id, x.user_profiles_id });
+                    table.PrimaryKey("pk_user_hobby_link", x => new { x.hobbies_id, x.users_id });
                     table.ForeignKey(
-                        name: "fk_user_profile_hobby_link_hobbies_hobbies_id",
+                        name: "fk_user_hobby_link_hobbies_hobbies_id",
                         column: x => x.hobbies_id,
-                        principalSchema: "users",
+                        principalSchema: "user_profile",
                         principalTable: "hobbies",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_user_profile_hobby_link_profiles_user_profiles_id",
-                        column: x => x.user_profiles_id,
-                        principalSchema: "users",
-                        principalTable: "profiles",
+                        name: "fk_user_hobby_link_users_users_id",
+                        column: x => x.users_id,
+                        principalSchema: "user_profile",
+                        principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
-                schema: "users",
+                schema: "user_profile",
                 table: "hobbies",
                 columns: new[] { "id", "name" },
                 values: new object[,]
@@ -152,32 +152,32 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "ix_hobbies_name",
-                schema: "users",
+                schema: "user_profile",
                 table: "hobbies",
                 column: "name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_profile_hobby_link_user_profiles_id",
-                schema: "users",
-                table: "user_profile_hobby_link",
-                column: "user_profiles_id");
+                name: "ix_user_hobby_link_users_id",
+                schema: "user_profile",
+                table: "user_hobby_link",
+                column: "users_id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "user_profile_hobby_link",
-                schema: "users");
+                name: "user_hobby_link",
+                schema: "user_profile");
 
             migrationBuilder.DropTable(
                 name: "hobbies",
-                schema: "users");
+                schema: "user_profile");
 
             migrationBuilder.DropTable(
-                name: "profiles",
-                schema: "users");
+                name: "users",
+                schema: "user_profile");
         }
     }
 }

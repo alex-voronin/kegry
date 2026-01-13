@@ -17,29 +17,29 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("users")
+                .HasDefaultSchema("user_profile")
                 .HasAnnotation("ProductVersion", "10.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("HobbyUserProfile", b =>
+            modelBuilder.Entity("HobbyUser", b =>
                 {
                     b.Property<Guid>("HobbiesId")
                         .HasColumnType("uuid")
                         .HasColumnName("hobbies_id");
 
-                    b.Property<Guid>("UserProfilesId")
+                    b.Property<Guid>("UsersId")
                         .HasColumnType("uuid")
-                        .HasColumnName("user_profiles_id");
+                        .HasColumnName("users_id");
 
-                    b.HasKey("HobbiesId", "UserProfilesId")
-                        .HasName("pk_user_profile_hobby_link");
+                    b.HasKey("HobbiesId", "UsersId")
+                        .HasName("pk_user_hobby_link");
 
-                    b.HasIndex("UserProfilesId")
-                        .HasDatabaseName("ix_user_profile_hobby_link_user_profiles_id");
+                    b.HasIndex("UsersId")
+                        .HasDatabaseName("ix_user_hobby_link_users_id");
 
-                    b.ToTable("user_profile_hobby_link", "users");
+                    b.ToTable("user_hobby_link", "user_profile");
                 });
 
             modelBuilder.Entity("UserProfileModule.Domain.Aggregates.Hobby", b =>
@@ -60,7 +60,7 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_hobbies_name");
 
-                    b.ToTable("hobbies", "users");
+                    b.ToTable("hobbies", "user_profile");
 
                     b.HasData(
                         new
@@ -400,7 +400,7 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("UserProfileModule.Domain.Aggregates.UserProfile", b =>
+            modelBuilder.Entity("UserProfileModule.Domain.Aggregates.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -445,26 +445,26 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                         .HasColumnName("last_name");
 
                     b.HasKey("Id")
-                        .HasName("pk_profiles");
+                        .HasName("pk_users");
 
-                    b.ToTable("profiles", "users");
+                    b.ToTable("users", "user_profile");
                 });
 
-            modelBuilder.Entity("HobbyUserProfile", b =>
+            modelBuilder.Entity("HobbyUser", b =>
                 {
                     b.HasOne("UserProfileModule.Domain.Aggregates.Hobby", null)
                         .WithMany()
                         .HasForeignKey("HobbiesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_user_profile_hobby_link_hobbies_hobbies_id");
+                        .HasConstraintName("fk_user_hobby_link_hobbies_hobbies_id");
 
-                    b.HasOne("UserProfileModule.Domain.Aggregates.UserProfile", null)
+                    b.HasOne("UserProfileModule.Domain.Aggregates.User", null)
                         .WithMany()
-                        .HasForeignKey("UserProfilesId")
+                        .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_user_profile_hobby_link_profiles_user_profiles_id");
+                        .HasConstraintName("fk_user_hobby_link_users_users_id");
                 });
 #pragma warning restore 612, 618
         }

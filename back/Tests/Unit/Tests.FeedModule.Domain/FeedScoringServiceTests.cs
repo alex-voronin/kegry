@@ -39,8 +39,8 @@ public class FeedScoringServiceTests
     {
         SetupRepositoryData(locationRepository, userId);
         userProfileRepository.GetByIdAsync(userId, asNoTracking: true,
-                includes: Arg.Any<Expression<Func<UserProfile, object?>>[]>())
-            .Returns((UserProfile?)null);
+                includes: Arg.Any<Expression<Func<User, object?>>[]>())
+            .Returns((User?)null);
 
         var exception =
             await Should.ThrowAsync<HttpCodeException>(() => service.GetFeedAsync(userId));
@@ -98,7 +98,7 @@ public class FeedScoringServiceTests
         await service.GetFeedAsync(userId);
         await feedCandidateRepository.Received(1)
             .GetFeedCandidatesInRadius(
-                Arg.Any<UserProfile>(),
+                Arg.Any<User>(),
                 Arg.Any<Point>(),
                 filter,
                 Arg.Any<int>(),
@@ -118,7 +118,7 @@ public class FeedScoringServiceTests
         SetupRepositoryData(userProfileRepository, userId);
 
         feedCandidateRepository.GetFeedCandidatesInRadius(
-                Arg.Any<UserProfile>(),
+                Arg.Any<User>(),
                 Arg.Any<Point>(),
                 Arg.Any<Filter>(),
                 Arg.Any<int>(),
@@ -145,7 +145,7 @@ public class FeedScoringServiceTests
         {
             DistanceMeters = 100,
             Rating = 5,
-            User = new UserProfile
+            User = new User
             {
                 Id = Guid.NewGuid(),
                 Birthday = new DateOnly(1990, 1, 1),
@@ -157,7 +157,7 @@ public class FeedScoringServiceTests
         {
             DistanceMeters = 10000,
             Rating = 1,
-            User = new UserProfile
+            User = new User
             {
                 Id = Guid.NewGuid(),
                 Birthday = new DateOnly(2000, 1, 1),
@@ -166,7 +166,7 @@ public class FeedScoringServiceTests
         };
 
         feedCandidateRepository.GetFeedCandidatesInRadius(
-                Arg.Any<UserProfile>(),
+                Arg.Any<User>(),
                 Arg.Any<Point>(),
                 Arg.Any<Filter>(),
                 Arg.Any<int>(),
@@ -196,10 +196,10 @@ public class FeedScoringServiceTests
         {
             DistanceMeters = 100 * i,
             Rating = 5,
-            User = new UserProfile { Id = Guid.NewGuid(), Birthday = new DateOnly(1990, 1, 1), Hobbies = [] }
+            User = new User { Id = Guid.NewGuid(), Birthday = new DateOnly(1990, 1, 1), Hobbies = [] }
         }).ToArray();
         feedCandidateRepository.GetFeedCandidatesInRadius(
-                Arg.Any<UserProfile>(),
+                Arg.Any<User>(),
                 Arg.Any<Point>(),
                 Arg.Any<Filter>(),
                 Arg.Any<int>(),
@@ -218,9 +218,9 @@ public class FeedScoringServiceTests
         return location;
     }
 
-    private UserProfile SetupRepositoryData(IUserProfileRepository userProfileRepository, Guid userId)
+    private User SetupRepositoryData(IUserProfileRepository userProfileRepository, Guid userId)
     {
-        var userProfile = new UserProfile
+        var userProfile = new User
         {
             Id = userId,
             Birthday = new DateOnly(1990, 1, 1),
@@ -228,7 +228,7 @@ public class FeedScoringServiceTests
         };
         userProfileRepository.GetByIdAsync(userId,
                 asNoTracking: true,
-                includes: Arg.Any<Expression<Func<UserProfile, object?>>[]>())
+                includes: Arg.Any<Expression<Func<User, object?>>[]>())
             .Returns(userProfile);
         return userProfile;
     }
