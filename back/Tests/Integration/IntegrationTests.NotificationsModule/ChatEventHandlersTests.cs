@@ -38,24 +38,24 @@ public class ChatEventHandlersTests : IAsyncLifetime
         var requestA = new UpdateFcmTokenRequest("devA", "tokenA");
         _factory.ApiClient.SetAuth(authResponseA);
         var tokenResponseA = await _factory.ApiClient
-            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>("/api/v1/notifications/device/token", requestA);
+            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken, requestA);
         tokenResponseA.Success.ShouldBeTrue();
 
         var requestB = new UpdateFcmTokenRequest("devB", "tokenB");
         _factory.ApiClient.SetAuth(authResponseB);
         var tokenResponseB = await _factory.ApiClient
-            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>("/api/v1/notifications/device/token", requestB);
+            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken, requestB);
         tokenResponseB.Success.ShouldBeTrue();
 
         // 3. Send invites
         _factory.ApiClient.SetAuth(authResponseA);
         var inviteResponseA = await _factory.ApiClient
-            .PostAsync<object?, ApiResult.EmptyResult>($"/api/v1/feed/{userBId}/invite", null);
+            .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(userBId), null);
         inviteResponseA.Success.ShouldBeTrue();
 
         _factory.ApiClient.SetAuth(authResponseB);
         var inviteResponseB = await _factory.ApiClient
-            .PostAsync<object?, ApiResult.EmptyResult>($"/api/v1/feed/{userAId}/invite", null);
+            .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(userAId), null);
         inviteResponseB.Success.ShouldBeTrue();
 
         // 4. Setup push notifications awaiting

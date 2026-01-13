@@ -46,7 +46,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
         );
 
         var response = await _factory.ApiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(
-            "/api/v1/user-profile", request);
+            ApiRoutes.UserProfile.Profile, request);
 
         if (!response.Success)
         {
@@ -55,7 +55,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
 
         // 3. Check response
         response.Success.ShouldBeTrue();
-        var getResponse = await _factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>("/api/v1/user-profile");
+        var getResponse = await _factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
         getResponse.Success.ShouldBeTrue();
         getResponse.Result.UserProfile.ShouldSatisfyAllConditions(
              p => p.FirstName.ShouldBe(request.FirstName),
@@ -90,7 +90,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
         );
 
         var response = await _factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
-            "/api/v1/user-profile", request);
+            ApiRoutes.UserProfile.Profile, request);
 
         if (!response.Success)
         {
@@ -99,7 +99,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
         response.Success.ShouldBeTrue();
 
         // 3. Check response
-        var getResponse = await _factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>("/api/v1/user-profile");
+        var getResponse = await _factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
         getResponse.Success.ShouldBeTrue();
         getResponse.Result.UserProfile.ShouldSatisfyAllConditions(
             p => p.FirstName.ShouldBe(request.FirstName),
@@ -123,7 +123,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
 
         // 2. Get profile before update
         var getBeforeUpdateResponse = await _factory.ApiClient
-            .GetAsync<ApiResult<GetUserProfileResponse>>("/api/v1/user-profile");
+            .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
 
         // 3. Update profile
         var request = new PatchUserProfileRequest(
@@ -138,7 +138,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
         );
 
         var response = await _factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
-            "/api/v1/user-profile", request);
+            ApiRoutes.UserProfile.Profile, request);
 
         if (!response.Success)
         {
@@ -148,7 +148,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
 
         // 3. Check response
         var getAfterUpdateResponse = await _factory.ApiClient
-            .GetAsync<ApiResult<GetUserProfileResponse>>("/api/v1/user-profile");
+            .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
         getAfterUpdateResponse.Success.ShouldBeTrue();
         getAfterUpdateResponse.Result.UserProfile.ShouldSatisfyAllConditions(
             p => p.FirstName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.FirstName),
@@ -172,7 +172,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
 
         // 2. Get profile before update
         var getBeforeUpdateResponse = await _factory.ApiClient
-            .GetAsync<ApiResult<GetUserProfileResponse>>("/api/v1/user-profile");
+            .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
 
         // 3. Update profile
         var request = new PatchUserProfileRequest(
@@ -187,7 +187,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
         );
 
         var response = await _factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
-            "/api/v1/user-profile", request);
+            ApiRoutes.UserProfile.Profile, request);
 
         if (!response.Success)
         {
@@ -197,7 +197,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
 
         // 3. Check response
         var getAfterUpdateResponse = await _factory.ApiClient
-            .GetAsync<ApiResult<GetUserProfileResponse>>("/api/v1/user-profile");
+            .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
         getAfterUpdateResponse.Success.ShouldBeTrue();
         getAfterUpdateResponse.Result.UserProfile.ShouldSatisfyAllConditions(
             p => p.FirstName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.FirstName),
@@ -219,7 +219,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
         _factory.ApiClient.SetAuth(authResponse);
 
         // 2. Get profile
-        var response = await _factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>("/api/v1/user-profile");
+        var response = await _factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
 
         // 3. Check response
         response.Success.ShouldBeFalse();
@@ -235,7 +235,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
 
         // 2. Get upload url
         var response = await _factory.ApiClient.PostAsync<object?, ApiResult<GetPresignedUrlResponse>>(
-            "/api/v1/user-profile/avatar/upload-url", null);
+            ApiRoutes.UserProfile.AvatarUploadUrl, null);
 
         // 3. Check response
         response.Success.ShouldBeTrue();
@@ -252,7 +252,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
 
         // 2. Get upload url
         var response = await _factory.ApiClient.PostAsync<object?, ApiResult<GetPresignedUrlResponse>>(
-            "/api/v1/user-profile/cover/upload-url", null);
+            ApiRoutes.UserProfile.CoverUploadUrl, null);
 
         // 3. Check response
         response.Success.ShouldBeTrue();
@@ -269,7 +269,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
 
         // 2. Get upload url
         var response = await _factory.ApiClient.PostAsync<object?, ApiResult<GetPresignedUrlResponse>>(
-            "/api/v1/user-profile/avatar/upload-url", null);
+            ApiRoutes.UserProfile.AvatarUploadUrl, null);
 
         // 3. Check response
         response.Success.ShouldBeTrue();

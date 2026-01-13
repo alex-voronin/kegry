@@ -46,7 +46,7 @@ public class NotificationEndpointsTests : IAsyncLifetime
                     CreatedAt = DateTimeOffset.UtcNow.AddMinutes(-i),
                     PrimaryText = $"Notification {i}",
                     SecondaryText = $"Description {i}",
-                    FromUserId =  userId,
+                    FromUserId = userId,
                     IsSeen = false
                 });
             }
@@ -56,7 +56,7 @@ public class NotificationEndpointsTests : IAsyncLifetime
 
         // 4. Get the notifications page
         var response = await _factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
-            "/api/v1/notifications?offset=10&limit=10");
+            ApiRoutes.Notifications.GetNotificationsPaginated(10, 10));
 
         // 5. Check the response
         response.Success.ShouldBeTrue();
@@ -78,7 +78,7 @@ public class NotificationEndpointsTests : IAsyncLifetime
 
         // 2. Create the profile and notification user as well
         await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
-        
+
         // 3. Create an unseen notification
         using (var scope = _factory.Services.CreateScope())
         {
@@ -98,7 +98,7 @@ public class NotificationEndpointsTests : IAsyncLifetime
 
         // 4. Get notifications
         var response = await _factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
-            "/api/v1/notifications?offset=0&limit=10");
+            ApiRoutes.Notifications.GetNotificationsPaginated(0, 10));
 
         // 3. Check that the notification is marked as seen
         response.Success.ShouldBeTrue();
@@ -120,7 +120,7 @@ public class NotificationEndpointsTests : IAsyncLifetime
 
         // 2. Create the profile and notification user as well
         await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
-        
+
         using (var scope = _factory.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
@@ -155,7 +155,7 @@ public class NotificationEndpointsTests : IAsyncLifetime
         }
 
         // 3. Get unseen count
-        var response = await _factory.ApiClient.GetAsync<ApiResult<int>>("/api/v1/notifications/unseen/count");
+        var response = await _factory.ApiClient.GetAsync<ApiResult<int>>(ApiRoutes.Notifications.GetUnseenCount);
 
         // 4. Check response
         response.Success.ShouldBeTrue();

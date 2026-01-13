@@ -39,7 +39,7 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
                     capturedCode = match.Groups[1].Value;
                 }
             }), Arg.Any<CancellationToken>());
-        
+
         // 1. Signup
         var email = "asd@gmail.com";
         var request = new SignUpRequest(Email: email, Password: "123456789Qwe");
@@ -52,13 +52,13 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
         signinResponse.Result.RequiredAction.ShouldBe(RequiredAction.EmailVerification);
         signinResponse.Result.AccessToken.ShouldBeNull();
         signinResponse.Result.RefreshToken.ShouldBeNull();
-        
+
         capturedCode.ShouldNotBeNullOrEmpty();
 
         // 3. Confirm Email
         var confirmRequest = new ConfirmEmailRequest(signinResponse.Result.UserId, capturedCode);
         var confirmResponse = await _factory.ApiClient.PostAsync<ConfirmEmailRequest, ApiResult<AuthResponse>>(
-            "/api/v1/auth/confirm-email", confirmRequest);
+            ApiRoutes.Auth.ConfirmEmail, confirmRequest);
 
         // 4. Check confirmation response
         confirmResponse.Success.ShouldBeTrue();
@@ -85,7 +85,7 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
         var request = new SignInRequest(Email: "asd@gmail.com", Password: "123456789Qwe");
 
         var signinResponse = await _factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
-            "/api/v1/auth/signin", request);
+            ApiRoutes.Auth.Signin, request);
 
         signinResponse.Success.ShouldBeTrue();
         signinResponse.Result.Auth.ShouldBeNull();
@@ -135,7 +135,7 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
                 var match = Regex.Match(e.Body, @"<a href=""https:\/\/hoppyfy\.me\/password-reset\?token=(.+)"">");
                 capturedToken = match.Groups[1].Value;
             }), Arg.Any<CancellationToken>());
-        
+
         // 1. Authenticate
         var email = "user@example.com";
         var oldPassword = "OldPassword123!";
@@ -146,21 +146,21 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
         // 2. Reset password
         var requestReset = new RequestPasswordResetRequest(email);
         await _factory.ApiClient.PostAsync<RequestPasswordResetRequest, ApiResult.EmptyResult>(
-            "/api/v1/auth/request-password-reset", requestReset);
-        
+            ApiRoutes.Auth.RequestPasswordReset, requestReset);
+
         capturedToken.ShouldNotBeNullOrEmpty();
 
         // 3. Confirm password reset 
         var confirmRequest = new ConfirmPasswordResetRequest(userId, capturedToken, newPassword);
         var confirmResponse = await _factory.ApiClient.PostAsync<ConfirmPasswordResetRequest, ApiResult.EmptyResult>(
-            "/api/v1/auth/confirm-password-reset", confirmRequest);
-        
+            ApiRoutes.Auth.ConfirmPasswordReset, confirmRequest);
+
         confirmResponse.Success.ShouldBeTrue();
 
         // 4. Ensure that we can sign in with the new password
         var signinRequest = new SignInRequest(email, newPassword);
         var signinResponse = await _factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
-            "/api/v1/auth/signin", signinRequest);
+            ApiRoutes.Auth.Signin, signinRequest);
         signinResponse.Success.ShouldBeTrue();
     }
 
@@ -175,7 +175,7 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
         // 2. Confirm password reset
         var confirmRequest = new ConfirmPasswordResetRequest(userId, "invalid-token", "NewPassword123!");
         var confirmResponse = await _factory.ApiClient.PostAsync<ConfirmPasswordResetRequest, ApiResult.EmptyResult>(
-            "/api/v1/auth/confirm-password-reset", confirmRequest);
+            ApiRoutes.Auth.ConfirmPasswordReset, confirmRequest);
 
         // 3. Check response
         confirmResponse.Success.ShouldBeFalse();
@@ -187,26 +187,26 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
         // 1. Authenticate
         var email = "user@example.com";
         var auth = await _factory.AuthManager.CreateAndLoginUserAsync(email, "Password123!");
-        
+
         auth.RefreshToken.ShouldNotBeNullOrEmpty();
-        
+
         // 2. Renew token
         var request = new RenewTokensRequest(auth.RefreshToken!);
         var response = await _factory.ApiClient.PostAsync<RenewTokensRequest, ApiResult<AuthResponse>>(
-            "/api/v1/auth/renew-tokens", request);
-        
+            ApiRoutes.Auth.RenewTokens, request);
+
         response.Success.ShouldBeTrue();
         response.Result.AccessToken.ShouldNotBeNullOrEmpty();
         response.Result.RefreshToken.ShouldNotBeNullOrEmpty();
     }
-    
+
     [Fact]
     public async Task GivenUser_WhenRenewTokensWithInvalidRefreshToken_ThenReturnsError()
     {
         var request = new RenewTokensRequest("invalid-refresh-token");
         var response = await _factory.ApiClient.PostAsync<RenewTokensRequest, ApiResult<AuthResponse>>(
-            "/api/v1/auth/renew-tokens", request);
-        
+            ApiRoutes.Auth.RenewTokens, request);
+
         response.Success.ShouldBeFalse();
     }
 
@@ -220,19 +220,19 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
         _factory.ApiClient.SetAuth(auth);
 
         // 2. Delete account
-        var deleteResponse = await _factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>("/api/v1/auth/account");
+        var deleteResponse = await _factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(ApiRoutes.Auth.Account);
         deleteResponse.Success.ShouldBeTrue();
 
         // 3. Sign in again
         var signinRequest = new SignInRequest(email, password);
         var signinResponse = await _factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
-            "/api/v1/auth/signin", signinRequest);
-        
+            ApiRoutes.Auth.Signin, signinRequest);
+
         // 4. Ensure that signup is required 
         signinResponse.Success.ShouldBeTrue();
         signinResponse.Result.IsSignupRequired.ShouldBeTrue();
     }
-    
+
     [Fact]
     public async Task GivenUser_WhenLoggedOut_ThenInvalidatesRefreshToken()
     {
@@ -242,14 +242,14 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
 
         // 2. Log out
         var logoutResponse = await _factory.ApiClient
-            .PostAsync<object?, ApiResult.EmptyResult>("/api/v1/auth/logout", null);
+            .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, null);
         logoutResponse.Success.ShouldBeTrue();
 
         // 3. Renew token
         var request = new RenewTokensRequest(auth.RefreshToken!);
         var response = await _factory.ApiClient.PostAsync<RenewTokensRequest, ApiResult<AuthResponse>>(
-            "/api/v1/auth/renew-tokens", request);
-        
+            ApiRoutes.Auth.RenewTokens, request);
+
         response.Success.ShouldBeFalse();
         response.Errors[0].Error.ShouldBe("Invalid or revoked access token");
     }

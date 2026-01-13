@@ -55,7 +55,7 @@ public class User : ISoftDeletable<Guid>
 
     public required Gender Gender { get; set; }
     public bool IsDeleted { get; set; }
-    
+
     private List<Hobby> _hobbies = new();
 
     public IReadOnlyList<Hobby> Hobbies

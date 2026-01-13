@@ -28,7 +28,7 @@ public class FeedEndpointsTests : IAsyncLifetime
 
         await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
-        var feedResponse = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>("/api/v1/feed");
+        var feedResponse = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
         feedResponse.Success.ShouldBeTrue();
         feedResponse.Result.ShouldNotBeNull();
         feedResponse.Result.Feed.ShouldNotBeNull();
@@ -54,13 +54,13 @@ public class FeedEndpointsTests : IAsyncLifetime
         var rating = 4.5m;
         var ratingRequest = new UserRatingDto(rating);
         var response = await _factory.ApiClient.PostAsync<UserRatingDto, ApiResult.EmptyResult>(
-            $"/api/v1/feed/{userBId}/rating", ratingRequest);
+            ApiRoutes.Feed.RateUser(userBId), ratingRequest);
 
         response.Success.ShouldBeTrue(
             $"Rating failed with errors: {string.Join(", ", response.Errors.Select(e => e.Error))}");
 
         // 4. Get Feed and check rating
-        var feedResponse = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>("/api/v1/feed");
+        var feedResponse = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
         feedResponse.Result.Feed.First().Rating.ShouldBe(rating);
     }
 }

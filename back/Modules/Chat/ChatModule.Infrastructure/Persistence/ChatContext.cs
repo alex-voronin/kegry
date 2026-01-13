@@ -33,7 +33,7 @@ public class ChatContext : DbContext
                 .WithOne(l => l.User)
                 .HasForeignKey<ActiveChatUserLink>(l => l.UserId)
                 .IsRequired(false);
-            
+
             builder.HasQueryFilter(x => !x.IsDeleted);
         });
 

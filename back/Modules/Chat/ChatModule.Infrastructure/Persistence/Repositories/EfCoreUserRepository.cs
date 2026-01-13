@@ -7,9 +7,9 @@ namespace ChatModule.Infrastructure.Persistence.Repositories;
 public class EfCoreUserRepository : Repository<ChatContext, User>, IUserRepository
 {
     private readonly ISoftDeleteImplementer<ChatContext, User, Guid> _softDeleteImplementer;
-    
+
     public EfCoreUserRepository(
-        ChatContext context, 
+        ChatContext context,
         ISoftDeleteImplementer<ChatContext, User, Guid> softDeleteImplementer) : base(context)
     {
         _softDeleteImplementer = softDeleteImplementer;
