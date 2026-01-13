@@ -2,7 +2,7 @@ using SecurityModule.Contracts.Events;
 using UserProfileModule.Domain.Repositories;
 using Wolverine.Attributes;
 
-namespace UserProfileModule.Application.Messaging;
+namespace UserProfileModule.Application.Messaging.Account;
 
 [WolverineHandler]
 public static class AccountEventHandlers

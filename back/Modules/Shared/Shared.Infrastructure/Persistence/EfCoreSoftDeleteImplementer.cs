@@ -4,20 +4,20 @@ using SharedCore.Services.LifeTimes;
 
 namespace Shared.Infrastructure.Persistence;
 
-public interface ISoftDeleteImplementer<TEntity, TId>
+public interface ISoftDeleteImplementer<TContext, TEntity, TId>
     where TEntity : class, ISoftDeletable<TId>
 {
     Task SoftDeleteAsync(TId id, CancellationToken ct = default);
 }
 
-public class SoftDeleteImplementer<TContext, TEntity, TId>
-    : ISoftDeleteImplementer<TEntity, TId>, IScoped
+public class EfCoreSoftDeleteImplementer<TContext, TEntity, TId>
+    : ISoftDeleteImplementer<TContext, TEntity, TId>, IScoped
     where TEntity : class, ISoftDeletable<TId>
     where TContext : DbContext
 {
     private readonly TContext _context;
 
-    public SoftDeleteImplementer(TContext context)
+    public EfCoreSoftDeleteImplementer(TContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }

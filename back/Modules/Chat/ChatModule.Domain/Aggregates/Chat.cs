@@ -1,9 +1,10 @@
 using ChatModule.Domain.Entities;
+using SharedCore.Interfaces;
 using SharedCore.Validation;
 
 namespace ChatModule.Domain.Aggregates;
 
-public class Chat
+public class Chat : ISoftDeletable<Guid>
 {
     public required Guid Id { get; init; }
     public required DateTimeOffset CreatedAt { get; init; }

@@ -3,6 +3,4 @@ using SharedCore.Interfaces;
 
 namespace ChatModule.Domain.Repositories;
 
-public interface IUserRepository : IRepository<User>
-{
-}
+public interface IUserRepository : IRepository<User>, ISoftDeleteRepository<User, Guid>;
