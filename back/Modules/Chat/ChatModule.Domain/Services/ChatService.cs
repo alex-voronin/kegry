@@ -101,7 +101,7 @@ internal class ChatService : DomainService<IChatRepository>, IChatService, IScop
             MessageText = message.Text,
             CreatedAt = message.CreatedAt
         };
-        await Repository.PublishEventAsync(@event, ct);
+        await Repository.PublishEventAsync(@event);
         await Repository.SaveChangesAndFlushMessagesAsync(ct);
     }
 
@@ -130,7 +130,7 @@ internal class ChatService : DomainService<IChatRepository>, IChatService, IScop
         {
             ParticipantIdsFromDeletedChats = [participantIds]
         };
-        await Repository.PublishEventAsync(@event, ct);
+        await Repository.PublishEventAsync(@event);
 
         await transaction.SaveChangesAsync(ct);
         await transaction.CommitAsync(ct);

@@ -17,6 +17,7 @@ internal class LocationService : DomainService<ILocationRepository>, ILocationSe
         internal const double MaxSpeedMps = 100; // 360 km/h
         internal const double MetThresholdMeters = 50;
     }
+    internal readonly TimeSpan MetEventDelay = TimeSpan.FromMinutes(30);
 
     private readonly ITrackedUserPairRepository _trackedUserPairRepository;
     private readonly TimeProvider _timeProvider;
@@ -82,14 +83,15 @@ internal class LocationService : DomainService<ILocationRepository>, ILocationSe
                 continue;
             }
 
-            await _trackedUserPairRepository.PublishEventAsync(
-                new ChatParticipantsMetEvent
-                {
-                    ParticipantIds = [pair.FirstUserId, pair.SecondUserId]
-                }, ct);
-
             _trackedUserPairRepository.Delete(pair);
             pairsRemoved = true;
+
+            var @event = new ChatParticipantsMetEvent()
+            {
+                ParticipantIds = [pair.FirstUserId, pair.SecondUserId]
+            };
+            // Delay to allow users to keep chatting each other for some time even after the scheduled meeting
+            await _trackedUserPairRepository.ScheduleEventAsync(@event, MetEventDelay);
         }
 
         if (pairsRemoved)

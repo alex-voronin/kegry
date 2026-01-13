@@ -23,32 +23,6 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ChatModule.Domain.Aggregates.ActiveChatUserLink", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
-                    b.Property<Guid>("ChatId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("chat_id");
-
-                    b.Property<Guid?>("ChatId1")
-                        .HasColumnType("uuid")
-                        .HasColumnName("chat_id1");
-
-                    b.HasKey("UserId")
-                        .HasName("pk_active_chat_user_links");
-
-                    b.HasIndex("ChatId")
-                        .HasDatabaseName("ix_active_chat_user_links_chat_id");
-
-                    b.HasIndex("ChatId1")
-                        .HasDatabaseName("ix_active_chat_user_links_chat_id1");
-
-                    b.ToTable("active_chat_user_links", "meetings");
-                });
-
             modelBuilder.Entity("ChatModule.Domain.Aggregates.Chat", b =>
                 {
                     b.Property<Guid>("Id")
@@ -67,6 +41,10 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
+                    b.Property<bool>("ParticipantsMet")
+                        .HasColumnType("boolean")
+                        .HasColumnName("participants_met");
+
                     b.HasKey("Id")
                         .HasName("pk_chats");
 
@@ -75,39 +53,6 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                         .HasFilter("\"is_deleted\" = false");
 
                     b.ToTable("chats", "meetings");
-                });
-
-            modelBuilder.Entity("ChatModule.Domain.Aggregates.ChatMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("ChatId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("chat_id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<Guid>("FromUserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("from_user_id");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)")
-                        .HasColumnName("text");
-
-                    b.HasKey("Id")
-                        .HasName("pk_chat_messages");
-
-                    b.HasIndex("ChatId")
-                        .HasDatabaseName("ix_chat_messages_chat_id");
-
-                    b.ToTable("chat_messages", "meetings");
                 });
 
             modelBuilder.Entity("ChatModule.Domain.Aggregates.User", b =>
@@ -140,7 +85,66 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                     b.ToTable("users", "meetings");
                 });
 
-            modelBuilder.Entity("ChatModule.Domain.Aggregates.ActiveChatUserLink", b =>
+            modelBuilder.Entity("ChatModule.Domain.Entities.ActiveChatUserLink", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<Guid>("ChatId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("chat_id");
+
+                    b.Property<Guid?>("ChatId1")
+                        .HasColumnType("uuid")
+                        .HasColumnName("chat_id1");
+
+                    b.HasKey("UserId")
+                        .HasName("pk_active_chat_user_links");
+
+                    b.HasIndex("ChatId")
+                        .HasDatabaseName("ix_active_chat_user_links_chat_id");
+
+                    b.HasIndex("ChatId1")
+                        .HasDatabaseName("ix_active_chat_user_links_chat_id1");
+
+                    b.ToTable("active_chat_user_links", "meetings");
+                });
+
+            modelBuilder.Entity("ChatModule.Domain.Entities.ChatMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ChatId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("chat_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("FromUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("from_user_id");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
+                        .HasColumnName("text");
+
+                    b.HasKey("Id")
+                        .HasName("pk_chat_messages");
+
+                    b.HasIndex("ChatId")
+                        .HasDatabaseName("ix_chat_messages_chat_id");
+
+                    b.ToTable("chat_messages", "meetings");
+                });
+
+            modelBuilder.Entity("ChatModule.Domain.Entities.ActiveChatUserLink", b =>
                 {
                     b.HasOne("ChatModule.Domain.Aggregates.Chat", "Chat")
                         .WithMany()
@@ -156,7 +160,7 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
 
                     b.HasOne("ChatModule.Domain.Aggregates.User", "User")
                         .WithOne("ChatLink")
-                        .HasForeignKey("ChatModule.Domain.Aggregates.ActiveChatUserLink", "UserId")
+                        .HasForeignKey("ChatModule.Domain.Entities.ActiveChatUserLink", "UserId")
                         .HasConstraintName("fk_active_chat_user_links_users_user_id");
 
                     b.Navigation("Chat");
@@ -164,7 +168,7 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ChatModule.Domain.Aggregates.ChatMessage", b =>
+            modelBuilder.Entity("ChatModule.Domain.Entities.ChatMessage", b =>
                 {
                     b.HasOne("ChatModule.Domain.Aggregates.Chat", "Chat")
                         .WithMany("Messages")

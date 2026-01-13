@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SharedCore.Interfaces;
+using Wolverine;
 using Wolverine.EntityFrameworkCore;
 
 namespace Shared.Infrastructure.Persistence;
@@ -15,9 +16,14 @@ public class RepositoryOutbox<TContext, TEntity> : Repository<TContext, TEntity>
         _contextOutbox = contextOutbox;
     }
 
-    public async Task PublishEventAsync<T>(T @event, CancellationToken ct = default)
+    public ValueTask PublishEventAsync<T>(T @event)
     {
-        await _contextOutbox.PublishAsync(@event);
+        return _contextOutbox.PublishAsync(@event);
+    }
+
+    public ValueTask ScheduleEventAsync<T>(T @event, TimeSpan delay)
+    {
+        return _contextOutbox.ScheduleAsync(@event, delay);
     }
 
     public async Task SaveChangesAndFlushMessagesAsync(CancellationToken ct = default)

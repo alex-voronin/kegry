@@ -89,7 +89,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
                     UserId = otherUserId,
                     ByUserId = myUserId,
                     MeetingExpiresAt = meToOtherUserRelation.MeetingExpiresAt
-                }, ct: ct);
+                });
         }
 
         await _feedUserRelationRepository.SaveChangesAndFlushMessagesAsync(ct);
@@ -147,7 +147,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
                     new MeetingArrangedEvent.Participant(meToOtherUserRelation.MyUserId, me!.FullName),
                     new MeetingArrangedEvent.Participant(meToOtherUserRelation.OtherUserId, other!.FullName)
                 ]
-            }, ct: ct);
+            });
         return true;
     }
 }

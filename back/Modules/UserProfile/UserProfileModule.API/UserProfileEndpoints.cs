@@ -59,7 +59,7 @@ public class UserProfileEndpoints : IEndpoints
         await profileRepository.AddAsync(profile, ct);
 
         var @event = BuildUserChangedEvent(user, profile);
-        await profileRepository.PublishEventAsync(@event, ct);
+        await profileRepository.PublishEventAsync(@event);
         await profileRepository.SaveChangesAndFlushMessagesAsync(ct);
 
         return ApiResult.Empty;
@@ -103,7 +103,7 @@ public class UserProfileEndpoints : IEndpoints
         }
 
         var @event = BuildUserChangedEvent(user, userProfile);
-        await profileRepository.PublishEventAsync(@event, ct);
+        await profileRepository.PublishEventAsync(@event);
         await profileRepository.SaveChangesAndFlushMessagesAsync(ct);
 
         return ApiResult.Empty;

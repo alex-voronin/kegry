@@ -44,7 +44,7 @@ public class ExpiredChatsCollectorBackgroundService : BackgroundService
             {
                 ParticipantIdsFromDeletedChats = userIdsFromDeletedChats
             };
-            await chatRepository.PublishEventAsync(@event, ct);
+            await chatRepository.PublishEventAsync(@event);
         } while (userIdsFromDeletedChats.Count > 0);
 
         await transaction.SaveChangesAsync(ct);
