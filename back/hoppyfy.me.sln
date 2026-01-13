@@ -130,6 +130,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocationModule.Contracts", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocationModule.Application", "Modules\Location\LocationModule.Application\LocationModule.Application.csproj", "{634D7B7E-9F44-46A6-9DC3-DE2CB4A51239}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserProfileModule.Application", "Modules\UserProfile\UserProfileModule.Application\UserProfileModule.Application.csproj", "{8E02FAE8-0276-4BE1-AF95-87F4B126F05B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -348,6 +350,10 @@ Global
 		{634D7B7E-9F44-46A6-9DC3-DE2CB4A51239}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{634D7B7E-9F44-46A6-9DC3-DE2CB4A51239}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{634D7B7E-9F44-46A6-9DC3-DE2CB4A51239}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E02FAE8-0276-4BE1-AF95-87F4B126F05B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E02FAE8-0276-4BE1-AF95-87F4B126F05B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E02FAE8-0276-4BE1-AF95-87F4B126F05B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E02FAE8-0276-4BE1-AF95-87F4B126F05B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1CBC6F16-BB39-4743-B8CB-50987C4B7F47} = {8B4727C6-1303-46DA-9FCC-E230A877807C}
@@ -411,5 +417,6 @@ Global
 		{90B5EE11-26B4-40CB-9F48-345E33AE4FE0} = {2ED903D6-2067-49C1-BAFD-60F471404905}
 		{F828674C-8997-4230-8087-079CBD9CF3F5} = {81672CE4-AB28-46CB-B81C-8FFD3618816D}
 		{634D7B7E-9F44-46A6-9DC3-DE2CB4A51239} = {81672CE4-AB28-46CB-B81C-8FFD3618816D}
+		{8E02FAE8-0276-4BE1-AF95-87F4B126F05B} = {B24AC6CC-4596-4759-B0C8-348A3547DE1C}
 	EndGlobalSection
 EndGlobal

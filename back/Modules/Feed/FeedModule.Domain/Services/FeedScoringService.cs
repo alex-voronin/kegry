@@ -11,18 +11,18 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
 {
     private readonly IFeedCandidateRepository _feedCandidateRepository;
     private readonly ILocationRepository _locationRepository;
-    private readonly IUserProfileRepository _userProfileRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IFilterRepository _filterRepository;
 
     public FeedScoringService(
         IFeedCandidateRepository feedCandidateRepository,
         ILocationRepository locationRepository,
-        IUserProfileRepository userProfileRepository,
+        IUserRepository userRepository,
         IFilterRepository filterRepository)
     {
         _feedCandidateRepository = feedCandidateRepository;
         _locationRepository = locationRepository;
-        _userProfileRepository = userProfileRepository;
+        _userRepository = userRepository;
         _filterRepository = filterRepository;
     }
 
@@ -39,7 +39,7 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
             throw FeedExceptions.UserLocationIsUnknown(userId);
         }
 
-        var userProfile = await _userProfileRepository.GetByIdAsync(userId,
+        var userProfile = await _userRepository.GetByIdAsync(userId,
             asNoTracking: true,
             includes: [u => u.Hobbies],
             ct: ct);

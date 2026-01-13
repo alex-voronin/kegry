@@ -438,6 +438,10 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("gender");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)

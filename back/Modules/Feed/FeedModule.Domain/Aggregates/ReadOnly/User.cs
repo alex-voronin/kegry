@@ -11,6 +11,7 @@ public class User
     public string CoverImageS3Key { get; init; } = null!;
     public DateOnly Birthday { get; init; }
     public Gender Gender { get; init; }
+    public bool IsDeleted { get; set; }
 
     public IReadOnlyList<Hobby> Hobbies { get; init; } = new List<Hobby>();
 

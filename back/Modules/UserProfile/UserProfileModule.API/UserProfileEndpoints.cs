@@ -37,7 +37,7 @@ public class UserProfileEndpoints : IEndpoints
     private static async Task<ApiResult.EmptyResult> CreateUserProfile(
         [FromBody] CreateUserProfileRequest request,
         ClaimsPrincipal user,
-        IUserProfileRepository profileRepository,
+        IUserRepository repository,
         IHobbyService hobbyService,
         IS3StorageService storageService,
         CancellationToken ct)
@@ -56,11 +56,11 @@ public class UserProfileEndpoints : IEndpoints
             Gender = request.Gender,
             Hobbies = hobbyStubs
         };
-        await profileRepository.AddAsync(profile, ct);
+        await repository.AddAsync(profile, ct);
 
         var @event = BuildUserChangedEvent(user, profile);
-        await profileRepository.PublishEventAsync(@event);
-        await profileRepository.SaveChangesAndFlushMessagesAsync(ct);
+        await repository.PublishEventAsync(@event);
+        await repository.SaveChangesAndFlushMessagesAsync(ct);
 
         return ApiResult.Empty;
     }
@@ -68,13 +68,13 @@ public class UserProfileEndpoints : IEndpoints
     private static async Task<ApiResult.EmptyResult> PatchUserProfile(
         [FromBody] PatchUserProfileRequest request,
         ClaimsPrincipal user,
-        IUserProfileRepository profileRepository,
+        IUserRepository repository,
         IHobbyService hobbyService,
         IS3StorageService storageService,
         CancellationToken ct)
     {
         var userId = user.GetId();
-        var userProfile = await profileRepository.GetByIdAsync(userId, ct: ct);
+        var userProfile = await repository.GetByIdAsync(userId, ct: ct);
         if (userProfile == null)
         {
             throw UserProfileExceptions.ProfileNotFound(userId);
@@ -103,8 +103,8 @@ public class UserProfileEndpoints : IEndpoints
         }
 
         var @event = BuildUserChangedEvent(user, userProfile);
-        await profileRepository.PublishEventAsync(@event);
-        await profileRepository.SaveChangesAndFlushMessagesAsync(ct);
+        await repository.PublishEventAsync(@event);
+        await repository.SaveChangesAndFlushMessagesAsync(ct);
 
         return ApiResult.Empty;
     }
@@ -112,12 +112,12 @@ public class UserProfileEndpoints : IEndpoints
     private static async Task<ApiResult<GetUserProfileResponse>> GetUserProfile(
         [FromQuery] Guid? id,
         ClaimsPrincipal user,
-        IUserProfileRepository profileRepository,
+        IUserRepository repository,
         IS3StorageService storageService,
         CancellationToken ct)
     {
         var userId = id ?? user.GetId();
-        var profile = await profileRepository.GetByIdAsync(
+        var profile = await repository.GetByIdAsync(
             id: userId,
             asNoTracking: true,
             includes: [p => p.Hobbies],

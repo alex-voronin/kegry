@@ -12,6 +12,7 @@ public class UserProfileModuleStartup : AppModuleStartupBase<UserProfileContext>
             moduleAssemblies:
             [
                 typeof(Infrastructure.AssemblyMarker).Assembly,
+                typeof(Application.AssemblyMarker).Assembly,
                 typeof(Domain.AssemblyMarker).Assembly,
                 typeof(API.AssemblyMarker).Assembly
             ]

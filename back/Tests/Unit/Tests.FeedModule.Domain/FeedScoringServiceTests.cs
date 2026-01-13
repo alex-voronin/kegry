@@ -33,12 +33,12 @@ public class FeedScoringServiceTests
     [Theory, AutoNSubstituteData]
     internal async Task GetFeedAsync_WhenUserProfileIsMissing_ThenThrow(
         [Frozen] ILocationRepository locationRepository,
-        [Frozen] IUserProfileRepository userProfileRepository,
+        [Frozen] IUserRepository userRepository,
         FeedScoringService service,
         Guid userId)
     {
         SetupRepositoryData(locationRepository, userId);
-        userProfileRepository.GetByIdAsync(userId, asNoTracking: true,
+        userRepository.GetByIdAsync(userId, asNoTracking: true,
                 includes: Arg.Any<Expression<Func<User, object?>>[]>())
             .Returns((User?)null);
 
@@ -50,7 +50,7 @@ public class FeedScoringServiceTests
     [Theory, AutoNSubstituteData]
     internal async Task GetFeedAsync_WhenFilterIsMissing_ThenUseDefaultFilter(
         [Frozen] ILocationRepository locationRepository,
-        [Frozen] IUserProfileRepository userProfileRepository,
+        [Frozen] IUserRepository userRepository,
         [Frozen] IFilterRepository filterRepository,
         [Frozen] IFeedCandidateRepository feedCandidateRepository,
         FeedScoringService service,
@@ -58,7 +58,7 @@ public class FeedScoringServiceTests
     {
         var defaultFilter = Filter.CreateDefault(userId);
         var location = SetupRepositoryData(locationRepository, userId);
-        var userProfile = SetupRepositoryData(userProfileRepository, userId);
+        var userProfile = SetupRepositoryData(userRepository, userId);
         filterRepository.GetByIdAsync(userId, asNoTracking: true).Returns((Filter?)null);
 
         await service.GetFeedAsync(userId);
@@ -74,14 +74,14 @@ public class FeedScoringServiceTests
     [Theory, AutoNSubstituteData]
     internal async Task GetFeedAsync_WhenFilterExists_ThenUseIt(
         [Frozen] ILocationRepository locationRepository,
-        [Frozen] IUserProfileRepository userProfileRepository,
+        [Frozen] IUserRepository userRepository,
         [Frozen] IFilterRepository filterRepository,
         [Frozen] IFeedCandidateRepository feedCandidateRepository,
         FeedScoringService service,
         Guid userId)
     {
         SetupRepositoryData(locationRepository, userId);
-        SetupRepositoryData(userProfileRepository, userId);
+        SetupRepositoryData(userRepository, userId);
         var filter = new Filter
         {
             UserId = userId,
@@ -109,13 +109,13 @@ public class FeedScoringServiceTests
     [Theory, AutoNSubstituteData]
     internal async Task GetFeedAsync_WhenNoCandidatesFound_ThenReturnsEmptyResult(
         [Frozen] ILocationRepository locationRepository,
-        [Frozen] IUserProfileRepository userProfileRepository,
+        [Frozen] IUserRepository userRepository,
         [Frozen] IFeedCandidateRepository feedCandidateRepository,
         FeedScoringService service,
         Guid userId)
     {
         SetupRepositoryData(locationRepository, userId);
-        SetupRepositoryData(userProfileRepository, userId);
+        SetupRepositoryData(userRepository, userId);
 
         feedCandidateRepository.GetFeedCandidatesInRadius(
                 Arg.Any<User>(),
@@ -133,13 +133,13 @@ public class FeedScoringServiceTests
     [Theory, AutoNSubstituteData]
     internal async Task GetFeedAsync_WhenCandidatesFound_ThenRankByScore(
         [Frozen] ILocationRepository locationRepository,
-        [Frozen] IUserProfileRepository userProfileRepository,
+        [Frozen] IUserRepository userRepository,
         [Frozen] IFeedCandidateRepository feedCandidateRepository,
         FeedScoringService service,
         Guid userId)
     {
         SetupRepositoryData(locationRepository, userId);
-        var userProfile = SetupRepositoryData(userProfileRepository, userId);
+        var userProfile = SetupRepositoryData(userRepository, userId);
 
         var candidate1 = new FeedCandidate
         {
@@ -183,14 +183,14 @@ public class FeedScoringServiceTests
     [Theory, AutoNSubstituteData]
     internal async Task GetFeedAsync_WhenMoreCandidatesThanLimit_ThenReturnLimitedCount(
         [Frozen] ILocationRepository locationRepository,
-        [Frozen] IUserProfileRepository userProfileRepository,
+        [Frozen] IUserRepository userRepository,
         [Frozen] IFeedCandidateRepository feedCandidateRepository,
         FeedScoringService service,
         Guid userId)
     {
         var limit = 2;
         SetupRepositoryData(locationRepository, userId);
-        SetupRepositoryData(userProfileRepository, userId);
+        SetupRepositoryData(userRepository, userId);
 
         var candidates = Enumerable.Range(0, 3).Select(i => new FeedCandidate
         {
@@ -218,7 +218,7 @@ public class FeedScoringServiceTests
         return location;
     }
 
-    private User SetupRepositoryData(IUserProfileRepository userProfileRepository, Guid userId)
+    private User SetupRepositoryData(IUserRepository userRepository, Guid userId)
     {
         var userProfile = new User
         {
@@ -226,7 +226,7 @@ public class FeedScoringServiceTests
             Birthday = new DateOnly(1990, 1, 1),
             Hobbies = [new Hobby { Id = Guid.NewGuid(), Name = "Hiking" }]
         };
-        userProfileRepository.GetByIdAsync(userId,
+        userRepository.GetByIdAsync(userId,
                 asNoTracking: true,
                 includes: Arg.Any<Expression<Func<User, object?>>[]>())
             .Returns(userProfile);

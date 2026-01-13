@@ -10,5 +10,6 @@ public class UserProfileModuleWolverineSetup : IWolverineExtension
 {
     public void Configure(WolverineOptions options)
     {
+        options.Discovery.IncludeAssembly(typeof(Application.AssemblyMarker).Assembly);
     }
 }

@@ -12,7 +12,7 @@ using UserProfileModule.Infrastructure.Persistence;
 namespace UserProfileModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(UserProfileContext))]
-    [Migration("20260113153327_AddUserProfiles")]
+    [Migration("20260113170813_AddUserProfiles")]
     partial class AddUserProfiles
     {
         /// <inheritdoc />
@@ -440,6 +440,10 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("integer")
                         .HasColumnName("gender");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("LastName")
                         .IsRequired()

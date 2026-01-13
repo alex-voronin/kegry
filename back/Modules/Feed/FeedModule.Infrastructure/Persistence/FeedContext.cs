@@ -108,9 +108,9 @@ public class FeedContext : DbContext
         modelBuilder.Entity<User>(builder =>
         {
             builder.ToTable("users", "user_profile");
-            builder.HasKey(up => up.Id);
+            builder.HasKey(u => u.Id);
 
-            builder.HasMany(up => up.Hobbies)
+            builder.HasMany(u => u.Hobbies)
                 .WithMany(h => h.Users)
                 .UsingEntity(j =>
                 {
@@ -118,6 +118,7 @@ public class FeedContext : DbContext
                     j.Metadata.SetIsTableExcludedFromMigrations(true);
                 });
 
+            builder.HasQueryFilter(u => !u.IsDeleted);
             builder.Metadata.SetIsTableExcludedFromMigrations(true);
         });
 

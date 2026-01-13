@@ -9,20 +9,20 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
 {
     private readonly IFeedUserRelationRepository _feedUserRelationRepository;
     private readonly IFilterRepository _filterRepository;
-    private readonly IUserProfileRepository _userProfileRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IUserRatingRepository _userRatingRepository;
     private readonly TimeProvider _timeProvider;
 
     public UserActionsService(
         IFeedUserRelationRepository feedUserRelationRepository,
         IFilterRepository filterRepository,
-        IUserProfileRepository userProfileRepository,
+        IUserRepository userRepository,
         IUserRatingRepository userRatingRepository,
         TimeProvider timeProvider)
     {
         _feedUserRelationRepository = feedUserRelationRepository;
         _filterRepository = filterRepository;
-        _userProfileRepository = userProfileRepository;
+        _userRepository = userRepository;
         _userRatingRepository = userRatingRepository;
         _timeProvider = timeProvider;
     }
@@ -136,8 +136,8 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         // the potential race condition when multiple users invite the same user at the same time
         // is fixed by unq_feed_user_relation_active_meeting_per_user index
 
-        var me = await _userProfileRepository.GetByIdAsync(meToOtherUserRelation.MyUserId, asNoTracking: true, ct: ct);
-        var other = await _userProfileRepository.GetByIdAsync(meToOtherUserRelation.OtherUserId, asNoTracking: true,
+        var me = await _userRepository.GetByIdAsync(meToOtherUserRelation.MyUserId, asNoTracking: true, ct: ct);
+        var other = await _userRepository.GetByIdAsync(meToOtherUserRelation.OtherUserId, asNoTracking: true,
             ct: ct);
         await _feedUserRelationRepository.PublishEventAsync(
             new MeetingArrangedEvent

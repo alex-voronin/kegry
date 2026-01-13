@@ -3,4 +3,4 @@ using SharedCore.Interfaces;
 
 namespace FeedModule.Domain.Repositories;
 
-public interface IUserProfileRepository : IRepository<User>;
+public interface IUserRepository : IRepository<User>;

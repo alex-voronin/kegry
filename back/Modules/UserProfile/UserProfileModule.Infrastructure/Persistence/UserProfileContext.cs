@@ -21,23 +21,25 @@ public class UserProfileContext : DbContext
         modelBuilder.Entity<User>(builder =>
         {
             builder.ToTable("users");
-            builder.Property(up => up.Id).ValueGeneratedNever();
-            builder.Property(up => up.FirstName)
+            builder.Property(u => u.Id).ValueGeneratedNever();
+            builder.Property(u => u.FirstName)
                 .IsRequired()
                 .HasMaxLength(ValidationParameters.FirstNameMaxLength);
-            builder.Property(up => up.LastName)
+            builder.Property(u => u.LastName)
                 .IsRequired()
                 .HasMaxLength(ValidationParameters.LastNameMaxLength);
-            builder.Property(up => up.Bio)
+            builder.Property(u => u.Bio)
                 .HasMaxLength(ValidationParameters.BioMaxLength);
-            builder.Property(up => up.AvatarImageS3Key)
+            builder.Property(u => u.AvatarImageS3Key)
                 .HasMaxLength(ValidationParameters.S3KeyMaxLength);
-            builder.Property(up => up.CoverImageS3Key)
+            builder.Property(u => u.CoverImageS3Key)
                 .HasMaxLength(ValidationParameters.S3KeyMaxLength);
 
-            builder.HasMany(up => up.Hobbies)
+            builder.HasMany(u => u.Hobbies)
                 .WithMany(h => h.Users)
                 .UsingEntity(j => j.ToTable("user_hobby_link"));
+
+            builder.HasQueryFilter(u => !u.IsDeleted);
         });
 
         modelBuilder.Entity<Hobby>(builder =>

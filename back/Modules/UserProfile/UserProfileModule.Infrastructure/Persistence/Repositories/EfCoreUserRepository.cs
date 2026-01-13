@@ -5,9 +5,9 @@ using Wolverine.EntityFrameworkCore;
 
 namespace UserProfileModule.Infrastructure.Persistence.Repositories;
 
-internal class EfCoreUserProfileRepository : RepositoryOutbox<UserProfileContext, User>, IUserProfileRepository
+internal class EfCoreUserRepository : RepositoryOutbox<UserProfileContext, User>, IUserRepository
 {
-    public EfCoreUserProfileRepository(IDbContextOutbox<UserProfileContext> contextOutbox) : base(contextOutbox)
+    public EfCoreUserRepository(IDbContextOutbox<UserProfileContext> contextOutbox) : base(contextOutbox)
     {
     }
 }

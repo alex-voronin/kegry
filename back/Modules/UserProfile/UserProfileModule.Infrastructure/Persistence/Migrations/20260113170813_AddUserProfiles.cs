@@ -41,7 +41,8 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                     avatar_image_s3key = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     cover_image_s3key = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     birthday = table.Column<DateOnly>(type: "date", nullable: false),
-                    gender = table.Column<int>(type: "integer", nullable: false)
+                    gender = table.Column<int>(type: "integer", nullable: false),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
