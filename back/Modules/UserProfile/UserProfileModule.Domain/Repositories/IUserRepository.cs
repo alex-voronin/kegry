@@ -3,4 +3,4 @@ using UserProfileModule.Domain.Aggregates;
 
 namespace UserProfileModule.Domain.Repositories;
 
-public interface IUserRepository : IRepositoryOutbox<User>;
+public interface IUserRepository : IRepositoryOutbox<User>, ISoftDeleteRepository<User, Guid>;

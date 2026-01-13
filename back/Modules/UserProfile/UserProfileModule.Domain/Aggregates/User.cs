@@ -1,9 +1,10 @@
-﻿using SharedCore.Validation;
+﻿using SharedCore.Interfaces;
+using SharedCore.Validation;
 using SharedCore.ValueObjects;
 
 namespace UserProfileModule.Domain.Aggregates;
 
-public class User
+public class User : ISoftDeletable<Guid>
 {
     public Guid Id { get; init; }
 

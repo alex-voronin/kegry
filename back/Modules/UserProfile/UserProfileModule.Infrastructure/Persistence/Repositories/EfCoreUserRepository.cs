@@ -7,7 +7,17 @@ namespace UserProfileModule.Infrastructure.Persistence.Repositories;
 
 internal class EfCoreUserRepository : RepositoryOutbox<UserProfileContext, User>, IUserRepository
 {
-    public EfCoreUserRepository(IDbContextOutbox<UserProfileContext> contextOutbox) : base(contextOutbox)
+    private readonly ISoftDeleteImplementer<User, Guid> _softDeleteImplementer; 
+    
+    public EfCoreUserRepository(
+        IDbContextOutbox<UserProfileContext> contextOutbox, 
+        ISoftDeleteImplementer<User, Guid> softDeleteImplementer) : base(contextOutbox)
     {
+        _softDeleteImplementer = softDeleteImplementer;
+    }
+
+    public Task SoftDeleteAsync(Guid id, CancellationToken ct = default)
+    {
+        return _softDeleteImplementer.SoftDeleteAsync(id, ct);
     }
 }
