@@ -42,6 +42,12 @@ public class IntegrationApiClient
         return (await response.Content.ReadFromJsonAsync<TResp>(_options))!;
     }
 
+    public async Task<TResp> DeleteAsync<TResp>(string url)
+    {
+        var response = await _apiHttpClient.DeleteAsync(url);
+        return (await response.Content.ReadFromJsonAsync<TResp>(_options))!;
+    }
+
     public void SetAuth(AuthResponse authResponse)
     {
         DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResponse.AccessToken);

@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
 using SecurityModule.Contracts.Events;
 using SecurityModule.Domain.Exceptions;
@@ -213,8 +214,6 @@ internal class AuthenticationService : IAuthenticationService, IScoped
             await _refreshTokenRepository.DeleteByJtiAsync(jti);
             await _refreshTokenRepository.SaveChangesAsync();
         }
-
-        await _signInManager.SignOutAsync();
     }
 
     public async Task RequestPasswordResetAsync(string email)
@@ -246,7 +245,8 @@ internal class AuthenticationService : IAuthenticationService, IScoped
             throw SecurityExceptions.UserNotFound(userId);
         }
 
-        var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+        var result = await _userManager.ResetPasswordAsync(user, decodedToken, newPassword);
         if (!result.Succeeded)
         {
             var message = result.Errors.FirstOrDefault()?.Description ?? "Password reset failed";

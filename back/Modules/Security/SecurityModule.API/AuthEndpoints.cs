@@ -84,9 +84,7 @@ public class AuthEndpoints : IEndpoints
         );
     }
 
-    private static async Task<ApiResult.EmptyResult> Logout(
-        [FromBody] SignInRequest request,
-        IAuthenticationService service)
+    private static async Task<ApiResult.EmptyResult> Logout(IAuthenticationService service)
     {
         await service.LogoutAsync();
         return ApiResult.Empty;

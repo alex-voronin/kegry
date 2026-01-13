@@ -113,7 +113,7 @@ public class NotificationEndpointsTests : IAsyncLifetime
     [Fact]
     public async Task GivenFewUnseenNotifications_WhenUserGetsUnseenNotificationsCount_ThenReceivesCorrectCount()
     {
-        // 1. Arrange
+        // 1. Authorize
         var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("user3@example.com", "Password123!");
         var userId = Guid.Parse(authResponse.UserId);
         _factory.ApiClient.SetAuth(authResponse);
