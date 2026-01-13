@@ -8,7 +8,7 @@ public class FeedUserRelation
     public required Guid MyUserId { get; init; }
     public required Guid OtherUserId { get; init; }
 
-    public required decimal? Rating
+    public decimal? Rating
     {
         get;
         set
@@ -22,8 +22,9 @@ public class FeedUserRelation
         }
     }
 
-    public required bool IsBlocked { get; set; }
-    public required bool IsInMeeting { get; set; }
+    public bool IsBlocked { get; set; }
+    public bool IsInMeeting { get; set; }
+    public bool ShouldRate { get; set; }
     public required DateTimeOffset MeetingExpiresAt { get; set; }
     public required DateTimeOffset SkippedAt { get; set; }
     public required DateTimeOffset LastSeenAt { get; set; }

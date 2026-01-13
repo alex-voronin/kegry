@@ -7,12 +7,14 @@ namespace FeedModule.Application.Messaging.Chat;
 [WolverineHandler]
 public class ChatEventHandlers
 {
-    public static Task HandleAsync(
+    public static async Task HandleAsync(
         ChatsDeletedEvent @event,
         IFeedUserRelationRepository userRelationRepository,
         CancellationToken ct = default)
     {
         var userIds = @event.ParticipantIdsFromDeletedChats.SelectMany(ids => ids).Distinct().ToArray();
-        return userRelationRepository.ResetMeetingsAsync(userIds, ct);
+        await userRelationRepository.SetShouldRateAsync(userIds, ct);
+        await userRelationRepository.ResetMeetingsAsync(userIds, ct);
+        await userRelationRepository.SaveChangesAsync(ct);
     }
 }

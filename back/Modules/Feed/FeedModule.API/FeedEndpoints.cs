@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using FeedModule.API.Dto;
+using FeedModule.Domain.Repositories;
 using FeedModule.Domain.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -20,6 +21,7 @@ public class FeedEndpoints : IEndpoints
             .WithTags("Feed API")
             .RequireAuthorization();
         apiGroup.MapGet("/api/v1/feed", GetFeed);
+        apiGroup.MapGet("/api/v1/feed/status", GetFeedStatus);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/rating", PostUserRating);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/invite", InviteUser);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/skip", SkipUser);
@@ -55,6 +57,17 @@ public class FeedEndpoints : IEndpoints
 
         return ApiResult<GetFeedResponse>.Build(
             new GetFeedResponse(Feed: dtos)
+        );
+    }
+
+    private static async Task<ApiResult<GetFeedStatusResponse>> GetFeedStatus(
+        ClaimsPrincipal user,
+        IFeedUserRelationRepository repository,
+        CancellationToken ct)
+    {
+        var (isInMeeting, userIdToRate) = await repository.GetFeedStatusAsync(user.GetId(), ct);
+        return ApiResult<GetFeedStatusResponse>.Build(
+            new GetFeedStatusResponse(isInMeeting, userIdToRate)
         );
     }
 

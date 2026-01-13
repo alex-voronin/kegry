@@ -73,6 +73,7 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                     rating = table.Column<decimal>(type: "numeric(2,1)", nullable: true),
                     is_blocked = table.Column<bool>(type: "boolean", nullable: false),
                     is_in_meeting = table.Column<bool>(type: "boolean", nullable: false),
+                    should_rate = table.Column<bool>(type: "boolean", nullable: false),
                     meeting_expires_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     skipped_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     last_seen_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)

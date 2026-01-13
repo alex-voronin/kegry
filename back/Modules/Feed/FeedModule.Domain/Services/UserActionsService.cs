@@ -27,23 +27,27 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         _timeProvider = timeProvider;
     }
 
-    public async Task RateUserAsync(Guid myUserId, Guid otherUserId, decimal rating, CancellationToken ct)
+    public async Task RateUserAsync(Guid myUserId, Guid otherUserId, decimal? rating, CancellationToken ct)
     {
         var transaction = await _userRatingRepository
             .And(_feedUserRelationRepository)
             .StartTransactionAsync(ct);
 
         var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
+        feedUserRelation.ShouldRate = false;
+        
+        if (rating != null)
+        {
+            var oldRating = feedUserRelation.Rating ?? 0.0m;
+            await _userRatingRepository.UpsertRatingAtomic(
+                userId: otherUserId,
+                oldRating: oldRating,
+                newRating: rating.Value,
+                ct: ct);
 
-        var oldRating = feedUserRelation.Rating ?? 0.0m;
-        await _userRatingRepository.UpsertRatingAtomic(
-            userId: otherUserId,
-            oldRating: oldRating,
-            newRating: rating,
-            ct: ct);
-
-        feedUserRelation.Rating = rating;
-        feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
+            feedUserRelation.Rating = rating;
+            feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
+        }
 
         await transaction.SaveChangesAsync(ct);
         await transaction.CommitAsync(ct);
@@ -105,9 +109,6 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
                 Id = Guid.CreateVersion7(),
                 MyUserId = myUserId,
                 OtherUserId = otherUserId,
-                Rating = null,
-                IsBlocked = false,
-                IsInMeeting = false,
                 MeetingExpiresAt = DateTimeOffset.MinValue,
                 SkippedAt = DateTimeOffset.MinValue,
                 LastSeenAt = _timeProvider.GetUtcNow()

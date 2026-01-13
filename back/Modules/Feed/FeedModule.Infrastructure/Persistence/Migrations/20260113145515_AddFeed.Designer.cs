@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(FeedContext))]
-    [Migration("20260111090151_AddFeed")]
+    [Migration("20260113145515_AddFeed")]
     partial class AddFeed
     {
         /// <inheritdoc />
@@ -76,6 +76,10 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                     b.Property<decimal?>("Rating")
                         .HasColumnType("numeric(2,1)")
                         .HasColumnName("rating");
+
+                    b.Property<bool>("ShouldRate")
+                        .HasColumnType("boolean")
+                        .HasColumnName("should_rate");
 
                     b.Property<DateTimeOffset>("SkippedAt")
                         .HasColumnType("timestamp with time zone")

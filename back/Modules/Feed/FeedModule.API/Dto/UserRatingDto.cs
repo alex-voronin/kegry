@@ -1,3 +1,3 @@
 namespace FeedModule.API.Dto;
 
-public record UserRatingDto(decimal Value);
+public record UserRatingDto(decimal? Value);

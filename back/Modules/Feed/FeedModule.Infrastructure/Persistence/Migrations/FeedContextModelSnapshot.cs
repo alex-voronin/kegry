@@ -74,6 +74,10 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("numeric(2,1)")
                         .HasColumnName("rating");
 
+                    b.Property<bool>("ShouldRate")
+                        .HasColumnType("boolean")
+                        .HasColumnName("should_rate");
+
                     b.Property<DateTimeOffset>("SkippedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("skipped_at");
