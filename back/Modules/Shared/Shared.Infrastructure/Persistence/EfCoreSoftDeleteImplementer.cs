@@ -26,7 +26,7 @@ public class EfCoreSoftDeleteImplementer<TContext, TEntity, TId>
     {
         return _context
             .Set<TEntity>()
-            .Where(x => x.Id.Equals(id))
+            .Where(x => x.Id!.Equals(id))
             .ExecuteUpdateAsync(
                 setters => setters.SetProperty(x => x.IsDeleted, true),
                 ct);

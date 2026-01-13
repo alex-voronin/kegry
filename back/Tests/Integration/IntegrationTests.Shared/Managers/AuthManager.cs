@@ -63,8 +63,8 @@ public class AuthManager
                 FirstName: "FirstName",
                 LastName: "LastName",
                 Bio: "Bio",
-                AvatarImageUrl: TestConfig.S3.PublicUrl + "new-avatar.jpg",
-                CoverImageUrl: TestConfig.S3.PublicUrl + "new-cover-image.jpg",
+                AvatarImageUrl: TestConfig.S3.PublicUrl + "/avatar.jpg",
+                CoverImageUrl: TestConfig.S3.PublicUrl + "/cover-image.jpg",
                 Birthday: new DateOnly(1980, 1, 1),
                 Gender: Gender.Male,
                 HobbyIds: []
