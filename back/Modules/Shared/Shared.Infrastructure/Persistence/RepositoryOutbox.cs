@@ -30,4 +30,9 @@ public class RepositoryOutbox<TContext, TEntity> : Repository<TContext, TEntity>
     {
         await _contextOutbox.SaveChangesAndFlushMessagesAsync(ct);
     }
+
+    public async Task FlushOutgoingMessagesAsync()
+    {
+        await _contextOutbox.FlushOutgoingMessagesAsync();
+    }
 }

@@ -19,6 +19,7 @@ using Respawn.Graph;
 using Amazon.S3;
 using Amazon.S3.Model;
 using IntegrationTests.Shared.HttpClients;
+using Microsoft.Extensions.Time.Testing;
 using Xunit;
 
 namespace IntegrationTests.Shared;
@@ -101,6 +102,11 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
             pushSender.SendPushMessage(Arg.Any<PushMessage>())
                 .Returns(new SendResult(true, []));
             services.AddSingleton(pushSender);
+
+            var fakeTimeProvider = new FakeTimeProvider();
+            services.RemoveAll<TimeProvider>();
+            services.AddSingleton<TimeProvider>(fakeTimeProvider);
+            services.AddSingleton<FakeTimeProvider>(fakeTimeProvider);
 
             NotificationManager = new NotificationManager(emailSender: emailSender, pushSender: pushSender);
         });

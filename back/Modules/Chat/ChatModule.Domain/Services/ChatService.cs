@@ -134,5 +134,9 @@ internal class ChatService : DomainService<IChatRepository>, IChatService, IScop
 
         await transaction.SaveChangesAsync(ct);
         await transaction.CommitAsync(ct);
+        // We must wait until the transaction ends before publishing events,
+        // and we cannot call SaveChangesAndFlushMessagesAsync() on the DbContext before the end of the transaction
+        // because its implementation commits the transaction.
+        await Repository.FlushOutgoingMessagesAsync();
     }
 }

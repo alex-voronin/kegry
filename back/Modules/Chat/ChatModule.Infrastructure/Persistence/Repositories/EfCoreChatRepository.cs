@@ -14,11 +14,10 @@ public class EfCoreChatRepository : RepositoryOutbox<ChatContext, Chat>, IChatRe
 
     public Task<Chat?> GetActiveChatByUserId(Guid userId, CancellationToken ct = default)
     {
-        return Context.ActiveChatUserLinks
-            .Where(l => l.UserId == userId)
-            .Select(l => l.Chat)
+        return Context.Chats
+            .Where(c => c.UserLinks.Any(l => l.UserId == userId))
             .Include(c => c.UserLinks)
-            .ThenInclude(u => u.User)
+            .ThenInclude(ul => ul.User)
             .Include(c => c.Messages)
             .FirstOrDefaultAsync(ct);
     }

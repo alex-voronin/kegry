@@ -5,4 +5,5 @@ public interface IRepositoryOutbox<TEntity> : IRepository<TEntity> where TEntity
     public ValueTask PublishEventAsync<T>(T @event);
     public ValueTask ScheduleEventAsync<T>(T @event, TimeSpan delay);
     public Task SaveChangesAndFlushMessagesAsync(CancellationToken ct = default);
+    public Task FlushOutgoingMessagesAsync();
 }

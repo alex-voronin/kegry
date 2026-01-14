@@ -1,7 +1,10 @@
 using ChatModule.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Shared.Setup;
+using Wolverine.EntityFrameworkCore;
 
 namespace ChatModule.Setup;
 
@@ -24,5 +27,14 @@ public class ChatModuleStartup : AppModuleStartupBase<ChatContext>
     {
         base.Register(appBuilder, host);
         appBuilder.Services.AutoRegisterAssemblies(ModuleAssemblies);
+    }
+
+    protected override void RegisterEfCoreContexts(IServiceCollection services, string dbConnectionString)
+    {
+        services.AddDbContextWithWolverineIntegration<ChatContext>(options =>
+            options
+                .UseNpgsql(dbConnectionString)
+                .UseSnakeCaseNamingConvention()
+        );
     }
 }

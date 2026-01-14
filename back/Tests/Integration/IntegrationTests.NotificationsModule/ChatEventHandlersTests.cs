@@ -38,28 +38,32 @@ public class ChatEventHandlersTests : IAsyncLifetime
         var requestA = new UpdateFcmTokenRequest("devA", "tokenA");
         _factory.ApiClient.SetAuth(authResponseA);
         var tokenResponseA = await _factory.ApiClient
-            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken, requestA);
+            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+                requestA);
         tokenResponseA.Success.ShouldBeTrue();
 
         var requestB = new UpdateFcmTokenRequest("devB", "tokenB");
         _factory.ApiClient.SetAuth(authResponseB);
         var tokenResponseB = await _factory.ApiClient
-            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken, requestB);
+            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+                requestB);
         tokenResponseB.Success.ShouldBeTrue();
 
-        // 3. Send invites
-        _factory.ApiClient.SetAuth(authResponseA);
-        var inviteResponseA = await _factory.ApiClient
-            .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(userBId), null);
-        inviteResponseA.Success.ShouldBeTrue();
+        // 3. Send invites and await push notifications
+        await _factory.NotificationManager.AwaitPushNotifications(
+            codeToRun: async () =>
+            {
+                _factory.ApiClient.SetAuth(authResponseA);
+                var inviteResponseA = await _factory.ApiClient
+                    .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(userBId), null);
+                inviteResponseA.Success.ShouldBeTrue();
 
-        _factory.ApiClient.SetAuth(authResponseB);
-        var inviteResponseB = await _factory.ApiClient
-            .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(userAId), null);
-        inviteResponseB.Success.ShouldBeTrue();
-
-        // 4. Setup push notifications awaiting
-        const int expectedNotificationsCount = 2;
-        await _factory.NotificationManager.AwaitPushNotifications(expectedNotificationsCount, "Invitation accepted!");
+                _factory.ApiClient.SetAuth(authResponseB);
+                var inviteResponseB = await _factory.ApiClient
+                    .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(userAId), null);
+                inviteResponseB.Success.ShouldBeTrue();
+            },
+            expectedCount: 2,
+            expectedTitle: "Invitation accepted!");
     }
 }

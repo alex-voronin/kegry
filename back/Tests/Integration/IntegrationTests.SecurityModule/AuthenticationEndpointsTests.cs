@@ -182,7 +182,7 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task GivenUser_WhenRenewTokensWithValidTokenRefresh_ThenReturnsError()
+    public async Task GivenUser_WhenRenewTokensWithValidTokenRefresh_ThenReturnsNewTokens()
     {
         // 1. Authenticate
         var email = "user@example.com";
@@ -253,7 +253,7 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
         response.Success.ShouldBeFalse();
         response.Errors[0].Error.ShouldBe("Invalid or revoked access token");
     }
-    
+
     [Fact]
     public async Task GivenUser_WhenLogsInWithInvalidPassword_ThenErrorReturns()
     {
@@ -271,7 +271,7 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
         var request = new SignInRequest(Email: email, Password: "123456789Qwe");
         var signinResponse = await _factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
             ApiRoutes.Auth.Signin, request);
-        
+
         signinResponse.Success.ShouldBeFalse();
     }
 }

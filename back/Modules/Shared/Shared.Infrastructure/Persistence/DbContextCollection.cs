@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using SharedCore.Interfaces;
@@ -68,12 +67,18 @@ internal class DbContextCollection : IDbContextCollection
 
     public void SaveChanges()
     {
-        SaveDbContexts(_contexts);
+        foreach (var context in _contexts)
+        {
+            context.SaveChanges();
+        }
     }
 
     public async Task SaveChangesAsync(CancellationToken ct)
     {
-        await SaveDbContextsAsync(_contexts, ct);
+        foreach (var context in _contexts)
+        {
+            await context.SaveChangesAsync(ct);
+        }
     }
 
     protected virtual async Task<IDbContextTransaction> BeginTransaction(DbContext dbContext, CancellationToken ct)
@@ -87,21 +92,5 @@ internal class DbContextCollection : IDbContextCollection
         CancellationToken ct = default)
     {
         await context.Database.UseTransactionAsync(transaction.GetDbTransaction(), ct);
-    }
-
-    private static void SaveDbContexts(IEnumerable<DbContext> contexts)
-    {
-        foreach (var context in contexts)
-        {
-            context.SaveChanges();
-        }
-    }
-
-    private static async Task SaveDbContextsAsync(IEnumerable<DbContext> contexts, CancellationToken ct = default)
-    {
-        foreach (var context in contexts)
-        {
-            await context.SaveChangesAsync(ct);
-        }
     }
 }

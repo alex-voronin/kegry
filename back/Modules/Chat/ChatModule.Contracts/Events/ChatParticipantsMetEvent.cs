@@ -1,4 +1,4 @@
-namespace LocationModule.Contracts.Events;
+namespace ChatModule.Contracts.Events;
 
 public class ChatParticipantsMetEvent
 {

@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using Shared.Setup;
+using Wolverine.EntityFrameworkCore;
 
 namespace LocationModule.Setup;
 
@@ -31,7 +32,7 @@ public class LocationModuleStartup : AppModuleStartupBase<LocationContext>
 
     protected override void RegisterEfCoreContexts(IServiceCollection services, string dbConnectionString)
     {
-        services.AddDbContext<LocationContext>(options =>
+        services.AddDbContextWithWolverineIntegration<LocationContext>(options =>
             options
                 .UseNpgsql(dbConnectionString, npgsqlOptions => npgsqlOptions.UseNetTopologySuite())
                 .UseSnakeCaseNamingConvention()

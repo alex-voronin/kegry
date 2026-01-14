@@ -37,6 +37,11 @@ public static class ApiRoutes
         public const string CoverUploadUrl = "/api/v1/user-profile/cover/upload-url";
     }
 
+    public static class Location
+    {
+        public const string PostLocation = "/api/v1/location";
+    }
+
     public static class Chat
     {
         public const string ChatRoot = "/api/v1/chat";

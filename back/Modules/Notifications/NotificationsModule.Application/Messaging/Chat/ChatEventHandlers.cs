@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using ChatModule.Contracts.Events;
 using NotificationsModule.Application.Services;
 using Serilog;
@@ -45,7 +44,7 @@ public class ChatEventHandlers
         // We can't use Parallel.ForEachAsync here to speed up handling,
         // because sending push notifications code relies on the notification settings repository internally,
         // and, as we know, DbContext does not support parallel operations.
-        var errors = new ConcurrentBag<Exception>();
+        var errors = new List<Exception>();
         foreach (var participantIds in @event.ParticipantIdsFromDeletedChats)
         {
             if (participantIds.Length != 2)
@@ -72,9 +71,35 @@ public class ChatEventHandlers
             }
         }
 
-        if (!errors.IsEmpty)
+        if (errors.Count > 0)
         {
             throw new AggregateException(errors);
+        }
+    }
+
+    public static async Task HandleAsync(
+        ChatParticipantsMetEvent @event,
+        IPushNotificationStrategy pushNotificationStrategy,
+        CancellationToken ct = default)
+    {
+        if (@event.ParticipantIds.Length != 2)
+        {
+            throw new ArgumentException($"A chat can have only two participants, but {@event.ParticipantIds.Length} " +
+                                        $"were provided: {string.Join(", ", @event.ParticipantIds.Length)}");
+        }
+
+        foreach (var participantId in @event.ParticipantIds)
+        {
+            try
+            {
+                await pushNotificationStrategy.SendEndMeetingSuggestion(participantId, ct);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e,
+                    "An exception occurred while handling a {EventName}. UserId: {UserId}",
+                    nameof(ChatParticipantsMetEvent), participantId);
+            }
         }
     }
 }
