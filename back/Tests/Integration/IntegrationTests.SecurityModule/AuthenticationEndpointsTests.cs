@@ -45,7 +45,7 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
         var request = new SignUpRequest(Email: email, Password: "123456789Qwe");
 
         var signinResponse = await _factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
-            "/api/v1/auth/signup", request);
+            ApiRoutes.Auth.Signup, request);
 
         // 2. Check signup response
         signinResponse.Success.ShouldBeTrue();
@@ -73,7 +73,7 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
         var request = new SignUpRequest(Email: email, Password: "123456789Qwe");
 
         var signinResponse = await _factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
-            "/api/v1/auth/signup", request);
+            ApiRoutes.Auth.Signup, request);
 
         signinResponse.Success.ShouldBeFalse();
         signinResponse.Errors.First().Code.ShouldBe(nameof(ErrorCode.DoesNotExist));
@@ -252,5 +252,26 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
 
         response.Success.ShouldBeFalse();
         response.Errors[0].Error.ShouldBe("Invalid or revoked access token");
+    }
+    
+    [Fact]
+    public async Task GivenUser_WhenLogsInWithInvalidPassword_ThenErrorReturns()
+    {
+        // 1. Authenticate
+        var email = "user@example.com";
+        var auth = await _factory.AuthManager.CreateAndLoginUserAsync(email, "Password123!");
+        _factory.ApiClient.SetAuth(auth);
+
+        // 2. Log out
+        var logoutResponse = await _factory.ApiClient
+            .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, null);
+        logoutResponse.Success.ShouldBeTrue();
+
+        // 3. Sign in again
+        var request = new SignInRequest(Email: email, Password: "123456789Qwe");
+        var signinResponse = await _factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
+            ApiRoutes.Auth.Signin, request);
+        
+        signinResponse.Success.ShouldBeFalse();
     }
 }
