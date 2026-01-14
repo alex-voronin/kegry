@@ -1,4 +1,5 @@
 using ChatModule.Contracts.Events;
+using FeedModule.Contracts.Events;
 using FeedModule.Domain.Repositories;
 using Wolverine.Attributes;
 
@@ -15,6 +16,11 @@ public class ChatEventHandlers
         var userIds = @event.ParticipantIdsFromDeletedChats.SelectMany(ids => ids).Distinct().ToArray();
         await userRelationRepository.SetShouldRateAsync(userIds, ct);
         await userRelationRepository.ResetMeetingsAsync(userIds, ct);
-        await userRelationRepository.SaveChangesAsync(ct);
+        var meetingEndedEvent = new MeetingsEndedEvent()
+        {
+            ParticipantIdsFromDeletedChats = @event.ParticipantIdsFromDeletedChats,
+        };
+        await userRelationRepository.PublishEventAsync(meetingEndedEvent);
+        await userRelationRepository.SaveChangesAndFlushMessagesAsync(ct);
     }
 }

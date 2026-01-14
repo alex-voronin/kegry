@@ -14,7 +14,7 @@ public interface IPushBuilder
     PushMessage BuildUserInvitedPush(string[] fcmTokens);
     PushMessage BuildChatMessageReceivedPush(string[] fcmTokens, ChatMessageSentEvent @event);
     PushMessage BuildChatMessageReceivedSilentPush(string[] fcmTokens, ChatMessageSentEvent @event);
-    PushMessage BuildGoToRateUserScreenSilentPush(string[] fcmTokens, Guid rateeUserId);
+    PushMessage BuildOpenRateUserScreenSilentPush(string[] fcmTokens, Guid rateeUserId);
     PushMessage BuildEndMeetingSuggestionSilentPush(string[] fcmTokens);
 }
 
@@ -123,7 +123,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         return BuildPushMessages(fcmTokens, null, data);
     }
 
-    public PushMessage BuildGoToRateUserScreenSilentPush(string[] fcmTokens, Guid rateeUserId)
+    public PushMessage BuildOpenRateUserScreenSilentPush(string[] fcmTokens, Guid rateeUserId)
     {
         var data = new Dictionary<string, string>()
         {
