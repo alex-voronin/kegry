@@ -104,6 +104,7 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
             services.AddSingleton(pushSender);
 
             var fakeTimeProvider = new FakeTimeProvider();
+            fakeTimeProvider.SetUtcNow(DateTime.UtcNow);
             services.RemoveAll<TimeProvider>();
             services.AddSingleton<TimeProvider>(fakeTimeProvider);
             services.AddSingleton<FakeTimeProvider>(fakeTimeProvider);
@@ -120,11 +121,6 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
         return base.CreateHost(builder);
     }
 
-    public async Task ResetDatabaseAsync()
-    {
-        await _respawner.ResetAsync(_dbConnection);
-    }
-
     public async Task InitializeAsync()
     {
         await _dbContainer.StartAsync();
@@ -138,6 +134,20 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
         AuthManager = new AuthManager(ApiClient, Services);
 
         await InitializeRespawnerAsync(DbConnectionString);
+    }
+
+    public new async Task DisposeAsync()
+    {
+        await base.DisposeAsync();
+
+        await _dbConnection.DisposeAsync();
+        await _dbContainer.DisposeAsync();
+        await _minioContainer.DisposeAsync();
+    }
+
+    public async Task ResetDatabaseAsync()
+    {
+        await _respawner.ResetAsync(_dbConnection);
     }
 
     private async Task CreateTestBucketAsync()
@@ -168,15 +178,6 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
             BucketName = TestConfig.S3.BucketName,
             Policy = policyJson
         });
-    }
-
-    public new async Task DisposeAsync()
-    {
-        await base.DisposeAsync();
-
-        await _dbConnection.DisposeAsync();
-        await _dbContainer.DisposeAsync();
-        await _minioContainer.DisposeAsync();
     }
 
     private async Task InitializeRespawnerAsync(string dbConnectionString)

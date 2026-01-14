@@ -88,7 +88,7 @@ internal class ChatService : DomainService<IChatRepository>, IChatService, IScop
             CreatedAt = _timeProvider.GetUtcNow()
         };
 
-        chat.Messages.Add(message);
+        chat.AddMessage(message);
 
         var toUser = chat.UserLinks.First(l => l.UserId != userId).User;
         var fromUser = chat.UserLinks.First(l => l.UserId == userId).User;

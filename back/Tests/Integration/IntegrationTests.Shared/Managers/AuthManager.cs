@@ -27,7 +27,7 @@ public class AuthManager
         // 1. Sign up
         var signupRequest = new SignUpRequest(email, password);
         var signupResponse = await _apiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
-            "/api/v1/auth/signup", signupRequest);
+            ApiRoutes.Auth.Signup, signupRequest);
 
         signupResponse.Success.ShouldBeTrue();
         var userId = Guid.Parse(signupResponse.Result.UserId);
@@ -46,7 +46,7 @@ public class AuthManager
         // 3. Sign in again to get access token
         var signinRequest = new SignInRequest(email, password);
         var signinResponse = await _apiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
-            "/api/v1/auth/signin", signinRequest);
+            ApiRoutes.Auth.Signin, signinRequest);
 
         signinResponse.Success.ShouldBeTrue(
             $"Login failed with errors: {string.Join(", ", signinResponse.Errors.Select(e => e.Error))}");
@@ -58,7 +58,7 @@ public class AuthManager
 
     public async Task CreateDefaultProfileAndSubmitLocation()
     {
-        await _apiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>("/api/v1/user-profile",
+        await _apiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(ApiRoutes.UserProfile.Profile,
             new CreateUserProfileRequest(
                 FirstName: "FirstName",
                 LastName: "LastName",
@@ -71,7 +71,7 @@ public class AuthManager
             )
         );
 
-        var response = await _apiClient.PostAsync<UpdateLocationRequest, ApiResult.EmptyResult>("/api/v1/location",
+        var response = await _apiClient.PostAsync<UpdateLocationRequest, ApiResult.EmptyResult>(ApiRoutes.Location.PostLocation,
             new UpdateLocationRequest(Latitude: 0.0, Longitude: 0.0));
         response.Success.ShouldBeTrue();
     }

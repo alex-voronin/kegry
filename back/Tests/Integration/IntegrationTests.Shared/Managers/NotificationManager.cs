@@ -16,19 +16,56 @@ public class NotificationManager
         PushSender = pushSender;
     }
 
-    public async Task<int> AwaitPushNotifications(int count, string title, int timeoutSeconds = 5)
+    public Task AwaitPushNotifications(
+        Func<Task> codeToRun,
+        int expectedCount,
+        string expectedTitle,
+        int timeoutSeconds = 5)
+    {
+        return AwaitPushNotifications(
+            codeToRun: codeToRun,
+            pushPredicate: p => p.UnicastMessage!.Notification.Title == expectedTitle,
+            expectedCount: expectedCount,
+            timeoutSeconds: timeoutSeconds);
+    }
+
+    public Task AwaitSilentPushNotifications(
+        Func<Task> codeToRun,
+        int expectedCount,
+        string? expectedAction = null,
+        string? expectedUserAction = null,
+        int timeoutSeconds = 5)
+    {
+        return AwaitPushNotifications(
+            codeToRun: codeToRun,
+            pushPredicate: p => p.UnicastMessage!.Notification == null &&
+                                (
+                                    expectedAction == null ||
+                                    p.UnicastMessage!.Data[FcmPushBuilder.Keys.Action] == expectedAction
+                                ) &&
+                                (
+                                    expectedUserAction == null ||
+                                    p.UnicastMessage!.Data[FcmPushBuilder.Keys.UserAction] == expectedUserAction
+                                ),
+            expectedCount: expectedCount,
+            timeoutSeconds: timeoutSeconds);
+    }
+
+    public async Task AwaitPushNotifications(
+        Func<Task> codeToRun,
+        Predicate<PushMessage> pushPredicate,
+        int expectedCount,
+        int timeoutSeconds = 5)
     {
         var eventProcessedTcs = new TaskCompletionSource<bool>();
         var notificationsCount = 0;
-        const int expectedCalls = 2;
 
         PushSender.SendPushMessage(Arg.Any<PushMessage>())
             .Returns(args =>
             {
-                if (args[0] is PushMessage pushMessage &&
-                    pushMessage.UnicastMessage!.Notification.Title == title)
+                if (args[0] is PushMessage pushMessage && pushPredicate(pushMessage))
                 {
-                    if (Interlocked.Increment(ref notificationsCount) == expectedCalls)
+                    if (Interlocked.Increment(ref notificationsCount) >= expectedCount)
                     {
                         eventProcessedTcs.TrySetResult(true);
                     }
@@ -37,7 +74,7 @@ public class NotificationManager
                 return new SendResult(true, []);
             });
 
+        await codeToRun();
         await eventProcessedTcs.Task.WaitAsync(TimeSpan.FromSeconds(timeoutSeconds));
-        return expectedCalls;
     }
 }

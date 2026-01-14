@@ -9,7 +9,7 @@ namespace Tests.UserProfileModule.Domain;
 public class UserTests
 {
     [Fact]
-    public void UserProfile_GivenValidData_WhenInitialized_ThenReturnValidProfile()
+    public void UserProfile_GivenValidData_WhenInitialized_ThenReturnsValidProfile()
     {
         var id = Guid.CreateVersion7();
         var profile = CreateValidProfile(id);

@@ -19,7 +19,7 @@ public class FeedEndpointsTests : IAsyncLifetime
     public async Task DisposeAsync() => await _factory.ResetDatabaseAsync();
 
     [Fact]
-    public async Task GivenOneUser_WhenTheyOpenFeed_ThenThereNoUsers()
+    public async Task GivenOneUser_WhenOpensFeed_ThenReturnsNoUsers()
     {
         var email = "feedtest@example.com";
         var password = "Password123!";

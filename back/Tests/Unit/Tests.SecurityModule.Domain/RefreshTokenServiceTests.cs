@@ -23,7 +23,7 @@ public class RefreshTokenServiceTests
     };
 
     [Theory, AutoNSubstituteData]
-    internal async Task CreateRefreshTokenAsync_GivenUniqueJti_WhenLimitIsNotReached_ThenReturnValidToken(
+    internal async Task CreateRefreshTokenAsync_GivenUniqueJti_WhenLimitIsNotReached_ThenReturnsValidToken(
         [Frozen] FakeTimeProvider timeProvider,
         [Frozen] IRefreshTokenRepository repository,
         RefreshTokenService service

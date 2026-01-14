@@ -3,6 +3,8 @@ using System.Text;
 using IntegrationTests.Shared;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using NotificationsModule.Infrastructure.Transport.Emails;
 using NSubstitute;
 using SecurityModule.API.Dto;

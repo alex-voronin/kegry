@@ -20,7 +20,7 @@ public class Chat : ISoftDeletable<Guid>
     }
 
     private readonly List<ChatMessage> _messages = new List<ChatMessage>();
-    public ICollection<ChatMessage> Messages
+    public IReadOnlyList<ChatMessage> Messages
     {
         get => _messages;
         init => _messages = new List<ChatMessage>(value);

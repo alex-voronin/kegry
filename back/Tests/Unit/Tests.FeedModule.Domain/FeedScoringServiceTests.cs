@@ -181,7 +181,7 @@ public class FeedScoringServiceTests
     }
 
     [Theory, AutoNSubstituteData]
-    internal async Task GetFeedAsync_WhenMoreCandidatesThanLimit_ThenReturnLimitedCount(
+    internal async Task GetFeedAsync_WhenMoreCandidatesThanLimit_ThenReturnsLimitedCount(
         [Frozen] ILocationRepository locationRepository,
         [Frozen] IUserRepository userRepository,
         [Frozen] IFeedCandidateRepository feedCandidateRepository,
