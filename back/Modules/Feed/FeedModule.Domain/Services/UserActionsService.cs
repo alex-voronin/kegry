@@ -88,17 +88,42 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         }
     }
 
+    public async Task<Filter> GetFilterAsync(Guid userId, CancellationToken ct)
+    {
+        var filter = await _filterRepository.GetByIdAsync(userId, asNoTracking: true, ct: ct);
+        return filter ?? Filter.CreateDefault(userId);
+    }
+
+    public async Task UpdateFilterAsync(Guid userId, Filter filter, CancellationToken ct)
+    {
+        var existingFilter = await _filterRepository.GetByIdAsync(userId, ct: ct);
+        if (existingFilter == null)
+        {
+            await _filterRepository.AddAsync(filter with { UserId = userId }, ct);
+        }
+        else
+        {
+            // Update existing filter properties
+            // Since it's a record, we can use 'with' but we need to ensure the repository tracks it or we replace it.
+            // EfCoreFilterRepository inherits from Repository<FeedContext, Filter>, which usually handles updates if the entity is tracked.
+            // However, records might need special handling depending on the Repository implementation.
+            // Let's assume a simple replacement if it's not tracking properly, or just update the tracked entity.
+
+            _filterRepository.Delete(existingFilter);
+            await _filterRepository.AddAsync(filter with { UserId = userId }, ct);
+        }
+
+        await _filterRepository.SaveChangesAsync(ct);
+    }
+
     // It's unsafe because can throw exception when two users invite the same user at the same time.
     // Since the user can be only in one meeting.
     private async Task InviteUserUnsafeAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
     {
-        var filter = await _filterRepository.GetByIdAsync(myUserId, asNoTracking: true, ct: ct);
-        filter ??= Filter.CreateDefault(myUserId);
-
         var now = _timeProvider.GetUtcNow();
         var meToOtherUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
         meToOtherUserRelation.MeetingExpiresAt =
-            _timeProvider.GetUtcNow().AddMinutes(filter.GetMeetingExpirationMinutesFromNow());
+            _timeProvider.GetUtcNow().AddMinutes(FeedParameters.MeetingExpirationTimeInDays);
         meToOtherUserRelation.LastSeenAt = now;
 
         var otherToMeUserRelation = await _feedUserRelationRepository.GetAsync(otherUserId, myUserId, false, ct);

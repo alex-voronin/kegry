@@ -26,6 +26,8 @@ public class FeedEndpoints : IEndpoints
         apiGroup.MapPost("/api/v1/feed/{id:guid}/invite", InviteUser);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/skip", SkipUser);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/block", BlockUser);
+        apiGroup.MapGet("/api/v1/feed/filter", GetFilter);
+        apiGroup.MapPut("/api/v1/feed/filter", UpdateFilter);
     }
 
     private static async Task<ApiResult<GetFeedResponse>> GetFeed(
@@ -108,6 +110,42 @@ public class FeedEndpoints : IEndpoints
         CancellationToken ct)
     {
         await userActionsService.InviteUserAsync(user.GetId(), id, ct);
+        return ApiResult.Empty;
+    }
+
+    private static async Task<ApiResult<GetFilterResponse>> GetFilter(
+        ClaimsPrincipal user,
+        IUserActionsService userActionsService,
+        CancellationToken ct)
+    {
+        var filter = await userActionsService.GetFilterAsync(user.GetId(), ct);
+        var dto = new FilterDto(
+            RadiusMeters: filter.RadiusMeters,
+            AgeFrom: filter.AgeFrom,
+            AgeTo: filter.AgeTo,
+            Gender: filter.Gender,
+            HobbyIds: filter.HobbyIds);
+
+        return ApiResult<GetFilterResponse>.Build(new GetFilterResponse(dto));
+    }
+
+    private static async Task<ApiResult.EmptyResult> UpdateFilter(
+        [FromBody] UpdateFilterRequest request,
+        ClaimsPrincipal user,
+        IUserActionsService userActionsService,
+        CancellationToken ct)
+    {
+        var domainFilter = new Domain.Aggregates.Filter
+        {
+            UserId = user.GetId(),
+            RadiusMeters = request.Filter.RadiusMeters,
+            AgeFrom = request.Filter.AgeFrom,
+            AgeTo = request.Filter.AgeTo,
+            Gender = request.Filter.Gender,
+            HobbyIds = request.Filter.HobbyIds
+        };
+
+        await userActionsService.UpdateFilterAsync(user.GetId(), domainFilter, ct);
         return ApiResult.Empty;
     }
 }

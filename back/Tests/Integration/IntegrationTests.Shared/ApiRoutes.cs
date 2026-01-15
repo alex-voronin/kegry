@@ -25,11 +25,12 @@ public static class ApiRoutes
     public static class Feed
     {
         public const string GetFeed = "/api/v1/feed";
-        public const string GetStatus = $"/api/v1/feed/status";
+        public const string GetStatus = "/api/v1/feed/status";
         public static string RateUser(string userId) => $"/api/v1/feed/{userId}/rating";
         public static string InviteUser(string userId) => $"/api/v1/feed/{userId}/invite";
         public static string BlockUser(string userId) => $"/api/v1/feed/{userId}/block";
         public static string SkipUser(string userId) => $"/api/v1/feed/{userId}/skip";
+        public const string Filter = "/api/v1/feed/filter";
     }
 
     public static class UserProfile

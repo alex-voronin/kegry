@@ -142,7 +142,6 @@ public class FeedScoringServiceCalculateScoreTests
         {
             UserId = userProfile.Id,
             RadiusMeters = FilterDistance,
-            MeetingDeadline = MeetingDeadline.Now,
             AgeFrom = null,
             AgeTo = null,
             Gender = null,

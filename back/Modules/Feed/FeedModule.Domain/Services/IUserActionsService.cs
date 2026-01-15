@@ -1,3 +1,5 @@
+using FeedModule.Domain.Aggregates;
+
 namespace FeedModule.Domain.Services;
 
 public interface IUserActionsService
@@ -6,4 +8,6 @@ public interface IUserActionsService
     Task BlockUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct);
     Task SkipUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct);
     Task InviteUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct);
+    Task<Filter> GetFilterAsync(Guid userId, CancellationToken ct);
+    Task UpdateFilterAsync(Guid userId, Filter filter, CancellationToken ct);
 }

@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(FeedContext))]
-    [Migration("20260113154034_AddFeed")]
+    [Migration("20260115172202_AddFeed")]
     partial class AddFeed
     {
         /// <inheritdoc />
@@ -123,10 +123,6 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid[]")
                         .HasColumnName("hobby_ids");
 
-                    b.Property<int>("MeetingDeadline")
-                        .HasColumnType("integer")
-                        .HasColumnName("meeting_deadline");
-
                     b.Property<int>("RadiusMeters")
                         .HasColumnType("integer")
                         .HasColumnName("radius_meters");
@@ -207,6 +203,10 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("integer")
                         .HasColumnName("gender");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("LastName")
                         .IsRequired()

@@ -4,7 +4,6 @@ using FeedModule.Domain.Aggregates;
 using FeedModule.Domain.Aggregates.ReadOnly;
 using FeedModule.Domain.Repositories;
 using FeedModule.Domain.Services;
-using FeedModule.Domain.ValueObjects;
 using NetTopologySuite.Geometries;
 using NSubstitute;
 using SharedCore.Exceptions;
@@ -86,7 +85,6 @@ public class FeedScoringServiceTests
         {
             UserId = userId,
             RadiusMeters = 5000,
-            MeetingDeadline = MeetingDeadline.Now,
             AgeFrom = null,
             AgeTo = null,
             Gender = null,

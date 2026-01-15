@@ -37,7 +37,6 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                 {
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     radius_meters = table.Column<int>(type: "integer", nullable: false),
-                    meeting_deadline = table.Column<int>(type: "integer", nullable: false),
                     age_from = table.Column<int>(type: "integer", nullable: true),
                     age_to = table.Column<int>(type: "integer", nullable: true),
                     gender = table.Column<int>(type: "integer", nullable: true),

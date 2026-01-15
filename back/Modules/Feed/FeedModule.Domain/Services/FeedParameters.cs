@@ -9,4 +9,5 @@ internal static class FeedParameters
     internal const double HobbiesWeightInScore = 0.43;
     internal const double AgeWeightInScore = 0.32;
     internal const double RatingWeightInScore = 0.05;
+    internal const double MeetingExpirationTimeInDays = 2;
 }

@@ -58,21 +58,36 @@ public class AuthManager
 
     public async Task CreateDefaultProfileAndSubmitLocation()
     {
-        await _apiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(ApiRoutes.UserProfile.Profile,
+        await CreateProfile();
+        await SubmitLocation();
+    }
+
+    public async Task CreateProfile(
+        string firstName = "Main",
+        string lastName = "MainLastName",
+        Gender gender = Gender.Male,
+        DateOnly? birthday = null,
+        Guid[]? hobbyIds = null)
+    {
+        var response = await _apiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(ApiRoutes.UserProfile.Profile,
             new CreateUserProfileRequest(
-                FirstName: "FirstName",
-                LastName: "LastName",
+                FirstName: firstName,
+                LastName: lastName,
                 Bio: "Bio",
                 AvatarImageUrl: TestConfig.S3.PublicUrl + "/avatar.jpg",
                 CoverImageUrl: TestConfig.S3.PublicUrl + "/cover-image.jpg",
-                Birthday: new DateOnly(1980, 1, 1),
-                Gender: Gender.Male,
-                HobbyIds: []
+                Birthday: birthday ?? new DateOnly(1980, 1, 1),
+                Gender: gender,
+                HobbyIds: hobbyIds ?? []
             )
         );
+        response.Success.ShouldBeTrue();
+    }
 
+    public async Task SubmitLocation(double latitude = 0.0, double longitude = 0.0)
+    {
         var response = await _apiClient.PostAsync<UpdateLocationRequest, ApiResult.EmptyResult>(ApiRoutes.Location.PostLocation,
-            new UpdateLocationRequest(Latitude: 0.0, Longitude: 0.0));
+            new UpdateLocationRequest(Latitude: latitude, Longitude: longitude));
         response.Success.ShouldBeTrue();
     }
 }
