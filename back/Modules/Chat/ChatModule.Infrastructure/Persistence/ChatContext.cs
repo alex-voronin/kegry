@@ -35,7 +35,7 @@ public class ChatContext : DbContext
         {
             builder.ToTable("chats");
             builder.Property(x => x.Id).ValueGeneratedNever();
-            
+
             builder.HasQueryFilter(x => !x.IsDeleted);
 
             builder

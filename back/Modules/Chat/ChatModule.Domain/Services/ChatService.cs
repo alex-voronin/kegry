@@ -68,12 +68,15 @@ internal class ChatService : DomainService<IChatRepository>, IChatService, IScop
 
     public Task<Chat?> GetActiveChatAsync(Guid userId, CancellationToken ct = default)
     {
-        return Repository.GetActiveChatByUserId(userId, ct);
+        return Repository.GetActiveChatByUserId(userId, loadMessages: true, ct: ct);
     }
 
     public async Task AddNewMessageAsync(Guid userId, string messageText, CancellationToken ct = default)
     {
-        var chat = await Repository.GetActiveChatByUserId(userId, ct);
+        // It's cheaper to load the entire chat with its messages in a single query
+        // than load the chat without messages and then query the message count,
+        // because a chat can't have more than 60 messages.
+        var chat = await Repository.GetActiveChatByUserId(userId, loadMessages: true, ct: ct);
         if (chat == null)
         {
             throw ChatExceptions.ChatNotFound(userId);
@@ -111,7 +114,7 @@ internal class ChatService : DomainService<IChatRepository>, IChatService, IScop
             .And(_activeChatUserLinkRepository)
             .StartTransactionAsync(ct);
 
-        var chat = await Repository.GetActiveChatByUserId(userId, ct);
+        var chat = await Repository.GetActiveChatByUserId(userId, loadMessages: false, ct: ct);
         if (chat == null)
         {
             return;

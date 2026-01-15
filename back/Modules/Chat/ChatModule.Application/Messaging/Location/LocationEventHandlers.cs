@@ -30,7 +30,7 @@ public static class ChatParticipantsMetEventHandler
         CancellationToken ct)
     {
         var userId = @event.Event.UserIds.First();
-        var chat = await chatRepository.GetActiveChatByUserId(userId, ct);
+        var chat = await chatRepository.GetActiveChatByUserId(userId, loadMessages: false, ct: ct);
         if (chat != null)
         {
             chat.ParticipantsMet = true;

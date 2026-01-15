@@ -12,14 +12,24 @@ public class EfCoreChatRepository : RepositoryOutbox<ChatContext, Chat>, IChatRe
     {
     }
 
-    public Task<Chat?> GetActiveChatByUserId(Guid userId, CancellationToken ct = default)
+    public Task<Chat?> GetActiveChatByUserId(Guid userId, bool loadMessages = true, CancellationToken ct = default)
     {
-        return Context.Chats
+        IQueryable<Chat> query = Context.Chats
             .Where(c => c.UserLinks.Any(l => l.UserId == userId))
             .Include(c => c.UserLinks)
-            .ThenInclude(ul => ul.User)
-            .Include(c => c.Messages)
-            .FirstOrDefaultAsync(ct);
+            .ThenInclude(ul => ul.User);
+        if (loadMessages)
+        {
+            query = query.Include(c => c.Messages);
+        }
+
+        return query.FirstOrDefaultAsync(ct);
+    }
+
+    public Task<int> GetMessageCountAsync(Guid chatId, Guid userId, CancellationToken ct = default)
+    {
+        return Context.Messages
+            .CountAsync(m => m.ChatId == chatId && m.FromUserId == userId, ct);
     }
 
     public async Task MarkExpiredChatsAsDeleted(CancellationToken ct = default)
