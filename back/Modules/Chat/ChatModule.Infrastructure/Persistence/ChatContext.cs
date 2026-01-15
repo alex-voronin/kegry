@@ -28,12 +28,6 @@ public class ChatContext : DbContext
             builder.Property(x => x.LastName).HasMaxLength(100);
             builder.Property(x => x.AvatarImageS3Key).HasMaxLength(128);
 
-            builder
-                .HasOne(u => u.ChatLink)
-                .WithOne(l => l.User)
-                .HasForeignKey<ActiveChatUserLink>(l => l.UserId)
-                .IsRequired(false);
-
             builder.HasQueryFilter(x => !x.IsDeleted);
         });
 
@@ -41,12 +35,7 @@ public class ChatContext : DbContext
         {
             builder.ToTable("chats");
             builder.Property(x => x.Id).ValueGeneratedNever();
-
-            builder
-                .HasMany(c => c.UserLinks)
-                .WithOne(l => l.Chat)
-                .HasForeignKey(l => l.ChatId);
-
+            
             builder.HasQueryFilter(x => !x.IsDeleted);
 
             builder
@@ -57,11 +46,19 @@ public class ChatContext : DbContext
         modelBuilder.Entity<ActiveChatUserLink>(builder =>
         {
             builder.ToTable("active_chat_user_links");
-            builder.HasKey(x => x.UserId);
+            builder.HasKey(l => l.UserId);
+            builder.Property(l => l.UserId).ValueGeneratedNever();
 
-            builder.HasOne(uc => uc.Chat)
-                .WithMany()
-                .HasForeignKey(uc => uc.ChatId);
+            builder.HasOne(l => l.Chat)
+                .WithMany(c => c.UserLinks)
+                .HasForeignKey(l => l.ChatId)
+                .IsRequired();
+
+            builder
+                .HasOne(l => l.User)
+                .WithOne(u => u.ChatLink)
+                .HasForeignKey<ActiveChatUserLink>(l => l.UserId)
+                .IsRequired();
         });
 
         modelBuilder.Entity<ChatMessage>(builder =>

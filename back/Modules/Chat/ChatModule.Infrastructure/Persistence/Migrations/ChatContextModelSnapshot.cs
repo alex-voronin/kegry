@@ -99,18 +99,11 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("chat_id");
 
-                    b.Property<Guid?>("ChatId1")
-                        .HasColumnType("uuid")
-                        .HasColumnName("chat_id1");
-
                     b.HasKey("UserId")
                         .HasName("pk_active_chat_user_links");
 
                     b.HasIndex("ChatId")
                         .HasDatabaseName("ix_active_chat_user_links_chat_id");
-
-                    b.HasIndex("ChatId1")
-                        .HasDatabaseName("ix_active_chat_user_links_chat_id1");
 
                     b.ToTable("active_chat_user_links", "meetings");
                 });
@@ -151,20 +144,17 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("ChatModule.Domain.Entities.ActiveChatUserLink", b =>
                 {
                     b.HasOne("ChatModule.Domain.Aggregates.Chat", "Chat")
-                        .WithMany()
+                        .WithMany("UserLinks")
                         .HasForeignKey("ChatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_active_chat_user_links_chats_chat_id");
 
-                    b.HasOne("ChatModule.Domain.Aggregates.Chat", null)
-                        .WithMany("UserLinks")
-                        .HasForeignKey("ChatId1")
-                        .HasConstraintName("fk_active_chat_user_links_chats_chat_id1");
-
                     b.HasOne("ChatModule.Domain.Aggregates.User", "User")
                         .WithOne("ChatLink")
                         .HasForeignKey("ChatModule.Domain.Entities.ActiveChatUserLink", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("fk_active_chat_user_links_users_user_id");
 
                     b.Navigation("Chat");

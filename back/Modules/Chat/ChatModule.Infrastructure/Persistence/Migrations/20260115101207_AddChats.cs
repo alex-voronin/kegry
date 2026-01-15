@@ -75,8 +75,7 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    chat_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    chat_id1 = table.Column<Guid>(type: "uuid", nullable: true)
+                    chat_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -89,17 +88,12 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_active_chat_user_links_chats_chat_id1",
-                        column: x => x.chat_id1,
-                        principalSchema: "meetings",
-                        principalTable: "chats",
-                        principalColumn: "id");
-                    table.ForeignKey(
                         name: "fk_active_chat_user_links_users_user_id",
                         column: x => x.user_id,
                         principalSchema: "meetings",
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -107,12 +101,6 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                 schema: "meetings",
                 table: "active_chat_user_links",
                 column: "chat_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_active_chat_user_links_chat_id1",
-                schema: "meetings",
-                table: "active_chat_user_links",
-                column: "chat_id1");
 
             migrationBuilder.CreateIndex(
                 name: "ix_chat_messages_chat_id",
