@@ -11,7 +11,7 @@ namespace FeedModule.Infrastructure.Persistence.Repositories;
 internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
 {
     private readonly FeedContext _context;
-    private TimeProvider _timeProvider;
+    private readonly TimeProvider _timeProvider;
 
     public EfCoreFeedCandidateRepository(FeedContext context, TimeProvider timeProvider)
     {
@@ -29,7 +29,7 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
     {
         var today = DateOnly.FromDateTime(_timeProvider.GetUtcNow().DateTime);
         var now = _timeProvider.GetUtcNow();
-        var skipCutoff = now.AddDays(skippedUserCutOffInDays);
+        var skipCutoff = now.AddDays(-skippedUserCutOffInDays);
 
         var query = _context.Users.AsNoTracking()
             .Join(

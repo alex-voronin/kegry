@@ -99,8 +99,7 @@ public class ChatEndpointsTests : IAsyncLifetime
         await _factory.NotificationManager.AwaitSilentPushNotifications(
             codeToRun: async () =>
             {
-                var fakeTimeProvider = _factory.Services.GetRequiredService<FakeTimeProvider>();
-                fakeTimeProvider.SetUtcNow(DateTime.UtcNow + TimeSpan.FromHours(1));
+                _factory.FakeTimeProvider.SetUtcNow(DateTime.UtcNow + TimeSpan.FromHours(1));
 
                 _factory.ApiClient.SetAuth(authA);
                 var locationA = await _factory.ApiClient.PostAsync<UpdateLocationRequest, ApiResult.EmptyResult>(

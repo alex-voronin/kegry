@@ -1,6 +1,7 @@
 using FeedModule.Contracts.Events;
 using FeedModule.Domain.Aggregates;
 using FeedModule.Domain.Repositories;
+using Serilog;
 using SharedCore.Services.LifeTimes;
 
 namespace FeedModule.Domain.Services;
@@ -70,6 +71,26 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
     }
 
     public async Task InviteUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
+    {
+        try
+        {
+            await InviteUserUnsafeAsync(myUserId, otherUserId, ct);
+        }
+        catch (Exception e)
+        {
+            var isInMeeting = await _feedUserRelationRepository.IsInMeetingAsync(otherUserId, ct);
+            if (!isInMeeting)
+            {
+                throw;
+            }
+            Log.Information(e, "User {UserId} tried to invite {OtherUserId}, but he is in meeting already",
+                myUserId, otherUserId);
+        }
+    }
+
+    // It's unsafe because can throw exception when two users invite the same user at the same time.
+    // Since the user can be only in one meeting.
+    private async Task InviteUserUnsafeAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
     {
         var filter = await _filterRepository.GetByIdAsync(myUserId, asNoTracking: true, ct: ct);
         filter ??= Filter.CreateDefault(myUserId);

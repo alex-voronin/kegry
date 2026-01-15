@@ -9,14 +9,13 @@ namespace IntegrationTests.Shared.HttpClients;
 public class IntegrationApiClient
 {
     private readonly HttpClient _apiHttpClient;
+
     private readonly JsonSerializerOptions _options = new JsonSerializerOptions(JsonSerializerDefaults.Web)
     {
         Converters = { new JsonStringEnumConverter() }
     };
 
     public IntegrationApiClient(HttpClient apiHttpClient) => _apiHttpClient = apiHttpClient;
-
-    private HttpRequestHeaders DefaultRequestHeaders => _apiHttpClient.DefaultRequestHeaders;
 
     public async Task<TResp> GetAsync<TResp>(string url)
     {
@@ -50,6 +49,15 @@ public class IntegrationApiClient
 
     public void SetAuth(AuthResponse authResponse)
     {
-        DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResponse.AccessToken);
+        _apiHttpClient.SetAuth(authResponse);
+    }
+}
+
+public static class TestHttpClientExtensions
+{
+    public static void SetAuth(this HttpClient client, AuthResponse authResponse)
+    {
+        client.DefaultRequestHeaders
+            .Authorization = new AuthenticationHeaderValue("Bearer", authResponse.AccessToken);
     }
 }

@@ -9,10 +9,10 @@ namespace Tests.FeedModule.Domain;
 
 public class FeedScoringServiceCalculateScoreTests
 {
-    private const double DistanceWeight = FeedScoringParameters.DistanceWeightInScore;
-    private const double HobbiesWeight = FeedScoringParameters.HobbiesWeightInScore;
-    private const double AgeWeight = FeedScoringParameters.AgeWeightInScore;
-    private const double RatingWeightInScore = FeedScoringParameters.RatingWeightInScore;
+    private const double DistanceWeight = FeedParameters.DistanceWeightInScore;
+    private const double HobbiesWeight = FeedParameters.HobbiesWeightInScore;
+    private const double AgeWeight = FeedParameters.AgeWeightInScore;
+    private const double RatingWeightInScore = FeedParameters.RatingWeightInScore;
     private const int FilterDistance = 30000;
 
     [Fact]

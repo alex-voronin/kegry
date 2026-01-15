@@ -28,7 +28,7 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
 
     public async Task<FeedCandidate[]> GetFeedAsync(
         Guid userId,
-        int limit = 30,
+        int limit = FeedParameters.FeedLength,
         CancellationToken ct = default)
     {
         var filter = await _filterRepository.GetByIdAsync(userId, asNoTracking: true, ct: ct);
@@ -51,15 +51,15 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
         var candidates = await _feedCandidateRepository.GetFeedCandidatesInRadius(
             user: userProfile,
             userCoordinates: userLocation.Coordinates,
-            limit: FeedScoringParameters.UserLimitPerDatabaseQuery,
-            skippedUserCutOffInDays: FeedScoringParameters.SkippedUserCutOffInDays,
+            limit: FeedParameters.UserLimitPerDatabaseQuery,
+            skippedUserCutOffInDays: FeedParameters.SkippedUserCutOffInDays,
             filter: filter,
             ct: ct);
 
         return RankCandidates(userProfile, candidates, filter, limit);
     }
 
-    private FeedCandidate[] RankCandidates(
+    private static FeedCandidate[] RankCandidates(
         User user,
         FeedCandidate[] candidates,
         Filter filter,
@@ -109,9 +109,9 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
 
         //TODO: add inactivity time to the scoring calculation formula
 
-        return FeedScoringParameters.DistanceWeightInScore * distanceScore +
-               FeedScoringParameters.HobbiesWeightInScore * hobbiesScore +
-               FeedScoringParameters.AgeWeightInScore * ageScore +
-               FeedScoringParameters.RatingWeightInScore * ratingScore;
+        return FeedParameters.DistanceWeightInScore * distanceScore +
+               FeedParameters.HobbiesWeightInScore * hobbiesScore +
+               FeedParameters.AgeWeightInScore * ageScore +
+               FeedParameters.RatingWeightInScore * ratingScore;
     }
 }

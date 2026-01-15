@@ -39,6 +39,7 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
     public S3Client S3Client { get; init; } = new S3Client();
     public AuthManager AuthManager { get; private set; } = null!;
     public NotificationManager NotificationManager { get; private set; } = null!;
+    public FakeTimeProvider FakeTimeProvider { get; init; } = new FakeTimeProvider();
 
     private readonly IContainer _dbContainer =
         new ContainerBuilder("kartoza/postgis:18-3.6--v2025.11.24")
@@ -103,11 +104,10 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
                 .Returns(new SendResult(true, []));
             services.AddSingleton(pushSender);
 
-            var fakeTimeProvider = new FakeTimeProvider();
-            fakeTimeProvider.SetUtcNow(DateTime.UtcNow);
+            FakeTimeProvider.SetUtcNow(DateTime.UtcNow);
             services.RemoveAll<TimeProvider>();
-            services.AddSingleton<TimeProvider>(fakeTimeProvider);
-            services.AddSingleton<FakeTimeProvider>(fakeTimeProvider);
+            services.AddSingleton<TimeProvider>(FakeTimeProvider);
+            services.AddSingleton<FakeTimeProvider>(FakeTimeProvider);
 
             NotificationManager = new NotificationManager(emailSender: emailSender, pushSender: pushSender);
         });

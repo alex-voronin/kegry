@@ -1,7 +1,8 @@
 namespace FeedModule.Domain.Services;
 
-internal static class FeedScoringParameters
+internal static class FeedParameters
 {
+    internal const int FeedLength = 30;
     internal const int UserLimitPerDatabaseQuery = 1000;
     internal const int SkippedUserCutOffInDays = 1;
     internal const double DistanceWeightInScore = 0.19;
