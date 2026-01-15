@@ -1,4 +1,5 @@
 using IntegrationTests.Shared;
+using IntegrationTests.Shared.Managers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using NotificationModule.Domain.Aggregates;
@@ -10,31 +11,28 @@ using Shouldly;
 namespace IntegrationTests.NotificationsModule;
 
 [Collection("IntegrationTests")]
-public class NotificationEndpointsTests : IAsyncLifetime
+public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
 {
-    private readonly IntegrationWebApplicationFactory _factory;
-
-    public NotificationEndpointsTests(IntegrationWebApplicationFactory factory)
+    public NotificationEndpointsTests(IntegrationWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     public Task InitializeAsync() => Task.CompletedTask;
-    public Task DisposeAsync() => _factory.ResetDatabaseAsync();
+    public Task DisposeAsync() => ContainerManager.ResetDatabaseAsync();
 
     [Fact]
     public async Task GivenAuthorizedUserWithTwoPagesOfNotifications_WhenUserGetsTheSecondPage_ThenReceivesTheSecondPage()
     {
         // 1. Authorize
-        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("user1@example.com", "Password123!");
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("user1@example.com", "Password123!");
         var userId = Guid.Parse(authResponse.UserId);
-        _factory.ApiClient.SetAuth(authResponse);
+        Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Create the profile and notification user as well
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 3. Save notifications to the database
-        using (var scope = _factory.Services.CreateScope())
+        using (var scope = Factory.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
             for (int i = 0; i < 20; i++)
@@ -55,7 +53,7 @@ public class NotificationEndpointsTests : IAsyncLifetime
         }
 
         // 4. Get the notifications page
-        var response = await _factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
+        var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
             ApiRoutes.Notifications.GetNotificationsPaginated(10, 10));
 
         // 5. Check the response
@@ -72,15 +70,15 @@ public class NotificationEndpointsTests : IAsyncLifetime
     public async Task GivenAuthorizedUserUnseenNotifications_WhenUserGetsUnseenNotifications_ThenTheirCountDecreases()
     {
         // 1. Authorize
-        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("user2@example.com", "Password123!");
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("user2@example.com", "Password123!");
         var userId = Guid.Parse(authResponse.UserId);
-        _factory.ApiClient.SetAuth(authResponse);
+        Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Create the profile and notification user as well
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 3. Create an unseen notification
-        using (var scope = _factory.Services.CreateScope())
+        using (var scope = Factory.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
 
@@ -97,12 +95,12 @@ public class NotificationEndpointsTests : IAsyncLifetime
         }
 
         // 4. Get notifications
-        var response = await _factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
+        var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
             ApiRoutes.Notifications.GetNotificationsPaginated(0, 10));
 
         // 3. Check that the notification is marked as seen
         response.Success.ShouldBeTrue();
-        using (var scope = _factory.Services.CreateScope())
+        using (var scope = Factory.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
             var notification = await context.Notifications.FirstAsync(x => x.UserId == userId);
@@ -114,14 +112,14 @@ public class NotificationEndpointsTests : IAsyncLifetime
     public async Task GivenFewUnseenNotifications_WhenUserGetsUnseenNotificationsCount_ThenReceivesCorrectCount()
     {
         // 1. Authorize
-        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("user3@example.com", "Password123!");
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("user3@example.com", "Password123!");
         var userId = Guid.Parse(authResponse.UserId);
-        _factory.ApiClient.SetAuth(authResponse);
+        Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Create the profile and notification user as well
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
-        using (var scope = _factory.Services.CreateScope())
+        using (var scope = Factory.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
             context.Notifications.Add(new Notification
@@ -155,7 +153,7 @@ public class NotificationEndpointsTests : IAsyncLifetime
         }
 
         // 3. Get unseen count
-        var response = await _factory.ApiClient.GetAsync<ApiResult<int>>(ApiRoutes.Notifications.GetUnseenCount);
+        var response = await Factory.ApiClient.GetAsync<ApiResult<int>>(ApiRoutes.Notifications.GetUnseenCount);
 
         // 4. Check response
         response.Success.ShouldBeTrue();

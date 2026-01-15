@@ -1,5 +1,4 @@
 using IntegrationTests.Shared;
-using Xunit;
 
 namespace IntegrationTests.UserProfileModule;
 

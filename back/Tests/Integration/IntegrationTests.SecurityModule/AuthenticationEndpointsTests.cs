@@ -3,6 +3,7 @@ using System.Text;
 using IntegrationTests.Shared;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.RegularExpressions;
+using IntegrationTests.Shared.Managers;
 using NotificationsModule.Infrastructure.Transport.Emails;
 using NSubstitute;
 using SecurityModule.API.Dto;
@@ -14,23 +15,20 @@ using Shouldly;
 namespace IntegrationTests.SecurityModule;
 
 [Collection("IntegrationTests")]
-public class AuthenticationEndpointsTests : IAsyncLifetime
+public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
 {
-    public Task InitializeAsync() => Task.CompletedTask;
-    public async Task DisposeAsync() => await _factory.ResetDatabaseAsync();
-
-    private readonly IntegrationWebApplicationFactory _factory;
-
-    public AuthenticationEndpointsTests(IntegrationWebApplicationFactory factory)
+    public AuthenticationEndpointsTests(IntegrationWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
+
+    public Task InitializeAsync() => Task.CompletedTask;
+    public async Task DisposeAsync() => await ContainerManager.ResetDatabaseAsync();
 
     [Fact]
     public async Task GivenNoUsers_WhenUserSignsUp_ThenUserIsRedirectedToEmailVerificationAndEmailIsSent()
     {
         string capturedCode = null!;
-        await _factory.NotificationManager.EmailSender
+        await Factory.NotificationManager.EmailSender
             .SendEmailAsync(Arg.Do<Email>(e =>
             {
                 var match = Regex.Match(e.Body, @"is (\d+)");
@@ -44,7 +42,7 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
         var email = "asd@gmail.com";
         var request = new SignUpRequest(Email: email, Password: "123456789Qwe");
 
-        var signinResponse = await _factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
+        var signinResponse = await Factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
             ApiRoutes.Auth.Signup, request);
 
         // 2. Check signup response
@@ -57,7 +55,7 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
 
         // 3. Confirm Email
         var confirmRequest = new ConfirmEmailRequest(signinResponse.Result.UserId, capturedCode);
-        var confirmResponse = await _factory.ApiClient.PostAsync<ConfirmEmailRequest, ApiResult<AuthResponse>>(
+        var confirmResponse = await Factory.ApiClient.PostAsync<ConfirmEmailRequest, ApiResult<AuthResponse>>(
             ApiRoutes.Auth.ConfirmEmail, confirmRequest);
 
         // 4. Check confirmation response
@@ -72,7 +70,7 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
         var email = "asd@asldk.com";
         var request = new SignUpRequest(Email: email, Password: "123456789Qwe");
 
-        var signinResponse = await _factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
+        var signinResponse = await Factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
             ApiRoutes.Auth.Signup, request);
 
         signinResponse.Success.ShouldBeFalse();
@@ -84,7 +82,7 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
     {
         var request = new SignInRequest(Email: "asd@gmail.com", Password: "123456789Qwe");
 
-        var signinResponse = await _factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
+        var signinResponse = await Factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
             ApiRoutes.Auth.Signin, request);
 
         signinResponse.Success.ShouldBeTrue();
@@ -97,7 +95,7 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
     {
         var email = "asd@gmail.com";
         var password = "123456789Qwe";
-        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync(email, password);
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync(email, password);
 
         var handler = new JwtSecurityTokenHandler()
         {
@@ -129,7 +127,7 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
     public async Task GivenUserWithResetToken_WhenPasswordResetConfirmed_ThenCanSignInWithNewPassword()
     {
         string capturedToken = null!;
-        await _factory.NotificationManager.EmailSender
+        await Factory.NotificationManager.EmailSender
             .SendEmailAsync(Arg.Do<Email>(e =>
             {
                 var match = Regex.Match(e.Body, @"<a href=""https:\/\/hoppyfy\.me\/password-reset\?token=(.+)"">");
@@ -140,26 +138,26 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
         var email = "user@example.com";
         var oldPassword = "OldPassword123!";
         var newPassword = "NewPassword123!";
-        var auth = await _factory.AuthManager.CreateAndLoginUserAsync(email, oldPassword);
+        var auth = await Factory.AuthManager.CreateAndLoginUserAsync(email, oldPassword);
         var userId = auth.UserId;
 
         // 2. Reset password
         var requestReset = new RequestPasswordResetRequest(email);
-        await _factory.ApiClient.PostAsync<RequestPasswordResetRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PostAsync<RequestPasswordResetRequest, ApiResult.EmptyResult>(
             ApiRoutes.Auth.RequestPasswordReset, requestReset);
 
         capturedToken.ShouldNotBeNullOrEmpty();
 
         // 3. Confirm password reset 
         var confirmRequest = new ConfirmPasswordResetRequest(userId, capturedToken, newPassword);
-        var confirmResponse = await _factory.ApiClient.PostAsync<ConfirmPasswordResetRequest, ApiResult.EmptyResult>(
+        var confirmResponse = await Factory.ApiClient.PostAsync<ConfirmPasswordResetRequest, ApiResult.EmptyResult>(
             ApiRoutes.Auth.ConfirmPasswordReset, confirmRequest);
 
         confirmResponse.Success.ShouldBeTrue();
 
         // 4. Ensure that we can sign in with the new password
         var signinRequest = new SignInRequest(email, newPassword);
-        var signinResponse = await _factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
+        var signinResponse = await Factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
             ApiRoutes.Auth.Signin, signinRequest);
         signinResponse.Success.ShouldBeTrue();
     }
@@ -169,12 +167,12 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
     {
         // 1. Authenticate
         var email = "user@example.com";
-        var auth = await _factory.AuthManager.CreateAndLoginUserAsync(email, "Password123!");
+        var auth = await Factory.AuthManager.CreateAndLoginUserAsync(email, "Password123!");
         var userId = auth.UserId;
 
         // 2. Confirm password reset
         var confirmRequest = new ConfirmPasswordResetRequest(userId, "invalid-token", "NewPassword123!");
-        var confirmResponse = await _factory.ApiClient.PostAsync<ConfirmPasswordResetRequest, ApiResult.EmptyResult>(
+        var confirmResponse = await Factory.ApiClient.PostAsync<ConfirmPasswordResetRequest, ApiResult.EmptyResult>(
             ApiRoutes.Auth.ConfirmPasswordReset, confirmRequest);
 
         // 3. Check response
@@ -186,13 +184,13 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
     {
         // 1. Authenticate
         var email = "user@example.com";
-        var auth = await _factory.AuthManager.CreateAndLoginUserAsync(email, "Password123!");
+        var auth = await Factory.AuthManager.CreateAndLoginUserAsync(email, "Password123!");
 
         auth.RefreshToken.ShouldNotBeNullOrEmpty();
 
         // 2. Renew token
         var request = new RenewTokensRequest(auth.RefreshToken!);
-        var response = await _factory.ApiClient.PostAsync<RenewTokensRequest, ApiResult<AuthResponse>>(
+        var response = await Factory.ApiClient.PostAsync<RenewTokensRequest, ApiResult<AuthResponse>>(
             ApiRoutes.Auth.RenewTokens, request);
 
         response.Success.ShouldBeTrue();
@@ -204,7 +202,7 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
     public async Task GivenUser_WhenRenewTokensWithInvalidRefreshToken_ThenReturnsError()
     {
         var request = new RenewTokensRequest("invalid-refresh-token");
-        var response = await _factory.ApiClient.PostAsync<RenewTokensRequest, ApiResult<AuthResponse>>(
+        var response = await Factory.ApiClient.PostAsync<RenewTokensRequest, ApiResult<AuthResponse>>(
             ApiRoutes.Auth.RenewTokens, request);
 
         response.Success.ShouldBeFalse();
@@ -216,16 +214,16 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
         // 1. Authenticate
         var email = "user@example.com";
         var password = "Password123!";
-        var auth = await _factory.AuthManager.CreateAndLoginUserAsync(email, password);
-        _factory.ApiClient.SetAuth(auth);
+        var auth = await Factory.AuthManager.CreateAndLoginUserAsync(email, password);
+        Factory.ApiClient.SetAuth(auth);
 
         // 2. Delete account
-        var deleteResponse = await _factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(ApiRoutes.Auth.Account);
+        var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(ApiRoutes.Auth.Account);
         deleteResponse.Success.ShouldBeTrue();
 
         // 3. Sign in again
         var signinRequest = new SignInRequest(email, password);
-        var signinResponse = await _factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
+        var signinResponse = await Factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
             ApiRoutes.Auth.Signin, signinRequest);
 
         // 4. Ensure that signup is required 
@@ -237,17 +235,17 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
     public async Task GivenUser_WhenLoggedOut_ThenInvalidatesRefreshToken()
     {
         // 1. Authenticate
-        var auth = await _factory.AuthManager.CreateAndLoginUserAsync("user@example.com", "Password123!");
-        _factory.ApiClient.SetAuth(auth);
+        var auth = await Factory.AuthManager.CreateAndLoginUserAsync("user@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(auth);
 
         // 2. Log out
-        var logoutResponse = await _factory.ApiClient
+        var logoutResponse = await Factory.ApiClient
             .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, null);
         logoutResponse.Success.ShouldBeTrue();
 
         // 3. Renew token
         var request = new RenewTokensRequest(auth.RefreshToken!);
-        var response = await _factory.ApiClient.PostAsync<RenewTokensRequest, ApiResult<AuthResponse>>(
+        var response = await Factory.ApiClient.PostAsync<RenewTokensRequest, ApiResult<AuthResponse>>(
             ApiRoutes.Auth.RenewTokens, request);
 
         response.Success.ShouldBeFalse();
@@ -259,17 +257,17 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
     {
         // 1. Authenticate
         var email = "user@example.com";
-        var auth = await _factory.AuthManager.CreateAndLoginUserAsync(email, "Password123!");
-        _factory.ApiClient.SetAuth(auth);
+        var auth = await Factory.AuthManager.CreateAndLoginUserAsync(email, "Password123!");
+        Factory.ApiClient.SetAuth(auth);
 
         // 2. Log out
-        var logoutResponse = await _factory.ApiClient
+        var logoutResponse = await Factory.ApiClient
             .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, null);
         logoutResponse.Success.ShouldBeTrue();
 
         // 3. Sign in again
         var request = new SignInRequest(Email: email, Password: "123456789Qwe");
-        var signinResponse = await _factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
+        var signinResponse = await Factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
             ApiRoutes.Auth.Signin, request);
 
         signinResponse.Success.ShouldBeFalse();

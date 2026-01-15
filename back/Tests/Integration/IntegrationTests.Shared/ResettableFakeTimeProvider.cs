@@ -20,7 +20,7 @@ public sealed class ResettableTimeProvider : TimeProvider
         {
             return _inner.GetUtcNow();
         }
-    } 
+    }
 
     public void Advance(TimeSpan delta)
     {

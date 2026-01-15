@@ -1,4 +1,5 @@
 using IntegrationTests.Shared;
+using IntegrationTests.Shared.Managers;
 using Serilog;
 using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
@@ -9,24 +10,21 @@ using UserProfileModule.API.Dto;
 namespace IntegrationTests.UserProfileModule;
 
 [Collection("IntegrationTests")]
-public class UserProfileEndpointsTests : IAsyncLifetime
+public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
 {
-    private readonly IntegrationWebApplicationFactory _factory;
-
-    public UserProfileEndpointsTests(IntegrationWebApplicationFactory factory)
+    public UserProfileEndpointsTests(IntegrationWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     public Task InitializeAsync() => Task.CompletedTask;
-    public Task DisposeAsync() => _factory.ResetDatabaseAsync();
+    public Task DisposeAsync() => ContainerManager.ResetDatabaseAsync();
 
     [Fact]
     public async Task GivenAuthenticatedUser_WhenUserCreatesProfile_ThenProfileCreated()
     {
         // 1. Sign in
-        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
-        _factory.ApiClient.SetAuth(authResponse);
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Create profile
         var request = new CreateUserProfileRequest(
@@ -45,7 +43,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
             ]
         );
 
-        var response = await _factory.ApiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(
+        var response = await Factory.ApiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(
             ApiRoutes.UserProfile.Profile, request);
 
         if (!response.Success)
@@ -55,7 +53,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
 
         // 3. Check response
         response.Success.ShouldBeTrue();
-        var getResponse = await _factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
+        var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
         getResponse.Success.ShouldBeTrue();
         getResponse.Result.UserProfile.ShouldSatisfyAllConditions(
              p => p.FirstName.ShouldBe(request.FirstName),
@@ -73,9 +71,9 @@ public class UserProfileEndpointsTests : IAsyncLifetime
     public async Task GivenExistingProfile_WhenUserUpdatesProfile_ThenProfileUpdated()
     {
         // 1. Sign in and create profile
-        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
-        _factory.ApiClient.SetAuth(authResponse);
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authResponse);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Update profile
         var request = new PatchUserProfileRequest(
@@ -89,7 +87,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
             HobbyIds: [Guid.Parse("33b2bf1f-e351-0658-5139-5ab721f5e935")]
         );
 
-        var response = await _factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
+        var response = await Factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
             ApiRoutes.UserProfile.Profile, request);
 
         if (!response.Success)
@@ -99,7 +97,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
         response.Success.ShouldBeTrue();
 
         // 3. Check response
-        var getResponse = await _factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
+        var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
         getResponse.Success.ShouldBeTrue();
         getResponse.Result.UserProfile.ShouldSatisfyAllConditions(
             p => p.FirstName.ShouldBe(request.FirstName),
@@ -117,12 +115,12 @@ public class UserProfileEndpointsTests : IAsyncLifetime
     public async Task GivenExistingProfile_WhenUserUpdatesAvatar_ThenOnlyAvatarUpdated()
     {
         // 1. Sign in and create profile
-        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
-        _factory.ApiClient.SetAuth(authResponse);
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authResponse);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Get profile before update
-        var getBeforeUpdateResponse = await _factory.ApiClient
+        var getBeforeUpdateResponse = await Factory.ApiClient
             .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
 
         // 3. Update profile
@@ -137,7 +135,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
             HobbyIds: null
         );
 
-        var response = await _factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
+        var response = await Factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
             ApiRoutes.UserProfile.Profile, request);
 
         if (!response.Success)
@@ -147,7 +145,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
         response.Success.ShouldBeTrue();
 
         // 3. Check response
-        var getAfterUpdateResponse = await _factory.ApiClient
+        var getAfterUpdateResponse = await Factory.ApiClient
             .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
         getAfterUpdateResponse.Success.ShouldBeTrue();
         getAfterUpdateResponse.Result.UserProfile.ShouldSatisfyAllConditions(
@@ -166,12 +164,12 @@ public class UserProfileEndpointsTests : IAsyncLifetime
     public async Task GivenExistingProfile_WhenUserUpdatesCoverImage_ThenOnlyCoverImageUpdated()
     {
         // 1. Sign in and create profile
-        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
-        _factory.ApiClient.SetAuth(authResponse);
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authResponse);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Get profile before update
-        var getBeforeUpdateResponse = await _factory.ApiClient
+        var getBeforeUpdateResponse = await Factory.ApiClient
             .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
 
         // 3. Update profile
@@ -186,7 +184,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
             HobbyIds: null
         );
 
-        var response = await _factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
+        var response = await Factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
             ApiRoutes.UserProfile.Profile, request);
 
         if (!response.Success)
@@ -196,7 +194,7 @@ public class UserProfileEndpointsTests : IAsyncLifetime
         response.Success.ShouldBeTrue();
 
         // 3. Check response
-        var getAfterUpdateResponse = await _factory.ApiClient
+        var getAfterUpdateResponse = await Factory.ApiClient
             .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
         getAfterUpdateResponse.Success.ShouldBeTrue();
         getAfterUpdateResponse.Result.UserProfile.ShouldSatisfyAllConditions(
@@ -215,11 +213,11 @@ public class UserProfileEndpointsTests : IAsyncLifetime
     public async Task GivenNoProfile_WhenUserGetsProfile_ThenReturnsNotFound()
     {
         // 1. Sign in
-        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
-        _factory.ApiClient.SetAuth(authResponse);
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Get profile
-        var response = await _factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
+        var response = await Factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
 
         // 3. Check response
         response.Success.ShouldBeFalse();
@@ -230,11 +228,11 @@ public class UserProfileEndpointsTests : IAsyncLifetime
     public async Task GivenAuthenticatedUser_WhenUserGetsAvatarUploadUrl_ThenReturnsUrl()
     {
         // 1. Sign in
-        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
-        _factory.ApiClient.SetAuth(authResponse);
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Get upload url
-        var response = await _factory.ApiClient.PostAsync<object?, ApiResult<GetPresignedUrlResponse>>(
+        var response = await Factory.ApiClient.PostAsync<object?, ApiResult<GetPresignedUrlResponse>>(
             ApiRoutes.UserProfile.AvatarUploadUrl, null);
 
         // 3. Check response
@@ -247,11 +245,11 @@ public class UserProfileEndpointsTests : IAsyncLifetime
     public async Task GivenAuthenticatedUser_WhenUserGetsCoverUploadUrl_ThenReturnsUrl()
     {
         // 1. Sign in
-        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
-        _factory.ApiClient.SetAuth(authResponse);
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Get upload url
-        var response = await _factory.ApiClient.PostAsync<object?, ApiResult<GetPresignedUrlResponse>>(
+        var response = await Factory.ApiClient.PostAsync<object?, ApiResult<GetPresignedUrlResponse>>(
             ApiRoutes.UserProfile.CoverUploadUrl, null);
 
         // 3. Check response
@@ -264,11 +262,11 @@ public class UserProfileEndpointsTests : IAsyncLifetime
     public async Task GivenAuthenticatedUser_WhenUserUploadsImageToS3_ThenTheyCanDownloadIt()
     {
         // 1. Sign in
-        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
-        _factory.ApiClient.SetAuth(authResponse);
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Get upload url
-        var response = await _factory.ApiClient.PostAsync<object?, ApiResult<GetPresignedUrlResponse>>(
+        var response = await Factory.ApiClient.PostAsync<object?, ApiResult<GetPresignedUrlResponse>>(
             ApiRoutes.UserProfile.AvatarUploadUrl, null);
 
         // 3. Check response
@@ -280,11 +278,11 @@ public class UserProfileEndpointsTests : IAsyncLifetime
 
         // 4. Upload dummy image
         var imageToUpload = "dummy image content"u8.ToArray();
-        var uploadResponse = await _factory.S3Client.UploadAsync(uploadUrl, imageToUpload, "image/jpeg");
+        var uploadResponse = await Factory.S3Client.UploadAsync(uploadUrl, imageToUpload, "image/jpeg");
         uploadResponse.EnsureSuccessStatusCode();
 
         // 5. Verify in Minio (S3)
-        var downloadedImage = await _factory.S3Client.Download(downloadUrl);
+        var downloadedImage = await Factory.S3Client.Download(downloadUrl);
         downloadedImage.ShouldBe(imageToUpload);
     }
 }

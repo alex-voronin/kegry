@@ -1,4 +1,5 @@
 using IntegrationTests.Shared;
+using IntegrationTests.Shared.Managers;
 using NotificationsModule.API;
 using SharedCore.Api.Dto;
 using Shouldly;
@@ -6,58 +7,55 @@ using Shouldly;
 namespace IntegrationTests.NotificationsModule;
 
 [Collection("IntegrationTests")]
-public class ChatEventHandlersTests : IAsyncLifetime
+public class ChatEventHandlersTests : IntegrationTestBase, IAsyncLifetime
 {
-    private readonly IntegrationWebApplicationFactory _factory;
-
-    public ChatEventHandlersTests(IntegrationWebApplicationFactory factory)
+    public ChatEventHandlersTests(IntegrationWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     public Task InitializeAsync() => Task.CompletedTask;
-    public Task DisposeAsync() => _factory.ResetDatabaseAsync();
+    public Task DisposeAsync() => ContainerManager.ResetDatabaseAsync();
 
     [Fact]
     public async Task GivenTwoUsers_WhenTheyCreateChat_ThenTheyBothReceiveNotification()
     {
         // 1. Create users
-        var authResponseA = await _factory.AuthManager.CreateAndLoginUserAsync("userA@example.com", "Password123!");
+        var authResponseA = await Factory.AuthManager.CreateAndLoginUserAsync("userA@example.com", "Password123!");
         var userAId = authResponseA.UserId;
-        _factory.ApiClient.SetAuth(authResponseA);
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        Factory.ApiClient.SetAuth(authResponseA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
-        var authResponseB = await _factory.AuthManager.CreateAndLoginUserAsync("userB@example.com", "Password123!");
+        var authResponseB = await Factory.AuthManager.CreateAndLoginUserAsync("userB@example.com", "Password123!");
         var userBId = authResponseB.UserId;
-        _factory.ApiClient.SetAuth(authResponseB);
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        Factory.ApiClient.SetAuth(authResponseB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Create users' device tokens. They are required to send pushes
         var requestA = new UpdateFcmTokenRequest("devA", "tokenA");
-        _factory.ApiClient.SetAuth(authResponseA);
-        var tokenResponseA = await _factory.ApiClient
+        Factory.ApiClient.SetAuth(authResponseA);
+        var tokenResponseA = await Factory.ApiClient
             .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
                 requestA);
         tokenResponseA.Success.ShouldBeTrue();
 
         var requestB = new UpdateFcmTokenRequest("devB", "tokenB");
-        _factory.ApiClient.SetAuth(authResponseB);
-        var tokenResponseB = await _factory.ApiClient
+        Factory.ApiClient.SetAuth(authResponseB);
+        var tokenResponseB = await Factory.ApiClient
             .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
                 requestB);
         tokenResponseB.Success.ShouldBeTrue();
 
         // 3. Send invites and await push notifications
-        await _factory.NotificationManager.AwaitPushNotifications(
+        await Factory.NotificationManager.AwaitPushNotifications(
             codeToRun: async () =>
             {
-                _factory.ApiClient.SetAuth(authResponseA);
-                var inviteResponseA = await _factory.ApiClient
+                Factory.ApiClient.SetAuth(authResponseA);
+                var inviteResponseA = await Factory.ApiClient
                     .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(userBId), null);
                 inviteResponseA.Success.ShouldBeTrue();
 
-                _factory.ApiClient.SetAuth(authResponseB);
-                var inviteResponseB = await _factory.ApiClient
+                Factory.ApiClient.SetAuth(authResponseB);
+                var inviteResponseB = await Factory.ApiClient
                     .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(userAId), null);
                 inviteResponseB.Success.ShouldBeTrue();
             },

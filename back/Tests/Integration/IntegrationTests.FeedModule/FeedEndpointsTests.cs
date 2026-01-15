@@ -3,35 +3,33 @@ using FeedModule.API.Dto;
 using FeedModule.Domain.Services;
 using IntegrationTests.Shared;
 using IntegrationTests.Shared.HttpClients;
+using IntegrationTests.Shared.Managers;
 using SharedCore.Api.Dto;
 using Shouldly;
 
 namespace IntegrationTests.FeedModule;
 
 [Collection("IntegrationTests")]
-public class FeedEndpointsTests : IAsyncLifetime
+public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
 {
-    private readonly IntegrationWebApplicationFactory _factory;
-
-    public FeedEndpointsTests(IntegrationWebApplicationFactory factory)
+    public FeedEndpointsTests(IntegrationWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     public Task InitializeAsync() => Task.CompletedTask;
-    public async Task DisposeAsync() => await _factory.ResetDatabaseAsync();
+    public async Task DisposeAsync() => await ContainerManager.ResetDatabaseAsync();
 
     [Fact]
     public async Task GivenOneUser_WhenOpensFeed_ThenReturnsNoUsers()
     {
         var email = "feedtest@example.com";
         var password = "Password123!";
-        var authResponse = await _factory.AuthManager.CreateAndLoginUserAsync(email, password);
-        _factory.ApiClient.SetAuth(authResponse);
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync(email, password);
+        Factory.ApiClient.SetAuth(authResponse);
 
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
-        var feedResponse = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        var feedResponse = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
         feedResponse.Success.ShouldBeTrue();
         feedResponse.Result.ShouldNotBeNull();
         feedResponse.Result.Feed.ShouldNotBeNull();
@@ -42,28 +40,28 @@ public class FeedEndpointsTests : IAsyncLifetime
     public async Task GivenTwoUsers_WhenUserRatesAnotherUser_ThenTheUserSeesRateOnFeed()
     {
         // 1. Sign in User A (Rater)
-        var authResponseA = await _factory.AuthManager.CreateAndLoginUserAsync("rater@example.com", "Password123!");
-        _factory.ApiClient.SetAuth(authResponseA);
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        var authResponseA = await Factory.AuthManager.CreateAndLoginUserAsync("rater@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authResponseA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Create User B (Rated)
-        var authResponseB = await _factory.AuthManager.CreateAndLoginUserAsync("ratee@example.com", "Password123!");
+        var authResponseB = await Factory.AuthManager.CreateAndLoginUserAsync("ratee@example.com", "Password123!");
         var userBId = authResponseB.UserId;
-        _factory.ApiClient.SetAuth(authResponseB);
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        Factory.ApiClient.SetAuth(authResponseB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 3. User A rates User B
-        _factory.ApiClient.SetAuth(authResponseA);
+        Factory.ApiClient.SetAuth(authResponseA);
         var rating = 4.5m;
         var ratingRequest = new UserRatingDto(rating);
-        var response = await _factory.ApiClient.PostAsync<UserRatingDto, ApiResult.EmptyResult>(
+        var response = await Factory.ApiClient.PostAsync<UserRatingDto, ApiResult.EmptyResult>(
             ApiRoutes.Feed.RateUser(userBId), ratingRequest);
 
         response.Success.ShouldBeTrue(
             $"Rating failed with errors: {string.Join(", ", response.Errors.Select(e => e.Error))}");
 
         // 4. Get Feed and check rating
-        var feedResponse = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        var feedResponse = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
         feedResponse.Result.Feed.First().Rating.ShouldBe(rating);
     }
 
@@ -71,32 +69,32 @@ public class FeedEndpointsTests : IAsyncLifetime
     public async Task GivenTwoUsers_WhenUserSkipsAnotherUser_ThenAnotherUserDisappearsForSkipCutOffTime()
     {
         // 1. Create two users and submit locations
-        var authA = await _factory.AuthManager.CreateAndLoginUserAsync("blocker@example.com", "Password123!");
-        _factory.ApiClient.SetAuth(authA);
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("blocker@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
-        var authB = await _factory.AuthManager.CreateAndLoginUserAsync("blockee@example.com", "Password123!");
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("blockee@example.com", "Password123!");
         var userBId = authB.UserId;
-        _factory.ApiClient.SetAuth(authB);
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. User A sees User B in feed
-        _factory.ApiClient.SetAuth(authA);
-        var feedBefore = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        Factory.ApiClient.SetAuth(authA);
+        var feedBefore = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
         feedBefore.Result.Feed.Any(f => f.Id == Guid.Parse(userBId)).ShouldBeTrue();
 
         // 3. User A blocks User B
-        var response = await _factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
+        var response = await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
             ApiRoutes.Feed.SkipUser(userBId), null);
         response.Success.ShouldBeTrue();
 
         // 4. User A no longer sees User B in feed
-        var feedAfterSkip = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        var feedAfterSkip = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
         feedAfterSkip.Result.Feed.Any(f => f.Id == Guid.Parse(userBId)).ShouldBeFalse();
 
         //5. User A can see User B in feed after time passed
-        _factory.FakeTimeProvider.Advance(TimeSpan.FromDays(FeedParameters.SkippedUserCutOffInDays + 1));
-        var feedAfterDelay = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        Factory.FakeTimeProvider.Advance(TimeSpan.FromDays(FeedParameters.SkippedUserCutOffInDays + 1));
+        var feedAfterDelay = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
         feedAfterDelay.Result.Feed.Any(f => f.Id == Guid.Parse(userBId)).ShouldBeTrue();
     }
 
@@ -104,28 +102,28 @@ public class FeedEndpointsTests : IAsyncLifetime
     public async Task GivenTwoUsers_WhenUserBlocksAnotherUser_ThenAnotherUserDisappearsFromFeed()
     {
         // 1. Create two users and submit locations
-        var authA = await _factory.AuthManager.CreateAndLoginUserAsync("blocker@example.com", "Password123!");
-        _factory.ApiClient.SetAuth(authA);
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("blocker@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
-        var authB = await _factory.AuthManager.CreateAndLoginUserAsync("blockee@example.com", "Password123!");
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("blockee@example.com", "Password123!");
         var userBId = authB.UserId;
-        _factory.ApiClient.SetAuth(authB);
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. User A sees User B in feed
-        _factory.ApiClient.SetAuth(authA);
-        var feedBefore = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        Factory.ApiClient.SetAuth(authA);
+        var feedBefore = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
         feedBefore.Result.Feed.Any(f => f.Id == Guid.Parse(userBId)).ShouldBeTrue();
 
         // 3. User A blocks User B
-        var response = await _factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
+        var response = await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
             ApiRoutes.Feed.BlockUser(userBId), null);
         response.Success.ShouldBeTrue();
 
         // 4. User A no longer sees User B in feed
-        _factory.FakeTimeProvider.Advance(TimeSpan.FromDays(365));
-        var feedAfter = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        Factory.FakeTimeProvider.Advance(TimeSpan.FromDays(365));
+        var feedAfter = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
         feedAfter.Result.Feed.Any(f => f.Id == Guid.Parse(userBId)).ShouldBeFalse();
     }
 
@@ -133,18 +131,18 @@ public class FeedEndpointsTests : IAsyncLifetime
     public async Task GivenTwoUsers_WhenUserInvitesAnotherUser_ThenReturnsSuccess()
     {
         // 1. Create two users and submit locations
-        var authA = await _factory.AuthManager.CreateAndLoginUserAsync("inviter@example.com", "Password123!");
-        _factory.ApiClient.SetAuth(authA);
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("inviter@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
-        var authB = await _factory.AuthManager.CreateAndLoginUserAsync("invitee@example.com", "Password123!");
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("invitee@example.com", "Password123!");
         var userBId = authB.UserId;
-        _factory.ApiClient.SetAuth(authB);
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. User A invites User B
-        _factory.ApiClient.SetAuth(authA);
-        var response = await _factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
+        Factory.ApiClient.SetAuth(authA);
+        var response = await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
             ApiRoutes.Feed.InviteUser(userBId), null);
 
         response.Success.ShouldBeTrue();
@@ -154,32 +152,32 @@ public class FeedEndpointsTests : IAsyncLifetime
     public async Task GivenThreeUsers_WhenTwoUsersInviteSameUserSimultaneously_ThenOnlyOneMeetingEstablished()
     {
         // 1. Create three users A, B, and C
-        var authA = await _factory.AuthManager.CreateAndLoginUserAsync("usera@example.com", "Password123!");
-        _factory.ApiClient.SetAuth(authA);
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("usera@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
-        var authB = await _factory.AuthManager.CreateAndLoginUserAsync("userb@example.com", "Password123!");
-        _factory.ApiClient.SetAuth(authB);
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("userb@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
-        var authC = await _factory.AuthManager.CreateAndLoginUserAsync("userc@example.com", "Password123!");
+        var authC = await Factory.AuthManager.CreateAndLoginUserAsync("userc@example.com", "Password123!");
         var userCId = authC.UserId;
-        _factory.ApiClient.SetAuth(authC);
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        Factory.ApiClient.SetAuth(authC);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. A and B both invite C
-        _factory.ApiClient.SetAuth(authC);
-        await _factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authA.UserId),
+        Factory.ApiClient.SetAuth(authC);
+        await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authA.UserId),
             null);
-        await _factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authB.UserId),
+        await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authB.UserId),
             null);
 
         // 3. A and B invite C simultaneously
-        using var httpClientA = _factory.CreateClient();
+        using var httpClientA = Factory.CreateClient();
         httpClientA.SetAuth(authA);
         var taskA = httpClientA.PostAsync(ApiRoutes.Feed.InviteUser(userCId), null);
 
-        using var httpClientB = _factory.CreateClient();
+        using var httpClientB = Factory.CreateClient();
         httpClientB.SetAuth(authB);
         var taskB = httpClientA.PostAsync(ApiRoutes.Feed.InviteUser(userCId), null);
         var results = await Task.WhenAll(taskA, taskB);
@@ -187,47 +185,49 @@ public class FeedEndpointsTests : IAsyncLifetime
         // 4. Check A status 
         var inviteA = await results[0].Content.ReadFromJsonAsync<ApiResult.EmptyResult>();
         inviteA!.Success.ShouldBeTrue();
-        _factory.ApiClient.SetAuth(authA);
-        var statusA = await _factory.ApiClient.GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
+        Factory.ApiClient.SetAuth(authA);
+        var statusA = await Factory.ApiClient.GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
         statusA.Success.ShouldBeTrue();
 
         // 5. Check B status 
         var inviteB = await results[1].Content.ReadFromJsonAsync<ApiResult.EmptyResult>();
         inviteB!.Success.ShouldBeTrue();
-        _factory.ApiClient.SetAuth(authB);
-        var statusB = await _factory.ApiClient.GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
+        Factory.ApiClient.SetAuth(authB);
+        var statusB = await Factory.ApiClient.GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
         statusB.Success.ShouldBeTrue();
 
         // 6. A and B in meetings status must be different. One should have established the meeting, the other not.
         statusA.Result.IsInMeeting.ShouldNotBe(statusB.Result.IsInMeeting);
 
         // 7. Verify that C is in the meeting.
-        _factory.ApiClient.SetAuth(authC);
-        var statusC = await _factory.ApiClient.GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
+        Factory.ApiClient.SetAuth(authC);
+        var statusC = await Factory.ApiClient.GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
         statusC.Result.IsInMeeting.ShouldBeTrue();
     }
+
     [Fact]
     public async Task WhenUserSkipsMultipleUsers_ThenFeedIsRefilledWithNewUsers()
     {
         const int usersToSkipCount = 5;
 
         // 1. Create main user
-        var authMain = await _factory.AuthManager.CreateAndLoginUserAsync("main@example.com", "Password123!");
-        _factory.ApiClient.SetAuth(authMain);
-        await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        var authMain = await Factory.AuthManager.CreateAndLoginUserAsync("main@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authMain);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Create FeedParameters.FeedLength + 5 candidate users
         const int totalCandidates = FeedParameters.FeedLength + usersToSkipCount;
         for (var i = 0; i < totalCandidates; i++)
         {
-            var authCandidate = await _factory.AuthManager.CreateAndLoginUserAsync($"candidate{i}@example.com", "Password123!");
-            _factory.ApiClient.SetAuth(authCandidate);
-            await _factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+            var authCandidate =
+                await Factory.AuthManager.CreateAndLoginUserAsync($"candidate{i}@example.com", "Password123!");
+            Factory.ApiClient.SetAuth(authCandidate);
+            await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
         }
 
         // 3. Get initial feed for main user
-        _factory.ApiClient.SetAuth(authMain);
-        var initialFeedResponse = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        Factory.ApiClient.SetAuth(authMain);
+        var initialFeedResponse = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
         initialFeedResponse.Success.ShouldBeTrue();
         var initialFeed = initialFeedResponse.Result.Feed;
         initialFeed.Length.ShouldBe(FeedParameters.FeedLength);
@@ -236,13 +236,14 @@ public class FeedEndpointsTests : IAsyncLifetime
         var userIdsToSkip = initialFeed.Select(p => p.Id).Take(usersToSkipCount).ToHashSet();
         foreach (var userId in userIdsToSkip)
         {
-            var skipResponse = await _factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
+            var skipResponse = await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
                 ApiRoutes.Feed.SkipUser(userId.ToString()), null);
             skipResponse.Success.ShouldBeTrue();
         }
 
         // 5. Get feed again
-        var feedAfterSkipResponse = await _factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        var feedAfterSkipResponse =
+            await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
         feedAfterSkipResponse.Success.ShouldBeTrue();
 
         // 6. Validate actual feed
