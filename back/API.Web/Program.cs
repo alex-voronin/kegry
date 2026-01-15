@@ -22,6 +22,7 @@ IFeatureStartup[] startups =
 [
     new HybridCacheStartup(),
     new LocalizationStartup(),
+    new PrometheusExporterStartup(),
     new SharedCoreModuleStartup(),
     new SecurityModuleStartup(configuration),
     new UserProfileModuleStartup(configuration),
