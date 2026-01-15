@@ -7,7 +7,6 @@ using LocationModule.API.Dto;
 using LocationModule.Domain.Aggregates;
 using LocationModule.Domain.Repositories;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Time.Testing;
 using NotificationsModule.API;
 using NotificationsModule.Infrastructure.Transport.Push;
 using Polly;

@@ -28,7 +28,7 @@ public class ExpiredChatsCollectorTests : IAsyncLifetime
     [Fact]
     public async Task GivenExpiredChat_WhenCollectingExpiredChats_ThenChatIsDeletedAndLinksAreRemoved()
     {
-        _factory.FakeTimeProvider.SetUtcNow(
+        _factory.FakeTimeProvider.Reset(
             DateTime.UtcNow - TimeSpan.FromDays(FeedParameters.MeetingExpirationTimeInDays + 1)
         );
 

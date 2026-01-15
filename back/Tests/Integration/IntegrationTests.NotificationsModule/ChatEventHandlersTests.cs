@@ -1,7 +1,5 @@
 using IntegrationTests.Shared;
 using NotificationsModule.API;
-using NotificationsModule.Infrastructure.Transport.Push;
-using NSubstitute;
 using SharedCore.Api.Dto;
 using Shouldly;
 

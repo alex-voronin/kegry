@@ -184,8 +184,6 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
     [Fact]
     public async Task GivenUser_WhenRenewTokensWithValidTokenRefresh_ThenReturnsNewTokens()
     {
-        _factory.FakeTimeProvider.SetUtcNow(DateTime.UtcNow);
-
         // 1. Authenticate
         var email = "user@example.com";
         var auth = await _factory.AuthManager.CreateAndLoginUserAsync(email, "Password123!");
