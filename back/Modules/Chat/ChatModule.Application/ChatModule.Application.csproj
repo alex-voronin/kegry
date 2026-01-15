@@ -7,6 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="IntegrationTests.ChatModule" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\..\Feed\FeedModule.Contracts\FeedModule.Contracts.csproj" />
       <ProjectReference Include="..\..\Location\LocationModule.Contracts\LocationModule.Contracts.csproj" />
       <ProjectReference Include="..\..\Security\SecurityModule.Contracts\SecurityModule.Contracts.csproj" />

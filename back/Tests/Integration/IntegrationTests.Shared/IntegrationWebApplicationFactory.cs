@@ -104,7 +104,6 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
                 .Returns(new SendResult(true, []));
             services.AddSingleton(pushSender);
 
-            FakeTimeProvider.SetUtcNow(DateTime.UtcNow);
             services.RemoveAll<TimeProvider>();
             services.AddSingleton<TimeProvider>(FakeTimeProvider);
             services.AddSingleton<FakeTimeProvider>(FakeTimeProvider);

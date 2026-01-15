@@ -16,6 +16,7 @@ public class EfCoreActiveChatUserLinkRepository : Repository<ChatContext, Active
     public async Task<IReadOnlyList<Guid[]>> BatchDeleteLinksToDeletedChats(int limit = 100, CancellationToken ct = default)
     {
         var linksToDelete = await Context.ActiveChatUserLinks
+            .IgnoreQueryFilters()
             .Where(l => l.Chat.IsDeleted)
             .OrderBy(l => l.ChatId)
             .Take(limit)

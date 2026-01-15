@@ -24,7 +24,7 @@ public class ExpiredChatsCollectorBackgroundService : BackgroundService
         }
     }
 
-    private async Task CollectExpiredChats(CancellationToken ct)
+    internal async Task CollectExpiredChats(CancellationToken ct)
     {
         Log.Information("Collecting expired chat has started");
         using var scope = _scopeFactory.CreateScope();
@@ -33,22 +33,26 @@ public class ExpiredChatsCollectorBackgroundService : BackgroundService
 
         var transaction = await chatRepository.And(activeChatUserLinkRepository)
             .StartTransactionAsync(ct);
-        await chatRepository.MarkExpiredChatsAsDeleted(ct);
 
+        await chatRepository.MarkExpiredChatsAsDeleted(ct);
         IReadOnlyList<Guid[]> userIdsFromDeletedChats;
         do
         {
             userIdsFromDeletedChats = await activeChatUserLinkRepository
                 .BatchDeleteLinksToDeletedChats(100, ct);
-            var @event = new ChatsDeletedEvent()
+            if (userIdsFromDeletedChats.Count > 0)
             {
-                ParticipantIdsFromDeletedChats = userIdsFromDeletedChats
-            };
-            await chatRepository.PublishEventAsync(@event);
+                var @event = new ChatsDeletedEvent()
+                {
+                    ParticipantIdsFromDeletedChats = userIdsFromDeletedChats
+                };
+                await chatRepository.PublishEventAsync(@event);
+            }
         } while (userIdsFromDeletedChats.Count > 0);
 
         await transaction.SaveChangesAsync(ct);
         await transaction.CommitAsync(ct);
+        await chatRepository.FlushOutgoingMessagesAsync();
         Log.Information("Collecting expired chat has finished");
     }
 }

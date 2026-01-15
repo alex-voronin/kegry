@@ -70,6 +70,8 @@ public class FeedEndpointsTests : IAsyncLifetime
     [Fact]
     public async Task GivenTwoUsers_WhenUserSkipsAnotherUser_ThenAnotherUserDisappearsForSkipCutOffTime()
     {
+        _factory.FakeTimeProvider.SetUtcNow(DateTime.UtcNow);
+
         // 1. Create two users and submit locations
         var authA = await _factory.AuthManager.CreateAndLoginUserAsync("blocker@example.com", "Password123!");
         _factory.ApiClient.SetAuth(authA);

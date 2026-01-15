@@ -3,8 +3,6 @@ using System.Text;
 using IntegrationTests.Shared;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Time.Testing;
 using NotificationsModule.Infrastructure.Transport.Emails;
 using NSubstitute;
 using SecurityModule.API.Dto;
@@ -186,6 +184,8 @@ public class AuthenticationEndpointsTests : IAsyncLifetime
     [Fact]
     public async Task GivenUser_WhenRenewTokensWithValidTokenRefresh_ThenReturnsNewTokens()
     {
+        _factory.FakeTimeProvider.SetUtcNow(DateTime.UtcNow);
+
         // 1. Authenticate
         var email = "user@example.com";
         var auth = await _factory.AuthManager.CreateAndLoginUserAsync(email, "Password123!");
