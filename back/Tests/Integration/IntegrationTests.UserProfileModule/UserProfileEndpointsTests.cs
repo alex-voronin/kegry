@@ -1,8 +1,8 @@
 using IntegrationTests.Shared;
-using IntegrationTests.Shared.Managers;
 using Serilog;
 using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
+using SharedCore.Extensions;
 using SharedCore.ValueObjects;
 using Shouldly;
 using UserProfileModule.API.Dto;
@@ -37,9 +37,8 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
             Gender: Gender.Male,
             HobbyIds:
             [
-                // hobby ids can be found in the user profile module's initial migration
-                Guid.Parse("a436df38-2318-7ace-fca5-78d3189dbd8f"),
-                Guid.Parse("0dc68446-71dc-39bc-3a1b-f007f5452372")
+                "camping".ToDeterministicGuid(),
+                "boxing".ToDeterministicGuid()
             ]
         );
 
@@ -84,7 +83,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
             CoverImageUrl: TestConfig.S3.PublicUrl + "/updated_cover.jpg",
             Birthday: new DateOnly(1991, 2, 2),
             Gender: Gender.Female,
-            HobbyIds: [Guid.Parse("33b2bf1f-e351-0658-5139-5ab721f5e935")]
+            HobbyIds: ["tennis".ToDeterministicGuid()]
         );
 
         var response = await Factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(

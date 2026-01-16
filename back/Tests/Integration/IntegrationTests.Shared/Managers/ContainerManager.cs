@@ -38,7 +38,7 @@ public class ContainerManager : IAsyncLifetime
             .WithEnvironment("MINIO_ROOT_PASSWORD", TestConfig.S3.SecretKey)
             .WithPortBinding(TestConfig.S3.HostPort, TestConfig.S3.ContainerPort)
             .WithWaitStrategy(Wait.ForUnixContainer()
-                .UntilInternalTcpPortIsAvailable(TestConfig.S3.HostPort))
+                .UntilInternalTcpPortIsAvailable(TestConfig.S3.ContainerPort))
             .Build();
 
     public async Task ResetDatabaseAsync()

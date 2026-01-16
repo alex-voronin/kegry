@@ -4,8 +4,8 @@ public static class StringExtensions
 {
     public static Guid ToDeterministicGuid(this string str)
     {
-        using var md5 = System.Security.Cryptography.MD5.Create();
-        var hash = md5.ComputeHash(System.Text.Encoding.UTF8.GetBytes(str));
+        var bytes = System.Text.Encoding.UTF8.GetBytes(str);
+        var hash = System.Security.Cryptography.MD5.HashData(bytes);
         return new Guid(hash);
     }
 }
