@@ -180,7 +180,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
     }
 
     [Fact]
-    public async Task GivenUser_WhenRenewTokensWithValidTokenRefresh_ThenReturnsNewTokens()
+    public async Task GivenValidAccessToken_WhenRenewTokensWithValidTokenRefresh_ThenReturnsNewTokens()
     {
         // 1. Authenticate
         var email = "user@example.com";
@@ -196,6 +196,28 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         response.Success.ShouldBeTrue();
         response.Result.AccessToken.ShouldNotBeNullOrEmpty();
         response.Result.RefreshToken.ShouldNotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public async Task GivenExpiredRefreshToken_WhenRenewTokensWithValidTokenRefresh_ThenReturnsError()
+    {
+        // 1. Authenticate
+        Factory.FakeTimeProvider.Reset(
+            DateTime.UtcNow - TimeSpan.FromDays(TestConfig.AuthToken.RefreshTokenDurationInDays + 1)
+        );
+        var email = "user@example.com";
+        var auth = await Factory.AuthManager.CreateAndLoginUserAsync(email, "Password123!");
+        auth.RefreshToken.ShouldNotBeNullOrEmpty();
+
+        // 2. Renew token
+        Factory.FakeTimeProvider.Reset(DateTime.UtcNow);
+        var request = new RenewTokensRequest(auth.RefreshToken!);
+        var response = await Factory.ApiClient.PostAsync<RenewTokensRequest, ApiResult<AuthResponse>>(
+            ApiRoutes.Auth.RenewTokens, request);
+
+        // 3. Check that 
+        response.Success.ShouldBeFalse();
+        response.Errors[0].Error.ShouldBe("Invalid or revoked access token");
     }
 
     [Fact]
