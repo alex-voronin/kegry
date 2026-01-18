@@ -5,6 +5,7 @@ using NotificationModule.Domain.Aggregates;
 using NotificationModule.Domain.Repositories;
 using NotificationsModule.Application.Services;
 using NotificationsModule.Infrastructure.Resources;
+using Serilog;
 using SharedCore.Localization;
 using SharedCore.Services.LifeTimes;
 using Wolverine;
@@ -38,6 +39,8 @@ public class UserInvitedEventHandler : DebouncedEventHandlerBase<UserInvitedEven
     [Transactional]
     public override async Task HandleAsync(UserInvitedEvent @event, CancellationToken ct)
     {
+        Log.Information("{HandlerClass} Handling event {@Event}",
+            typeof(UserInvitedEventHandler).FullName, @event);
         var notification = new Notification
         {
             Id = Guid.CreateVersion7(),
@@ -62,6 +65,8 @@ public class UserInvitedEventHandler : DebouncedEventHandlerBase<UserInvitedEven
 
     protected override Task HandleDebouncedEventAsync(UserInvitedEvent @event, CancellationToken ct)
     {
+        Log.Information("{HandlerClass} Handling debounced event {@Event}",
+            typeof(UserInvitedEventHandler).FullName, @event);
         return _notificationManager.SendUserInvited(@event.UserId, ct);
     }
 }

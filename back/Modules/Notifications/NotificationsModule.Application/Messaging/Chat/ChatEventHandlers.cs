@@ -6,13 +6,15 @@ using Wolverine.Attributes;
 namespace NotificationsModule.Application.Messaging.Chat;
 
 [WolverineHandler]
-public class ChatEventHandlers
+public static class ChatEventHandlers
 {
     public static async Task HandleAsync(
         ChatCreatedEvent @event,
         IDebouncedEventHandler<MeetingArrangedNotificationEvent> eventHandler,
         CancellationToken ct = default)
     {
+        Log.Information("{HandlerClass} Handling event {@Event}", typeof(ChatEventHandlers).FullName, @event);
+
         // We can't use Parallel.ForEachAsync here to speed up handling,
         // because sending push notifications code relies on the notification settings repository internally,
         // and, as we know, DbContext does not support parallel operations.
@@ -41,6 +43,8 @@ public class ChatEventHandlers
         IPushNotificationStrategy pushNotificationStrategy,
         CancellationToken ct = default)
     {
+        Log.Information("{HandlerClass} Handling event {@Event}", typeof(ChatEventHandlers).FullName, @event);
+
         if (@event.ParticipantIds.Length != 2)
         {
             throw new ArgumentException($"A chat can have only two participants, but {@event.ParticipantIds.Length} " +

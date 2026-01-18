@@ -1,5 +1,6 @@
 using ChatModule.Domain.Aggregates;
 using ChatModule.Domain.Repositories;
+using Serilog;
 using UserProfileModule.Contracts.Events;
 using Wolverine.Attributes;
 
@@ -13,6 +14,8 @@ public static class ChatUserProfileEventHandlers
         IUserRepository userRepository,
         CancellationToken ct)
     {
+        Log.Information("{HandlerClass} Handling event {@Event}",
+            typeof(ChatUserProfileEventHandlers).FullName, @event);
         var user = await userRepository.GetByIdAsync(@event.UserId, ct: ct);
 
         if (user == null)

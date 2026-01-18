@@ -1,4 +1,5 @@
 using SecurityModule.Contracts.Events;
+using Serilog;
 using UserProfileModule.Domain.Repositories;
 using Wolverine.Attributes;
 
@@ -12,6 +13,7 @@ public static class AccountEventHandlers
         IUserRepository userRepository,
         CancellationToken ct)
     {
+        Log.Information("{HandlerClass} Handling event {@Event}", typeof(AccountEventHandlers).FullName, @event);
         return userRepository.SoftDeleteAsync(@event.Id, ct);
     }
 }

@@ -1,6 +1,6 @@
 namespace LocationModule.Contracts.Events;
 
-public class TrackedUsersMetEvent
+public record TrackedUsersMetEvent
 {
     public required Guid[] UserIds { get; init; }
 }

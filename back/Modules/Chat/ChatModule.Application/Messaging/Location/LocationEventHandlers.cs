@@ -1,6 +1,7 @@
 using ChatModule.Contracts.Events;
 using ChatModule.Domain.Repositories;
 using LocationModule.Contracts.Events;
+using Serilog;
 using Wolverine;
 using Wolverine.Attributes;
 
@@ -18,6 +19,9 @@ public static class ChatParticipantsMetEventHandler
         IMessageBus messageBus,
         CancellationToken ct)
     {
+        Log.Information("{HandlerClass} Handling event {@Event}",
+            typeof(ChatParticipantsMetEventHandler).FullName, @event);
+
         // Delay to allow users to keep chatting each other for some time even after the scheduled meeting
         // It can't be scheduled anywhere else as scheduled events can have only one handler
         var wrapperEvent = new DelayedWrapperEvent(@event);
@@ -29,6 +33,9 @@ public static class ChatParticipantsMetEventHandler
         IChatRepository chatRepository,
         CancellationToken ct)
     {
+        Log.Information("{HandlerClass} Handling event {@Event}",
+            typeof(ChatParticipantsMetEventHandler).FullName, @event);
+
         var userId = @event.Event.UserIds.First();
         var chat = await chatRepository.GetActiveChatByUserId(userId, loadMessages: false, ct: ct);
         if (chat != null)

@@ -1,6 +1,6 @@
 namespace ChatModule.Contracts.Events;
 
-public class ChatCreatedEvent
+public record ChatCreatedEvent
 {
     public record Participant(Guid UserId, string FullName);
 

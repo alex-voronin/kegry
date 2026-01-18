@@ -1,12 +1,13 @@
 using Microsoft.Extensions.Caching.Hybrid;
 using NotificationsModule.Application.Services;
+using Serilog;
 using SharedCore.Events;
 using SharedCore.Services.LifeTimes;
 using Wolverine;
 
 namespace NotificationsModule.Application.Messaging.Chat;
 
-public class MeetingArrangedNotificationEvent : UserEvent
+public record MeetingArrangedNotificationEvent : UserEvent
 {
     public required string OtherUserFullName { get; init; }
 }
@@ -26,6 +27,8 @@ public class MeetingArrangedEventHandler : DebouncedEventHandlerBase<MeetingArra
 
     public override Task HandleAsync(MeetingArrangedNotificationEvent @event, CancellationToken ct)
     {
+        Log.Information("{HandlerClass} Handling event {@Event}",
+            typeof(MeetingArrangedEventHandler), @event);
         return DebounceEventAsync(@event, ct);
     }
 
@@ -36,6 +39,8 @@ public class MeetingArrangedEventHandler : DebouncedEventHandlerBase<MeetingArra
 
     protected override Task HandleDebouncedEventAsync(MeetingArrangedNotificationEvent @event, CancellationToken ct)
     {
+        Log.Information("{HandlerClass} Handling debounced event {@Event}",
+            typeof(MeetingArrangedEventHandler), @event);
         return _notificationManager.SendMeetingArranged(@event.UserId, @event.OtherUserFullName, ct);
     }
 }

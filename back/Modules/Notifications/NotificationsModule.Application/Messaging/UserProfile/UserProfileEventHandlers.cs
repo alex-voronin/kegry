@@ -1,5 +1,6 @@
 using NotificationModule.Domain.Aggregates;
 using NotificationModule.Domain.Repositories;
+using Serilog;
 using UserProfileModule.Contracts.Events;
 using Wolverine.Attributes;
 
@@ -13,6 +14,9 @@ public static class UserProfileEventHandlers
         IUserRepository userRepository,
         CancellationToken ct)
     {
+        Log.Information("{HandlerClass} Handling event {@Event}",
+            typeof(UserProfileEventHandlers).FullName, @event);
+
         var user = await userRepository.GetByIdAsync(@event.UserId, ct: ct);
 
         if (user == null)

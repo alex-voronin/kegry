@@ -1,5 +1,6 @@
 using NotificationsModule.Application.Services;
 using SecurityModule.Contracts.Events;
+using Serilog;
 using Wolverine.Attributes;
 
 namespace NotificationsModule.Application.Messaging.Account;
@@ -11,6 +12,8 @@ public static class AccountEventHandlers
         AccountCreatedEvent @event,
         IEmailNotificationStrategy emailNotificationStrategy)
     {
+        Log.Information("{HandlerClass} Handling event {@Event}",
+            typeof(AccountEventHandlers).FullName, @event);
         await emailNotificationStrategy.SendConfirmEmail(@event.Email, @event.ConfirmationCode);
     }
 
@@ -18,6 +21,8 @@ public static class AccountEventHandlers
         PasswordResetRequestedEvent @event,
         IEmailNotificationStrategy emailNotificationStrategy)
     {
+        Log.Information("{HandlerClass} Handling event {@Event}",
+            typeof(AccountEventHandlers).FullName, @event);
         await emailNotificationStrategy.SendPasswordReset(@event.Email, @event.ResetToken);
     }
 }

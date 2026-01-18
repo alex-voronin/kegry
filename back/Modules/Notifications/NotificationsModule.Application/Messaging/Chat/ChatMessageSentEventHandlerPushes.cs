@@ -2,6 +2,7 @@ using ChatModule.Contracts.Events;
 using Microsoft.Extensions.Caching.Hybrid;
 using NotificationModule.Domain.Repositories;
 using NotificationsModule.Application.Services;
+using Serilog;
 using SharedCore.Services.LifeTimes;
 using Wolverine;
 using Wolverine.Attributes;
@@ -28,6 +29,8 @@ public class ChatMessageSentEventHandlerPushes : DebouncedEventHandlerBase<ChatM
 
     public override async Task HandleAsync(ChatMessageSentEvent @event, CancellationToken ct)
     {
+        Log.Information("{HandlerClass} Handling event {@Event}",
+            typeof(ChatMessageSentEventHandlerPushes).FullName, @event);
         var isEventHandled = await DebounceEventAsync(@event, ct);
         if (!isEventHandled)
         {
@@ -43,6 +46,8 @@ public class ChatMessageSentEventHandlerPushes : DebouncedEventHandlerBase<ChatM
 
     protected override async Task HandleDebouncedEventAsync(ChatMessageSentEvent @event, CancellationToken ct)
     {
+        Log.Information("{HandlerClass} Handling debounced event {@Event}",
+            typeof(ChatMessageSentEventHandlerPushes).FullName, @event);
         var (pushesEnabled, _) = await _notificationsSettingsRepository
             .GetNotificationsEnabledById(@event.ToUserId, ct);
         if (pushesEnabled)

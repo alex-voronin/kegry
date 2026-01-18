@@ -1,6 +1,6 @@
 namespace FeedModule.Contracts.Events;
 
-public class MeetingsEndedEvent
+public record MeetingsEndedEvent
 {
     public required IReadOnlyList<Guid[]> ParticipantIdsFromDeletedChats { get; init; }
 }

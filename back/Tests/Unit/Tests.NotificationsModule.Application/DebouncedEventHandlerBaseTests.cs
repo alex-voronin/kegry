@@ -13,7 +13,7 @@ namespace Tests.NotificationsModule.Application;
 
 public class DebouncedEventHandlerBaseTests
 {
-    public class TestEvent : UserEvent
+    public record TestEvent : UserEvent
     {
         [SetsRequiredMembers]
         public TestEvent(Guid userId)

@@ -1,6 +1,6 @@
 namespace SharedCore.Events;
 
-public class UserEvent : IdempotentEventBase
+public record UserEvent : IdempotentEventBase
 {
     public required Guid UserId { get; init; }
 

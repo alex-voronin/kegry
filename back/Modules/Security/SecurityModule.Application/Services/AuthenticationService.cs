@@ -257,7 +257,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
     public async Task DeleteAccountAsync(string userId)
     {
         await LogoutAsync();
-        
+
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
         {

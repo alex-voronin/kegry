@@ -1,5 +1,6 @@
 using ChatModule.Domain.Repositories;
 using SecurityModule.Contracts.Events;
+using Serilog;
 using Wolverine.Attributes;
 
 namespace ChatModule.Application.Messaging.Account;
@@ -12,6 +13,8 @@ public static class AccountEventHandlers
         IUserRepository userRepository,
         CancellationToken ct)
     {
+        Log.Information("{HandlerClass} Handling event {@Event}",
+            typeof(AccountEventHandlers).FullName, @event);
         return userRepository.SoftDeleteAsync(@event.Id, ct);
     }
 }

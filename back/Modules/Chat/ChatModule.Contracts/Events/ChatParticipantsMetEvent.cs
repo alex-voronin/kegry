@@ -1,6 +1,6 @@
 namespace ChatModule.Contracts.Events;
 
-public class ChatParticipantsMetEvent
+public record ChatParticipantsMetEvent
 {
     public required Guid[] ParticipantIds { get; init; }
 }

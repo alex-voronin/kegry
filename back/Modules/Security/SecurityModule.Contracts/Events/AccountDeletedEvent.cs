@@ -1,6 +1,6 @@
 namespace SecurityModule.Contracts.Events;
 
-public class AccountDeletedEvent
+public record AccountDeletedEvent
 {
     public required Guid Id { get; init; }
 }

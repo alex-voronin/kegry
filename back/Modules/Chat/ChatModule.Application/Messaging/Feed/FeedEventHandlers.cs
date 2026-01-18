@@ -1,6 +1,7 @@
 using ChatModule.Contracts.Events;
 using ChatModule.Domain.Services;
 using FeedModule.Contracts.Events;
+using Serilog;
 using Wolverine.Attributes;
 
 namespace ChatModule.Application.Messaging.Feed;
@@ -14,6 +15,9 @@ public class FeedEventHandlers
         IChatService chatService,
         CancellationToken ct = default)
     {
+        Log.Information("{HandlerClass}, Handling event {@Event}",
+            typeof(FeedEventHandlers).FullName, @event);
+
         await chatService.CreateChatAsync(
             userIds: @event.Participants.Select(p => p.UserId).ToArray(),
             expiresAt: @event.ExpiresAt,

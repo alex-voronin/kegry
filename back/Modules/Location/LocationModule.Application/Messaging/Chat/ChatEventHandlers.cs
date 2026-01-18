@@ -1,18 +1,21 @@
 using ChatModule.Contracts.Events;
 using LocationModule.Domain.Aggregates;
 using LocationModule.Domain.Repositories;
+using Serilog;
 using Wolverine.Attributes;
 
 namespace LocationModule.Application.Messaging.Chat;
 
 [WolverineHandler]
-public class ChatEventHandlers
+public static class ChatEventHandlers
 {
     public static async Task HandleAsync(
         ChatCreatedEvent @event,
         ITrackedUserPairRepository trackedUserPairRepository,
         CancellationToken ct)
     {
+        Log.Information("{HandlerClass} Handling event {@Event}", typeof(ChatEventHandlers).FullName, @event);
+
         if (@event.Participants.Length != 2)
         {
             throw new ArgumentException("Only two participants are supported");
@@ -37,6 +40,8 @@ public class ChatEventHandlers
         ITrackedUserPairRepository trackedUserPairRepository,
         CancellationToken ct = default)
     {
+        Log.Information("{HandlerClass} Handling event {@Event}", typeof(ChatEventHandlers).FullName, @event);
+
         var userIds = @event.ParticipantIdsFromDeletedChats.SelectMany(p => p).Distinct().ToArray();
         await trackedUserPairRepository.DeleteByUserIds(userIds, ct);
         await trackedUserPairRepository.SaveChangesAsync(ct);

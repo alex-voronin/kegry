@@ -13,6 +13,8 @@ public static class FeedEventHandlers
         IPushNotificationStrategy pushNotificationStrategy,
         CancellationToken ct = default)
     {
+        Log.Information("{HandlerClass} Handling event {@Event}", typeof(FeedEventHandlers).FullName, @event);
+
         // We can't use Parallel.ForEachAsync here to speed up handling,
         // because sending push notifications code relies on the notification settings repository internally,
         // and, as we know, DbContext does not support parallel operations.

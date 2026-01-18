@@ -1,6 +1,6 @@
 namespace SharedCore.Events;
 
-public abstract class IdempotentEventBase
+public abstract record IdempotentEventBase
 {
     public abstract Guid IdempotencyKey();
 }

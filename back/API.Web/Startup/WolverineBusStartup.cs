@@ -27,6 +27,8 @@ public class WolverineBusStartup : IFeatureStartup
                 {
                     x.Includes.WithAttribute<WolverineHandlerAttribute>();
                 });
+
+                opts.Policies.MessageExecutionLogLevel(LogLevel.Information);
             }
         );
         host.UseResourceSetupOnStartup();
