@@ -61,7 +61,7 @@ export default function PasswordResetPage() {
 
   const onSubmit = async (data: FormData) => {
     if (!email || !token) {
-      toast.error('Invalid link');
+      toast.error(t('errors.invalidLink'));
       return;
     }
 
@@ -72,12 +72,7 @@ export default function PasswordResetPage() {
       toast.success(t('success'));
       router.push('/login');
     } catch (err: any) {
-      const errorKey = `server.${err.message}`;
-      const errorMessage = tCommonErrors.has(errorKey)
-        ? tCommonErrors(errorKey)
-        : err.message || tCommonErrors('network');
-
-      toast.error(errorMessage);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -123,7 +118,7 @@ export default function PasswordResetPage() {
 
         <form onSubmit={handleSubmit(onSubmit)} className={styles.formSection}>
           <p className="text-center text-xl">{t('title')}</p>
-          <div className={styles.passwordWrapper}>
+          <div>
             <Input
               type="password"
               placeholder={t('newPassword')}
@@ -131,12 +126,12 @@ export default function PasswordResetPage() {
               disabled={loading}
               {...register('password')}
             />
+            {errors.password && (
+              <div className={styles.fieldError}>{errors.password.message}</div>
+            )}
           </div>
-          {errors.password && (
-            <div className={styles.fieldError}>{errors.password.message}</div>
-          )}
 
-          <div className={styles.passwordWrapper}>
+          <div>
             <Input
               type="password"
               placeholder={t('confirmPassword')}
@@ -144,12 +139,12 @@ export default function PasswordResetPage() {
               disabled={loading}
               {...register('confirmPassword')}
             />
+            {errors.confirmPassword && (
+              <div className={styles.fieldError}>
+                {errors.confirmPassword.message}
+              </div>
+            )}
           </div>
-          {errors.confirmPassword && (
-            <div className={styles.fieldError}>
-              {errors.confirmPassword.message}
-            </div>
-          )}
 
           <Button
             variant={ButtonVariant.Default}
@@ -160,10 +155,7 @@ export default function PasswordResetPage() {
             {loading ? 'Loading...' : t('submit')}
           </Button>
 
-          <Link
-            href="/login"
-            className="text-muted-foreground hover:text-foreground mt-4 text-center text-sm underline"
-          >
+          <Link href="/login" className="mt-4 text-center text-sm underline">
             {t('backToLogin')}
           </Link>
         </form>

@@ -13,7 +13,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
 
 export default function ForgotPasswordPage() {
   const t = useTranslations('screens.forgot');
@@ -26,10 +25,7 @@ export default function ForgotPasswordPage() {
   );
 
   const schema = z.object({
-    email: z
-      .string()
-      .min(1, t('errors.emailRequired'))
-      .email(t('errors.emailInvalid')),
+    email: z.email(t('errors.emailInvalid')).min(1, t('errors.emailRequired')),
   });
 
   type FormData = z.infer<typeof schema>;
@@ -53,25 +49,7 @@ export default function ForgotPasswordPage() {
       await requestPasswordReset(data.email);
       setIsSuccess(true);
     } catch (err: any) {
-      if (Array.isArray(err)) {
-        err.forEach((e: any) => {
-          if (e.location === 'email') {
-            setError('email', {
-              type: 'server',
-              message: e.error,
-            });
-          } else {
-            toast.error(e.error);
-          }
-        });
-      } else {
-        const errorKey = `server.${err.message}`;
-        const errorMessage = tCommonErrors.has(errorKey)
-          ? tCommonErrors(errorKey)
-          : err.message || tCommonErrors('network');
-
-        toast.error(errorMessage);
-      }
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -92,17 +70,15 @@ export default function ForgotPasswordPage() {
                   priority
                 />
               </div>
+              <h1 className={styles.brandName}>oppyfy.me</h1>
             </div>
-            <h1 className={styles.tagline}>{t('successTitle')}</h1>
-            <p className="text-muted-foreground mt-2 text-center text-sm">
+            <p className="mt-4 text-center text-base">
               {t('successDescription')}
             </p>
           </div>
 
-          <Link href="/login" className="w-full">
-            <Button variant={ButtonVariant.Default} className="w-full">
-              {t('backToLogin')}
-            </Button>
+          <Link href="/login" className="mt-4 text-center text-sm underline">
+            {t('backToLogin')}
           </Link>
         </div>
       </div>
@@ -152,10 +128,7 @@ export default function ForgotPasswordPage() {
             {loading ? 'Loading...' : t('submit')}
           </Button>
 
-          <Link
-            href="/login"
-            className="text-muted-foreground hover:text-foreground mt-4 text-center text-sm underline"
-          >
+          <Link href="/login" className="mt-4 text-center text-sm underline">
             {t('backToLogin')}
           </Link>
         </form>

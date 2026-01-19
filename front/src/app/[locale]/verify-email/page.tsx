@@ -1,0 +1,111 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
+import { Button, ButtonVariant } from '@/components/ui/button';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from '@/components/ui/input-otp';
+import { useAuthStore } from '@/lib/auth/useAuthStore';
+import { Link } from '@/i18n/routing';
+import styles from '../login/login.module.css'; // Reusing login styles
+import { toast } from 'react-toastify';
+import Image from 'next/image';
+
+const OTP_LENGTH = 6;
+
+export default function VerifyEmailPage() {
+  const t = useTranslations('screens.verifyEmail');
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [value, setValue] = useState('');
+
+  const confirmEmail = useAuthStore((state) => state.confirmEmail);
+  const userId = useAuthStore((state) => state.userId);
+
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+
+    if (value.length !== OTP_LENGTH) {
+      return;
+    }
+
+    if (!userId) {
+      toast.error(t('errors.userNotFound'));
+      router.push('/login');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await confirmEmail(userId, value);
+      toast.success(t('successTitle'));
+      router.push('/feed');
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className={styles.page}>
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <div className={styles.logoRow}>
+            <div className={styles.logoContainer}>
+              <Image
+                src="/assets/logo.png"
+                alt="Hoppyfy Logo"
+                fill
+                className={styles.logoImage}
+                priority
+              />
+            </div>
+            <h1 className={styles.brandName}>oppyfy.me</h1>
+          </div>
+          <p className="mt-4 text-center text-xl">{t('title')}</p>
+          <p className={styles.tagline}>{t('description')}</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className={styles.formSection}>
+          <div className="flex justify-center py-4">
+            <InputOTP
+              maxLength={OTP_LENGTH}
+              value={value}
+              onChange={(val) => setValue(val)}
+              disabled={loading}
+              autoFocus
+            >
+              <InputOTPGroup>
+                <InputOTPSlot index={0} />
+                <InputOTPSlot index={1} />
+                <InputOTPSlot index={2} />
+                <InputOTPSlot index={3} />
+                <InputOTPSlot index={4} />
+                <InputOTPSlot index={5} />
+              </InputOTPGroup>
+            </InputOTP>
+          </div>
+
+          <Button
+            variant={ButtonVariant.Default}
+            className={styles.signInButton}
+            type="submit"
+            disabled={loading || value.length !== OTP_LENGTH}
+          >
+            {loading ? t('verifying') : t('submit')}
+          </Button>
+
+          <Link href="/login" className="mt-4 text-center text-sm underline">
+            {t('backToLogin')}
+          </Link>
+        </form>
+      </div>
+    </div>
+  );
+}

@@ -40,13 +40,28 @@
       "newPassword": "New Password",
       "confirmPassword": "Confirm Password",
       "submit": "Change Password",
-      "success": "Password reset successfully. You can now login.",
+      "success": "Password changed successfully. You can now login.",
       "backToLogin": "Back to login",
       "errors": {
         "passwordRequired": "Password is required",
         "passwordShort": "Password must be at least 10 characters",
         "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
-        "match": "Passwords do not match"
+        "match": "Passwords do not match",
+        "invalidLink": "Invalid link"
+      }
+    },
+    "verifyEmail": {
+      "title": "Verify your email",
+      "description": "Please enter the 6-digit code sent to your email address.",
+      "submit": "Verify Email",
+      "verifying": "Verifying...",
+      "successTitle": "Email verified!",
+      "successDescription": "Your email has been successfully verified.",
+      "errorTitle": "Verification failed",
+      "backToLogin": "Back to login",
+      "resend": "Resend Code",
+      "errors": {
+        "userNotFound": "User session not found. Please login again."
       }
     },
     "onboarding": {
