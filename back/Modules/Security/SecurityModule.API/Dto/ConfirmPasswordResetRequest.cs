@@ -1,3 +1,3 @@
 namespace SecurityModule.API.Dto;
 
-public record ConfirmPasswordResetRequest(string UserId, string Token, string NewPassword);
+public record ConfirmPasswordResetRequest(string EncodedEmail, string EncodedToken, string NewPassword);

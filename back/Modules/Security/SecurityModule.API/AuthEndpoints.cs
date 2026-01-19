@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.WebUtilities;
 using SecurityModule.Application.Services;
 using SecurityModule.API.Dto;
 using SharedCore.Api;
@@ -102,7 +104,9 @@ public class AuthEndpoints : IEndpoints
         [FromBody] ConfirmPasswordResetRequest request,
         IAuthenticationService service)
     {
-        await service.ConfirmPasswordResetAsync(request.UserId, request.Token, request.NewPassword);
+        var decodedEmail = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.EncodedEmail));
+        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.EncodedToken));
+        await service.ConfirmPasswordResetAsync(decodedEmail, decodedToken, request.NewPassword);
         return ApiResult.Empty;
     }
 

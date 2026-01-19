@@ -3,7 +3,6 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
 using SecurityModule.Contracts.Events;
 using SecurityModule.Domain.Exceptions;
@@ -237,16 +236,15 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         );
     }
 
-    public async Task ConfirmPasswordResetAsync(string userId, string token, string newPassword)
+    public async Task ConfirmPasswordResetAsync(string email, string token, string newPassword)
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
         {
-            throw SecurityExceptions.UserNotFound(userId);
+            throw SecurityExceptions.UserNotFound(email);
         }
 
-        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
-        var result = await _userManager.ResetPasswordAsync(user, decodedToken, newPassword);
+        var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
         if (!result.Succeeded)
         {
             var message = result.Errors.FirstOrDefault()?.Description ?? "Password reset failed";

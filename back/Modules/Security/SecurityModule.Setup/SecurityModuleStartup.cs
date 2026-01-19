@@ -111,7 +111,7 @@ public class SecurityModuleStartup : AppModuleStartupBase<SecurityContext>
                 o.Password.RequireLowercase = true;
                 o.Password.RequireUppercase = true;
                 o.Password.RequireNonAlphanumeric = false;
-                o.Password.RequiredLength = 12;
+                o.Password.RequiredLength = 10;
                 o.User.RequireUniqueEmail = false;
                 o.Lockout.MaxFailedAccessAttempts = 5;
                 o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);

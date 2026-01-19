@@ -3,9 +3,9 @@ using System.Text;
 using IntegrationTests.Shared;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.RegularExpressions;
-using IntegrationTests.Shared.Managers;
 using NotificationsModule.Infrastructure.Transport.Emails;
 using NSubstitute;
+using NSubstitute.ClearExtensions;
 using SecurityModule.API.Dto;
 using SecurityModule.Domain.Aggregates;
 using SharedCore.Api.Dto;
@@ -130,7 +130,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.NotificationManager.EmailSender
             .SendEmailAsync(Arg.Do<Email>(e =>
             {
-                var match = Regex.Match(e.Body, @"<a href=""https:\/\/hoppyfy\.me\/password-reset\?token=(.+)"">");
+                var match = Regex.Match(e.Body, @"<a href=""https:\/\/hoppyfy\.me\/password-reset\?email=.+&token=(.+)"">");
                 capturedToken = match.Groups[1].Value;
             }), Arg.Any<CancellationToken>());
 
@@ -138,8 +138,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var email = "user@example.com";
         var oldPassword = "OldPassword123!";
         var newPassword = "NewPassword123!";
-        var auth = await Factory.AuthManager.CreateAndLoginUserAsync(email, oldPassword);
-        var userId = auth.UserId;
+        await Factory.AuthManager.CreateAndLoginUserAsync(email, oldPassword);
 
         // 2. Reset password
         var requestReset = new RequestPasswordResetRequest(email);
@@ -149,7 +148,8 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         capturedToken.ShouldNotBeNullOrEmpty();
 
         // 3. Confirm password reset 
-        var confirmRequest = new ConfirmPasswordResetRequest(userId, capturedToken, newPassword);
+        var confirmRequest = new ConfirmPasswordResetRequest(
+            Base64UrlEncoder.Encode(email), capturedToken, newPassword);
         var confirmResponse = await Factory.ApiClient.PostAsync<ConfirmPasswordResetRequest, ApiResult.EmptyResult>(
             ApiRoutes.Auth.ConfirmPasswordReset, confirmRequest);
 
@@ -160,6 +160,23 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var signinResponse = await Factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
             ApiRoutes.Auth.Signin, signinRequest);
         signinResponse.Success.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task GivenEmailForNonExistingUser_WhenRequestsPasswordReset_ThenEmailIsNotSent()
+    {
+        Factory.NotificationManager.EmailSender.ClearSubstitute();
+
+        // 1. Reset password
+        var requestReset = new RequestPasswordResetRequest("test@test.com");
+        var resetResponse = await Factory.ApiClient.PostAsync<RequestPasswordResetRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Auth.RequestPasswordReset, requestReset);
+        resetResponse.Success.ShouldBeTrue();
+
+        // 2. Ensure that we haven't sent any emails
+        await Task.Delay(1000);
+        await Factory.NotificationManager.EmailSender.DidNotReceive()
+            .SendEmailAsync(Arg.Any<Email>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

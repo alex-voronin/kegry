@@ -58,9 +58,10 @@ internal class EmailBuilder : IEmailBuilder, ISingleton
 
     public Email BuildPasswordResetEmail(string toEmail, string resetToken)
     {
+        var encodedEmail = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(toEmail));
         var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(resetToken));
         var title = _localizer.GetString("Email.PasswordReset.Subject");
-        var body = _localizer.GetString("Email.PasswordReset.Body", encodedToken);
+        var body = _localizer.GetString("Email.PasswordReset.Body", encodedEmail, encodedToken);
         return new Email(ToEmail: toEmail, Subject: title, Body: body, IsImportant: true);
     }
 }

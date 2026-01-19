@@ -8,7 +8,7 @@ public class PrometheusExporterStartup : IFeatureStartup
     public void Register(IHostApplicationBuilder appBuilder, IHostBuilder host)
     {
         var metricsServerConfigSection = appBuilder.Configuration
-            .GetSection($"Monitoring:MetricsServer");
+            .GetSection($"Monitoring:MetricsServerConfig");
         appBuilder.Services.AddMetricServer(options =>
             {
                 options.Hostname = metricsServerConfigSection["Hostname"]!;

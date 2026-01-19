@@ -20,6 +20,6 @@ public interface IAuthenticationService
     public Task LogoutAsync();
 
     public Task RequestPasswordResetAsync(string email);
-    public Task ConfirmPasswordResetAsync(string userId, string token, string newPassword);
+    public Task ConfirmPasswordResetAsync(string email, string token, string newPassword);
     public Task DeleteAccountAsync(string userId);
 }

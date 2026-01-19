@@ -67,6 +67,6 @@
         <value>Reset your password</value>
     </data>
     <data name="Email.PasswordReset.Body" xml:space="preserve">
-        <value>You requested a password reset. Follow the link to reset your password: &lt;a href=&quot;https://hoppyfy.me/password-reset?token={0}&quot;&gt;https://hoppyfy.me/password-reset?token={0}&lt;/a&gt;</value>
+        <value>You requested a password reset. Follow the link to reset your password: &lt;a href=&quot;https://hoppyfy.me/password-reset?email={0}&amp;token={1}&quot;&gt;https://hoppyfy.me/password-reset?email={0}&amp;token={1}&lt;/a&gt;</value>
     </data>
 </root>
