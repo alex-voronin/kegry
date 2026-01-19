@@ -45,6 +45,16 @@ export interface RenewTokensRequest {
   refreshToken: string;
 }
 
+export interface RequestPasswordResetRequest {
+  email: string;
+}
+
+export interface ConfirmPasswordResetRequest {
+  encodedEmail: string;
+  encodedToken: string;
+  newPassword: string;
+}
+
 interface AuthState {
   userId: string | null;
   accessToken: string | null;
@@ -57,6 +67,12 @@ interface AuthState {
   signin: (email: string, password: string) => Promise<AuthResponse>;
   confirmEmail: (userId: string, token: string) => Promise<AuthResponse>;
   logout: () => Promise<void>;
+  requestPasswordReset: (email: string) => Promise<void>;
+  confirmPasswordReset: (
+    encodedEmail: string,
+    encodedToken: string,
+    newPassword: string,
+  ) => Promise<void>;
 
   // Internal/Helper action to update tokens
   setAuth: (auth: AuthResponse) => void;
@@ -169,6 +185,52 @@ export const useAuthStore = create<AuthState>()(
             refreshToken: null,
             requiredAction: null,
           });
+        }
+      },
+
+      requestPasswordReset: async (email) => {
+        try {
+          const res = await axios.post<ApiResult<any>>(
+            '/api/v1/auth/request-password-reset',
+            { email },
+          );
+
+          if (!res.data.success) {
+            const error = res.data.errors[0];
+            throw new Error(error?.error || 'Password reset request failed');
+          }
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            const apiError = error.response?.data?.errors?.[0];
+            const msg = apiError?.error || error.message;
+            throw new Error(msg);
+          }
+          throw error;
+        }
+      },
+
+      confirmPasswordReset: async (encodedEmail, encodedToken, newPassword) => {
+        try {
+          const res = await axios.post<ApiResult<any>>(
+            '/api/v1/auth/confirm-password-reset',
+            {
+              encodedEmail,
+              encodedToken,
+              newPassword,
+            },
+          );
+
+          if (!res.data.success) {
+            const error = res.data.errors[0];
+            throw new Error(error?.error || 'Password reset failed');
+          }
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            const apiError = error.response?.data?.errors?.[0];
+            const msg = apiError?.error || error.message;
+            throw new Error(msg);
+          }
+          throw error;
         }
       },
     }),

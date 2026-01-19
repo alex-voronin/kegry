@@ -18,8 +18,35 @@
         "emailRequired": "Email is required",
         "emailInvalid": "Invalid email address",
         "passwordRequired": "Password is required",
-        "passwordShort": "Password must be at least 6 characters",
+        "passwordShort": "Password must be at least 10 characters",
         "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+      }
+    },
+    "forgot": {
+      "title": "Forgot Password?",
+      "description": "Enter your email address and we'll send you a link to reset your password.",
+      "email": "Email",
+      "submit": "Send Reset Link",
+      "successTitle": "Check your email",
+      "successDescription": "We have sent a password reset link to your email address.",
+      "backToLogin": "Back to login",
+      "errors": {
+        "emailRequired": "Email is required",
+        "emailInvalid": "Invalid email address"
+      }
+    },
+    "passwordReset": {
+      "title": "Reset Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "Reset Password",
+      "success": "Password reset successfully. You can now login.",
+      "backToLogin": "Back to login",
+      "errors": {
+        "passwordRequired": "Password is required",
+        "passwordShort": "Password must be at least 10 characters",
+        "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+        "match": "Passwords do not match"
       }
     },
     "onboarding": {

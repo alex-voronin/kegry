@@ -1,0 +1,173 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from '@/i18n/routing';
+import { useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { Button, ButtonVariant } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useAuthStore } from '@/lib/auth/useAuthStore';
+import { Link } from '@/i18n/routing';
+import styles from '../login/login.module.css'; // Reusing login styles
+import { toast } from 'react-toastify';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import Image from 'next/image';
+
+export default function PasswordResetPage() {
+  const t = useTranslations('screens.passwordReset');
+  const tCommonErrors = useTranslations('common.errors');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [loading, setLoading] = useState(false);
+  const confirmPasswordReset = useAuthStore(
+    (state) => state.confirmPasswordReset,
+  );
+
+  const email = searchParams.get('email');
+  const token = searchParams.get('token');
+
+  const schema = z
+    .object({
+      password: z
+        .string()
+        .min(1, t('errors.passwordRequired'))
+        .min(10, t('errors.passwordShort'))
+        .refine(
+          (pw) => /[A-Z]/.test(pw) && /[a-z]/.test(pw) && /[0-9]/.test(pw),
+          { message: t('errors.passwordComplexity') },
+        ),
+      confirmPassword: z.string().min(1, t('errors.passwordRequired')),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t('errors.match'),
+      path: ['confirmPassword'],
+    });
+
+  type FormData = z.infer<typeof schema>;
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      password: '',
+      confirmPassword: '',
+    },
+  });
+
+  const onSubmit = async (data: FormData) => {
+    if (!email || !token) {
+      toast.error('Invalid link');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await confirmPasswordReset(email, token, data.password);
+      toast.success(t('success'));
+      router.push('/login');
+    } catch (err: any) {
+      const errorKey = `server.${err.message}`;
+      const errorMessage = tCommonErrors.has(errorKey)
+        ? tCommonErrors(errorKey)
+        : err.message || tCommonErrors('network');
+
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!email || !token) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.container}>
+          <div className="text-center">
+            <h1 className="text-xl font-bold">Invalid Link</h1>
+            <p className="text-muted-foreground mt-2">
+              This password reset link is invalid or incomplete.
+            </p>
+            <Link href="/login" className="mt-4 inline-block">
+              <Button variant={ButtonVariant.Default}>
+                {t('backToLogin')}
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.page}>
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <div className={styles.logoRow}>
+            <div className={styles.logoContainer}>
+              <Image
+                src="/assets/logo.png"
+                alt="Hoppyfy Logo"
+                fill
+                className={styles.logoImage}
+                priority
+              />
+            </div>
+            <h1 className={styles.brandName}>oppyfy.me</h1>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.formSection}>
+          <p className="text-center text-xl">{t('title')}</p>
+          <div className={styles.passwordWrapper}>
+            <Input
+              type="password"
+              placeholder={t('newPassword')}
+              className={styles.inputCredentials}
+              disabled={loading}
+              {...register('password')}
+            />
+          </div>
+          {errors.password && (
+            <div className={styles.fieldError}>{errors.password.message}</div>
+          )}
+
+          <div className={styles.passwordWrapper}>
+            <Input
+              type="password"
+              placeholder={t('confirmPassword')}
+              className={styles.inputCredentials}
+              disabled={loading}
+              {...register('confirmPassword')}
+            />
+          </div>
+          {errors.confirmPassword && (
+            <div className={styles.fieldError}>
+              {errors.confirmPassword.message}
+            </div>
+          )}
+
+          <Button
+            variant={ButtonVariant.Default}
+            className={styles.signInButton}
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? 'Loading...' : t('submit')}
+          </Button>
+
+          <Link
+            href="/login"
+            className="text-muted-foreground hover:text-foreground mt-4 text-center text-sm underline"
+          >
+            {t('backToLogin')}
+          </Link>
+        </form>
+      </div>
+    </div>
+  );
+}
