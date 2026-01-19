@@ -36,6 +36,14 @@
   @apply mt-12 flex w-full flex-col gap-8 px-2;
 }
 
+.error {
+  @apply text-error text-center text-sm font-medium;
+}
+
+.fieldError {
+  @apply text-error mt-1 text-sm;
+}
+
 .inputCredentials {
   @apply border-secondary placeholder:text-secondary focus-visible:border-primary border-b;
 }

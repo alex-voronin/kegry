@@ -4,6 +4,7 @@ import '../globals.css';
 import { Providers } from '@/components/providers';
 import { getMessages, getLocale } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
+import { ToastContainer } from 'react-toastify';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -40,6 +41,17 @@ export default async function RootLayout({
         <Providers locale={locale} messages={messages}>
           <div className="flex min-h-screen w-full justify-center">
             <main className="bg-surface text-foreground relative flex w-full max-w-[500px] flex-col sm:rounded-[16px]">
+              <ToastContainer
+                theme="dark"
+                position="bottom-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={true}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                pauseOnHover
+              />
               {children}
             </main>
           </div>

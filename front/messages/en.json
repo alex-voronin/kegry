@@ -1,4 +1,9 @@
 {
+  "common": {
+    "errors": {
+      "network": "Network error. Please try again."
+    }
+  },
   "screens": {
     "login": {
       "tagline": "The best stories start off-screen",
@@ -8,7 +13,14 @@
       "signIn": "Sign In",
       "orContinueWith": "Or continue with",
       "google": "Google",
-      "facebook": "Facebook"
+      "facebook": "Facebook",
+      "errors": {
+        "emailRequired": "Email is required",
+        "emailInvalid": "Invalid email address",
+        "passwordRequired": "Password is required",
+        "passwordShort": "Password must be at least 6 characters",
+        "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+      }
     },
     "onboarding": {
       "title": "Tell us about yourself",
