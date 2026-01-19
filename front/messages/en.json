@@ -36,10 +36,10 @@
       }
     },
     "passwordReset": {
-      "title": "Reset Password",
+      "title": "Please enter your new password",
       "newPassword": "New Password",
       "confirmPassword": "Confirm Password",
-      "submit": "Reset Password",
+      "submit": "Change Password",
       "success": "Password reset successfully. You can now login.",
       "backToLogin": "Back to login",
       "errors": {
