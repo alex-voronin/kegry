@@ -2,24 +2,41 @@
 
 import Image from 'next/image';
 import styles from './avatar-section.module.css';
-import { useRef, useState } from 'react';
+import { useRef, useState, useMemo, useEffect } from 'react';
 import AvatarCropper from '../avatar-cropper';
 
-type ClickableImageProps = {
-  src?: string;
-  onAvatarChange?: (base64Avatar: string) => void;
+type AvatarSectionProps = {
+  avatarBlob?: Blob | null;
+  onAvatarChange?: (avatarBlob: Blob) => void;
 };
 
 export const AvatarSection = ({
-  src = '/assets/common/camera-placeholder.svg',
+  avatarBlob,
   onAvatarChange,
-}: ClickableImageProps) => {
+}: AvatarSectionProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [imageToCropSrc, setImageToCropSrc] = useState<string | null>(null);
-  const [avatarImage, setAvatarImage] = useState<string | null>(null);
+  const [localBlob, setLocalBlob] = useState<Blob | null>(null);
 
-  const handleDivClick = () => {
-    // hack to open file picker
+  const displayUrl = useMemo(() => {
+    const blob = localBlob || avatarBlob;
+    if (blob) {
+      return URL.createObjectURL(blob);
+    }
+    return null;
+  }, [localBlob, avatarBlob]);
+
+  // Cleanup object URL on unmount or when blob changes
+  useEffect(() => {
+    return () => {
+      if (displayUrl) {
+        URL.revokeObjectURL(displayUrl);
+      }
+    };
+  }, [displayUrl]);
+
+  const handleClick = () => {
+    // Pass click to invisible file input
     inputRef.current?.click();
   };
 
@@ -30,17 +47,21 @@ export const AvatarSection = ({
     }
   };
 
-  const handleCrop = (base64Avatar: string) => {
-    setAvatarImage(base64Avatar);
+  const handleCrop = (blob: Blob) => {
+    // Revoke the source URL after cropping is complete
+    if (imageToCropSrc) {
+      URL.revokeObjectURL(imageToCropSrc);
+    }
+    setLocalBlob(blob);
     setImageToCropSrc(null);
-    onAvatarChange?.(base64Avatar);
+    onAvatarChange?.(blob);
   };
 
   if (imageToCropSrc)
     return <AvatarCropper imageSrc={imageToCropSrc} onCrop={handleCrop} />;
 
   return (
-    <div className={styles.profileSection} onClick={handleDivClick}>
+    <div className={styles.profileSection} onClick={handleClick}>
       <div className={styles.profilePlaceholder}>
         <input
           type="file"
@@ -50,7 +71,7 @@ export const AvatarSection = ({
           className="hidden"
         />
         <Image
-          src={avatarImage || src}
+          src={displayUrl || '/assets/common/camera-placeholder.svg'}
           alt={'Avatar Image'}
           width={192}
           height={192}

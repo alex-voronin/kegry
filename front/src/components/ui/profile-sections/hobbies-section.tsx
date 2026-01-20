@@ -1,9 +1,11 @@
 'use client';
 
-import * as React from 'react';
+import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import Select from 'react-select';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
+import { useHobbiesStore } from '@/store/use-hobbies-store';
+import { toast } from 'react-toastify';
 
 export interface HobbyOption {
   value: string;
@@ -78,12 +80,23 @@ export function HobbiesSection({
   readOnly = false,
 }: HobbiesSectionProps) {
   const t = useTranslations('components.profile-sections.hobbies');
+  const { hobbies, fetchHobbies, isLoading, error } = useHobbiesStore();
 
-  const HOBBY_OPTIONS: HobbyOption[] = [
-    { value: 'volleyball', label: t('volleyball') },
-    { value: 'boxing', label: t('boxing') },
-    { value: 'camping', label: t('camping') },
-  ];
+  useEffect(() => {
+    fetchHobbies();
+  }, [fetchHobbies]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
+
+  // Map API hobbies to select options
+  const hobbyOptions: HobbyOption[] = hobbies.map((h) => ({
+    value: h.id,
+    label: h.name,
+  }));
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -91,13 +104,14 @@ export function HobbiesSection({
       <Select
         instanceId="hobby-select"
         isMulti
-        options={HOBBY_OPTIONS}
+        options={hobbyOptions}
         value={value}
         onChange={(selected) => onChange(selected as HobbyOption[])}
         placeholder={t('placeholder')}
         classNamePrefix="hobby-select"
         isDisabled={readOnly}
         isClearable={!readOnly}
+        isLoading={isLoading}
         styles={readOnly ? readOnlySelectStyles : selectStyles}
         components={
           readOnly

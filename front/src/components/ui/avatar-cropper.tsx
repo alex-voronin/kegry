@@ -1,14 +1,17 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import Cropper from 'react-easy-crop';
 import { Button } from './button';
 
-function getCroppedImg(
+const AVATAR_SIZE = 256;
+
+function getCroppedImageBlob(
   imageSrc: string,
   crop: { x: number; y: number; width: number; height: number },
-) {
-  return new Promise<string>((resolve, reject) => {
+): Promise<Blob> {
+  return new Promise((resolve, reject) => {
     const image = new Image();
     image.src = imageSrc;
     image.onload = () => {
@@ -16,8 +19,8 @@ function getCroppedImg(
       const ctx = canvas.getContext('2d');
       if (!ctx) return reject('No ctx');
 
-      canvas.width = crop.width;
-      canvas.height = crop.height;
+      canvas.width = AVATAR_SIZE;
+      canvas.height = AVATAR_SIZE;
 
       ctx.drawImage(
         image,
@@ -27,11 +30,21 @@ function getCroppedImg(
         crop.height,
         0,
         0,
-        crop.width,
-        crop.height,
+        AVATAR_SIZE,
+        AVATAR_SIZE,
       );
 
-      resolve(canvas.toDataURL('image/png'));
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject('Failed to create blob');
+          }
+        },
+        'image/jpeg',
+        0.9,
+      );
     };
     image.onerror = reject;
   });
@@ -42,11 +55,13 @@ export default function AvatarCropper({
   onCrop,
 }: {
   imageSrc: string;
-  onCrop: (base64Avatar: string) => void;
+  onCrop: (avatarBlob: Blob) => void;
 }) {
+  const t = useTranslations('components.avatar-cropper');
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const imageSrcRef = useRef(imageSrc);
 
   const onCropComplete = useCallback((_: any, croppedAreaPixels: any) => {
     setCroppedAreaPixels(croppedAreaPixels);
@@ -54,9 +69,9 @@ export default function AvatarCropper({
 
   const saveCroppedImage = useCallback(async () => {
     if (!croppedAreaPixels) return;
-    const cropped = await getCroppedImg(imageSrc, croppedAreaPixels);
-    onCrop(cropped);
-  }, [croppedAreaPixels, imageSrc]);
+    const blob = await getCroppedImageBlob(imageSrc, croppedAreaPixels);
+    onCrop(blob);
+  }, [croppedAreaPixels, imageSrc, onCrop]);
 
   return (
     <div className="bg-surface fixed z-50 h-screen w-full">
@@ -82,7 +97,7 @@ export default function AvatarCropper({
           onChange={(e) => setZoom(Number(e.target.value))}
           className="accent-primary bg-secondary h-2 w-40 rounded-lg"
         />
-        <Button onClick={saveCroppedImage}>Сохранить</Button>
+        <Button onClick={saveCroppedImage}>{t('save')}</Button>
       </div>
     </div>
   );

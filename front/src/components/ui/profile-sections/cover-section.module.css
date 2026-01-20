@@ -1,0 +1,21 @@
+@reference "../../../app/globals.css";
+
+.coverSection {
+  @apply relative flex h-screen w-full cursor-pointer items-center justify-center overflow-hidden bg-[#1a1a1a] sm:rounded-xl;
+}
+
+.coverImage {
+  @apply h-full w-full object-cover;
+}
+
+.overlay {
+  @apply absolute inset-0 bg-black/40;
+}
+
+.placeholder {
+  @apply flex flex-col items-center justify-center gap-4;
+}
+
+.placeholderText {
+  @apply text-sm text-gray-400;
+}
