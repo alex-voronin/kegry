@@ -1,20 +1,22 @@
 'use client';
 
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { useRouter } from '@/i18n/routing';
-import axios from 'axios';
 import { Button, ButtonVariant } from '@/components/ui/button';
-import { Link } from '@/i18n/routing';
-import { CoverSection } from '@/components/ui/profile-sections/cover-section';
-import styles from './cover.module.css';
 import { Header } from '@/components/ui/header';
-import { useUserProfileStore } from '@/store/use-user-profile-store';
-import { useHobbiesStore } from '@/store/use-hobbies-store';
-import { useAuthStore, RequiredAction } from '@/lib/auth/useAuthStore';
+import { CoverSection } from '@/components/ui/profile-sections/cover-section';
+import { Link, useRouter } from '@/i18n/routing';
 import { ApiResult } from '@/lib/api-types';
+import { RequiredAction, useAuthStore } from '@/lib/auth/useAuthStore';
 import { cn } from '@/lib/utils';
+import { useHobbiesStore } from '@/store/use-hobbies-store';
+import {
+  base64ToBlob,
+  useUserProfileStore,
+} from '@/store/use-user-profile-store';
+import axios from 'axios';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
+import styles from './cover.module.css';
 
 interface PresignedUrlResponse {
   uploadUrl: string;
@@ -53,7 +55,7 @@ export default function CoverPage() {
     birthday,
     bio,
     gender,
-    avatarBlob,
+    avatarBase64,
     coverBlob,
     setCoverBlob,
     reset: resetProfile,
@@ -71,12 +73,14 @@ export default function CoverPage() {
       let avatarUrl = '';
       let coverUrl = '';
 
-      if (!avatarBlob) {
+      if (!avatarBase64) {
         toast.error(
           'Avatar image is not selected. Please go back and select it.',
         );
+        setIsSubmitting(false);
         return;
       }
+      const avatarBlob = base64ToBlob(avatarBase64);
       const avatarPresigned = await getPresignedUrl(
         '/api/v1/user-profile/avatar/upload-url',
       );
@@ -85,6 +89,7 @@ export default function CoverPage() {
 
       if (!coverBlob) {
         toast.error('Choose cover image is not selected.');
+        setIsSubmitting(false);
         return;
       }
       const coverPresigned = await getPresignedUrl(

@@ -2,38 +2,22 @@
 
 import Image from 'next/image';
 import styles from './avatar-section.module.css';
-import { useRef, useState, useMemo, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import AvatarCropper from '../avatar-cropper';
+import { blobToBase64 } from '@/store/use-user-profile-store';
 
 type AvatarSectionProps = {
-  avatarBlob?: Blob | null;
-  onAvatarChange?: (avatarBlob: Blob) => void;
+  avatarBase64?: string | null;
+  onAvatarChange?: (avatarBase64: string) => void;
 };
 
 export const AvatarSection = ({
-  avatarBlob,
+  avatarBase64,
   onAvatarChange,
 }: AvatarSectionProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [imageToCropSrc, setImageToCropSrc] = useState<string | null>(null);
-  const [localBlob, setLocalBlob] = useState<Blob | null>(null);
-
-  const displayUrl = useMemo(() => {
-    const blob = localBlob || avatarBlob;
-    if (blob) {
-      return URL.createObjectURL(blob);
-    }
-    return null;
-  }, [localBlob, avatarBlob]);
-
-  // Cleanup object URL on unmount or when blob changes
-  useEffect(() => {
-    return () => {
-      if (displayUrl) {
-        URL.revokeObjectURL(displayUrl);
-      }
-    };
-  }, [displayUrl]);
+  const [localAvatarUrl, setLocalAvatarUrl] = useState<string | null>(null);
 
   const handleClick = () => {
     // Pass click to invisible file input
@@ -47,18 +31,23 @@ export const AvatarSection = ({
     }
   };
 
-  const handleCrop = (blob: Blob) => {
+  const handleCrop = async (blob: Blob) => {
     // Revoke the source URL after cropping is complete
     if (imageToCropSrc) {
       URL.revokeObjectURL(imageToCropSrc);
     }
-    setLocalBlob(blob);
+
+    // Convert blob to base64 for localStorage persistence
+    const base64 = await blobToBase64(blob);
+    setLocalAvatarUrl(base64);
     setImageToCropSrc(null);
-    onAvatarChange?.(blob);
+    onAvatarChange?.(base64);
   };
 
   if (imageToCropSrc)
     return <AvatarCropper imageSrc={imageToCropSrc} onCrop={handleCrop} />;
+
+  const displayUrl = localAvatarUrl || avatarBase64;
 
   return (
     <div className={styles.profileSection} onClick={handleClick}>

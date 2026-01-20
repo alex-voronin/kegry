@@ -20,20 +20,19 @@ export default function OnboardingPage() {
   const router = useRouter();
   const tGender = useTranslations('components.profile-sections.gender');
 
-  // User profile store
   const {
     firstName,
     lastName,
     birthday,
     bio,
     gender,
-    avatarBlob,
+    avatarBase64,
     setFirstName,
     setLastName,
     setBirthday,
     setBio,
     setGender,
-    setAvatarBlob,
+    setAvatarBase64,
   } = useUserProfileStore();
   const { hobbies, selectedHobbyIds, setSelectedHobbyIds } = useHobbiesStore();
 
@@ -62,7 +61,10 @@ export default function OnboardingPage() {
     <div className={styles.wrapper}>
       <Header title={t('title')} />
 
-      <AvatarSection avatarBlob={avatarBlob} onAvatarChange={setAvatarBlob} />
+      <AvatarSection
+        avatarBase64={avatarBase64}
+        onAvatarChange={setAvatarBase64}
+      />
 
       <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
         <NameSection
@@ -93,6 +95,14 @@ export default function OnboardingPage() {
             className={styles.continueButton}
             type="button"
             onClick={handleContinue}
+            disabled={
+              !avatarBase64 ||
+              !firstName ||
+              !lastName ||
+              !birthday ||
+              !gender ||
+              !selectedHobbyIds.length
+            }
           >
             {t('continue')}
           </Button>
