@@ -60,6 +60,6 @@ public class ChatEventHandlersTests : IntegrationTestBase, IAsyncLifetime
                 inviteResponseB.Success.ShouldBeTrue();
             },
             expectedCount: 2,
-            expectedTitle: "Invitation accepted!");
+            expectedTitle: NotificationTitles.MeetingArrangedTitle);
     }
 }

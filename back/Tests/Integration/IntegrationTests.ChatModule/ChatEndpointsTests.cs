@@ -293,7 +293,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
                     .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authA.UserId), null);
             },
             expectedCount: 2,
-            expectedTitle: "Invitation accepted!");
+            expectedTitle: NotificationTitles.MeetingArrangedTitle);
 
         return (authA, authB);
     }

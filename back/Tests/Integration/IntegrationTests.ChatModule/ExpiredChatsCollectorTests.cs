@@ -53,12 +53,20 @@ public class ExpiredChatsCollectorTests : IntegrationTestBase, IAsyncLifetime
                 tokenRequestB);
 
         // 3. Establish chat
-        Factory.ApiClient.SetAuth(authA);
-        await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authB.UserId),
-            null);
-        Factory.ApiClient.SetAuth(authB);
-        await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authA.UserId),
-            null);
+        await Factory.NotificationManager.AwaitPushNotifications(
+            codeToRun: async () =>
+            {
+                Factory.ApiClient.SetAuth(authA);
+                await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
+                    ApiRoutes.Feed.InviteUser(authB.UserId),
+                    null);
+                Factory.ApiClient.SetAuth(authB);
+                await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
+                    ApiRoutes.Feed.InviteUser(authA.UserId),
+                    null);
+            },
+            expectedCount: 2,
+            expectedTitle: NotificationTitles.MeetingArrangedTitle);
 
         // Verify chat exists
         var chatResponse = await Factory.ApiClient.GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);

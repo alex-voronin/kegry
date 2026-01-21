@@ -1,7 +1,6 @@
 using NotificationsModule.Infrastructure.Transport.Push;
 using NotificationsModule.Infrastructure.Transport.Emails;
 using NSubstitute;
-using Shouldly;
 
 namespace IntegrationTests.Shared.Managers;
 
