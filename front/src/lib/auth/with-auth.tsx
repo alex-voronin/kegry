@@ -1,7 +1,7 @@
 import { ComponentType, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { PAGE_ROUTES } from '../routes';
-import { useAuthStore } from './useAuthStore';
+import { useAuthStore } from './use-auth-store';
 
 export function withAuth<P extends object>(Component: ComponentType<P>) {
   return function ProtectedPage(props: P) {

@@ -6,7 +6,7 @@ import { useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useAuthStore, RequiredAction } from '@/lib/auth/useAuthStore';
+import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import { Link } from '@/i18n/routing';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from './login.module.css';
@@ -126,9 +126,9 @@ export default function LoginPage() {
             variant={ButtonVariant.Default}
             className={styles.signInButton}
             type="submit"
-            disabled={loading}
+            loading={loading}
           >
-            {loading ? 'Loading...' : t('signIn')}
+            {t('signIn')}
           </Button>
         </form>
 

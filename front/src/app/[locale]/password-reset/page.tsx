@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useAuthStore } from '@/lib/auth/useAuthStore';
+import { useAuthStore } from '@/lib/auth/use-auth-store';
 import { Link } from '@/i18n/routing';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from '../login/login.module.css'; // Reusing login styles
@@ -151,9 +151,9 @@ export default function PasswordResetPage() {
             variant={ButtonVariant.Default}
             className={styles.signInButton}
             type="submit"
-            disabled={loading}
+            loading={loading}
           >
-            {loading ? 'Loading...' : t('submit')}
+            {t('submit')}
           </Button>
 
           <Link

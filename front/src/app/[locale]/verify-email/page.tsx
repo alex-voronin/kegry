@@ -9,7 +9,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
-import { useAuthStore } from '@/lib/auth/useAuthStore';
+import { useAuthStore } from '@/lib/auth/use-auth-store';
 import { Link } from '@/i18n/routing';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from '../login/login.module.css'; // Reusing login styles

@@ -5,7 +5,7 @@ import { Header } from '@/components/ui/header';
 import { CoverSection } from '@/components/ui/profile-sections/cover-section';
 import { Link, useRouter } from '@/i18n/routing';
 import { ApiResult } from '@/lib/api-types';
-import { RequiredAction, useAuthStore } from '@/lib/auth/useAuthStore';
+import { RequiredAction, useAuthStore } from '@/lib/auth/use-auth-store';
 import { cn } from '@/lib/utils';
 import { useHobbiesStore } from '@/store/use-hobbies-store';
 import {
@@ -144,9 +144,10 @@ export default function CoverPage() {
             className={styles.continueButton}
             type="button"
             onClick={handleContinue}
-            disabled={isSubmitting || !coverBlob}
+            disabled={!coverBlob}
+            loading={isSubmitting}
           >
-            {isSubmitting ? t('creating') : t('continue')}
+            {t('continue')}
           </Button>
           <Link
             href={PAGE_ROUTES.ONBOARDING}
