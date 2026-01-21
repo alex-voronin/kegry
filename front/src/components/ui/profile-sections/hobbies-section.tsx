@@ -93,10 +93,12 @@ export function HobbiesSection({
   }, [error]);
 
   // Map API hobbies to select options
-  const hobbyOptions: HobbyOption[] = hobbies.map((h) => ({
-    value: h.id,
-    label: h.name,
-  }));
+  const hobbyOptions: HobbyOption[] = hobbies.map((h) => {
+    return {
+      value: h.id,
+      label: t(h.name),
+    };
+  });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>

@@ -19,6 +19,7 @@ import { HobbyOption } from '@/components/ui/profile-sections/hobbies-section';
 export default function OnboardingPage() {
   const t = useTranslations('screens.onboarding');
   const router = useRouter();
+  const tHobbies = useTranslations('components.profile-sections.hobbies');
   const tGender = useTranslations('components.profile-sections.gender');
 
   const {
@@ -44,7 +45,12 @@ export default function OnboardingPage() {
 
   const selectedHobbies: HobbyOption[] = hobbies
     .filter((h) => selectedHobbyIds.includes(h.id))
-    .map((h) => ({ value: h.id, label: h.name }));
+    .map((h) => {
+      return {
+        value: h.id,
+        label: tHobbies(h.name),
+      };
+    });
 
   const handleHobbiesChange = (selected: HobbyOption[]) => {
     setSelectedHobbyIds(selected.map((h) => h.value));
