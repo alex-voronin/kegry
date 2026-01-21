@@ -32,8 +32,6 @@ public class SecurityModuleStartup : AppModuleStartupBase<SecurityContext>
     {
         base.Register(appBuilder, host);
 
-        appBuilder.Services.AutoRegisterAssemblies(ModuleAssemblies);
-
         var authTokenConfigSection = appBuilder.Configuration
             .GetSection($"Authentication:{nameof(AuthTokenConfig)}");
         appBuilder.Services.AddOptions<AuthTokenConfig>()

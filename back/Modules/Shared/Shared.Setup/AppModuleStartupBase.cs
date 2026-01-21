@@ -24,6 +24,7 @@ public abstract class AppModuleStartupBase<TContext> : IFeatureStartup where TCo
     public virtual void Register(IHostApplicationBuilder appBuilder, IHostBuilder host)
     {
         RegisterEfCoreContexts(appBuilder.Services, _dbConnectionString);
+        appBuilder.Services.AutoRegisterAssemblies(ModuleAssemblies);
     }
 
     public virtual void Initialize(WebApplication app)

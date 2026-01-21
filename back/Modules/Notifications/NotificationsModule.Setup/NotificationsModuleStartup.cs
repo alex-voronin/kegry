@@ -29,8 +29,6 @@ public class NotificationsModuleStartup : AppModuleStartupBase<NotificationsCont
         base.Register(appBuilder, host);
         RegisterEmailConfig(appBuilder);
         RegisterFirebase(appBuilder);
-
-        appBuilder.Services.AutoRegisterAssemblies(ModuleAssemblies);
     }
 
     private static void RegisterEmailConfig(IHostApplicationBuilder appBuilder)
