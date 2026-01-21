@@ -12,6 +12,7 @@ import {
   base64ToBlob,
   useUserProfileStore,
 } from '@/store/use-user-profile-store';
+import { API_ENDPOINTS, PAGE_ROUTES } from '@/lib/routes';
 import axios from 'axios';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -82,7 +83,7 @@ export default function CoverPage() {
       }
       const avatarBlob = base64ToBlob(avatarBase64);
       const avatarPresigned = await getPresignedUrl(
-        '/api/v1/user-profile/avatar/upload-url',
+        API_ENDPOINTS.USER_PROFILE.AVATAR_UPLOAD_URL,
       );
       await uploadBlobToS3(avatarPresigned.uploadUrl, avatarBlob);
       avatarUrl = avatarPresigned.publicDownloadUrl;
@@ -93,12 +94,12 @@ export default function CoverPage() {
         return;
       }
       const coverPresigned = await getPresignedUrl(
-        '/api/v1/user-profile/cover/upload-url',
+        API_ENDPOINTS.USER_PROFILE.COVER_UPLOAD_URL,
       );
       await uploadBlobToS3(coverPresigned.uploadUrl, coverBlob);
       coverUrl = coverPresigned.publicDownloadUrl;
 
-      await axios.post('/api/v1/user-profile', {
+      await axios.post(API_ENDPOINTS.USER_PROFILE.PROFILE, {
         firstName,
         lastName,
         bio,
@@ -118,7 +119,7 @@ export default function CoverPage() {
 
       resetProfile();
 
-      router.push('/feed');
+      router.push(PAGE_ROUTES.FEED);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to create profile';
@@ -148,7 +149,7 @@ export default function CoverPage() {
             {isSubmitting ? t('creating') : t('continue')}
           </Button>
           <Link
-            href="/onboarding"
+            href={PAGE_ROUTES.ONBOARDING}
             className="mt-4 text-center text-sm underline"
           >
             {t('back')}

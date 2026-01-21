@@ -8,6 +8,7 @@ import styles from './chat.module.css';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { ModalMenu } from '@/components/ui/modal-menu';
+import { PAGE_ROUTES } from '@/lib/routes';
 
 export default function ChatScreen() {
   const t = useTranslations('screens.chat');
@@ -27,7 +28,7 @@ export default function ChatScreen() {
     {
       icon: '/assets/chat/cancel-icon.svg',
       label: t('menu.cancel'),
-      onClick: () => router.push('/feed'),
+      onClick: () => router.push(PAGE_ROUTES.FEED),
     },
   ];
 

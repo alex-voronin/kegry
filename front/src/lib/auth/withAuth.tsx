@@ -1,5 +1,6 @@
 import { ComponentType, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { PAGE_ROUTES } from '../routes';
 import { useAuthStore } from './useAuthStore';
 
 export function withAuth<P extends object>(Component: ComponentType<P>) {
@@ -9,7 +10,7 @@ export function withAuth<P extends object>(Component: ComponentType<P>) {
 
     useEffect(() => {
       if (hasHydrated && !userId) {
-        router.push('/auth/login');
+        router.push(PAGE_ROUTES.LOGIN);
       }
     }, [userId, router, hasHydrated]);
 

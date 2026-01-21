@@ -7,6 +7,7 @@ import { Button, ButtonVariant } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuthStore } from '@/lib/auth/useAuthStore';
 import { Link } from '@/i18n/routing';
+import { PAGE_ROUTES } from '@/lib/routes';
 import styles from '../login/login.module.css'; // Reusing login styles
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
@@ -77,7 +78,10 @@ export default function ForgotPasswordPage() {
             </p>
           </div>
 
-          <Link href="/login" className="mt-4 text-center text-sm underline">
+          <Link
+            href={PAGE_ROUTES.LOGIN}
+            className="mt-4 text-center text-sm underline"
+          >
             {t('backToLogin')}
           </Link>
         </div>
@@ -128,7 +132,10 @@ export default function ForgotPasswordPage() {
             {loading ? 'Loading...' : t('submit')}
           </Button>
 
-          <Link href="/login" className="mt-4 text-center text-sm underline">
+          <Link
+            href={PAGE_ROUTES.LOGIN}
+            className="mt-4 text-center text-sm underline"
+          >
             {t('backToLogin')}
           </Link>
         </form>

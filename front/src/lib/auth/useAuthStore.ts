@@ -3,7 +3,7 @@
 import { create } from 'zustand';
 import axios from 'axios';
 import { persist } from 'zustand/middleware';
-import Router from 'next/router';
+import { API_ENDPOINTS, PAGE_ROUTES } from '../routes';
 
 // --- Types ---
 
@@ -106,7 +106,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           // 1. Try to sign in
           const signinRes = await axios.post<ApiResult<SigninResponse>>(
-            '/api/v1/auth/signin',
+            API_ENDPOINTS.AUTH.SIGNIN,
             { email, password },
           );
 
@@ -124,7 +124,7 @@ export const useAuthStore = create<AuthState>()(
           // 2. If signup is required, try to sign up
           if (isSignupRequired) {
             const signupRes = await axios.post<ApiResult<AuthResponse>>(
-              '/api/v1/auth/signup',
+              API_ENDPOINTS.AUTH.SIGNUP,
               { email, password },
             );
 
@@ -153,7 +153,7 @@ export const useAuthStore = create<AuthState>()(
       confirmEmail: async (userId, token) => {
         try {
           const res = await axios.post<ApiResult<AuthResponse>>(
-            '/api/v1/auth/confirm-email',
+            API_ENDPOINTS.AUTH.CONFIRM_EMAIL,
             { userId, token },
           );
 
@@ -177,7 +177,7 @@ export const useAuthStore = create<AuthState>()(
 
       logout: async () => {
         try {
-          await axios.post('/api/v1/auth/logout');
+          await axios.post(API_ENDPOINTS.AUTH.LOGOUT);
         } finally {
           set({
             userId: null,
@@ -191,7 +191,7 @@ export const useAuthStore = create<AuthState>()(
       requestPasswordReset: async (email) => {
         try {
           const res = await axios.post<ApiResult<any>>(
-            '/api/v1/auth/request-password-reset',
+            API_ENDPOINTS.AUTH.REQUEST_PASSWORD_RESET,
             { email },
           );
 
@@ -212,7 +212,7 @@ export const useAuthStore = create<AuthState>()(
       confirmPasswordReset: async (encodedEmail, encodedToken, newPassword) => {
         try {
           const res = await axios.post<ApiResult<any>>(
-            '/api/v1/auth/confirm-password-reset',
+            API_ENDPOINTS.AUTH.CONFIRM_PASSWORD_RESET,
             {
               encodedEmail,
               encodedToken,
@@ -269,7 +269,10 @@ let failedQueue: Array<{
 const handleAuthFailure = () => {
   const { logout } = useAuthStore.getState();
   logout();
-  Router.push('/login');
+  // We are outside of a React component, so we cannot use here the useRouter hook.
+  if (typeof window !== 'undefined') {
+    window.location.href = PAGE_ROUTES.LOGIN;
+  }
 };
 
 const processQueue = (error: any, token: string | null = null) => {
@@ -291,9 +294,9 @@ axios.interceptors.response.use(
 
     // Prevent infinite loops for auth endpoints
     if (
-      originalRequest.url.includes('/auth/signin') ||
-      originalRequest.url.includes('/auth/signup') ||
-      originalRequest.url.includes('/auth/renew-tokens')
+      originalRequest.url.includes(API_ENDPOINTS.AUTH.SIGNIN) ||
+      originalRequest.url.includes(API_ENDPOINTS.AUTH.SIGNUP) ||
+      originalRequest.url.includes(API_ENDPOINTS.AUTH.RENEW_TOKENS)
     ) {
       return Promise.reject(error);
     }
@@ -324,7 +327,7 @@ axios.interceptors.response.use(
 
       try {
         const response = await axios.post<ApiResult<AuthResponse>>(
-          '/api/v1/auth/renew-tokens',
+          API_ENDPOINTS.AUTH.RENEW_TOKENS,
           { refreshToken },
         );
 

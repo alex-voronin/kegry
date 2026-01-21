@@ -7,6 +7,7 @@ import { StarRating } from 'react-flexible-star-rating';
 import styles from './feed.module.css';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
+import { PAGE_ROUTES } from '@/lib/routes';
 
 export default function FeedScreen() {
   const t = useTranslations('screens.feed');
@@ -23,7 +24,7 @@ export default function FeedScreen() {
               width={30}
               height={32}
               priority
-              onClick={() => router.push('/profile')}
+              onClick={() => router.push(PAGE_ROUTES.PROFILE)}
             />
           }
           right={
@@ -34,7 +35,7 @@ export default function FeedScreen() {
                 width={32}
                 height={32}
                 priority
-                onClick={() => router.push('/feed/filters')}
+                onClick={() => router.push(PAGE_ROUTES.FEED_FILTERS)}
               />
               <Icon
                 src="/assets/feed/notifications-icon.svg"
@@ -42,7 +43,7 @@ export default function FeedScreen() {
                 width={28}
                 height={30}
                 priority
-                onClick={() => router.push('/notifications')}
+                onClick={() => router.push(PAGE_ROUTES.NOTIFICATIONS)}
               >
                 <span className={styles.badge}>3</span>
               </Icon>
@@ -111,7 +112,7 @@ export default function FeedScreen() {
           </button>
           <button
             className={styles.actionPrimary}
-            onClick={() => router.push('/chat')}
+            onClick={() => router.push(PAGE_ROUTES.CHAT)}
           >
             <Image
               className="pointer-events-none"

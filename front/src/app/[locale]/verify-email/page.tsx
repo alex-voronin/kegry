@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/input-otp';
 import { useAuthStore } from '@/lib/auth/useAuthStore';
 import { Link } from '@/i18n/routing';
+import { PAGE_ROUTES } from '@/lib/routes';
 import styles from '../login/login.module.css'; // Reusing login styles
 import { toast } from 'react-toastify';
 import Image from 'next/image';
@@ -35,7 +36,7 @@ export default function VerifyEmailPage() {
 
     if (!userId) {
       toast.error(t('errors.userNotFound'));
-      router.push('/login');
+      router.push(PAGE_ROUTES.LOGIN);
       return;
     }
 
@@ -44,7 +45,7 @@ export default function VerifyEmailPage() {
     try {
       await confirmEmail(userId, value);
       toast.success(t('successTitle'));
-      router.push('/feed');
+      router.push(PAGE_ROUTES.FEED);
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -101,7 +102,10 @@ export default function VerifyEmailPage() {
             {loading ? t('verifying') : t('submit')}
           </Button>
 
-          <Link href="/login" className="mt-4 text-center text-sm underline">
+          <Link
+            href={PAGE_ROUTES.LOGIN}
+            className="mt-4 text-center text-sm underline"
+          >
             {t('backToLogin')}
           </Link>
         </form>

@@ -11,6 +11,7 @@ import { GenderSection } from '@/components/ui/profile-sections/gender-section';
 import { BioSection } from '@/components/ui/profile-sections/bio-section';
 import styles from './onboarding.module.css';
 import { Header } from '@/components/ui/header';
+import { PAGE_ROUTES } from '@/lib/routes';
 import { useUserProfileStore, Gender } from '@/store/use-user-profile-store';
 import { useHobbiesStore } from '@/store/use-hobbies-store';
 import { HobbyOption } from '@/components/ui/profile-sections/hobbies-section';
@@ -54,7 +55,7 @@ export default function OnboardingPage() {
   };
 
   const handleContinue = () => {
-    router.push('/onboarding/cover');
+    router.push(PAGE_ROUTES.ONBOARDING_COVER);
   };
 
   return (

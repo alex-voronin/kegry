@@ -8,6 +8,7 @@ import { Button, ButtonVariant } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuthStore, RequiredAction } from '@/lib/auth/useAuthStore';
 import { Link } from '@/i18n/routing';
+import { PAGE_ROUTES } from '@/lib/routes';
 import styles from './login.module.css';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
@@ -54,13 +55,13 @@ export default function LoginPage() {
       const result = await signin(data.email, data.password);
 
       if (result.requiredAction === RequiredAction.EmailVerification) {
-        router.push('/verify-email');
+        router.push(PAGE_ROUTES.VERIFY_EMAIL);
       } else if (
         result.requiredAction === RequiredAction.OnboardingCompletion
       ) {
-        router.push('/onboarding');
+        router.push(PAGE_ROUTES.ONBOARDING);
       } else {
-        router.push('/feed');
+        router.push(PAGE_ROUTES.FEED);
       }
     } catch (err: any) {
       toast.error(err.message || tCommonErrors('network'));
@@ -110,7 +111,10 @@ export default function LoginPage() {
               disabled={loading}
               {...register('password')}
             />
-            <Link href="/forgot" className={styles.forgotLink}>
+            <Link
+              href={PAGE_ROUTES.FORGOT_PASSWORD}
+              className={styles.forgotLink}
+            >
               {t('forgot')}
             </Link>
             {errors.password && (

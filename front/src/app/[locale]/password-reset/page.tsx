@@ -8,6 +8,7 @@ import { Button, ButtonVariant } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuthStore } from '@/lib/auth/useAuthStore';
 import { Link } from '@/i18n/routing';
+import { PAGE_ROUTES } from '@/lib/routes';
 import styles from '../login/login.module.css'; // Reusing login styles
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
@@ -70,7 +71,7 @@ export default function PasswordResetPage() {
     try {
       await confirmPasswordReset(email, token, data.password);
       toast.success(t('success'));
-      router.push('/login');
+      router.push(PAGE_ROUTES.LOGIN);
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -87,7 +88,7 @@ export default function PasswordResetPage() {
             <p className="text-muted-foreground mt-2">
               This password reset link is invalid or incomplete.
             </p>
-            <Link href="/login" className="mt-4 inline-block">
+            <Link href={PAGE_ROUTES.LOGIN} className="mt-4 inline-block">
               <Button variant={ButtonVariant.Default}>
                 {t('backToLogin')}
               </Button>
@@ -155,7 +156,10 @@ export default function PasswordResetPage() {
             {loading ? 'Loading...' : t('submit')}
           </Button>
 
-          <Link href="/login" className="mt-4 text-center text-sm underline">
+          <Link
+            href={PAGE_ROUTES.LOGIN}
+            className="mt-4 text-center text-sm underline"
+          >
             {t('backToLogin')}
           </Link>
         </form>

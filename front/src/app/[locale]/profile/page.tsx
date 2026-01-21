@@ -10,6 +10,7 @@ import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { cn } from '@/lib/utils';
+import { PAGE_ROUTES } from '@/lib/routes';
 import styles from './profile.module.css';
 
 export default function ProfilePage() {
@@ -36,7 +37,7 @@ export default function ProfilePage() {
     {
       icon: '/assets/profile/logout-icon.svg',
       label: t('menu.logOut'),
-      onClick: () => router.push('/login'),
+      onClick: () => router.push(PAGE_ROUTES.LOGIN),
     },
     {
       icon: '/assets/profile/delete-icon.svg',
@@ -47,7 +48,7 @@ export default function ProfilePage() {
   ];
 
   const handleEditProfile = () => {
-    router.push('/edit-profile');
+    router.push(PAGE_ROUTES.EDIT_PROFILE);
   };
 
   const handleBack = () => {
@@ -133,7 +134,7 @@ export default function ProfilePage() {
           <div className={styles.actionsSection}>
             <div
               className={cn(styles.field, styles.actionField)}
-              onClick={() => router.push('/settings')}
+              onClick={() => router.push(PAGE_ROUTES.SETTINGS)}
             >
               <span>{t('settings')}</span>
               <Icon
@@ -146,7 +147,7 @@ export default function ProfilePage() {
             </div>
             <div
               className={cn(styles.field, styles.actionField)}
-              onClick={() => router.push('/login')}
+              onClick={() => router.push(PAGE_ROUTES.LOGIN)}
             >
               <span>{t('menu.logOut')}</span>
             </div>
