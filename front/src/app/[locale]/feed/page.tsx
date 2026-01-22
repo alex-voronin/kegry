@@ -126,8 +126,8 @@ export default function FeedScreen() {
           <button className={styles.actionButton}>
             <Image
               className="pointer-events-none"
-              src="/assets/feed/temporary-block-icon.svg"
-              alt="block"
+              src="/assets/feed/skip-icon.svg"
+              alt="skip"
               width={24}
               height={24}
               priority
