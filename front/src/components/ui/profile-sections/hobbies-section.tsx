@@ -80,11 +80,14 @@ export function HobbiesSection({
   readOnly = false,
 }: HobbiesSectionProps) {
   const t = useTranslations('components.profile-sections.hobbies');
-  const { hobbies, fetchHobbies, isLoading, error } = useHobbiesStore();
+  const { hobbies, fetchHobbies, isLoading, error, hasHydrated } =
+    useHobbiesStore();
 
   useEffect(() => {
-    fetchHobbies();
-  }, [fetchHobbies]);
+    if (hasHydrated) {
+      fetchHobbies();
+    }
+  }, [hasHydrated, fetchHobbies]);
 
   useEffect(() => {
     if (error) {

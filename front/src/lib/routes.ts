@@ -40,6 +40,7 @@ export const API_ENDPOINTS = {
     IGNORE: '/api/v1/feed',
     INVITE: '/api/v1/feed',
     RATE: '/api/v1/feed',
+    FILTER: '/api/v1/feed/filter',
   },
   NOTIFICATIONS: {
     UNSEEN_COUNT: '/api/v1/notifications/unseen/count',

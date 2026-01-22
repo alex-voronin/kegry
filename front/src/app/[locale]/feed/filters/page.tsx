@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import { Header } from '@/components/ui/header';
@@ -14,24 +14,57 @@ import {
 } from '@/components/ui/profile-sections/hobbies-section';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
+import { useFeedFiltersStore, FilterDto } from '@/store/use-feed-filters-store';
+import { toast } from 'react-toastify';
 import styles from './filters.module.css';
 import stylesCommon from '@/components/ui/common.module.css';
 
 export default function FiltersScreen() {
   const t = useTranslations('screens.filters');
   const router = useRouter();
+  const {
+    filters: serverFilters,
+    fetchFilters,
+    updateFilters,
+    isLoading,
+    hasHydrated,
+  } = useFeedFiltersStore();
 
-  const initialFilters = {
-    when: 'today',
-    distance: '10',
-    ageFrom: '',
-    ageTo: '',
-    gender: 'any',
-    hobbies: [] as HobbyOption[],
-  };
+  const initialFilters = useMemo(
+    () => ({
+      when: 'today',
+      distance: '10',
+      ageFrom: '',
+      ageTo: '',
+      gender: 'any',
+      hobbies: [] as HobbyOption[],
+    }),
+    [],
+  );
 
   const [filters, setFilters] = useState(initialFilters);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const isLoaded = useRef(false);
+
+  useEffect(() => {
+    if (hasHydrated) {
+      fetchFilters();
+    }
+  }, [hasHydrated, fetchFilters]);
+
+  useEffect(() => {
+    if (serverFilters && !isLoaded.current) {
+      setFilters({
+        when: 'today',
+        distance: (serverFilters.radiusMeters / 1000).toString(),
+        ageFrom: serverFilters.ageFrom?.toString() || '',
+        ageTo: serverFilters.ageTo?.toString() || '',
+        gender: serverFilters.gender || 'any',
+        hobbies: serverFilters.hobbyIds.map((id) => ({ value: id, label: '' })),
+      });
+      isLoaded.current = true;
+    }
+  }, [serverFilters]);
 
   const hasChanges = useMemo(() => {
     return JSON.stringify(filters) !== JSON.stringify(initialFilters);
@@ -45,9 +78,22 @@ export default function FiltersScreen() {
     }
   };
 
-  const handleApply = () => {
-    console.log('Applying filters:', filters);
-    router.back();
+  const handleApply = async () => {
+    const dto: FilterDto = {
+      radiusMeters: parseFloat(filters.distance) * 1000,
+      ageFrom: filters.ageFrom ? parseInt(filters.ageFrom) : null,
+      ageTo: filters.ageTo ? parseInt(filters.ageTo) : null,
+      gender: filters.gender === 'any' ? null : filters.gender,
+      hobbyIds: filters.hobbies.map((h) => h.value),
+    };
+
+    try {
+      await updateFilters(dto);
+      toast.success(t('applySuccess'));
+      router.back();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to update filters');
+    }
   };
 
   const handleDiscard = () => {
@@ -65,6 +111,10 @@ export default function FiltersScreen() {
     { value: 'male', label: t('male'), width: 100 },
     { value: 'female', label: t('female'), width: 100 },
   ];
+
+  if (isLoading && !isLoaded.current) {
+    return <div>Loading...</div>; // Should probably use a real spinner
+  }
 
   return (
     <div>
@@ -151,7 +201,11 @@ export default function FiltersScreen() {
           </div>
 
           <div className={styles.applyButtonWrapper}>
-            <Button onClick={handleApply} className={styles.applyButton}>
+            <Button
+              onClick={handleApply}
+              className={styles.applyButton}
+              loading={isLoading}
+            >
               {t('apply')}
             </Button>
           </div>

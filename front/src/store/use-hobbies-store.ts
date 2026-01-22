@@ -36,10 +36,6 @@ interface GetHobbyListResponse {
   hobbies: ApiHobbyDto[];
 }
 
-interface GetHobbyListResponse {
-  hobbies: ApiHobbyDto[];
-}
-
 const initialState = {
   hobbies: [] as HobbyOption[],
   selectedHobbyIds: [] as string[],
@@ -49,12 +45,20 @@ const initialState = {
   hasHydrated: false,
 };
 
+// Module-level singleton to track if fetch has been initiated this session
+let fetchInitiated = false;
+
 export const useHobbiesStore = create<HobbiesState>()(
   persist(
     (set, get) => ({
       ...initialState,
 
       fetchHobbies: async () => {
+        // Singleton check - only allow one fetch per page session
+        if (fetchInitiated) {
+          return;
+        }
+
         const state = get();
         const now = Date.now();
 
@@ -66,6 +70,9 @@ export const useHobbiesStore = create<HobbiesState>()(
         ) {
           return;
         }
+
+        // Mark as initiated before async operation
+        fetchInitiated = true;
 
         set({ isLoading: true, error: null });
 
@@ -87,7 +94,7 @@ export const useHobbiesStore = create<HobbiesState>()(
 
           set({
             hobbies,
-            lastFetched: now,
+            lastFetched: Date.now(),
             isLoading: false,
           });
         } catch (error) {

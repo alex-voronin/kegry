@@ -105,7 +105,8 @@
         "title": "Apply filters?",
         "buttonYes": "Yes",
         "buttonNo": "No"
-      }
+      },
+      "applySuccess": "Filters applied successfully"
     },
     "notifications": {
       "title": "Notifications",
