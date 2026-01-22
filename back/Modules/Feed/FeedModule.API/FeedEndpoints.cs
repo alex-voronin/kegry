@@ -26,6 +26,7 @@ public class FeedEndpoints : IEndpoints
         apiGroup.MapPost("/api/v1/feed/{id:guid}/invite", InviteUser);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/skip", SkipUser);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/block", BlockUser);
+        apiGroup.MapPost("/api/v1/feed/{id:guid}/ignore", IgnoreUser);
         apiGroup.MapGet("/api/v1/feed/filter", GetFilter);
         apiGroup.MapPut("/api/v1/feed/filter", UpdateFilter);
     }
@@ -110,6 +111,16 @@ public class FeedEndpoints : IEndpoints
         CancellationToken ct)
     {
         await userActionsService.InviteUserAsync(user.GetId(), id, ct);
+        return ApiResult.Empty;
+    }
+
+    private static async Task<ApiResult.EmptyResult> IgnoreUser(
+        [FromRoute] Guid id,
+        ClaimsPrincipal user,
+        IUserActionsService userActionsService,
+        CancellationToken ct)
+    {
+        await userActionsService.IgnoreUserAsync(user.GetId(), id, ct);
         return ApiResult.Empty;
     }
 

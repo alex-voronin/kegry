@@ -70,6 +70,13 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         await _feedUserRelationRepository.SaveChangesAsync(ct);
     }
 
+    public async Task IgnoreUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
+    {
+        var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
+        feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
+        await _feedUserRelationRepository.SaveChangesAsync(ct);
+    }
+
     public async Task InviteUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
     {
         try
