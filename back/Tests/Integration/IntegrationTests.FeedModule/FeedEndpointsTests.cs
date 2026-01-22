@@ -126,6 +126,46 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var feedAfter = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
         feedAfter.Result.Feed.Any(f => f.Id == Guid.Parse(userBId)).ShouldBeFalse();
     }
+    
+    [Fact]
+    public async Task GivenTwoUsers_WhenUserIgnoresAnotherUser_ThenThisUserGoesToEndOfTheFeed()
+    {
+        // 1. Create two users and submit locations
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("user_a@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("user_b@example.com", "Password123!");
+        var userBId = authB.UserId;
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        
+        var authC = await Factory.AuthManager.CreateAndLoginUserAsync("user_c@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authC);
+        await Factory.AuthManager.CreateProfile();
+        await Factory.AuthManager.SubmitLocation(0.01, 0.01);
+
+        // 2. User A sees User B in feed
+        Factory.ApiClient.SetAuth(authA);
+        
+        var feedBefore = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        var firstFeedId = feedBefore.Result.Feed.First().Id;
+        firstFeedId.ShouldBe(Guid.Parse(userBId));
+
+        // 3. User A ignore User B
+        var response = await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.IgnoreUser(userBId), null);
+        response.Success.ShouldBeTrue();
+
+        // 4. User B goes to the end of the feed
+        var feedAfterIgnore = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        feedAfterIgnore.Result.Feed.Last().Id.ShouldBe(Guid.Parse(userBId));
+        
+        // 5. After delay user B returns on top of the feed
+        Factory.FakeTimeProvider.Advance(TimeSpan.FromHours(FeedParameters.IgnoredUserRatingDowngradeInHours + 1));
+        var feedAfterDelay = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        feedAfterDelay.Result.Feed.First().Id.ShouldBe(Guid.Parse(userBId));
+    }
 
     [Fact]
     public async Task GivenTwoUsers_WhenUserInvitesAnotherUser_ThenReturnsSuccess()

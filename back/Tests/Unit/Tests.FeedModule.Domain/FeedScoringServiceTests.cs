@@ -143,6 +143,8 @@ public class FeedScoringServiceTests
         {
             DistanceMeters = 100,
             Rating = 5,
+            LastSeenAt = DateTimeOffset.UtcNow - 
+                         TimeSpan.FromDays(FeedParameters.IgnoredUserRatingDowngradeInHours + 1),
             User = new User
             {
                 Id = Guid.NewGuid(),
@@ -155,6 +157,8 @@ public class FeedScoringServiceTests
         {
             DistanceMeters = 10000,
             Rating = 1,
+            LastSeenAt = DateTimeOffset.UtcNow - 
+                         TimeSpan.FromDays(FeedParameters.IgnoredUserRatingDowngradeInHours + 1),
             User = new User
             {
                 Id = Guid.NewGuid(),
@@ -194,6 +198,8 @@ public class FeedScoringServiceTests
         {
             DistanceMeters = 100 * i,
             Rating = 5,
+            LastSeenAt = DateTimeOffset.UtcNow - 
+                         TimeSpan.FromDays(FeedParameters.IgnoredUserRatingDowngradeInHours + 1),
             User = new User { Id = Guid.NewGuid(), Birthday = new DateOnly(1990, 1, 1), Hobbies = [] }
         }).ToArray();
         feedCandidateRepository.GetFeedCandidatesInRadius(

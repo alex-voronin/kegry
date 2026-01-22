@@ -13,17 +13,20 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
     private readonly ILocationRepository _locationRepository;
     private readonly IUserRepository _userRepository;
     private readonly IFilterRepository _filterRepository;
+    private readonly TimeProvider _timeProvider;
 
     public FeedScoringService(
         IFeedCandidateRepository feedCandidateRepository,
         ILocationRepository locationRepository,
         IUserRepository userRepository,
-        IFilterRepository filterRepository)
+        IFilterRepository filterRepository,
+        TimeProvider timeProvider)
     {
         _feedCandidateRepository = feedCandidateRepository;
         _locationRepository = locationRepository;
         _userRepository = userRepository;
         _filterRepository = filterRepository;
+        _timeProvider = timeProvider;
     }
 
     public async Task<FeedCandidate[]> GetFeedAsync(
@@ -59,21 +62,31 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
         return RankCandidates(userProfile, candidates, filter, limit);
     }
 
-    private static FeedCandidate[] RankCandidates(
+    private FeedCandidate[] RankCandidates(
         User user,
         FeedCandidate[] candidates,
         Filter filter,
         int limit)
     {
-        return candidates
+        var ratingCutOffDateTime = _timeProvider.GetUtcNow() - 
+                                   TimeSpan.FromHours(FeedParameters.IgnoredUserRatingDowngradeInHours);
+        
+        var tailCandidates = candidates
+            .Where(c => c.LastSeenAt != null && c.LastSeenAt > ratingCutOffDateTime)
+            .OrderBy(c => c.LastSeenAt);
+
+        var headCandidates = candidates
             .Select(c => new
             {
                 Candidate = c,
                 Score = CalculateScore(user, c, filter)
             })
-            .OrderByDescending(x => x.Score)
+            .OrderByDescending(t => t.Score);
+
+        return headCandidates
+            .Select(x => x.Candidate)
+            .Concat(tailCandidates)
             .Take(limit)
-            .Select(candidateAndScore => candidateAndScore.Candidate)
             .ToArray();
     }
 

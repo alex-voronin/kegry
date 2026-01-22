@@ -119,6 +119,7 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
             {
                 User = candidate.User,
                 Rating = candidate.Rating,
+                LastSeenAt = candidate.LastSeenAt,
                 DistanceMeters = (int)candidate.DistanceMeters
             })
             .ToArrayAsync(ct);

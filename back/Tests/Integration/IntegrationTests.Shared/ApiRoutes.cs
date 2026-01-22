@@ -30,6 +30,7 @@ public static class ApiRoutes
         public static string InviteUser(string userId) => $"/api/v1/feed/{userId}/invite";
         public static string BlockUser(string userId) => $"/api/v1/feed/{userId}/block";
         public static string SkipUser(string userId) => $"/api/v1/feed/{userId}/skip";
+        public static string IgnoreUser(string userId) => $"/api/v1/feed/{userId}/ignore";
         public const string Filter = "/api/v1/feed/filter";
     }
 

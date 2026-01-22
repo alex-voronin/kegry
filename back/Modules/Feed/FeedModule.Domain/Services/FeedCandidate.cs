@@ -5,6 +5,7 @@ namespace FeedModule.Domain.Services;
 public sealed class FeedCandidate
 {
     public required User User { get; init; }
+    public required DateTimeOffset? LastSeenAt { get; init; }
     public required decimal? Rating { get; init; }
     public required int DistanceMeters { get; init; }
 }

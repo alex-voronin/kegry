@@ -1,7 +1,6 @@
 using FeedModule.Domain.Aggregates;
 using FeedModule.Domain.Aggregates.ReadOnly;
 using FeedModule.Domain.Services;
-using FeedModule.Domain.ValueObjects;
 using Shouldly;
 using Hobby = FeedModule.Domain.Aggregates.ReadOnly.Hobby;
 
@@ -31,6 +30,7 @@ public class FeedScoringServiceCalculateScoreTests
         {
             DistanceMeters = 0,
             Rating = 5,
+            LastSeenAt = DateTimeOffset.UtcNow - TimeSpan.FromDays(1),
             User = new User
             {
                 Id = Guid.NewGuid(),
@@ -64,6 +64,7 @@ public class FeedScoringServiceCalculateScoreTests
         {
             DistanceMeters = 15000,
             Rating = 5,
+            LastSeenAt = DateTimeOffset.UtcNow - TimeSpan.FromDays(1),
             User = new User
             {
                 Id = Guid.NewGuid(),
@@ -95,6 +96,7 @@ public class FeedScoringServiceCalculateScoreTests
         {
             DistanceMeters = 100000,
             Rating = 0.5m,
+            LastSeenAt = DateTimeOffset.UtcNow - TimeSpan.FromDays(1),
             User = new User
             {
                 Id = Guid.NewGuid(),
@@ -130,6 +132,7 @@ public class FeedScoringServiceCalculateScoreTests
         {
             DistanceMeters = distanceMeters,
             Rating = 0.5m,
+            LastSeenAt = DateTimeOffset.UtcNow - TimeSpan.FromDays(1),
             User = new User
             {
                 Id = Guid.NewGuid(),
@@ -174,6 +177,7 @@ public class FeedScoringServiceCalculateScoreTests
         {
             DistanceMeters = 100000,
             Rating = 0.5m,
+            LastSeenAt = DateTimeOffset.UtcNow - TimeSpan.FromDays(1),
             User = new User
             {
                 Id = Guid.NewGuid(),
@@ -210,6 +214,7 @@ public class FeedScoringServiceCalculateScoreTests
         {
             DistanceMeters = 100000,
             Rating = 0.5m,
+            LastSeenAt = DateTimeOffset.UtcNow - TimeSpan.FromDays(1),
             User = new User
             {
                 Id = Guid.NewGuid(),
