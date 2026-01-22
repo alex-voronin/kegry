@@ -41,4 +41,7 @@ export const API_ENDPOINTS = {
     INVITE: '/api/v1/feed',
     RATE: '/api/v1/feed',
   },
+  NOTIFICATIONS: {
+    UNSEEN_COUNT: '/api/v1/notifications/unseen/count',
+  },
 } as const;

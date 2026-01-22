@@ -10,9 +10,16 @@ import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useFeedStore, UserProfileDto } from '@/store/use-feed-store';
+import { useNotificationStore } from '@/store/use-notification-store';
 import { toast } from 'react-toastify';
 
-function FeedHeader({ router }: { router: ReturnType<typeof useRouter> }) {
+function FeedHeader({
+  router,
+  unseenCount,
+}: {
+  router: ReturnType<typeof useRouter>;
+  unseenCount: number;
+}) {
   return (
     <Header
       left={
@@ -43,7 +50,11 @@ function FeedHeader({ router }: { router: ReturnType<typeof useRouter> }) {
             priority
             onClick={() => router.push(PAGE_ROUTES.NOTIFICATIONS)}
           >
-            <span className={styles.badge}>3</span>
+            {unseenCount > 0 && (
+              <span className={styles.badge}>
+                {unseenCount > 99 ? '99+' : unseenCount}
+              </span>
+            )}
           </Icon>
         </div>
       }
@@ -196,6 +207,7 @@ export default function FeedScreen() {
     isLoading,
     hasHydrated,
   } = useFeedStore();
+  const { unseenCount, fetchUnseenCount } = useNotificationStore();
 
   const currentProfile = feed[0] || null;
 
@@ -208,7 +220,11 @@ export default function FeedScreen() {
       isInitialized.current = true;
 
       try {
-        const [status] = await Promise.all([fetchFeedStatus(), fetchFeed()]);
+        const [status] = await Promise.all([
+          fetchFeedStatus(),
+          fetchFeed(),
+          fetchUnseenCount(),
+        ]);
 
         if (status.isInMeeting) {
           router.push(PAGE_ROUTES.CHAT);
@@ -225,7 +241,7 @@ export default function FeedScreen() {
     };
 
     initializeFeed();
-  }, [hasHydrated, fetchFeedStatus, fetchFeed, router]);
+  }, [hasHydrated, fetchFeedStatus, fetchFeed, fetchUnseenCount, router]);
 
   const showLoading = isLoading || !hasHydrated;
 
@@ -259,7 +275,7 @@ export default function FeedScreen() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.content}>
-        <FeedHeader router={router} />
+        <FeedHeader router={router} unseenCount={unseenCount} />
         <FeedBody
           currentProfile={currentProfile}
           isLoading={showLoading}
