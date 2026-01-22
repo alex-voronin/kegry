@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
@@ -137,10 +137,18 @@ function FeedBody({
   );
 }
 
-function FeedFooter({ router }: { router: ReturnType<typeof useRouter> }) {
+function FeedFooter({
+  onIgnore,
+  onInvite,
+  onSkip,
+}: {
+  onIgnore: () => void;
+  onInvite: () => void;
+  onSkip: () => void;
+}) {
   return (
     <footer className={styles.actions}>
-      <button className={styles.actionButton}>
+      <button className={styles.actionButton} onClick={onIgnore}>
         <Image
           className="pointer-events-none"
           src="/assets/feed/ignore-icon.svg"
@@ -150,10 +158,7 @@ function FeedFooter({ router }: { router: ReturnType<typeof useRouter> }) {
           priority
         />
       </button>
-      <button
-        className={styles.actionPrimary}
-        onClick={() => router.push(PAGE_ROUTES.CHAT)}
-      >
+      <button className={styles.actionPrimary} onClick={onInvite}>
         <Image
           className="pointer-events-none"
           src="/assets/feed/invite-icon.png"
@@ -163,7 +168,7 @@ function FeedFooter({ router }: { router: ReturnType<typeof useRouter> }) {
           priority
         />
       </button>
-      <button className={styles.actionButton}>
+      <button className={styles.actionButton} onClick={onSkip}>
         <Image
           className="pointer-events-none"
           src="/assets/feed/skip-icon.svg"
@@ -183,17 +188,24 @@ export default function FeedScreen() {
   const router = useRouter();
   const {
     feed,
-    currentProfileIndex,
     fetchFeedStatus,
     fetchFeed,
+    inviteUser,
+    skipUser,
+    ignoreUser,
     isLoading,
-    error,
     hasHydrated,
   } = useFeedStore();
+
+  const currentProfile = feed[0] || null;
+
+  const isInitialized = useRef(false);
 
   useEffect(() => {
     const initializeFeed = async () => {
       if (!hasHydrated) return;
+      if (isInitialized.current) return;
+      isInitialized.current = true;
 
       try {
         const [status] = await Promise.all([fetchFeedStatus(), fetchFeed()]);
@@ -208,20 +220,41 @@ export default function FeedScreen() {
         }
       } catch (err: any) {
         toast.error(err.message);
+        isInitialized.current = false;
       }
     };
 
     initializeFeed();
   }, [hasHydrated, fetchFeedStatus, fetchFeed, router]);
 
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
-
-  const currentProfile = feed[currentProfileIndex] || null;
   const showLoading = isLoading || !hasHydrated;
+
+  const handleIgnore = async () => {
+    if (!currentProfile) return;
+    try {
+      await ignoreUser(currentProfile.id);
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleInvite = async () => {
+    if (!currentProfile) return;
+    try {
+      await inviteUser(currentProfile.id);
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleSkip = async () => {
+    if (!currentProfile) return;
+    try {
+      await skipUser(currentProfile.id);
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
 
   return (
     <div className={styles.wrapper}>
@@ -233,7 +266,11 @@ export default function FeedScreen() {
           tFeed={tFeed}
           tHobbies={tHobbies}
         />
-        <FeedFooter router={router} />
+        <FeedFooter
+          onIgnore={handleIgnore}
+          onInvite={handleInvite}
+          onSkip={handleSkip}
+        />
       </div>
     </div>
   );

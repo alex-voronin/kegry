@@ -28,25 +28,29 @@ export interface FeedStatusResponse {
 
 interface FeedState {
   feed: UserProfileDto[];
-  currentProfileIndex: number;
-  lastFetched: number | null;
+  lastFetchedAt: number | null;
   isLoading: boolean;
   error: string | null;
   hasHydrated: boolean;
 
   fetchFeedStatus: () => Promise<FeedStatusResponse>;
   fetchFeed: () => Promise<void>;
+  refreshFeedIfNeeded: () => Promise<void>;
+  inviteUser: (userId: string) => Promise<void>;
+  skipUser: (userId: string) => Promise<void>;
+  ignoreUser: (userId: string) => Promise<void>;
   nextProfile: () => void;
-  setHasHydrated: (hydrated: boolean) => void;
+  setHasHydrated: () => void;
   reset: () => void;
 }
 
-const CACHE_DURATION_MS = 60 * 60 * 1000; // 1 hour
+const FETCH_COOLDOWN_MS = 30 * 1000;
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+const MIN_PROFILES_THRESHOLD = 3;
 
 const initialState = {
   feed: [] as UserProfileDto[],
-  currentProfileIndex: 0,
-  lastFetched: null as number | null,
+  lastFetchedAt: null as number | null,
   isLoading: false,
   error: null as string | null,
   hasHydrated: false,
@@ -71,11 +75,6 @@ export const useFeedStore = create<FeedState>()(
 
           return response.data.result;
         } catch (error) {
-          const errorMessage =
-            error instanceof Error
-              ? error.message
-              : 'Failed to fetch feed status';
-          set({ error: errorMessage });
           throw error;
         }
       },
@@ -83,16 +82,20 @@ export const useFeedStore = create<FeedState>()(
       fetchFeed: async () => {
         const state = get();
         const now = Date.now();
+        const isCacheValid =
+          state.lastFetchedAt &&
+          now - state.lastFetchedAt < CACHE_TTL_MS &&
+          state.feed.length >= MIN_PROFILES_THRESHOLD;
 
-        if (
-          state.lastFetched &&
-          now - state.lastFetched < CACHE_DURATION_MS &&
-          state.feed.length > 0
-        ) {
+        if (isCacheValid) {
           return;
         }
 
-        set({ isLoading: true, error: null });
+        const hasStaleData = state.feed.length > 0;
+
+        if (!hasStaleData) {
+          set({ isLoading: true, error: null });
+        }
 
         try {
           const response = await axios.get<
@@ -105,38 +108,113 @@ export const useFeedStore = create<FeedState>()(
             );
           }
 
+          const newFeed = response.data.result.feed;
+
+          if (hasStaleData) {
+            const currentProfile = state.feed[0];
+            const existingIds = new Set([currentProfile?.id]);
+            const itemsToAdd = newFeed.filter((p) => !existingIds.has(p.id));
+
+            const mergedFeed = currentProfile
+              ? [currentProfile, ...itemsToAdd]
+              : newFeed;
+
+            set({
+              feed: mergedFeed,
+              lastFetchedAt: now,
+              isLoading: false,
+            });
+          } else {
+            set({
+              feed: newFeed,
+              lastFetchedAt: now,
+              isLoading: false,
+            });
+          }
+        } catch (error) {
+          set({ isLoading: false });
+          throw error;
+        }
+      },
+
+      refreshFeedIfNeeded: async () => {
+        const state = get();
+        const now = Date.now();
+
+        if (state.feed.length >= MIN_PROFILES_THRESHOLD) {
+          return;
+        }
+
+        if (
+          state.lastFetchedAt &&
+          now - state.lastFetchedAt < FETCH_COOLDOWN_MS
+        ) {
+          return;
+        }
+
+        try {
+          const response = await axios.get<
+            ApiResult<{ feed: UserProfileDto[] }>
+          >(API_ENDPOINTS.FEED.LIST);
+
+          if (!response.data.success) {
+            return;
+          }
+
+          const newFeed = response.data.result.feed;
+          const existingIds = new Set(state.feed.map((p) => p.id));
+          const itemsToAdd = newFeed.filter((p) => !existingIds.has(p.id));
+
           set({
-            feed: response.data.result.feed,
-            currentProfileIndex: 0,
-            lastFetched: now,
-            isLoading: false,
+            feed: [...state.feed, ...itemsToAdd],
+            lastFetchedAt: now,
           });
         } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : 'Failed to fetch feed';
-          set({ error: errorMessage, isLoading: false });
+          console.log('Failed to refresh feed', error);
         }
+      },
+
+      inviteUser: async (userId: string) => {
+        await axios.post(`${API_ENDPOINTS.FEED.INVITE}/${userId}/invite`);
+        get().nextProfile();
+        get().refreshFeedIfNeeded();
+      },
+
+      skipUser: async (userId: string) => {
+        await axios.post(`${API_ENDPOINTS.FEED.SKIP}/${userId}/skip`);
+        get().nextProfile();
+        get().refreshFeedIfNeeded();
+      },
+
+      ignoreUser: async (userId: string) => {
+        await axios.post(`${API_ENDPOINTS.FEED.IGNORE}/${userId}/ignore`);
+        get().nextProfile();
+        get().refreshFeedIfNeeded();
       },
 
       nextProfile: () => {
         const state = get();
-        if (state.currentProfileIndex < state.feed.length - 1) {
-          set({ currentProfileIndex: state.currentProfileIndex + 1 });
+        if (state.feed.length > 1) {
+          set({ feed: state.feed.slice(1) });
+        } else if (state.feed.length === 1) {
+          set({ feed: [] });
         }
       },
 
-      setHasHydrated: (hydrated) => set({ hasHydrated: hydrated }),
+      setHasHydrated: () => set({ hasHydrated: true }),
       reset: () => set({ ...initialState, hasHydrated: true }),
     }),
     {
       name: 'feed-store',
-      onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true);
+      onRehydrateStorage: () => (state, error) => {
+        if (error) {
+          console.error('Failed to hydrate feed store:', error);
+        }
+        state?.setHasHydrated();
       },
       partialize: (state) => ({
         feed: state.feed,
-        currentProfileIndex: state.currentProfileIndex,
-        lastFetched: state.lastFetched,
+        lastFetchedAt: state.lastFetchedAt,
       }),
     },
   ),
