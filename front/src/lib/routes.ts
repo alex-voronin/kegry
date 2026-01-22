@@ -33,4 +33,12 @@ export const API_ENDPOINTS = {
   HOBBIES: {
     LIST: '/api/v1/hobby',
   },
+  FEED: {
+    STATUS: '/api/v1/feed/status',
+    LIST: '/api/v1/feed',
+    SKIP: '/api/v1/feed',
+    IGNORE: '/api/v1/feed',
+    INVITE: '/api/v1/feed',
+    RATE: '/api/v1/feed',
+  },
 } as const;
