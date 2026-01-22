@@ -175,19 +175,19 @@ export const useFeedStore = create<FeedState>()(
       },
 
       inviteUser: async (userId: string) => {
-        await axios.post(`${API_ENDPOINTS.FEED.INVITE}/${userId}/invite`);
+        await axios.post(API_ENDPOINTS.FEED.INVITE(userId));
         get().nextProfile();
         get().refreshFeedIfNeeded();
       },
 
       skipUser: async (userId: string) => {
-        await axios.post(`${API_ENDPOINTS.FEED.SKIP}/${userId}/skip`);
+        await axios.post(API_ENDPOINTS.FEED.SKIP(userId));
         get().nextProfile();
         get().refreshFeedIfNeeded();
       },
 
       ignoreUser: async (userId: string) => {
-        await axios.post(`${API_ENDPOINTS.FEED.IGNORE}/${userId}/ignore`);
+        await axios.post(API_ENDPOINTS.FEED.IGNORE(userId));
         get().nextProfile();
         get().refreshFeedIfNeeded();
       },

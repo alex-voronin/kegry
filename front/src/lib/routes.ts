@@ -36,10 +36,11 @@ export const API_ENDPOINTS = {
   FEED: {
     STATUS: '/api/v1/feed/status',
     LIST: '/api/v1/feed',
-    SKIP: '/api/v1/feed',
-    IGNORE: '/api/v1/feed',
-    INVITE: '/api/v1/feed',
-    RATE: '/api/v1/feed',
+    RATE: (userId: string) => `/api/v1/feed/${userId}/rating`,
+    INVITE: (userId: string) => `/api/v1/feed/${userId}/invite`,
+    BLOCK: (userId: string) => `/api/v1/feed/${userId}/block`,
+    SKIP: (userId: string) => `/api/v1/feed/${userId}/skip`,
+    IGNORE: (userId: string) => `/api/v1/feed/${userId}/ignore`,
     FILTER: '/api/v1/feed/filter',
   },
   NOTIFICATIONS: {
