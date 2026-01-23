@@ -16,9 +16,9 @@ interface ModalDialogProps {
   onClose: () => void;
   message: string;
   primaryButtonText: string;
-  secondaryButtonText: string;
+  secondaryButtonText?: string;
   onPrimaryAction: () => void;
-  onSecondaryAction: () => void;
+  onSecondaryAction?: () => void;
 }
 
 export function ModalDialog({
@@ -67,16 +67,18 @@ export function ModalDialog({
                 >
                   {primaryButtonText}
                 </Button>
-                <Button
-                  variant={ButtonVariant.Default}
-                  className={styles.button}
-                  onClick={() => {
-                    onSecondaryAction();
-                    onClose();
-                  }}
-                >
-                  {secondaryButtonText}
-                </Button>
+                {secondaryButtonText && onSecondaryAction && (
+                  <Button
+                    variant={ButtonVariant.Default}
+                    className={styles.button}
+                    onClick={() => {
+                      onSecondaryAction();
+                      onClose();
+                    }}
+                  >
+                    {secondaryButtonText}
+                  </Button>
+                )}
               </div>
             </DialogPanel>
           </TransitionChild>

@@ -79,8 +79,17 @@
     "chat": {
       "messagePlaceholder": "Message 1/30",
       "timer": "{minutes}:{seconds}",
+      "noActiveChat": "No active chat",
+      "timerInfoDialog": {
+        "title": "The timer shows a countdown until the chat ends. When the time expires or the chat is ended manually, you will again be able to scroll the feed and invite users to meetings.",
+        "okButton": "OK"
+      },
       "menu": {
-        "cancel": "Cancel meeting"
+        "cancel": "End meeting"
+      },
+      "toast": {
+        "sendFailed": "Failed to send message",
+        "cancelFailed": "Failed to end meeting"
       }
     },
     "filters": {

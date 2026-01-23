@@ -101,6 +101,7 @@ export const useNotificationsStore = create<NotificationsState>()(
 
 export function isNotificationExpired(createdAt: string): boolean {
   const createdDate = new Date(createdAt);
+  // TODO: get this value from the backend
   const expirationDate = new Date(createdDate.getTime() + 48 * 60 * 60 * 1000);
   return new Date() > expirationDate;
 }
