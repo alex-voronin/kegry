@@ -1,38 +1,84 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
+import { toast } from 'react-toastify';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
+import { Spinner } from '@/components/ui/spinner';
+import AvatarCropper from '@/components/ui/avatar-cropper';
 import { cn } from '@/lib/utils';
-import { PAGE_ROUTES } from '@/lib/routes';
+import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
+import {
+  useUserProfileStore,
+  calculateAge,
+  blobToBase64,
+} from '@/store/use-user-profile-store';
+import { useHobbiesStore } from '@/store/use-hobbies-store';
+import { uploadImage } from '@/lib/image-utils';
 import styles from './profile.module.css';
 
 export default function ProfilePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
     useState(false);
+  const [isCropperOpen, setIsCropperOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const t = useTranslations('screens.profile');
   const tGender = useTranslations('components.profile-sections.gender');
   const tBio = useTranslations('components.profile-sections.bio');
   const tHobbies = useTranslations('components.profile-sections.hobbies');
+  const tAge = useTranslations('components.profile-sections.age');
   const router = useRouter();
+
+  const {
+    serverProfile: profile,
+    firstName: localFirstName,
+    lastName: localLastName,
+    birthday: localBirthday,
+    bio: localBio,
+    gender: localGender,
+    avatarBase64: localAvatarBase64,
+    selectedHobbyIds: localSelectedHobbyIds,
+    isLoading,
+    fetchMyProfile,
+    patchProfile,
+    setAvatarBase64,
+  } = useUserProfileStore();
+
+  const { hobbies } = useHobbiesStore();
+
+  const isInitialized = useRef(false);
+
+  useEffect(() => {
+    if (isInitialized.current) return;
+    isInitialized.current = true;
+    fetchMyProfile();
+  }, [fetchMyProfile]);
 
   const menuOptions = [
     {
       icon: '/assets/profile/edit-icon.svg',
       label: t('menu.edit'),
-      onClick: () => console.log('Edit clicked'),
+      onClick: () => router.push(PAGE_ROUTES.PROFILE_EDIT),
     },
     {
       icon: '/assets/profile/set-photo-icon.svg',
-      label: t('menu.setPhoto'),
-      onClick: () => console.log('Set photo clicked'),
+      label: t('menu.setAvatar'),
+      onClick: () => fileInputRef.current?.click(),
+    },
+    {
+      icon: '/assets/profile/set-photo-icon.svg',
+      label: t('menu.setCover'),
+      onClick: () => router.push(PAGE_ROUTES.PROFILE_COVER),
     },
     {
       icon: '/assets/profile/logout-icon.svg',
@@ -48,12 +94,81 @@ export default function ProfilePage() {
   ];
 
   const handleEditProfile = () => {
-    router.push(PAGE_ROUTES.EDIT_PROFILE);
+    router.push(PAGE_ROUTES.PROFILE_EDIT);
   };
 
   const handleBack = () => {
     router.back();
   };
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setSelectedImage(reader.result as string);
+      setIsCropperOpen(true);
+    };
+    reader.readAsDataURL(file);
+
+    // Reset input so same file can be selected again
+    e.target.value = '';
+  };
+
+  const handleCropComplete = async (croppedBlob: Blob) => {
+    setIsCropperOpen(false);
+    setIsUploadingAvatar(true);
+
+    try {
+      const base64 = await blobToBase64(croppedBlob);
+      setAvatarBase64(base64);
+      const publicUrl = await uploadImage(
+        croppedBlob,
+        API_ENDPOINTS.USER_PROFILE.AVATAR_UPLOAD_URL,
+      );
+
+      await patchProfile({ avatarImageUrl: publicUrl });
+      toast.success('Avatar updated');
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to upload avatar');
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  };
+
+  if (isLoading && !profile && !localFirstName) {
+    return (
+      <div className="flex flex-1 items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
+
+  const displayName =
+    profile?.firstName && profile?.lastName
+      ? `${profile.firstName} ${profile.lastName}`
+      : localFirstName && localLastName
+        ? `${localFirstName} ${localLastName}`
+        : 'Loading...';
+
+  const userBirthday = profile?.birthday || localBirthday;
+  const age = userBirthday ? calculateAge(userBirthday) : null;
+
+  const userGender = profile?.gender || localGender;
+  const genderLabel = userGender
+    ? tGender(userGender === 'male' ? 'male' : 'female')
+    : '';
+
+  const userBio = profile?.bio || localBio;
+  const userAvatarUrl = profile?.avatarImageUrl || localAvatarBase64;
+  const userHobbies =
+    profile?.hobbies ||
+    hobbies.filter((h) => localSelectedHobbyIds.includes(h.id));
 
   return (
     <div>
@@ -79,19 +194,33 @@ export default function ProfilePage() {
         }
       />
 
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileSelect}
+      />
+
       <div className={styles.wrapper}>
         <div className={styles.avatarSection}>
-          <div className={styles.avatarContainer}>
-            <Image
-              src="/assets/profile/avatar.png"
-              alt="Avatar"
-              fill
-              className={styles.avatarImage}
-              priority
-            />
+          <div className={styles.avatarContainer} onClick={handleAvatarClick}>
+            {isUploadingAvatar ? (
+              <div className="flex h-full w-full items-center justify-center">
+                <Spinner />
+              </div>
+            ) : (
+              <Image
+                src={userAvatarUrl || '/assets/common/avatar-placeholder.svg'}
+                alt="Avatar"
+                fill
+                className={styles.avatarImage}
+                priority
+              />
+            )}
           </div>
           <h1 className={styles.userName} onClick={handleEditProfile}>
-            Genadiy Srulin
+            {displayName}
           </h1>
         </div>
 
@@ -99,44 +228,68 @@ export default function ProfilePage() {
           <div className={styles.section} onClick={handleEditProfile}>
             <FormSectionTitle>{tGender('title')}</FormSectionTitle>
             <div className={styles.field}>
-              <span>{tGender('male')}</span>
+              <span>{genderLabel}</span>
             </div>
           </div>
 
           <div className={styles.section} onClick={handleEditProfile}>
-            <FormSectionTitle>
-              {useTranslations('components.profile-sections.age')('title')}
-            </FormSectionTitle>
+            <FormSectionTitle>{tAge('title')}</FormSectionTitle>
             <div className={styles.field}>
-              <span>35</span>
+              <span>{age ?? '--'}</span>
             </div>
           </div>
 
           <div className={styles.section} onClick={handleEditProfile}>
             <FormSectionTitle>{tBio('title')}</FormSectionTitle>
             <div className={styles.field}>
-              <p>
-                A real man - I love hunting, fishing, and drinking beer! Praise
-                Odin and await Ragnarök.
-              </p>
+              <p>{userBio || '--'}</p>
             </div>
           </div>
 
           <div className={styles.section} onClick={handleEditProfile}>
             <FormSectionTitle>{tHobbies('title')}</FormSectionTitle>
             <div className={cn(styles.field, styles.hobbiesField)}>
-              <div className={styles.hobbyTag}>{tHobbies('volleyball')}</div>
-              <div className={styles.hobbyTag}>{tHobbies('boxing')}</div>
-              <div className={styles.hobbyTag}>{tHobbies('camping')}</div>
+              {userHobbies.map((hobby) => (
+                <div key={hobby.id} className={styles.hobbyTag}>
+                  {tHobbies(hobby.name as any) || hobby.name}
+                </div>
+              ))}
+              {(!userHobbies || userHobbies.length === 0) && <span>--</span>}
             </div>
           </div>
 
           <div className={styles.actionsSection}>
             <div
               className={cn(styles.field, styles.actionField)}
+              onClick={() => router.push(PAGE_ROUTES.PROFILE_COVER)}
+            >
+              <span>{t('coverImage')}</span>
+              <Icon
+                src="/assets/common/disclosure-right-icon.svg"
+                alt="chevron"
+                width={10}
+                height={18}
+                priority
+              />
+            </div>
+            <div
+              className={cn(styles.field, styles.actionField)}
               onClick={() => router.push(PAGE_ROUTES.SETTINGS)}
             >
               <span>{t('settings')}</span>
+              <Icon
+                src="/assets/common/disclosure-right-icon.svg"
+                alt="chevron"
+                width={10}
+                height={18}
+                priority
+              />
+            </div>
+            <div
+              className={cn(styles.field, styles.actionField)}
+              onClick={() => router.push(PAGE_ROUTES.BLOCKED_USERS)}
+            >
+              <span>{t('blockedUsers')}</span>
               <Icon
                 src="/assets/common/disclosure-right-icon.svg"
                 alt="chevron"
@@ -170,6 +323,14 @@ export default function ProfilePage() {
         onPrimaryAction={() => console.log('Account deletion is confirmed')}
         onSecondaryAction={() => console.log('Account deletion is canceled')}
       />
+
+      {isCropperOpen && selectedImage && (
+        <AvatarCropper
+          imageSrc={selectedImage}
+          onCrop={handleCropComplete}
+          onClose={() => setIsCropperOpen(false)}
+        />
+      )}
     </div>
   );
 }

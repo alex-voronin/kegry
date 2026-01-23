@@ -9,6 +9,7 @@ import { compressImageToBlob } from '@/lib/image-utils';
 type CoverSectionProps = {
   coverBlob?: Blob | null;
   onCoverChange?: (coverBlob: Blob) => void;
+  existingCoverUrl?: string;
 };
 
 const MAX_COVER_SIZE_BYTES = 1024 * 1024; // 1MB
@@ -17,6 +18,7 @@ const MAX_COVER_WIDTH = 1920;
 export const CoverSection = ({
   coverBlob,
   onCoverChange,
+  existingCoverUrl,
 }: CoverSectionProps) => {
   const t = useTranslations('screens.onboarding');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -28,8 +30,8 @@ export const CoverSection = ({
     if (blob) {
       return URL.createObjectURL(blob);
     }
-    return null;
-  }, [localBlob, coverBlob]);
+    return existingCoverUrl || null;
+  }, [localBlob, coverBlob, existingCoverUrl]);
 
   // Cleanup object URL on unmount or when blob changes
   useEffect(() => {

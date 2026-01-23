@@ -117,8 +117,6 @@ export default function CoverPage() {
         requiredAction: RequiredAction.None,
       });
 
-      resetProfile();
-
       router.push(PAGE_ROUTES.FEED);
     } catch (err) {
       const errorMessage =

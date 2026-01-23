@@ -9,10 +9,13 @@ export const PAGE_ROUTES = {
   ONBOARDING: '/onboarding',
   ONBOARDING_COVER: '/onboarding/cover',
   PROFILE: '/profile',
+  PROFILE_EDIT: '/profile/edit',
+  PROFILE_COVER: '/profile/cover-image',
   EDIT_PROFILE: '/edit-profile',
   NOTIFICATIONS: '/notifications',
   CHAT: '/chat',
   SETTINGS: '/settings',
+  BLOCKED_USERS: '/blocked-users',
 } as const;
 
 export const API_ENDPOINTS = {

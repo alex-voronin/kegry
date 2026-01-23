@@ -140,3 +140,43 @@ export async function compressImageToBlob(
 export function createImageUrl(blob: Blob): string {
   return URL.createObjectURL(blob);
 }
+
+/**
+ * Upload an image blob to S3 using a presigned URL endpoint
+ * Returns the public download URL of the uploaded image
+ */
+export async function uploadImage(
+  blob: Blob,
+  presignedUrlEndpoint: string,
+): Promise<string> {
+  const axios = (await import('axios')).default;
+
+  interface PresignedUrlResponse {
+    uploadUrl: string;
+    publicDownloadUrl: string;
+  }
+
+  // Get presigned URL
+  const presignedResponse = await axios.post<{
+    success: boolean;
+    result: PresignedUrlResponse;
+    errors: { error: string }[];
+  }>(presignedUrlEndpoint);
+
+  if (!presignedResponse.data.success) {
+    throw new Error(
+      presignedResponse.data.errors[0]?.error || 'Failed to get upload URL',
+    );
+  }
+
+  const { uploadUrl, publicDownloadUrl } = presignedResponse.data.result;
+
+  // Upload to S3
+  await axios.put(uploadUrl, blob, {
+    headers: {
+      'Content-Type': blob.type || 'image/jpeg',
+    },
+  });
+
+  return publicDownloadUrl;
+}

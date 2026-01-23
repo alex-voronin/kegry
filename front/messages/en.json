@@ -143,10 +143,13 @@
     },
     "profile": {
       "title": "My Profile",
+      "blockedUsers": "Blocked Users",
+      "coverImage": "Cover Image",
       "settings": "Settings",
       "menu": {
         "edit": "Edit Profile",
-        "setPhoto": "Set Photo",
+        "setAvatar": "Set Avatar",
+        "setCover": "Set Cover",
         "logOut": "Log Out",
         "delete": "Delete Account"
       },
@@ -154,6 +157,20 @@
         "title": "Are you sure you want to delete your account? This action cannot be undone.",
         "buttonYes": "Yes",
         "buttonNo": "No"
+      }
+    },
+    "editProfile": {
+      "title": "Edit Profile",
+      "save": "Save",
+      "toast": {
+        "saved": "Profile updated"
+      }
+    },
+    "coverImage": {
+      "save": "Save",
+      "toast": {
+        "coverNotSelected": "Please select a cover image",
+        "uploaded": "Cover image uploaded successfully"
       }
     }
   },
@@ -170,6 +187,9 @@
       "birthday": {
         "title": "Birthday",
         "placeholder": "Birthday"
+      },
+      "age": {
+        "title": "Age"
       },
       "gender": {
         "title": "Gender",
