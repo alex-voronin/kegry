@@ -10,6 +10,7 @@ interface IconProps {
   height?: number;
   priority?: boolean;
   className?: string;
+  disabled?: boolean;
   onClick?: () => void;
   children?: React.ReactNode;
 }
@@ -21,15 +22,17 @@ export function Icon({
   height,
   priority,
   className,
+  disabled,
   onClick,
   children,
 }: IconProps) {
   return (
     <div
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
       className={cn(
         'relative hover:brightness-75 active:brightness-75',
         `w-[${width}px] h-[${height}px]`,
+        disabled && 'pointer-events-none opacity-30',
         className,
       )}
     >

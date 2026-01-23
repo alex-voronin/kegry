@@ -20,7 +20,7 @@ export default function ChatScreen() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isTimerInfoOpen, setIsTimerInfoOpen] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [remainingTime, setRemainingTime] = useState<string>('--:--');
+  const [remainingTimeMs, setRemainingTimeMs] = useState<number | null>(null);
   const router = useRouter();
 
   const { chat, isLoading, fetchChat, sendMessage, deleteChat } =
@@ -30,35 +30,37 @@ export default function ChatScreen() {
     fetchChat();
   }, [fetchChat]);
 
-  const calculateRemainingTime = useCallback(() => {
-    if (!chat?.expiresAt) return '--:--';
+  const calculateRemainingTimeMs = useCallback(() => {
+    if (!chat?.expiresAt) return null;
 
     const now = new Date().getTime();
     const expiresAt = new Date(chat.expiresAt).getTime();
     const diff = expiresAt - now;
 
-    if (diff <= 0) {
-      return '00:00';
-    }
-
-    const minutes = Math.floor(diff / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    return Math.max(0, diff);
   }, [chat?.expiresAt]);
+
+  const formatRemainingTime = (ms: number | null): string => {
+    if (ms === null) return '--:--';
+    if (ms <= 0) return '00:00';
+
+    const hours = Math.floor(ms / (1000 * 60 * 60));
+    const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  };
 
   useEffect(() => {
     if (!chat?.expiresAt) return;
 
-    setRemainingTime(calculateRemainingTime());
+    setRemainingTimeMs(calculateRemainingTimeMs());
 
     const interval = setInterval(() => {
-      const time = calculateRemainingTime();
-      setRemainingTime(time);
-    }, 1000);
+      setRemainingTimeMs(calculateRemainingTimeMs());
+    }, 10000);
 
     return () => clearInterval(interval);
-  }, [chat?.expiresAt, calculateRemainingTime]);
+  }, [chat?.expiresAt, calculateRemainingTimeMs]);
 
   const onMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const el = e.target;
@@ -100,9 +102,32 @@ export default function ChatScreen() {
     },
   ];
 
+  const sentMessagesCount = chat?.messages.filter((m) => m.isMine).length ?? 0;
+  const maxMessages = chat?.maxMessagesPerUser ?? 0;
+  const remainingMessages = Math.max(0, maxMessages - sentMessagesCount);
+
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const today = new Date();
+    const isToday =
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear();
+
+    const time = date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    if (isToday) {
+      return time;
+    }
+
+    const dateStr = date.toLocaleDateString([], {
+      month: 'numeric',
+      day: 'numeric',
+    });
+    return `${dateStr}, ${time}`;
   };
 
   if (isLoading) {
@@ -162,7 +187,9 @@ export default function ChatScreen() {
               priority
               onClick={() => setIsTimerInfoOpen(true)}
             />
-            <span className={styles.timer}>{remainingTime}</span>
+            <span className={styles.timer}>
+              {formatRemainingTime(remainingTimeMs)}
+            </span>
             <Icon
               src="/assets/chat/more-icon.svg"
               alt="more"
@@ -225,7 +252,10 @@ export default function ChatScreen() {
           value={message}
           onChange={(e) => onMessageChange(e)}
           className={styles.input}
-          placeholder={t('messagePlaceholder')}
+          placeholder={t('messagePlaceholder', {
+            remaining: remainingMessages,
+            total: maxMessages,
+          })}
           rows={1}
         />
         <Icon
@@ -235,6 +265,7 @@ export default function ChatScreen() {
           width={28}
           height={28}
           priority
+          disabled={remainingMessages <= 0}
           onClick={handleSendMessage}
         />
       </footer>

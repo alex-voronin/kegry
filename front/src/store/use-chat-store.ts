@@ -23,6 +23,7 @@ export interface ChatDto {
   id: string;
   createdAt: string;
   expiresAt: string;
+  maxMessagesPerUser: number;
   participantsMet: boolean;
   participant: ChatParticipantDto;
   messages: ChatMessageDto[];

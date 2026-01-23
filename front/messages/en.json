@@ -77,7 +77,7 @@
       "distance": "Distance: {km} {units}"
     },
     "chat": {
-      "messagePlaceholder": "Message 1/30",
+      "messagePlaceholder": "Message {remaining}/{total}",
       "timer": "{minutes}:{seconds}",
       "noActiveChat": "No active chat",
       "timerInfoDialog": {
