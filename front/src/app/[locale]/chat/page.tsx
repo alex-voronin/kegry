@@ -85,7 +85,7 @@ export default function ChatScreen() {
       <div className={styles.titleWrapper}>
         <div className={styles.avatarCircle}>
           <Image
-            src="/assets/feed/profile-image.png"
+            src="/assets/common/avatar-placeholder.svg"
             alt="avatar"
             fill
             className="object-cover"

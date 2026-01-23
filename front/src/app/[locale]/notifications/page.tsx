@@ -144,7 +144,7 @@ export default function NotificationsScreen() {
                       <Image
                         src={
                           notif.avatarImageUrl ||
-                          '/assets/feed/profile-image.png'
+                          '/assets/common/avatar-placeholder.svg'
                         }
                         alt="Profile"
                         width={48}
