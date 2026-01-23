@@ -59,6 +59,7 @@ public class ChatEndpoints : IEndpoints
             new GetChatResponse(
                 Id: chat.Id,
                 CreatedAt: chat.CreatedAt,
+                ExpiresAt: chat.ExpiresAt,
                 ParticipantsMet: chat.ParticipantsMet,
                 Participant: participantDto,
                 Messages: messageDtos
