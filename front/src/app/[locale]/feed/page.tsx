@@ -10,7 +10,6 @@ import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useFeedStore, UserProfileDto } from '@/store/use-feed-store';
-import { useNotificationStore } from '@/store/use-notification-store';
 import { toast } from 'react-toastify';
 
 function FeedHeader({
@@ -206,8 +205,9 @@ export default function FeedScreen() {
     ignoreUser,
     isLoading,
     hasHydrated,
+    unseenNotificationCount,
+    fetchUnseenNotificationCount,
   } = useFeedStore();
-  const { unseenCount, fetchUnseenCount } = useNotificationStore();
 
   const currentProfile = feed[0] || null;
 
@@ -223,7 +223,7 @@ export default function FeedScreen() {
         const [status] = await Promise.all([
           fetchFeedStatus(),
           fetchFeed(),
-          fetchUnseenCount(),
+          fetchUnseenNotificationCount(),
         ]);
 
         if (status.isInMeeting) {
@@ -241,7 +241,13 @@ export default function FeedScreen() {
     };
 
     initializeFeed();
-  }, [hasHydrated, fetchFeedStatus, fetchFeed, fetchUnseenCount, router]);
+  }, [
+    hasHydrated,
+    fetchFeedStatus,
+    fetchFeed,
+    fetchUnseenNotificationCount,
+    router,
+  ]);
 
   const showLoading = isLoading || !hasHydrated;
 
@@ -275,7 +281,7 @@ export default function FeedScreen() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.content}>
-        <FeedHeader router={router} unseenCount={unseenCount} />
+        <FeedHeader router={router} unseenCount={unseenNotificationCount} />
         <FeedBody
           currentProfile={currentProfile}
           isLoading={showLoading}

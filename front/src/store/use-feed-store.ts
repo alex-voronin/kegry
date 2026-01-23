@@ -32,6 +32,7 @@ interface FeedState {
   isLoading: boolean;
   error: string | null;
   hasHydrated: boolean;
+  unseenNotificationCount: number;
 
   fetchFeedStatus: () => Promise<FeedStatusResponse>;
   fetchFeed: () => Promise<void>;
@@ -41,6 +42,8 @@ interface FeedState {
   ignoreUser: (userId: string) => Promise<void>;
   nextProfile: () => void;
   setHasHydrated: () => void;
+  fetchUnseenNotificationCount: () => Promise<void>;
+  setUnseenNotificationCount: (count: number) => void;
   reset: () => void;
 }
 
@@ -54,6 +57,7 @@ const initialState = {
   isLoading: false,
   error: null as string | null,
   hasHydrated: false,
+  unseenNotificationCount: 0,
 };
 
 export const useFeedStore = create<FeedState>()(
@@ -202,6 +206,29 @@ export const useFeedStore = create<FeedState>()(
       },
 
       setHasHydrated: () => set({ hasHydrated: true }),
+
+      fetchUnseenNotificationCount: async () => {
+        try {
+          const response = await axios.get<ApiResult<number>>(
+            API_ENDPOINTS.NOTIFICATIONS.UNSEEN_COUNT,
+          );
+
+          if (response.data.success) {
+            set({ unseenNotificationCount: response.data.result });
+          } else {
+            throw new Error(
+              response.data.errors[0]?.error ||
+                'Failed to fetch notification count',
+            );
+          }
+        } catch (error) {
+          console.error('Failed to fetch unseen notification count:', error);
+        }
+      },
+
+      setUnseenNotificationCount: (count: number) =>
+        set({ unseenNotificationCount: count }),
+
       reset: () => set({ ...initialState, hasHydrated: true }),
     }),
     {
