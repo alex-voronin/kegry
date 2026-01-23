@@ -1,68 +1,112 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useRouter } from '@/i18n/routing';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { ModalMenu } from '@/components/ui/modal-menu';
+import { Spinner } from '@/components/ui/spinner';
+import {
+  useNotificationsStore,
+  NotificationDto,
+  isNotificationExpired,
+} from '@/store/use-notifications-store';
+import { toast } from 'react-toastify';
 import styles from './notifications.module.css';
-
-interface Notification {
-  id: number;
-  type: 'invite';
-  title: string;
-  subtitle: string;
-}
 
 export default function NotificationsScreen() {
   const router = useRouter();
   const t = useTranslations('screens.notifications');
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [selectedNotification, setSelectedNotification] =
+    useState<NotificationDto | null>(null);
 
-  const notifications: Notification[] = [
-    {
-      id: 1,
-      type: 'invite',
-      title: t('drinkInvitation', { time: t('today') }),
-      subtitle: t('todayUntil', { h: 24 }),
-    },
-    {
-      id: 2,
-      type: 'invite',
-      title: t('drinkInvitation', { time: t('rightNow') }),
-      subtitle: t('todayUntil', { h: 22 }),
-    },
-    {
-      id: 3,
-      type: 'invite',
-      title: t('drinkInvitation', { time: t('tomorrow') }),
-      subtitle: t('ago', { time: '1w' }),
-    },
-  ];
+  const {
+    notifications,
+    isLoading,
+    fetchNotifications,
+    acceptInvite,
+    ignoreInvite,
+    blockUser,
+  } = useNotificationsStore();
 
-  const menuOptions = [
-    {
-      icon: '/assets/notifications/accept-icon.png',
-      label: t('menu.accept'),
-      onClick: () => console.log('Accept clicked'),
-    },
-    {
-      icon: '/assets/notifications/ignore-icon.svg',
-      label: t('menu.ignore'),
-      onClick: () => console.log('Ignore clicked'),
-    },
-    {
-      icon: '/assets/notifications/block-icon.svg',
-      label: t('menu.block'),
-      onClick: () => console.log('Block clicked'),
-      isDestructive: true,
-    },
-  ];
+  useEffect(() => {
+    fetchNotifications();
+  }, [fetchNotifications]);
+
+  const handleAccept = async (notif: NotificationDto) => {
+    if (!notif.fromUserId) return;
+    if (isNotificationExpired(notif.createdAt)) {
+      toast.error(t('toast.expired'));
+      return;
+    }
+    try {
+      await acceptInvite(notif.fromUserId, notif.id);
+      toast.success(t('toast.accepted'));
+    } catch (err: any) {
+      toast.error(err.message || t('toast.acceptFailed'));
+    }
+  };
+
+  const handleIgnore = async (notif: NotificationDto) => {
+    if (!notif.fromUserId) return;
+    try {
+      await ignoreInvite(notif.fromUserId, notif.id);
+    } catch (err: any) {
+      toast.error(err.message || t('toast.ignoreFailed'));
+    }
+  };
+
+  const handleBlock = async (notif: NotificationDto) => {
+    if (!notif.fromUserId) return;
+    try {
+      await blockUser(notif.fromUserId, notif.id);
+      toast.success(t('toast.blocked'));
+    } catch (err: any) {
+      toast.error(err.message || t('toast.blockFailed'));
+    }
+  };
+
+  const getMenuOptions = (notif: NotificationDto) => {
+    const options = [];
+
+    if (!isNotificationExpired(notif.createdAt) && notif.fromUserId) {
+      options.push({
+        icon: '/assets/notifications/accept-icon.png',
+        label: t('menu.accept'),
+        onClick: () => {
+          handleAccept(notif);
+          setSelectedNotification(null);
+        },
+      });
+    }
+
+    if (notif.fromUserId) {
+      options.push({
+        icon: '/assets/notifications/ignore-icon.svg',
+        label: t('menu.ignore'),
+        onClick: () => {
+          handleIgnore(notif);
+          setSelectedNotification(null);
+        },
+      });
+      options.push({
+        icon: '/assets/notifications/block-icon.svg',
+        label: t('menu.block'),
+        onClick: () => {
+          handleBlock(notif);
+          setSelectedNotification(null);
+        },
+        isDestructive: true,
+      });
+    }
+
+    return options;
+  };
 
   return (
-    <div>
+    <div className="flex flex-1 flex-col">
       <Header
         left={
           <Icon
@@ -78,56 +122,80 @@ export default function NotificationsScreen() {
       />
 
       <div className={styles.content}>
-        <div className={styles.notificationList}>
-          {notifications.map((notif) => (
-            <div key={notif.id} className={styles.notificationItem}>
-              <div className={styles.notificationItemLeft}>
-                <div className={styles.profileImageWrapper}>
-                  <Image
-                    src="/assets/feed/profile-image.png"
-                    alt="Profile"
-                    width={48}
-                    height={48}
-                    className="object-cover"
-                  />
-                </div>
-                <div className={styles.notificationBody}>
-                  <span className={styles.notificationTitle}>
-                    {notif.title}
-                  </span>
-                  <span className={styles.notificationTime}>
-                    {notif.subtitle}
-                  </span>
-                </div>
-              </div>
+        {isLoading && notifications.length === 0 ? (
+          <div className={styles.emptyState}>
+            <Spinner />
+          </div>
+        ) : notifications.length === 0 ? (
+          <div className={styles.emptyState}>
+            <span>{t('noNotifications')}</span>
+          </div>
+        ) : (
+          <div className={styles.notificationList}>
+            {notifications.map((notif) => {
+              const expired = isNotificationExpired(notif.createdAt);
+              return (
+                <div
+                  key={notif.id}
+                  className={`${styles.notificationItem} ${expired ? styles.expired : ''}`}
+                >
+                  <div className={styles.notificationItemLeft}>
+                    <div className={styles.profileImageWrapper}>
+                      <Image
+                        src={
+                          notif.avatarImageUrl ||
+                          '/assets/feed/profile-image.png'
+                        }
+                        alt="Profile"
+                        width={48}
+                        height={48}
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className={styles.notificationBody}>
+                      <span className={styles.notificationTitle}>
+                        {notif.primaryText}
+                      </span>
+                      <span className={styles.notificationTime}>
+                        {notif.secondaryText}
+                      </span>
+                    </div>
+                  </div>
 
-              <div className={styles.notificationItemRight}>
-                <Icon
-                  src="/assets/notifications/accept-icon.png"
-                  alt="accept"
-                  width={24}
-                  height={24}
-                  className="object-fill"
-                  priority
-                />
-                <Icon
-                  src="/assets/chat/more-icon.svg"
-                  alt="more"
-                  width={24}
-                  height={24}
-                  priority
-                  onClick={() => setIsMenuOpen(true)}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+                  <div className={styles.notificationItemRight}>
+                    {!expired && notif.fromUserId && (
+                      <Icon
+                        src="/assets/notifications/accept-icon.png"
+                        alt="accept"
+                        width={24}
+                        height={24}
+                        className="object-fill"
+                        priority
+                        onClick={() => handleAccept(notif)}
+                      />
+                    )}
+                    <Icon
+                      src="/assets/chat/more-icon.svg"
+                      alt="more"
+                      width={24}
+                      height={24}
+                      priority
+                      onClick={() => setSelectedNotification(notif)}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <ModalMenu
-        isOpen={isMenuOpen}
-        onClose={() => setIsMenuOpen(false)}
-        options={menuOptions}
+        isOpen={!!selectedNotification}
+        onClose={() => setSelectedNotification(null)}
+        options={
+          selectedNotification ? getMenuOptions(selectedNotification) : []
+        }
       />
     </div>
   );

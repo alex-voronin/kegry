@@ -110,6 +110,7 @@
     },
     "notifications": {
       "title": "Notifications",
+      "noNotifications": "No notifications yet",
       "drinkInvitation": "Let's get a drink {time}!",
       "today": "today",
       "rightNow": "right now",
@@ -121,6 +122,14 @@
         "accept": "Accept",
         "ignore": "Ignore",
         "block": "Block"
+      },
+      "toast": {
+        "expired": "This invitation has expired",
+        "accepted": "Invitation accepted",
+        "acceptFailed": "Failed to accept invitation",
+        "ignoreFailed": "Failed to ignore invitation",
+        "blocked": "User blocked",
+        "blockFailed": "Failed to block user"
       }
     },
     "profile": {

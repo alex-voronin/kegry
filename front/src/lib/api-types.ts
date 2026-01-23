@@ -8,3 +8,8 @@ export interface ApiResult<T> {
   result: T;
   errors: ApiError[];
 }
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  totalCount: number;
+}

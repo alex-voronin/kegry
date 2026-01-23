@@ -44,6 +44,7 @@ export const API_ENDPOINTS = {
     FILTER: '/api/v1/feed/filter',
   },
   NOTIFICATIONS: {
+    LIST: '/api/v1/notifications',
     UNSEEN_COUNT: '/api/v1/notifications/unseen/count',
   },
 } as const;
