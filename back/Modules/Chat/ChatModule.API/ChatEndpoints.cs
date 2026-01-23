@@ -60,6 +60,7 @@ public class ChatEndpoints : IEndpoints
                 Id: chat.Id,
                 CreatedAt: chat.CreatedAt,
                 ExpiresAt: chat.ExpiresAt,
+                MaxMessagesPerUser: ValidationParameters.MaxMessagesPerUser,
                 ParticipantsMet: chat.ParticipantsMet,
                 Participant: participantDto,
                 Messages: messageDtos
