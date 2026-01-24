@@ -1,0 +1,33 @@
+@reference "../../../app/globals.css";
+
+.content {
+  @apply flex flex-1 flex-col sm:p-4 sm:pt-0;
+}
+
+.blockedList {
+  @apply flex flex-col gap-0.5;
+}
+
+.blockedItem {
+  @apply bg-form-element hover:bg-hover flex items-center justify-between px-4 py-3 sm:rounded-xl;
+}
+
+.blockedItemLeft {
+  @apply flex items-center gap-4;
+}
+
+.profileImageWrapper {
+  @apply relative h-12 w-12 shrink-0 overflow-hidden rounded-full;
+}
+
+.blockedBody {
+  @apply flex flex-col;
+}
+
+.blockedName {
+  @apply text-base leading-tight font-normal;
+}
+
+.emptyState {
+  @apply text-secondary flex flex-1 items-center justify-center text-center;
+}

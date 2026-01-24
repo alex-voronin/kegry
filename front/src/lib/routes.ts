@@ -42,9 +42,11 @@ export const API_ENDPOINTS = {
     RATE: (userId: string) => `/api/v1/feed/${userId}/rating`,
     INVITE: (userId: string) => `/api/v1/feed/${userId}/invite`,
     BLOCK: (userId: string) => `/api/v1/feed/${userId}/block`,
+    UNBLOCK: (userId: string) => `/api/v1/feed/${userId}/unblock`,
     SKIP: (userId: string) => `/api/v1/feed/${userId}/skip`,
     IGNORE: (userId: string) => `/api/v1/feed/${userId}/ignore`,
     FILTER: '/api/v1/feed/filter',
+    BLOCKED_USERS: '/api/v1/feed/blocked-users',
   },
   NOTIFICATIONS: {
     LIST: '/api/v1/notifications',

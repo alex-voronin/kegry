@@ -172,6 +172,20 @@
         "coverNotSelected": "Please select a cover image",
         "uploaded": "Cover image uploaded successfully"
       }
+    },
+    "blockedUsers": {
+      "title": "Blocked Users",
+      "noBlockedUsers": "No blocked users yet",
+      "menu": {
+        "viewProfile": "View Profile",
+        "unblock": "Unblock",
+        "close": "Close"
+      },
+      "toast": {
+        "fetchFailed": "Failed to fetch blocked users",
+        "unblocked": "{name} was unblocked",
+        "unblockFailed": "Failed to unblock user"
+      }
     }
   },
   "components": {

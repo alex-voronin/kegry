@@ -175,7 +175,7 @@ export default function NotificationsScreen() {
                       />
                     )}
                     <Icon
-                      src="/assets/chat/more-icon.svg"
+                      src="/assets/common/more-icon.svg"
                       alt="more"
                       width={24}
                       height={24}

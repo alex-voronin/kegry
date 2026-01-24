@@ -185,7 +185,7 @@ export default function ProfilePage() {
         }
         right={
           <Icon
-            src="/assets/chat/more-icon.svg"
+            src="/assets/common/more-icon.svg"
             alt="more"
             width={24}
             height={24}

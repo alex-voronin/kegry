@@ -191,7 +191,7 @@ export default function ChatScreen() {
               {formatRemainingTime(remainingTimeMs)}
             </span>
             <Icon
-              src="/assets/chat/more-icon.svg"
+              src="/assets/common/more-icon.svg"
               alt="more"
               width={28}
               height={28}
