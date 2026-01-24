@@ -12,37 +12,13 @@ import {
   base64ToBlob,
   useUserProfileStore,
 } from '@/store/use-user-profile-store';
+import { uploadImage } from '@/lib/image-utils';
 import { API_ENDPOINTS, PAGE_ROUTES } from '@/lib/routes';
 import axios from 'axios';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import styles from './cover.module.css';
-
-interface PresignedUrlResponse {
-  uploadUrl: string;
-  publicDownloadUrl: string;
-}
-
-async function getPresignedUrl(
-  endpoint: string,
-): Promise<PresignedUrlResponse> {
-  const response = await axios.post<ApiResult<PresignedUrlResponse>>(endpoint);
-  if (!response.data.success) {
-    throw new Error(
-      response.data.errors[0]?.error || 'Failed to get upload URL',
-    );
-  }
-  return response.data.result;
-}
-
-async function uploadBlobToS3(uploadUrl: string, blob: Blob): Promise<void> {
-  await axios.put(uploadUrl, blob, {
-    headers: {
-      'Content-Type': blob.type || 'image/jpeg',
-    },
-  });
-}
 
 export default function CoverPage() {
   const t = useTranslations('screens.onboarding');
@@ -82,22 +58,21 @@ export default function CoverPage() {
         return;
       }
       const avatarBlob = base64ToBlob(avatarBase64);
-      const avatarPresigned = await getPresignedUrl(
+      avatarUrl = await uploadImage(
+        avatarBlob,
         API_ENDPOINTS.USER_PROFILE.AVATAR_UPLOAD_URL,
       );
-      await uploadBlobToS3(avatarPresigned.uploadUrl, avatarBlob);
-      avatarUrl = avatarPresigned.publicDownloadUrl;
 
       if (!coverBlob) {
         toast.error('Choose cover image is not selected.');
         setIsSubmitting(false);
         return;
       }
-      const coverPresigned = await getPresignedUrl(
+
+      coverUrl = await uploadImage(
+        coverBlob,
         API_ENDPOINTS.USER_PROFILE.COVER_UPLOAD_URL,
       );
-      await uploadBlobToS3(coverPresigned.uploadUrl, coverBlob);
-      coverUrl = coverPresigned.publicDownloadUrl;
 
       await axios.post(API_ENDPOINTS.USER_PROFILE.PROFILE, {
         firstName,

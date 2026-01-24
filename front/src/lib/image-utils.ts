@@ -161,7 +161,7 @@ export async function uploadImage(
     success: boolean;
     result: PresignedUrlResponse;
     errors: { error: string }[];
-  }>(presignedUrlEndpoint);
+  }>(presignedUrlEndpoint, { ContentLength: blob.size });
 
   if (!presignedResponse.data.success) {
     throw new Error(
