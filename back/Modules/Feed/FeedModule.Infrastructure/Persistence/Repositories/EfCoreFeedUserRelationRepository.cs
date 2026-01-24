@@ -10,11 +10,8 @@ namespace FeedModule.Infrastructure.Persistence.Repositories;
 internal class EfCoreFeedUserRelationRepository : RepositoryOutbox<FeedContext, FeedUserRelation>,
     IFeedUserRelationRepository, IScoped
 {
-    private readonly IDbContextOutbox<FeedContext> _contextOutbox;
-
     public EfCoreFeedUserRelationRepository(IDbContextOutbox<FeedContext> contextOutbox) : base(contextOutbox)
     {
-        _contextOutbox = contextOutbox;
     }
 
     public async Task<FeedUserRelation?> GetAsync(Guid myUserId, Guid otherUserId, bool asNoTracking = false,

@@ -298,4 +298,36 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var newUserCount = actualUserIds.Except(initialUserIds).Count();
         newUserCount.ShouldBe(usersToSkipCount);
     }
+
+    [Fact]
+    public async Task GivenBlockedUsers_WhenGetBlockedUsers_ThenReturnsList()
+    {
+        // 1. Create two users and submit locations
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("blocker2@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("blockee2@example.com", "Password123!");
+        var userBId = authB.UserId;
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. User A blocks User B
+        Factory.ApiClient.SetAuth(authA);
+        var response = await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.BlockUser(userBId), null);
+        response.Success.ShouldBeTrue();
+
+        // 3. User A retrieves blocked users
+        var blockedUsersResponse = await Factory.ApiClient.GetAsync<ApiResult<GetBlockedUsersResponse>>(ApiRoutes.Feed.GetBlockedUsers);
+        blockedUsersResponse.Success.ShouldBeTrue();
+        
+        // 4. Assert response contains User B
+        blockedUsersResponse.Result.BlockedUsers.ShouldNotBeEmpty();
+        var blockedUser = blockedUsersResponse.Result.BlockedUsers.First();
+        blockedUser.Id.ShouldBe(Guid.Parse(userBId));
+        blockedUser.FirstName.ShouldNotBeNullOrEmpty();
+        blockedUser.LastName.ShouldNotBeNullOrEmpty();
+        blockedUser.AvatarUrl.ShouldNotBeNullOrEmpty();
+    }
 }

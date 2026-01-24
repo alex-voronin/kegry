@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using FeedModule.API.Dto;
+using FeedModule.Domain.Aggregates.ReadOnly;
 using FeedModule.Domain.Repositories;
 using FeedModule.Domain.Services;
 using Microsoft.AspNetCore.Builder;
@@ -29,6 +30,7 @@ public class FeedEndpoints : IEndpoints
         apiGroup.MapPost("/api/v1/feed/{id:guid}/ignore", IgnoreUser);
         apiGroup.MapGet("/api/v1/feed/filter", GetFilter);
         apiGroup.MapPut("/api/v1/feed/filter", UpdateFilter);
+        apiGroup.MapGet("/api/v1/feed/blocked-users", GetBlockedUsers);
     }
 
     private static async Task<ApiResult<GetFeedResponse>> GetFeed(
@@ -158,5 +160,29 @@ public class FeedEndpoints : IEndpoints
 
         await userActionsService.UpdateFilterAsync(user.GetId(), domainFilter, ct);
         return ApiResult.Empty;
+    }
+
+    private static async Task<ApiResult<GetBlockedUsersResponse>> GetBlockedUsers(
+        [AsParameters] PaginatedRequest request,
+        ClaimsPrincipal user,
+        IUserRepository repository,
+        IS3StorageService storageService,
+        CancellationToken ct)
+    {
+        var users = await repository.GetBlockedUsersAsync(user.GetId(), request.Offset, request.Limit, ct);
+        var dtos = users.
+            Select(u => DomainUserToBlockedUserDto(u, storageService))
+            .ToArray();
+        return ApiResult<GetBlockedUsersResponse>.Build(new GetBlockedUsersResponse(dtos));
+    }
+
+    private static BlockedUserDto DomainUserToBlockedUserDto(User user, IS3StorageService storageService)
+    {
+        return new BlockedUserDto(
+            Id: user.Id,
+            FirstName: user.FirstName,
+            LastName: user.LastName,
+            AvatarUrl: storageService.S3KeyToPublicFileUrl(user.AvatarImageS3Key)
+        );
     }
 }

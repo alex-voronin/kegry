@@ -1,5 +1,6 @@
 using FeedModule.Domain.Aggregates.ReadOnly;
 using FeedModule.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Shared.Infrastructure.Persistence;
 
 namespace FeedModule.Infrastructure.Persistence.Repositories;
@@ -8,5 +9,22 @@ internal class EfCoreUserRepository : Repository<FeedContext, User>, IUserReposi
 {
     public EfCoreUserRepository(FeedContext context) : base(context)
     {
+    }
+    
+    public async Task<User[]> GetBlockedUsersAsync(Guid userId, int skip, int limit, CancellationToken ct = default)
+    {
+        var users = await Context.FeedUserRelations
+            .AsNoTracking()
+            .Where(r => r.MyUserId == userId && r.IsBlocked)
+            .OrderByDescending(r => r.LastSeenAt)
+            .Skip(skip)
+            .Take(limit)
+            .Join(Context.Users,
+                relation => relation.OtherUserId,
+                user => user.Id,
+                (relation, user) => user)
+            .ToArrayAsync(ct);
+
+        return users;
     }
 }
