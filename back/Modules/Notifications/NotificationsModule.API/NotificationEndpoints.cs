@@ -26,6 +26,8 @@ public class NotificationEndpoints : IEndpoints
         apiGroup.MapPost("/api/v1/notifications/device/token", UpdateFcmToken);
         apiGroup.MapGet("/api/v1/notifications", GetNotifications);
         apiGroup.MapGet("/api/v1/notifications/unseen/count", GetUnseenCount);
+        apiGroup.MapGet("/api/v1/notifications/settings", GetSettings);
+        apiGroup.MapPut("/api/v1/notifications/settings", UpdateSettings);
     }
 
     private static async Task<ApiResult.EmptyResult> UpdateFcmToken(
@@ -103,5 +105,44 @@ public class NotificationEndpoints : IEndpoints
     {
         var count = await notificationRepository.GetUnseenCountAsync(user.GetId(), ct);
         return ApiResult<int>.Build(count);
+    }
+
+    private static async Task<ApiResult<GetNotificationSettingsResponse>> GetSettings(
+        ClaimsPrincipal user,
+        INotificationsSettingsRepository settingsRepository,
+        CancellationToken ct)
+    {
+        var userId = user.GetId();
+        var (pushes, emails) = await settingsRepository.GetNotificationsEnabledById(userId, ct);
+        return ApiResult<GetNotificationSettingsResponse>.Build(new GetNotificationSettingsResponse(pushes, emails));
+    }
+
+    private static async Task<ApiResult.EmptyResult> UpdateSettings(
+        [FromBody] PutNotificationSettingsRequest request,
+        ClaimsPrincipal user,
+        INotificationsSettingsRepository settingsRepository,
+        CancellationToken ct)
+    {
+        var userId = user.GetId();
+        var settings = await settingsRepository.GetByIdAsync(userId, ct: ct);
+
+        if (settings == null)
+        {
+            settings = new NotificationsSettings
+            {
+                UserId = userId,
+                PushesEnabled = request.PushesEnabled,
+                EmailsEnabled = request.EmailsEnabled
+            };
+            await settingsRepository.AddAsync(settings, ct);
+        }
+        else
+        {
+            settings.PushesEnabled = request.PushesEnabled;
+            settings.EmailsEnabled = request.EmailsEnabled;
+        }
+
+        await settingsRepository.SaveChangesAsync(ct);
+        return ApiResult.Empty;
     }
 }

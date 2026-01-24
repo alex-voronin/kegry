@@ -1,5 +1,4 @@
 using IntegrationTests.Shared;
-using IntegrationTests.Shared.Managers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using NotificationModule.Domain.Aggregates;
@@ -24,7 +23,7 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
     public async Task GivenAuthorizedUserWithTwoPagesOfNotifications_WhenUserGetsTheSecondPage_ThenReceivesTheSecondPage()
     {
         // 1. Authorize
-        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("user1@example.com", "Password123!");
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("user@example.com", "Password123!");
         var userId = Guid.Parse(authResponse.UserId);
         Factory.ApiClient.SetAuth(authResponse);
 
@@ -70,7 +69,7 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
     public async Task GivenAuthorizedUserUnseenNotifications_WhenUserGetsUnseenNotifications_ThenTheirCountDecreases()
     {
         // 1. Authorize
-        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("user2@example.com", "Password123!");
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("user@example.com", "Password123!");
         var userId = Guid.Parse(authResponse.UserId);
         Factory.ApiClient.SetAuth(authResponse);
 
@@ -112,7 +111,7 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
     public async Task GivenFewUnseenNotifications_WhenUserGetsUnseenNotificationsCount_ThenReceivesCorrectCount()
     {
         // 1. Authorize
-        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("user3@example.com", "Password123!");
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("user@example.com", "Password123!");
         var userId = Guid.Parse(authResponse.UserId);
         Factory.ApiClient.SetAuth(authResponse);
 
@@ -158,5 +157,45 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 4. Check response
         response.Success.ShouldBeTrue();
         response.Result.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task GivenAuthorizedUser_WhenUserUpdatesSettings_ThenSettingsAreUpdated()
+    {
+        // 1. Authorize and create user profile
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("user@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authResponse);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Get initial settings (should be default)
+        var initialResponse = await Factory.ApiClient.GetAsync<ApiResult<GetNotificationSettingsResponse>>(
+                ApiRoutes.Notifications
+                .Settings);
+        initialResponse.Success.ShouldBeTrue();
+        initialResponse.Result.PushesEnabled.ShouldBeTrue();
+        initialResponse.Result.EmailsEnabled.ShouldBeFalse();
+
+        // 3. Update settings to true
+        var enableAllRequest = new PutNotificationSettingsRequest(PushesEnabled: true, EmailsEnabled: true);
+        var enableAllResponse =
+            await Factory.ApiClient.PutAsync<PutNotificationSettingsRequest, ApiResult.EmptyResult>(
+                ApiRoutes.Notifications.Settings, enableAllRequest);
+        enableAllResponse.Success.ShouldBeTrue();
+
+        var allEnabledResponse = await Factory.ApiClient
+            .GetAsync<ApiResult<GetNotificationSettingsResponse>>(ApiRoutes.Notifications.Settings);
+        allEnabledResponse.Success.ShouldBeTrue();
+        allEnabledResponse.Result.PushesEnabled.ShouldBeTrue();
+        allEnabledResponse.Result.EmailsEnabled.ShouldBeTrue();
+
+        // 4. Update again to false
+        var disableAllRequest = new PutNotificationSettingsRequest(PushesEnabled: false, EmailsEnabled: false);
+        await Factory.ApiClient.PutAsync<PutNotificationSettingsRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Notifications.Settings, disableAllRequest);
+
+        var allDisabledResponse = await Factory.ApiClient
+                .GetAsync<ApiResult<GetNotificationSettingsResponse>>(ApiRoutes.Notifications.Settings);
+        allDisabledResponse.Result.PushesEnabled.ShouldBeFalse();
+        allDisabledResponse.Result.EmailsEnabled.ShouldBeFalse();
     }
 }

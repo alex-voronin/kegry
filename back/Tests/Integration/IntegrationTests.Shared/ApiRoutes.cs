@@ -20,6 +20,7 @@ public static class ApiRoutes
         public static string GetNotificationsPaginated(int offset, int limit) => $"/api/v1/notifications?offset={offset}&limit={limit}";
         public const string GetUnseenCount = "/api/v1/notifications/unseen/count";
         public const string UpdateDeviceToken = "/api/v1/notifications/device/token";
+        public const string Settings = "/api/v1/notifications/settings";
     }
 
     public static class Feed
