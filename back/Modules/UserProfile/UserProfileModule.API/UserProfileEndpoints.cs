@@ -143,24 +143,28 @@ public class UserProfileEndpoints : IEndpoints
     }
 
     private static async Task<ApiResult<GetPresignedUrlResponse>> GetAvatarUploadUrl(
+        [FromBody] GetPresignedUrlRequest request,
         ClaimsPrincipal user,
         IProfileImageService imageService,
         CancellationToken ct)
     {
+        Validation.ThrowIfFileSizeExceed(request.ContentLength, Validation.MaxAvatarSizeBytes);
         var userId = user.GetId();
-        var urls = await imageService.GetAvatarUploadUrlAsync(userId, ct);
+        var urls = await imageService.GetAvatarUploadUrlAsync(userId, request.ContentLength, ct);
         return ApiResult<GetPresignedUrlResponse>.Build(
             new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl)
         );
     }
 
     private static async Task<ApiResult<GetPresignedUrlResponse>> GetCoverUploadUrl(
+        [FromBody] GetPresignedUrlRequest request,
         ClaimsPrincipal user,
         IProfileImageService imageService,
         CancellationToken ct)
     {
+        Validation.ThrowIfFileSizeExceed(request.ContentLength, Validation.MaxCoverSizeBytes);
         var userId = user.GetId();
-        var urls = await imageService.GetCoverUploadUrlAsync(userId, ct);
+        var urls = await imageService.GetCoverUploadUrlAsync(userId, request.ContentLength, ct);
         return ApiResult<GetPresignedUrlResponse>.Build(
             new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl)
         );

@@ -5,6 +5,7 @@ using SharedCore.Exceptions;
 using SharedCore.Extensions;
 using SharedCore.ValueObjects;
 using Shouldly;
+using UserProfileModule.API;
 using UserProfileModule.API.Dto;
 
 namespace IntegrationTests.UserProfileModule;
@@ -231,8 +232,8 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Get upload url
-        var response = await Factory.ApiClient.PostAsync<object?, ApiResult<GetPresignedUrlResponse>>(
-            ApiRoutes.UserProfile.AvatarUploadUrl, null);
+        var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
+            ApiRoutes.UserProfile.AvatarUploadUrl, new GetPresignedUrlRequest(ContentLength: Validation.MaxAvatarSizeBytes));
 
         // 3. Check response
         response.Success.ShouldBeTrue();
@@ -248,13 +249,47 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Get upload url
-        var response = await Factory.ApiClient.PostAsync<object?, ApiResult<GetPresignedUrlResponse>>(
-            ApiRoutes.UserProfile.CoverUploadUrl, null);
+        var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
+            ApiRoutes.UserProfile.CoverUploadUrl, new GetPresignedUrlRequest(ContentLength: Validation.MaxCoverSizeBytes));
 
         // 3. Check response
         response.Success.ShouldBeTrue();
         response.Result.UploadUrl.ShouldNotBeNullOrEmpty();
         response.Result.UploadUrl.ShouldContain("test-bucket");
+    }
+    
+    [Fact]
+    public async Task GivenAuthenticatedUser_WhenUserGetsAvatarUploadUrlForTooLargeFile_ThenReturnsError()
+    {
+        // 1. Sign in
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authResponse);
+
+        // 2. Get upload url
+        var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
+            ApiRoutes.UserProfile.AvatarUploadUrl, new GetPresignedUrlRequest(ContentLength: Validation.MaxAvatarSizeBytes + 1));
+
+        // 3. Check response
+        response.Success.ShouldBeFalse();
+        response.Result.PublicDownloadUrl.ShouldBeNull();
+        response.Result.UploadUrl.ShouldBeNull();
+    }
+    
+    [Fact]
+    public async Task GivenAuthenticatedUser_WhenUserGetsCoverUploadUrlForTooLargeFile_ThenReturnsError()
+    {
+        // 1. Sign in
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authResponse);
+
+        // 2. Get upload url
+        var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
+            ApiRoutes.UserProfile.CoverUploadUrl, new GetPresignedUrlRequest(ContentLength: Validation.MaxCoverSizeBytes + 1));
+
+        // 3. Check response
+        response.Success.ShouldBeFalse();
+        response.Result.PublicDownloadUrl.ShouldBeNull();
+        response.Result.UploadUrl.ShouldBeNull();
     }
 
     [Fact]
@@ -265,8 +300,10 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Get upload url
-        var response = await Factory.ApiClient.PostAsync<object?, ApiResult<GetPresignedUrlResponse>>(
-            ApiRoutes.UserProfile.AvatarUploadUrl, null);
+        var imageToUpload = "dummy image content"u8.ToArray();
+        
+        var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
+            ApiRoutes.UserProfile.AvatarUploadUrl, new GetPresignedUrlRequest(ContentLength: imageToUpload.Length));
 
         // 3. Check response
         response.Success.ShouldBeTrue();
@@ -276,7 +313,6 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         downloadUrl.ShouldNotBeNullOrEmpty();
 
         // 4. Upload dummy image
-        var imageToUpload = "dummy image content"u8.ToArray();
         var uploadResponse = await Factory.S3Client.UploadAsync(uploadUrl, imageToUpload, "image/jpeg");
         uploadResponse.EnsureSuccessStatusCode();
 

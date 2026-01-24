@@ -11,9 +11,10 @@ public interface IS3StorageService
     public string PublicFileUrlToS3Key(string publicFileUrl);
     public string S3KeyToPublicFileUrl(string s3Key);
 
-    Task<string> GetPresignedUploadUrlAsync(
+    public Task<string> GetPresignedUploadUrlAsync(
         string key,
         string contentType,
+        int contentLength,
         TimeSpan expires);
 }
 
@@ -49,6 +50,7 @@ internal class S3StorageService : IS3StorageService, ISingleton
     public Task<string> GetPresignedUploadUrlAsync(
         string key,
         string contentType,
+        int contentLength,
         TimeSpan expires)
     {
         var request = new GetPreSignedUrlRequest
@@ -59,6 +61,8 @@ internal class S3StorageService : IS3StorageService, ISingleton
             Verb = HttpVerb.PUT,
             Expires = DateTime.UtcNow.Add(expires)
         };
+        
+        request.Headers["Content-Length"] = contentLength.ToString();
 
         if (_s3Client.Config.UseHttp)
         {

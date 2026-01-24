@@ -19,24 +19,28 @@ internal class ProfileImageService : IProfileImageService, ISingleton
         _config = config.Value;
     }
 
-    public async Task<StorageUrls> GetAvatarUploadUrlAsync(Guid userId, CancellationToken ct = default)
+    public async Task<StorageUrls> GetAvatarUploadUrlAsync(Guid userId, int contentLength,
+        CancellationToken ct = default)
     {
         var key = GenerateKey(userId, fileName: "avatar");
         var presignedUrl = await _storageService.GetPresignedUploadUrlAsync(
-            key,
-            "image/jpeg",
-            TimeSpan.FromMinutes(10));
+            key: key,
+            contentType: "image/jpeg",
+            contentLength: contentLength,
+            expires: TimeSpan.FromMinutes(10));
         var publicUrl = _storageService.S3KeyToPublicFileUrl(key);
         return new StorageUrls(presignedUrl, publicUrl);
     }
 
-    public async Task<StorageUrls> GetCoverUploadUrlAsync(Guid userId, CancellationToken ct = default)
+    public async Task<StorageUrls> GetCoverUploadUrlAsync(Guid userId, int contentLength,
+        CancellationToken ct = default)
     {
         var key = GenerateKey(userId, fileName: "cover");
         var presignedUrl = await _storageService.GetPresignedUploadUrlAsync(
-            key,
-            "image/jpeg",
-            TimeSpan.FromMinutes(10));
+            key: key,
+            contentType: "image/jpeg",
+            contentLength: contentLength,
+            expires: TimeSpan.FromMinutes(10));
         var publicUrl = _storageService.S3KeyToPublicFileUrl(key);
         return new StorageUrls(presignedUrl, publicUrl);
     }
