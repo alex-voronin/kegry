@@ -36,7 +36,7 @@ export const CoverSection = ({
   // Cleanup object URL on unmount or when blob changes
   useEffect(() => {
     return () => {
-      if (displayUrl) {
+      if (displayUrl && displayUrl.startsWith('blob:')) {
         URL.revokeObjectURL(displayUrl);
       }
     };

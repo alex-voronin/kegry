@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import { toast } from 'react-toastify';
@@ -20,7 +20,20 @@ export default function ProfileCoverImagePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [coverBlob, setCoverBlob] = useState<Blob | null>(null);
 
-  const { patchProfile, serverProfile: profile } = useUserProfileStore();
+  const {
+    patchProfile,
+    serverProfile: profile,
+    fetchMyProfile,
+  } = useUserProfileStore();
+
+  const isInitialized = useRef(false);
+
+  useEffect(() => {
+    if (!profile && !isInitialized.current) {
+      fetchMyProfile();
+    }
+    isInitialized.current = true;
+  }, [profile, fetchMyProfile]);
 
   const handleSave = async () => {
     if (!coverBlob) {
