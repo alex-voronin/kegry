@@ -10,4 +10,8 @@ public interface IUserRepository : IRepository<User>
         int skip,
         int limit,
         CancellationToken ct = default);
+
+    public Task<int> GetBlockedUsersCount(
+        Guid userId,
+        CancellationToken ct = default);
 }

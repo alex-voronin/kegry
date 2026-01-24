@@ -257,7 +257,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         response.Result.UploadUrl.ShouldNotBeNullOrEmpty();
         response.Result.UploadUrl.ShouldContain("test-bucket");
     }
-    
+
     [Fact]
     public async Task GivenAuthenticatedUser_WhenUserGetsAvatarUploadUrlForTooLargeFile_ThenReturnsError()
     {
@@ -274,7 +274,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         response.Result.PublicDownloadUrl.ShouldBeNull();
         response.Result.UploadUrl.ShouldBeNull();
     }
-    
+
     [Fact]
     public async Task GivenAuthenticatedUser_WhenUserGetsCoverUploadUrlForTooLargeFile_ThenReturnsError()
     {
@@ -301,7 +301,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Get upload url
         var imageToUpload = "dummy image content"u8.ToArray();
-        
+
         var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
             ApiRoutes.UserProfile.AvatarUploadUrl, new GetPresignedUrlRequest(ContentLength: imageToUpload.Length));
 

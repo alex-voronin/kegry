@@ -10,7 +10,7 @@ internal class EfCoreUserRepository : Repository<FeedContext, User>, IUserReposi
     public EfCoreUserRepository(FeedContext context) : base(context)
     {
     }
-    
+
     public async Task<User[]> GetBlockedUsersAsync(Guid userId, int skip, int limit, CancellationToken ct = default)
     {
         var users = await Context.FeedUserRelations
@@ -26,5 +26,11 @@ internal class EfCoreUserRepository : Repository<FeedContext, User>, IUserReposi
             .ToArrayAsync(ct);
 
         return users;
+    }
+
+    public Task<int> GetBlockedUsersCount(Guid userId, CancellationToken ct = default)
+    {
+        return Context.FeedUserRelations
+            .CountAsync(r => r.MyUserId == userId && r.IsBlocked, ct);
     }
 }

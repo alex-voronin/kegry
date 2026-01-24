@@ -27,6 +27,7 @@ public class FeedEndpoints : IEndpoints
         apiGroup.MapPost("/api/v1/feed/{id:guid}/invite", InviteUser);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/skip", SkipUser);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/block", BlockUser);
+        apiGroup.MapPost("/api/v1/feed/{id:guid}/unblock", UnblockUser);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/ignore", IgnoreUser);
         apiGroup.MapGet("/api/v1/feed/filter", GetFilter);
         apiGroup.MapPut("/api/v1/feed/filter", UpdateFilter);
@@ -96,6 +97,16 @@ public class FeedEndpoints : IEndpoints
         return ApiResult.Empty;
     }
 
+    private static async Task<ApiResult.EmptyResult> UnblockUser(
+        [FromRoute] Guid id,
+        ClaimsPrincipal user,
+        IUserActionsService userActionsService,
+        CancellationToken ct)
+    {
+        await userActionsService.UnblockUserAsync(user.GetId(), id, ct);
+        return ApiResult.Empty;
+    }
+
     private static async Task<ApiResult.EmptyResult> SkipUser(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
@@ -162,18 +173,24 @@ public class FeedEndpoints : IEndpoints
         return ApiResult.Empty;
     }
 
-    private static async Task<ApiResult<GetBlockedUsersResponse>> GetBlockedUsers(
+    private static async Task<ApiResult<PaginatedResponse<BlockedUserDto>>> GetBlockedUsers(
         [AsParameters] PaginatedRequest request,
         ClaimsPrincipal user,
         IUserRepository repository,
         IS3StorageService storageService,
         CancellationToken ct)
     {
-        var users = await repository.GetBlockedUsersAsync(user.GetId(), request.Offset, request.Limit, ct);
-        var dtos = users.
-            Select(u => DomainUserToBlockedUserDto(u, storageService))
+        var blockedUsersPage = await repository.GetBlockedUsersAsync(user.GetId(), request.Offset, request.Limit, ct);
+        var blockedUsersCount = await repository.GetBlockedUsersCount(user.GetId(), ct);
+        var dtos = blockedUsersPage
+            .Select(u => DomainUserToBlockedUserDto(u, storageService))
             .ToArray();
-        return ApiResult<GetBlockedUsersResponse>.Build(new GetBlockedUsersResponse(dtos));
+        return ApiResult<PaginatedResponse<BlockedUserDto>>.Build(
+            new PaginatedResponse<BlockedUserDto>(
+                Data: dtos,
+                TotalCount: blockedUsersCount
+            )
+        );
     }
 
     private static BlockedUserDto DomainUserToBlockedUserDto(User user, IS3StorageService storageService)

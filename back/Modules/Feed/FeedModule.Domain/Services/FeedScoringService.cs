@@ -68,9 +68,9 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
         Filter filter,
         int limit)
     {
-        var ratingCutOffDateTime = _timeProvider.GetUtcNow() - 
+        var ratingCutOffDateTime = _timeProvider.GetUtcNow() -
                                    TimeSpan.FromHours(FeedParameters.IgnoredUserRatingDowngradeInHours);
-        
+
         var tailCandidates = candidates
             .Where(c => c.LastSeenAt != null && c.LastSeenAt > ratingCutOffDateTime)
             .OrderBy(c => c.LastSeenAt);

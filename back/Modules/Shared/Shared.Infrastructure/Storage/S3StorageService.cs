@@ -61,7 +61,7 @@ internal class S3StorageService : IS3StorageService, ISingleton
             Verb = HttpVerb.PUT,
             Expires = DateTime.UtcNow.Add(expires)
         };
-        
+
         request.Headers["Content-Length"] = contentLength.ToString();
 
         if (_s3Client.Config.UseHttp)

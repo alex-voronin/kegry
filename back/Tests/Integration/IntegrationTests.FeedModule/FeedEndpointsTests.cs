@@ -3,7 +3,6 @@ using FeedModule.API.Dto;
 using FeedModule.Domain.Services;
 using IntegrationTests.Shared;
 using IntegrationTests.Shared.HttpClients;
-using IntegrationTests.Shared.Managers;
 using SharedCore.Api.Dto;
 using Shouldly;
 
@@ -126,7 +125,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var feedAfter = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
         feedAfter.Result.Feed.Any(f => f.Id == Guid.Parse(userBId)).ShouldBeFalse();
     }
-    
+
     [Fact]
     public async Task GivenTwoUsers_WhenUserIgnoresAnotherUser_ThenThisUserGoesToEndOfTheFeed()
     {
@@ -139,7 +138,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var userBId = authB.UserId;
         Factory.ApiClient.SetAuth(authB);
         await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
-        
+
         var authC = await Factory.AuthManager.CreateAndLoginUserAsync("user_c@example.com", "Password123!");
         Factory.ApiClient.SetAuth(authC);
         await Factory.AuthManager.CreateProfile();
@@ -147,7 +146,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. User A sees User B in feed
         Factory.ApiClient.SetAuth(authA);
-        
+
         var feedBefore = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
         var firstFeedId = feedBefore.Result.Feed.First().Id;
         firstFeedId.ShouldBe(Guid.Parse(userBId));
@@ -160,7 +159,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 4. User B goes to the end of the feed
         var feedAfterIgnore = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
         feedAfterIgnore.Result.Feed.Last().Id.ShouldBe(Guid.Parse(userBId));
-        
+
         // 5. After delay user B returns on top of the feed
         Factory.FakeTimeProvider.Advance(TimeSpan.FromHours(FeedParameters.IgnoredUserRatingDowngradeInHours + 1));
         var feedAfterDelay = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
@@ -319,12 +318,12 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         response.Success.ShouldBeTrue();
 
         // 3. User A retrieves blocked users
-        var blockedUsersResponse = await Factory.ApiClient.GetAsync<ApiResult<GetBlockedUsersResponse>>(ApiRoutes.Feed.GetBlockedUsers);
+        var blockedUsersResponse = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<BlockedUserDto>>>(ApiRoutes.Feed.GetBlockedUsers);
         blockedUsersResponse.Success.ShouldBeTrue();
-        
+
         // 4. Assert response contains User B
-        blockedUsersResponse.Result.BlockedUsers.ShouldNotBeEmpty();
-        var blockedUser = blockedUsersResponse.Result.BlockedUsers.First();
+        blockedUsersResponse.Result.Data.ShouldNotBeEmpty();
+        var blockedUser = blockedUsersResponse.Result.Data.First();
         blockedUser.Id.ShouldBe(Guid.Parse(userBId));
         blockedUser.FirstName.ShouldNotBeNullOrEmpty();
         blockedUser.LastName.ShouldNotBeNullOrEmpty();

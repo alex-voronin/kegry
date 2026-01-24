@@ -62,6 +62,14 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         await _feedUserRelationRepository.SaveChangesAsync(ct);
     }
 
+    public async Task UnblockUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
+    {
+        var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
+        feedUserRelation.IsBlocked = false;
+        feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
+        await _feedUserRelationRepository.SaveChangesAsync(ct);
+    }
+
     public async Task SkipUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
     {
         var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
@@ -90,6 +98,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
             {
                 throw;
             }
+
             Log.Information(e, "User {UserId} tried to invite {OtherUserId}, but he is in meeting already",
                 myUserId, otherUserId);
         }
