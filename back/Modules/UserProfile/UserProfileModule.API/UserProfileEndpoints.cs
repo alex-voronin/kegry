@@ -129,6 +129,7 @@ public class UserProfileEndpoints : IEndpoints
         }
 
         var dto = new UserProfileDto(
+            Id: profile.Id.ToString(),
             FirstName: profile.FirstName,
             LastName: profile.LastName,
             Bio: profile.Bio,

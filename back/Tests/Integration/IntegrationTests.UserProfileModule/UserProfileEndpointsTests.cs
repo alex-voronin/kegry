@@ -56,6 +56,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
         getResponse.Success.ShouldBeTrue();
         getResponse.Result.UserProfile.ShouldSatisfyAllConditions(
+            p => p.Id.ShouldBe(authResponse.UserId),
              p => p.FirstName.ShouldBe(request.FirstName),
              p => p.LastName.ShouldBe(request.LastName),
              p => p.Bio.ShouldBe(request.Bio),
@@ -100,6 +101,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
         getResponse.Success.ShouldBeTrue();
         getResponse.Result.UserProfile.ShouldSatisfyAllConditions(
+            p => p.Id.ShouldBe(authResponse.UserId),
             p => p.FirstName.ShouldBe(request.FirstName),
             p => p.LastName.ShouldBe(request.LastName),
             p => p.Bio.ShouldBe(request.Bio),
@@ -149,6 +151,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
         getAfterUpdateResponse.Success.ShouldBeTrue();
         getAfterUpdateResponse.Result.UserProfile.ShouldSatisfyAllConditions(
+            p => p.Id.ShouldBe(authResponse.UserId),
             p => p.FirstName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.FirstName),
             p => p.LastName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.LastName),
             p => p.Bio.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Bio),
@@ -198,6 +201,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
         getAfterUpdateResponse.Success.ShouldBeTrue();
         getAfterUpdateResponse.Result.UserProfile.ShouldSatisfyAllConditions(
+            p => p.Id.ShouldBe(authResponse.UserId),
             p => p.FirstName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.FirstName),
             p => p.LastName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.LastName),
             p => p.Bio.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Bio),
