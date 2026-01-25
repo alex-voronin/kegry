@@ -76,6 +76,7 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
             .OrderBy(c => c.LastSeenAt);
 
         var headCandidates = candidates
+            .Where(c => c.LastSeenAt == null || c.LastSeenAt <= ratingCutOffDateTime)
             .Select(c => new
             {
                 Candidate = c,
