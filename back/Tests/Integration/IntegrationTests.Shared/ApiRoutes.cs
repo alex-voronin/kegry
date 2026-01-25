@@ -34,6 +34,7 @@ public static class ApiRoutes
         public static string IgnoreUser(string userId) => $"/api/v1/feed/{userId}/ignore";
         public const string Filter = "/api/v1/feed/filter";
         public const string GetBlockedUsers = "/api/v1/feed/blocked-users";
+        public const string DisplaySettings = "/api/v1/feed/settings";
     }
 
     public static class UserProfile

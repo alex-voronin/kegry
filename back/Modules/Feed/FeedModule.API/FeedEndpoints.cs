@@ -32,6 +32,8 @@ public class FeedEndpoints : IEndpoints
         apiGroup.MapGet("/api/v1/feed/filter", GetFilter);
         apiGroup.MapPut("/api/v1/feed/filter", UpdateFilter);
         apiGroup.MapGet("/api/v1/feed/blocked-users", GetBlockedUsers);
+        apiGroup.MapGet("/api/v1/feed/settings", GetSettings);
+        apiGroup.MapPut("/api/v1/feed/settings", UpdateSettings);
     }
 
     private static async Task<ApiResult<GetFeedResponse>> GetFeed(
@@ -191,6 +193,55 @@ public class FeedEndpoints : IEndpoints
                 TotalCount: blockedUsersCount
             )
         );
+    }
+
+    private static async Task<ApiResult<GetSettingsResponse>> GetSettings(
+        ClaimsPrincipal user,
+        IDisplaySettingsRepository repository,
+        CancellationToken ct)
+    {
+        var settings = await repository.GetByIdAsync(user.GetId(), ct: ct);
+        if (settings == null)
+        {
+            return ApiResult<GetSettingsResponse>.Build(
+                new GetSettingsResponse(
+                    new SettingsDto(Domain.ValueObjects.DistanceUnits.Kilometers)
+                )
+            );
+        }
+
+        return ApiResult<GetSettingsResponse>.Build(
+            new GetSettingsResponse(
+                new SettingsDto(settings.DistanceUnits)
+            )
+        );
+    }
+
+    private static async Task<ApiResult.EmptyResult> UpdateSettings(
+        [FromBody] UpdateSettingsRequest request,
+        ClaimsPrincipal user,
+        IDisplaySettingsRepository repository,
+        CancellationToken ct)
+    {
+        var userId = user.GetId();
+        var settings = await repository.GetByIdAsync(userId, ct: ct);
+
+        if (settings == null)
+        {
+            settings = new Domain.Aggregates.DisplaySettings
+            {
+                UserId = userId,
+                DistanceUnits = request.DistanceUnits
+            };
+            await repository.AddAsync(settings, ct);
+        }
+        else
+        {
+            settings.DistanceUnits = request.DistanceUnits;
+        }
+        await repository.SaveAsync(settings, ct);
+
+        return ApiResult.Empty;
     }
 
     private static BlockedUserDto DomainUserToBlockedUserDto(User user, IS3StorageService storageService)

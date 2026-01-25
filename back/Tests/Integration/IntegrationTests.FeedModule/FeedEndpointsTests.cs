@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using FeedModule.API.Dto;
 using FeedModule.Domain.Services;
+using FeedModule.Domain.ValueObjects;
 using IntegrationTests.Shared;
 using IntegrationTests.Shared.HttpClients;
 using SharedCore.Api.Dto;
@@ -328,5 +329,39 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         blockedUser.FirstName.ShouldNotBeNullOrEmpty();
         blockedUser.LastName.ShouldNotBeNullOrEmpty();
         blockedUser.AvatarUrl.ShouldNotBeNullOrEmpty();
+    }
+    
+    [Fact]
+    public async Task GivenUserWithoutSavedSettings_WhenGetDisplaySettings_ThenDefaultsReturned()
+    {
+        // 1. Create user
+        var auth = await Factory.AuthManager.CreateAndLoginUserAsync("default_settings@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(auth);
+
+        // 2. Get settings
+        var response = await Factory.ApiClient.GetAsync<ApiResult<GetSettingsResponse>>(ApiRoutes.Feed.DisplaySettings);
+        
+        // 3. Verify defaults
+        response.Success.ShouldBeTrue();
+        response.Result.Settings.DistanceUnits.ShouldBe(DistanceUnits.Kilometers);
+    }
+
+    [Fact]
+    public async Task GivenUser_WhenUpdateDisplaySettings_ThenSettingsAreUpdated()
+    {
+        // 1. Create user
+        var auth = await Factory.AuthManager.CreateAndLoginUserAsync("update_settings@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(auth);
+
+        // 2. Update settings
+        var newSettings = new UpdateSettingsRequest(DistanceUnits.Miles);
+        var updateResponse = await Factory.ApiClient.PutAsync<UpdateSettingsRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.DisplaySettings, newSettings);
+        updateResponse.Success.ShouldBeTrue();
+
+        // 3. Verify update
+        var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetSettingsResponse>>(ApiRoutes.Feed.DisplaySettings);
+        getResponse.Success.ShouldBeTrue();
+        getResponse.Result.Settings.DistanceUnits.ShouldBe(DistanceUnits.Miles);
     }
 }
