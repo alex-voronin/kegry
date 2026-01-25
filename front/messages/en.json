@@ -141,6 +141,16 @@
         "blockFailed": "Failed to block user"
       }
     },
+    "rateUser": {
+      "howWasIt": "How was it?",
+      "submit": "Submit",
+      "skip": "Skip",
+      "toast": {
+        "ratingRequired": "Please select a rating",
+        "submitFailed": "Failed to submit rating",
+        "ratingSubmitted": "Thank you! Rating has been submitted"
+      }
+    },
     "profile": {
       "title": "My Profile",
       "blockedUsers": "Blocked Users",

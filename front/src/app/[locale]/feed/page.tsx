@@ -105,6 +105,7 @@ function FeedBody({
             initialRating={currentProfile.rating || 0}
             isReadOnly
             dimension={12}
+            isHalfRatingEnabled={true}
           />
         </div>
 
