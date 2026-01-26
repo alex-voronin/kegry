@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="FirebaseAdmin" Version="3.4.0" />
-      <PackageReference Include="Microsoft.Extensions.Localization" Version="10.0.1" />
-      <PackageReference Include="OneSignalApi" Version="2.3.0" />
-      <PackageReference Include="WolverineFx.EntityFrameworkCore" Version="5.9.2" />
-      <PackageReference Include="WolverineFx.Postgresql" Version="5.9.2" />
+      <PackageReference Include="FirebaseAdmin" />
+      <PackageReference Include="Microsoft.Extensions.Localization" />
+      <PackageReference Include="OneSignalApi" />
+      <PackageReference Include="WolverineFx.EntityFrameworkCore" />
+      <PackageReference Include="WolverineFx.Postgresql" />
     </ItemGroup>
 
     <ItemGroup>

@@ -12,12 +12,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AWSSDK.S3" Version="4.0.16.4" />
-      <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.3.8" />
-      <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.1" />
-      <PackageReference Include="Npgsql" Version="10.0.1" />
-      <PackageReference Include="Respawn" Version="7.0.0" />
-      <PackageReference Include="Testcontainers.PostgreSql" Version="4.10.0" />
+      <PackageReference Include="AWSSDK.S3" />
+      <PackageReference Include="Microsoft.AspNetCore.Hosting" />
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+      <PackageReference Include="Npgsql" />
+      <PackageReference Include="Respawn" />
+      <PackageReference Include="Testcontainers.PostgreSql" />
     </ItemGroup>
 
 </Project>

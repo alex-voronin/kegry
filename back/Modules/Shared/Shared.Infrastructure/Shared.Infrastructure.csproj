@@ -11,14 +11,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AWSSDK.S3" Version="4.0.16.4" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
-      <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="10.1.0" />
-      <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.1.0" />
-      <PackageReference Include="Npgsql" Version="10.0.1" />
-      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
-      <PackageReference Include="WolverineFx" Version="5.9.2" />
-      <PackageReference Include="WolverineFx.EntityFrameworkCore" Version="5.9.2" />
+      <PackageReference Include="AWSSDK.S3" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" />
+      <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" />
+      <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+      <PackageReference Include="Npgsql" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+      <PackageReference Include="WolverineFx" />
+      <PackageReference Include="WolverineFx.EntityFrameworkCore" />
     </ItemGroup>
 
     <ItemGroup>
