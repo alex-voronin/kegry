@@ -330,7 +330,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         blockedUser.LastName.ShouldNotBeNullOrEmpty();
         blockedUser.AvatarUrl.ShouldNotBeNullOrEmpty();
     }
-    
+
     [Fact]
     public async Task GivenUserWithoutSavedSettings_WhenGetDisplaySettings_ThenDefaultsReturned()
     {
@@ -340,7 +340,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Get settings
         var response = await Factory.ApiClient.GetAsync<ApiResult<GetSettingsResponse>>(ApiRoutes.Feed.DisplaySettings);
-        
+
         // 3. Verify defaults
         response.Success.ShouldBeTrue();
         response.Result.Settings.DistanceUnits.ShouldBe(DistanceUnits.Kilometers);
