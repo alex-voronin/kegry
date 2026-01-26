@@ -169,6 +169,23 @@
         "buttonNo": "No"
       }
     },
+    "settings": {
+      "title": "Settings",
+      "distanceUnits": "Distance units",
+      "notifications": "Notifications",
+      "push": "Push",
+      "pushDesc": "Real-time notifications for account activity",
+      "email": "Email",
+      "emailDesc": "Account and service-related emails",
+      "km": "km",
+      "mi": "mi",
+      "kmFull": "km (kilometers)",
+      "miFull": "mi (miles)",
+      "save": "Save",
+      "saved": "Settings saved",
+      "saveFailed": "Failed to save settings",
+      "fetchFailed": "Failed to fetch settings"
+    },
     "editProfile": {
       "title": "Edit Profile",
       "save": "Save",

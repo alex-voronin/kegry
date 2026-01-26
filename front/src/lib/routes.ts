@@ -47,10 +47,12 @@ export const API_ENDPOINTS = {
     IGNORE: (userId: string) => `/api/v1/feed/${userId}/ignore`,
     FILTER: '/api/v1/feed/filter',
     BLOCKED_USERS: '/api/v1/feed/blocked-users',
+    SETTINGS: '/api/v1/feed/settings',
   },
   NOTIFICATIONS: {
     LIST: '/api/v1/notifications',
     UNSEEN_COUNT: '/api/v1/notifications/unseen/count',
+    SETTINGS: '/api/v1/notifications/settings',
   },
   CHAT: {
     GET: '/api/v1/chat',

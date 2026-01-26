@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import styles from './modal-menu.module.css';
 
 export interface ModalMenuOption {
-  icon: string;
+  icon?: string;
   label: string;
   onClick: () => void;
   isDestructive?: boolean;
@@ -66,15 +66,17 @@ export function ModalMenu({
                       option.isDestructive && 'text-red-500',
                     )}
                   >
-                    <div className={styles.icon}>
-                      <Image
-                        src={option.icon}
-                        alt={option.label}
-                        width={24}
-                        height={24}
-                        className="object-contain"
-                      />
-                    </div>
+                    {option.icon && (
+                      <div className={styles.icon}>
+                        <Image
+                          src={option.icon}
+                          alt={option.label}
+                          width={24}
+                          height={24}
+                          className="object-contain"
+                        />
+                      </div>
+                    )}
                     <span className={styles.label}>{option.label}</span>
                   </button>
                 ))}
