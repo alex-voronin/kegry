@@ -14,6 +14,8 @@ public interface IAuthenticationService
         string email,
         string password);
 
+    public Task<AuthResult> SigninExternalAsync(string email);
+
     public Task<bool> IsUserExistAsync(string email);
     public Task<AuthResult> ConfirmEmailAsync(string userId, string token);
     public Task<AuthResult> RenewTokensAsync(string refreshToken);

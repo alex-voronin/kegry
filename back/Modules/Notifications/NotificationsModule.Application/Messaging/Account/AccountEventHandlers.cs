@@ -12,6 +12,11 @@ public static class AccountEventHandlers
         AccountCreatedEvent @event,
         IEmailNotificationStrategy emailNotificationStrategy)
     {
+        if (@event.ConfirmationCode == null)
+        {
+            return;
+        }
+
         Log.Information("{HandlerClass} Handling event {@Event}",
             typeof(AccountEventHandlers).FullName, @event);
         await emailNotificationStrategy.SendConfirmEmail(@event.Email, @event.ConfirmationCode);

@@ -38,6 +38,13 @@ public class SecurityModuleStartup : AppModuleStartupBase<SecurityContext>
             .Bind(authTokenConfigSection)
             .ValidateDataAnnotations()
             .ValidateOnStart();
+        
+        var googleAuthConfigSection = appBuilder.Configuration
+            .GetSection($"Authentication:{nameof(GoogleAuthConfig)}");
+        appBuilder.Services.AddOptions<GoogleAuthConfig>()
+            .Bind(googleAuthConfigSection)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         RegisterEfCoreAsAuthenticationStore(appBuilder.Services);
         appBuilder.Services.AddAuthorization();
@@ -69,36 +76,6 @@ public class SecurityModuleStartup : AppModuleStartupBase<SecurityContext>
                     )
                 };
             });
-        // TODO: uncomment to allow Google and Apple login
-        // .AddGoogle(options =>
-        // {
-        //     var googleAuthSection = Configuration.GetSection("Authentication:Google");
-        //     options.ClientId = googleAuthSection["ClientId"];
-        //     options.ClientSecret = googleAuthSection["ClientSecret"];
-        //     options.CallbackPath = "/api/corporate-landing/auth/signin-google";
-        //     options.AccessDeniedPath = ExternalSignInHandler.CallbackUrl;
-        //     options.CorrelationCookie.Name = "sf2d.google.correlation.";
-        //     options.CorrelationCookie.SecurePolicy =
-        //         !HostingEnvironment.IsDevelopment()
-        //             ? CookieSecurePolicy.Always
-        //             : CookieSecurePolicy.None;
-        // })
-        // .AddApple(options =>
-        // {
-        //     var appleAuthSection = Configuration.GetSection("Authentication:Apple");
-        //
-        //     options.ClientId = appleAuthSection["ClientId"];
-        //     options.KeyId = appleAuthSection["KeyId"];
-        //     options.TeamId = appleAuthSection["TeamId"];
-        //     options.CallbackPath = "/api/corporate-landing/auth/signin-apple";
-        //     options.UsePrivateKey(keyId =>
-        //         HostingEnvironment.ContentRootFileProvider.GetFileInfo($"AuthKey_{keyId}.p8"));
-        //     options.CorrelationCookie.Name = "sf2d.apple.correlation.";
-        //     options.CorrelationCookie.SecurePolicy =
-        //         !HostingEnvironment.IsDevelopment()
-        //             ? CookieSecurePolicy.Always
-        //             : CookieSecurePolicy.None;
-        // });
     }
 
     private static void RegisterEfCoreAsAuthenticationStore(IServiceCollection services)

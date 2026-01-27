@@ -145,6 +145,62 @@ internal class AuthenticationService : IAuthenticationService, IScoped
             RefreshToken: refreshToken);
     }
 
+    public async Task<AuthResult> SigninExternalAsync(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user == null)
+        {
+            user = new User
+            {
+                Id = Guid.CreateVersion7(),
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
+                RequiredAction = RequiredAction.OnboardingCompletion,
+            };
+
+            var result = await _userManager.CreateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(e => e.Description).ToArray();
+                throw SecurityExceptions.InternalError(string.Join(";", errors));
+            }
+
+            // In fact, it's not necessary to send this event here,
+            // but we publish it for consistency
+            await _bus.PublishAsync(
+                new AccountCreatedEvent
+                {
+                    UserId = user.Id,
+                    Email = email,
+                    ConfirmationCode = null
+                }
+            );
+        }
+
+        // If user exists but email not confirmed,
+        // we can confirm it here since they logged in with a trusted provider
+        if (!user.EmailConfirmed)
+        {
+            user.EmailConfirmed = true;
+            if (user.RequiredAction == RequiredAction.EmailVerification)
+            {
+                user.RequiredAction = RequiredAction.OnboardingCompletion;
+            }
+
+            await _userManager.UpdateAsync(user);
+        }
+
+        var (accessToken, refreshToken) = await GenerateTokensAsync(user);
+
+        return new AuthResult(
+            User: user,
+            AccessToken: accessToken,
+            RefreshToken: refreshToken);
+    }
+
     public async Task<AuthResult> ConfirmEmailAsync(string userId, string token)
     {
         var user = await _userManager.FindByIdAsync(userId);

@@ -8,6 +8,7 @@
     <PackageVersion Include="AWSSDK.S3" Version="4.0.16.4" />
     <PackageVersion Include="DnsClient" Version="1.8.0" />
     <PackageVersion Include="FirebaseAdmin" Version="3.4.0" />
+    <PackageVersion Include="Google.Apis.Auth" Version="1.73.0" />
     <PackageVersion Include="Humanizer" Version="3.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.Facebook" Version="10.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.1" />

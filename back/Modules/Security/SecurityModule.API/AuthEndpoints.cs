@@ -5,8 +5,11 @@ using Microsoft.AspNetCore.Routing;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.WebUtilities;
+using Google.Apis.Auth;
+using Microsoft.Extensions.Options;
 using SecurityModule.Application.Services;
 using SecurityModule.API.Dto;
+using SecurityModule.Application.Configs;
 using SharedCore.Api;
 using SharedCore.Api.Dto;
 using SharedCore.Extensions;
@@ -22,6 +25,7 @@ public class AuthEndpoints : IEndpoints
             .AllowAnonymous();
         anonymousGroup.MapPost("/api/v1/auth/signin", Signin);
         anonymousGroup.MapPost("/api/v1/auth/signup", Signup);
+        anonymousGroup.MapPost("/api/v1/auth/google", SigninWithGoogle);
         anonymousGroup.MapPost("/api/v1/auth/renew-tokens", RenewTokens);
         anonymousGroup.MapPost("/api/v1/auth/confirm-email", ConfirmEmail);
         anonymousGroup.MapPost("/api/v1/auth/request-password-reset", RequestPasswordReset);
@@ -60,6 +64,24 @@ public class AuthEndpoints : IEndpoints
         [FromBody] SignInRequest request)
     {
         var result = await authenticationService.SignupAsync(email: request.Email, password: request.Password);
+        return ApiResult<AuthResponse>.Build(
+            AuthResultToResponse(result)
+        );
+    }
+
+    private static async Task<ApiResult<AuthResponse>> SigninWithGoogle(
+        [FromBody] GoogleIdTokenRequest request,
+        IAuthenticationService authenticationService,
+        IOptions<GoogleAuthConfig> googleAuthConfig)
+    {
+        var settings = new GoogleJsonWebSignature.ValidationSettings
+        {
+            Audience = [googleAuthConfig.Value.ClientId]
+        };
+
+        var payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken, settings);
+
+        var result = await authenticationService.SigninExternalAsync(payload.Email);
         return ApiResult<AuthResponse>.Build(
             AuthResultToResponse(result)
         );
