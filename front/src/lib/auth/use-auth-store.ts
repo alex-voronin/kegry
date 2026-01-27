@@ -65,6 +65,7 @@ interface AuthState {
   setHasHydrated: (hydrated: boolean) => void;
 
   signin: (email: string, password: string) => Promise<AuthResponse>;
+  signinWithGoogle: (idToken: string) => Promise<AuthResponse>;
   confirmEmail: (userId: string, token: string) => Promise<AuthResponse>;
   logout: () => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
@@ -140,6 +141,32 @@ export const useAuthStore = create<AuthState>()(
           }
 
           throw new Error('Unexpected auth state');
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            const msg =
+              error.response?.data?.errors?.[0]?.error || error.message;
+            throw new Error(msg);
+          }
+          throw error;
+        }
+      },
+
+      signinWithGoogle: async (idToken) => {
+        try {
+          const res = await axios.post<ApiResult<AuthResponse>>(
+            API_ENDPOINTS.AUTH.GOOGLE,
+            { idToken },
+          );
+
+          if (!res.data.success) {
+            throw new Error(
+              res.data.errors[0]?.error || 'Google sign-in failed',
+            );
+          }
+
+          const auth = res.data.result;
+          get().setAuth(auth);
+          return auth;
         } catch (error) {
           if (axios.isAxiosError(error)) {
             const msg =

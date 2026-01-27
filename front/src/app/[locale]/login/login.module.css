@@ -65,13 +65,9 @@
 }
 
 .divider {
-  @apply relative text-center;
+  @apply flex flex-row items-center justify-center gap-2 text-center;
 }
 
 .dividerText {
   @apply text-secondary text-sm font-light;
-}
-
-.socialGrid {
-  @apply grid grid-cols-2 gap-4;
 }

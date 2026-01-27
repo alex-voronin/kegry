@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Script from 'next/script';
 import { useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
+import { useGoogleSignIn } from '@/lib/auth/use-google-sign-in';
 import { Link } from '@/i18n/routing';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from './login.module.css';
@@ -20,7 +22,9 @@ export default function LoginPage() {
   const tCommonErrors = useTranslations('common.errors');
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const signin = useAuthStore((state) => state.signin);
+  const signinWithGoogle = useAuthStore((state) => state.signinWithGoogle);
 
   const schema = z.object({
     email: z.email(t('errors.emailInvalid')).min(1, t('errors.emailRequired')),
@@ -70,97 +74,115 @@ export default function LoginPage() {
     }
   };
 
+  const handleGoogleSuccess = async (credential: string) => {
+    setGoogleLoading(true);
+    try {
+      const result = await signinWithGoogle(credential);
+
+      if (result.requiredAction === RequiredAction.OnboardingCompletion) {
+        router.push(PAGE_ROUTES.ONBOARDING);
+      } else {
+        router.push(PAGE_ROUTES.FEED);
+      }
+    } catch (err: any) {
+      toast.error(err.message || tCommonErrors('network'));
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  const { renderButton, isGoogleLoaded, onScriptLoad } = useGoogleSignIn({
+    onSuccess: handleGoogleSuccess,
+    onError: (error) => toast.error(error.message),
+  });
+
+  useEffect(() => {
+    if (isGoogleLoaded) {
+      renderButton('google-signin-button');
+    }
+  }, [isGoogleLoaded, renderButton]);
+
   return (
-    <div className={styles.page}>
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <div className={styles.logoRow}>
-            <div className={styles.logoContainer}>
-              <Image
-                src="/assets/logo.png"
-                alt="Hoppyfy Logo"
-                fill
-                className={styles.logoImage}
-                priority
-              />
+    <>
+      <Script
+        src="https://accounts.google.com/gsi/client"
+        strategy="afterInteractive"
+        onLoad={onScriptLoad}
+      />
+      <div className={styles.page}>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.logoRow}>
+              <div className={styles.logoContainer}>
+                <Image
+                  src="/assets/logo.png"
+                  alt="Hoppyfy Logo"
+                  fill
+                  className={styles.logoImage}
+                  priority
+                />
+              </div>
+              <h1 className={styles.brandName}>oppyfy.me</h1>
             </div>
-            <h1 className={styles.brandName}>oppyfy.me</h1>
-          </div>
-          <p className={styles.tagline}>{t('tagline')}</p>
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)} className={styles.formSection}>
-          <div>
-            <Input
-              type="email"
-              placeholder={t('email')}
-              className={styles.inputCredentials}
-              disabled={loading}
-              {...register('email')}
-            />
-            {errors.email && (
-              <div className={styles.fieldError}>{errors.email.message}</div>
-            )}
+            <p className={styles.tagline}>{t('tagline')}</p>
           </div>
 
-          <div className={styles.passwordWrapper}>
-            <Input
-              type="password"
-              placeholder={t('password')}
-              className={styles.inputCredentials}
-              disabled={loading}
-              {...register('password')}
-            />
-            <Link
-              href={PAGE_ROUTES.FORGOT_PASSWORD}
-              className={styles.forgotLink}
-            >
-              {t('forgot')}
-            </Link>
-            {errors.password && (
-              <div className={styles.fieldError}>{errors.password.message}</div>
-            )}
-          </div>
-
-          <Button
-            variant={ButtonVariant.Default}
-            className={styles.signInButton}
-            type="submit"
-            loading={loading}
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className={styles.formSection}
           >
-            {t('signIn')}
-          </Button>
-        </form>
-
-        <div className={styles.footer}>
-          <div className={styles.divider}>
-            <span className={styles.dividerText}>{t('orContinueWith')}</span>
-          </div>
-
-          <div className={styles.socialGrid}>
-            <Button variant={ButtonVariant.Social} type="button">
-              <Image
-                src="/assets/google.png"
-                alt={t('google')}
-                width={24}
-                height={24}
-                priority
+            <div>
+              <Input
+                type="email"
+                placeholder={t('email')}
+                className={styles.inputCredentials}
+                disabled={loading}
+                {...register('email')}
               />
-              {t('google')}
-            </Button>
-            <Button variant={ButtonVariant.Social} type="button">
-              <Image
-                src="/assets/facebook.png"
-                alt={t('facebook')}
-                width={24}
-                height={24}
-                priority
+              {errors.email && (
+                <div className={styles.fieldError}>{errors.email.message}</div>
+              )}
+            </div>
+
+            <div className={styles.passwordWrapper}>
+              <Input
+                type="password"
+                placeholder={t('password')}
+                className={styles.inputCredentials}
+                disabled={loading}
+                {...register('password')}
               />
-              {t('facebook')}
+              <Link
+                href={PAGE_ROUTES.FORGOT_PASSWORD}
+                className={styles.forgotLink}
+              >
+                {t('forgot')}
+              </Link>
+              {errors.password && (
+                <div className={styles.fieldError}>
+                  {errors.password.message}
+                </div>
+              )}
+            </div>
+
+            <Button
+              variant={ButtonVariant.Default}
+              className={styles.signInButton}
+              type="submit"
+              loading={loading}
+            >
+              {t('signIn')}
             </Button>
+          </form>
+
+          <div className={styles.footer}>
+            <div className={styles.divider}>
+              <div className={styles.dividerText}>{t('orContinueWith')}</div>
+              <div id="google-signin-button"></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -27,6 +27,7 @@ export const API_ENDPOINTS = {
     REQUEST_PASSWORD_RESET: '/api/v1/auth/request-password-reset',
     CONFIRM_PASSWORD_RESET: '/api/v1/auth/confirm-password-reset',
     RENEW_TOKENS: '/api/v1/auth/renew-tokens',
+    GOOGLE: '/api/v1/auth/google',
   },
   USER_PROFILE: {
     PROFILE: '/api/v1/user-profile',
