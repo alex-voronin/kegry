@@ -10,6 +10,8 @@ import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useFeedStore, UserProfileDto } from '@/store/use-feed-store';
+import { useSettingsStore, DistanceUnits } from '@/store/use-settings-store';
+import { metersToKilometers, metersToMiles } from '@/lib/distance-utils';
 import { toast } from 'react-toastify';
 
 function FeedHeader({
@@ -64,12 +66,16 @@ function FeedHeader({
 function FeedBody({
   currentProfile,
   isLoading,
+  distanceUnits,
   tFeed,
+  tCommon,
   tHobbies,
 }: {
   currentProfile: UserProfileDto | null;
   isLoading: boolean;
+  distanceUnits: DistanceUnits;
   tFeed: ReturnType<typeof useTranslations>;
+  tCommon: ReturnType<typeof useTranslations>;
   tHobbies: ReturnType<typeof useTranslations>;
 }) {
   if (isLoading) {
@@ -129,8 +135,14 @@ function FeedBody({
             </span>
             <span>
               {tFeed('distance', {
-                km: Math.round(currentProfile.distanceMeters / 1000),
-                units: 'km',
+                distance:
+                  distanceUnits === DistanceUnits.Miles
+                    ? metersToMiles(currentProfile.distanceMeters)
+                    : metersToKilometers(currentProfile.distanceMeters),
+                units:
+                  distanceUnits === DistanceUnits.Miles
+                    ? tCommon('units.miles')
+                    : tCommon('units.kilometers'),
               })}
             </span>
           </div>
@@ -195,6 +207,7 @@ function FeedFooter({
 
 export default function FeedScreen() {
   const tFeed = useTranslations('screens.feed');
+  const tCommon = useTranslations('common');
   const tHobbies = useTranslations('components.profile-sections.hobbies');
   const router = useRouter();
   const {
@@ -209,6 +222,8 @@ export default function FeedScreen() {
     unseenNotificationCount,
     fetchUnseenNotificationCount,
   } = useFeedStore();
+
+  const distanceUnits = useSettingsStore((state) => state.distanceUnits);
 
   const currentProfile = feed[0] || null;
 
@@ -286,7 +301,9 @@ export default function FeedScreen() {
         <FeedBody
           currentProfile={currentProfile}
           isLoading={showLoading}
+          distanceUnits={distanceUnits}
           tFeed={tFeed}
+          tCommon={tCommon}
           tHobbies={tHobbies}
         />
         <FeedFooter

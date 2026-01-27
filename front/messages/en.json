@@ -2,6 +2,10 @@
   "common": {
     "errors": {
       "network": "Network error. Please try again."
+    },
+    "units": {
+      "kilometers": "km",
+      "miles": "mi"
     }
   },
   "screens": {
@@ -74,7 +78,7 @@
     },
     "feed": {
       "availabilityTime": "Available: {time}",
-      "distance": "Distance: {km} {units}"
+      "distance": "Distance: {distance} {units}"
     },
     "chat": {
       "messagePlaceholder": "Message {remaining}/{total}",
@@ -98,7 +102,7 @@
       "now": "Now",
       "today": "Today",
       "tomorrow": "Tomorrow",
-      "distance": "Search distance (km)",
+      "distance": "Search distance",
       "age": "Age",
       "from": "From",
       "to": "To",

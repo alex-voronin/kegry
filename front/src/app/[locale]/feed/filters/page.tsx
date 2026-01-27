@@ -15,12 +15,20 @@ import {
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { useFeedFiltersStore, FilterDto } from '@/store/use-feed-filters-store';
+import { useSettingsStore, DistanceUnits } from '@/store/use-settings-store';
+import {
+  metersToKilometers,
+  metersToMiles,
+  kilometersToMeters,
+  milesToMeters,
+} from '@/lib/distance-utils';
 import { toast } from 'react-toastify';
 import styles from './filters.module.css';
 import stylesCommon from '@/components/ui/common.module.css';
 
 export default function FiltersScreen() {
   const t = useTranslations('screens.filters');
+  const tCommon = useTranslations('common');
   const router = useRouter();
   const {
     filters: serverFilters,
@@ -29,6 +37,9 @@ export default function FiltersScreen() {
     isLoading,
     hasHydrated,
   } = useFeedFiltersStore();
+
+  const distanceUnits = useSettingsStore((state) => state.distanceUnits);
+  const isMiles = distanceUnits === DistanceUnits.Miles;
 
   const initialFilters = useMemo(
     () => ({
@@ -54,9 +65,12 @@ export default function FiltersScreen() {
 
   useEffect(() => {
     if (serverFilters && !isLoaded.current) {
+      const distanceValue = isMiles
+        ? metersToMiles(serverFilters.radiusMeters).toString()
+        : metersToKilometers(serverFilters.radiusMeters).toString();
       setFilters({
         when: 'today',
-        distance: (serverFilters.radiusMeters / 1000).toString(),
+        distance: distanceValue,
         ageFrom: serverFilters.ageFrom?.toString() || '',
         ageTo: serverFilters.ageTo?.toString() || '',
         gender: serverFilters.gender || 'any',
@@ -64,7 +78,7 @@ export default function FiltersScreen() {
       });
       isLoaded.current = true;
     }
-  }, [serverFilters]);
+  }, [serverFilters, isMiles]);
 
   const hasChanges = useMemo(() => {
     return JSON.stringify(filters) !== JSON.stringify(initialFilters);
@@ -79,8 +93,11 @@ export default function FiltersScreen() {
   };
 
   const handleApply = async () => {
+    const radiusMeters = isMiles
+      ? milesToMeters(parseFloat(filters.distance))
+      : kilometersToMeters(parseFloat(filters.distance));
     const dto: FilterDto = {
-      radiusMeters: parseFloat(filters.distance) * 1000,
+      radiusMeters,
       ageFrom: filters.ageFrom ? parseInt(filters.ageFrom) : null,
       ageTo: filters.ageTo ? parseInt(filters.ageTo) : null,
       gender: filters.gender === 'any' ? null : filters.gender,
@@ -143,7 +160,10 @@ export default function FiltersScreen() {
           </div>
 
           <div className={styles.filterSection}>
-            <FormSectionTitle>{t('distance')}</FormSectionTitle>
+            <FormSectionTitle>
+              {t('distance')} (
+              {isMiles ? tCommon('units.miles') : tCommon('units.kilometers')})
+            </FormSectionTitle>
             <Input
               type="number"
               value={filters.distance}
