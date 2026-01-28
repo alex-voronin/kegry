@@ -2,6 +2,12 @@
 
 import { ReactNode } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
+import { useBackgroundLocation } from '@/lib/use-background-location';
+
+function BackgroundServices() {
+  useBackgroundLocation();
+  return null;
+}
 
 export function Providers({
   children,
@@ -14,6 +20,7 @@ export function Providers({
 }) {
   return (
     <NextIntlClientProvider messages={messages} locale={locale} timeZone="UTC">
+      <BackgroundServices />
       {children}
     </NextIntlClientProvider>
   );

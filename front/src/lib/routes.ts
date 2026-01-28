@@ -60,4 +60,7 @@ export const API_ENDPOINTS = {
     SEND_MESSAGE: '/api/v1/chat/message',
     DELETE: '/api/v1/chat',
   },
+  LOCATION: {
+    UPDATE: '/api/v1/location',
+  },
 } as const;
