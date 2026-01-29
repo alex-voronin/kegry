@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Hoppyfy',
+  title: 'Hoppyfy.me',
   description: 'The best stories start off-screen',
 };
 

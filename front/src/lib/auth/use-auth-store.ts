@@ -112,7 +112,7 @@ export const useAuthStore = create<AuthState>()(
           );
 
           if (!signinRes.data.success) {
-            throw new Error(signinRes.data.errors[0]?.error || 'Signin failed'); // TODO: translate
+            throw new Error(signinRes.data.errors[0]?.error || 'Signin failed');
           }
 
           const { isSignupRequired, auth } = signinRes.data.result;
@@ -131,7 +131,7 @@ export const useAuthStore = create<AuthState>()(
 
             if (!signupRes.data.success) {
               throw new Error(
-                signupRes.data.errors[0]?.error || 'Signup failed', // TODO: translate
+                signupRes.data.errors[0]?.error || 'Signup failed',
               );
             }
 
@@ -186,7 +186,7 @@ export const useAuthStore = create<AuthState>()(
 
           if (!res.data.success) {
             throw new Error(
-              res.data.errors[0]?.error || 'Email confirmation failed', // TODO: translate
+              res.data.errors[0]?.error || 'Email confirmation failed',
             );
           }
 

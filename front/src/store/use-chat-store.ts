@@ -33,10 +33,12 @@ interface ChatState {
   chat: ChatDto | null;
   isLoading: boolean;
   error: string | null;
+  showEndMeetingPrompt: boolean;
 
   fetchChat: () => Promise<void>;
   sendMessage: (text: string) => Promise<void>;
   deleteChat: () => Promise<void>;
+  setShowEndMeetingPrompt: (show: boolean) => void;
   reset: () => void;
 }
 
@@ -44,6 +46,7 @@ const initialState = {
   chat: null as ChatDto | null,
   isLoading: false,
   error: null as string | null,
+  showEndMeetingPrompt: false,
 };
 
 export const useChatStore = create<ChatState>()((set, get) => ({
@@ -106,6 +109,9 @@ export const useChatStore = create<ChatState>()((set, get) => ({
       throw new Error(errorMessage);
     }
   },
+
+  setShowEndMeetingPrompt: (show: boolean) =>
+    set({ showEndMeetingPrompt: show }),
 
   reset: () => set(initialState),
 }));

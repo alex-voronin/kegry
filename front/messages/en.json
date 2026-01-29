@@ -94,6 +94,11 @@
       "toast": {
         "sendFailed": "Failed to send message",
         "cancelFailed": "Failed to end meeting"
+      },
+      "endMeetingDialog": {
+        "message": "It seems you have met. Has the meeting already ended?",
+        "yes": "Yes",
+        "no": "No"
       }
     },
     "filters": {

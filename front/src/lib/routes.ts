@@ -16,6 +16,7 @@ export const PAGE_ROUTES = {
   CHAT: '/chat',
   SETTINGS: '/settings',
   BLOCKED_USERS: '/blocked-users',
+  RATE_USER: '/rate-user',
 } as const;
 
 export const API_ENDPOINTS = {
@@ -54,6 +55,7 @@ export const API_ENDPOINTS = {
     LIST: '/api/v1/notifications',
     UNSEEN_COUNT: '/api/v1/notifications/unseen/count',
     SETTINGS: '/api/v1/notifications/settings',
+    FCM_TOKEN: '/api/v1/notifications/device/token',
   },
   CHAT: {
     GET: '/api/v1/chat',

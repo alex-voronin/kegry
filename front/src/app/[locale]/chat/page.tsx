@@ -13,6 +13,7 @@ import { ModalDialog } from '@/components/ui/modal-dialog';
 import { Spinner } from '@/components/ui/spinner';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useChatStore } from '@/store/use-chat-store';
+import { useFeedStore } from '@/store/use-feed-store';
 
 export default function ChatScreen() {
   const t = useTranslations('screens.chat');
@@ -23,8 +24,15 @@ export default function ChatScreen() {
   const [remainingTimeMs, setRemainingTimeMs] = useState<number | null>(null);
   const router = useRouter();
 
-  const { chat, isLoading, fetchChat, sendMessage, deleteChat } =
-    useChatStore();
+  const {
+    chat,
+    isLoading,
+    fetchChat,
+    sendMessage,
+    deleteChat,
+    showEndMeetingPrompt,
+    setShowEndMeetingPrompt,
+  } = useChatStore();
 
   useEffect(() => {
     fetchChat();
@@ -84,8 +92,10 @@ export default function ChatScreen() {
     }
   };
 
-  const handleCancelMeeting = async () => {
+  const handleEndMeeting = async () => {
+    setShowEndMeetingPrompt(false);
     setIsMenuOpen(false);
+    useFeedStore.setState({ isInMeeting: false });
     try {
       await deleteChat();
       router.push(PAGE_ROUTES.FEED);
@@ -98,7 +108,7 @@ export default function ChatScreen() {
     {
       icon: '/assets/chat/cancel-icon.svg',
       label: t('menu.cancel'),
-      onClick: handleCancelMeeting,
+      onClick: handleEndMeeting,
     },
   ];
 
@@ -282,6 +292,16 @@ export default function ChatScreen() {
         message={t('timerInfoDialog.title')}
         primaryButtonText={t('timerInfoDialog.okButton')}
         onPrimaryAction={() => {}}
+      />
+
+      <ModalDialog
+        isOpen={showEndMeetingPrompt}
+        onClose={() => setShowEndMeetingPrompt(false)}
+        message={t('endMeetingDialog.message')}
+        primaryButtonText={t('endMeetingDialog.yes')}
+        secondaryButtonText={t('endMeetingDialog.no')}
+        onPrimaryAction={handleEndMeeting}
+        onSecondaryAction={() => setShowEndMeetingPrompt(false)}
       />
     </div>
   );

@@ -33,6 +33,7 @@ interface FeedState {
   error: string | null;
   hasHydrated: boolean;
   unseenNotificationCount: number;
+  isInMeeting: boolean;
 
   fetchFeedStatus: () => Promise<FeedStatusResponse>;
   fetchFeed: () => Promise<void>;
@@ -58,6 +59,7 @@ const initialState = {
   error: null as string | null,
   hasHydrated: false,
   unseenNotificationCount: 0,
+  isInMeeting: false,
 };
 
 export const useFeedStore = create<FeedState>()(
@@ -77,6 +79,7 @@ export const useFeedStore = create<FeedState>()(
             );
           }
 
+          set({ isInMeeting: response.data.result.isInMeeting });
           return response.data.result;
         } catch (error) {
           throw error;
@@ -242,6 +245,7 @@ export const useFeedStore = create<FeedState>()(
       partialize: (state) => ({
         feed: state.feed,
         lastFetchedAt: state.lastFetchedAt,
+        isInMeeting: state.isInMeeting,
       }),
     },
   ),
