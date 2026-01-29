@@ -97,7 +97,15 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         {
             Title = title,
             Body = body,
-            ImageUrl = @event.FromUserAvatarUrl
+        };
+        var webPush = new WebpushConfig()
+        {
+            Notification = new WebpushNotification()
+            {
+                Title = title,
+                Body = body,
+                Icon = @event.FromUserAvatarUrl
+            }
         };
         var data = new Dictionary<string, string>()
         {
@@ -107,7 +115,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
             { Keys.CreatedAt, @event.CreatedAt.ToString("o") },
         };
 
-        return BuildPushMessages(fcmTokens, notification, data);
+        return BuildPushMessages(fcmTokens, notification, data, webPush);
     }
 
     public PushMessage BuildChatMessageReceivedSilentPush(string[] fcmTokens, ChatMessageSentEvent @event)
@@ -145,8 +153,12 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
     private static PushMessage BuildPushMessages(
         string[] fcmTokens,
         Notification? notification,
-        Dictionary<string, string> data)
+        Dictionary<string, string> data,
+        WebpushConfig? webPushConfig = null)
     {
+        // Required for a frontend deduplication logic 
+        data["messageId"] = Guid.NewGuid().ToString();
+
         return fcmTokens.Length > 1
             ? new PushMessage(
                 UnicastMessage: null,
@@ -154,7 +166,8 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
                 {
                     Tokens = fcmTokens,
                     Notification = notification,
-                    Data = data
+                    Data = data,
+                    Webpush = webPushConfig
                 }
             )
             : new PushMessage(
@@ -163,6 +176,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
                     Token = fcmTokens[0],
                     Notification = notification,
                     Data = data,
+                    Webpush = webPushConfig
                 },
                 MulticastMessage: null);
     }

@@ -7,8 +7,8 @@ public class Device
     private string _fcmToken = null!;
     public required string FcmToken
     {
-        get => field;
-        init => field = value;
+        get => _fcmToken;
+        init => _fcmToken = value;
     }
 
     public required Guid UserId { get; set; }

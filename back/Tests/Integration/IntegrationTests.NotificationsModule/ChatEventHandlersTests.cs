@@ -1,6 +1,5 @@
 using IntegrationTests.Shared;
-using IntegrationTests.Shared.Managers;
-using NotificationsModule.API;
+using NotificationsModule.API.Dto;
 using SharedCore.Api.Dto;
 using Shouldly;
 

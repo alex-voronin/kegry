@@ -38,7 +38,7 @@ public class SecurityModuleStartup : AppModuleStartupBase<SecurityContext>
             .Bind(authTokenConfigSection)
             .ValidateDataAnnotations()
             .ValidateOnStart();
-        
+
         var googleAuthConfigSection = appBuilder.Configuration
             .GetSection($"Authentication:{nameof(GoogleAuthConfig)}");
         appBuilder.Services.AddOptions<GoogleAuthConfig>()

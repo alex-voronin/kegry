@@ -1,5 +1,6 @@
 using ChatModule.Contracts.Events;
 using NotificationModule.Domain.Aggregates;
+using NotificationModule.Domain.Repositories;
 using NotificationsModule.Infrastructure.Transport.Push;
 using Serilog;
 using SharedCore.Services.LifeTimes;

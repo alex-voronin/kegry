@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NotificationModule.Domain.Aggregates;
+using NotificationModule.Domain.Repositories;
 using Shared.Infrastructure.Persistence;
 
 namespace NotificationsModule.Infrastructure.Persistence.Repositories;
@@ -14,14 +15,21 @@ internal class EfCoreDeviceRepository : Repository<NotificationsContext, Device>
     {
         return Context.Devices
             .AsNoTracking()
-            .Where(x => x.UserId == userId)
+            .Where(d => d.UserId == userId)
             .ToArrayAsync(ct);
     }
 
-    public async Task DeleteByFcmTokenAsync(string fcmToken, CancellationToken ct = default)
+    public Task DeleteByFcmTokenAsync(string fcmToken, CancellationToken ct = default)
     {
-        await Context.Devices
-            .Where(u => u.FcmToken == fcmToken)
+        return Context.Devices
+            .Where(d => d.FcmToken == fcmToken)
+            .ExecuteDeleteAsync(ct);
+    }
+
+    public Task DeleteByIdAsync(string id, Guid userId, CancellationToken ct = default)
+    {
+        return Context.Devices
+            .Where(d => d.Id == id && d.UserId == userId)
             .ExecuteDeleteAsync(ct);
     }
 }

@@ -13,8 +13,6 @@ using SharedCore.Extensions;
 
 namespace NotificationsModule.API;
 
-public record UpdateFcmTokenRequest(string DeviceId, string FcmToken);
-
 public class NotificationEndpoints : IEndpoints
 {
     public static void MapEndpoints(IEndpointRouteBuilder builder)
@@ -24,6 +22,7 @@ public class NotificationEndpoints : IEndpoints
             .AllowAnonymous();
 
         apiGroup.MapPost("/api/v1/notifications/device/token", UpdateFcmToken);
+        apiGroup.MapDelete("/api/v1/notifications/device/token", DeleteDevice);
         apiGroup.MapGet("/api/v1/notifications", GetNotifications);
         apiGroup.MapGet("/api/v1/notifications/unseen/count", GetUnseenCount);
         apiGroup.MapGet("/api/v1/notifications/settings", GetSettings);
@@ -51,11 +50,21 @@ public class NotificationEndpoints : IEndpoints
         else
         {
             device.UpdateFcmToken(request.FcmToken);
-            deviceRepository.Update(device);
         }
 
         await deviceRepository.SaveChangesAsync(ct);
 
+        return ApiResult.Empty;
+    }
+
+    private static async Task<ApiResult.EmptyResult> DeleteDevice(
+        [FromQuery] string deviceId,
+        ClaimsPrincipal user,
+        IDeviceRepository deviceRepository,
+        CancellationToken ct)
+    {
+        await deviceRepository.DeleteByIdAsync(deviceId, user.GetId(), ct);
+        await deviceRepository.SaveChangesAsync(ct);
         return ApiResult.Empty;
     }
 

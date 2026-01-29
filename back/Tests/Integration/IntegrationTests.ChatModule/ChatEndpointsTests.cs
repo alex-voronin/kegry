@@ -7,7 +7,7 @@ using LocationModule.API.Dto;
 using LocationModule.Domain.Aggregates;
 using LocationModule.Domain.Repositories;
 using Microsoft.Extensions.DependencyInjection;
-using NotificationsModule.API;
+using NotificationsModule.API.Dto;
 using NotificationsModule.Infrastructure.Transport.Push;
 using Polly;
 using SecurityModule.API.Dto;

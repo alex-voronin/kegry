@@ -20,7 +20,7 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
     public Task DisposeAsync() => ContainerManager.ResetDatabaseAsync();
 
     [Fact]
-    public async Task GivenAuthorizedUserWithTwoPagesOfNotifications_WhenUserGetsTheSecondPage_ThenReceivesTheSecondPage()
+    public async Task GivenUserWithTwoPagesOfNotifications_WhenUserGetsTheSecondPage_ThenReceivesTheSecondPage()
     {
         // 1. Authorize
         var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("user@example.com", "Password123!");
@@ -168,9 +168,8 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Get initial settings (should be default)
-        var initialResponse = await Factory.ApiClient.GetAsync<ApiResult<GetNotificationSettingsResponse>>(
-                ApiRoutes.Notifications
-                .Settings);
+        var initialResponse = await Factory.ApiClient
+            .GetAsync<ApiResult<GetNotificationSettingsResponse>>(ApiRoutes.Notifications.Settings);
         initialResponse.Success.ShouldBeTrue();
         initialResponse.Result.PushesEnabled.ShouldBeTrue();
         initialResponse.Result.EmailsEnabled.ShouldBeFalse();
@@ -194,8 +193,128 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.Notifications.Settings, disableAllRequest);
 
         var allDisabledResponse = await Factory.ApiClient
-                .GetAsync<ApiResult<GetNotificationSettingsResponse>>(ApiRoutes.Notifications.Settings);
+            .GetAsync<ApiResult<GetNotificationSettingsResponse>>(ApiRoutes.Notifications.Settings);
         allDisabledResponse.Result.PushesEnabled.ShouldBeFalse();
         allDisabledResponse.Result.EmailsEnabled.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task GivenAuthorizedUser_WhenUserUpdatesFCMToken_ThenTokenIsSaved()
+    {
+        // 1. Authorize
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("user-token@example.com", "Password123!");
+        var userId = Guid.Parse(authResponse.UserId);
+        Factory.ApiClient.SetAuth(authResponse);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Update FCM Token
+        var deviceId = "device-123";
+        var fcmToken = "fcm-token-123";
+        var request = new UpdateFcmTokenRequest(deviceId, fcmToken);
+
+        var response = await Factory.ApiClient.PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Notifications.UpdateDeviceToken, request);
+
+        // 3. Verify response and database
+        response.Success.ShouldBeTrue();
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
+            var device = await context.Devices.FirstOrDefaultAsync(d => d.Id == deviceId);
+
+            device.ShouldNotBeNull();
+            device.FcmToken.ShouldBe(fcmToken);
+            device.UserId.ShouldBe(userId);
+        }
+    }
+
+    [Fact]
+    public async Task GivenAuthorizedUserWithExistingDevice_WhenUserUpdatesFCMToken_ThenTokenIsUpdated()
+    {
+        // 1. Authorize
+        var authResponse =
+            await Factory.AuthManager.CreateAndLoginUserAsync("user-update-token@example.com", "Password123!");
+        var userId = Guid.Parse(authResponse.UserId);
+        Factory.ApiClient.SetAuth(authResponse);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Create existing device
+        var deviceId = "device-abc";
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
+            context.Devices.Add(
+                new Device()
+                {
+                    Id = deviceId,
+                    FcmToken = "old-fcm-token",
+                    UserId = userId
+                }
+                );
+            await context.SaveChangesAsync();
+        }
+
+        // 3. Update FCM Token
+        var newFcmToken = "new-fcm-token";
+        var request = new UpdateFcmTokenRequest(deviceId, newFcmToken);
+
+        var response = await Factory.ApiClient.PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Notifications.UpdateDeviceToken, request);
+
+        // 4. Verify update
+        response.Success.ShouldBeTrue();
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
+            var devices = await context.Devices.ToListAsync();
+            var device = await context.Devices.FirstOrDefaultAsync(d => d.Id == deviceId);
+
+            device.ShouldNotBeNull();
+            device.FcmToken.ShouldBe(newFcmToken);
+        }
+    }
+
+    [Fact]
+    public async Task GivenAuthorizedUserWithExistingDevice_WhenUserDeletesDevice_ThenDeviceIsRemoved()
+    {
+        // 1. Authorize
+        var authResponse =
+            await Factory.AuthManager.CreateAndLoginUserAsync("user-delete-device@example.com", "Password123!");
+        var userId = Guid.Parse(authResponse.UserId);
+        Factory.ApiClient.SetAuth(authResponse);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Create existing device
+        var deviceId = "device-to-delete";
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
+            context.Devices.Add(
+                new Device()
+                {
+                    Id = deviceId,
+                    FcmToken = "fcm-token-123",
+                    UserId = userId
+                }
+            );
+            await context.SaveChangesAsync();
+        }
+
+        // 3. Delete device
+        var response = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
+            ApiRoutes.Notifications.DeleteDeviceToken(deviceId));
+
+        // 4. Verify removal
+        response.Success.ShouldBeTrue();
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
+            var device = await context.Devices.FirstOrDefaultAsync(d => d.Id == deviceId);
+
+            device.ShouldBeNull();
+        }
     }
 }
