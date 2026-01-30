@@ -2,12 +2,14 @@
 
 import { ReactNode, useEffect, useCallback } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
+import axios from 'axios';
 import { useRouter } from '@/i18n/routing';
 import { useBackgroundLocation } from '@/lib/use-background-location';
 import { useFcm } from '@/lib/fcm/use-fcm';
 import { useFcmStore } from '@/lib/fcm/store';
 import { useFeedStore } from '@/store/use-feed-store';
-import { PAGE_ROUTES } from '@/lib/routes';
+import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
+import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { FcmPayload } from '@/lib/fcm/types';
 
 function FcmGlobalHandler() {
@@ -16,6 +18,8 @@ function FcmGlobalHandler() {
     registerForegroundHandler,
     unregisterForegroundHandler,
     setBackgroundMessageHandler,
+    setApiCallbacks,
+    setStateCallbacks,
   } = useFcmStore();
 
   const handleForegroundMessage = useCallback(
@@ -73,16 +77,45 @@ function FcmGlobalHandler() {
   );
 
   useEffect(() => {
+    // Register state callbacks
+    setStateCallbacks({
+      getIsFcmAllowed: () => {
+        const { accessToken, requiredAction } = useAuthStore.getState();
+        return !!accessToken && requiredAction === RequiredAction.None;
+      },
+    });
+
+    // Register API callbacks
+    setApiCallbacks({
+      onTokenRegister: async (deviceId, fcmToken) => {
+        await axios.post(API_ENDPOINTS.NOTIFICATIONS.FCM_TOKEN, {
+          deviceId,
+          fcmToken,
+        });
+      },
+      onTokenUnregister: async (deviceId) => {
+        await axios.delete(API_ENDPOINTS.NOTIFICATIONS.FCM_TOKEN, {
+          params: { deviceId },
+        });
+      },
+    });
+
+    // Register message handlers
     registerForegroundHandler(handleForegroundMessage);
     setBackgroundMessageHandler(handleBackgroundMessage);
 
     return () => {
       unregisterForegroundHandler(handleForegroundMessage);
+      setBackgroundMessageHandler(null);
+      setApiCallbacks(null);
+      setStateCallbacks(null);
     };
   }, [
     registerForegroundHandler,
     unregisterForegroundHandler,
     setBackgroundMessageHandler,
+    setApiCallbacks,
+    setStateCallbacks,
     handleForegroundMessage,
     handleBackgroundMessage,
   ]);

@@ -27,3 +27,16 @@ export interface StoredToken {
   token: string;
   ts: number;
 }
+
+/* ------------------------------------------------------------------ */
+/* API Callbacks */
+/* ------------------------------------------------------------------ */
+
+export interface FcmApiCallbacks {
+  onTokenRegister: (deviceId: string, fcmToken: string) => Promise<void>;
+  onTokenUnregister: (deviceId: string) => Promise<void>;
+}
+
+export interface FcmStateCallbacks {
+  getIsFcmAllowed: () => boolean;
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { initializeApp, getApps } from 'firebase/app';
 import {
   getMessaging,
@@ -8,20 +8,12 @@ import {
   onMessage,
   deleteToken,
 } from 'firebase/messaging';
-import axios from 'axios';
-
-import { useRouter } from '@/i18n/routing';
-import { API_ENDPOINTS } from '@/lib/routes';
-import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
-import { useFeedStore } from '@/store/use-feed-store';
 
 import { useFcmStore } from './store';
 import { FcmState, StoredToken } from './types';
 import {
   createForegroundMessageHandler,
-  createBackgroundMessageFactory,
-  getBackgroundMessageHandler,
-  clearBackgroundMessageHandler,
+  createSwMessageListener,
 } from './handlers';
 
 /* ------------------------------------------------------------------ */
@@ -106,27 +98,11 @@ async function registerServiceWorker(): Promise<ServiceWorkerRegistration> {
 /* ------------------------------------------------------------------ */
 
 export function useFcm() {
-  const router = useRouter();
-  const accessToken = useAuthStore((s) => s.accessToken);
-  const requiredAction = useAuthStore((s) => s.requiredAction);
-
-  const canInitializeFcm =
-    !!accessToken && requiredAction === RequiredAction.None;
-
-  const routerRef = useRef(router);
-  useEffect(() => {
-    routerRef.current = router;
-  }, [router]);
-
   const messaging = useFcmStore((s) => s.messaging);
-  const swRegistration = useFcmStore((s) => s.swRegistration);
   const unsubForeground = useFcmStore((s) => s.unsubForeground);
-  const customForegroundHandlers = useFcmStore(
-    (s) => s.customForegroundHandlers,
-  );
-  const backgroundMessageHandler = useFcmStore(
-    (s) => s.backgroundMessageHandler,
-  );
+  const stateCallbacks = useFcmStore((s) => s.stateCallbacks);
+
+  const isFcmAllowed = stateCallbacks?.getIsFcmAllowed() ?? false;
 
   const {
     setState: setFcmState,
@@ -134,45 +110,49 @@ export function useFcm() {
     setMessaging,
     setSwRegistration,
     setUnsubForeground,
+    setSwMessageListener,
     reset: resetFcmStore,
   } = useFcmStore();
 
   /* -------------------------------------------------------------- */
-  /* Message handling */
+  /* Message handling (created once, reads from store dynamically) */
   /* -------------------------------------------------------------- */
 
-  const isInMeeting = useFeedStore((s) => s.isInMeeting);
-
-  const onForegroundMessage = useCallback(
-    createForegroundMessageHandler({
-      router,
-      isInMeeting,
-      swRegistration,
-      customHandlers: customForegroundHandlers,
-    }),
-    [router, isInMeeting, swRegistration, customForegroundHandlers],
-  );
-
-  const onBackgroundMessageFactory = useCallback(
-    createBackgroundMessageFactory({
-      routerRef,
-      customHandler: backgroundMessageHandler,
-    }),
-    [backgroundMessageHandler],
-  );
+  const onForegroundMessage = useCallback(createForegroundMessageHandler(), []);
 
   /* -------------------------------------------------------------- */
   /* State machine runner */
   /* -------------------------------------------------------------- */
 
+  // Module-level transition mutex
+  let transitionMutex: Promise<void> | null = null;
+
   const transition = useCallback(
     async (next: FcmState) => {
-      const currentState = useFcmStore.getState().state;
-      if (currentState === next) return;
-      setFcmState(next);
-      console.log('[FCM]', next);
+      // Module-level mutex: queue transitions to prevent race conditions
+      const previousMutex = transitionMutex;
+      let resolveMutex: () => void;
+      transitionMutex = new Promise((resolve) => {
+        resolveMutex = resolve;
+      });
+
+      // Wait for any previous transition to complete
+      if (previousMutex) {
+        await previousMutex;
+      }
 
       try {
+        const store = useFcmStore.getState();
+
+        // Prevent unnecessary state updates if we are already in the target state
+        if (store.state === next) {
+          if (resolveMutex!) resolveMutex();
+          return;
+        }
+
+        setFcmState(next);
+        console.log('[FCM]', next);
+
         switch (next) {
           case FcmState.PERMISSION: {
             if (!isBrowser() || !('Notification' in window)) {
@@ -217,10 +197,16 @@ export function useFcm() {
 
             const currentSwReg = useFcmStore.getState().swRegistration;
 
+            if (!currentSwReg) {
+              console.error('[FCM] SW registration missing');
+              transition(FcmState.ERROR);
+              return;
+            }
+
             // Always fetch current token to detect refreshes
             const currentToken = await getToken(msg, {
               vapidKey: VAPID_KEY,
-              serviceWorkerRegistration: currentSwReg!,
+              serviceWorkerRegistration: currentSwReg,
             });
 
             if (!currentToken) {
@@ -234,10 +220,14 @@ export function useFcm() {
 
             // Register/update token if changed or expired
             if (hasTokenChanged || !isTokenValid()) {
-              await axios.post(API_ENDPOINTS.NOTIFICATIONS.FCM_TOKEN, {
-                deviceId: getDeviceId(),
-                fcmToken: currentToken,
-              });
+              const callbacks = useFcmStore.getState().apiCallbacks;
+              if (callbacks) {
+                await callbacks.onTokenRegister(getDeviceId(), currentToken);
+              } else {
+                console.warn(
+                  '[FCM] API callbacks not set, skipping token registration',
+                );
+              }
 
               saveToken(currentToken);
               console.log('[FCM] Token registered/refreshed');
@@ -246,8 +236,10 @@ export function useFcm() {
             const unsub = onMessage(msg, onForegroundMessage);
             setUnsubForeground(unsub);
 
-            const handler = onBackgroundMessageFactory();
-            navigator.serviceWorker.addEventListener('message', handler);
+            // Create and track SW message listener
+            const swListener = createSwMessageListener();
+            setSwMessageListener(swListener);
+            navigator.serviceWorker.addEventListener('message', swListener);
 
             transition(FcmState.READY);
             break;
@@ -263,6 +255,8 @@ export function useFcm() {
       } catch (e) {
         console.error('[FCM] transition failed', e);
         transition(FcmState.ERROR);
+      } finally {
+        if (resolveMutex!) resolveMutex();
       }
     },
     [
@@ -271,8 +265,8 @@ export function useFcm() {
       setMessaging,
       setSwRegistration,
       setUnsubForeground,
+      setSwMessageListener,
       onForegroundMessage,
-      onBackgroundMessageFactory,
     ],
   );
 
@@ -281,7 +275,7 @@ export function useFcm() {
   /* -------------------------------------------------------------- */
 
   useEffect(() => {
-    if (canInitializeFcm) {
+    if (isFcmAllowed) {
       transition(FcmState.PERMISSION);
     } else {
       (async () => {
@@ -289,20 +283,22 @@ export function useFcm() {
         unsubForeground?.();
         setUnsubForeground(null);
 
-        // Remove SW listener using stable reference
-        const bgHandler = getBackgroundMessageHandler();
-        if (bgHandler) {
-          navigator.serviceWorker.removeEventListener('message', bgHandler);
-          clearBackgroundMessageHandler();
+        // Remove SW listener using tracked reference
+        const swListener = useFcmStore.getState().swMessageListener;
+        if (swListener) {
+          navigator.serviceWorker.removeEventListener('message', swListener);
+          setSwMessageListener(null);
         }
 
         // Delete FCM token
-        if (messaging) {
+        const currentMessaging = useFcmStore.getState().messaging;
+        if (currentMessaging) {
           try {
-            await deleteToken(messaging);
-            await axios.delete(API_ENDPOINTS.NOTIFICATIONS.FCM_TOKEN, {
-              params: { deviceId: getDeviceId() },
-            });
+            await deleteToken(currentMessaging);
+            const callbacks = useFcmStore.getState().apiCallbacks;
+            if (callbacks) {
+              await callbacks.onTokenUnregister(getDeviceId());
+            }
           } catch (err) {
             console.error('[FCM] Token unregister failed:', err);
           }
@@ -314,18 +310,19 @@ export function useFcm() {
     }
 
     return () => {
-      const handler = getBackgroundMessageHandler();
-      if (handler) {
-        navigator.serviceWorker.removeEventListener('message', handler);
+      const swListener = useFcmStore.getState().swMessageListener;
+      if (swListener) {
+        navigator.serviceWorker.removeEventListener('message', swListener);
       }
       unsubForeground?.();
     };
   }, [
-    canInitializeFcm,
+    isFcmAllowed,
     transition,
     unsubForeground,
     messaging,
     setUnsubForeground,
+    setSwMessageListener,
     resetFcmStore,
   ]);
 
@@ -351,10 +348,10 @@ export function useFcm() {
 
       const stored = loadToken();
       if (!stored || stored.token !== currentToken || !isTokenValid()) {
-        await axios.post(API_ENDPOINTS.NOTIFICATIONS.FCM_TOKEN, {
-          deviceId: getDeviceId(),
-          fcmToken: currentToken,
-        });
+        const callbacks = useFcmStore.getState().apiCallbacks;
+        if (callbacks) {
+          await callbacks.onTokenRegister(getDeviceId(), currentToken);
+        }
 
         saveToken(currentToken);
         console.log('[FCM] Token refreshed and updated');
@@ -365,10 +362,16 @@ export function useFcm() {
   }, []);
 
   useEffect(() => {
-    if (!canInitializeFcm) return;
+    if (!isFcmAllowed) return;
+
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
+      if (document.visibilityState !== 'visible') return;
+
+      // Debounce to prevent spam on rapid tab switching
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
         const currentState = useFcmStore.getState().state;
 
         // If we are already READY, just check for token refresh
@@ -378,17 +381,19 @@ export function useFcm() {
           currentState === FcmState.IDLE ||
           currentState === FcmState.ERROR
         ) {
-          // If we were stuck in IDLE or ERROR (e.g. permission was denied)
-          // re-trigger the flow.
-          transition(FcmState.PERMISSION);
+          // Only re-trigger if permission is already granted (don't re-prompt)
+          if (Notification.permission === 'granted') {
+            transition(FcmState.PERMISSION);
+          }
         }
-      }
+      }, 500);
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [canInitializeFcm, checkTokenRefresh, transition]);
+  }, [isFcmAllowed, checkTokenRefresh, transition]);
 }

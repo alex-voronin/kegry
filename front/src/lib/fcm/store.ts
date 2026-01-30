@@ -3,7 +3,12 @@
 import { create } from 'zustand';
 import { FirebaseApp } from 'firebase/app';
 import { Messaging } from 'firebase/messaging';
-import { FcmState, FcmMessageHandler } from './types';
+import {
+  FcmState,
+  FcmMessageHandler,
+  FcmApiCallbacks,
+  FcmStateCallbacks,
+} from './types';
 
 interface FcmStoreState {
   state: FcmState;
@@ -12,19 +17,35 @@ interface FcmStoreState {
   swRegistration: ServiceWorkerRegistration | null;
   unsubForeground: (() => void) | null;
 
+  // Transition guard
+  // (Module-level mutex used instead)
+
+  // SW message listener reference for cleanup
+  swMessageListener: ((event: MessageEvent) => void) | null;
+
   // Dynamic handlers
   customForegroundHandlers: FcmMessageHandler[];
   backgroundMessageHandler: FcmMessageHandler | null;
+
+  // Callbacks
+  apiCallbacks: FcmApiCallbacks | null;
+  stateCallbacks: FcmStateCallbacks | null;
 
   setState: (state: FcmState) => void;
   setApp: (app: FirebaseApp) => void;
   setMessaging: (messaging: Messaging) => void;
   setSwRegistration: (reg: ServiceWorkerRegistration) => void;
   setUnsubForeground: (unsub: (() => void) | null) => void;
+  setSwMessageListener: (
+    listener: ((event: MessageEvent) => void) | null,
+  ) => void;
 
   registerForegroundHandler: (handler: FcmMessageHandler) => void;
   unregisterForegroundHandler: (handler: FcmMessageHandler) => void;
   setBackgroundMessageHandler: (handler: FcmMessageHandler | null) => void;
+
+  setApiCallbacks: (callbacks: FcmApiCallbacks | null) => void;
+  setStateCallbacks: (callbacks: FcmStateCallbacks | null) => void;
 
   reset: () => void;
 }
@@ -35,8 +56,11 @@ const initialState = {
   messaging: null as Messaging | null,
   swRegistration: null as ServiceWorkerRegistration | null,
   unsubForeground: null as (() => void) | null,
+  swMessageListener: null as ((event: MessageEvent) => void) | null,
   customForegroundHandlers: [] as FcmMessageHandler[],
   backgroundMessageHandler: null as FcmMessageHandler | null,
+  apiCallbacks: null as FcmApiCallbacks | null,
+  stateCallbacks: null as FcmStateCallbacks | null,
 };
 
 export const useFcmStore = create<FcmStoreState>()((set) => ({
@@ -47,6 +71,7 @@ export const useFcmStore = create<FcmStoreState>()((set) => ({
   setMessaging: (messaging) => set({ messaging }),
   setSwRegistration: (swRegistration) => set({ swRegistration }),
   setUnsubForeground: (unsubForeground) => set({ unsubForeground }),
+  setSwMessageListener: (swMessageListener) => set({ swMessageListener }),
 
   registerForegroundHandler: (handler) =>
     set((state) => ({
@@ -62,6 +87,9 @@ export const useFcmStore = create<FcmStoreState>()((set) => ({
 
   setBackgroundMessageHandler: (handler) =>
     set({ backgroundMessageHandler: handler }),
+
+  setApiCallbacks: (apiCallbacks) => set({ apiCallbacks }),
+  setStateCallbacks: (stateCallbacks) => set({ stateCallbacks }),
 
   reset: () => set(initialState),
 }));

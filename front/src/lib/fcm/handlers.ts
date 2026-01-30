@@ -1,31 +1,17 @@
 'use client';
 
 import { FcmPayload, FcmMessageHandler } from './types';
-
-/* ------------------------------------------------------------------ */
-/* Types */
-/* ------------------------------------------------------------------ */
-
-export interface ForegroundMessageContext {
-  router: { push: (path: string) => void };
-  isInMeeting: boolean;
-  swRegistration: ServiceWorkerRegistration | null;
-  customHandlers: FcmMessageHandler[];
-}
-
-export interface BackgroundMessageContext {
-  routerRef: { current: { push: (path: string) => void } };
-  customHandler: FcmMessageHandler | null;
-}
+import { useFcmStore } from './store';
 
 /* ------------------------------------------------------------------ */
 /* Foreground Message Handler */
 /* ------------------------------------------------------------------ */
 
-export function createForegroundMessageHandler(ctx: ForegroundMessageContext) {
+export function createForegroundMessageHandler() {
   return (payload: FcmPayload) => {
-    // Run custom handlers
-    ctx.customHandlers.forEach((handler) => {
+    // Read handler from store at execution time (fixes stale capture bug)
+    const handlers = useFcmStore.getState().customForegroundHandlers;
+    handlers.forEach((handler) => {
       try {
         handler(payload);
       } catch (err) {
@@ -39,39 +25,24 @@ export function createForegroundMessageHandler(ctx: ForegroundMessageContext) {
 /* Background Message Handler */
 /* ------------------------------------------------------------------ */
 
-// Stable reference for SW message handler (module-level to survive remounts)
-let onBackgroundMessage: ((event: MessageEvent) => void) | null = null;
+export function createSwMessageListener(): (event: MessageEvent) => void {
+  return (event: MessageEvent) => {
+    const { type, data } = event.data || {};
+    if (type !== 'NOTIFICATION_CLICK') return;
 
-export function createBackgroundMessageFactory(ctx: BackgroundMessageContext) {
-  return () => {
-    if (!onBackgroundMessage) {
-      onBackgroundMessage = (event: MessageEvent) => {
-        const { type, data } = event.data || {};
-        if (type !== 'NOTIFICATION_CLICK') return;
-
-        // Run custom handler
-        if (ctx.customHandler) {
-          try {
-            const payload: FcmPayload = data || {
-              from: '',
-              collapseKey: '',
-              messageId: '',
-            };
-            ctx.customHandler(payload);
-          } catch (err) {
-            console.error('[FCM] Custom background handler failed', err);
-          }
-        }
-      };
+    // Read handler from store at execution time (fixes stale capture bug)
+    const handler = useFcmStore.getState().backgroundMessageHandler;
+    if (handler) {
+      try {
+        const payload: FcmPayload = data || {
+          from: '',
+          collapseKey: '',
+          messageId: '',
+        };
+        handler(payload);
+      } catch (err) {
+        console.error('[FCM] Custom background handler failed', err);
+      }
     }
-    return onBackgroundMessage;
   };
-}
-
-export function getBackgroundMessageHandler() {
-  return onBackgroundMessage;
-}
-
-export function clearBackgroundMessageHandler() {
-  onBackgroundMessage = null;
 }
