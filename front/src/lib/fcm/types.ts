@@ -19,6 +19,19 @@ export enum FcmState {
   ERROR = 'ERROR',
 }
 
+export enum NotificationType {
+  MEETING_ARRANGED = 'meetingArranged',
+  USER_INVITED = 'userInvited',
+  CHAT_MESSAGE_RECEIVED = 'chatMessageReceived',
+  OPEN_RATE_USER_SCREEN = 'openRateUserScreen',
+  SHOW_END_MEETING_SUGGESTION = 'showEndMeetingSuggestion',
+}
+
+export enum SwMessageType {
+  FCM_MESSAGE = 'FCM_MESSAGE',
+  NOTIFICATION_CLICK = 'NOTIFICATION_CLICK',
+}
+
 /* ------------------------------------------------------------------ */
 /* Token Storage Types */
 /* ------------------------------------------------------------------ */

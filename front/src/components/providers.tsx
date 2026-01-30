@@ -10,7 +10,7 @@ import { useFcmStore } from '@/lib/fcm/store';
 import { useFeedStore } from '@/store/use-feed-store';
 import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
-import { FcmPayload } from '@/lib/fcm/types';
+import { FcmPayload, NotificationType } from '@/lib/fcm/types';
 
 function FcmGlobalHandler() {
   const router = useRouter();
@@ -25,21 +25,20 @@ function FcmGlobalHandler() {
   const handleForegroundMessage = useCallback(
     (payload: FcmPayload) => {
       const data = payload?.data || {};
-      const action = data.action;
-      const userAction = data.userAction;
+      const type = data.type;
       const notification = payload?.notification;
       const isInMeeting = useFeedStore.getState().isInMeeting;
 
-      // Navigation actions
-      if (action === 'openChatScreen') {
+      // Navigation actions based on type
+      if (type === NotificationType.MEETING_ARRANGED) {
         router.push(PAGE_ROUTES.CHAT);
       }
-      if (action === 'openRateUserScreen') {
+      if (type === NotificationType.OPEN_RATE_USER_SCREEN) {
         router.push(PAGE_ROUTES.RATE_USER);
       }
 
-      // Show system notification for notifications screen (when not in meeting)
-      if (userAction === 'openNotificationsScreen' && !isInMeeting) {
+      // Show system notification for invitations (when not in meeting)
+      if (type === NotificationType.USER_INVITED && !isInMeeting) {
         if (
           'serviceWorker' in navigator &&
           navigator.serviceWorker.controller
@@ -64,12 +63,15 @@ function FcmGlobalHandler() {
 
   const handleBackgroundMessage = useCallback(
     (payload: FcmPayload) => {
-      const userAction = payload?.data?.userAction;
+      const type = payload?.data?.type;
 
-      if (userAction === 'openNotificationsScreen') {
+      if (type === NotificationType.USER_INVITED) {
         router.push(PAGE_ROUTES.NOTIFICATIONS);
       }
-      if (userAction === 'openChatScreen') {
+      if (
+        type === NotificationType.MEETING_ARRANGED ||
+        type === NotificationType.CHAT_MESSAGE_RECEIVED
+      ) {
         router.push(PAGE_ROUTES.CHAT);
       }
     },

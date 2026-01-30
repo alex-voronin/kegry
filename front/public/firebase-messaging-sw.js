@@ -12,6 +12,11 @@ importScripts(
 firebase.initializeApp(self.firebaseConfig);
 const messaging = firebase.messaging();
 
+const MessageType = {
+  FCM_MESSAGE: 'FCM_MESSAGE',
+  NOTIFICATION_CLICK: 'NOTIFICATION_CLICK',
+};
+
 function getMessageId(payload) {
   return payload.messageId || payload.data?.messageId || null;
 }
@@ -37,7 +42,7 @@ messaging.onBackgroundMessage(async (payload) => {
 
     for (const client of clients) {
       client.postMessage({
-        type: 'FCM_MESSAGE',
+        type: MessageType.FCM_MESSAGE,
         messageId,
         payload,
       });
@@ -87,7 +92,7 @@ self.addEventListener('notificationclick', (event) => {
           if ('focus' in client) {
             await client.focus();
             client.postMessage({
-              type: 'NOTIFICATION_CLICK',
+              type: MessageType.NOTIFICATION_CLICK,
               data: payload,
             });
             return;

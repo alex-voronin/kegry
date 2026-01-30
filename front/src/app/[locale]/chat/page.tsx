@@ -15,7 +15,7 @@ import { PAGE_ROUTES } from '@/lib/routes';
 import { useChatStore } from '@/store/use-chat-store';
 import { useFeedStore } from '@/store/use-feed-store';
 import { useFcmStore } from '@/lib/fcm/store';
-import { FcmPayload } from '@/lib/fcm/types';
+import { FcmPayload, NotificationType } from '@/lib/fcm/types';
 
 export default function ChatScreen() {
   const t = useTranslations('screens.chat');
@@ -51,14 +51,13 @@ export default function ChatScreen() {
       const data = payload?.data;
       if (!data) return;
 
-      const action = data.action;
       const type = data.type;
 
-      if (action === 'showEndMeetingSuggestion') {
+      if (type === NotificationType.SHOW_END_MEETING_SUGGESTION) {
         setShowEndMeetingPrompt(true);
       }
 
-      if (type === 'chatMessageReceived') {
+      if (type === NotificationType.CHAT_MESSAGE_RECEIVED) {
         if (data.messageText && data.createdAt) {
           addMessage({
             id: crypto.randomUUID(), // Temp ID until next fetch

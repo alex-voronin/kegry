@@ -1,6 +1,6 @@
 'use client';
 
-import { FcmPayload, FcmMessageHandler } from './types';
+import { FcmPayload, SwMessageType } from './types';
 import { useFcmStore } from './store';
 
 /* ------------------------------------------------------------------ */
@@ -28,7 +28,7 @@ export function createForegroundMessageHandler() {
 export function createSwMessageListener(): (event: MessageEvent) => void {
   return (event: MessageEvent) => {
     const { type, data } = event.data || {};
-    if (type !== 'NOTIFICATION_CLICK') return;
+    if (type !== SwMessageType.NOTIFICATION_CLICK) return;
 
     // Read handler from store at execution time (fixes stale capture bug)
     const handler = useFcmStore.getState().backgroundMessageHandler;
