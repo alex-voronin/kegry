@@ -39,8 +39,7 @@ messaging.onBackgroundMessage(async (payload) => {
       client.postMessage({
         type: 'FCM_MESSAGE',
         messageId,
-        data,
-        notification,
+        payload,
       });
     }
   } catch (err) {
@@ -57,7 +56,7 @@ messaging.onBackgroundMessage(async (payload) => {
         body: notification.body ?? '',
         icon: notification.icon ?? '/assets/logo.png',
         tag: `hoppyfy-${messageId}`,
-        data: { ...data, messageId },
+        data: payload,
       },
     );
   } catch (err) {
@@ -68,8 +67,9 @@ messaging.onBackgroundMessage(async (payload) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
-  const data = event.notification.data || {};
-  const { userAction, messageId } = data;
+  const payload = event.notification.data;
+  const userAction = payload?.data?.userAction;
+  const messageId = payload?.messageId || payload?.data?.messageId;
 
   if (!messageId) return;
 
@@ -88,9 +88,7 @@ self.addEventListener('notificationclick', (event) => {
             await client.focus();
             client.postMessage({
               type: 'NOTIFICATION_CLICK',
-              messageId,
-              userAction,
-              data,
+              data: payload,
             });
             return;
           }

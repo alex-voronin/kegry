@@ -14,6 +14,8 @@ import { Spinner } from '@/components/ui/spinner';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useChatStore } from '@/store/use-chat-store';
 import { useFeedStore } from '@/store/use-feed-store';
+import { useFcmStore } from '@/lib/fcm/store';
+import { FcmPayload } from '@/lib/fcm/types';
 
 export default function ChatScreen() {
   const t = useTranslations('screens.chat');
@@ -34,9 +36,29 @@ export default function ChatScreen() {
     setShowEndMeetingPrompt,
   } = useChatStore();
 
+  const { registerForegroundHandler, unregisterForegroundHandler } =
+    useFcmStore();
+
   useEffect(() => {
     fetchChat();
   }, [fetchChat]);
+
+  // Register FCM handler for showEndMeetingSuggestion
+  useEffect(() => {
+    const handleFcmMessage = (payload: FcmPayload) => {
+      const action = payload?.data?.action;
+      if (action === 'showEndMeetingSuggestion') {
+        setShowEndMeetingPrompt(true);
+      }
+    };
+
+    registerForegroundHandler(handleFcmMessage);
+    return () => unregisterForegroundHandler(handleFcmMessage);
+  }, [
+    registerForegroundHandler,
+    unregisterForegroundHandler,
+    setShowEndMeetingPrompt,
+  ]);
 
   const calculateRemainingTimeMs = useCallback(() => {
     if (!chat?.expiresAt) return null;

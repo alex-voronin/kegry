@@ -1,8 +1,6 @@
 'use client';
 
-import { PAGE_ROUTES } from '@/lib/routes';
-import { FcmPayload } from './types';
-import { useChatStore } from '@/store/use-chat-store';
+import { FcmPayload, FcmMessageHandler } from './types';
 
 /* ------------------------------------------------------------------ */
 /* Types */
@@ -12,10 +10,12 @@ export interface ForegroundMessageContext {
   router: { push: (path: string) => void };
   isInMeeting: boolean;
   swRegistration: ServiceWorkerRegistration | null;
+  customHandlers: FcmMessageHandler[];
 }
 
 export interface BackgroundMessageContext {
   routerRef: { current: { push: (path: string) => void } };
+  customHandler: FcmMessageHandler | null;
 }
 
 /* ------------------------------------------------------------------ */
@@ -24,38 +24,14 @@ export interface BackgroundMessageContext {
 
 export function createForegroundMessageHandler(ctx: ForegroundMessageContext) {
   return (payload: FcmPayload) => {
-    const data = payload?.data || {};
-    const action = data.action;
-    const userAction = data.userAction;
-    const notification = payload?.notification;
-
-    // Handle specific actions
-    if (action === 'openChatScreen') {
-      ctx.router.push(PAGE_ROUTES.CHAT);
-    }
-
-    if (action === 'openRateUserScreen') {
-      ctx.router.push(PAGE_ROUTES.RATE_USER);
-    }
-
-    if (action === 'showEndMeetingSuggestion') {
-      // Set flag in chat store - chat page will handle showing the dialog
-      useChatStore.getState().setShowEndMeetingPrompt(true);
-    }
-
-    // Show system notification for notifications screen if not in meeting
-    if (userAction === 'openNotificationsScreen' && !ctx.isInMeeting) {
-      if (ctx.swRegistration && notification) {
-        ctx.swRegistration.showNotification(
-          notification.title || 'Hoppyfy.me',
-          {
-            body: notification.body || '',
-            icon: notification.icon || '/assets/logo.png',
-            data: data,
-          },
-        );
+    // Run custom handlers
+    ctx.customHandlers.forEach((handler) => {
+      try {
+        handler(payload);
+      } catch (err) {
+        console.error('[FCM] Custom foreground handler failed', err);
       }
-    }
+    });
   };
 }
 
@@ -70,14 +46,21 @@ export function createBackgroundMessageFactory(ctx: BackgroundMessageContext) {
   return () => {
     if (!onBackgroundMessage) {
       onBackgroundMessage = (event: MessageEvent) => {
-        const { type, userAction } = event.data || {};
+        const { type, data } = event.data || {};
         if (type !== 'NOTIFICATION_CLICK') return;
 
-        if (userAction === 'openNotificationsScreen') {
-          ctx.routerRef.current.push(PAGE_ROUTES.NOTIFICATIONS);
-        }
-        if (userAction === 'openChatScreen') {
-          ctx.routerRef.current.push(PAGE_ROUTES.CHAT);
+        // Run custom handler
+        if (ctx.customHandler) {
+          try {
+            const payload: FcmPayload = data || {
+              from: '',
+              collapseKey: '',
+              messageId: '',
+            };
+            ctx.customHandler(payload);
+          } catch (err) {
+            console.error('[FCM] Custom background handler failed', err);
+          }
         }
       };
     }

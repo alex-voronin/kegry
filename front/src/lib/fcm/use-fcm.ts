@@ -121,6 +121,12 @@ export function useFcm() {
   const messaging = useFcmStore((s) => s.messaging);
   const swRegistration = useFcmStore((s) => s.swRegistration);
   const unsubForeground = useFcmStore((s) => s.unsubForeground);
+  const customForegroundHandlers = useFcmStore(
+    (s) => s.customForegroundHandlers,
+  );
+  const backgroundMessageHandler = useFcmStore(
+    (s) => s.backgroundMessageHandler,
+  );
 
   const {
     setState: setFcmState,
@@ -142,13 +148,17 @@ export function useFcm() {
       router,
       isInMeeting,
       swRegistration,
+      customHandlers: customForegroundHandlers,
     }),
-    [router, isInMeeting, swRegistration],
+    [router, isInMeeting, swRegistration, customForegroundHandlers],
   );
 
   const onBackgroundMessageFactory = useCallback(
-    createBackgroundMessageFactory({ routerRef }),
-    [],
+    createBackgroundMessageFactory({
+      routerRef,
+      customHandler: backgroundMessageHandler,
+    }),
+    [backgroundMessageHandler],
   );
 
   /* -------------------------------------------------------------- */

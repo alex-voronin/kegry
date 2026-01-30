@@ -1,27 +1,10 @@
 'use client';
 
-/* ------------------------------------------------------------------ */
-/* FCM Payload Types */
-/* ------------------------------------------------------------------ */
+import { MessagePayload } from 'firebase/messaging';
 
-export interface FcmNotification {
-  title?: string;
-  body?: string;
-  icon?: string;
-}
+export type FcmPayload = MessagePayload;
 
-export interface FcmData {
-  action?: string;
-  userAction?: string;
-  messageId?: string;
-  [key: string]: string | undefined;
-}
-
-export interface FcmPayload {
-  notification?: FcmNotification;
-  data?: FcmData;
-  messageId?: string;
-}
+export type FcmMessageHandler = (payload: FcmPayload) => void | Promise<void>;
 
 /* ------------------------------------------------------------------ */
 /* FCM State Types */
