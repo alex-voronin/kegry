@@ -1,7 +1,7 @@
 'use client';
 
 import { PAGE_ROUTES } from '@/lib/routes';
-import { FcmPayload } from '@/lib/fcm-types';
+import { FcmPayload } from './types';
 import { useChatStore } from '@/store/use-chat-store';
 
 /* ------------------------------------------------------------------ */

@@ -3,7 +3,7 @@
 import { create } from 'zustand';
 import { FirebaseApp } from 'firebase/app';
 import { Messaging } from 'firebase/messaging';
-import { FcmState } from '@/lib/fcm-types';
+import { FcmState } from './types';
 
 interface FcmStoreState {
   state: FcmState;

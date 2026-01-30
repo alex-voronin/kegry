@@ -3,7 +3,7 @@
 import { ReactNode } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { useBackgroundLocation } from '@/lib/use-background-location';
-import { useFcm } from '@/lib/use-fcm';
+import { useFcm } from '@/lib/fcm/use-fcm';
 
 function BackgroundServices() {
   useBackgroundLocation();

@@ -12,17 +12,17 @@ import axios from 'axios';
 
 import { useRouter } from '@/i18n/routing';
 import { API_ENDPOINTS } from '@/lib/routes';
-import { useAuthStore } from '@/lib/auth/use-auth-store';
+import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import { useFeedStore } from '@/store/use-feed-store';
 
-import { useFcmStore } from '@/store/use-fcm-store';
-import { FcmState, StoredToken } from '@/lib/fcm-types';
+import { useFcmStore } from './store';
+import { FcmState, StoredToken } from './types';
 import {
   createForegroundMessageHandler,
   createBackgroundMessageFactory,
   getBackgroundMessageHandler,
   clearBackgroundMessageHandler,
-} from '@/lib/fcm-handlers';
+} from './handlers';
 
 /* ------------------------------------------------------------------ */
 /* Config */
@@ -107,7 +107,11 @@ async function registerServiceWorker(): Promise<ServiceWorkerRegistration> {
 
 export function useFcm() {
   const router = useRouter();
-  const isAuthenticated = !!useAuthStore((s) => s.accessToken);
+  const accessToken = useAuthStore((s) => s.accessToken);
+  const requiredAction = useAuthStore((s) => s.requiredAction);
+
+  const canInitializeFcm =
+    !!accessToken && requiredAction === RequiredAction.None;
 
   const routerRef = useRef(router);
   useEffect(() => {
@@ -267,7 +271,7 @@ export function useFcm() {
   /* -------------------------------------------------------------- */
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (canInitializeFcm) {
       transition(FcmState.PERMISSION);
     } else {
       (async () => {
@@ -307,7 +311,7 @@ export function useFcm() {
       unsubForeground?.();
     };
   }, [
-    isAuthenticated,
+    canInitializeFcm,
     transition,
     unsubForeground,
     messaging,
@@ -351,7 +355,7 @@ export function useFcm() {
   }, []);
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!canInitializeFcm) return;
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
@@ -376,5 +380,5 @@ export function useFcm() {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [isAuthenticated, checkTokenRefresh, transition]);
+  }, [canInitializeFcm, checkTokenRefresh, transition]);
 }
