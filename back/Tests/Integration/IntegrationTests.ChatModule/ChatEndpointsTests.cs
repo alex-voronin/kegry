@@ -37,25 +37,44 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var authB = await Factory.AuthManager.CreateAndLoginUserAsync("userB@example.com", "Password123!");
         Factory.ApiClient.SetAuth(authB);
         await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        
+        //2. Create device tokens for push notifications
+        var tokenRequestA = new UpdateFcmTokenRequest("devA", "tokenA");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.ApiClient
+            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+                tokenRequestA);
 
-        // 2. Verify no active chat exists for User A
+        var tokenRequestB = new UpdateFcmTokenRequest("devB", "tokenB");
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.ApiClient
+            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+                tokenRequestB);
+
+        // 3. Verify no active chat exists for User A
         Factory.ApiClient.SetAuth(authA);
         var chatResponseBefore = await Factory.ApiClient
             .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
         chatResponseBefore.Success.ShouldBeFalse();
 
-        // 3. User A invites User B
-        var inviteResponseA = await Factory.ApiClient
-            .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authB.UserId), null);
-        inviteResponseA.Success.ShouldBeTrue();
+        await Factory.NotificationManager.AwaitPushNotifications(
+            codeToRun: async () =>
+            {
+                // 4. User A invites User B
+                var inviteResponseA = await Factory.ApiClient
+                    .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authB.UserId), null);
+                inviteResponseA.Success.ShouldBeTrue();
 
-        // 4. User B invites User A (creates chat)
-        Factory.ApiClient.SetAuth(authB);
-        var inviteResponseB = await Factory.ApiClient
-            .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authA.UserId), null);
-        inviteResponseB.Success.ShouldBeTrue();
+                // 5. User B invites User A (creates chat)
+                Factory.ApiClient.SetAuth(authB);
+                var inviteResponseB = await Factory.ApiClient
+                    .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authA.UserId), null);
+                inviteResponseB.Success.ShouldBeTrue();
+            },
+            expectedCount: 2,
+            expectedTitle: NotificationTitles.MeetingArrangedTitle);
 
-        // 5. Verify chat exists for User A
+        // 6. Verify chat exists for User A
         Factory.ApiClient.SetAuth(authA);
         var chatResponseAfter = await Factory.ApiClient
             .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
@@ -63,7 +82,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
         chatResponseAfter.Result.Participant.Id.ShouldBe(Guid.Parse(authB.UserId));
         chatResponseAfter.Result.ParticipantsMet.ShouldBeFalse();
 
-        // 6. Verify chat exists for User B
+        // 7. Verify chat exists for User B
         Factory.ApiClient.SetAuth(authB);
         var chatResponseB = await Factory.ApiClient
             .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
@@ -110,7 +129,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 locationB.Success.ShouldBeTrue();
             },
             expectedCount: 2,
-            expectedAction: FcmPushBuilder.Actions.ShowEndMeetingSuggestion);
+            expectedType: FcmPushBuilder.PushType.ShowEndMeetingSuggestion);
 
         // 4. Verify ParticipantsMet flag is true
         Factory.ApiClient.SetAuth(authA);
@@ -142,7 +161,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 deleteResponse.Success.ShouldBeTrue();
             },
             expectedCount: 2,
-            expectedAction: FcmPushBuilder.Actions.OpenRateUserScreen);
+            expectedType: FcmPushBuilder.PushType.OpenRateUserScreen);
 
         // 4. Verify chat is deleted for User A
         var chatAfterDelete = await Factory.ApiClient
@@ -185,7 +204,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
             },
             expectedCount: 1,
             pushPredicate: p =>
-                p.UnicastMessage!.Data[FcmPushBuilder.Keys.UserAction] == FcmPushBuilder.UserActions.OpenChatScreen &&
+                p.UnicastMessage!.Data[FcmPushBuilder.Keys.Type] == FcmPushBuilder.PushType.ChatMessageReceived &&
                 p.UnicastMessage!.Data[FcmPushBuilder.Keys.MessageText] == messageA);
 
         // 3. User B sends message to User A
@@ -201,7 +220,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
             },
             expectedCount: 1,
             pushPredicate: p =>
-                p.UnicastMessage!.Data[FcmPushBuilder.Keys.UserAction] == FcmPushBuilder.UserActions.OpenChatScreen &&
+                p.UnicastMessage!.Data[FcmPushBuilder.Keys.Type] == FcmPushBuilder.PushType.ChatMessageReceived &&
                 p.UnicastMessage!.Data[FcmPushBuilder.Keys.MessageText] == messageB);
 
         // 4. Verify User A sees both messages in history

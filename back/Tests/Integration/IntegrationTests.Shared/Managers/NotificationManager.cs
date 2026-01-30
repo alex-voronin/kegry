@@ -31,20 +31,15 @@ public class NotificationManager
     public Task AwaitSilentPushNotifications(
         Func<Task> codeToRun,
         int expectedCount,
-        string? expectedAction = null,
-        string? expectedUserAction = null,
+        string? expectedType = null,
         int timeoutSeconds = 5)
     {
         return AwaitPushNotifications(
             codeToRun: codeToRun,
             pushPredicate: p => p.UnicastMessage!.Notification == null &&
                                 (
-                                    expectedAction == null ||
-                                    p.UnicastMessage!.Data[FcmPushBuilder.Keys.Action] == expectedAction
-                                ) &&
-                                (
-                                    expectedUserAction == null ||
-                                    p.UnicastMessage!.Data[FcmPushBuilder.Keys.UserAction] == expectedUserAction
+                                    expectedType == null ||
+                                    p.UnicastMessage!.Data[FcmPushBuilder.Keys.Type] == expectedType
                                 ),
             expectedCount: expectedCount,
             timeoutSeconds: timeoutSeconds);

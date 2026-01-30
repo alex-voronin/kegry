@@ -84,7 +84,7 @@ public class ExpiredChatsCollectorTests : IntegrationTestBase, IAsyncLifetime
                 await collector.CollectExpiredChats(CancellationToken.None);
             },
             expectedCount: 2,
-            expectedAction: FcmPushBuilder.Actions.OpenRateUserScreen);
+            expectedType: FcmPushBuilder.PushType.OpenRateUserScreen);
 
         // 5. Verify that chat has been collected
         using var scope = Factory.Services.CreateScope();

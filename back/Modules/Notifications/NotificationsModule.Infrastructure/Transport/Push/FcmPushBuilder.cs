@@ -1,5 +1,6 @@
 using ChatModule.Contracts.Events;
 using FirebaseAdmin.Messaging;
+using JasperFx.Core;
 using Microsoft.Extensions.Localization;
 using NotificationsModule.Infrastructure.Resources;
 using SharedCore.Services.LifeTimes;
@@ -20,31 +21,24 @@ public interface IPushBuilder
 
 internal class FcmPushBuilder : IPushBuilder, ISingleton
 {
+    internal static class PushType
+    {
+        public static readonly string MeetingArranged = nameof(MeetingArranged).ToCamelCase();
+        public static readonly string UserInvited = nameof(UserInvited).ToCamelCase();
+        public static readonly string ChatMessageReceived = nameof(ChatMessageReceived).ToCamelCase();
+        public static readonly string OpenRateUserScreen = nameof(OpenRateUserScreen).ToCamelCase();
+        public static readonly string ShowEndMeetingSuggestion = nameof(ShowEndMeetingSuggestion).ToCamelCase();
+    }
+    
     internal static class Keys
     {
-        public const string Action = "action";
-        public const string UserAction = "userAction";
-        public const string FromUserId = "fromUserId";
-        public const string MessageText = "messageText";
-        public const string CreatedAt = "createdAt";
-        public const string RateeId = "rateeId";
+        public static readonly string FromUserId = nameof(FromUserId).ToCamelCase();
+        public static readonly string MessageText = nameof(MessageText).ToCamelCase();
+        public static readonly string CreatedAt = nameof(CreatedAt).ToCamelCase();
+        public static readonly string RateeId = nameof(RateeId).ToCamelCase();
+        public static readonly string Type = nameof(Type).ToCamelCase();
     }
-
-    // Actions are commands to the frontend that must be performed 
-    internal static class Actions
-    {
-        public const string OpenChatScreen = "openChatScreen";
-        public const string OpenRateUserScreen = "openRateUserScreen";
-        public const string ShowEndMeetingSuggestion = "showEndMeetingSuggestion";
-    }
-
-    // User actions triggered by tapping a push notification 
-    internal static class UserActions
-    {
-        public const string OpenNotificationsScreen = "openNotificationsScreen";
-        public const string OpenChatScreen = "openChatScreen";
-    }
-
+    
     private readonly IStringLocalizer<NotificationsLocalization> _localizer;
 
     public FcmPushBuilder(IStringLocalizer<NotificationsLocalization> localizer)
@@ -64,7 +58,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         };
         var data = new Dictionary<string, string>()
         {
-            { Keys.Action, Actions.OpenChatScreen }
+            { Keys.Type, PushType.MeetingArranged },
         };
 
         return BuildPushMessages(fcmTokens, notification, data);
@@ -82,7 +76,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         };
         var data = new Dictionary<string, string>()
         {
-            { Keys.UserAction, UserActions.OpenNotificationsScreen }
+            { Keys.Type, PushType.UserInvited },
         };
 
         return BuildPushMessages(fcmTokens, notification, data);
@@ -109,10 +103,10 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         };
         var data = new Dictionary<string, string>()
         {
-            { Keys.UserAction, UserActions.OpenChatScreen },
             { Keys.FromUserId, @event.FromUserId.ToString() },
             { Keys.MessageText, @event.MessageText },
             { Keys.CreatedAt, @event.CreatedAt.ToString("o") },
+            { Keys.Type, PushType.ChatMessageReceived },
         };
 
         return BuildPushMessages(fcmTokens, notification, data, webPush);
@@ -122,10 +116,10 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
     {
         var data = new Dictionary<string, string>()
         {
-            { Keys.UserAction, UserActions.OpenChatScreen },
             { Keys.FromUserId, @event.FromUserId.ToString() },
             { Keys.MessageText, @event.MessageText },
             { Keys.CreatedAt, @event.CreatedAt.ToString("o") },
+            { Keys.Type, PushType.ChatMessageReceived },
         };
 
         return BuildPushMessages(fcmTokens, null, data);
@@ -135,8 +129,8 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
     {
         var data = new Dictionary<string, string>()
         {
-            { Keys.Action, Actions.OpenRateUserScreen },
             { Keys.RateeId, rateeUserId.ToString() },
+            { Keys.Type, PushType.OpenRateUserScreen },
         };
         return BuildPushMessages(fcmTokens, null, data);
     }
@@ -145,7 +139,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
     {
         var data = new Dictionary<string, string>()
         {
-            { Keys.Action, Actions.ShowEndMeetingSuggestion }
+            { Keys.Type, PushType.ShowEndMeetingSuggestion },
         };
         return BuildPushMessages(fcmTokens, null, data);
     }
