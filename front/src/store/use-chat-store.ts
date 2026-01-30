@@ -36,7 +36,9 @@ interface ChatState {
   showEndMeetingPrompt: boolean;
 
   fetchChat: () => Promise<void>;
+  refreshChat: () => Promise<void>;
   sendMessage: (text: string) => Promise<void>;
+  addMessage: (message: ChatMessageDto) => void;
   deleteChat: () => Promise<void>;
   setShowEndMeetingPrompt: (show: boolean) => void;
   reset: () => void;
@@ -73,6 +75,22 @@ export const useChatStore = create<ChatState>()((set, get) => ({
     }
   },
 
+  refreshChat: async () => {
+    try {
+      const response = await axios.get<ApiResult<ChatDto>>(
+        API_ENDPOINTS.CHAT.GET,
+      );
+
+      if (!response.data.success) {
+        return;
+      }
+
+      set({ chat: response.data.result });
+    } catch (error) {
+      console.error('Failed to refresh chat', error);
+    }
+  },
+
   sendMessage: async (text: string) => {
     try {
       await axios.post(API_ENDPOINTS.CHAT.SEND_MESSAGE, { messageText: text });
@@ -96,6 +114,20 @@ export const useChatStore = create<ChatState>()((set, get) => ({
       const errorMessage =
         error instanceof Error ? error.message : 'Failed to send message';
       throw new Error(errorMessage);
+    }
+  },
+
+  addMessage: (message: ChatMessageDto) => {
+    const chat = get().chat;
+    if (chat) {
+      if (chat.messages.some((m) => m.id === message.id)) return;
+
+      set({
+        chat: {
+          ...chat,
+          messages: [...chat.messages, message],
+        },
+      });
     }
   },
 

@@ -34,6 +34,8 @@ export default function ChatScreen() {
     deleteChat,
     showEndMeetingPrompt,
     setShowEndMeetingPrompt,
+    refreshChat,
+    addMessage,
   } = useChatStore();
 
   const { registerForegroundHandler, unregisterForegroundHandler } =
@@ -43,12 +45,30 @@ export default function ChatScreen() {
     fetchChat();
   }, [fetchChat]);
 
-  // Register FCM handler for showEndMeetingSuggestion
+  // Register FCM handler for showEndMeetingSuggestion and chatMessageReceived
   useEffect(() => {
     const handleFcmMessage = (payload: FcmPayload) => {
-      const action = payload?.data?.action;
+      const data = payload?.data;
+      if (!data) return;
+
+      const action = data.action;
+      const type = data.type;
+
       if (action === 'showEndMeetingSuggestion') {
         setShowEndMeetingPrompt(true);
+      }
+
+      if (type === 'chatMessageReceived') {
+        if (data.messageText && data.createdAt) {
+          addMessage({
+            id: crypto.randomUUID(), // Temp ID until next fetch
+            messageText: data.messageText,
+            createdAt: data.createdAt,
+            isMine: false,
+          });
+        } else {
+          refreshChat();
+        }
       }
     };
 
@@ -58,6 +78,8 @@ export default function ChatScreen() {
     registerForegroundHandler,
     unregisterForegroundHandler,
     setShowEndMeetingPrompt,
+    refreshChat,
+    addMessage,
   ]);
 
   const calculateRemainingTimeMs = useCallback(() => {
