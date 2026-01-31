@@ -248,7 +248,8 @@ export default function FeedScreen() {
         }
 
         if (status.userIdToRate) {
-          console.log('User to rate:', status.userIdToRate);
+          router.push(PAGE_ROUTES.RATE_USER(status.userIdToRate));
+          return;
         }
       } catch (err: any) {
         toast.error(err.message);

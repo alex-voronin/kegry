@@ -16,7 +16,7 @@ export const PAGE_ROUTES = {
   CHAT: '/chat',
   SETTINGS: '/settings',
   BLOCKED_USERS: '/blocked-users',
-  RATE_USER: '/rate-user',
+  RATE_USER: (userId: string) => `/rate-user/${userId}`,
 } as const;
 
 export const API_ENDPOINTS = {

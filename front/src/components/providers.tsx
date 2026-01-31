@@ -35,7 +35,10 @@ function FcmGlobalHandler() {
         router.push(PAGE_ROUTES.CHAT);
       }
       if (type === NotificationType.OPEN_RATE_USER_SCREEN) {
-        router.push(PAGE_ROUTES.RATE_USER);
+        const userId = data.RateeId;
+        if (userId) {
+          router.push(PAGE_ROUTES.RATE_USER(userId));
+        }
       }
 
       // Show system notification for invitations (when not in meeting)

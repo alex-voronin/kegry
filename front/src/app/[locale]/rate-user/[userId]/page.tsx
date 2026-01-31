@@ -7,16 +7,25 @@ import { useRouter } from '@/i18n/routing';
 import { StarRating } from 'react-flexible-star-rating';
 import styles from './rate-user.module.css';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { useFeedStore } from '@/store/use-feed-store';
 import { useRateUserStore } from '@/store/use-rate-user-store';
 import { toast } from 'react-toastify';
 import { Spinner } from '@/components/ui/spinner';
 import { Button, ButtonVariant } from '@/components/ui/button';
 
-export default function RateUserScreen() {
+import { use } from 'react';
+
+interface RateUserScreenProps {
+  params: Promise<{
+    locale: string;
+    userId: string;
+  }>;
+}
+
+export default function RateUserScreen({ params }: RateUserScreenProps) {
   const t = useTranslations('screens.rateUser');
   const router = useRouter();
-  const { fetchFeedStatus } = useFeedStore();
+  const { userId } = use(params);
+
   const {
     userProfile,
     fetchUserToRate,
@@ -35,12 +44,10 @@ export default function RateUserScreen() {
 
     const init = async () => {
       try {
-        const status = await fetchFeedStatus();
-
-        if (status.userIdToRate) {
-          await fetchUserToRate(status.userIdToRate);
+        if (userId) {
+          await fetchUserToRate(userId);
         } else {
-          console.log('No user to rate found in status, redirecting to feed.');
+          console.log('No user to rate found in params, redirecting to feed.');
           router.replace(PAGE_ROUTES.FEED);
           return;
         }
@@ -53,7 +60,7 @@ export default function RateUserScreen() {
     };
 
     init();
-  }, [fetchFeedStatus, fetchUserToRate, router]);
+  }, [fetchUserToRate, router, userId]);
 
   const handleSubmit = async () => {
     if (!userProfile) {

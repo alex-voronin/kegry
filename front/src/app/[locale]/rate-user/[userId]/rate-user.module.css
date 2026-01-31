@@ -1,4 +1,4 @@
-@reference "../../globals.css";
+@reference "../../../globals.css";
 
 .wrapper {
   @apply relative h-dvh overflow-hidden;
