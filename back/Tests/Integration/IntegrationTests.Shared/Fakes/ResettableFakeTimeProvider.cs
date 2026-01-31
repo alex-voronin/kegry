@@ -1,16 +1,14 @@
 using Microsoft.Extensions.Time.Testing;
 
-namespace IntegrationTests.Shared;
+namespace IntegrationTests.Shared.Fakes;
 
 public sealed class ResettableTimeProvider : TimeProvider
 {
     private readonly Lock _timerLock = new Lock();
     private FakeTimeProvider _inner;
-    private readonly DateTimeOffset _initial;
 
     public ResettableTimeProvider(DateTimeOffset initial)
     {
-        _initial = initial;
         _inner = new FakeTimeProvider(initial);
     }
 

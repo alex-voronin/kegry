@@ -3,6 +3,9 @@ using System.Text;
 using IntegrationTests.Shared;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.RegularExpressions;
+using IntegrationTests.Shared.Fakes;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using NotificationsModule.Infrastructure.Transport.Emails;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
@@ -130,7 +133,8 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.NotificationManager.EmailSender
             .SendEmailAsync(Arg.Do<Email>(e =>
             {
-                var match = Regex.Match(e.Body, @"<a href=""https:\/\/hoppyfy\.me\/password-reset\?email=.+&token=(.+)"">");
+                var match = Regex.Match(e.Body,
+                    @"<a href=""https:\/\/hoppyfy\.me\/password-reset\?email=.+&token=(.+)"">");
                 capturedToken = match.Groups[1].Value;
             }), Arg.Any<CancellationToken>());
 
@@ -310,5 +314,124 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.Auth.Signin, request);
 
         signinResponse.Success.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task GivenNoUsers_WhenUserSignsUpViaGoogle_ThenUserIsCreated()
+    {
+        // 1. Sign up
+        var email = "googleuser@gmail.com";
+        var token = FakeGoogleTokenValidator.CreateToken(email);
+        var request = new GoogleIdTokenRequest(token);
+
+        var result = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, ApiResult<AuthResponse>>(
+            ApiRoutes.Auth.Google, request);
+
+        result.Success.ShouldBeTrue();
+        result.Result.AccessToken.ShouldNotBeNullOrEmpty();
+        result.Result.RefreshToken.ShouldNotBeNullOrEmpty();
+        result.Result.RequiredAction.ShouldBe(RequiredAction.OnboardingCompletion);
+
+        // 2. Verify changes in DB
+        using var scope = Factory.Services.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+        var user = await userManager.FindByEmailAsync(email);
+        user.ShouldNotBeNull();
+        user.HasGoogleAuth.ShouldBeTrue();
+        user.EmailConfirmed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task GivenGoogleUser_WhenUserSignsInViaGoogle_ThenUserIsLoggedIn()
+    {
+        // 1. Signup via Google
+        var email = "googleuser@gmail.com";
+        var token = FakeGoogleTokenValidator.CreateToken(email);
+        var request = new GoogleIdTokenRequest(token);
+
+        var signupResponse = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, ApiResult<AuthResponse>>(
+            ApiRoutes.Auth.Google, request);
+        signupResponse.Success.ShouldBeTrue();
+
+        // 2. Logout
+        Factory.ApiClient.SetAuth(signupResponse.Result);
+        var logoutResponse = await Factory.ApiClient
+            .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, null);
+        logoutResponse.Success.ShouldBeTrue();
+
+        // 3. Signin via Google
+        var signinResponse = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, ApiResult<AuthResponse>>(
+            ApiRoutes.Auth.Google, request);
+
+        signinResponse.Success.ShouldBeTrue();
+        signinResponse.Result.AccessToken.ShouldNotBeNullOrEmpty();
+        signinResponse.Result.RefreshToken.ShouldNotBeNullOrEmpty();
+        signinResponse.Result.UserId.ShouldBe(signupResponse.Result.UserId);
+    }
+
+    [Fact]
+    public async Task GivenEmailUser_WhenUserSignsInViaGoogle_ThenUserIsLoggedInAndGoogleAuthFlagIsSet()
+    {
+        // 1. Signup via email/password
+        var email = "regularuser@gmail.com";
+        var token = FakeGoogleTokenValidator.CreateToken(email);
+        var request = new GoogleIdTokenRequest(token);
+        var auth = await Factory.AuthManager.CreateAndLoginUserAsync(email, "Password123!");
+
+        {
+            using var scope = Factory.Services.CreateScope();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            var emailUser = await userManager.FindByEmailAsync(email);
+            emailUser.ShouldNotBeNull();
+            emailUser.HasGoogleAuth.ShouldBeFalse();
+        }
+
+        // 2. Logout
+        Factory.ApiClient.SetAuth(auth);
+        var logoutResponse = await Factory.ApiClient
+            .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, null);
+        logoutResponse.Success.ShouldBeTrue();
+
+        // 3. Login via Google
+        var result = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, ApiResult<AuthResponse>>(
+            ApiRoutes.Auth.Google, request);
+
+        result.Success.ShouldBeTrue();
+        result.Result.AccessToken.ShouldNotBeNullOrEmpty();
+
+        {
+            using var scope = Factory.Services.CreateScope();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            var googleUser = await userManager.FindByEmailAsync(email);
+            googleUser.ShouldNotBeNull();
+            googleUser.HasGoogleAuth.ShouldBeTrue();
+        }
+    }
+
+    [Fact]
+    public async Task GivenUnconfirmedUser_WhenUserSignsInViaGoogle_ThenUserIsConfirmedAndLoggedIn()
+    {
+        // 1. Signup via email but don't confirm
+        var email = "unconfirmed@gmail.com";
+        var signupRequest = new SignUpRequest(Email: email, Password: "Password123!");
+        await Factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(ApiRoutes.Auth.Signup, signupRequest);
+
+        var token = FakeGoogleTokenValidator.CreateToken(email);
+        var googleRequest = new GoogleIdTokenRequest(token);
+
+        // 2. Login via Google
+        var result = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, ApiResult<AuthResponse>>(
+            ApiRoutes.Auth.Google, googleRequest);
+
+        result.Success.ShouldBeTrue();
+        result.Result.AccessToken.ShouldNotBeNullOrEmpty();
+
+        // 3. Verify changes in DB
+        using var scope = Factory.Services.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+        var user = await userManager.FindByEmailAsync(email);
+        user!.EmailConfirmed.ShouldBeTrue();
+        user.HasGoogleAuth.ShouldBeTrue();
+        user.RequiredAction.ShouldBe(RequiredAction.OnboardingCompletion); // Changed from Verification to Onboarding
     }
 }

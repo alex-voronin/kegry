@@ -1,3 +1,4 @@
+using IntegrationTests.Shared.Fakes;
 using IntegrationTests.Shared.Managers;
 using JasperFx.CommandLine;
 using Microsoft.AspNetCore.Hosting;
@@ -11,6 +12,7 @@ using NotificationsModule.Infrastructure.Transport.Emails;
 using NotificationsModule.Infrastructure.Transport.Push;
 using NSubstitute;
 using IntegrationTests.Shared.HttpClients;
+using SecurityModule.Infrastructure.Service;
 using Xunit;
 
 namespace IntegrationTests.Shared;
@@ -69,6 +71,9 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
 
             services.RemoveAll<TimeProvider>();
             services.AddSingleton<TimeProvider>(FakeTimeProvider);
+
+            services.RemoveAll<IGoogleTokenValidator>();
+            services.AddSingleton<IGoogleTokenValidator>(new FakeGoogleTokenValidator());
 
             NotificationManager = new NotificationManager(emailSender: emailSender, pushSender: pushSender);
         });

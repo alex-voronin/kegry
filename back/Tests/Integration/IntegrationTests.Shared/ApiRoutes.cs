@@ -12,6 +12,7 @@ public static class ApiRoutes
         public const string RenewTokens = "/api/v1/auth/renew-tokens";
         public const string Account = "/api/v1/auth/account";
         public const string Logout = "/api/v1/auth/logout";
+        public const string Google = "/api/v1/auth/google";
     }
 
     public static class Notifications

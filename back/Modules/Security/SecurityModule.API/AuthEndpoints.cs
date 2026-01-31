@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Routing;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.WebUtilities;
-using Google.Apis.Auth;
 using Microsoft.Extensions.Options;
 using SecurityModule.Application.Services;
 using SecurityModule.API.Dto;
 using SecurityModule.Application.Configs;
+using SecurityModule.Infrastructure.Service;
 using SharedCore.Api;
 using SharedCore.Api.Dto;
 using SharedCore.Extensions;
@@ -72,15 +72,10 @@ public class AuthEndpoints : IEndpoints
     private static async Task<ApiResult<AuthResponse>> SigninWithGoogle(
         [FromBody] GoogleIdTokenRequest request,
         IAuthenticationService authenticationService,
+        IGoogleTokenValidator googleTokenValidator,
         IOptions<GoogleAuthConfig> googleAuthConfig)
     {
-        var settings = new GoogleJsonWebSignature.ValidationSettings
-        {
-            Audience = [googleAuthConfig.Value.ClientId]
-        };
-
-        var payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken, settings);
-
+        var payload = await googleTokenValidator.ValidateAsync(request.IdToken, googleAuthConfig.Value.ClientId);
         var result = await authenticationService.SigninExternalAsync(payload.Email);
         return ApiResult<AuthResponse>.Build(
             AuthResultToResponse(result)
