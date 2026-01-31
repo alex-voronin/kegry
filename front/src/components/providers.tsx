@@ -11,6 +11,7 @@ import { useFeedStore } from '@/store/use-feed-store';
 import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { FcmPayload, NotificationType } from '@/lib/fcm/types';
+import { TawkMessenger } from './tawk-messenger';
 
 function FcmGlobalHandler() {
   const router = useRouter();
@@ -142,6 +143,7 @@ export function Providers({
 }) {
   return (
     <NextIntlClientProvider messages={messages} locale={locale} timeZone="UTC">
+      <TawkMessenger />
       <BackgroundServices />
       <FcmGlobalHandler />
       {children}

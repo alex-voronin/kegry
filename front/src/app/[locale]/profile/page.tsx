@@ -14,6 +14,7 @@ import { Spinner } from '@/components/ui/spinner';
 import AvatarCropper from '@/components/ui/avatar-cropper';
 import { cn } from '@/lib/utils';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
+import { openTawkChat } from '@/components/tawk-messenger';
 import {
   useUserProfileStore,
   calculateAge,
@@ -300,6 +301,19 @@ export default function ProfilePage() {
             </div>
             <div
               className={cn(styles.field, styles.actionField)}
+              onClick={openTawkChat}
+            >
+              <span>{t('contactUs')}</span>
+              <Icon
+                src="/assets/common/disclosure-right-icon.svg"
+                alt="chevron"
+                width={10}
+                height={18}
+                priority
+              />
+            </div>
+            <div
+              className={cn(styles.field, styles.actionField, 'mt-8')}
               onClick={() => router.push(PAGE_ROUTES.LOGIN)}
             >
               <span>{t('menu.logOut')}</span>
