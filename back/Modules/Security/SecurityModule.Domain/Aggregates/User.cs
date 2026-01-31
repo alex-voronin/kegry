@@ -12,4 +12,5 @@ public enum RequiredAction
 public sealed class User : IdentityUser<Guid>
 {
     public required RequiredAction RequiredAction { get; set; }
+    public bool HasGoogleAuth { get; set; }
 }

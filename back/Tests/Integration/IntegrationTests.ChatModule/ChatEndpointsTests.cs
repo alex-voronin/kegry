@@ -37,7 +37,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var authB = await Factory.AuthManager.CreateAndLoginUserAsync("userB@example.com", "Password123!");
         Factory.ApiClient.SetAuth(authB);
         await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
-        
+
         //2. Create device tokens for push notifications
         var tokenRequestA = new UpdateFcmTokenRequest("devA", "tokenA");
         Factory.ApiClient.SetAuth(authA);

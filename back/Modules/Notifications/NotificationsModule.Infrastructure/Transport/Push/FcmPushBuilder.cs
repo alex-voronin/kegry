@@ -29,7 +29,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         public static readonly string OpenRateUserScreen = nameof(OpenRateUserScreen).ToCamelCase();
         public static readonly string ShowEndMeetingSuggestion = nameof(ShowEndMeetingSuggestion).ToCamelCase();
     }
-    
+
     internal static class Keys
     {
         public static readonly string FromUserId = nameof(FromUserId).ToCamelCase();
@@ -38,7 +38,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         public static readonly string RateeId = nameof(RateeId).ToCamelCase();
         public static readonly string Type = nameof(Type).ToCamelCase();
     }
-    
+
     private readonly IStringLocalizer<NotificationsLocalization> _localizer;
 
     public FcmPushBuilder(IStringLocalizer<NotificationsLocalization> localizer)

@@ -184,7 +184,7 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", "security");
                 });
 
-            modelBuilder.Entity("SecurityModule.Domain.Aggregates.RefreshToken.RefreshToken", b =>
+            modelBuilder.Entity("SecurityModule.Domain.Aggregates.RefreshToken", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -234,7 +234,7 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
                     b.ToTable("refresh_tokens", "security");
                 });
 
-            modelBuilder.Entity("SecurityModule.Domain.Aggregates.User.User", b =>
+            modelBuilder.Entity("SecurityModule.Domain.Aggregates.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -257,6 +257,10 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean")
                         .HasColumnName("email_confirmed");
+
+                    b.Property<bool>("HasGoogleAuth")
+                        .HasColumnType("boolean")
+                        .HasColumnName("has_google_auth");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean")
@@ -330,7 +334,7 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("SecurityModule.Domain.Aggregates.User.User", null)
+                    b.HasOne("SecurityModule.Domain.Aggregates.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -340,7 +344,7 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("SecurityModule.Domain.Aggregates.User.User", null)
+                    b.HasOne("SecurityModule.Domain.Aggregates.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -357,7 +361,7 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_asp_net_user_roles_asp_net_roles_role_id");
 
-                    b.HasOne("SecurityModule.Domain.Aggregates.User.User", null)
+                    b.HasOne("SecurityModule.Domain.Aggregates.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -367,7 +371,7 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("SecurityModule.Domain.Aggregates.User.User", null)
+                    b.HasOne("SecurityModule.Domain.Aggregates.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -375,9 +379,9 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
                 });
 
-            modelBuilder.Entity("SecurityModule.Domain.Aggregates.RefreshToken.RefreshToken", b =>
+            modelBuilder.Entity("SecurityModule.Domain.Aggregates.RefreshToken", b =>
                 {
-                    b.HasOne("SecurityModule.Domain.Aggregates.User.User", null)
+                    b.HasOne("SecurityModule.Domain.Aggregates.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

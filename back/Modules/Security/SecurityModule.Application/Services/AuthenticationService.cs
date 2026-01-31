@@ -158,6 +158,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
                 Email = email,
                 EmailConfirmed = true,
                 RequiredAction = RequiredAction.OnboardingCompletion,
+                HasGoogleAuth = true,
             };
 
             var result = await _userManager.CreateAsync(user);
@@ -179,18 +180,30 @@ internal class AuthenticationService : IAuthenticationService, IScoped
                 }
             );
         }
-
-        // If user exists but email not confirmed,
-        // we can confirm it here since they logged in with a trusted provider
-        if (!user.EmailConfirmed)
+        else
         {
-            user.EmailConfirmed = true;
-            if (user.RequiredAction == RequiredAction.EmailVerification)
+            var shouldSave = !user.HasGoogleAuth || !user.EmailConfirmed;
+
+            if (!user.HasGoogleAuth)
             {
-                user.RequiredAction = RequiredAction.OnboardingCompletion;
+                user.HasGoogleAuth = true;
             }
 
-            await _userManager.UpdateAsync(user);
+            // If user exists but email not confirmed,
+            // we can confirm it here since they logged in with a trusted provider
+            if (!user.EmailConfirmed)
+            {
+                user.EmailConfirmed = true;
+                if (user.RequiredAction == RequiredAction.EmailVerification)
+                {
+                    user.RequiredAction = RequiredAction.OnboardingCompletion;
+                }
+            }
+
+            if (shouldSave)
+            {
+                await _userManager.UpdateAsync(user);
+            }
         }
 
         var (accessToken, refreshToken) = await GenerateTokensAsync(user);
