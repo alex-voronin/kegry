@@ -44,7 +44,9 @@ interface FeedState {
   nextProfile: () => void;
   setHasHydrated: () => void;
   fetchUnseenNotificationCount: () => Promise<void>;
-  setUnseenNotificationCount: (count: number) => void;
+  setUnseenNotificationCount: (
+    countOrFn: number | ((current: number) => number),
+  ) => void;
   reset: () => void;
 }
 
@@ -229,8 +231,15 @@ export const useFeedStore = create<FeedState>()(
         }
       },
 
-      setUnseenNotificationCount: (count: number) =>
-        set({ unseenNotificationCount: count }),
+      setUnseenNotificationCount: (
+        countOrFn: number | ((current: number) => number),
+      ) =>
+        set((state) => ({
+          unseenNotificationCount:
+            typeof countOrFn === 'function'
+              ? countOrFn(state.unseenNotificationCount)
+              : countOrFn,
+        })),
 
       reset: () => set({ ...initialState, hasHydrated: true }),
     }),

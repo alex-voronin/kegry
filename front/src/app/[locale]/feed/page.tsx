@@ -13,6 +13,8 @@ import { useFeedStore, UserProfileDto } from '@/store/use-feed-store';
 import { useSettingsStore, DistanceUnits } from '@/store/use-settings-store';
 import { metersToKilometers, metersToMiles } from '@/lib/distance-utils';
 import { toast } from 'react-toastify';
+import { useFcmStore } from '@/lib/fcm/store';
+import { NotificationType, FcmPayload } from '@/lib/fcm/types';
 
 function FeedHeader({
   router,
@@ -221,6 +223,7 @@ export default function FeedScreen() {
     hasHydrated,
     unseenNotificationCount,
     fetchUnseenNotificationCount,
+    setUnseenNotificationCount,
   } = useFeedStore();
 
   const distanceUnits = useSettingsStore((state) => state.distanceUnits);
@@ -264,6 +267,25 @@ export default function FeedScreen() {
     fetchFeed,
     fetchUnseenNotificationCount,
     router,
+  ]);
+
+  const { registerForegroundHandler, unregisterForegroundHandler } =
+    useFcmStore();
+
+  useEffect(() => {
+    const handleNotification = (payload: FcmPayload) => {
+      const type = payload?.data?.type;
+      if (type === NotificationType.USER_INVITED) {
+        setUnseenNotificationCount((current) => current + 1);
+      }
+    };
+
+    registerForegroundHandler(handleNotification);
+    return () => unregisterForegroundHandler(handleNotification);
+  }, [
+    registerForegroundHandler,
+    unregisterForegroundHandler,
+    setUnseenNotificationCount,
   ]);
 
   const showLoading = isLoading || !hasHydrated;
