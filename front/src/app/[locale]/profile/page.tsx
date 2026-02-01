@@ -22,6 +22,7 @@ import {
 } from '@/store/use-user-profile-store';
 import { useHobbiesStore } from '@/store/use-hobbies-store';
 import { uploadImage } from '@/lib/image-utils';
+import { checkIfPermissionsDenied } from '@/lib/permissions';
 import styles from './profile.module.css';
 
 export default function ProfilePage() {
@@ -58,6 +59,16 @@ export default function ProfilePage() {
   const { hobbies } = useHobbiesStore();
 
   const isInitialized = useRef(false);
+  const [showPermissionsLink, setShowPermissionsLink] = useState(false);
+
+  useEffect(() => {
+    const checkPermissions = async () => {
+      const isDenied = await checkIfPermissionsDenied();
+      setShowPermissionsLink(isDenied);
+    };
+
+    checkPermissions();
+  }, []);
 
   useEffect(() => {
     if (isInitialized.current) return;
@@ -312,6 +323,24 @@ export default function ProfilePage() {
                 priority
               />
             </div>
+            {showPermissionsLink && (
+              <div
+                className={cn(styles.field, styles.actionField)}
+                onClick={() => router.push(PAGE_ROUTES.PERMISSIONS)}
+              >
+                <div className={styles.permissionsLabel}>
+                  <span>{t('permissions')}</span>
+                  <div className={styles.permissionsBadge} />
+                </div>
+                <Icon
+                  src="/assets/common/disclosure-right-icon.svg"
+                  alt="chevron"
+                  width={10}
+                  height={18}
+                  priority
+                />
+              </div>
+            )}
             <div
               className={cn(styles.field, styles.actionField, 'mt-8')}
               onClick={() => router.push(PAGE_ROUTES.LOGIN)}

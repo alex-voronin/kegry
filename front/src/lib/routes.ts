@@ -17,6 +17,7 @@ export const PAGE_ROUTES = {
   SETTINGS: '/settings',
   BLOCKED_USERS: '/blocked-users',
   RATE_USER: (userId: string) => `/rate-user/${userId}`,
+  PERMISSIONS: '/permissions',
 } as const;
 
 export const API_ENDPOINTS = {

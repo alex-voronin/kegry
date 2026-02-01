@@ -165,6 +165,7 @@
       "blockedUsers": "Blocked Users",
       "coverImage": "Cover Image",
       "settings": "Settings",
+      "permissions": "Permissions",
       "contactUs": "Contact Us",
       "menu": {
         "edit": "Edit Profile",
@@ -223,6 +224,15 @@
         "unblocked": "{name} was unblocked",
         "unblockFailed": "Failed to unblock user"
       }
+    },
+    "permissions": {
+      "title": "Permissions",
+      "description": "To provide you with the best experience, we need access to your location and notifications.",
+      "locationTitle": "Location",
+      "locationDesc": "Absolutely necessary to discover people around you. Without it, the feed won't work",
+      "notificationsTitle": "Notifications",
+      "notificationsDesc": "The app will work without notifications enabled, but you won't receive invitations or new message notifications. The user experience of some features will also be degraded.",
+      "instructions": "To enable permissions:\n1. Tap the lock icon 🔒 or settings icon in your browser address bar.\n2. Tap 'Permissions' or 'Site Settings'.\n3. Allow 'Location' and 'Notifications'.\n4. Refresh this page."
     }
   },
   "components": {

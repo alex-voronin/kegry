@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
@@ -15,13 +15,16 @@ import { metersToKilometers, metersToMiles } from '@/lib/distance-utils';
 import { toast } from 'react-toastify';
 import { useFcmStore } from '@/lib/fcm/store';
 import { NotificationType, FcmPayload } from '@/lib/fcm/types';
+import { checkIfPermissionsDenied } from '@/lib/permissions';
 
 function FeedHeader({
   router,
   unseenCount,
+  showPermissionsBadge,
 }: {
   router: ReturnType<typeof useRouter>;
   unseenCount: number;
+  showPermissionsBadge: boolean;
 }) {
   return (
     <Header
@@ -33,7 +36,11 @@ function FeedHeader({
           height={32}
           priority
           onClick={() => router.push(PAGE_ROUTES.PROFILE)}
-        />
+        >
+          {showPermissionsBadge && (
+            <span className={styles.permissionsBadge}></span>
+          )}
+        </Icon>
       }
       right={
         <div className={styles.headerRightSideIconsWrapper}>
@@ -225,6 +232,20 @@ export default function FeedScreen() {
     fetchUnseenNotificationCount,
     setUnseenNotificationCount,
   } = useFeedStore();
+  const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
+
+  useEffect(() => {
+    const checkPermissions = async () => {
+      const isDenied = await checkIfPermissionsDenied();
+      setShowPermissionsBadge(isDenied);
+    };
+
+    checkPermissions();
+
+    // Re-check when window gains focus
+    window.addEventListener('focus', checkPermissions);
+    return () => window.removeEventListener('focus', checkPermissions);
+  }, []);
 
   const distanceUnits = useSettingsStore((state) => state.distanceUnits);
 
@@ -320,15 +341,25 @@ export default function FeedScreen() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.content}>
-        <FeedHeader router={router} unseenCount={unseenNotificationCount} />
-        <FeedBody
-          currentProfile={currentProfile}
-          isLoading={showLoading}
-          distanceUnits={distanceUnits}
-          tFeed={tFeed}
-          tCommon={tCommon}
-          tHobbies={tHobbies}
+        <FeedHeader
+          router={router}
+          unseenCount={unseenNotificationCount}
+          showPermissionsBadge={showPermissionsBadge}
         />
+        {feed.length > 0 ? (
+          <FeedBody
+            currentProfile={currentProfile}
+            isLoading={showLoading}
+            distanceUnits={distanceUnits}
+            tFeed={tFeed}
+            tCommon={tCommon}
+            tHobbies={tHobbies}
+          />
+        ) : (
+          <div style={{ textAlign: 'center', marginTop: '50%' }}>
+            No profiles available. Try changing the filter settings.
+          </div>
+        )}
         <FeedFooter
           onIgnore={handleIgnore}
           onInvite={handleInvite}
