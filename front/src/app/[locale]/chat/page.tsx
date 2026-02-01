@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
@@ -16,6 +16,11 @@ import { useChatStore } from '@/store/use-chat-store';
 import { useFeedStore } from '@/store/use-feed-store';
 import { useFcmStore } from '@/lib/fcm/store';
 import { FcmPayload, NotificationType } from '@/lib/fcm/types';
+import EmojiPicker, {
+  EmojiClickData,
+  Theme,
+  EmojiStyle,
+} from 'emoji-picker-react';
 
 export default function ChatScreen() {
   const t = useTranslations('screens.chat');
@@ -24,7 +29,30 @@ export default function ChatScreen() {
   const [isTimerInfoOpen, setIsTimerInfoOpen] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [remainingTimeMs, setRemainingTimeMs] = useState<number | null>(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const router = useRouter();
+
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
+  const emojiButtonRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        showEmojiPicker &&
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target as Node) &&
+        emojiButtonRef.current &&
+        !emojiButtonRef.current.contains(event.target as Node)
+      ) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showEmojiPicker]);
 
   const {
     chat,
@@ -145,6 +173,10 @@ export default function ChatScreen() {
     } catch (err: any) {
       toast.error(err.message || t('toast.cancelFailed'));
     }
+  };
+
+  const onEmojiClick = (emojiData: EmojiClickData) => {
+    setMessage((prev) => prev + emojiData.emoji);
   };
 
   const menuOptions = [
@@ -293,14 +325,28 @@ export default function ChatScreen() {
       </div>
 
       <footer className={styles.footer}>
-        <Icon
-          className={styles.footerIcon}
-          src="/assets/chat/smiley-icon.svg"
-          alt="emoji"
-          width={24}
-          height={24}
-          priority
-        />
+        {showEmojiPicker && (
+          <div ref={emojiPickerRef} className={styles.emojiPickerWrapper}>
+            <EmojiPicker
+              onEmojiClick={onEmojiClick}
+              theme={Theme.DARK}
+              lazyLoadEmojis={true}
+              emojiStyle={EmojiStyle.NATIVE}
+              width={300}
+            />
+          </div>
+        )}
+        <div ref={emojiButtonRef} className="flex">
+          <Icon
+            className={styles.footerIcon}
+            src="/assets/chat/smiley-icon.svg"
+            alt="emoji"
+            width={24}
+            height={24}
+            priority
+            onClick={() => setShowEmojiPicker((prev) => !prev)}
+          />
+        </div>
         <textarea
           value={message}
           onChange={(e) => onMessageChange(e)}
