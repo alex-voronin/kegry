@@ -71,3 +71,15 @@
 .actionPrimary {
   @apply bg-brand flex h-16 w-16 items-center justify-center rounded-full hover:brightness-75 active:brightness-75;
 }
+
+.emptyState {
+  @apply flex h-full w-full flex-col items-center justify-center p-8 pb-30;
+}
+
+.emptyStateImage {
+  @apply mb-6;
+}
+
+.emptyStateText {
+  @apply text-secondary text-center text-sm leading-relaxed;
+}

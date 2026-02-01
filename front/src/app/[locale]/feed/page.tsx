@@ -356,8 +356,15 @@ export default function FeedScreen() {
             tHobbies={tHobbies}
           />
         ) : (
-          <div style={{ textAlign: 'center', marginTop: '50%' }}>
-            No profiles available. Try changing the filter settings.
+          <div className={styles.emptyState}>
+            <Image
+              src="/assets/feed/no-profiles-placeholder.png"
+              alt="no profiles"
+              width={200}
+              height={200}
+              className={styles.emptyStateImage}
+            />
+            <p className={styles.emptyStateText}>{tFeed('noProfiles')}</p>
           </div>
         )}
         <FeedFooter

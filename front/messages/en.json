@@ -78,7 +78,8 @@
     },
     "feed": {
       "availabilityTime": "Available: {time}",
-      "distance": "Distance: {distance} {units}"
+      "distance": "Distance: {distance} {units}",
+      "noProfiles": "No profiles found. Try changing the filters."
     },
     "chat": {
       "messagePlaceholder": "Message {remaining}/{total}",
