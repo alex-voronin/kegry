@@ -347,6 +347,9 @@ export default function ProfilePage() {
             >
               <span>{t('menu.logOut')}</span>
             </div>
+            <div className={styles.version}>
+              Hoppyfy.me for Web v{process.env.NEXT_PUBLIC_APP_VERSION}
+            </div>
           </div>
         </div>
       </div>

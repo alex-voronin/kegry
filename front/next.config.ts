@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
+import { version } from './package.json';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
@@ -9,6 +10,9 @@ console.log(`api calls will be redirected to: ${API_BASE_URL}`);
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  env: {
+    NEXT_PUBLIC_APP_VERSION: version,
+  },
   async rewrites() {
     return [
       {
