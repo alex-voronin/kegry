@@ -1,0 +1,45 @@
+@reference "../../globals.css";
+
+.wrapper {
+  @apply min-h-screen w-full;
+}
+
+.hero {
+  @apply flex min-h-screen flex-col items-center justify-center px-8 py-16;
+}
+
+.logo {
+  @apply mb-8;
+}
+
+.title {
+  @apply text-brand mb-4 text-center text-5xl font-bold;
+}
+
+.subtitle {
+  @apply text-secondary mb-8 text-center text-xl;
+}
+
+.cta {
+  @apply bg-brand hover:bg-brand/90 rounded-full px-8 py-4 text-lg font-semibold text-white transition-colors;
+}
+
+.features {
+  @apply grid gap-8 px-8 py-16 md:grid-cols-3;
+}
+
+.feature {
+  @apply text-center;
+}
+
+.featureIcon {
+  @apply mx-auto mb-4;
+}
+
+.featureTitle {
+  @apply text-primary mb-2 text-xl font-semibold;
+}
+
+.featureDescription {
+  @apply text-secondary text-sm;
+}
