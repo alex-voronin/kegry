@@ -33,10 +33,6 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale();
   const messages = await getMessages();
-  const headersList = await headers();
-  const pathname = headersList.get('x-pathname') || '';
-
-  const isLanding = pathname === '/' || pathname === `/${locale}`;
 
   return (
     <html lang={locale}>
@@ -44,26 +40,22 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers locale={locale} messages={messages}>
-          {isLanding ? (
-            <>{children}</>
-          ) : (
-            <div className="flex min-h-screen w-full justify-center">
-              <main className="bg-surface text-foreground relative flex w-full max-w-[500px] flex-col sm:rounded-[16px]">
-                <ToastContainer
-                  theme="dark"
-                  position="bottom-center"
-                  autoClose={5000}
-                  hideProgressBar={false}
-                  newestOnTop={true}
-                  closeOnClick
-                  rtl={false}
-                  pauseOnFocusLoss
-                  pauseOnHover
-                />
-                {children}
-              </main>
-            </div>
-          )}
+          <div className="flex min-h-screen w-full justify-center">
+            <main className="bg-surface text-foreground relative flex w-full max-w-[500px] flex-col sm:rounded-[16px]">
+              <ToastContainer
+                theme="dark"
+                position="bottom-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={true}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                pauseOnHover
+              />
+              {children}
+            </main>
+          </div>
         </Providers>
       </body>
     </html>
