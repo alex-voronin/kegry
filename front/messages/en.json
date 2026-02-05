@@ -9,6 +9,51 @@
     }
   },
   "screens": {
+    "landing": {
+      "header": {
+        "subtitle": "The best stories start off-screen",
+        "nav": {
+          "pollsNews": "Polls & News",
+          "howItWorks": "How It Works",
+          "contactUs": "Contact Us",
+          "login": "Log In/Sign Up",
+          "loginMobile": "Log In"
+        }
+      },
+      "cheers": {
+        "title": "Find your bar buddy right now!",
+        "description": "Up for a drink and good company? No dating. No endless chats.<br />Check a profile, send an invite, arrange a meeting, and there you go, you're at the bar! Talk about life, laugh, vent and keep your head up. If any hoplings appear, maybe it's time to slow down a bit 🥴",
+        "mobileDescription": "Up for a drink and good company? No dating. No endless chats. Check a profile, send an invite, and meet at a bar. 🍺",
+        "cta": "Ready?"
+      },
+      "pollsNews": {
+        "newsTitle": "News",
+        "newsItem1": "We've started open beta! 🎉"
+      },
+      "howItWorks": {
+        "title": "How It Works",
+        "step1": "1. Browse users and invite them",
+        "step2": "2. Chat and plan",
+        "step3": "3. Meet and enjoy",
+        "mobileStep1": "1. Browse & Invite",
+        "mobileStep2": "2. Chat & Plan",
+        "mobileStep3": "3. Meet & Enjoy",
+        "note": "Hey adventurer! Just a heads-up: invites expire in 48 hours. You can have only one chat at a time and 30 messages per chat, so choose wisely. Invite buddies only if you're really ready for a bar adventure and hurry before the hoplings drink all the beer!"
+      },
+      "contactUs": {
+        "title": "Contact Us",
+        "description": "You might be wondering the same thing we are: are these hoplings the same or different? Honestly, we're not sure yet... We still haven't figured out how to tell them apart. If you happen to know how to, or if you have any questions or suggestions about the service, we'd be happy to hear from you via email at <email>contacts@hoplingshere.com</email> or through our <chat>chat</chat>."
+      },
+      "footer": {
+        "copyright": "© 2026 HoplingsHere™. All rights reserved.",
+        "privacy": "Privacy Policy",
+        "cookie": "Cookie & Analytics Policy",
+        "terms": "Terms of Service",
+        "community": "Community Guidelines",
+        "mobilePrivacy": "Privacy",
+        "mobileTerms": "Terms"
+      }
+    },
     "login": {
       "tagline": "The best stories start off-screen",
       "email": "Email",

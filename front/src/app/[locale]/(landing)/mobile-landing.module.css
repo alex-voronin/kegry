@@ -1,0 +1,27 @@
+@reference "../../globals.css";
+
+/* ===== Mobile Specific Styles ===== */
+
+.mobileCheers {
+  @apply min-h-0 flex-col px-6 pt-24;
+}
+
+.mobileHowItWorks {
+  @apply min-h-0 flex-col px-6 py-8;
+}
+
+.mobileSteps {
+  @apply mt-6 flex flex-col gap-6;
+}
+
+.mobileStep {
+  @apply flex flex-col items-center gap-3 text-center;
+}
+
+.mobileFooter {
+  @apply flex-col gap-4 px-6;
+}
+
+.mobileFooterLinks {
+  @apply flex justify-center gap-6;
+}

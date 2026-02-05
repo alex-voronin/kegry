@@ -3,10 +3,13 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import Script from 'next/script';
+import { useTranslations } from 'next-intl';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from '../landing.module.css';
 
 export default function DesktopLayout() {
+  const t = useTranslations('screens.landing');
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -36,9 +39,7 @@ export default function DesktopLayout() {
                 height={20}
               />
             </div>
-            <span className={styles.logoSubtitle}>
-              The best stories start off-screen
-            </span>
+            <span className={styles.logoSubtitle}>{t('header.subtitle')}</span>
           </div>
         </div>
         <nav className={styles.nav}>
@@ -46,38 +47,40 @@ export default function DesktopLayout() {
             className={styles.navLink}
             onClick={() => scrollToSection('polls-news')}
           >
-            Polls & News
+            {t('header.nav.pollsNews')}
           </span>
           <span
             className={styles.navLink}
             onClick={() => scrollToSection('how-it-works')}
           >
-            How It Works
+            {t('header.nav.howItWorks')}
           </span>
           <span
             className={styles.navLink}
             onClick={() => scrollToSection('contact-us')}
           >
-            Contact Us
+            {t('header.nav.contactUs')}
           </span>
           <Link href={PAGE_ROUTES.LOGIN} className={styles.loginButton}>
-            Log In/Sign Up
+            {t('header.nav.login')}
           </Link>
         </nav>
       </header>
-      {/* Hero Section */}
-      <section className={styles.hero}>
+      {/* Cheers Section */}
+      <section className={styles.cheers}>
         <div className={styles.card}>
-          <h1 className={styles.cardTitle}>Find your bar buddy right now!</h1>
+          <h1 className={styles.cardTitle}>{t('cheers.title')}</h1>
           <p className={styles.cardDescription}>
-            Up for a drink and good company? No dating. No endless chats.
-            <br />
-            Check a profile, send an invite, and meet at a bar. Talk about life,
-            laugh, vent and keep your head up. If any hoplings appear, maybe
-            it&apos;s time to slow down a bit 🍺
+            {t.rich('cheers.description', {
+              br: () => <br />,
+            })}{' '}
+            <Link href={PAGE_ROUTES.LOGIN} className={styles.actionLink}>
+              {t('cheers.cta')}
+            </Link>
           </p>
         </div>
-        <div className={styles.heroImage}>
+
+        <div className={styles.sideImage}>
           <Image
             src="/assets/landing/section-cheers.webp"
             alt="Cheers"
@@ -89,7 +92,7 @@ export default function DesktopLayout() {
 
       {/* Polls & News Section */}
       <section id="polls-news" className={styles.pollsNewsSection}>
-        <div className={styles.goblinImage}>
+        <div className={styles.sideImage}>
           <Image
             src="/assets/landing/section-news.webp"
             alt="News"
@@ -98,16 +101,11 @@ export default function DesktopLayout() {
           />
         </div>
 
-        {/* News Card */}
         <div className={`${styles.card} ${styles.newsCard}`}>
-          <h2 className={styles.cardTitle}>News</h2>
+          <h2 className={styles.cardTitle}>{t('pollsNews.newsTitle')}</h2>
           <div className={styles.newsItem}>
-            <span className={styles.newsDate}>20/02/2022</span>
-            <span>We&apos;ve started open beta! 🎉</span>
-          </div>
-          <div className={styles.newsItem}>
-            <span className={styles.newsDate}>???</span>
-            <span>What&apos;s next? 🤔</span>
+            <span className={styles.newsDate}>20/02/2026</span>
+            <span>{t('pollsNews.newsItem1')}</span>
           </div>
         </div>
 
@@ -139,12 +137,10 @@ export default function DesktopLayout() {
       {/* How It Works Section */}
       <section id="how-it-works" className={styles.howItWorksSection}>
         <div className={styles.card}>
-          <h2 className={styles.cardTitle}>How It Works</h2>
+          <h2 className={styles.cardTitle}>{t('howItWorks.title')}</h2>
           <div className={styles.howItWorksSteps}>
             <div className={styles.step}>
-              <p className={styles.stepTitle}>
-                1. Browse users and invite them
-              </p>
+              <p className={styles.stepTitle}>{t('howItWorks.step1')}</p>
               <Image
                 src="/assets/landing/step-1.webp"
                 alt="Step 1"
@@ -154,7 +150,7 @@ export default function DesktopLayout() {
               />
             </div>
             <div className={styles.step}>
-              <p className={styles.stepTitle}>2. Chat and plan</p>
+              <p className={styles.stepTitle}>{t('howItWorks.step2')}</p>
               <Image
                 src="/assets/landing/step-2.webp"
                 alt="Step 2"
@@ -164,7 +160,7 @@ export default function DesktopLayout() {
               />
             </div>
             <div className={styles.step}>
-              <p className={styles.stepTitle}>3. Meet and enjoy</p>
+              <p className={styles.stepTitle}>{t('howItWorks.step3')}</p>
               <Image
                 src="/assets/landing/step-3.webp"
                 alt="Step 3"
@@ -174,12 +170,7 @@ export default function DesktopLayout() {
               />
             </div>
           </div>
-          <p className={styles.howItWorksNote}>
-            Hey adventurer! Just a heads-up: invites expire in 48 hours. You can
-            have only one chat at a time and 30 messages per chat, so choose
-            wisely. Invite buddies only if you&apos;re really ready for a bar
-            adventure and hurry before the hoplings drink all the beer!
-          </p>
+          <p className={styles.howItWorksNote}>{t('howItWorks.note')}</p>
         </div>
         <div className={styles.decorativeImageWrapper}>
           <Image
@@ -194,7 +185,7 @@ export default function DesktopLayout() {
 
       {/* Contact Us Section */}
       <section id="contact-us" className={styles.contactSection}>
-        <div className={styles.contactImage}>
+        <div className={styles.sideImage}>
           <Image
             src="/assets/landing/section-contact-us.webp"
             alt="Goblin Artist"
@@ -204,56 +195,53 @@ export default function DesktopLayout() {
         </div>
 
         <div className={`${styles.card} ${styles.contactCard}`}>
-          <h2 className={styles.cardTitle}>Contact Us</h2>
+          <h2 className={styles.cardTitle}>{t('contactUs.title')}</h2>
           <p className={styles.cardDescription}>
-            You might be wondering the same thing we are: are these hoplings the
-            same or different? Honestly, we&apos;re not sure yet... We still
-            haven&apos;t figured out how to tell them apart. If you happen to
-            know how to, or if you have any questions or suggestions about the
-            service, we&apos;d be happy to hear from you via email at{' '}
-            <a
-              href="mailto:contacts@hoplingshere.com"
-              className={styles.contactLink}
-            >
-              contacts@hoplingshere.com
-            </a>{' '}
-            or through our{' '}
-            <Link
-              href="#"
-              className={styles.contactLink}
-              onClick={(e) => {
-                e.preventDefault();
-                // @ts-ignore
-                if (window.Tawk_API) {
-                  // @ts-ignore
-                  window.Tawk_API.maximize();
-                }
-              }}
-            >
-              chat
-            </Link>
-            .
+            {t.rich('contactUs.description', {
+              email: (chunks) => (
+                <a
+                  href="mailto:contacts@hoplingshere.com"
+                  className={styles.actionLink}
+                >
+                  {chunks}
+                </a>
+              ),
+              chat: (chunks) => (
+                <Link
+                  href="#"
+                  className={styles.actionLink}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    // @ts-ignore
+                    if (window.Tawk_API) {
+                      // @ts-ignore
+                      window.Tawk_API.maximize();
+                    }
+                  }}
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
           </p>
         </div>
       </section>
 
       {/* Footer */}
       <footer className={styles.footer}>
-        <span className={styles.footerCopyright}>
-          © 2026 HoplingsHere™. All rights reserved.
-        </span>
+        <span className={styles.footerCopyright}>{t('footer.copyright')}</span>
         <div className={styles.footerLinks}>
           <Link href="#" className={styles.footerLink}>
-            Privacy Policy
+            {t('footer.privacy')}
           </Link>
           <Link href="#" className={styles.footerLink}>
-            Cookie & Analytics Policy
+            {t('footer.cookie')}
           </Link>
           <Link href="#" className={styles.footerLink}>
-            Terms of Service
+            {t('footer.terms')}
           </Link>
           <Link href="#" className={styles.footerLink}>
-            Community Guidelines
+            {t('footer.community')}
           </Link>
         </div>
       </footer>

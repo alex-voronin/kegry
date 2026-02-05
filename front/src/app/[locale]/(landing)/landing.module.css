@@ -5,8 +5,20 @@
   --landing-bg: #333333;
   --landing-card-bg: #292929;
   --landing-heading: #f5eccd;
+  --landing-subheading: #bdbdbd;
   --landing-text: #ffffff;
   --landing-button: #ffab10;
+}
+
+/* ===== Common ===== */
+
+.actionLink {
+  @apply cursor-pointer transition-opacity hover:opacity-80;
+  color: var(--landing-button);
+}
+
+.sideImage {
+  @apply shrink-0;
 }
 
 /* ===== Shared Card Styles ===== */
@@ -26,7 +38,7 @@
 
 /* ===== Global Wrapper ===== */
 .wrapper {
-  @apply min-h-screen w-full;
+  @apply mx-auto min-h-screen w-full max-w-[1470px];
   background-color: var(--landing-bg);
   color: var(--landing-text);
 }
@@ -55,7 +67,8 @@
 }
 
 .logoSubtitle {
-  @apply ml-[6px] text-sm opacity-70;
+  @apply ml-[6px] text-sm;
+  color: var(--landing-subheading);
 }
 
 .logoIconImage {
@@ -80,26 +93,14 @@
   opacity: 0.9;
 }
 
-/* ===== Hero Section ===== */
-.hero {
-  @apply flex items-center justify-between gap-5 px-16 pt-24 pb-0;
-}
-
-.mobileHero {
-  @apply min-h-0 flex-col px-6 pt-24;
-}
-
-.heroImage {
-  @apply shrink-0;
+/* ===== Cheers Section ===== */
+.cheers {
+  @apply flex items-center justify-between gap-5 px-16 pt-24 pb-[20px];
 }
 
 /* ===== Polls & News Section ===== */
 .pollsNewsSection {
-  @apply flex items-center gap-8 px-16;
-}
-
-.goblinImage {
-  @apply shrink-0;
+  @apply flex scroll-mt-[100px] items-center gap-8 px-16;
 }
 
 .pollCard {
@@ -110,36 +111,17 @@
   @apply h-[300px] flex-1;
 }
 
-.pollOption {
-  @apply mb-2 flex items-center gap-2 rounded-md bg-white/10 px-4 py-2 text-sm;
-}
-
-.pollOptionIndicator {
-  @apply h-4 w-4 rounded;
-  background-color: var(--landing-button);
-}
-
-.submitButton {
-  @apply mt-4 flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold;
-  background-color: var(--landing-button);
-  color: #000000;
-}
-
 .newsItem {
   @apply mb-2 flex items-start gap-4 text-lg;
 }
 
 .newsDate {
-  @apply font-semibold opacity-70;
+  @apply font-semibold;
 }
 
 /* ===== How It Works Section ===== */
 .howItWorksSection {
-  @apply flex items-center gap-0 px-16 py-0;
-}
-
-.mobileHowItWorks {
-  @apply min-h-0 flex-col px-6 py-8;
+  @apply flex scroll-mt-[100px] items-center gap-0 px-16 py-[20px];
 }
 
 .howItWorksSteps {
@@ -162,14 +144,6 @@
   @apply mt-8 text-lg leading-relaxed opacity-80;
 }
 
-.mobileSteps {
-  @apply mt-6 flex flex-col gap-6;
-}
-
-.mobileStep {
-  @apply flex flex-col items-center gap-3 text-center;
-}
-
 .decorativeImageWrapper {
   @apply shrink-0 translate-x-[30px];
 }
@@ -180,29 +154,16 @@
 
 /* ===== Contact Us Section ===== */
 .contactSection {
-  @apply flex items-start gap-8 px-16 py-0;
-}
-
-.contactImage {
-  @apply shrink-0;
+  @apply flex scroll-mt-[100px] items-start gap-8 px-16 py-0;
 }
 
 .contactCard {
   @apply flex-1;
 }
 
-.contactLink {
-  @apply cursor-pointer transition-opacity hover:opacity-80;
-  color: var(--landing-button);
-}
-
 /* ===== Footer ===== */
 .footer {
   @apply flex items-center justify-between border-t border-white/10 px-16 py-6;
-}
-
-.mobileFooter {
-  @apply flex-col gap-4 px-6;
 }
 
 .footerCopyright {
@@ -211,10 +172,6 @@
 
 .footerLinks {
   @apply flex gap-8;
-}
-
-.mobileFooterLinks {
-  @apply flex justify-center gap-6;
 }
 
 .footerLink {

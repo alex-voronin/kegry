@@ -2,10 +2,14 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from '../landing.module.css';
+import mobileStyles from '../mobile-landing.module.css';
 
 export default function MobileLayout() {
+  const t = useTranslations('screens.landing');
+
   return (
     <div className={styles.wrapper}>
       {/* Header */}
@@ -29,20 +33,23 @@ export default function MobileLayout() {
           </span>
         </div>
         <Link href={PAGE_ROUTES.LOGIN} className={styles.loginButton}>
-          Log In
+          {t('header.nav.loginMobile')}
         </Link>
       </header>
 
-      {/* Hero Section */}
-      <section className={`${styles.hero} ${styles.mobileHero}`}>
+      {/* Cheers Section */}
+      <section className={`${styles.cheers} ${mobileStyles.mobileCheers}`}>
         <div className={styles.card}>
-          <h1 className={styles.cardTitle}>Find your bar buddy right now!</h1>
+          <h1 className={styles.cardTitle}>{t('cheers.title')}</h1>
           <p className={styles.cardDescription}>
-            Up for a drink and good company? No dating. No endless chats. Check
-            a profile, send an invite, and meet at a bar. 🍺
+            {t('cheers.mobileDescription')}
           </p>
+          <Link href={PAGE_ROUTES.LOGIN} className={styles.loginButton}>
+            {t('cheers.mobileCta')}
+          </Link>
         </div>
-        <div className={styles.heroImage}>
+
+        <div className={styles.sideImage}>
           <Image
             src="/assets/landing/section-cheers.webp"
             alt="Cheers"
@@ -55,13 +62,13 @@ export default function MobileLayout() {
 
       {/* How It Works */}
       <section
-        className={`${styles.howItWorksSection} ${styles.mobileHowItWorks}`}
+        className={`${styles.howItWorksSection} ${mobileStyles.mobileHowItWorks}`}
       >
         <div className={styles.card}>
-          <h2 className={styles.cardTitle}>How It Works</h2>
-          <div className={styles.mobileSteps}>
-            <div className={styles.mobileStep}>
-              <p className={styles.stepTitle}>1. Browse & Invite</p>
+          <h2 className={styles.cardTitle}>{t('howItWorks.title')}</h2>
+          <div className={mobileStyles.mobileSteps}>
+            <div className={mobileStyles.mobileStep}>
+              <p className={styles.stepTitle}>{t('howItWorks.mobileStep1')}</p>
               <Image
                 src="/assets/landing/step-1.webp"
                 alt="Step 1"
@@ -70,8 +77,8 @@ export default function MobileLayout() {
                 className={styles.stepImagePlaceholder}
               />
             </div>
-            <div className={styles.mobileStep}>
-              <p className={styles.stepTitle}>2. Chat & Plan</p>
+            <div className={mobileStyles.mobileStep}>
+              <p className={styles.stepTitle}>{t('howItWorks.mobileStep2')}</p>
               <Image
                 src="/assets/landing/step-2.webp"
                 alt="Step 2"
@@ -80,8 +87,8 @@ export default function MobileLayout() {
                 className={styles.stepImagePlaceholder}
               />
             </div>
-            <div className={styles.mobileStep}>
-              <p className={styles.stepTitle}>3. Meet & Enjoy</p>
+            <div className={mobileStyles.mobileStep}>
+              <p className={styles.stepTitle}>{t('howItWorks.mobileStep3')}</p>
               <Image
                 src="/assets/landing/step-3.webp"
                 alt="Step 3"
@@ -95,14 +102,14 @@ export default function MobileLayout() {
       </section>
 
       {/* Footer */}
-      <footer className={`${styles.footer} ${styles.mobileFooter}`}>
-        <span className={styles.footerCopyright}>© 2026 HoplingsHere™</span>
-        <div className={styles.mobileFooterLinks}>
+      <footer className={`${styles.footer} ${mobileStyles.mobileFooter}`}>
+        <span className={styles.footerCopyright}>{t('footer.copyright')}</span>
+        <div className={mobileStyles.mobileFooterLinks}>
           <Link href="#" className={styles.footerLink}>
-            Privacy
+            {t('footer.mobilePrivacy')}
           </Link>
           <Link href="#" className={styles.footerLink}>
-            Terms
+            {t('footer.mobileTerms')}
           </Link>
         </div>
       </footer>
