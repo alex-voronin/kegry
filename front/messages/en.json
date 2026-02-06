@@ -13,7 +13,7 @@
       "header": {
         "subtitle": "The best stories start off-screen",
         "nav": {
-          "pollsNews": "Polls & News",
+          "pollsNews": "News & Polls",
           "howItWorks": "How It Works",
           "contactUs": "Contact Us",
           "login": "Log In/Sign Up",
@@ -38,7 +38,7 @@
         "mobileStep1": "1. Browse & Invite",
         "mobileStep2": "2. Chat & Plan",
         "mobileStep3": "3. Meet & Enjoy",
-        "note": "Hey adventurer! Just a heads-up: invites expire in 48 hours. You can have only one chat at a time and 30 messages per chat, so choose wisely. Invite buddies only if you're really ready for a bar adventure and hurry before the hoplings drink all the beer!"
+        "note": "Hey adventurer! Just a heads-up: invites expire in 2 days. You can have only one chat at a time and 30 messages per chat, so choose wisely. Invite buddies only if you're really ready for a bar adventure and hurry before the hoplings drink all the beer!"
       },
       "contactUs": {
         "title": "Contact Us",

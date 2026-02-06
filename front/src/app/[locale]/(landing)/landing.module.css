@@ -47,6 +47,7 @@
 .header {
   @apply fixed top-0 right-0 left-0 z-50 flex items-center justify-between px-8 py-4;
   background-color: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(4px);
 }
 
 .logoContainer {
@@ -141,7 +142,7 @@
 }
 
 .howItWorksNote {
-  @apply mt-8 text-lg leading-relaxed opacity-80;
+  @apply mt-8 text-lg leading-relaxed;
 }
 
 .decorativeImageWrapper {

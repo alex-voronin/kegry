@@ -1,27 +1,179 @@
 @reference "../../globals.css";
 
-/* ===== Mobile Specific Styles ===== */
-
-.mobileCheers {
-  @apply min-h-0 flex-col px-6 pt-24;
+/* ===== Mobile Header ===== */
+.mobileHeader {
+  @apply fixed top-0 right-0 left-0 z-50 flex items-center justify-between px-4 py-3;
+  background-color: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(4px);
 }
 
-.mobileHowItWorks {
-  @apply min-h-0 flex-col px-6 py-8;
+.mobileLogoContainer {
+  @apply relative flex items-center gap-1;
 }
 
+.mobileLogoImage {
+  transform: translateY(2px);
+}
+
+.mobileLogoTextWrapper {
+  @apply flex flex-col items-start;
+  margin-left: 26px;
+  transform: translateY(6px);
+}
+
+.mobileLogoTitleRow {
+  @apply flex items-center gap-1;
+}
+
+.mobileLogoText {
+  @apply text-2xl font-bold;
+  color: var(--landing-heading);
+}
+
+.mobileLogoSubtitle {
+  @apply ml-px text-[12px];
+  transform: translateY(-2px);
+  color: var(--landing-subheading);
+}
+
+.burgerButton {
+  @apply flex items-center justify-center p-2;
+  color: var(--landing-text);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* ===== Drawer Overlay ===== */
+.drawerOverlay {
+  @apply fixed inset-0 z-60;
+  background-color: rgba(0, 0, 0, 0);
+  pointer-events: none;
+  transition: background-color 0.3s ease;
+}
+
+.drawerOverlayOpen {
+  background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+}
+
+/* ===== Drawer ===== */
+.drawer {
+  @apply fixed top-0 right-0 z-70 flex h-full w-[280px] flex-col p-6;
+  background-color: var(--landing-card-bg);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+
+.drawerOpen {
+  transform: translateX(0);
+}
+
+.drawerCloseButton {
+  @apply mb-8 self-end p-2;
+  color: var(--landing-text);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* ===== Drawer Navigation ===== */
+.drawerNav {
+  @apply flex flex-col gap-6;
+}
+
+.drawerNavLink {
+  @apply cursor-pointer text-lg font-medium transition-opacity;
+  color: var(--landing-text);
+}
+
+.drawerNavLink:hover {
+  opacity: 0.8;
+}
+
+.drawerSignUpButton {
+  @apply mt-8 rounded-md px-6 py-3 text-center text-base font-semibold;
+  background-color: var(--landing-button);
+  color: #000000;
+}
+
+.drawerLegalLinks {
+  @apply mt-auto flex flex-col gap-2;
+}
+
+.drawerLegalLink {
+  @apply text-sm opacity-60 transition-opacity;
+  color: var(--landing-text);
+}
+
+.drawerLegalLink:hover {
+  opacity: 1;
+}
+
+/* ===== Mobile Sections ===== */
+.mobileSection {
+  @apply flex flex-col items-center px-4 py-6;
+}
+
+.mobileSection:first-of-type {
+  @apply pt-20;
+}
+
+.mobileSectionImage {
+  @apply mb-4 flex items-center justify-center;
+}
+
+.sectionImg {
+  @apply max-w-full object-contain;
+}
+
+.mobileSectionCard {
+  @apply w-full rounded-xl p-6;
+}
+
+.mobileCardTitle {
+  @apply mb-4 text-center text-2xl font-bold;
+  color: var(--landing-heading);
+}
+
+.mobileCardDescription {
+  @apply text-base leading-relaxed;
+  color: var(--landing-text);
+}
+
+/* ===== Mobile Poll Card ===== */
+.mobilePollCard {
+  @apply mt-4 w-full overflow-hidden rounded-xl p-4;
+}
+
+/* ===== Mobile How It Works ===== */
 .mobileSteps {
-  @apply mt-6 flex flex-col gap-6;
+  @apply mt-4 flex flex-col gap-6;
 }
 
 .mobileStep {
   @apply flex flex-col items-center gap-3 text-center;
 }
 
+.mobileStepTitle {
+  @apply text-base font-medium;
+  color: var(--landing-text);
+}
+
+.mobileStepImage {
+  @apply object-contain;
+}
+
+.mobileHowItWorksNote {
+  @apply mt-6 text-sm leading-relaxed;
+  color: var(--landing-subheading);
+}
+
+/* ===== Mobile Footer ===== */
 .mobileFooter {
-  @apply flex-col gap-4 px-6;
+  @apply flex flex-col items-center gap-4 border-t border-white/10 px-4 py-6;
 }
 
 .mobileFooterLinks {
-  @apply flex justify-center gap-6;
+  @apply flex flex-wrap justify-center gap-4;
 }
