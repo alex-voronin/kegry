@@ -12,6 +12,7 @@ import { useGoogleSignIn } from '@/lib/auth/use-google-sign-in';
 import { Link } from '@/i18n/routing';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from './login.module.css';
+import { Logo } from '@/components/common/Logo';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -111,29 +112,7 @@ export default function LoginPage() {
       />
       <div className={styles.page}>
         <div className={styles.container}>
-          <div className="flex w-full justify-center">
-            <div className={styles.header}>
-              <div className={styles.logoRow}>
-                <Image
-                  src="/assets/common/logo.webp"
-                  alt="H"
-                  width={180}
-                  height={254}
-                  className={styles.logoImage}
-                  priority
-                />
-                <span className={styles.brandName}>oplingsHere</span>
-                <Image
-                  src="/assets/common/beer-mug.webp"
-                  alt="Beer"
-                  width={32}
-                  height={45}
-                  className={styles.beerMug}
-                />
-              </div>
-              <p className={styles.tagline}>{t('tagline')}</p>
-            </div>
-          </div>
+          <Logo />
 
           <form
             onSubmit={handleSubmit(onSubmit)}

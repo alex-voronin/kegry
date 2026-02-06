@@ -1,0 +1,70 @@
+@reference "../../app/globals.css";
+
+.header {
+  @apply flex w-fit flex-col items-end;
+  transform: translateX(-8px);
+}
+
+.logoRow {
+  @apply flex items-end justify-center;
+}
+
+.logoImage {
+  @apply object-contain;
+  width: 162px;
+  height: 162px;
+}
+
+.brandName {
+  @apply text-brand text-3xl font-bold;
+  margin-left: -5.3rem;
+}
+
+.beerMug {
+  width: 21px;
+  height: 29px;
+}
+
+.tagline {
+  @apply text-primary mt-1 text-sm;
+}
+
+/* Medium mobile (390px+) */
+@media (min-width: 390px) {
+  .logoImage {
+    width: 203px;
+    height: 203px;
+  }
+
+  .brandName {
+    @apply text-4xl;
+    margin-left: -6.5rem;
+  }
+
+  .beerMug {
+    width: 26px;
+    height: 36px;
+  }
+}
+
+/* Desktop (640px+) */
+@media (min-width: 640px) {
+  .logoImage {
+    width: 180px;
+    height: 254px;
+  }
+
+  .brandName {
+    @apply text-5xl;
+    margin-left: -6rem;
+  }
+
+  .beerMug {
+    width: 32px;
+    height: 45px;
+  }
+
+  .tagline {
+    @apply text-base;
+  }
+}

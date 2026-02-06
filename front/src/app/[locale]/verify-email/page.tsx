@@ -14,7 +14,7 @@ import { Link } from '@/i18n/routing';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from '../login/login.module.css'; // Reusing login styles
 import { toast } from 'react-toastify';
-import Image from 'next/image';
+import { Logo } from '@/components/common/Logo';
 
 const OTP_LENGTH = 6;
 
@@ -56,24 +56,15 @@ export default function VerifyEmailPage() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <div className={styles.header}>
-          <div className={styles.logoRow}>
-            <div className={styles.logoContainer}>
-              <Image
-                src="/assets/logo.png"
-                alt="Hoppyfy Logo"
-                fill
-                className={styles.logoImage}
-                priority
-              />
-            </div>
-            <h1 className={styles.brandName}>oppyfy.me</h1>
-          </div>
-          <p className="mt-4 text-center text-xl">{t('title')}</p>
-          <p className={styles.tagline}>{t('description')}</p>
+        <Logo />
+        <div className="mt-2 flex flex-col items-center gap-2">
+          <h2 className="text-center text-xl font-medium">{t('title')}</h2>
+          <p className="text-secondary text-center text-sm">
+            {t('description')}
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.formSection}>
+        <form onSubmit={handleSubmit} className={`${styles.formSection} !mt-4`}>
           <div className="flex justify-center py-4">
             <InputOTP
               maxLength={OTP_LENGTH}
