@@ -9,7 +9,7 @@ export default function LegalLayout({
 }) {
   return (
     <div className="bg-background text-foreground flex min-h-screen w-full flex-col">
-      <main className="bg-form-element mx-auto w-full max-w-[800px] flex-1 rounded-2xl p-8">
+      <main className="bg-form-element mx-auto w-full max-w-[800px] flex-1 rounded-none p-8 sm:rounded-2xl">
         <header className="mb-8 flex w-full items-center">
           <Link
             href={PAGE_ROUTES.HOME}
