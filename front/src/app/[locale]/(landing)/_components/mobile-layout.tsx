@@ -17,7 +17,7 @@ export default function MobileLayout() {
   const scrollToSection = (sectionId: string) => {
     setIsMenuOpen(false);
     setTimeout(() => {
-      const element = document.getElementById(sectionId);
+      const element = document.getElementById(`mobile-${sectionId}`);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
@@ -33,7 +33,7 @@ export default function MobileLayout() {
             src="/assets/landing/header-logo.webp"
             alt="H"
             width={28}
-            height={44}
+            height={60}
             className={`${styles.logoIconImage} ${mobileStyles.mobileLogoImage}`}
           />
           <div className={mobileStyles.mobileLogoTextWrapper}>
@@ -43,7 +43,7 @@ export default function MobileLayout() {
                 src="/assets/landing/header-mug.webp"
                 alt="Beer"
                 width={20}
-                height={20}
+                height={29}
               />
             </div>
             <span className={mobileStyles.mobileLogoSubtitle}>
@@ -157,13 +157,13 @@ export default function MobileLayout() {
       </section>
 
       {/* Polls & News Section */}
-      <section id="polls-news" className={mobileStyles.mobileSection}>
+      <section id="mobile-polls-news" className={mobileStyles.mobileSection}>
         <div className={mobileStyles.mobileSectionImage}>
           <Image
             src="/assets/landing/section-news.webp"
             alt="News"
             width={260}
-            height={260}
+            height={214}
             className={mobileStyles.sectionImg}
           />
         </div>
@@ -200,7 +200,7 @@ export default function MobileLayout() {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className={mobileStyles.mobileSection}>
+      <section id="mobile-how-it-works" className={mobileStyles.mobileSection}>
         <div className={mobileStyles.mobileSectionImage}>
           <Image
             src="/assets/landing/section-how-it-works.webp"
@@ -259,7 +259,7 @@ export default function MobileLayout() {
       </section>
 
       {/* Contact Us Section */}
-      <section id="contact-us" className={mobileStyles.mobileSection}>
+      <section id="mobile-contact-us" className={mobileStyles.mobileSection}>
         <div className={mobileStyles.mobileSectionImage}>
           <Image
             src="/assets/landing/section-contact-us.webp"

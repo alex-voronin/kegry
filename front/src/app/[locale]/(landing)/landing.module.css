@@ -10,6 +10,25 @@
   --landing-button: #ffab10;
 }
 
+/* ===== Responsive Layout Switching ===== */
+.desktopOnly {
+  @apply block;
+}
+
+.mobileOnly {
+  @apply hidden;
+}
+
+@media (max-width: 900px) {
+  .desktopOnly {
+    @apply hidden;
+  }
+
+  .mobileOnly {
+    @apply block;
+  }
+}
+
 /* ===== Common ===== */
 
 .actionLink {

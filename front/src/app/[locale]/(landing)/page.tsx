@@ -1,16 +1,16 @@
-'use client';
-
-import { useMediaQuery } from '@/hooks/use-media-query';
 import DesktopLayout from './_components/desktop-layout';
 import MobileLayout from './_components/mobile-layout';
+import styles from './landing.module.css';
 
 export default function LandingPage() {
-  const isMobile = useMediaQuery('(max-width: 900px)');
-
-  // Don't render anything until we know the viewport size to prevent flash
-  if (isMobile === undefined) {
-    return null;
-  }
-
-  return isMobile ? <MobileLayout /> : <DesktopLayout />;
+  return (
+    <>
+      <div className={styles.desktopOnly}>
+        <DesktopLayout />
+      </div>
+      <div className={styles.mobileOnly}>
+        <MobileLayout />
+      </div>
+    </>
+  );
 }
