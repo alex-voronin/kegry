@@ -18,6 +18,12 @@ export const PAGE_ROUTES = {
   BLOCKED_USERS: '/blocked-users',
   RATE_USER: (userId: string) => `/rate-user/${userId}`,
   PERMISSIONS: '/permissions',
+  LEGAL: {
+    TERMS: '/terms-of-service',
+    PRIVACY: '/privacy-policy',
+    CONSENT: '/consent-to-communication',
+    GUIDELINES: '/community-guidelines',
+  },
 } as const;
 
 export const API_ENDPOINTS = {

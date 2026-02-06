@@ -1,0 +1,69 @@
+Terms of Service
+
+1. Eligibility
+You must be at least 18 years old to use HoplingsHere
+
+2. Purpose of the Service
+HoplingsHere is intended solely for friendship and social connections, not for romantic or sexual relationships.
+
+3. User Content
+You retain ownership of your content.
+By uploading content, you grant HoplingsHere a non-exclusive, revocable license to display it within the service.
+You confirm that:
+3.1. You own or have rights to the content
+3.2. The content is lawful and does not violate others’ rights
+
+4. Intellectual Property & Brand Assets
+All intellectual property rights in the Service, including but not limited to the HoplingsHere name, logo, software code, UI/UX design, and the brand mascot, are owned by or licensed to us.
+4.1. Mascot Ownership: Our mascot is a proprietary character (including human-modified AI-generated elements). We hold all rights to its visual appearance and usage within the Service.
+4.2. Restrictions: You may not copy, modify, distribute, or use our mascot, logo, or any other branding elements for any commercial or non-commercial purpose without our express written permission.
+4.3 Evidence of Rights: We maintain digital records (including but not limited to GitHub commit history, Figma versioning, and time-stamped archives) to establish the date of creation and ownership of all brand assets.
+
+5. Prohibited Use
+You may not:
+5.1. Harass, threaten, or abuse others
+5.2. Impersonate another person
+5.3. Share explicit or sexual content
+5.4. Use the service for commercial solicitation
+
+6. Account Termination
+We may suspend or terminate accounts for violations of these Terms or Community Guidelines, particularly in cases of serious or repeated abuse.
+
+7. Disclaimer and Limitation of Liability
+The Service is provided on an "as is" and "as available" basis, without any express or implied warranties, to the maximum extent permitted by applicable law.
+We do not conduct background checks on users and do not guarantee the behaviour, safety, identity, or intentions of any users. Your interactions with other users, including any in-person meetings, activities, or events, are entirely at your own risk and discretion.
+To the fullest extent permitted by law and except as prohibited by mandatory consumer protection rules or other applicable law, HoplingsHere, its affiliates, officers, directors, employees, and agents shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, goodwill, use, or other intangible losses, arising from or in connection with:
+7.1.1. your use of or inability to use the Service;
+7.1.2. interactions or relationships with other users;
+7.1.3. any in-person activities, meetings, or events (whether or not organised through the Service);
+7.1.4. any incidents related to alcohol consumption or personal safety during such activities.
+Nothing in these Terms excludes or limits our liability for:
+7.2.1. death or personal injury caused by our negligence or the negligence of our employees, agents, or subcontractors;
+7.2.2. fraud or fraudulent misrepresentation;
+7.2.3. breach of any mandatory statutory obligations or consumer rights under applicable law (including, without limitation, liability that cannot be excluded or limited under the laws of your jurisdiction);
+7.2.4. any other matter where liability cannot lawfully be excluded or limited.
+If you are a consumer in the European Union, you may have additional statutory rights and remedies that are not affected by these Terms
+
+8. Governing Law
+These Terms are governed by the laws of Serbia.
+
+9. In-Person Activities and Alcohol Disclaimer
+HoplingsHere is solely a platform that enables users to connect, communicate, and voluntarily organise or join social activities, including those at venues where alcohol may be served (such as bars, pubs, or events). We do not organise, host, supervise, manage, endorse, or assume any control over any in-person activities, events, or meetings. All such activities are initiated, arranged, and participated in exclusively by users.
+You are fully and solely responsible for:
+9.1. your own decisions, conduct, and safety;
+9.2. assessing any risks associated with meeting others;
+9.3. your alcohol consumption (if applicable) and compliance with the legal drinking age and all relevant laws in your location;
+9.4. your personal well-being and compliance with venue rules and local regulations.
+While we strive to foster a respectful and safe community through our Community Guidelines, content moderation, and reporting mechanisms, we cannot guarantee or control the actions, intentions, or safety of other users. Any risks related to in-person interactions, including those involving alcohol, third-party venues, or personal safety, are borne entirely by you.
+Nothing in this section or these Terms is intended to exclude or limit our liability for death, personal injury, or other harm caused directly by our own negligence, wilful misconduct, fraud, or where such exclusion or limitation is prohibited by mandatory applicable law (including EU consumer protection rules).
+
+10. Legal Drinking Age
+Users are responsible for ensuring that they meet the legal drinking age requirements applicable in their country or region before consuming alcohol during any in-person activity.
+
+11. No Organized or Professional Events
+HoplingsHere does not provide professional event organization, guided tours, or hosted experiences.
+The service functions solely as a platform for user-initiated social connections.
+
+EU Consumer Rights
+If you are a consumer resident in the European Union, these Terms do not affect your mandatory statutory rights under applicable consumer protection law, including but not limited to rights under the Unfair Contract Terms Directive (93/13/EEC), Consumer Rights Directive, or national implementations thereof. Any provision found to be unfair or invalid under such laws shall not affect the validity of the remaining provisions.
+These Terms are governed by the laws of Serbia, provided that this shall not deprive you of the protection afforded by mandatory provisions of the law of the country where you reside as a consumer.

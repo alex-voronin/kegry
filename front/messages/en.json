@@ -47,11 +47,13 @@
       "footer": {
         "copyright": "© 2026 HoplingsHere™. All rights reserved.",
         "privacy": "Privacy Policy",
-        "cookie": "Cookie & Analytics Policy",
+        "consent": "Consent to Communication",
         "terms": "Terms of Service",
         "community": "Community Guidelines",
         "mobilePrivacy": "Privacy",
-        "mobileTerms": "Terms"
+        "mobileTerms": "Terms",
+        "mobileConsent": "Consent",
+        "mobileCommunity": "Guidelines"
       }
     },
     "login": {

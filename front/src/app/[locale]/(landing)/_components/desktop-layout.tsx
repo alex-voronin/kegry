@@ -231,16 +231,19 @@ export default function DesktopLayout() {
       <footer className={styles.footer}>
         <span className={styles.footerCopyright}>{t('footer.copyright')}</span>
         <div className={styles.footerLinks}>
-          <Link href="#" className={styles.footerLink}>
+          <Link href={PAGE_ROUTES.LEGAL.PRIVACY} className={styles.footerLink}>
             {t('footer.privacy')}
           </Link>
-          <Link href="#" className={styles.footerLink}>
-            {t('footer.cookie')}
+          <Link href={PAGE_ROUTES.LEGAL.CONSENT} className={styles.footerLink}>
+            {t('footer.consent')}
           </Link>
-          <Link href="#" className={styles.footerLink}>
+          <Link href={PAGE_ROUTES.LEGAL.TERMS} className={styles.footerLink}>
             {t('footer.terms')}
           </Link>
-          <Link href="#" className={styles.footerLink}>
+          <Link
+            href={PAGE_ROUTES.LEGAL.GUIDELINES}
+            className={styles.footerLink}
+          >
             {t('footer.community')}
           </Link>
         </div>

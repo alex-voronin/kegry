@@ -105,11 +105,20 @@ export default function MobileLayout() {
       <footer className={`${styles.footer} ${mobileStyles.mobileFooter}`}>
         <span className={styles.footerCopyright}>{t('footer.copyright')}</span>
         <div className={mobileStyles.mobileFooterLinks}>
-          <Link href="#" className={styles.footerLink}>
+          <Link href={PAGE_ROUTES.LEGAL.PRIVACY} className={styles.footerLink}>
             {t('footer.mobilePrivacy')}
           </Link>
-          <Link href="#" className={styles.footerLink}>
+          <Link href={PAGE_ROUTES.LEGAL.CONSENT} className={styles.footerLink}>
+            {t('footer.mobileConsent')}
+          </Link>
+          <Link href={PAGE_ROUTES.LEGAL.TERMS} className={styles.footerLink}>
             {t('footer.mobileTerms')}
+          </Link>
+          <Link
+            href={PAGE_ROUTES.LEGAL.GUIDELINES}
+            className={styles.footerLink}
+          >
+            {t('footer.mobileCommunity')}
           </Link>
         </div>
       </footer>

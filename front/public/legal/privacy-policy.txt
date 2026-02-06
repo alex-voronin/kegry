@@ -1,0 +1,99 @@
+Privacy Policy
+
+Effective Date: 02/02/2026
+
+1. Who We Are (Data Controller)
+HoplingsHere is a social platform operated as an independent digital product to help users aged 18+ find new friends and organise voluntary social connections.
+We act as the data controller under the General Data Protection Regulation (GDPR) (EU) 2016/679 for users in the EU/EEA and other jurisdictions where GDPR applies (e.g., due to offering services to EU residents).
+Contact: contacts@hoplingsghere.com (for all privacy queries, including exercising GDPR rights).
+We do not have a designated Data Protection Officer (DPO) as this is not required under Article 37 GDPR for our scale and activities.
+
+2. Information We Collect
+2.1 Information You Provide Voluntarily. When you create and use an account, you may provide:
+2.1.1. Name or nickname
+2.1.2. Profile photos or images
+2.1.3. Age and date of birth (to verify 18+)
+2.1.4. Gender
+2.1.5 Interests and social preferences related to friendship
+2.1.6. Any text or content you post in profiles or activity descriptions
+
+2.2 Automatically Collected Information. We may collect:
+2.2.1 Approximate location (IP-based, not precise GPS)
+2.2.2. Device information (type, OS, unique identifiers such as advertising ID)
+2.2.3. Usage and interaction data (e.g., profile views, invites sent/received, timestamps, app crashes)
+2.2.4. Log data (IP address, access times, browser/app version)
+
+3. Purpose of Processing
+We process your personal data to:
+3.1. Create and manage user accounts
+3.2. Show nearby and relevant users
+3.3. Enable matching and discovery features
+3.4. Allow users to create, join, and display user-organized social activities (including in-person meetups)
+3.5. Improve app performance and user experience
+3.6 Ensure safety, security, and prevent abuse
+
+4. Legal Basis for Processing
+We rely on the following lawful bases under Article 6 GDPR:
+4.1.1. Consent (Article 6(1)(a)): For processing profile photos, optional gender, marketing communications (e.g., newsletters about new features), and any optional precise location sharing. Consent is freely given, specific, informed, and granular. You can withdraw it at any time via app settings without affecting the lawfulness of prior processing.
+4.1.2. Performance of a contract (Article 6(1)(b)): For core account creation, matching, displaying nearby users, and enabling user-organised activities — processing is necessary to provide the service you requested.
+4.1.3. Legitimate interests (Article 6(1)(f)): For fraud/abuse prevention, safety & security (e.g., moderating reports), basic analytics to improve the app, approximate location-based matching (city-level), and recommendation of profiles based on interests/age/distance.
+Legitimate Interests Assessment (LIA) summary:
+4.2.1. Interest: Providing a functional, safe friendship-matching service; preventing misuse; improving user experience through data-driven insights.
+4.2.2. Necessity: We use the least intrusive means (e.g., pseudonymisation, no precise tracking by default, data minimisation).
+4.2.3. Balancing: Your rights are protected via transparency, easy deletion, opt-out options for recommendations, limited retention, and no marketing profiling. We consider the impact low for most users in a voluntary friendship context. You can object to processing based on legitimate interests at any time (see Your Rights).
+
+5. Profiling and Recommendations
+HoplingsHere uses automated processing to:
+Sort and recommend profiles based on age, interests, and approximate distance
+This profiling:
+5.1. Is used only to improve user experience
+5.2. Does not produce legal effects
+5.3 Does not significantly affect users in a similar way
+We do not use automated decision-making as defined under Article 22 GDPR.
+
+6. Analytics and Third-Party Processors
+We use PostHog for product analytics.
+PostHog processes:
+6.1.1. Pseudonymized usage and interaction data
+6.1.2. Technical and event-based analytics
+Analytics data is:
+6.2.1. Used only to understand app usage
+6.2.2. Stored and processed on European servers
+6.2.3. Not used for advertising or tracking across other services
+We do not sell personal data.
+
+7. Data Storage and Retention
+All personal data is stored and processed exclusively within the European Economic Area (EEA). We do not transfer data outside the EEA.
+Retention:
+7.1. Account data — as long as your account is active.
+7.2. After deletion request — irreversibly deleted or anonymised within 30 days (except backups for 90 days max, then purged; or if legally required, e.g., for disputes).
+7.3. Security logs / abuse reports — up to 12 months (then anonymised or deleted).
+You may delete your account at any time via app settings.
+After deletion, your data will be permanently removed within a reasonable period, unless retention is required by law.
+
+8. Your Rights Under GDPR
+You have the right to:
+8.1. Access your personal data
+8.2. Rectify inaccurate or incomplete data
+8.3. Request deletion (“right to be forgotten”)
+8.4. Restrict processing
+8.5. Object to processing
+8.6. Receive your data in a portable format
+8.7. Withdraw consent at any time
+You also have the right to lodge a complaint with your local supervisory authority.
+To exercise your rights, contact: contacts@hoplingshere.com
+
+9. Data Security and Breaches
+We apply appropriate technical and organizational measures to protect personal data.
+In the event of a personal data breach that poses a risk to users, we will notify affected users and relevant authorities as required by law.
+
+10. Children’s Privacy
+HoplingsHere is intended for users aged 18 and older.
+We do not knowingly collect personal data from minors.
+If you believe a minor has provided data, contact us and we will delete it promptly.
+
+11. Changes to This Policy
+We may update this Privacy Policy. Material changes will be notified in-app (banner/pop-up) and/or by email at least 30 days in advance where feasible. Continued use after changes constitutes acceptance.
+
+12. International Data Transfers
+We do not transfer personal data outside the EEA. All processing occurs in EU/EEA data centres.

@@ -1,0 +1,19 @@
+Consent to Communications
+
+We may send you messages via email, push notifications, or in-app alerts. We distinguish between: Required Service Messages (no opt-out possible)
+1. These are essential communications necessary for providing and securing the Service, such as:
+1.1. Account creation/verification notifications
+1.2. Security alerts (e.g., suspicious login, password reset)
+1.3. Important updates to Terms, Privacy Policy, or Community Guidelines
+1.4. Safety-related notifications (e.g., report outcomes, moderation actions)
+1.5 Transactional/service messages (e.g., invites accepted, activity reminders if you joined)
+Legal basis: Performance of our contract with you (Art. 6(1)(b) GDPR) and/or our legitimate interests in maintaining service security and functionality (Art. 6(1)(f) GDPR). These messages are not marketing and cannot be opted out of, as they are required for the Service to operate properly.
+
+2. Optional Marketing and Promotional Messages (opt-in / opt-out)
+2.1. News about new features, product updates, or improvements
+2.2. Announcements about events, partnerships, or app enhancements
+2.3. Tips, newsletters, or invitations to try new tools
+Legal basis: Your consent (Art. 6(1)(a) GDPR). We will only send these if you have given explicit opt-in consent (e.g., during signup or in settings).
+You can withdraw consent / opt out at any time via profile settings (or unsubscribe link in every message). Withdrawal is free, easy, and does not affect your use of the core Service. Once opted out, we stop sending promotional messages immediately (though you may still receive required service messages).
+
+We do not send unsolicited marketing without a valid legal basis. All messages clearly identify us as the sender and include an easy way to manage preferences.
