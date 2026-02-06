@@ -111,20 +111,28 @@ export default function LoginPage() {
       />
       <div className={styles.page}>
         <div className={styles.container}>
-          <div className={styles.header}>
-            <div className={styles.logoRow}>
-              <div className={styles.logoContainer}>
+          <div className="flex w-full justify-center">
+            <div className={styles.header}>
+              <div className={styles.logoRow}>
                 <Image
-                  src="/assets/logo.png"
-                  alt="Hoppyfy Logo"
-                  fill
+                  src="/assets/common/logo.webp"
+                  alt="H"
+                  width={180}
+                  height={254}
                   className={styles.logoImage}
                   priority
                 />
+                <span className={styles.brandName}>oplingsHere</span>
+                <Image
+                  src="/assets/common/beer-mug.webp"
+                  alt="Beer"
+                  width={32}
+                  height={45}
+                  className={styles.beerMug}
+                />
               </div>
-              <h1 className={styles.brandName}>oppyfy.me</h1>
+              <p className={styles.tagline}>{t('tagline')}</p>
             </div>
-            <p className={styles.tagline}>{t('tagline')}</p>
           </div>
 
           <form

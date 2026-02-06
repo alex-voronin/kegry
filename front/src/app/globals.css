@@ -19,7 +19,7 @@ input[type='number']::-webkit-inner-spin-button {
 
   /* App Colors */
   --color-surface: #333333;
-  --color-brand: #f9e2af;
+  --color-brand: #f5eccd;
   --color-error: #f68581;
 
   /* Text/Primary Colors - use with text-primary, bg-primary, border-primary */
