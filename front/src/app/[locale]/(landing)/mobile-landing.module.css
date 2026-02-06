@@ -127,6 +127,14 @@
   @apply max-w-full object-contain;
 }
 
+/* Scale up images for tablets */
+@media (min-width: 600px) and (max-width: 900px) {
+  .sectionImg {
+    transform: scale(1.3);
+    margin: 2rem 0;
+  }
+}
+
 .mobileSectionCard {
   @apply w-full rounded-xl p-6;
 }
