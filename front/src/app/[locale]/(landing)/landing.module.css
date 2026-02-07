@@ -1,14 +1,8 @@
 @reference "../../globals.css";
+@import './landing-theme.css';
 
 /* ===== Variables ===== */
-:root {
-  --landing-bg: #333333;
-  --landing-card-bg: #292929;
-  --landing-heading: #f5eccd;
-  --landing-subheading: #bdbdbd;
-  --landing-text: #ffffff;
-  --landing-button: #ffab10;
-}
+/* Variables are defined in landing-theme.css */
 
 /* ===== Responsive Layout Switching ===== */
 .desktopOnly {
@@ -33,7 +27,7 @@
 
 .actionLink {
   @apply cursor-pointer transition-opacity hover:opacity-80;
-  color: var(--landing-button);
+  color: var(--color-landing-button);
 }
 
 .sideImage {
@@ -43,12 +37,12 @@
 /* ===== Shared Card Styles ===== */
 .card {
   @apply rounded-xl p-8;
-  background-color: var(--landing-card-bg);
+  background-color: var(--color-landing-card-bg);
 }
 
 .cardTitle {
   @apply mb-4 text-center text-4xl font-bold;
-  color: var(--landing-heading);
+  color: var(--color-landing-heading);
 }
 
 .cardDescription {
@@ -58,8 +52,8 @@
 /* ===== Global Wrapper ===== */
 .wrapper {
   @apply mx-auto min-h-screen w-full max-w-[1470px];
-  background-color: var(--landing-bg);
-  color: var(--landing-text);
+  background-color: var(--color-landing-bg);
+  color: var(--color-landing-text);
 }
 
 /* ===== Header ===== */
@@ -83,12 +77,12 @@
 
 .logoText {
   @apply text-3xl font-bold;
-  color: var(--landing-heading);
+  color: var(--color-landing-heading);
 }
 
 .logoSubtitle {
   @apply ml-[6px] text-sm;
-  color: var(--landing-subheading);
+  color: var(--color-landing-subheading);
 }
 
 .logoIconImage {
@@ -105,7 +99,7 @@
 
 .loginButton {
   @apply rounded-md px-6 py-2 text-sm font-semibold transition-colors;
-  background-color: var(--landing-button);
+  background-color: var(--color-landing-button);
   color: #000000;
 }
 

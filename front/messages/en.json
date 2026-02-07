@@ -286,6 +286,12 @@
     "logo": {
       "tagline": "The best stories start off-screen"
     },
+    "ageVerification": {
+      "message": "This service is intended for users aged 18 and over. I confirm that I am at least 18 years old.",
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy",
+      "confirm": "I am 18+"
+    },
     "avatar-cropper": {
       "save": "Save"
     },
