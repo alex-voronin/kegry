@@ -1,0 +1,25 @@
+@reference "../../globals.css";
+
+.wrapper {
+  @apply fixed inset-0 overflow-auto bg-[#333333];
+}
+
+/* ===== Responsive Layout Switching ===== */
+
+.desktopOnly {
+  @apply block;
+}
+
+.mobileOnly {
+  @apply hidden;
+}
+
+@media (max-width: 900px) {
+  .desktopOnly {
+    @apply hidden;
+  }
+
+  .mobileOnly {
+    @apply block;
+  }
+}

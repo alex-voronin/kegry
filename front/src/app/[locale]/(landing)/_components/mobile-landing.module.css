@@ -1,4 +1,5 @@
-@reference "../../globals.css";
+@reference "../../../globals.css";
+@import './landing-theme.css';
 
 /* ===== Mobile Header ===== */
 .mobileHeader {
@@ -27,18 +28,18 @@
 
 .mobileLogoText {
   @apply text-2xl font-bold;
-  color: var(--landing-heading);
+  color: var(--color-landing-heading);
 }
 
 .mobileLogoSubtitle {
   @apply ml-px text-[12px];
   transform: translateY(-2px);
-  color: var(--landing-subheading);
+  color: var(--color-landing-subheading);
 }
 
 .burgerButton {
   @apply flex items-center justify-center p-2;
-  color: var(--landing-text);
+  color: var(--color-landing-text);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -60,9 +61,10 @@
 /* ===== Drawer ===== */
 .drawer {
   @apply fixed top-0 right-0 z-70 flex h-full w-[280px] flex-col p-6;
-  background-color: var(--landing-card-bg);
   transform: translateX(100%);
   transition: transform 0.3s ease;
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
 }
 
 .drawerOpen {
@@ -71,7 +73,7 @@
 
 .drawerCloseButton {
   @apply mb-8 self-end p-2;
-  color: var(--landing-text);
+  color: var(--color-landing-text);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -84,7 +86,7 @@
 
 .drawerNavLink {
   @apply cursor-pointer text-lg font-medium transition-opacity;
-  color: var(--landing-text);
+  color: var(--color-landing-text);
 }
 
 .drawerNavLink:hover {
@@ -93,7 +95,7 @@
 
 .drawerSignUpButton {
   @apply mt-8 rounded-md px-6 py-3 text-center text-base font-semibold;
-  background-color: var(--landing-button);
+  background-color: var(--color-landing-button);
   color: #000000;
 }
 
@@ -103,7 +105,7 @@
 
 .drawerLegalLink {
   @apply text-sm opacity-60 transition-opacity;
-  color: var(--landing-text);
+  color: var(--color-landing-text);
 }
 
 .drawerLegalLink:hover {
@@ -141,12 +143,12 @@
 
 .mobileCardTitle {
   @apply mb-4 text-center text-2xl font-bold;
-  color: var(--landing-heading);
+  color: var(--color-landing-heading);
 }
 
 .mobileCardDescription {
   @apply text-base leading-relaxed;
-  color: var(--landing-text);
+  color: var(--color-landing-text);
 }
 
 /* ===== Mobile Poll Card ===== */
@@ -165,7 +167,7 @@
 
 .mobileStepTitle {
   @apply text-base font-medium;
-  color: var(--landing-text);
+  color: var(--color-landing-text);
 }
 
 .mobileStepImage {
@@ -174,7 +176,7 @@
 
 .mobileHowItWorksNote {
   @apply mt-6 text-sm leading-relaxed;
-  color: var(--landing-subheading);
+  color: var(--color-landing-subheading);
 }
 
 /* ===== Mobile Footer ===== */

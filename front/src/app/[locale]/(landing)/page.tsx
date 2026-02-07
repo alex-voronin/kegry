@@ -1,6 +1,6 @@
 import DesktopLayout from './_components/desktop-layout';
 import MobileLayout from './_components/mobile-layout';
-import styles from './landing.module.css';
+import styles from './layout.module.css';
 import { AgeVerification } from './_components/AgeVerification';
 
 export default function LandingPage() {

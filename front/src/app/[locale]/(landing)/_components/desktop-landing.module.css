@@ -1,27 +1,5 @@
-@reference "../../globals.css";
+@reference "../../../globals.css";
 @import './landing-theme.css';
-
-/* ===== Variables ===== */
-/* Variables are defined in landing-theme.css */
-
-/* ===== Responsive Layout Switching ===== */
-.desktopOnly {
-  @apply block;
-}
-
-.mobileOnly {
-  @apply hidden;
-}
-
-@media (max-width: 900px) {
-  .desktopOnly {
-    @apply hidden;
-  }
-
-  .mobileOnly {
-    @apply block;
-  }
-}
 
 /* ===== Common ===== */
 

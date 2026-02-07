@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Script from 'next/script';
 import { useTranslations } from 'next-intl';
 import { PAGE_ROUTES } from '@/lib/routes';
-import styles from '../landing.module.css';
+import styles from './desktop-landing.module.css';
 
 export default function DesktopLayout() {
   const t = useTranslations('screens.landing');

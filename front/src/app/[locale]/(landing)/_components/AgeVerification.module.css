@@ -1,13 +1,26 @@
 @reference "../../../globals.css";
-@import '../landing-theme.css';
+@import './landing-theme.css';
 
 .overlay {
-  @apply fixed inset-0 z-100 flex items-center justify-center bg-black/80 backdrop-blur-sm;
+  @apply fixed inset-0 z-100 flex items-end justify-center bg-black/40;
+  backdrop-filter: blur(1px);
+}
+
+@media (min-width: 900px) {
+  .overlay {
+    @apply items-center;
+  }
 }
 
 .modal {
-  @apply flex max-w-md flex-col items-center gap-6 rounded-2xl p-8 text-center shadow-xl;
+  @apply flex max-w-[600px] flex-col items-center gap-6 rounded-t-2xl p-8 text-center;
   background-color: var(--color-landing-card-bg);
+}
+
+@media (min-width: 900px) {
+  .modal {
+    @apply max-w-[450px] rounded-2xl;
+  }
 }
 
 .message {

@@ -1,6 +1,4 @@
-'use client';
-
-import React from 'react';
+import styles from './layout.module.css';
 
 export default function LandingLayout({
   children,
@@ -9,7 +7,5 @@ export default function LandingLayout({
 }) {
   // Landing page uses full-width layout
   // This wrapper breaks out of the parent container's max-width constraint
-  return (
-    <div className="fixed inset-0 overflow-auto bg-[#333333]">{children}</div>
-  );
+  return <div className={styles.wrapper}>{children}</div>;
 }

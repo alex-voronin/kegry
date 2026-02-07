@@ -7,8 +7,8 @@ import Script from 'next/script';
 import { useTranslations } from 'next-intl';
 import { Menu, X } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
-import styles from '../landing.module.css';
-import mobileStyles from '../mobile-landing.module.css';
+import styles from './desktop-landing.module.css';
+import mobileStyles from './mobile-landing.module.css';
 
 export default function MobileLayout() {
   const t = useTranslations('screens.landing');
