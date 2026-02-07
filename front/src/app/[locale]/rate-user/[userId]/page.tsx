@@ -100,7 +100,7 @@ export default function RateUserScreen({ params }: RateUserScreenProps) {
         <Image
           src={
             userProfile?.coverImageUrl ||
-            '/assets/common/avatar-placeholder.svg'
+            '/assets/common/avatar-placeholder.webp'
           }
           alt="cover"
           fill

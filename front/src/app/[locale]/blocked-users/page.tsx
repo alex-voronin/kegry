@@ -52,7 +52,7 @@ export default function BlockedUsersPage() {
   const menuOptions = selectedUser
     ? [
         {
-          icon: '/assets/common/avatar-placeholder.svg',
+          icon: '/assets/blocked-users/user-profile-icon.svg',
           label: t('menu.viewProfile'),
           onClick: () => {
             handleViewProfile(selectedUser.id);
@@ -108,7 +108,7 @@ export default function BlockedUsersPage() {
                     <Image
                       src={
                         user.avatarUrl ||
-                        '/assets/common/avatar-placeholder.svg'
+                        '/assets/common/avatar-placeholder.webp'
                       }
                       alt="Profile"
                       width={48}

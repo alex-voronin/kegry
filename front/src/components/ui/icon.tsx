@@ -31,14 +31,14 @@ export function Icon({
       onClick={disabled ? undefined : onClick}
       className={cn(
         'relative hover:brightness-75 active:brightness-75',
-        `w-[${width}px] h-[${height}px]`,
         disabled && 'pointer-events-none opacity-30',
         className,
       )}
+      style={{ width, height }}
     >
       {src && alt && width && height && (
         <Image
-          className="pointer-events-none h-full w-full select-none"
+          className="pointer-events-none h-full w-full object-contain select-none"
           src={src}
           alt={alt}
           width={width}

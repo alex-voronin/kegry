@@ -87,7 +87,7 @@ export default function UserProfilePage() {
             <Image
               src={
                 profile.avatarImageUrl ||
-                '/assets/common/avatar-placeholder.svg'
+                '/assets/common/avatar-placeholder.webp'
               }
               alt="Avatar"
               fill

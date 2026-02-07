@@ -223,7 +223,7 @@ export default function ProfilePage() {
               </div>
             ) : (
               <Image
-                src={userAvatarUrl || '/assets/common/avatar-placeholder.svg'}
+                src={userAvatarUrl || '/assets/common/avatar-placeholder.webp'}
                 alt="Avatar"
                 fill
                 className={styles.avatarImage}

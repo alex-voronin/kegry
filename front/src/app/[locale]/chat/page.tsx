@@ -265,10 +265,10 @@ export default function ChatScreen() {
         right={
           <div className={styles.headerActionsWrapper}>
             <Icon
-              src="/assets/chat/mug-icon.png"
+              src="/assets/common/beer-mug.webp"
               alt="status"
               width={36}
-              height={38}
+              height={36}
               priority
               onClick={() => setIsTimerInfoOpen(true)}
             />
@@ -292,7 +292,7 @@ export default function ChatScreen() {
           <Image
             src={
               chat.participant.avatarUrl ||
-              '/assets/common/avatar-placeholder.svg'
+              '/assets/common/avatar-placeholder.webp'
             }
             alt="avatar"
             fill
