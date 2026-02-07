@@ -114,13 +114,13 @@ export default function CoverPage() {
           {error && <p className={styles.error}>{error}</p>}
           <Button
             variant={ButtonVariant.Default}
-            className={styles.continueButton}
+            className={styles.createProfileButton}
             type="button"
             onClick={handleContinue}
             disabled={!coverBlob}
             loading={isSubmitting}
           >
-            {t('continue')}
+            {t('createProfile')}
           </Button>
 
           <div className={styles.legalText}>

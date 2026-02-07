@@ -119,12 +119,13 @@
     "onboarding": {
       "title": "Tell us about yourself",
       "continue": "Continue",
+      "createProfile": "Create profile",
       "uploadCoverTitle": "Choose your cover",
       "selectCover": "Tap to select cover image",
       "creating": "Creating profile...",
       "back": "Back",
       "legal": {
-        "text": "By creating an account on HoplingsHere, you confirm that you are <age>18 or older</age> and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+        "text": "By creating a profile on HoplingsHere, you confirm that you are <age>18 or older</age> and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
       }
     },
     "feed": {

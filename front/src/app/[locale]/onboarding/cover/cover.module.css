@@ -33,7 +33,7 @@
   @apply mb-6 flex w-full flex-col items-center gap-4;
 }
 
-.continueButton {
+.createProfileButton {
   @apply h-[40px] w-full max-w-[300px];
 }
 
