@@ -122,6 +122,38 @@ export default function CoverPage() {
           >
             {t('continue')}
           </Button>
+
+          <div className={styles.legalText}>
+            {t.rich('legal.text', {
+              age: (chunks) => (
+                <Link
+                  href={PAGE_ROUTES.LEGAL.TERMS}
+                  className={styles.legalLink}
+                  target="_blank"
+                >
+                  {chunks}
+                </Link>
+              ),
+              terms: (chunks) => (
+                <Link
+                  href={PAGE_ROUTES.LEGAL.TERMS}
+                  className={styles.legalLink}
+                  target="_blank"
+                >
+                  {chunks}
+                </Link>
+              ),
+              privacy: (chunks) => (
+                <Link
+                  href={PAGE_ROUTES.LEGAL.PRIVACY}
+                  className={styles.legalLink}
+                  target="_blank"
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
+          </div>
           <Link
             href={PAGE_ROUTES.ONBOARDING}
             className="mt-4 text-center text-sm underline"

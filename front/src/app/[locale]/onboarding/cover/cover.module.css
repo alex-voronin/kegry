@@ -30,9 +30,17 @@
 }
 
 .footer {
-  @apply mb-6 flex w-full flex-col items-center gap-2;
+  @apply mb-6 flex w-full flex-col items-center gap-4;
 }
 
 .continueButton {
   @apply h-[40px] w-full max-w-[300px];
+}
+
+.legalText {
+  @apply max-w-[300px] text-center text-base text-white/80;
+}
+
+.legalLink {
+  @apply font-medium text-white underline hover:no-underline;
 }

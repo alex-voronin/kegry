@@ -163,6 +163,14 @@ export default function LoginPage() {
 
             <div className={styles.legalText}>
               {t.rich('legal.text', {
+                age: (chunks) => (
+                  <Link
+                    href={PAGE_ROUTES.LEGAL.TERMS}
+                    className={styles.legalLink}
+                  >
+                    {chunks}
+                  </Link>
+                ),
                 terms: (chunks) => (
                   <Link
                     href={PAGE_ROUTES.LEGAL.TERMS}
