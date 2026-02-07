@@ -12,6 +12,7 @@ import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { FcmPayload, NotificationType } from '@/lib/fcm/types';
 import { TawkMessenger } from './tawk-messenger';
+import { BRAND_NAME } from '@/lib/constants';
 
 function FcmGlobalHandler() {
   const router = useRouter();
@@ -49,16 +50,13 @@ function FcmGlobalHandler() {
         ) {
           navigator.serviceWorker.ready.then((registration) => {
             if (notification) {
-              registration.showNotification(
-                notification.title || 'Hoppyfy.me',
-                {
-                  body: notification.body || '',
-                  icon:
-                    notification.icon ||
-                    '/assets/notifications/notification-logo.webp',
-                  data: payload,
-                },
-              );
+              registration.showNotification(notification.title || BRAND_NAME, {
+                body: notification.body || '',
+                icon:
+                  notification.icon ||
+                  '/assets/notifications/notification-logo.webp',
+                data: payload,
+              });
             }
           });
         }

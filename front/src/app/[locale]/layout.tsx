@@ -6,6 +6,7 @@ import { Providers } from '@/components/providers';
 import { getMessages, getLocale } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import { ToastContainer } from 'react-toastify';
+import { BRAND_NAME } from '@/lib/constants';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -18,8 +19,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Hoppyfy.me',
+  title: BRAND_NAME,
   description: 'The best stories start off-screen',
+  icons: {
+    icon: [
+      { url: '/favicon-16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
+    ],
+  },
 };
 
 export async function generateStaticParams() {

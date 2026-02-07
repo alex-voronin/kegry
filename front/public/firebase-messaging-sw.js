@@ -57,12 +57,13 @@ messaging.onBackgroundMessage(async (payload) => {
 
   try {
     await self.registration.showNotification(
-      notification.title ?? 'Hoppyfy.me',
+      // TODO: Use BRAND_NAME constant here after moving to modular firebase SDK
+      notification.title ?? 'HoplingsHere',
       {
         body: notification.body ?? '',
         icon:
           notification.icon ?? '/assets/notifications/notification-logo.webp',
-        tag: `hoppyfy-${messageId}`,
+        tag: `hoplingshere-${messageId}`,
         data: payload,
       },
     );

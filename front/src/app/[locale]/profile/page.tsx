@@ -23,6 +23,7 @@ import {
 import { useHobbiesStore } from '@/store/use-hobbies-store';
 import { uploadImage } from '@/lib/image-utils';
 import { checkIfPermissionsDenied } from '@/lib/permissions';
+import { BRAND_NAME } from '@/lib/constants';
 import styles from './profile.module.css';
 
 export default function ProfilePage() {
@@ -348,7 +349,7 @@ export default function ProfilePage() {
               <span>{t('menu.logOut')}</span>
             </div>
             <div className={styles.version}>
-              Hoppyfy.me for Web v{process.env.NEXT_PUBLIC_APP_VERSION}
+              {BRAND_NAME} for Web v{process.env.NEXT_PUBLIC_APP_VERSION}
             </div>
           </div>
         </div>
