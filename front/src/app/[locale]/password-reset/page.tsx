@@ -14,11 +14,10 @@ import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import Image from 'next/image';
+import { Logo } from '@/components/common/Logo';
 
 export default function PasswordResetPage() {
   const t = useTranslations('screens.passwordReset');
-  const tCommonErrors = useTranslations('common.errors');
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -102,23 +101,9 @@ export default function PasswordResetPage() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <div className={styles.header}>
-          <div className={styles.logoRow}>
-            <div className={styles.logoContainer}>
-              <Image
-                src="/assets/logo.png"
-                alt="Hoppyfy Logo"
-                fill
-                className={styles.logoImage}
-                priority
-              />
-            </div>
-            <h1 className={styles.brandName}>oppyfy.me</h1>
-          </div>
-        </div>
+        <Logo />
 
         <form onSubmit={handleSubmit(onSubmit)} className={styles.formSection}>
-          <p className="text-center text-xl">{t('title')}</p>
           <div>
             <Input
               type="password"
