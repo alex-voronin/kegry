@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,12 +12,10 @@ import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import Image from 'next/image';
+import { Logo } from '@/components/common/Logo';
 
 export default function ForgotPasswordPage() {
   const t = useTranslations('screens.forgot');
-  const tCommonErrors = useTranslations('common.errors');
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const requestPasswordReset = useAuthStore(
@@ -60,22 +57,9 @@ export default function ForgotPasswordPage() {
     return (
       <div className={styles.page}>
         <div className={styles.container}>
-          <div className={styles.header}>
-            <div className={styles.logoRow}>
-              <div className={styles.logoContainer}>
-                <Image
-                  src="/assets/logo.png"
-                  alt="Hoppyfy Logo"
-                  fill
-                  className={styles.logoImage}
-                  priority
-                />
-              </div>
-              <h1 className={styles.brandName}>oppyfy.me</h1>
-            </div>
-            <p className="mt-4 text-center text-base">
-              {t('successDescription')}
-            </p>
+          <Logo />
+          <div className="mt-4 text-center">
+            <p className="text-base">{t('successDescription')}</p>
           </div>
 
           <Link
@@ -92,24 +76,13 @@ export default function ForgotPasswordPage() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <div className={styles.header}>
-          <div className={styles.logoRow}>
-            <div className={styles.logoContainer}>
-              <Image
-                src="/assets/logo.png"
-                alt="Hoppyfy Logo"
-                fill
-                className={styles.logoImage}
-                priority
-              />
-            </div>
-            <h1 className={styles.brandName}>oppyfy.me</h1>
-          </div>
-        </div>
+        <Logo />
 
         <form onSubmit={handleSubmit(onSubmit)} className={styles.formSection}>
-          <p className="mt-4 text-center text-xl">{t('title')}</p>
-          <p className={styles.tagline}>{t('description')}</p>
+          <div className="text-center">
+            <p className="mt-4 text-xl">{t('title')}</p>
+            <p className="text-secondary mt-2 text-sm">{t('description')}</p>
+          </div>
           <div>
             <Input
               type="email"
