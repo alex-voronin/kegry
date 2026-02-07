@@ -83,3 +83,11 @@
 .emptyStateText {
   @apply text-secondary text-center text-sm leading-relaxed;
 }
+
+.loadingContainer {
+  @apply flex h-full w-full items-center justify-center;
+}
+
+.loadingOverlay {
+  @apply absolute inset-0 z-30 flex items-center justify-center bg-black/30;
+}

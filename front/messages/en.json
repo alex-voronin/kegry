@@ -136,7 +136,8 @@
     "feed": {
       "availabilityTime": "Available: {time}",
       "distance": "Distance: {distance} {units}",
-      "noProfiles": "No profiles found. Try changing the filters."
+      "noProfiles": "No profiles found. Try changing the filters.",
+      "locationRequired": "Location access is required to show profiles nearby. Please enable location in your browser settings."
     },
     "chat": {
       "messagePlaceholder": "Message {remaining}/{total}",

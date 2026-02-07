@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
@@ -8,6 +8,7 @@ import { StarRating } from 'react-flexible-star-rating';
 import styles from './feed.module.css';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
+import { Spinner } from '@/components/ui/spinner';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useFeedStore, UserProfileDto } from '@/store/use-feed-store';
 import { useSettingsStore, DistanceUnits } from '@/store/use-settings-store';
@@ -16,6 +17,10 @@ import { toast } from 'react-toastify';
 import { useFcmStore } from '@/lib/fcm/store';
 import { NotificationType, FcmPayload } from '@/lib/fcm/types';
 import { checkIfPermissionsDenied } from '@/lib/permissions';
+import {
+  SendLocationWithRateLimit,
+  LocationResult,
+} from '@/lib/use-background-location';
 
 function FeedHeader({
   router,
@@ -87,9 +92,12 @@ function FeedBody({
   tCommon: ReturnType<typeof useTranslations>;
   tHobbies: ReturnType<typeof useTranslations>;
 }) {
-  if (isLoading) {
+  // Show spinner if loading and no cached content
+  if (isLoading && !currentProfile) {
     return (
-      <div style={{ textAlign: 'center', marginTop: '50%' }}>Loading...</div>
+      <div className={styles.loadingContainer}>
+        <Spinner />
+      </div>
     );
   }
 
@@ -103,6 +111,11 @@ function FeedBody({
 
   return (
     <>
+      {isLoading && (
+        <div className={styles.loadingOverlay}>
+          <Spinner />
+        </div>
+      )}
       <div>
         <Image
           src={currentProfile.coverImageUrl}
@@ -233,6 +246,7 @@ export default function FeedScreen() {
     setUnseenNotificationCount,
   } = useFeedStore();
   const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
+  const [isLocationDenied, setIsLocationDenied] = useState(false);
 
   useEffect(() => {
     const checkPermissions = async () => {
@@ -251,15 +265,22 @@ export default function FeedScreen() {
 
   const currentProfile = feed[0] || null;
 
-  const isInitialized = useRef(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     const initializeFeed = async () => {
       if (!hasHydrated) return;
-      if (isInitialized.current) return;
-      isInitialized.current = true;
+      if (isInitialized) return;
 
       try {
+        // Send location first, then fetch feed
+        const locationResult = await SendLocationWithRateLimit();
+        if (locationResult === 'denied') {
+          setIsLocationDenied(true);
+          return;
+        }
+        setIsLocationDenied(false);
+
         const [status] = await Promise.all([
           fetchFeedStatus(),
           fetchFeed(),
@@ -277,13 +298,15 @@ export default function FeedScreen() {
         }
       } catch (err: any) {
         toast.error(err.message);
-        isInitialized.current = false;
+      } finally {
+        setIsInitialized(true);
       }
     };
 
     initializeFeed();
   }, [
     hasHydrated,
+    isInitialized,
     fetchFeedStatus,
     fetchFeed,
     fetchUnseenNotificationCount,
@@ -309,7 +332,7 @@ export default function FeedScreen() {
     setUnseenNotificationCount,
   ]);
 
-  const showLoading = isLoading || !hasHydrated;
+  const showLoading = isLoading || !hasHydrated || !isInitialized;
 
   const handleIgnore = async () => {
     if (!currentProfile) return;
@@ -346,7 +369,22 @@ export default function FeedScreen() {
           unseenCount={unseenNotificationCount}
           showPermissionsBadge={showPermissionsBadge}
         />
-        {feed.length > 0 ? (
+        {showLoading && !currentProfile ? (
+          <div className={styles.loadingContainer}>
+            <Spinner />
+          </div>
+        ) : isLocationDenied ? (
+          <div className={styles.emptyState}>
+            <Image
+              src="/assets/feed/geolocation-disabled-placeholder.webp"
+              alt="location required"
+              width={300}
+              height={300}
+              className={styles.emptyStateImage}
+            />
+            <p className={styles.emptyStateText}>{tFeed('locationRequired')}</p>
+          </div>
+        ) : currentProfile ? (
           <FeedBody
             currentProfile={currentProfile}
             isLoading={showLoading}
@@ -360,8 +398,8 @@ export default function FeedScreen() {
             <Image
               src="/assets/feed/no-profiles-placeholder.webp"
               alt="no profiles"
-              width={200}
-              height={200}
+              width={300}
+              height={300}
               className={styles.emptyStateImage}
             />
             <p className={styles.emptyStateText}>{tFeed('noProfiles')}</p>
