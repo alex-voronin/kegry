@@ -192,11 +192,11 @@ function FeedFooter({
       </button>
       <button className={styles.actionPrimary} onClick={onInvite}>
         <Image
-          className="pointer-events-none"
-          src="/assets/feed/invite-icon.png"
+          className="pointer-events-none translate-x-[2px]"
+          src="/assets/feed/invite-icon.webp"
           alt="invite"
-          width={40}
-          height={42}
+          width={35}
+          height={49}
           priority
         />
       </button>
@@ -358,7 +358,7 @@ export default function FeedScreen() {
         ) : (
           <div className={styles.emptyState}>
             <Image
-              src="/assets/feed/no-profiles-placeholder.png"
+              src="/assets/feed/no-profiles-placeholder.webp"
               alt="no profiles"
               width={200}
               height={200}
