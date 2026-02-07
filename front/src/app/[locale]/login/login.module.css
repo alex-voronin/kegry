@@ -8,9 +8,8 @@
   @apply relative flex w-full max-w-[500px] flex-col gap-8 p-8 sm:h-auto;
 }
 
-/* Logo styles moved to src/components/common/Logo.module.css */
 .formSection {
-  @apply mt-12 flex w-full flex-col gap-8 px-2;
+  @apply mt-6 flex w-full flex-col gap-8 px-2;
 }
 
 .error {
@@ -35,6 +34,14 @@
 
 .signInButton {
   @apply m-auto w-[202px];
+}
+
+.legalText {
+  @apply text-secondary -mt-4 text-center text-sm;
+}
+
+.legalLink {
+  @apply text-primary hover:underline;
 }
 
 .footer {

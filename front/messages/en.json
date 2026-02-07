@@ -70,6 +70,9 @@
         "passwordRequired": "Password is required",
         "passwordShort": "Password must be at least 10 characters",
         "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+      },
+      "legal": {
+        "text": "By signing in to HoplingsHere, you confirm that you are 18 or older and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
       }
     },
     "forgot": {

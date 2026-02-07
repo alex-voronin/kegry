@@ -160,6 +160,27 @@ export default function LoginPage() {
             >
               {t('signIn')}
             </Button>
+
+            <div className={styles.legalText}>
+              {t.rich('legal.text', {
+                terms: (chunks) => (
+                  <Link
+                    href={PAGE_ROUTES.LEGAL.TERMS}
+                    className={styles.legalLink}
+                  >
+                    {chunks}
+                  </Link>
+                ),
+                privacy: (chunks) => (
+                  <Link
+                    href={PAGE_ROUTES.LEGAL.PRIVACY}
+                    className={styles.legalLink}
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
+            </div>
           </form>
 
           <div className={styles.footer}>
