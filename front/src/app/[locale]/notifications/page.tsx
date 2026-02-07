@@ -73,7 +73,7 @@ export default function NotificationsScreen() {
 
     if (!isNotificationExpired(notif.createdAt) && notif.fromUserId) {
       options.push({
-        icon: '/assets/notifications/accept-icon.png',
+        icon: '/assets/notifications/accept-icon.webp',
         label: t('menu.accept'),
         onClick: () => {
           handleAccept(notif);
@@ -165,7 +165,7 @@ export default function NotificationsScreen() {
                   <div className={styles.notificationItemRight}>
                     {!expired && notif.fromUserId && (
                       <Icon
-                        src="/assets/notifications/accept-icon.png"
+                        src="/assets/notifications/accept-icon.webp"
                         alt="accept"
                         width={24}
                         height={24}

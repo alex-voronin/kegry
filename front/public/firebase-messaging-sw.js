@@ -12,6 +12,7 @@ importScripts(
 firebase.initializeApp(self.firebaseConfig);
 const messaging = firebase.messaging();
 
+// TODO: replace with enum from fcm/types.ts after moving to modular firebase SDK
 const MessageType = {
   FCM_MESSAGE: 'FCM_MESSAGE',
   NOTIFICATION_CLICK: 'NOTIFICATION_CLICK',
@@ -59,7 +60,8 @@ messaging.onBackgroundMessage(async (payload) => {
       notification.title ?? 'Hoppyfy.me',
       {
         body: notification.body ?? '',
-        icon: notification.icon ?? '/assets/logo.png',
+        icon:
+          notification.icon ?? '/assets/notifications/notification-logo.webp',
         tag: `hoppyfy-${messageId}`,
         data: payload,
       },

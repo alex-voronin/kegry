@@ -53,7 +53,9 @@ function FcmGlobalHandler() {
                 notification.title || 'Hoppyfy.me',
                 {
                   body: notification.body || '',
-                  icon: notification.icon || '/assets/logo.png',
+                  icon:
+                    notification.icon ||
+                    '/assets/notifications/notification-logo.webp',
                   data: payload,
                 },
               );
