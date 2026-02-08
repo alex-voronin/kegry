@@ -6,6 +6,7 @@ import Script from 'next/script';
 import { useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { Button, ButtonVariant } from '@/components/ui/button';
+import { Eye, EyeOff } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import { useGoogleSignIn } from '@/lib/auth/use-google-sign-in';
@@ -24,6 +25,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const signin = useAuthStore((state) => state.signin);
   const signinWithGoogle = useAuthStore((state) => state.signinWithGoogle);
 
@@ -132,13 +134,23 @@ export default function LoginPage() {
             </div>
 
             <div className={styles.passwordWrapper}>
-              <Input
-                type="password"
-                placeholder={t('password')}
-                className={styles.inputCredentials}
-                disabled={loading}
-                {...register('password')}
-              />
+              <div className={styles.passwordInputWrapper}>
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder={t('password')}
+                  className={styles.inputCredentials}
+                  disabled={loading}
+                  {...register('password')}
+                />
+                <button
+                  type="button"
+                  className={styles.eyeButton}
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
               <Link
                 href={PAGE_ROUTES.FORGOT_PASSWORD}
                 className={styles.forgotLink}
