@@ -6,7 +6,7 @@ interface NewsData {
 }
 
 interface NewsStore {
-  data: NewsData | null;
+  data: NewsData[] | null;
   isLoading: boolean;
   error: string | null;
   fetchNews: () => Promise<void>;
@@ -25,9 +25,9 @@ export const useNewsStore = create<NewsStore>((set, get) => ({
       const res = await fetch('/news.json');
       const data = await res.json();
 
-      if (data && data.date && data.content) {
+      if (Array.isArray(data)) {
         set({
-          data: { date: data.date, content: data.content },
+          data: data,
           isLoading: false,
         });
       } else {

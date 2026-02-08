@@ -152,17 +152,16 @@
 }
 
 /* ===== Mobile Poll Card ===== */
+.mobileNewsList {
+  @apply flex flex-col gap-2;
+}
+
+.mobileNewsItem {
+  @apply flex items-start gap-4 text-base;
+}
+
 .mobilePollCard {
   @apply mt-4 flex flex-col items-center justify-between p-6;
-}
-
-.pollButton {
-  @apply mt-4 w-fit rounded-md px-6 py-2 text-sm font-semibold text-black transition-colors;
-  background-color: var(--color-landing-button);
-}
-
-.pollButton:hover {
-  opacity: 0.9;
 }
 
 /* ===== Mobile How It Works ===== */

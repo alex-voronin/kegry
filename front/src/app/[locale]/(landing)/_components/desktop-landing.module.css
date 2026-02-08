@@ -109,11 +109,15 @@
 }
 
 .newsCard {
-  @apply flex flex-1 flex-col gap-4 p-8;
+  @apply flex flex-1 flex-col p-8;
+}
+
+.newsList {
+  @apply flex flex-col gap-4;
 }
 
 .newsItem {
-  @apply mb-2 flex items-start gap-4 text-lg;
+  @apply flex items-start gap-4 text-lg;
 }
 
 .newsDate {

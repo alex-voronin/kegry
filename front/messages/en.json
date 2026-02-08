@@ -16,14 +16,12 @@
           "pollsNews": "News & Polls",
           "howItWorks": "How It Works",
           "contactUs": "Contact Us",
-          "login": "Sign In/Sign Up",
-          "loginMobile": "Log In"
+          "login": "Sign In/Sign Up"
         }
       },
       "cheers": {
         "title": "Find your bar buddy right now!",
         "description": "Up for a drink and good company? No dating. No endless chats. Check a profile, send an invite, arrange a meeting, and there you go, you're at the bar! Talk about life, laugh, vent and keep your head up. If any hoplings appear, maybe it's time to slow down a bit 🥴",
-        "mobileDescription": "Up for a drink and good company? No dating. No endless chats. Check a profile, send an invite, and meet at a bar. 🍺",
         "cta": "Ready?"
       },
       "pollsNews": {
@@ -34,12 +32,9 @@
       },
       "howItWorks": {
         "title": "How It Works",
-        "step1": "1. Browse users and invite them",
-        "step2": "2. Chat and plan",
-        "step3": "3. Meet and enjoy",
-        "mobileStep1": "1. Browse & Invite",
-        "mobileStep2": "2. Chat & Plan",
-        "mobileStep3": "3. Meet & Enjoy",
+        "step1": "1. Browse & Invite",
+        "step2": "2. Chat & Plan",
+        "step3": "3. Meet & Enjoy",
         "note": "Hey adventurer! Just a heads-up: invites expire in 2 days. You can have only one chat at a time and 30 messages per chat, so choose wisely. Invite buddies only if you're really ready for a bar adventure and hurry before the hoplings drink all the beer!"
       },
       "contactUs": {

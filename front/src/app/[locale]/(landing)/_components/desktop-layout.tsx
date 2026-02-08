@@ -110,19 +110,20 @@ export default function DesktopLayout() {
 
         <div className={`${styles.card} ${styles.newsCard}`}>
           <h2 className={styles.cardTitle}>{t('pollsNews.newsTitle')}</h2>
-          <div className={styles.newsItem}>
-            {newsData && (
-              <>
-                <span className={styles.newsDate}>
-                  {new Date(newsData.date).toLocaleDateString(undefined, {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                  })}
-                </span>
-                <span>{newsData.content}</span>
-              </>
-            )}
+          <div className={styles.newsList}>
+            {newsData &&
+              newsData.map((news, index) => (
+                <div key={index} className={styles.newsItem}>
+                  <span className={styles.newsDate}>
+                    {new Date(news.date).toLocaleDateString(undefined, {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                    })}
+                  </span>
+                  <span>{news.content}</span>
+                </div>
+              ))}
           </div>
         </div>
 

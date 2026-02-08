@@ -177,19 +177,20 @@ export default function MobileLayout() {
           <h2 className={mobileStyles.mobileCardTitle}>
             {t('pollsNews.newsTitle')}
           </h2>
-          <div className={styles.newsItem}>
-            {newsData && (
-              <>
-                <span className={styles.newsDate}>
-                  {new Date(newsData.date).toLocaleDateString(undefined, {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                  })}
-                </span>
-                <span>{newsData.content}</span>
-              </>
-            )}
+          <div className={mobileStyles.mobileNewsList}>
+            {newsData &&
+              newsData.map((news, index) => (
+                <div key={index} className={mobileStyles.mobileNewsItem}>
+                  <span className={styles.newsDate}>
+                    {new Date(news.date).toLocaleDateString(undefined, {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                    })}
+                  </span>
+                  <span>{news.content}</span>
+                </div>
+              ))}
           </div>
         </div>
         <div className={`${styles.card} ${mobileStyles.mobilePollCard}`}>
@@ -201,7 +202,7 @@ export default function MobileLayout() {
             href="https://tally.so/r/obGVDN"
             target="_blank"
             rel="noopener noreferrer"
-            className={mobileStyles.pollButton}
+            className={styles.pollButton}
           >
             {t('pollsNews.pollButton')}
           </a>
@@ -226,7 +227,7 @@ export default function MobileLayout() {
           <div className={mobileStyles.mobileSteps}>
             <div className={mobileStyles.mobileStep}>
               <p className={mobileStyles.mobileStepTitle}>
-                {t('howItWorks.mobileStep1')}
+                {t('howItWorks.step1')}
               </p>
               <Image
                 src="/assets/landing/step-1.webp"
@@ -238,7 +239,7 @@ export default function MobileLayout() {
             </div>
             <div className={mobileStyles.mobileStep}>
               <p className={mobileStyles.mobileStepTitle}>
-                {t('howItWorks.mobileStep2')}
+                {t('howItWorks.step2')}
               </p>
               <Image
                 src="/assets/landing/step-2.webp"
@@ -250,7 +251,7 @@ export default function MobileLayout() {
             </div>
             <div className={mobileStyles.mobileStep}>
               <p className={mobileStyles.mobileStepTitle}>
-                {t('howItWorks.mobileStep3')}
+                {t('howItWorks.step3')}
               </p>
               <Image
                 src="/assets/landing/step-3.webp"
