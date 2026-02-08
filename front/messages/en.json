@@ -63,18 +63,35 @@
       "password": "Password",
       "forgot": "Forgot?",
       "signIn": "Sign In",
+      "switchToRegister": "New here? Sign Up",
       "orContinueWith": "Or continue with",
       "google": "Google",
-      "facebook": "Facebook",
       "errors": {
         "emailRequired": "Email is required",
         "emailInvalid": "Invalid email address",
         "passwordRequired": "Password is required",
         "passwordShort": "Password must be at least 10 characters",
         "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+      }
+    },
+    "register": {
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "signUp": "Sign Up",
+      "switchToLogin": "Have an account? Sign In",
+      "orContinueWith": "Or continue with",
+      "google": "Google",
+      "errors": {
+        "emailRequired": "Email is required",
+        "emailInvalid": "Invalid email address",
+        "passwordRequired": "Password is required",
+        "passwordShort": "Password must be at least 10 characters",
+        "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+        "passwordMismatch": "Passwords do not match"
       },
       "legal": {
-        "text": "By signing in to HoplingsHere, you confirm that you are <age>18 or older</age> and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+        "text": "By signing up to HoplingsHere, you confirm that you are <age>18 or older</age> and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
       }
     },
     "forgot": {

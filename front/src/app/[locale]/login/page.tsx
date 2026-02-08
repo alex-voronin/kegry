@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import Script from 'next/script';
 import { useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
@@ -120,7 +119,7 @@ export default function LoginPage() {
             onSubmit={handleSubmit(onSubmit)}
             className={styles.formSection}
           >
-            <div>
+            <div className={styles.inputWrapper}>
               <Input
                 type="email"
                 placeholder={t('email')}
@@ -150,13 +149,13 @@ export default function LoginPage() {
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
+                <Link
+                  href={PAGE_ROUTES.FORGOT_PASSWORD}
+                  className={styles.forgotLink}
+                >
+                  {t('forgot')}
+                </Link>
               </div>
-              <Link
-                href={PAGE_ROUTES.FORGOT_PASSWORD}
-                className={styles.forgotLink}
-              >
-                {t('forgot')}
-              </Link>
               {errors.password && (
                 <div className={styles.fieldError}>
                   {errors.password.message}
@@ -164,42 +163,18 @@ export default function LoginPage() {
               )}
             </div>
 
-            <Button
-              variant={ButtonVariant.Default}
-              className={styles.signInButton}
-              type="submit"
-              loading={loading}
-            >
-              {t('signIn')}
-            </Button>
-
-            <div className={styles.legalText}>
-              {t.rich('legal.text', {
-                age: (chunks) => (
-                  <Link
-                    href={PAGE_ROUTES.LEGAL.TERMS}
-                    className={styles.legalLink}
-                  >
-                    {chunks}
-                  </Link>
-                ),
-                terms: (chunks) => (
-                  <Link
-                    href={PAGE_ROUTES.LEGAL.TERMS}
-                    className={styles.legalLink}
-                  >
-                    {chunks}
-                  </Link>
-                ),
-                privacy: (chunks) => (
-                  <Link
-                    href={PAGE_ROUTES.LEGAL.PRIVACY}
-                    className={styles.legalLink}
-                  >
-                    {chunks}
-                  </Link>
-                ),
-              })}
+            <div className={styles.actionsRow}>
+              <Link href={PAGE_ROUTES.REGISTER} className={styles.toggleLink}>
+                {t('switchToRegister')}
+              </Link>
+              <Button
+                variant={ButtonVariant.Default}
+                className={styles.signInButton}
+                type="submit"
+                loading={loading}
+              >
+                {t('signIn')}
+              </Button>
             </div>
           </form>
 

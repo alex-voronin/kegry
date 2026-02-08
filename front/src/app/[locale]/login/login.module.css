@@ -1,11 +1,11 @@
 @reference "../../globals.css";
 
 .page {
-  @apply flex h-dvh min-h-screen items-center justify-center;
+  @apply flex min-h-dvh items-center justify-center pb-[10dvh];
 }
 
 .container {
-  @apply relative flex w-full max-w-[500px] flex-col gap-8 p-8 sm:h-auto;
+  @apply relative flex w-full max-w-[500px] flex-col gap-4 p-8 sm:h-auto;
 }
 
 .formSection {
@@ -17,7 +17,11 @@
 }
 
 .fieldError {
-  @apply text-error mt-1 text-sm;
+  @apply text-error absolute top-full left-0 mt-1 text-sm;
+}
+
+.inputWrapper {
+  @apply relative w-full;
 }
 
 .inputCredentials {
@@ -41,12 +45,29 @@
   color: var(--color-primary);
 }
 
+.eyeButtonRight {
+  @apply absolute top-1/2 right-0 -translate-y-1/2 cursor-pointer bg-transparent p-1;
+  color: var(--color-secondary);
+}
+
+.eyeButtonRight:hover {
+  color: var(--color-primary);
+}
+
 .forgotLink {
   @apply text-primary pointer-events-auto absolute top-1/2 right-0 z-10 -translate-y-1/2 text-sm font-semibold hover:underline;
 }
 
 .signInButton {
-  @apply m-auto w-[202px];
+  @apply px-8;
+}
+
+.actionsRow {
+  @apply flex flex-row items-center justify-between gap-4;
+}
+
+.toggleLink {
+  @apply text-primary cursor-pointer bg-transparent text-sm font-medium hover:underline;
 }
 
 .legalText {

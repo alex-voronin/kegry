@@ -65,6 +65,7 @@ interface AuthState {
   setHasHydrated: (hydrated: boolean) => void;
 
   signin: (email: string, password: string) => Promise<AuthResponse>;
+  signup: (email: string, password: string) => Promise<AuthResponse>;
   signinWithGoogle: (idToken: string) => Promise<AuthResponse>;
   confirmEmail: (userId: string, token: string) => Promise<AuthResponse>;
   logout: () => Promise<void>;
@@ -105,7 +106,6 @@ export const useAuthStore = create<AuthState>()(
 
       signin: async (email, password) => {
         try {
-          // 1. Try to sign in
           const signinRes = await axios.post<ApiResult<SigninResponse>>(
             API_ENDPOINTS.AUTH.SIGNIN,
             { email, password },
@@ -117,30 +117,40 @@ export const useAuthStore = create<AuthState>()(
 
           const { isSignupRequired, auth } = signinRes.data.result;
 
-          if (!isSignupRequired && auth) {
-            get().setAuth(auth);
-            return auth;
-          }
-
-          // 2. If signup is required, try to sign up
           if (isSignupRequired) {
-            const signupRes = await axios.post<ApiResult<AuthResponse>>(
-              API_ENDPOINTS.AUTH.SIGNUP,
-              { email, password },
-            );
-
-            if (!signupRes.data.success) {
-              throw new Error(
-                signupRes.data.errors[0]?.error || 'Signup failed',
-              );
-            }
-
-            const signupAuth = signupRes.data.result;
-            get().setAuth(signupAuth);
-            return signupAuth;
+            throw new Error('Account not found. Please sign up first.');
           }
 
-          throw new Error('Unexpected auth state');
+          if (!auth) {
+            throw new Error('Unexpected auth state');
+          }
+
+          get().setAuth(auth);
+          return auth;
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            const msg =
+              error.response?.data?.errors?.[0]?.error || error.message;
+            throw new Error(msg);
+          }
+          throw error;
+        }
+      },
+
+      signup: async (email, password) => {
+        try {
+          const signupRes = await axios.post<ApiResult<AuthResponse>>(
+            API_ENDPOINTS.AUTH.SIGNUP,
+            { email, password },
+          );
+
+          if (!signupRes.data.success) {
+            throw new Error(signupRes.data.errors[0]?.error || 'Signup failed');
+          }
+
+          const auth = signupRes.data.result;
+          get().setAuth(auth);
+          return auth;
         } catch (error) {
           if (axios.isAxiosError(error)) {
             const msg =

@@ -1,6 +1,7 @@
 export const PAGE_ROUTES = {
   HOME: '/',
   LOGIN: '/login',
+  REGISTER: '/register',
   FORGOT_PASSWORD: '/forgot',
   VERIFY_EMAIL: '/verify-email',
   PASSWORD_RESET: '/password-reset',
