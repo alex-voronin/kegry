@@ -177,25 +177,18 @@ export default function MobileLayout() {
           </div>
         </div>
         <div className={`${styles.card} ${mobileStyles.mobilePollCard}`}>
-          <iframe
-            data-tally-src="https://tally.so/embed/obGVDN?alignLeft=1&hideTitle=0&transparentBackground=1&dynamicHeight=1"
-            loading="lazy"
-            width="100%"
-            height="300"
-            frameBorder="0"
-            title="Poll"
-          ></iframe>
-          <Script
-            src="https://tally.so/widgets/embed.js"
-            strategy="lazyOnload"
-            onLoad={() => {
-              // @ts-ignore
-              if (typeof Tally !== 'undefined') {
-                // @ts-ignore
-                Tally.loadEmbeds();
-              }
-            }}
-          />
+          <h2 className={styles.cardTitle}>{t('pollsNews.pollTitle')}</h2>
+          <p className={mobileStyles.mobileCardDescription}>
+            {t('pollsNews.pollDescription')}
+          </p>
+          <a
+            href="https://tally.so/r/obGVDN"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={mobileStyles.pollButton}
+          >
+            {t('pollsNews.pollButton')}
+          </a>
         </div>
       </section>
 

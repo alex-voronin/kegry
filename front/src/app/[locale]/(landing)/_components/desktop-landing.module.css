@@ -92,15 +92,24 @@
 
 /* ===== Polls & News Section ===== */
 .pollsNewsSection {
-  @apply flex scroll-mt-[100px] items-center gap-8 px-16;
+  @apply flex scroll-mt-[100px] items-stretch gap-8 px-16;
 }
 
 .pollCard {
-  @apply h-[300px] flex-1 overflow-y-auto p-4 px-8;
+  @apply flex flex-1 flex-col justify-between p-8;
+}
+
+.pollButton {
+  @apply m-auto mt-4 w-fit rounded-md px-6 py-2 text-sm font-semibold text-black transition-colors;
+  background-color: var(--color-landing-button);
+}
+
+.pollButton:hover {
+  opacity: 0.9;
 }
 
 .newsCard {
-  @apply h-[300px] flex-1;
+  @apply flex flex-1 flex-col gap-4 p-8;
 }
 
 .newsItem {

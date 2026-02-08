@@ -114,7 +114,7 @@
 
 /* ===== Mobile Sections ===== */
 .mobileSection {
-  @apply flex flex-col items-center px-4 py-6;
+  @apply mx-auto flex max-w-[600px] flex-col items-center px-4 py-6;
 }
 
 .mobileSection:first-of-type {
@@ -153,7 +153,16 @@
 
 /* ===== Mobile Poll Card ===== */
 .mobilePollCard {
-  @apply mt-4 w-full overflow-hidden rounded-xl p-4;
+  @apply mt-4 flex flex-col items-center justify-between p-6;
+}
+
+.pollButton {
+  @apply mt-4 w-fit rounded-md px-6 py-2 text-sm font-semibold text-black transition-colors;
+  background-color: var(--color-landing-button);
+}
+
+.pollButton:hover {
+  opacity: 0.9;
 }
 
 /* ===== Mobile How It Works ===== */
