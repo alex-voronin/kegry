@@ -1,10 +1,12 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Script from 'next/script';
 import { useTranslations } from 'next-intl';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { useNewsStore } from '../store/use-news-store';
 import styles from './desktop-landing.module.css';
 
 export default function DesktopLayout() {
@@ -16,6 +18,11 @@ export default function DesktopLayout() {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
+  const { data: newsData, fetchNews } = useNewsStore();
+
+  useEffect(() => {
+    fetchNews();
+  }, [fetchNews]);
 
   return (
     <div className={styles.wrapper}>
@@ -104,8 +111,18 @@ export default function DesktopLayout() {
         <div className={`${styles.card} ${styles.newsCard}`}>
           <h2 className={styles.cardTitle}>{t('pollsNews.newsTitle')}</h2>
           <div className={styles.newsItem}>
-            <span className={styles.newsDate}>20/02/2026</span>
-            <span>{t('pollsNews.newsItem1')}</span>
+            {newsData && (
+              <>
+                <span className={styles.newsDate}>
+                  {new Date(newsData.date).toLocaleDateString(undefined, {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                  })}
+                </span>
+                <span>{newsData.content}</span>
+              </>
+            )}
           </div>
         </div>
 

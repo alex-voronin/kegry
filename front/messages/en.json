@@ -28,7 +28,6 @@
       },
       "pollsNews": {
         "newsTitle": "News",
-        "newsItem1": "We've started open beta! 🎉",
         "pollTitle": "Next Feature Poll",
         "pollDescription": "We value every member of our community! If you have ideas or want to help us make things even better, please vote for the feature you'd most like to see next.",
         "pollButton": "Take the poll"

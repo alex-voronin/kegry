@@ -1,18 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Script from 'next/script';
 import { useTranslations } from 'next-intl';
 import { Menu, X } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { useNewsStore } from '../store/use-news-store';
 import styles from './desktop-landing.module.css';
 import mobileStyles from './mobile-landing.module.css';
 
 export default function MobileLayout() {
   const t = useTranslations('screens.landing');
+  const { data: newsData, fetchNews } = useNewsStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    fetchNews();
+  }, [fetchNews]);
 
   const scrollToSection = (sectionId: string) => {
     setIsMenuOpen(false);
@@ -172,8 +178,18 @@ export default function MobileLayout() {
             {t('pollsNews.newsTitle')}
           </h2>
           <div className={styles.newsItem}>
-            <span className={styles.newsDate}>20/02/2026</span>
-            <span>{t('pollsNews.newsItem1')}</span>
+            {newsData && (
+              <>
+                <span className={styles.newsDate}>
+                  {new Date(newsData.date).toLocaleDateString(undefined, {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                  })}
+                </span>
+                <span>{newsData.content}</span>
+              </>
+            )}
           </div>
         </div>
         <div className={`${styles.card} ${mobileStyles.mobilePollCard}`}>
