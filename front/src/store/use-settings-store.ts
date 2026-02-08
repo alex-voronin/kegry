@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import axios from 'axios';
+import apiClient from '@/lib/api-client';
 import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -40,10 +40,10 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     set({ isLoading: true });
     try {
       const [feedSettingsRes, notifSettingsRes] = await Promise.all([
-        axios.get<ApiResult<{ settings: { distanceUnits: DistanceUnits } }>>(
+        apiClient.get<ApiResult<{ settings: { distanceUnits: DistanceUnits } }>>(
           API_ENDPOINTS.FEED.SETTINGS,
         ),
-        axios.get<
+        apiClient.get<
           ApiResult<{ pushesEnabled: boolean; emailsEnabled: boolean }>
         >(API_ENDPOINTS.NOTIFICATIONS.SETTINGS),
       ]);
@@ -91,10 +91,10 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 
       const promises = [];
 
-      promises.push(axios.put(API_ENDPOINTS.FEED.SETTINGS, { distanceUnits }));
+      promises.push(apiClient.put(API_ENDPOINTS.FEED.SETTINGS, { distanceUnits }));
 
       promises.push(
-        axios.put(API_ENDPOINTS.NOTIFICATIONS.SETTINGS, {
+        apiClient.put(API_ENDPOINTS.NOTIFICATIONS.SETTINGS, {
           pushesEnabled,
           emailsEnabled,
         }),

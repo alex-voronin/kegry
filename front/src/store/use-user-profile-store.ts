@@ -2,7 +2,8 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import axios from 'axios';
+import apiClient from '@/lib/api-client';
+import { handleApiError } from '@/lib/api-error';
 import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -106,7 +107,7 @@ export const useUserProfileStore = create<UserProfileState>()(
       fetchMyProfile: async () => {
         set({ isLoading: true, error: null });
         try {
-          const response = await axios.get<
+          const response = await apiClient.get<
             ApiResult<{ userProfile: UserProfileDto }>
           >(API_ENDPOINTS.USER_PROFILE.PROFILE);
 
@@ -130,7 +131,7 @@ export const useUserProfileStore = create<UserProfileState>()(
 
       fetchUserProfile: async (userId: string) => {
         try {
-          const response = await axios.get<
+          const response = await apiClient.get<
             ApiResult<{ userProfile: UserProfileDto }>
           >(`${API_ENDPOINTS.USER_PROFILE.PROFILE}?id=${userId}`);
 
@@ -149,7 +150,7 @@ export const useUserProfileStore = create<UserProfileState>()(
 
       patchProfile: async (data: Partial<PatchProfileRequest>) => {
         try {
-          const response = await axios.patch<ApiResult<void>>(
+          const response = await apiClient.patch<ApiResult<void>>(
             API_ENDPOINTS.USER_PROFILE.PROFILE,
             data,
           );
@@ -163,9 +164,7 @@ export const useUserProfileStore = create<UserProfileState>()(
           // Refresh profile after update
           await get().fetchMyProfile();
         } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : 'Failed to update profile';
-          throw new Error(errorMessage);
+          handleApiError(error, 'Failed to update profile');
         }
       },
 

@@ -14,7 +14,7 @@ import {
 } from '@/store/use-user-profile-store';
 import { uploadImage } from '@/lib/image-utils';
 import { API_ENDPOINTS, PAGE_ROUTES } from '@/lib/routes';
-import axios from 'axios';
+import apiClient from '@/lib/api-client';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
@@ -74,7 +74,7 @@ export default function CoverPage() {
         API_ENDPOINTS.USER_PROFILE.COVER_UPLOAD_URL,
       );
 
-      await axios.post(API_ENDPOINTS.USER_PROFILE.PROFILE, {
+      await apiClient.post(API_ENDPOINTS.USER_PROFILE.PROFILE, {
         firstName,
         lastName,
         bio,

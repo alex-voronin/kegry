@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import axios from 'axios';
+import apiClient from '@/lib/api-client';
 import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -62,7 +62,7 @@ export const useFeedFiltersStore = create<FeedFiltersState>()(
         }
 
         try {
-          const response = await axios.get<ApiResult<GetFilterResponse>>(
+          const response = await apiClient.get<ApiResult<GetFilterResponse>>(
             API_ENDPOINTS.FEED.FILTER,
           );
 
@@ -87,7 +87,7 @@ export const useFeedFiltersStore = create<FeedFiltersState>()(
       updateFilters: async (filters: FilterDto) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await axios.put<ApiResult<void>>(
+          const response = await apiClient.put<ApiResult<void>>(
             API_ENDPOINTS.FEED.FILTER,
             { filter: filters },
           );

@@ -1,7 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import axios from 'axios';
+import apiClient from '@/lib/api-client';
 import { ApiResult, PaginatedResponse } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -45,7 +45,7 @@ export const useNotificationsStore = create<NotificationsState>()(
     fetchNotifications: async (offset = 0, limit = DEFAULT_LIMIT) => {
       set({ isLoading: true, error: null });
       try {
-        const response = await axios.get<
+        const response = await apiClient.get<
           ApiResult<PaginatedResponse<NotificationDto>>
         >(
           `${API_ENDPOINTS.NOTIFICATIONS.LIST}?offset=${offset}&limit=${limit}`,
@@ -84,15 +84,15 @@ export const useNotificationsStore = create<NotificationsState>()(
     },
 
     acceptInvite: async (userId: string, notificationId: string) => {
-      await axios.post(API_ENDPOINTS.FEED.INVITE(userId));
+      await apiClient.post(API_ENDPOINTS.FEED.INVITE(userId));
     },
 
     ignoreInvite: async (userId: string, notificationId: string) => {
-      await axios.post(API_ENDPOINTS.FEED.IGNORE(userId));
+      await apiClient.post(API_ENDPOINTS.FEED.IGNORE(userId));
     },
 
     blockUser: async (userId: string, notificationId: string) => {
-      await axios.post(API_ENDPOINTS.FEED.BLOCK(userId));
+      await apiClient.post(API_ENDPOINTS.FEED.BLOCK(userId));
     },
 
     reset: () => set(initialState),

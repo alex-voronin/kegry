@@ -1,7 +1,8 @@
 'use client';
 
 import { create } from 'zustand';
-import axios from 'axios';
+import apiClient from '@/lib/api-client';
+import { handleApiError } from '@/lib/api-error';
 import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -57,7 +58,7 @@ export const useChatStore = create<ChatState>()((set, get) => ({
   fetchChat: async () => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.get<ApiResult<ChatDto>>(
+      const response = await apiClient.get<ApiResult<ChatDto>>(
         API_ENDPOINTS.CHAT.GET,
       );
 
@@ -77,7 +78,7 @@ export const useChatStore = create<ChatState>()((set, get) => ({
 
   refreshChat: async () => {
     try {
-      const response = await axios.get<ApiResult<ChatDto>>(
+      const response = await apiClient.get<ApiResult<ChatDto>>(
         API_ENDPOINTS.CHAT.GET,
       );
 
@@ -93,7 +94,9 @@ export const useChatStore = create<ChatState>()((set, get) => ({
 
   sendMessage: async (text: string) => {
     try {
-      await axios.post(API_ENDPOINTS.CHAT.SEND_MESSAGE, { messageText: text });
+      await apiClient.post(API_ENDPOINTS.CHAT.SEND_MESSAGE, {
+        messageText: text,
+      });
 
       const chat = get().chat;
       if (chat) {
@@ -111,9 +114,7 @@ export const useChatStore = create<ChatState>()((set, get) => ({
         });
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to send message';
-      throw new Error(errorMessage);
+      handleApiError(error, 'Failed to send message');
     }
   },
 
@@ -133,12 +134,10 @@ export const useChatStore = create<ChatState>()((set, get) => ({
 
   deleteChat: async () => {
     try {
-      await axios.delete(API_ENDPOINTS.CHAT.DELETE);
+      await apiClient.delete(API_ENDPOINTS.CHAT.DELETE);
       set({ chat: null });
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to end meeting';
-      throw new Error(errorMessage);
+      handleApiError(error, 'Failed to end meeting');
     }
   },
 

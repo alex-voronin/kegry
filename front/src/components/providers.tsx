@@ -2,7 +2,7 @@
 
 import { ReactNode, useEffect, useCallback } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
-import axios from 'axios';
+import apiClient from '@/lib/api-client';
 import { useRouter } from '@/i18n/routing';
 import { useBackgroundLocation } from '@/lib/use-background-location';
 import { useFcm } from '@/lib/fcm/use-fcm';
@@ -94,13 +94,13 @@ function FcmGlobalHandler() {
     // Register API callbacks
     setApiCallbacks({
       onTokenRegister: async (deviceId, fcmToken) => {
-        await axios.post(API_ENDPOINTS.NOTIFICATIONS.FCM_TOKEN, {
+        await apiClient.post(API_ENDPOINTS.NOTIFICATIONS.FCM_TOKEN, {
           deviceId,
           fcmToken,
         });
       },
       onTokenUnregister: async (deviceId) => {
-        await axios.delete(API_ENDPOINTS.NOTIFICATIONS.FCM_TOKEN, {
+        await apiClient.delete(API_ENDPOINTS.NOTIFICATIONS.FCM_TOKEN, {
           params: { deviceId },
         });
       },

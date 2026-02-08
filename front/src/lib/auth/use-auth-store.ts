@@ -4,6 +4,10 @@ import { create } from 'zustand';
 import axios from 'axios';
 import { persist } from 'zustand/middleware';
 import { API_ENDPOINTS, PAGE_ROUTES } from '../routes';
+import { handleApiError } from '../api-error';
+
+// Note: Auth endpoints use raw axios to avoid token interceptor issues during login/signup.
+// For other API calls, use apiClient from '../api-client' for automatic token handling and retries.
 
 // --- Types ---
 
@@ -128,12 +132,7 @@ export const useAuthStore = create<AuthState>()(
           get().setAuth(auth);
           return auth;
         } catch (error) {
-          if (axios.isAxiosError(error)) {
-            const msg =
-              error.response?.data?.errors?.[0]?.error || error.message;
-            throw new Error(msg);
-          }
-          throw error;
+          handleApiError(error, 'Signin failed');
         }
       },
 
@@ -152,12 +151,7 @@ export const useAuthStore = create<AuthState>()(
           get().setAuth(auth);
           return auth;
         } catch (error) {
-          if (axios.isAxiosError(error)) {
-            const msg =
-              error.response?.data?.errors?.[0]?.error || error.message;
-            throw new Error(msg);
-          }
-          throw error;
+          handleApiError(error, 'Signup failed');
         }
       },
 
@@ -178,12 +172,7 @@ export const useAuthStore = create<AuthState>()(
           get().setAuth(auth);
           return auth;
         } catch (error) {
-          if (axios.isAxiosError(error)) {
-            const msg =
-              error.response?.data?.errors?.[0]?.error || error.message;
-            throw new Error(msg);
-          }
-          throw error;
+          handleApiError(error, 'Google sign-in failed');
         }
       },
 
@@ -203,12 +192,7 @@ export const useAuthStore = create<AuthState>()(
           get().setAuth(res.data.result);
           return res.data.result;
         } catch (error) {
-          if (axios.isAxiosError(error)) {
-            const msg =
-              error.response?.data?.errors?.[0]?.error || error.message;
-            throw new Error(msg);
-          }
-          throw error;
+          handleApiError(error, 'Email confirmation failed');
         }
       },
 
@@ -237,12 +221,7 @@ export const useAuthStore = create<AuthState>()(
             throw new Error(error?.error || 'Password reset request failed');
           }
         } catch (error) {
-          if (axios.isAxiosError(error)) {
-            const apiError = error.response?.data?.errors?.[0];
-            const msg = apiError?.error || error.message;
-            throw new Error(msg);
-          }
-          throw error;
+          handleApiError(error, 'Password reset request failed');
         }
       },
 
@@ -262,12 +241,7 @@ export const useAuthStore = create<AuthState>()(
             throw new Error(error?.error || 'Password reset failed');
           }
         } catch (error) {
-          if (axios.isAxiosError(error)) {
-            const apiError = error.response?.data?.errors?.[0];
-            const msg = apiError?.error || error.message;
-            throw new Error(msg);
-          }
-          throw error;
+          handleApiError(error, 'Password reset failed');
         }
       },
     }),

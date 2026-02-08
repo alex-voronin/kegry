@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import axios from 'axios';
+import apiClient from '@/lib/api-client';
 import { ApiResult, PaginatedResponse } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -34,7 +34,7 @@ export const useBlockedUsersStore = create<BlockedUsersState>()((set, get) => ({
   fetchBlockedUsers: async (offset = 0, limit = DEFAULT_LIMIT) => {
     set({ isLoading: true });
     try {
-      const response = await axios.get<
+      const response = await apiClient.get<
         ApiResult<PaginatedResponse<BlockedUserDto>>
       >(`${API_ENDPOINTS.FEED.BLOCKED_USERS}?offset=${offset}&limit=${limit}`);
 
@@ -67,7 +67,7 @@ export const useBlockedUsersStore = create<BlockedUsersState>()((set, get) => ({
   unblockUser: async (userId: string) => {
     set({ isLoading: true });
     try {
-      await axios.post(API_ENDPOINTS.FEED.UNBLOCK(userId));
+      await apiClient.post(API_ENDPOINTS.FEED.UNBLOCK(userId));
 
       // Optimistic update
       set((state) => ({

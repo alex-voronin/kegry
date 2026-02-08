@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import axios from 'axios';
+import apiClient from '@/lib/api-client';
 import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -77,7 +77,7 @@ export const useHobbiesStore = create<HobbiesState>()(
         set({ isLoading: true, error: null });
 
         try {
-          const response = await axios.get<ApiResult<GetHobbyListResponse>>(
+          const response = await apiClient.get<ApiResult<GetHobbyListResponse>>(
             API_ENDPOINTS.HOBBIES.LIST,
           );
 

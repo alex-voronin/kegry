@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import axios from 'axios';
+import apiClient from '@/lib/api-client';
 import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -71,7 +71,7 @@ export const useFeedStore = create<FeedState>()(
 
       fetchFeedStatus: async () => {
         try {
-          const response = await axios.get<ApiResult<FeedStatusResponse>>(
+          const response = await apiClient.get<ApiResult<FeedStatusResponse>>(
             API_ENDPOINTS.FEED.STATUS,
           );
 
@@ -107,7 +107,7 @@ export const useFeedStore = create<FeedState>()(
         }
 
         try {
-          const response = await axios.get<
+          const response = await apiClient.get<
             ApiResult<{ feed: UserProfileDto[] }>
           >(API_ENDPOINTS.FEED.LIST);
 
@@ -162,7 +162,7 @@ export const useFeedStore = create<FeedState>()(
         }
 
         try {
-          const response = await axios.get<
+          const response = await apiClient.get<
             ApiResult<{ feed: UserProfileDto[] }>
           >(API_ENDPOINTS.FEED.LIST);
 
@@ -184,19 +184,19 @@ export const useFeedStore = create<FeedState>()(
       },
 
       inviteUser: async (userId: string) => {
-        await axios.post(API_ENDPOINTS.FEED.INVITE(userId));
+        await apiClient.post(API_ENDPOINTS.FEED.INVITE(userId));
         get().nextProfile();
         get().refreshFeedIfNeeded();
       },
 
       skipUser: async (userId: string) => {
-        await axios.post(API_ENDPOINTS.FEED.SKIP(userId));
+        await apiClient.post(API_ENDPOINTS.FEED.SKIP(userId));
         get().nextProfile();
         get().refreshFeedIfNeeded();
       },
 
       ignoreUser: async (userId: string) => {
-        await axios.post(API_ENDPOINTS.FEED.IGNORE(userId));
+        await apiClient.post(API_ENDPOINTS.FEED.IGNORE(userId));
         get().nextProfile();
         get().refreshFeedIfNeeded();
       },
@@ -214,7 +214,7 @@ export const useFeedStore = create<FeedState>()(
 
       fetchUnseenNotificationCount: async () => {
         try {
-          const response = await axios.get<ApiResult<number>>(
+          const response = await apiClient.get<ApiResult<number>>(
             API_ENDPOINTS.NOTIFICATIONS.UNSEEN_COUNT,
           );
 

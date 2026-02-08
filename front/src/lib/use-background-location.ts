@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import axios from 'axios';
+import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS } from '@/lib/routes';
 import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 
@@ -54,7 +54,7 @@ export function SendLocationWithRateLimit(): Promise<LocationResult> {
         // Double-check rate limit (could have been updated by another tab)
         if (!isRateLimited()) {
           try {
-            await axios.post(API_ENDPOINTS.LOCATION.UPDATE, {
+            await apiClient.post(API_ENDPOINTS.LOCATION.UPDATE, {
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
             });

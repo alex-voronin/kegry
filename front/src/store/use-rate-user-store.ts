@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import axios from 'axios';
+import apiClient from '@/lib/api-client';
 import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -40,7 +40,7 @@ export const useRateUserStore = create<RateUserState>((set) => ({
   fetchUserToRate: async (userId: string) => {
     set({ isLoading: true });
     try {
-      const response = await axios.get<
+      const response = await apiClient.get<
         ApiResult<{ userProfile: UserProfileDto }>
       >(`${API_ENDPOINTS.USER_PROFILE.PROFILE}/${userId}`);
 
@@ -57,7 +57,7 @@ export const useRateUserStore = create<RateUserState>((set) => ({
   submitRating: async (userId: string, rating: number) => {
     set({ isSubmitting: true });
     try {
-      await axios.post(API_ENDPOINTS.FEED.RATE(userId), {
+      await apiClient.post(API_ENDPOINTS.FEED.RATE(userId), {
         rating: rating,
       });
     } catch (error) {
