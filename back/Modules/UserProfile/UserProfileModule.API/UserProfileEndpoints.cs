@@ -58,7 +58,7 @@ public class UserProfileEndpoints : IEndpoints
         };
         await repository.AddAsync(profile, ct);
 
-        var @event = BuildUserChangedEvent(user, profile);
+        var @event = BuildUserChangedEvent(user, profile, true);
         await repository.PublishEventAsync(@event);
         await repository.SaveChangesAndFlushMessagesAsync(ct);
 
@@ -102,7 +102,7 @@ public class UserProfileEndpoints : IEndpoints
             userProfile.Hobbies = hobbyStubs;
         }
 
-        var @event = BuildUserChangedEvent(user, userProfile);
+        var @event = BuildUserChangedEvent(user, userProfile, false);
         await repository.PublishEventAsync(@event);
         await repository.SaveChangesAndFlushMessagesAsync(ct);
 
@@ -171,10 +171,11 @@ public class UserProfileEndpoints : IEndpoints
         );
     }
 
-    private static UserProfileChangedEvent BuildUserChangedEvent(ClaimsPrincipal user, User profile)
+    private static UserProfileChangedEvent BuildUserChangedEvent(ClaimsPrincipal user, User profile, bool isNewProfile)
     {
         return new UserProfileChangedEvent
         {
+            IsNewProfile = isNewProfile,
             UserId = user.GetId(),
             Email = user.GetEmail(),
             FirstName = profile.FirstName,

@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\UserProfile\UserProfileModule.Contracts\UserProfileModule.Contracts.csproj" />
       <ProjectReference Include="..\SecurityModule.Contracts\SecurityModule.Contracts.csproj" />
       <ProjectReference Include="..\SecurityModule.Infrastructure\SecurityModule.Infrastructure.csproj" />
       <ProjectReference Include="..\..\Shared\Shared.Core\Shared.Core.csproj" />
