@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import { Button } from '@/components/ui/button';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import styles from './how-it-works.module.css';
 
 const TOTAL_SLIDES = 3;
@@ -14,7 +15,7 @@ const DRAG_SENSITIVITY = 1.5;
 
 export default function HowItWorksPage() {
   const t = useTranslations('screens.howItWorks');
-
+  const { setRequiredAction } = useAuthStore();
   const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
@@ -26,6 +27,7 @@ export default function HowItWorksPage() {
     if (currentSlide < TOTAL_SLIDES - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
+      setRequiredAction(RequiredAction.None);
       router.push(PAGE_ROUTES.FEED);
     }
   };

@@ -82,6 +82,7 @@ interface AuthState {
 
   // Internal/Helper action to update tokens
   setAuth: (auth: AuthResponse) => void;
+  setRequiredAction: (action: RequiredAction) => void;
 }
 
 // --- Store ---
@@ -106,6 +107,10 @@ export const useAuthStore = create<AuthState>()(
           refreshToken: auth.refreshToken,
           requiredAction: auth.requiredAction,
         });
+      },
+
+      setRequiredAction: (action: RequiredAction) => {
+        set({ requiredAction: action });
       },
 
       signin: async (email, password) => {

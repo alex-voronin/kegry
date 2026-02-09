@@ -4,8 +4,6 @@ import { Button, ButtonVariant } from '@/components/ui/button';
 import { Header } from '@/components/ui/header';
 import { CoverSection } from '@/components/ui/profile-sections/cover-section';
 import { Link, useRouter } from '@/i18n/routing';
-import { ApiResult } from '@/lib/api-types';
-import { RequiredAction, useAuthStore } from '@/lib/auth/use-auth-store';
 import { cn } from '@/lib/utils';
 import { useHobbiesStore } from '@/store/use-hobbies-store';
 import {
@@ -39,8 +37,6 @@ export default function CoverPage() {
   } = useUserProfileStore();
 
   const { selectedHobbyIds, reset: resetHobbies } = useHobbiesStore();
-
-  const { setAuth, userId, accessToken, refreshToken } = useAuthStore();
 
   const handleContinue = async () => {
     setError(null);
@@ -83,13 +79,6 @@ export default function CoverPage() {
         birthday,
         gender: gender,
         hobbyIds: selectedHobbyIds,
-      });
-
-      setAuth({
-        userId: userId!,
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-        requiredAction: RequiredAction.None,
       });
 
       router.push(PAGE_ROUTES.HOW_IT_WORKS);
