@@ -3,6 +3,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
+import { rethrowApiError } from '@/lib/api-error';
 import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -30,7 +31,6 @@ interface FeedState {
   feed: UserProfileDto[];
   lastFetchedAt: number | null;
   isLoading: boolean;
-  error: string | null;
   hasHydrated: boolean;
   unseenNotificationCount: number;
   isInMeeting: boolean;
@@ -58,7 +58,6 @@ const initialState = {
   feed: [] as UserProfileDto[],
   lastFetchedAt: null as number | null,
   isLoading: false,
-  error: null as string | null,
   hasHydrated: false,
   unseenNotificationCount: 0,
   isInMeeting: false,
@@ -70,22 +69,19 @@ export const useFeedStore = create<FeedState>()(
       ...initialState,
 
       fetchFeedStatus: async () => {
-        try {
-          const response = await apiClient.get<ApiResult<FeedStatusResponse>>(
-            API_ENDPOINTS.FEED.STATUS,
+        const response = await apiClient.get<ApiResult<FeedStatusResponse>>(
+          API_ENDPOINTS.FEED.STATUS,
+        );
+
+        if (!response.data.success) {
+          rethrowApiError(
+            new Error(response.data.errors[0]?.error),
+            'Failed to fetch feed status',
           );
-
-          if (!response.data.success) {
-            throw new Error(
-              response.data.errors[0]?.error || 'Failed to fetch feed status',
-            );
-          }
-
-          set({ isInMeeting: response.data.result.isInMeeting });
-          return response.data.result;
-        } catch (error) {
-          throw error;
         }
+
+        set({ isInMeeting: response.data.result.isInMeeting });
+        return response.data.result;
       },
 
       fetchFeed: async () => {
@@ -103,7 +99,7 @@ export const useFeedStore = create<FeedState>()(
         const hasStaleData = state.feed.length > 0;
 
         if (!hasStaleData) {
-          set({ isLoading: true, error: null });
+          set({ isLoading: true });
         }
 
         try {
@@ -112,8 +108,10 @@ export const useFeedStore = create<FeedState>()(
           >(API_ENDPOINTS.FEED.LIST);
 
           if (!response.data.success) {
-            throw new Error(
-              response.data.errors[0]?.error || 'Failed to fetch feed',
+            set({ isLoading: false });
+            rethrowApiError(
+              new Error(response.data.errors[0]?.error),
+              'Failed to fetch feed',
             );
           }
 
@@ -142,7 +140,7 @@ export const useFeedStore = create<FeedState>()(
           }
         } catch (error) {
           set({ isLoading: false });
-          throw error;
+          rethrowApiError(error, 'Failed to fetch feed');
         }
       },
 
@@ -178,8 +176,8 @@ export const useFeedStore = create<FeedState>()(
             feed: [...state.feed, ...itemsToAdd],
             lastFetchedAt: now,
           });
-        } catch (error) {
-          console.log('Failed to refresh feed', error);
+        } catch {
+          // Silent failure for background refresh
         }
       },
 
@@ -220,14 +218,9 @@ export const useFeedStore = create<FeedState>()(
 
           if (response.data.success) {
             set({ unseenNotificationCount: response.data.result });
-          } else {
-            throw new Error(
-              response.data.errors[0]?.error ||
-                'Failed to fetch notification count',
-            );
           }
-        } catch (error) {
-          console.error('Failed to fetch unseen notification count:', error);
+        } catch {
+          // Silent failure for notification count
         }
       },
 

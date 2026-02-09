@@ -2,6 +2,7 @@
 
 import { create } from 'zustand';
 import apiClient from '@/lib/api-client';
+import { rethrowApiError } from '@/lib/api-error';
 import { ApiResult, PaginatedResponse } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -18,7 +19,6 @@ interface NotificationsState {
   notifications: NotificationDto[];
   totalCount: number;
   isLoading: boolean;
-  error: string | null;
   hasMore: boolean;
 
   fetchNotifications: (offset?: number, limit?: number) => Promise<void>;
@@ -34,7 +34,6 @@ const initialState = {
   notifications: [] as NotificationDto[],
   totalCount: 0,
   isLoading: false,
-  error: null as string | null,
   hasMore: true,
 };
 
@@ -43,7 +42,7 @@ export const useNotificationsStore = create<NotificationsState>()(
     ...initialState,
 
     fetchNotifications: async (offset = 0, limit = DEFAULT_LIMIT) => {
-      set({ isLoading: true, error: null });
+      set({ isLoading: true });
       try {
         const response = await apiClient.get<
           ApiResult<PaginatedResponse<NotificationDto>>
@@ -52,8 +51,10 @@ export const useNotificationsStore = create<NotificationsState>()(
         );
 
         if (!response.data.success) {
-          throw new Error(
-            response.data.errors[0]?.error || 'Failed to fetch notifications',
+          set({ isLoading: false });
+          rethrowApiError(
+            new Error(response.data.errors[0]?.error),
+            'Failed to fetch notifications',
           );
         }
 
@@ -75,11 +76,8 @@ export const useNotificationsStore = create<NotificationsState>()(
           }));
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : 'Failed to fetch notifications';
-        set({ error: errorMessage, isLoading: false });
+        set({ isLoading: false });
+        rethrowApiError(error, 'Failed to fetch notifications');
       }
     },
 

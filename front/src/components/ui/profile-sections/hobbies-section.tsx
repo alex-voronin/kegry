@@ -80,20 +80,20 @@ export function HobbiesSection({
   readOnly = false,
 }: HobbiesSectionProps) {
   const t = useTranslations('components.profile-sections.hobbies');
-  const { hobbies, fetchHobbies, isLoading, error, hasHydrated } =
-    useHobbiesStore();
+  const { hobbies, fetchHobbies, isLoading, hasHydrated } = useHobbiesStore();
 
   useEffect(() => {
-    if (hasHydrated) {
-      fetchHobbies();
-    }
-  }, [hasHydrated, fetchHobbies]);
+    if (!hasHydrated) return;
 
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
+    const loadHobbies = async () => {
+      try {
+        await fetchHobbies();
+      } catch (err: any) {
+        toast.error(err.message || t('loadFailed'));
+      }
+    };
+    loadHobbies();
+  }, [hasHydrated, fetchHobbies, t]);
 
   // Map API hobbies to select options
   const hobbyOptions: HobbyOption[] = hobbies.map((h) => {

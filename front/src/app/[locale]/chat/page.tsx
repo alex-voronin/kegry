@@ -70,8 +70,15 @@ export default function ChatScreen() {
     useFcmStore();
 
   useEffect(() => {
-    fetchChat();
-  }, [fetchChat]);
+    const loadChat = async () => {
+      try {
+        await fetchChat();
+      } catch (err: any) {
+        toast.error(err.message || t('toast.loadFailed'));
+      }
+    };
+    loadChat();
+  }, [fetchChat, t]);
 
   // Register FCM handler for showEndMeetingSuggestion and chatMessageReceived
   useEffect(() => {

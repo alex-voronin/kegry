@@ -31,7 +31,7 @@ export function extractApiError(
  * Extracts error message and throws it as a new Error.
  * Use in catch blocks for consistent error handling.
  */
-export function handleApiError(
+export function rethrowApiError(
   error: unknown,
   fallback = 'An error occurred',
 ): never {

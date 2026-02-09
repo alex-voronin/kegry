@@ -67,7 +67,7 @@
 }
 
 .toggleLink {
-  @apply text-primary cursor-pointer bg-transparent text-sm font-medium hover:underline;
+  @apply text-primary cursor-pointer bg-transparent text-sm font-semibold hover:underline;
 }
 
 .legalText {

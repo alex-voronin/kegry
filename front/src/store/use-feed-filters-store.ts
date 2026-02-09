@@ -3,6 +3,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
+import { rethrowApiError } from '@/lib/api-error';
 import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -22,7 +23,6 @@ interface FeedFiltersState {
   filters: FilterDto | null;
   lastFetchedAt: number | null;
   isLoading: boolean;
-  error: string | null;
   hasHydrated: boolean;
 
   fetchFilters: () => Promise<void>;
@@ -36,7 +36,6 @@ const initialState = {
   filters: null as FilterDto | null,
   lastFetchedAt: null as number | null,
   isLoading: false,
-  error: null as string | null,
   hasHydrated: false,
 };
 
@@ -53,57 +52,56 @@ export const useFeedFiltersStore = create<FeedFiltersState>()(
           now - state.lastFetchedAt < CACHE_TTL_MS &&
           state.filters !== null;
 
-        if (!isCacheValid || state.filters === null) {
-          set({ isLoading: true, error: null });
-        }
-
         if (isCacheValid) {
           return;
         }
+
+        set({ isLoading: true });
 
         try {
           const response = await apiClient.get<ApiResult<GetFilterResponse>>(
             API_ENDPOINTS.FEED.FILTER,
           );
 
-          if (response.data.success) {
-            set({
-              filters: response.data.result.filter,
-              lastFetchedAt: now,
-              isLoading: false,
-            });
-          } else {
-            throw new Error(
-              response.data.errors[0]?.error || 'Failed to fetch filters',
+          if (!response.data.success) {
+            set({ isLoading: false });
+            rethrowApiError(
+              new Error(response.data.errors[0]?.error),
+              'Failed to fetch filters',
             );
           }
+
+          set({
+            filters: response.data.result.filter,
+            lastFetchedAt: now,
+            isLoading: false,
+          });
         } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : 'Failed to fetch filters';
-          set({ error: errorMessage, isLoading: false });
+          set({ isLoading: false });
+          rethrowApiError(error, 'Failed to fetch filters');
         }
       },
 
       updateFilters: async (filters: FilterDto) => {
-        set({ isLoading: true, error: null });
+        set({ isLoading: true });
         try {
           const response = await apiClient.put<ApiResult<void>>(
             API_ENDPOINTS.FEED.FILTER,
             { filter: filters },
           );
 
-          if (response.data.success) {
-            set({ filters, lastFetchedAt: Date.now(), isLoading: false });
-          } else {
-            throw new Error(
-              response.data.errors[0]?.error || 'Failed to update filters',
+          if (!response.data.success) {
+            set({ isLoading: false });
+            rethrowApiError(
+              new Error(response.data.errors[0]?.error),
+              'Failed to update filters',
             );
           }
+
+          set({ filters, lastFetchedAt: Date.now(), isLoading: false });
         } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : 'Failed to update filters';
-          set({ error: errorMessage, isLoading: false });
-          throw error;
+          set({ isLoading: false });
+          rethrowApiError(error, 'Failed to update filters');
         }
       },
 

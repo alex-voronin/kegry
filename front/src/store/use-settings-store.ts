@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import apiClient from '@/lib/api-client';
+import { rethrowApiError } from '@/lib/api-error';
 import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -40,9 +41,9 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     set({ isLoading: true });
     try {
       const [feedSettingsRes, notifSettingsRes] = await Promise.all([
-        apiClient.get<ApiResult<{ settings: { distanceUnits: DistanceUnits } }>>(
-          API_ENDPOINTS.FEED.SETTINGS,
-        ),
+        apiClient.get<
+          ApiResult<{ settings: { distanceUnits: DistanceUnits } }>
+        >(API_ENDPOINTS.FEED.SETTINGS),
         apiClient.get<
           ApiResult<{ pushesEnabled: boolean; emailsEnabled: boolean }>
         >(API_ENDPOINTS.NOTIFICATIONS.SETTINGS),
@@ -65,8 +66,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
         });
       }
     } catch (error) {
-      console.error('Failed to fetch settings', error);
-      throw error;
+      rethrowApiError(error, 'Failed to fetch settings');
     } finally {
       set({ isLoading: false });
     }
@@ -91,7 +91,9 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 
       const promises = [];
 
-      promises.push(apiClient.put(API_ENDPOINTS.FEED.SETTINGS, { distanceUnits }));
+      promises.push(
+        apiClient.put(API_ENDPOINTS.FEED.SETTINGS, { distanceUnits }),
+      );
 
       promises.push(
         apiClient.put(API_ENDPOINTS.NOTIFICATIONS.SETTINGS, {
@@ -110,8 +112,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
         },
       });
     } catch (error) {
-      console.error('Failed to save settings', error);
-      throw error;
+      rethrowApiError(error, 'Failed to save settings');
     } finally {
       set({ isLoading: false });
     }

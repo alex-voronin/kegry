@@ -3,6 +3,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
+import { rethrowApiError } from '@/lib/api-error';
 import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -16,7 +17,6 @@ interface HobbiesState {
   selectedHobbyIds: string[];
   lastFetched: number | null;
   isLoading: boolean;
-  error: string | null;
   hasHydrated: boolean;
 
   fetchHobbies: () => Promise<void>;
@@ -41,7 +41,6 @@ const initialState = {
   selectedHobbyIds: [] as string[],
   lastFetched: null as number | null,
   isLoading: false,
-  error: null as string | null,
   hasHydrated: false,
 };
 
@@ -74,7 +73,7 @@ export const useHobbiesStore = create<HobbiesState>()(
         // Mark as initiated before async operation
         fetchInitiated = true;
 
-        set({ isLoading: true, error: null });
+        set({ isLoading: true });
 
         try {
           const response = await apiClient.get<ApiResult<GetHobbyListResponse>>(
@@ -82,8 +81,10 @@ export const useHobbiesStore = create<HobbiesState>()(
           );
 
           if (!response.data.success) {
-            throw new Error(
-              response.data.errors[0]?.error || 'Failed to fetch hobbies',
+            set({ isLoading: false });
+            rethrowApiError(
+              new Error(response.data.errors[0]?.error),
+              'Failed to fetch hobbies',
             );
           }
 
@@ -98,9 +99,8 @@ export const useHobbiesStore = create<HobbiesState>()(
             isLoading: false,
           });
         } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : 'Failed to fetch hobbies';
-          set({ error: errorMessage, isLoading: false });
+          set({ isLoading: false });
+          rethrowApiError(error, 'Failed to fetch hobbies');
         }
       },
 

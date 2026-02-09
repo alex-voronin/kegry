@@ -32,8 +32,15 @@ export default function NotificationsScreen() {
   } = useNotificationsStore();
 
   useEffect(() => {
-    fetchNotifications();
-  }, [fetchNotifications]);
+    const loadNotifications = async () => {
+      try {
+        await fetchNotifications();
+      } catch (err: any) {
+        toast.error(err.message || t('toast.loadFailed'));
+      }
+    };
+    loadNotifications();
+  }, [fetchNotifications, t]);
 
   const handleAccept = async (notif: NotificationDto) => {
     if (!notif.fromUserId) return;

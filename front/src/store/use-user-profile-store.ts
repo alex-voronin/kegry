@@ -3,7 +3,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
-import { handleApiError } from '@/lib/api-error';
+import { rethrowApiError } from '@/lib/api-error';
 import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -40,7 +40,6 @@ export interface UserProfileState {
   // API state
   serverProfile: UserProfileDto | null;
   isLoading: boolean;
-  error: string | null;
 
   // Local setters
   setFirstName: (firstName: string) => void;
@@ -86,7 +85,6 @@ const initialState = {
   hasHydrated: false,
   serverProfile: null as UserProfileDto | null,
   isLoading: false,
-  error: null as string | null,
 };
 
 export const useUserProfileStore = create<UserProfileState>()(
@@ -105,67 +103,59 @@ export const useUserProfileStore = create<UserProfileState>()(
       setHasHydrated: (hydrated) => set({ hasHydrated: hydrated }),
 
       fetchMyProfile: async () => {
-        set({ isLoading: true, error: null });
+        set({ isLoading: true });
         try {
           const response = await apiClient.get<
             ApiResult<{ userProfile: UserProfileDto }>
           >(API_ENDPOINTS.USER_PROFILE.PROFILE);
 
           if (!response.data.success) {
-            throw new Error(
-              response.data.errors[0]?.error || 'Failed to fetch profile',
+            set({ isLoading: false });
+            rethrowApiError(
+              new Error(response.data.errors[0]?.error),
+              'Failed to fetch profile',
             );
           }
 
           const profile = response.data.result.userProfile;
           get().discardLocalProfileChanges(profile);
-          set({
-            isLoading: false,
-          });
+          set({ isLoading: false });
         } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : 'Failed to fetch profile';
-          set({ error: errorMessage, isLoading: false });
+          set({ isLoading: false });
+          rethrowApiError(error, 'Failed to fetch profile');
         }
       },
 
       fetchUserProfile: async (userId: string) => {
-        try {
-          const response = await apiClient.get<
-            ApiResult<{ userProfile: UserProfileDto }>
-          >(`${API_ENDPOINTS.USER_PROFILE.PROFILE}?id=${userId}`);
+        const response = await apiClient.get<
+          ApiResult<{ userProfile: UserProfileDto }>
+        >(`${API_ENDPOINTS.USER_PROFILE.PROFILE}?id=${userId}`);
 
-          if (!response.data.success) {
-            throw new Error(
-              response.data.errors[0]?.error || 'Failed to fetch user profile',
-            );
-          }
-
-          return response.data.result.userProfile;
-        } catch (error) {
-          console.error('Failed to fetch user profile:', error);
-          return null;
+        if (!response.data.success) {
+          rethrowApiError(
+            new Error(response.data.errors[0]?.error),
+            'Failed to fetch user profile',
+          );
         }
+
+        return response.data.result.userProfile;
       },
 
       patchProfile: async (data: Partial<PatchProfileRequest>) => {
-        try {
-          const response = await apiClient.patch<ApiResult<void>>(
-            API_ENDPOINTS.USER_PROFILE.PROFILE,
-            data,
+        const response = await apiClient.patch<ApiResult<void>>(
+          API_ENDPOINTS.USER_PROFILE.PROFILE,
+          data,
+        );
+
+        if (!response.data.success) {
+          rethrowApiError(
+            new Error(response.data.errors[0]?.error),
+            'Failed to update profile',
           );
-
-          if (!response.data.success) {
-            throw new Error(
-              response.data.errors[0]?.error || 'Failed to update profile',
-            );
-          }
-
-          // Refresh profile after update
-          await get().fetchMyProfile();
-        } catch (error) {
-          handleApiError(error, 'Failed to update profile');
         }
+
+        // Refresh profile after update
+        await get().fetchMyProfile();
       },
 
       discardLocalProfileChanges: (

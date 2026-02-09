@@ -8,7 +8,7 @@ import { API_ENDPOINTS } from './routes';
 
 // --- Configuration ---
 
-const MAX_RETRIES = 3;
+const MAX_RETRIES = 2;
 const RETRY_DELAY_MS = 1000;
 const RETRYABLE_STATUS_CODES = [408, 429, 500, 502, 503, 504];
 

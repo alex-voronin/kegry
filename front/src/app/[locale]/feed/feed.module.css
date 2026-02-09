@@ -61,7 +61,7 @@
 }
 
 .actions {
-  @apply absolute right-0 bottom-4 left-0 z-20 flex items-center justify-center gap-6;
+  @apply absolute right-0 bottom-8 left-0 z-20 flex items-center justify-center gap-6;
 }
 
 .actionButton {

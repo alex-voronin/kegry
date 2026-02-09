@@ -4,7 +4,7 @@ import { create } from 'zustand';
 import axios from 'axios';
 import { persist } from 'zustand/middleware';
 import { API_ENDPOINTS, PAGE_ROUTES } from '../routes';
-import { handleApiError } from '../api-error';
+import { rethrowApiError } from '../api-error';
 
 // Note: Auth endpoints use raw axios to avoid token interceptor issues during login/signup.
 // For other API calls, use apiClient from '../api-client' for automatic token handling and retries.
@@ -132,7 +132,7 @@ export const useAuthStore = create<AuthState>()(
           get().setAuth(auth);
           return auth;
         } catch (error) {
-          handleApiError(error, 'Signin failed');
+          rethrowApiError(error, 'Signin failed');
         }
       },
 
@@ -151,7 +151,7 @@ export const useAuthStore = create<AuthState>()(
           get().setAuth(auth);
           return auth;
         } catch (error) {
-          handleApiError(error, 'Signup failed');
+          rethrowApiError(error, 'Signup failed');
         }
       },
 
@@ -172,7 +172,7 @@ export const useAuthStore = create<AuthState>()(
           get().setAuth(auth);
           return auth;
         } catch (error) {
-          handleApiError(error, 'Google sign-in failed');
+          rethrowApiError(error, 'Google sign-in failed');
         }
       },
 
@@ -192,7 +192,7 @@ export const useAuthStore = create<AuthState>()(
           get().setAuth(res.data.result);
           return res.data.result;
         } catch (error) {
-          handleApiError(error, 'Email confirmation failed');
+          rethrowApiError(error, 'Email confirmation failed');
         }
       },
 
@@ -221,7 +221,7 @@ export const useAuthStore = create<AuthState>()(
             throw new Error(error?.error || 'Password reset request failed');
           }
         } catch (error) {
-          handleApiError(error, 'Password reset request failed');
+          rethrowApiError(error, 'Password reset request failed');
         }
       },
 
@@ -241,7 +241,7 @@ export const useAuthStore = create<AuthState>()(
             throw new Error(error?.error || 'Password reset failed');
           }
         } catch (error) {
-          handleApiError(error, 'Password reset failed');
+          rethrowApiError(error, 'Password reset failed');
         }
       },
     }),

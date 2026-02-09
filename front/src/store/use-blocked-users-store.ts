@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import apiClient from '@/lib/api-client';
+import { rethrowApiError } from '@/lib/api-error';
 import { ApiResult, PaginatedResponse } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -39,8 +40,10 @@ export const useBlockedUsersStore = create<BlockedUsersState>()((set, get) => ({
       >(`${API_ENDPOINTS.FEED.BLOCKED_USERS}?offset=${offset}&limit=${limit}`);
 
       if (!response.data.success) {
-        throw new Error(
-          response.data.errors[0]?.error || 'Failed to fetch blocked users',
+        set({ isLoading: false });
+        rethrowApiError(
+          new Error(response.data.errors[0]?.error),
+          'Failed to fetch blocked users',
         );
       }
 
@@ -59,8 +62,9 @@ export const useBlockedUsersStore = create<BlockedUsersState>()((set, get) => ({
           isLoading: false,
         }));
       }
-    } finally {
+    } catch (error) {
       set({ isLoading: false });
+      rethrowApiError(error, 'Failed to fetch blocked users');
     }
   },
 

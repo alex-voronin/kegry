@@ -58,10 +58,17 @@ export default function FiltersScreen() {
   const isLoaded = useRef(false);
 
   useEffect(() => {
-    if (hasHydrated) {
-      fetchFilters();
-    }
-  }, [hasHydrated, fetchFilters]);
+    if (!hasHydrated) return;
+
+    const loadFilters = async () => {
+      try {
+        await fetchFilters();
+      } catch (err: any) {
+        toast.error(err.message || t('loadFailed'));
+      }
+    };
+    loadFilters();
+  }, [hasHydrated, fetchFilters, t]);
 
   useEffect(() => {
     if (serverFilters && !isLoaded.current) {

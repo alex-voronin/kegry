@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import apiClient from '@/lib/api-client';
+import { extractApiError, rethrowApiError } from '@/lib/api-error';
 import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -48,7 +49,10 @@ export const useRateUserStore = create<RateUserState>((set) => ({
         set({ userProfile: response.data.result.userProfile });
       }
     } catch (error) {
-      console.error('Failed to fetch user profile to rate:', error);
+      console.error(
+        'Failed to fetch user profile to rate:',
+        extractApiError(error),
+      );
     } finally {
       set({ isLoading: false });
     }
@@ -61,7 +65,7 @@ export const useRateUserStore = create<RateUserState>((set) => ({
         rating: rating,
       });
     } catch (error) {
-      throw error;
+      rethrowApiError(error, 'Failed to submit rating');
     } finally {
       set({ isSubmitting: false });
     }

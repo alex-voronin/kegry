@@ -74,8 +74,16 @@ export default function ProfilePage() {
   useEffect(() => {
     if (isInitialized.current) return;
     isInitialized.current = true;
-    fetchMyProfile();
-  }, [fetchMyProfile]);
+
+    const loadProfile = async () => {
+      try {
+        await fetchMyProfile();
+      } catch (err: any) {
+        toast.error(err.message || t('loadFailed'));
+      }
+    };
+    loadProfile();
+  }, [fetchMyProfile, t]);
 
   const menuOptions = [
     {

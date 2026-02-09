@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import apiClient from '@/lib/api-client';
-import { handleApiError } from '@/lib/api-error';
+import { rethrowApiError } from '@/lib/api-error';
 import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -33,7 +33,6 @@ export interface ChatDto {
 interface ChatState {
   chat: ChatDto | null;
   isLoading: boolean;
-  error: string | null;
   showEndMeetingPrompt: boolean;
 
   fetchChat: () => Promise<void>;
@@ -48,7 +47,6 @@ interface ChatState {
 const initialState = {
   chat: null as ChatDto | null,
   isLoading: false,
-  error: null as string | null,
   showEndMeetingPrompt: false,
 };
 
@@ -56,65 +54,56 @@ export const useChatStore = create<ChatState>()((set, get) => ({
   ...initialState,
 
   fetchChat: async () => {
-    set({ isLoading: true, error: null });
+    set({ isLoading: true });
     try {
       const response = await apiClient.get<ApiResult<ChatDto>>(
         API_ENDPOINTS.CHAT.GET,
       );
 
       if (!response.data.success) {
-        throw new Error(
-          response.data.errors[0]?.error || 'Failed to fetch chat',
+        set({ isLoading: false });
+        rethrowApiError(
+          new Error(response.data.errors[0]?.error),
+          'Failed to fetch chat',
         );
       }
 
       set({ chat: response.data.result, isLoading: false });
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to fetch chat';
-      set({ error: errorMessage, isLoading: false });
+      set({ isLoading: false });
+      rethrowApiError(error, 'Failed to fetch chat');
     }
   },
 
   refreshChat: async () => {
-    try {
-      const response = await apiClient.get<ApiResult<ChatDto>>(
-        API_ENDPOINTS.CHAT.GET,
-      );
+    const response = await apiClient.get<ApiResult<ChatDto>>(
+      API_ENDPOINTS.CHAT.GET,
+    );
 
-      if (!response.data.success) {
-        return;
-      }
-
+    if (response.data.success) {
       set({ chat: response.data.result });
-    } catch (error) {
-      console.error('Failed to refresh chat', error);
     }
   },
 
   sendMessage: async (text: string) => {
-    try {
-      await apiClient.post(API_ENDPOINTS.CHAT.SEND_MESSAGE, {
-        messageText: text,
-      });
+    await apiClient.post(API_ENDPOINTS.CHAT.SEND_MESSAGE, {
+      messageText: text,
+    });
 
-      const chat = get().chat;
-      if (chat) {
-        const newMessage: ChatMessageDto = {
-          id: crypto.randomUUID(),
-          messageText: text,
-          createdAt: new Date().toISOString(),
-          isMine: true,
-        };
-        set({
-          chat: {
-            ...chat,
-            messages: [...chat.messages, newMessage],
-          },
-        });
-      }
-    } catch (error) {
-      handleApiError(error, 'Failed to send message');
+    const chat = get().chat;
+    if (chat) {
+      const newMessage: ChatMessageDto = {
+        id: crypto.randomUUID(),
+        messageText: text,
+        createdAt: new Date().toISOString(),
+        isMine: true,
+      };
+      set({
+        chat: {
+          ...chat,
+          messages: [...chat.messages, newMessage],
+        },
+      });
     }
   },
 
@@ -133,12 +122,8 @@ export const useChatStore = create<ChatState>()((set, get) => ({
   },
 
   deleteChat: async () => {
-    try {
-      await apiClient.delete(API_ENDPOINTS.CHAT.DELETE);
-      set({ chat: null });
-    } catch (error) {
-      handleApiError(error, 'Failed to end meeting');
-    }
+    await apiClient.delete(API_ENDPOINTS.CHAT.DELETE);
+    set({ chat: null });
   },
 
   setShowEndMeetingPrompt: (show: boolean) =>
