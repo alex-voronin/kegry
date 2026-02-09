@@ -1,0 +1,33 @@
+@reference "../../app/globals.css";
+
+.backdrop {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-300;
+}
+
+.modalContainer {
+  @apply bg-form-element w-full max-w-[500px] overflow-hidden rounded-[32px] p-7 text-center transition-transform duration-300 ease-out;
+}
+
+.title {
+  @apply mb-4 text-lg font-medium;
+}
+
+.textareaWrapper {
+  @apply relative mb-8;
+}
+
+.textarea {
+  @apply bg-surface h-32 w-full resize-none rounded-2xl p-4 pb-8 text-base outline-none;
+}
+
+.charCounter {
+  @apply text-secondary absolute right-3 bottom-2 text-sm;
+}
+
+.buttonGroup {
+  @apply flex items-center justify-center gap-4;
+}
+
+.button {
+  @apply w-[150px] flex-1 py-2 transition-all;
+}

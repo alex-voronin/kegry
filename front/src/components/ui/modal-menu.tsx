@@ -63,7 +63,7 @@ export function ModalMenu({
                     }}
                     className={cn(
                       styles.menuItem,
-                      option.isDestructive && 'text-red-500',
+                      option.isDestructive && 'text-destructive',
                     )}
                   >
                     {option.icon && (

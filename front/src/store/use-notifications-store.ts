@@ -24,7 +24,7 @@ interface NotificationsState {
   fetchNotifications: (offset?: number, limit?: number) => Promise<void>;
   acceptInvite: (userId: string, notificationId: string) => Promise<void>;
   ignoreInvite: (userId: string, notificationId: string) => Promise<void>;
-  blockUser: (userId: string, notificationId: string) => Promise<void>;
+  blockUser: (userId: string, reportMessage?: string) => Promise<void>;
   reset: () => void;
 }
 
@@ -89,8 +89,8 @@ export const useNotificationsStore = create<NotificationsState>()(
       await apiClient.post(API_ENDPOINTS.FEED.IGNORE(userId));
     },
 
-    blockUser: async (userId: string, notificationId: string) => {
-      await apiClient.post(API_ENDPOINTS.FEED.BLOCK(userId));
+    blockUser: async (userId: string, reportMessage?: string) => {
+      await apiClient.post(API_ENDPOINTS.FEED.BLOCK(userId), { reportMessage });
     },
 
     reset: () => set(initialState),

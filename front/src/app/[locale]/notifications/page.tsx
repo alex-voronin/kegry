@@ -7,6 +7,7 @@ import { useRouter } from '@/i18n/routing';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { ModalMenu } from '@/components/ui/modal-menu';
+import { ReportDialog } from '@/components/ui/report-dialog';
 import { Spinner } from '@/components/ui/spinner';
 import {
   useNotificationsStore,
@@ -20,6 +21,8 @@ export default function NotificationsScreen() {
   const router = useRouter();
   const t = useTranslations('screens.notifications');
   const [selectedNotification, setSelectedNotification] =
+    useState<NotificationDto | null>(null);
+  const [notificationToReport, setNotificationToReport] =
     useState<NotificationDto | null>(null);
 
   const {
@@ -65,10 +68,13 @@ export default function NotificationsScreen() {
     }
   };
 
-  const handleBlock = async (notif: NotificationDto) => {
+  const handleBlock = async (
+    notif: NotificationDto,
+    reportMessage?: string,
+  ) => {
     if (!notif.fromUserId) return;
     try {
-      await blockUser(notif.fromUserId, notif.id);
+      await blockUser(notif.fromUserId, reportMessage);
       toast.success(t('toast.blocked'));
     } catch (err: any) {
       toast.error(err.message || t('toast.blockFailed'));
@@ -100,9 +106,9 @@ export default function NotificationsScreen() {
       });
       options.push({
         icon: '/assets/notifications/block-icon.svg',
-        label: t('menu.block'),
+        label: t('menu.blockAndReport'),
         onClick: () => {
-          handleBlock(notif);
+          setNotificationToReport(notif);
           setSelectedNotification(null);
         },
         isDestructive: true,
@@ -203,6 +209,16 @@ export default function NotificationsScreen() {
         options={
           selectedNotification ? getMenuOptions(selectedNotification) : []
         }
+      />
+
+      <ReportDialog
+        isOpen={!!notificationToReport}
+        onClose={() => setNotificationToReport(null)}
+        onConfirm={(message) => {
+          if (notificationToReport) {
+            handleBlock(notificationToReport, message);
+          }
+        }}
       />
     </div>
   );

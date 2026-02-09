@@ -229,7 +229,7 @@
       "menu": {
         "accept": "Accept",
         "ignore": "Ignore",
-        "block": "Block"
+        "blockAndReport": "Block & Report"
       },
       "toast": {
         "expired": "This invitation has expired",
@@ -334,6 +334,12 @@
       "termsOfService": "Terms of Service",
       "privacyPolicy": "Privacy Policy",
       "confirm": "I am 18+"
+    },
+    "reportDialog": {
+      "title": "Why are you blocking this user?",
+      "placeholder": "Tell us more...",
+      "cancel": "Cancel",
+      "confirm": "Block & Report"
     },
     "avatar-cropper": {
       "save": "Save"

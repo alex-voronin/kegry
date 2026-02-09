@@ -40,6 +40,7 @@ input[type='number']::-webkit-inner-spin-button {
   --color-surface: var(--color-surface);
   --color-brand: var(--color-brand);
   --color-error: var(--color-error);
+  --color-destructive: var(--color-error);
   --color-primary: var(--color-primary);
   --color-secondary: var(--color-secondary);
   --color-form-element: var(--color-form-element);

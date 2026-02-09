@@ -12,3 +12,11 @@
 .variantSocial {
   @apply hover:bg-hover active:bg-active h-[40px] rounded-[16px] border bg-transparent px-8 text-base font-normal select-none;
 }
+
+.variantSecondary {
+  @apply hover:bg-hover active:bg-active h-[40px] rounded-[16px] border bg-transparent px-4 font-sans text-sm font-semibold select-none;
+}
+
+.variantDestructive {
+  @apply text-destructive border-destructive hover:bg-destructive/10 active:bg-destructive/20 h-[40px] rounded-[16px] border bg-transparent px-4 font-sans text-sm font-semibold select-none;
+}

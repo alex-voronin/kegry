@@ -6,6 +6,8 @@ import styles from './button.module.css';
 export enum ButtonVariant {
   Default = 'default',
   Social = 'social',
+  Secondary = 'secondary',
+  Destructive = 'destructive',
 }
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -26,6 +28,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           {
             [styles.variantDefault]: variant === ButtonVariant.Default,
             [styles.variantSocial]: variant === ButtonVariant.Social,
+            [styles.variantSecondary]: variant === ButtonVariant.Secondary,
+            [styles.variantDestructive]: variant === ButtonVariant.Destructive,
           },
           className,
         )}
