@@ -9,6 +9,7 @@ export const PAGE_ROUTES = {
   FEED_FILTERS: '/feed/filters',
   ONBOARDING: '/onboarding',
   ONBOARDING_COVER: '/onboarding/cover',
+  HOW_IT_WORKS: '/how-it-works',
   PROFILE: '/profile',
   PROFILE_EDIT: '/profile/edit',
   PROFILE_COVER: '/profile/cover-image',

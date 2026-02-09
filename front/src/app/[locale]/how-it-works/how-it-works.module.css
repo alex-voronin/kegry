@@ -1,0 +1,61 @@
+@reference "../../globals.css";
+
+.wrapper {
+  @apply flex min-h-dvh flex-col px-6 py-8;
+}
+
+.content {
+  @apply flex flex-1 flex-col items-center gap-4;
+}
+
+.sensei {
+  @apply mb-2;
+}
+
+.greeting {
+  @apply text-primary text-2xl font-bold;
+}
+
+.carouselViewport {
+  @apply w-full cursor-grab overflow-hidden active:cursor-grabbing;
+}
+
+.carouselTrack {
+  @apply flex w-full;
+}
+
+.slide {
+  @apply w-full shrink-0 px-2;
+}
+
+.card {
+  @apply bg-form-element flex flex-col gap-4 rounded-2xl p-6 select-none;
+}
+
+.section {
+  @apply text-base leading-relaxed;
+}
+
+.permissionNote {
+  @apply bg-background rounded-xl p-4 text-base;
+}
+
+.indicators {
+  @apply flex gap-2 pt-4 pb-4;
+}
+
+.indicator {
+  @apply bg-secondary h-2 w-2 cursor-pointer rounded-full border-none p-0 transition-all;
+}
+
+.indicator.active {
+  @apply bg-primary w-6;
+}
+
+.footer {
+  @apply mt-4 flex justify-center pb-4;
+}
+
+.continueButton {
+  @apply w-[298px];
+}

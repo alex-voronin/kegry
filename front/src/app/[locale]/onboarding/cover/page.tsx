@@ -92,7 +92,7 @@ export default function CoverPage() {
         requiredAction: RequiredAction.None,
       });
 
-      router.push(PAGE_ROUTES.FEED);
+      router.push(PAGE_ROUTES.HOW_IT_WORKS);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to create profile';

@@ -135,6 +135,23 @@
         "userNotFound": "User session not found. Please login again."
       }
     },
+    "howItWorks": {
+      "greeting": "Hey, adventurer!",
+      "slideFeed": {
+        "textDontGoAlone": "You won't find any Hoplings on your own. Pick a companion first and start your journey together!",
+        "textInvites": "You get 7 invites per day. Each one expires in 48 hours if your companion doesn't respond, then you can try again. Choose wisely 😉."
+      },
+      "slideChat": {
+        "textNewChat": "Once you've established a connection, a chat opens to plan your meeting.",
+        "textEndChat": "You can cancel it anytime, or it'll end automatically when you're done."
+      },
+      "slidePermissions": {
+        "location": "📍 Geolocation is absolutely necessary for the feed to work. Please allow it when we ask for permission.",
+        "notifications": "🔔 We also need notification permissions to let you know about new invites and chat messages!"
+      },
+      "continue": "Let's go!",
+      "next": "Next"
+    },
     "onboarding": {
       "title": "Tell us about yourself",
       "continue": "Continue",
