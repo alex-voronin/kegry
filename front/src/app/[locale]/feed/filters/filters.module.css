@@ -39,3 +39,7 @@
 .applyButton {
   @apply w-[298px];
 }
+
+.loaderContainer {
+  @apply flex h-[80vh] w-full items-center justify-center;
+}

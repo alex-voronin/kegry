@@ -175,7 +175,7 @@ export default function ProfilePage() {
       ? `${profile.firstName} ${profile.lastName}`
       : localFirstName && localLastName
         ? `${localFirstName} ${localLastName}`
-        : 'Loading...';
+        : '';
 
   const userBirthday = profile?.birthday || localBirthday;
   const age = userBirthday ? calculateAge(userBirthday) : null;

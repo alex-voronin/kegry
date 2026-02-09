@@ -101,8 +101,9 @@ export default function ForgotPasswordPage() {
             className={styles.signInButton}
             type="submit"
             disabled={loading}
+            loading={loading}
           >
-            {loading ? 'Loading...' : t('submit')}
+            t('submit')
           </Button>
 
           <Link
