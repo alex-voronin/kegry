@@ -71,6 +71,9 @@ public class FeedContext : DbContext
             builder.HasIndex(fp => new { fp.MyUserId, fp.OtherUserId })
                 .IsUnique()
                 .HasDatabaseName("unq_feed_user_relation_pair");
+
+            builder.Property(fp => fp.ReportMessage)
+                .HasMaxLength(ValidationParameters.MaxReportMessageLength);
         });
 
         modelBuilder.Entity<Filter>(builder =>

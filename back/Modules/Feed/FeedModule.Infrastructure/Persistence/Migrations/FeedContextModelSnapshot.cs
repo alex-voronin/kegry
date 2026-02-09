@@ -74,6 +74,11 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("numeric(2,1)")
                         .HasColumnName("rating");
 
+                    b.Property<string>("ReportMessage")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)")
+                        .HasColumnName("report_message");
+
                     b.Property<bool>("ShouldRate")
                         .HasColumnType("boolean")
                         .HasColumnName("should_rate");
@@ -182,6 +187,11 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<string>("AvatarImageS3Key")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("avatar_image_s3key");
 
                     b.Property<DateOnly>("Birthday")
                         .HasColumnType("date")

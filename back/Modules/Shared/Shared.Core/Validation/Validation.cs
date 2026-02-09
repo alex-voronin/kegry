@@ -38,8 +38,8 @@ public static class Validation
     public static void ThrowIfLengthExceeded(string fieldName, string value, int limit)
     {
         ThrowIfInvalid(fieldName,
-            () => string.IsNullOrWhiteSpace(value) || value.Length < limit,
-            $"'{fieldName}' must be less then ${limit} symbols length");
+            () => string.IsNullOrWhiteSpace(value) || value.Length <= limit,
+            $"{fieldName} must be less then {limit} symbols length");
     }
 
     public static void ThrowIfNegativeOrZero(string fieldName, long value)

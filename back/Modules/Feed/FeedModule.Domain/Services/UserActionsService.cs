@@ -54,10 +54,11 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         await transaction.CommitAsync(ct);
     }
 
-    public async Task BlockUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
+    public async Task BlockUserAsync(Guid myUserId, Guid otherUserId, string? reportMessage, CancellationToken ct)
     {
         var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
         feedUserRelation.IsBlocked = true;
+        feedUserRelation.ReportMessage = reportMessage;
         feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
         await _feedUserRelationRepository.SaveChangesAsync(ct);
     }

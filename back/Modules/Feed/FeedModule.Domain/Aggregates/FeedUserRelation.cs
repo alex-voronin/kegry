@@ -23,6 +23,24 @@ public class FeedUserRelation
     }
 
     public bool IsBlocked { get; set; }
+
+    public string? ReportMessage
+    {
+        get;
+        set
+        {
+            if (value != null)
+            {
+                Validation.ThrowIfLengthExceeded(
+                    nameof(ReportMessage),
+                    value,
+                    ValidationParameters.MaxReportMessageLength
+                );
+            }
+            field = value;
+        }
+    }
+
     public bool IsInMeeting { get; set; }
     public bool ShouldRate { get; set; }
     public required DateTimeOffset MeetingExpiresAt { get; set; }

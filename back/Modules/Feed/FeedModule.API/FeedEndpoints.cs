@@ -91,11 +91,12 @@ public class FeedEndpoints : IEndpoints
 
     private static async Task<ApiResult.EmptyResult> BlockUser(
         [FromRoute] Guid id,
+        [FromBody] BlockUserRequest request,
         ClaimsPrincipal user,
         IUserActionsService userActionsService,
         CancellationToken ct)
     {
-        await userActionsService.BlockUserAsync(user.GetId(), id, ct);
+        await userActionsService.BlockUserAsync(user.GetId(), id, request.ReportMessage, ct);
         return ApiResult.Empty;
     }
 

@@ -1,9 +1,11 @@
 using System.Net.Http.Json;
 using FeedModule.API.Dto;
+using FeedModule.Domain.Repositories;
 using FeedModule.Domain.Services;
 using FeedModule.Domain.ValueObjects;
 using IntegrationTests.Shared;
 using IntegrationTests.Shared.HttpClients;
+using Microsoft.Extensions.DependencyInjection;
 using SharedCore.Api.Dto;
 using Shouldly;
 
@@ -117,8 +119,9 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         feedBefore.Result.Feed.Any(f => f.Id == Guid.Parse(userBId)).ShouldBeTrue();
 
         // 3. User A blocks User B
-        var response = await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
-            ApiRoutes.Feed.BlockUser(userBId), null);
+        var blockRequest = new BlockUserRequest(null);
+        var response = await Factory.ApiClient.PostAsync<BlockUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.BlockUser(userBId), blockRequest);
         response.Success.ShouldBeTrue();
 
         // 4. User A no longer sees User B in feed
@@ -314,8 +317,9 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. User A blocks User B
         Factory.ApiClient.SetAuth(authA);
-        var response = await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
-            ApiRoutes.Feed.BlockUser(userBId), null);
+        var blockRequest = new BlockUserRequest(null);
+        var response = await Factory.ApiClient.PostAsync<BlockUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.BlockUser(userBId), blockRequest);
         response.Success.ShouldBeTrue();
 
         // 3. User A retrieves blocked users
@@ -363,5 +367,36 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetSettingsResponse>>(ApiRoutes.Feed.DisplaySettings);
         getResponse.Success.ShouldBeTrue();
         getResponse.Result.Settings.DistanceUnits.ShouldBe(DistanceUnits.Miles);
+    }
+
+    [Fact]
+    public async Task GivenTwoUsers_WhenUserBlocksWithReportMessage_ThenMessageIsSaved()
+    {
+        // 1. Create two users and submit locations
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("reporter@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("reported@example.com", "Password123!");
+        var userBId = authB.UserId;
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. User A blocks User B with a report message
+        Factory.ApiClient.SetAuth(authA);
+        const string reportMessage = "This user was sending spam messages";
+        var blockRequest = new BlockUserRequest(reportMessage);
+        var response = await Factory.ApiClient.PostAsync<BlockUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.BlockUser(userBId), blockRequest);
+        response.Success.ShouldBeTrue();
+
+        // 3. Verify the report message is saved in the database
+        using var scope = Factory.Services.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<IFeedUserRelationRepository>();
+        var relation = await repository.GetAsync(Guid.Parse(authA.UserId), Guid.Parse(userBId), asNoTracking: true);
+
+        relation.ShouldNotBeNull();
+        relation.IsBlocked.ShouldBeTrue();
+        relation.ReportMessage.ShouldBe(reportMessage);
     }
 }

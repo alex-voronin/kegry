@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(FeedContext))]
-    [Migration("20260115172202_AddFeed")]
+    [Migration("20260209193130_AddFeed")]
     partial class AddFeed
     {
         /// <inheritdoc />
@@ -76,6 +76,11 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                     b.Property<decimal?>("Rating")
                         .HasColumnType("numeric(2,1)")
                         .HasColumnName("rating");
+
+                    b.Property<string>("ReportMessage")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)")
+                        .HasColumnName("report_message");
 
                     b.Property<bool>("ShouldRate")
                         .HasColumnType("boolean")
@@ -185,6 +190,11 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<string>("AvatarImageS3Key")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("avatar_image_s3key");
 
                     b.Property<DateOnly>("Birthday")
                         .HasColumnType("date")
