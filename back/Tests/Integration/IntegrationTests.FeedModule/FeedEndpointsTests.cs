@@ -193,6 +193,55 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
     }
 
     [Fact]
+    public async Task GivenTwoUsers_WhenCheckingInviteExpiration_ThenReturnsCorrectExpiration()
+    {
+        Factory.FakeTimeProvider.Reset(DateTime.UtcNow);
+
+        // 1. Create two users
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("userA@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("userB@example.com", "Password123!");
+        var userBId = authB.UserId;
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Before any invite, User B checks invite expiration from User A — should be null
+        Factory.ApiClient.SetAuth(authB);
+        var beforeInvite = await Factory.ApiClient
+            .GetAsync<ApiResult<GetInviteExpirationResponse>>(ApiRoutes.Feed.GetInviteExpiration(authA.UserId));
+        beforeInvite.Success.ShouldBeTrue();
+        beforeInvite.Result.InviteExpiresAt.ShouldBeNull();
+
+        // 3. User A invites User B with "Tomorrow" expiration
+        Factory.ApiClient.SetAuth(authA);
+        var inviteResponse = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.InviteUser(userBId), new InviteUserRequest(InviteExpiration.Tomorrow));
+        inviteResponse.Success.ShouldBeTrue();
+
+        // 4. User B checks invite expiration from User A — should return expiration date
+        Factory.ApiClient.SetAuth(authB);
+        var afterInvite = await Factory.ApiClient
+            .GetAsync<ApiResult<GetInviteExpirationResponse>>(ApiRoutes.Feed.GetInviteExpiration(authA.UserId));
+        afterInvite.Success.ShouldBeTrue();
+        afterInvite.Result.InviteExpiresAt.ShouldNotBeNull();
+
+        var expectedExpiration = UserActionsService.ComputeInviteExpiresAt(
+            DateTimeOffset.UtcNow, InviteExpiration.Tomorrow);
+        (afterInvite.Result.InviteExpiresAt.Value - expectedExpiration).ShouldBeLessThan(TimeSpan.FromSeconds(1));
+
+        // 5. Advance time past expiration — should return null
+        Factory.FakeTimeProvider.SetUtcNow(expectedExpiration.AddSeconds(2));
+        var afterExpiry = await Factory.ApiClient
+            .GetAsync<ApiResult<GetInviteExpirationResponse>>(ApiRoutes.Feed.GetInviteExpiration(authA.UserId));
+        afterExpiry.Success.ShouldBeTrue();
+        afterExpiry.Result.InviteExpiresAt.ShouldBeNull();
+
+        Factory.FakeTimeProvider.Reset(DateTime.UtcNow);
+    }
+
+    [Fact]
     public async Task GivenThreeUsers_WhenTwoUsersInviteSameUserSimultaneously_ThenOnlyOneMeetingEstablished()
     {
         // 1. Create three users A, B, and C
@@ -404,7 +453,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenUser_WhenInvitesMoreThanLimit_ThenReturnsTooManyRequests_AndReturnsDefaultCounterAfterWaitingForNewDay()
     {
-        Factory.FakeTimeProvider.Reset(DateTime.UtcNow);
+        Factory.FakeTimeProvider.Reset(DateTime.UtcNow.Date);
 
         // 1. Create main user
         var authMain = await Factory.AuthManager.CreateAndLoginUserAsync("user@example.com", "Password123!");
@@ -445,7 +494,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         failedResponse.Errors.First().Code.ShouldBe(nameof(ErrorCode.TooManyRequests));
 
         // 5. Wait until midnight and check limit
-        var today23H = DateTimeOffset.UtcNow.Date.AddDays(1).AddHours(-1);
+        var today23H = Factory.FakeTimeProvider.GetUtcNow().Date.AddDays(1).AddHours(-1);
         Factory.FakeTimeProvider.SetUtcNow(today23H);
 
         var today23HStatus = await Factory.ApiClient
@@ -454,7 +503,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         today23HStatus.Result.AvailableInvitesCount.ShouldBe(0);
 
         // 6. Wait until midnight and check limit
-        var tomorrow = DateTimeOffset.UtcNow.Date.AddDays(1);
+        var tomorrow = Factory.FakeTimeProvider.GetUtcNow().Date.AddDays(1);
         Factory.FakeTimeProvider.SetUtcNow(tomorrow);
 
         var tomorrowStatus = await Factory.ApiClient

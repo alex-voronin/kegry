@@ -25,6 +25,7 @@ public class FeedEndpoints : IEndpoints
         apiGroup.MapGet("/api/v1/feed/status", GetFeedStatus);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/rating", PostUserRating);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/invite", InviteUser);
+        apiGroup.MapGet("/api/v1/feed/{id:guid}/invite-expiration", GetInviteExpiration);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/skip", SkipUser);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/block", BlockUser);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/unblock", UnblockUser);
@@ -131,6 +132,26 @@ public class FeedEndpoints : IEndpoints
     {
         await userActionsService.InviteUserAsync(user.GetId(), id, request.InviteExpiration, ct);
         return ApiResult.Empty;
+    }
+
+    private static async Task<ApiResult<GetInviteExpirationResponse>> GetInviteExpiration(
+        [FromRoute] Guid id,
+        ClaimsPrincipal user,
+        IFeedUserRelationRepository repository,
+        TimeProvider timeProvider,
+        CancellationToken ct)
+    {
+        var relation = await repository.GetAsync(id, user.GetId(), asNoTracking: true, ct);
+        DateTimeOffset? expiresAt = null;
+        if (relation != null &&
+            relation.InvitedAt != DateTimeOffset.MinValue &&
+            !relation.IsInviteExpired(timeProvider.GetUtcNow()))
+        {
+            expiresAt = relation.InviteExpiresAt;
+        }
+
+        return ApiResult<GetInviteExpirationResponse>.Build(
+            new GetInviteExpirationResponse(expiresAt));
     }
 
     private static async Task<ApiResult.EmptyResult> IgnoreUser(
