@@ -2,6 +2,7 @@ using FeedModule.Contracts.Events;
 using FeedModule.Domain.Aggregates;
 using FeedModule.Domain.Exceptions;
 using FeedModule.Domain.Repositories;
+using FeedModule.Domain.ValueObjects;
 using Serilog;
 using SharedCore.Services.LifeTimes;
 
@@ -90,17 +91,18 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         await _feedUserRelationRepository.SaveChangesAsync(ct);
     }
 
-    public async Task InviteUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
+    public async Task InviteUserAsync(Guid myUserId, Guid otherUserId, InviteExpiration inviteExpiration,
+        CancellationToken ct)
     {
         var availableInvitesCount = await _userActionLimitsService.GetAvailableInvitesAsync(myUserId, ct);
         if (availableInvitesCount <= 0)
         {
             throw FeedExceptions.NoAvailableInvitesLeft(myUserId);
         }
-        
+
         try
         {
-            await InviteUserUnsafeAsync(myUserId, otherUserId, ct);
+            await InviteUserUnsafeAsync(myUserId, otherUserId, inviteExpiration, ct);
         }
         catch (Exception e)
         {
@@ -145,13 +147,13 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
 
     // It's unsafe because can throw exception when two users invite the same user at the same time.
     // Since the user can be only in one meeting.
-    private async Task InviteUserUnsafeAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
+    private async Task InviteUserUnsafeAsync(Guid myUserId, Guid otherUserId, InviteExpiration inviteExpiration,
+        CancellationToken ct)
     {
         var now = _timeProvider.GetUtcNow();
         var meToOtherUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
         meToOtherUserRelation.InvitedAt = now;
-        meToOtherUserRelation.InviteExpiresAt =
-            _timeProvider.GetUtcNow().AddMinutes(FeedParameters.InviteExpirationTimeInHours);
+        meToOtherUserRelation.InviteExpiresAt = ComputeInviteExpiresAt(now, inviteExpiration);
         meToOtherUserRelation.LastSeenAt = now;
 
         var otherToMeUserRelation = await _feedUserRelationRepository.GetAsync(otherUserId, myUserId, false, ct);
@@ -205,9 +207,14 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
             return false;
         }
 
-        otherToMeUserRelation.InviteExpiresAt = meToOtherUserRelation.InviteExpiresAt;
+        var meetingExpiresAt = meToOtherUserRelation.InviteExpiresAt < otherToMeUserRelation.InviteExpiresAt
+            ? meToOtherUserRelation.InviteExpiresAt
+            : otherToMeUserRelation.InviteExpiresAt;
+
         otherToMeUserRelation.IsInMeeting = true;
+        otherToMeUserRelation.InviteExpiresAt = meetingExpiresAt;
         meToOtherUserRelation.IsInMeeting = true;
+        meToOtherUserRelation.InviteExpiresAt = meetingExpiresAt;
         // the potential race condition when multiple users invite the same user at the same time
         // is fixed by unq_feed_user_relation_active_meeting_per_user index
 
@@ -217,7 +224,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         await _feedUserRelationRepository.PublishEventAsync(
             new MeetingArrangedEvent
             {
-                ExpiresAt = meToOtherUserRelation.InviteExpiresAt,
+                ExpiresAt = meetingExpiresAt,
                 Participants =
                 [
                     new MeetingArrangedEvent.Participant(meToOtherUserRelation.MyUserId, me!.FullName),
@@ -225,5 +232,19 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
                 ]
             });
         return true;
+    }
+
+    internal static DateTimeOffset ComputeInviteExpiresAt(DateTimeOffset now, InviteExpiration inviteExpiration)
+    {
+        var utcNow = now.UtcDateTime;
+        var expiresAtUtc = inviteExpiration switch
+        {
+            InviteExpiration.Now => utcNow.AddHours(4),
+            InviteExpiration.Today => utcNow.Date.AddDays(1).AddSeconds(-1),
+            InviteExpiration.Tomorrow => utcNow.Date.AddDays(2).AddSeconds(-1),
+            _ => throw new ArgumentOutOfRangeException(nameof(inviteExpiration), inviteExpiration, null)
+        };
+
+        return new DateTimeOffset(expiresAtUtc);
     }
 }

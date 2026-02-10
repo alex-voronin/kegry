@@ -2,6 +2,8 @@ using ChatModule.API.Dto;
 using ChatModule.Application.Messaging.Location;
 using ChatModule.Domain.Aggregates;
 using FeedModule.API.Dto;
+using FeedModule.Domain.Services;
+using FeedModule.Domain.ValueObjects;
 using IntegrationTests.Shared;
 using LocationModule.API.Dto;
 using LocationModule.Domain.Aggregates;
@@ -62,25 +64,29 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
             {
                 // 4. User A invites User B
                 var inviteResponseA = await Factory.ApiClient
-                    .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authB.UserId), null);
+                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authB.UserId), new InviteUserRequest(InviteExpiration.Today));
                 inviteResponseA.Success.ShouldBeTrue();
 
                 // 5. User B invites User A (creates chat)
                 Factory.ApiClient.SetAuth(authB);
                 var inviteResponseB = await Factory.ApiClient
-                    .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authA.UserId), null);
+                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authA.UserId), new InviteUserRequest(InviteExpiration.Tomorrow));
                 inviteResponseB.Success.ShouldBeTrue();
             },
             expectedCount: 2,
             expectedTitle: NotificationTitles.MeetingArrangedTitle);
 
         // 6. Verify chat exists for User A
+        var expectedExpiresAt = UserActionsService.ComputeInviteExpiresAt(
+            DateTimeOffset.UtcNow,
+            InviteExpiration.Today);
         Factory.ApiClient.SetAuth(authA);
         var chatResponseAfter = await Factory.ApiClient
             .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
         chatResponseAfter.Success.ShouldBeTrue();
         chatResponseAfter.Result.Participant.Id.ShouldBe(Guid.Parse(authB.UserId));
         chatResponseAfter.Result.ParticipantsMet.ShouldBeFalse();
+        chatResponseAfter.Result.ExpiresAt.ShouldBe(expectedExpiresAt);
 
         // 7. Verify chat exists for User B
         Factory.ApiClient.SetAuth(authB);
@@ -88,6 +94,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
         chatResponseB.Success.ShouldBeTrue();
         chatResponseB.Result.Participant.Id.ShouldBe(Guid.Parse(authA.UserId));
+        chatResponseB.Result.ExpiresAt.ShouldBe(expectedExpiresAt);
     }
 
     [Fact]
@@ -304,12 +311,12 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 // User A invites User B
                 Factory.ApiClient.SetAuth(authA);
                 await Factory.ApiClient
-                    .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authB.UserId), null);
+                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authB.UserId), new InviteUserRequest(InviteExpiration.Now));
 
                 // User B invites User A (creates chat)
                 Factory.ApiClient.SetAuth(authB);
                 await Factory.ApiClient
-                    .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authA.UserId), null);
+                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authA.UserId), new InviteUserRequest(InviteExpiration.Now));
             },
             expectedCount: 2,
             expectedTitle: NotificationTitles.MeetingArrangedTitle);

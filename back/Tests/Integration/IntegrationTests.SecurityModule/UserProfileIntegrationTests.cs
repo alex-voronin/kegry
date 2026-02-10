@@ -31,7 +31,7 @@ public class UserProfileIntegrationTests : IntegrationTestBase, IAsyncLifetime
         {
             await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
         });
-        
+
         // 2. Ensure that RequiredAction is none
         using var scope = Factory.Services.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();

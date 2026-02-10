@@ -1,3 +1,5 @@
+using FeedModule.API.Dto;
+using FeedModule.Domain.ValueObjects;
 using IntegrationTests.Shared;
 using NotificationsModule.API.Dto;
 using SharedCore.Api.Dto;
@@ -50,12 +52,12 @@ public class ChatEventHandlersTests : IntegrationTestBase, IAsyncLifetime
             {
                 Factory.ApiClient.SetAuth(authResponseA);
                 var inviteResponseA = await Factory.ApiClient
-                    .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(userBId), null);
+                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(userBId), new InviteUserRequest(InviteExpiration.Now));
                 inviteResponseA.Success.ShouldBeTrue();
 
                 Factory.ApiClient.SetAuth(authResponseB);
                 var inviteResponseB = await Factory.ApiClient
-                    .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(userAId), null);
+                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(userAId), new InviteUserRequest(InviteExpiration.Now));
                 inviteResponseB.Success.ShouldBeTrue();
             },
             expectedCount: 2,

@@ -74,7 +74,7 @@ public class FeedEndpoints : IEndpoints
         IUserActionLimitsService userActionsLimitsService,
         CancellationToken ct)
     {
-        var availableInvitesCount =  await userActionsLimitsService.GetAvailableInvitesAsync(user.GetId(), ct);
+        var availableInvitesCount = await userActionsLimitsService.GetAvailableInvitesAsync(user.GetId(), ct);
         var (isInMeeting, userIdToRate) = await repository.GetFeedStatusAsync(user.GetId(), ct);
         return ApiResult<GetFeedStatusResponse>.Build(
             new GetFeedStatusResponse(isInMeeting, userIdToRate, availableInvitesCount)
@@ -124,11 +124,12 @@ public class FeedEndpoints : IEndpoints
 
     private static async Task<ApiResult.EmptyResult> InviteUser(
         [FromRoute] Guid id,
+        [FromBody] InviteUserRequest request,
         ClaimsPrincipal user,
         IUserActionsService userActionsService,
         CancellationToken ct)
     {
-        await userActionsService.InviteUserAsync(user.GetId(), id, ct);
+        await userActionsService.InviteUserAsync(user.GetId(), id, request.InviteExpiration, ct);
         return ApiResult.Empty;
     }
 

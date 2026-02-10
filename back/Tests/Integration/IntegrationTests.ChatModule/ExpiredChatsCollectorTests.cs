@@ -1,7 +1,9 @@
 using ChatModule.API.Dto;
 using ChatModule.Application.BackgroundJobs;
 using ChatModule.Infrastructure.Persistence;
+using FeedModule.API.Dto;
 using FeedModule.Domain.Services;
+using FeedModule.Domain.ValueObjects;
 using IntegrationTests.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,9 +27,14 @@ public class ExpiredChatsCollectorTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenExpiredChat_WhenCollectingExpiredChats_ThenChatIsDeletedAndLinksAreRemoved()
     {
+        var invitationExpiration = InviteExpiration.Now;
+        var expirationSpan = UserActionsService.ComputeInviteExpiresAt(DateTime.UtcNow, invitationExpiration) -
+                             DateTime.UtcNow;
+
         Factory.FakeTimeProvider.Reset(
-            DateTime.UtcNow - TimeSpan.FromDays(FeedParameters.InviteExpirationTimeInHours + 1)
+            DateTime.UtcNow - expirationSpan - TimeSpan.FromHours(1)
         );
+
 
         // 1. Create two users
         var authA = await Factory.AuthManager.CreateAndLoginUserAsync("testA@example.com", "Password123!");
@@ -56,13 +63,13 @@ public class ExpiredChatsCollectorTests : IntegrationTestBase, IAsyncLifetime
             codeToRun: async () =>
             {
                 Factory.ApiClient.SetAuth(authA);
-                await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
+                await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
                     ApiRoutes.Feed.InviteUser(authB.UserId),
-                    null);
+                    new InviteUserRequest(invitationExpiration));
                 Factory.ApiClient.SetAuth(authB);
-                await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
+                await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
                     ApiRoutes.Feed.InviteUser(authA.UserId),
-                    null);
+                    new InviteUserRequest(invitationExpiration));
             },
             expectedCount: 2,
             expectedTitle: NotificationTitles.MeetingArrangedTitle);
@@ -72,7 +79,7 @@ public class ExpiredChatsCollectorTests : IntegrationTestBase, IAsyncLifetime
         chatResponse.Success.ShouldBeTrue();
         var chatId = chatResponse.Result.Id;
 
-        Factory.FakeTimeProvider.Advance(TimeSpan.FromDays(FeedParameters.InviteExpirationTimeInHours + 1));
+        Factory.FakeTimeProvider.Advance(expirationSpan + TimeSpan.FromHours(1));
 
         // 4. Trigger collection and check that pushes has been sent
         await Factory.NotificationManager.AwaitSilentPushNotifications(
