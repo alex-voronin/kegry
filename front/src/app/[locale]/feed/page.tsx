@@ -145,16 +145,11 @@ function FeedBody({
           <Image
             src="/assets/feed/location-icon.svg"
             alt="location"
-            width={24}
-            height={38}
+            width={20}
+            height={31}
             priority
           />
           <div className={styles.locationText}>
-            <span>
-              {tFeed('availabilityTime', {
-                time: 'today',
-              })}
-            </span>
             <span>
               {tFeed('distance', {
                 distance:
