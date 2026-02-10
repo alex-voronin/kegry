@@ -186,10 +186,12 @@ function FeedFooter({
   onIgnore,
   onInvite,
   onSkip,
+  isInviteDisabled,
 }: {
   onIgnore: () => void;
   onInvite: () => void;
   onSkip: () => void;
+  isInviteDisabled: boolean;
 }) {
   return (
     <footer className={styles.actions}>
@@ -203,7 +205,11 @@ function FeedFooter({
           priority
         />
       </button>
-      <button className={styles.actionPrimary} onClick={onInvite}>
+      <button
+        className={styles.actionPrimary}
+        onClick={onInvite}
+        disabled={isInviteDisabled}
+      >
         <Image
           className="pointer-events-none translate-x-[2px]"
           src="/assets/feed/invite-icon.webp"
@@ -227,6 +233,24 @@ function FeedFooter({
   );
 }
 
+function AvailableInvites({ count }: { count: number }) {
+  if (count <= 0) return null;
+  return (
+    <div className={styles.availableInvites}>
+      {Array.from({ length: count }).map((_, i) => (
+        <Image
+          key={i}
+          src="/assets/feed/invite-icon.webp"
+          alt="invite"
+          width={28}
+          height={28}
+          className={styles.inviteCounter}
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function FeedScreen() {
   const tFeed = useTranslations('screens.feed');
   const tCommon = useTranslations('common');
@@ -244,6 +268,7 @@ export default function FeedScreen() {
     unseenNotificationCount,
     fetchUnseenNotificationCount,
     setUnseenNotificationCount,
+    availableInvitesCount,
   } = useFeedStore();
   const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
@@ -405,10 +430,12 @@ export default function FeedScreen() {
             <p className={styles.emptyStateText}>{tFeed('noProfiles')}</p>
           </div>
         )}
+        <AvailableInvites count={availableInvitesCount} />
         <FeedFooter
           onIgnore={handleIgnore}
           onInvite={handleInvite}
           onSkip={handleSkip}
+          isInviteDisabled={availableInvitesCount <= 0}
         />
       </div>
     </div>

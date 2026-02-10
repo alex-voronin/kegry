@@ -25,6 +25,7 @@ export interface UserProfileDto {
 export interface FeedStatusResponse {
   isInMeeting: boolean;
   userIdToRate: string | null;
+  availableInvitesCount: number;
 }
 
 interface FeedState {
@@ -34,6 +35,7 @@ interface FeedState {
   hasHydrated: boolean;
   unseenNotificationCount: number;
   isInMeeting: boolean;
+  availableInvitesCount: number;
 
   fetchFeedStatus: () => Promise<FeedStatusResponse>;
   fetchFeed: () => Promise<void>;
@@ -61,6 +63,7 @@ const initialState = {
   hasHydrated: false,
   unseenNotificationCount: 0,
   isInMeeting: false,
+  availableInvitesCount: 0,
 };
 
 export const useFeedStore = create<FeedState>()(
@@ -80,7 +83,10 @@ export const useFeedStore = create<FeedState>()(
           );
         }
 
-        set({ isInMeeting: response.data.result.isInMeeting });
+        set({
+          isInMeeting: response.data.result.isInMeeting,
+          availableInvitesCount: response.data.result.availableInvitesCount,
+        });
         return response.data.result;
       },
 
@@ -183,6 +189,9 @@ export const useFeedStore = create<FeedState>()(
 
       inviteUser: async (userId: string) => {
         await apiClient.post(API_ENDPOINTS.FEED.INVITE(userId));
+        set((state) => ({
+          availableInvitesCount: Math.max(0, state.availableInvitesCount - 1),
+        }));
         get().nextProfile();
         get().refreshFeedIfNeeded();
       },
@@ -248,6 +257,7 @@ export const useFeedStore = create<FeedState>()(
         feed: state.feed,
         lastFetchedAt: state.lastFetchedAt,
         isInMeeting: state.isInMeeting,
+        availableInvitesCount: state.availableInvitesCount,
       }),
     },
   ),
