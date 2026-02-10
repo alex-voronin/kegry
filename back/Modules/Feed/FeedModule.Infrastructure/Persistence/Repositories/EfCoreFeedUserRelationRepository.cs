@@ -52,10 +52,19 @@ internal class EfCoreFeedUserRelationRepository : RepositoryOutbox<FeedContext, 
     public Task ResetExpiredMeetingsAsync(CancellationToken ct = default)
     {
         return Context.FeedUserRelations
-            .Where(r => r.IsInMeeting && r.MeetingExpiresAt < DateTimeOffset.UtcNow)
+            .Where(r => r.IsInMeeting && r.InviteExpiresAt < DateTimeOffset.UtcNow)
             .ExecuteUpdateAsync(setter =>
                     setter.SetProperty(r => r.IsInMeeting, false),
                 ct);
+    }
+
+    public Task<int> GetMadeInvitesCountAsync(Guid userId, DateOnly date, CancellationToken ct = default)
+    {
+        var start = new DateTimeOffset(date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
+        var end = start.AddDays(1);
+        return Context.FeedUserRelations
+            .CountAsync(r => r.MyUserId == userId &&
+                             r.InvitedAt >= start && r.InvitedAt < end, ct);
     }
 
     public async Task<(bool isInMeeting, Guid? userIdToRate)> GetFeedStatusAsync(Guid userId,

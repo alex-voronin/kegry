@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(FeedContext))]
-    [Migration("20260209193130_AddFeed")]
+    [Migration("20260210144410_AddFeed")]
     partial class AddFeed
     {
         /// <inheritdoc />
@@ -49,6 +49,14 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<DateTimeOffset>("InviteExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("invite_expires_at");
+
+                    b.Property<DateTimeOffset>("InvitedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("invited_at");
+
                     b.Property<bool>("IsBlocked")
                         .HasColumnType("boolean")
                         .HasColumnName("is_blocked");
@@ -60,10 +68,6 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                     b.Property<DateTimeOffset>("LastSeenAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_seen_at");
-
-                    b.Property<DateTimeOffset>("MeetingExpiresAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("meeting_expires_at");
 
                     b.Property<Guid>("MyUserId")
                         .HasColumnType("uuid")
@@ -92,6 +96,9 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_user_relations");
+
+                    b.HasIndex("InvitedAt")
+                        .HasDatabaseName("ix_user_relations_invited_at");
 
                     b.HasIndex("MyUserId")
                         .IsUnique()

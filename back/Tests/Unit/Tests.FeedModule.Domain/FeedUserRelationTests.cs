@@ -13,9 +13,10 @@ public class FeedUserRelationTests
             Id = Guid.NewGuid(),
             MyUserId = Guid.NewGuid(),
             OtherUserId = Guid.NewGuid(),
-            MeetingExpiresAt = DateTimeOffset.UtcNow,
+            InviteExpiresAt = DateTimeOffset.UtcNow,
             SkippedAt = DateTimeOffset.UtcNow,
-            LastSeenAt = DateTimeOffset.UtcNow
+            LastSeenAt = DateTimeOffset.UtcNow,
+            InvitedAt = DateTimeOffset.UtcNow
         };
     }
 

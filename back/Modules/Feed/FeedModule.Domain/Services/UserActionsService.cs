@@ -1,5 +1,6 @@
 using FeedModule.Contracts.Events;
 using FeedModule.Domain.Aggregates;
+using FeedModule.Domain.Exceptions;
 using FeedModule.Domain.Repositories;
 using Serilog;
 using SharedCore.Services.LifeTimes;
@@ -8,6 +9,7 @@ namespace FeedModule.Domain.Services;
 
 internal sealed class UserActionsService : IUserActionsService, IScoped
 {
+    private readonly IUserActionLimitsService _userActionLimitsService;
     private readonly IFeedUserRelationRepository _feedUserRelationRepository;
     private readonly IFilterRepository _filterRepository;
     private readonly IUserRepository _userRepository;
@@ -15,12 +17,14 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
     private readonly TimeProvider _timeProvider;
 
     public UserActionsService(
+        IUserActionLimitsService userActionLimitsService,
         IFeedUserRelationRepository feedUserRelationRepository,
         IFilterRepository filterRepository,
         IUserRepository userRepository,
         IUserRatingRepository userRatingRepository,
         TimeProvider timeProvider)
     {
+        _userActionLimitsService = userActionLimitsService;
         _feedUserRelationRepository = feedUserRelationRepository;
         _filterRepository = filterRepository;
         _userRepository = userRepository;
@@ -88,6 +92,12 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
 
     public async Task InviteUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
     {
+        var availableInvitesCount = await _userActionLimitsService.GetAvailableInvitesAsync(myUserId, ct);
+        if (availableInvitesCount <= 0)
+        {
+            throw FeedExceptions.NoAvailableInvitesLeft(myUserId);
+        }
+        
         try
         {
             await InviteUserUnsafeAsync(myUserId, otherUserId, ct);
@@ -139,12 +149,13 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
     {
         var now = _timeProvider.GetUtcNow();
         var meToOtherUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
-        meToOtherUserRelation.MeetingExpiresAt =
-            _timeProvider.GetUtcNow().AddMinutes(FeedParameters.MeetingExpirationTimeInDays);
+        meToOtherUserRelation.InvitedAt = now;
+        meToOtherUserRelation.InviteExpiresAt =
+            _timeProvider.GetUtcNow().AddMinutes(FeedParameters.InviteExpirationTimeInHours);
         meToOtherUserRelation.LastSeenAt = now;
 
         var otherToMeUserRelation = await _feedUserRelationRepository.GetAsync(otherUserId, myUserId, false, ct);
-        if (otherToMeUserRelation != null && !otherToMeUserRelation.IsMeetingExpired(now))
+        if (otherToMeUserRelation != null && !otherToMeUserRelation.IsInviteExpired(now))
         {
             await TryArrangeMeeting(otherToMeUserRelation, meToOtherUserRelation, ct);
         }
@@ -155,7 +166,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
                 {
                     UserId = otherUserId,
                     ByUserId = myUserId,
-                    MeetingExpiresAt = meToOtherUserRelation.MeetingExpiresAt
+                    MeetingExpiresAt = meToOtherUserRelation.InviteExpiresAt
                 });
         }
 
@@ -172,7 +183,8 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
                 Id = Guid.CreateVersion7(),
                 MyUserId = myUserId,
                 OtherUserId = otherUserId,
-                MeetingExpiresAt = DateTimeOffset.MinValue,
+                InvitedAt = DateTimeOffset.MinValue,
+                InviteExpiresAt = DateTimeOffset.MinValue,
                 SkippedAt = DateTimeOffset.MinValue,
                 LastSeenAt = _timeProvider.GetUtcNow()
             };
@@ -193,7 +205,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
             return false;
         }
 
-        otherToMeUserRelation.MeetingExpiresAt = meToOtherUserRelation.MeetingExpiresAt;
+        otherToMeUserRelation.InviteExpiresAt = meToOtherUserRelation.InviteExpiresAt;
         otherToMeUserRelation.IsInMeeting = true;
         meToOtherUserRelation.IsInMeeting = true;
         // the potential race condition when multiple users invite the same user at the same time
@@ -205,7 +217,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         await _feedUserRelationRepository.PublishEventAsync(
             new MeetingArrangedEvent
             {
-                ExpiresAt = meToOtherUserRelation.MeetingExpiresAt,
+                ExpiresAt = meToOtherUserRelation.InviteExpiresAt,
                 Participants =
                 [
                     new MeetingArrangedEvent.Participant(meToOtherUserRelation.MyUserId, me!.FullName),

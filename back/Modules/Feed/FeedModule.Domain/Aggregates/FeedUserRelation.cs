@@ -43,9 +43,10 @@ public class FeedUserRelation
 
     public bool IsInMeeting { get; set; }
     public bool ShouldRate { get; set; }
-    public required DateTimeOffset MeetingExpiresAt { get; set; }
+    public required DateTimeOffset InviteExpiresAt { get; set; }
+    public required DateTimeOffset InvitedAt { get; set; }
     public required DateTimeOffset SkippedAt { get; set; }
     public required DateTimeOffset LastSeenAt { get; set; }
 
-    public bool IsMeetingExpired(DateTimeOffset dateTime) => MeetingExpiresAt < dateTime;
+    public bool IsInviteExpired(DateTimeOffset dateTime) => InviteExpiresAt < dateTime;
 }

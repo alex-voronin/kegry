@@ -26,7 +26,7 @@ public class ExpiredChatsCollectorTests : IntegrationTestBase, IAsyncLifetime
     public async Task GivenExpiredChat_WhenCollectingExpiredChats_ThenChatIsDeletedAndLinksAreRemoved()
     {
         Factory.FakeTimeProvider.Reset(
-            DateTime.UtcNow - TimeSpan.FromDays(FeedParameters.MeetingExpirationTimeInDays + 1)
+            DateTime.UtcNow - TimeSpan.FromDays(FeedParameters.InviteExpirationTimeInHours + 1)
         );
 
         // 1. Create two users
@@ -72,7 +72,7 @@ public class ExpiredChatsCollectorTests : IntegrationTestBase, IAsyncLifetime
         chatResponse.Success.ShouldBeTrue();
         var chatId = chatResponse.Result.Id;
 
-        Factory.FakeTimeProvider.Advance(TimeSpan.FromDays(FeedParameters.MeetingExpirationTimeInDays + 1));
+        Factory.FakeTimeProvider.Advance(TimeSpan.FromDays(FeedParameters.InviteExpirationTimeInHours + 1));
 
         // 4. Trigger collection and check that pushes has been sent
         await Factory.NotificationManager.AwaitSilentPushNotifications(

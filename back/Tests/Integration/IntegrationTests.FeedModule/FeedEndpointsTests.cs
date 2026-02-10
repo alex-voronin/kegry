@@ -6,7 +6,9 @@ using FeedModule.Domain.ValueObjects;
 using IntegrationTests.Shared;
 using IntegrationTests.Shared.HttpClients;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using SharedCore.Api.Dto;
+using SharedCore.Exceptions;
 using Shouldly;
 
 namespace IntegrationTests.FeedModule;
@@ -398,5 +400,67 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         relation.ShouldNotBeNull();
         relation.IsBlocked.ShouldBeTrue();
         relation.ReportMessage.ShouldBe(reportMessage);
+    }
+    
+    [Fact]
+    public async Task GivenUser_WhenInvitesMoreThanLimit_ThenReturnsTooManyRequests_AndReturnsDefaultCounterAfterWaitingForNewDay()
+    {
+        Factory.FakeTimeProvider.SetUtcNow(DateTime.UtcNow);
+        
+        // 1. Create main user
+        var authMain = await Factory.AuthManager.CreateAndLoginUserAsync("user@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authMain);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Create FeedParameters.DefaultAvailableInvitesPerDay + 1 candidate users
+        const int totalCandidates = FeedParameters.DefaultAvailableInvitesPerDay + 1;
+        var candidateIds = new List<string>();
+        for (var i = 0; i < totalCandidates; i++)
+        {
+            var authCandidate = await Factory.AuthManager
+                .CreateAndLoginUserAsync($"limit_candidate{i}@example.com", "Password123!");
+            candidateIds.Add(authCandidate.UserId);
+            Factory.ApiClient.SetAuth(authCandidate);
+            await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        }
+
+        // 3. Invite FeedParameters.DefaultAvailableInvitesPerDay users successfully
+        Factory.ApiClient.SetAuth(authMain);
+        for (var i = 0; i < FeedParameters.DefaultAvailableInvitesPerDay; i++)
+        {
+            var response = await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
+                ApiRoutes.Feed.InviteUser(candidateIds[i]), null);
+            response.Success.ShouldBeTrue();
+            
+            var currentStatus = await Factory.ApiClient
+                .GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
+            currentStatus.Success.ShouldBeTrue();
+            currentStatus.Result.AvailableInvitesCount.ShouldBe(FeedParameters.DefaultAvailableInvitesPerDay - i - 1);
+        }
+
+        // 4. Try to invite one more user and expect failure
+        var failedResponse = await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.InviteUser(candidateIds[FeedParameters.DefaultAvailableInvitesPerDay]), null);
+        
+        failedResponse.Success.ShouldBeFalse();
+        failedResponse.Errors.First().Code.ShouldBe(nameof(ErrorCode.TooManyRequests));
+        
+        // 5. Wait until midnight and check limit
+        var today23H = DateTimeOffset.UtcNow.Date.AddDays(1).AddHours(-1);
+        Factory.FakeTimeProvider.SetUtcNow(today23H);
+        
+        var today23HStatus = await Factory.ApiClient
+            .GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
+        today23HStatus.Success.ShouldBeTrue();
+        today23HStatus.Result.AvailableInvitesCount.ShouldBe(0);
+        
+        // 6. Wait until midnight and check limit
+        var tomorrow = DateTimeOffset.UtcNow.Date.AddDays(1);
+        Factory.FakeTimeProvider.SetUtcNow(tomorrow);
+        
+        var tomorrowStatus = await Factory.ApiClient
+            .GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
+        tomorrowStatus.Success.ShouldBeTrue();
+        tomorrowStatus.Result.AvailableInvitesCount.ShouldBe(FeedParameters.DefaultAvailableInvitesPerDay);
     }
 }

@@ -74,7 +74,8 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                     report_message = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
                     is_in_meeting = table.Column<bool>(type: "boolean", nullable: false),
                     should_rate = table.Column<bool>(type: "boolean", nullable: false),
-                    meeting_expires_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    invite_expires_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    invited_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     skipped_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     last_seen_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
@@ -82,6 +83,12 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("pk_user_relations", x => x.id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_relations_invited_at",
+                schema: "feed",
+                table: "user_relations",
+                column: "invited_at");
 
             migrationBuilder.CreateIndex(
                 name: "unq_feed_user_relation_pair",

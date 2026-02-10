@@ -74,7 +74,7 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
             .Where(j => j.FeedUserRelation == null || !j.FeedUserRelation.IsBlocked)
             .Where(j => j.FeedUserRelation == null || !j.FeedUserRelation.IsInMeeting)
             .Where(j => j.FeedUserRelation == null || j.FeedUserRelation.SkippedAt < skipCutoff)
-            .Where(j => j.FeedUserRelation == null || j.FeedUserRelation.MeetingExpiresAt <= now);
+            .Where(j => j.FeedUserRelation == null || j.FeedUserRelation.InviteExpiresAt <= now);
 
         if (filter.Gender.HasValue)
         {

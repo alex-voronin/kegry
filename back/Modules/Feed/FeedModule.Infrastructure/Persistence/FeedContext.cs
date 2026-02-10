@@ -58,22 +58,24 @@ public class FeedContext : DbContext
         modelBuilder.Entity<FeedUserRelation>(builder =>
         {
             builder.ToTable("user_relations", "feed");
-            builder.Property(fp => fp.Id)
+            builder.Property(r => r.Id)
                 .ValueGeneratedNever();
-            builder.Property(fp => fp.Rating)
+            builder.Property(r => r.Rating)
                 .HasColumnType("numeric(2,1)");
 
-            builder.HasIndex(fp => fp.MyUserId)
+            builder.HasIndex(r => r.MyUserId)
                 .HasFilter("\"is_in_meeting\" = true")
                 .IsUnique()
                 .HasDatabaseName("unq_feed_user_relation_state_active_meeting_per_user");
 
-            builder.HasIndex(fp => new { fp.MyUserId, fp.OtherUserId })
+            builder.HasIndex(r => new { r.MyUserId, r.OtherUserId })
                 .IsUnique()
                 .HasDatabaseName("unq_feed_user_relation_pair");
 
-            builder.Property(fp => fp.ReportMessage)
+            builder.Property(r => r.ReportMessage)
                 .HasMaxLength(ValidationParameters.MaxReportMessageLength);
+
+            builder.HasIndex(r => r.InvitedAt);
         });
 
         modelBuilder.Entity<Filter>(builder =>

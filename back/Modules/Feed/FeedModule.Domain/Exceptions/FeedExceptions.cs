@@ -18,4 +18,11 @@ public static class FeedExceptions
             HttpStatusCode.UnprocessableEntity,
             ErrorCode.NotFound);
     }
+    
+    public static HttpCodeException NoAvailableInvitesLeft(Guid id)
+    {
+        return new HttpCodeException($"No available invites left for user {id}",
+            HttpStatusCode.TooManyRequests,
+            ErrorCode.TooManyRequests);
+    }
 }

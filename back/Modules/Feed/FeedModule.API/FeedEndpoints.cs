@@ -71,11 +71,13 @@ public class FeedEndpoints : IEndpoints
     private static async Task<ApiResult<GetFeedStatusResponse>> GetFeedStatus(
         ClaimsPrincipal user,
         IFeedUserRelationRepository repository,
+        IUserActionLimitsService userActionsLimitsService,
         CancellationToken ct)
     {
+        var availableInvitesCount =  await userActionsLimitsService.GetAvailableInvitesAsync(user.GetId(), ct);
         var (isInMeeting, userIdToRate) = await repository.GetFeedStatusAsync(user.GetId(), ct);
         return ApiResult<GetFeedStatusResponse>.Build(
-            new GetFeedStatusResponse(isInMeeting, userIdToRate)
+            new GetFeedStatusResponse(isInMeeting, userIdToRate, availableInvitesCount)
         );
     }
 

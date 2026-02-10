@@ -8,4 +8,5 @@ public enum ErrorCode
     AlreadyExists,
     ValidationError,
     TooManyEntities,
+    TooManyRequests,
 }
