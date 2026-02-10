@@ -101,7 +101,11 @@ export function useBackgroundLocation() {
     SendLocationWithRateLimit();
 
     intervalRef.current = setInterval(() => {
-      SendLocationWithRateLimit();
+      try {
+        SendLocationWithRateLimit();
+      } catch (error) {
+        console.error('Failed to send location:', error);
+      }
     }, LOCATION_UPDATE_INTERVAL);
 
     return () => {

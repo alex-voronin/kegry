@@ -139,7 +139,7 @@
       "greeting": "Hey, adventurer!",
       "slideFeed": {
         "textDontGoAlone": "You won't find any Hoplings on your own. Pick a companion first and start your journey together!",
-        "textInvites": "You get 7 invites per day. Each one expires in 48 hours if your companion doesn't respond, then you can try again. Choose wisely 😉."
+        "textInvites": "You get 7 invites per day. Each one expires in 2 days if your companion doesn't respond, then you can try again. Choose wisely 😉."
       },
       "slideChat": {
         "textNewChat": "Once you've established a connection, a chat opens to plan your meeting.",
