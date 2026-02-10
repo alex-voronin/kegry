@@ -9,6 +9,7 @@ import styles from './feed.module.css';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
+import { SegmentedControl } from '@/components/ui/segmented-control';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useFeedStore, UserProfileDto } from '@/store/use-feed-store';
 import { useSettingsStore, DistanceUnits } from '@/store/use-settings-store';
@@ -246,10 +247,40 @@ function AvailableInvites({ count }: { count: number }) {
   );
 }
 
+function WhenSelector({
+  value,
+  onChange,
+  tFilters,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  tFilters: ReturnType<typeof useTranslations>;
+}) {
+  const timeOptions = [
+    { value: 'now', label: tFilters('now'), width: 50 },
+    { value: 'today', label: tFilters('today'), width: 60 },
+    { value: 'tomorrow', label: tFilters('tomorrow'), width: 90 },
+  ];
+
+  return (
+    <div className={styles.whenSelector}>
+      <SegmentedControl
+        options={timeOptions}
+        value={value}
+        onChange={onChange}
+        // hack, but bg-transparent class doesn't work in some versoins of Safari
+        style={{ backgroundColor: 'transparent' }}
+        highlightPrevious
+      />
+    </div>
+  );
+}
+
 export default function FeedScreen() {
   const tFeed = useTranslations('screens.feed');
   const tCommon = useTranslations('common');
   const tHobbies = useTranslations('components.profile-sections.hobbies');
+  const tFilters = useTranslations('screens.filters');
   const router = useRouter();
   const {
     feed,
@@ -267,6 +298,7 @@ export default function FeedScreen() {
   } = useFeedStore();
   const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
+  const [when, setWhen] = useState('today');
 
   useEffect(() => {
     const checkPermissions = async () => {
@@ -425,6 +457,7 @@ export default function FeedScreen() {
             <p className={styles.emptyStateText}>{tFeed('noProfiles')}</p>
           </div>
         )}
+        <WhenSelector value={when} onChange={setWhen} tFilters={tFilters} />
         <AvailableInvites count={availableInvitesCount} />
         <FeedFooter
           onIgnore={handleIgnore}

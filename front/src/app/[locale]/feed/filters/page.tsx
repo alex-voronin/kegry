@@ -44,7 +44,6 @@ export default function FiltersScreen() {
 
   const initialFilters = useMemo(
     () => ({
-      when: 'today',
       distance: '10',
       ageFrom: '',
       ageTo: '',
@@ -77,7 +76,6 @@ export default function FiltersScreen() {
         ? metersToMiles(serverFilters.radiusMeters).toString()
         : metersToKilometers(serverFilters.radiusMeters).toString();
       setFilters({
-        when: 'today',
         distance: distanceValue,
         ageFrom: serverFilters.ageFrom?.toString() || '',
         ageTo: serverFilters.ageTo?.toString() || '',
@@ -125,12 +123,6 @@ export default function FiltersScreen() {
     router.back();
   };
 
-  const timeOptions = [
-    { value: 'now', label: t('now'), width: 100 },
-    { value: 'today', label: t('today'), width: 100 },
-    { value: 'tomorrow', label: t('tomorrow'), width: 140 },
-  ];
-
   const genderOptions = [
     { value: 'any', label: t('genderAny'), width: 100 },
     { value: 'male', label: t('male'), width: 100 },
@@ -159,15 +151,6 @@ export default function FiltersScreen() {
       ) : (
         <div className={styles.container}>
           <div className={styles.content}>
-            <div className={styles.filterSection}>
-              <FormSectionTitle>{t('when')}</FormSectionTitle>
-              <SegmentedControl
-                options={timeOptions}
-                value={filters.when}
-                onChange={(val) => setFilters({ ...filters, when: val })}
-              />
-            </div>
-
             <div className={styles.filterSection}>
               <FormSectionTitle>
                 {t('distance')} (

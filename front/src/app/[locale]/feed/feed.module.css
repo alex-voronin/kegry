@@ -33,7 +33,7 @@
 }
 
 .userInfo {
-  @apply pointer-events-none absolute right-0 bottom-28 left-0 z-10 px-4 pr-12;
+  @apply pointer-events-none absolute right-0 bottom-44 left-0 z-10 px-4 pr-12;
 }
 
 .ratingRow {
@@ -90,6 +90,10 @@
 
 .loadingOverlay {
   @apply absolute inset-0 z-30 flex items-center justify-center bg-black/30;
+}
+
+.whenSelector {
+  @apply absolute right-0 bottom-26 left-0 z-20 flex justify-center px-4;
 }
 
 .availableInvites {
