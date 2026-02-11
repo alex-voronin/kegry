@@ -36,7 +36,7 @@ export default function VerifyEmailPage() {
 
     if (!userId) {
       toast.error(t('errors.userNotFound'));
-      router.push(PAGE_ROUTES.LOGIN);
+      router.push(PAGE_ROUTES.LOGIN());
       return;
     }
 
@@ -94,7 +94,7 @@ export default function VerifyEmailPage() {
           </Button>
 
           <Link
-            href={PAGE_ROUTES.LOGIN}
+            href={PAGE_ROUTES.LOGIN()}
             className="mt-4 text-center text-sm underline"
           >
             {t('backToLogin')}

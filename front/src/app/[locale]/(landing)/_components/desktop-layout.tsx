@@ -68,7 +68,7 @@ export default function DesktopLayout() {
           >
             {t('header.nav.contactUs')}
           </span>
-          <Link href={PAGE_ROUTES.LOGIN} className={styles.loginButton}>
+          <Link href={PAGE_ROUTES.LOGIN(true)} className={styles.loginButton}>
             {t('header.nav.login')}
           </Link>
         </nav>
@@ -81,7 +81,7 @@ export default function DesktopLayout() {
             {t.rich('cheers.description', {
               br: () => <br />,
             })}{' '}
-            <Link href={PAGE_ROUTES.LOGIN} className={styles.actionLink}>
+            <Link href={PAGE_ROUTES.LOGIN(true)} className={styles.actionLink}>
               {t('cheers.cta')}
             </Link>
           </p>

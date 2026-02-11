@@ -70,7 +70,7 @@ export default function PasswordResetPage() {
     try {
       await confirmPasswordReset(email, token, data.password);
       toast.success(t('success'));
-      router.push(PAGE_ROUTES.LOGIN);
+      router.push(PAGE_ROUTES.LOGIN());
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -87,7 +87,7 @@ export default function PasswordResetPage() {
             <p className="text-muted-foreground mt-2">
               This password reset link is invalid or incomplete.
             </p>
-            <Link href={PAGE_ROUTES.LOGIN} className="mt-4 inline-block">
+            <Link href={PAGE_ROUTES.LOGIN()} className="mt-4 inline-block">
               <Button variant={ButtonVariant.Default}>
                 {t('backToLogin')}
               </Button>
@@ -142,7 +142,7 @@ export default function PasswordResetPage() {
           </Button>
 
           <Link
-            href={PAGE_ROUTES.LOGIN}
+            href={PAGE_ROUTES.LOGIN()}
             className="mt-4 text-center text-sm underline"
           >
             {t('backToLogin')}

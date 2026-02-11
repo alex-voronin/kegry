@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Script from 'next/script';
 import { useRouter } from '@/i18n/routing';
+import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
@@ -22,11 +23,28 @@ export default function LoginPage() {
   const t = useTranslations('screens.login');
   const tCommonErrors = useTranslations('common.errors');
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const signin = useAuthStore((state) => state.signin);
   const signinWithGoogle = useAuthStore((state) => state.signinWithGoogle);
+  const { accessToken, hasHydrated, requiredAction } = useAuthStore();
+
+  const shouldRedirect = searchParams.get('auto-signin');
+  const isRedirecting = hasHydrated && accessToken && shouldRedirect;
+
+  useEffect(() => {
+    if (isRedirecting) {
+      if (requiredAction === RequiredAction.EmailVerification) {
+        router.replace(PAGE_ROUTES.VERIFY_EMAIL);
+      } else if (requiredAction === RequiredAction.OnboardingCompletion) {
+        router.replace(PAGE_ROUTES.ONBOARDING);
+      } else {
+        router.replace(PAGE_ROUTES.FEED);
+      }
+    }
+  }, [isRedirecting, requiredAction, router]);
 
   const schema = z.object({
     email: z.email(t('errors.emailInvalid')).min(1, t('errors.emailRequired')),
@@ -103,6 +121,10 @@ export default function LoginPage() {
       renderButton('google-signin-button');
     }
   }, [isGoogleLoaded, renderButton]);
+
+  if (!hasHydrated || isRedirecting) {
+    return null;
+  }
 
   return (
     <>

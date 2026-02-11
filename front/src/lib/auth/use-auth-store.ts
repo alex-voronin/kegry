@@ -287,7 +287,7 @@ const handleAuthFailure = () => {
   logout();
   // We are outside of a React component, so we cannot use here the useRouter hook.
   if (typeof window !== 'undefined') {
-    window.location.href = PAGE_ROUTES.LOGIN;
+    window.location.href = PAGE_ROUTES.LOGIN();
   }
 };
 

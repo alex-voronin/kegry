@@ -104,7 +104,7 @@ export default function MobileLayout() {
         </nav>
 
         <Link
-          href={PAGE_ROUTES.LOGIN}
+          href={PAGE_ROUTES.LOGIN(true)}
           className={mobileStyles.drawerSignUpButton}
           onClick={() => setIsMenuOpen(false)}
         >
@@ -155,7 +155,7 @@ export default function MobileLayout() {
             {t.rich('cheers.description', {
               br: () => <br />,
             })}{' '}
-            <Link href={PAGE_ROUTES.LOGIN} className={styles.actionLink}>
+            <Link href={PAGE_ROUTES.LOGIN(true)} className={styles.actionLink}>
               {t('cheers.cta')}
             </Link>
           </p>

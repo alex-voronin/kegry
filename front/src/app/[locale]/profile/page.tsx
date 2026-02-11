@@ -104,7 +104,7 @@ export default function ProfilePage() {
     {
       icon: '/assets/profile/logout-icon.svg',
       label: t('menu.logOut'),
-      onClick: () => router.push(PAGE_ROUTES.LOGIN),
+      onClick: () => router.push(PAGE_ROUTES.LOGIN()),
     },
     {
       icon: '/assets/profile/delete-icon.svg',

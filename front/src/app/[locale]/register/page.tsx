@@ -192,7 +192,7 @@ export default function RegisterPage() {
             </div>
 
             <div className={styles.actionsRow}>
-              <Link href={PAGE_ROUTES.LOGIN} className={styles.toggleLink}>
+              <Link href={PAGE_ROUTES.LOGIN()} className={styles.toggleLink}>
                 {t('switchToLogin')}
               </Link>
               <Button

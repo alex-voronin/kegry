@@ -63,7 +63,7 @@ export default function ForgotPasswordPage() {
           </div>
 
           <Link
-            href={PAGE_ROUTES.LOGIN}
+            href={PAGE_ROUTES.LOGIN()}
             className="mt-4 text-center text-sm underline"
           >
             {t('backToLogin')}
@@ -107,7 +107,7 @@ export default function ForgotPasswordPage() {
           </Button>
 
           <Link
-            href={PAGE_ROUTES.LOGIN}
+            href={PAGE_ROUTES.LOGIN()}
             className="mt-4 text-center text-sm underline"
           >
             {t('backToLogin')}

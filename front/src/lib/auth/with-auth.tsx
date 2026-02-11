@@ -10,7 +10,7 @@ export function withAuth<P extends object>(Component: ComponentType<P>) {
 
     useEffect(() => {
       if (hasHydrated && !userId) {
-        router.push(PAGE_ROUTES.LOGIN);
+        router.push(PAGE_ROUTES.LOGIN());
       }
     }, [userId, router, hasHydrated]);
 

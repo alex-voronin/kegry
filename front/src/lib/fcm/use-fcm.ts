@@ -86,9 +86,7 @@ function isTokenValid(): boolean {
 /* ------------------------------------------------------------------ */
 
 async function registerServiceWorker(): Promise<ServiceWorkerRegistration> {
-  const reg = await navigator.serviceWorker.register(
-    '/firebase-messaging-sw.js',
-  );
+  const reg = await navigator.serviceWorker.register('/sw.js');
   await navigator.serviceWorker.ready;
   return reg;
 }

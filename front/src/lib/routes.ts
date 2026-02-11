@@ -1,6 +1,7 @@
 export const PAGE_ROUTES = {
   HOME: '/',
-  LOGIN: '/login',
+  LOGIN: (autoSignin?: boolean) =>
+    autoSignin ? '/login?auto-signin=true' : '/login',
   REGISTER: '/register',
   FORGOT_PASSWORD: '/forgot',
   VERIFY_EMAIL: '/verify-email',

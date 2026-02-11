@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "generate-firebase-config": "node scripts/generate-firebase-config.js",
-    "predev": "npm run generate-firebase-config",
+    "generate-pwa-assets": "node scripts/generate-pwa-assets.js",
+    "predev": "npm run generate-firebase-config && npm run generate-pwa-assets",
     "dev": "next dev",
-    "prebuild": "npm run generate-firebase-config",
+    "prebuild": "npm run generate-firebase-config && npm run generate-pwa-assets",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
