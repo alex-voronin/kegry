@@ -186,15 +186,13 @@ public class FeedEndpoints : IEndpoints
         IUserActionsService userActionsService,
         CancellationToken ct)
     {
-        var domainFilter = new Domain.Aggregates.Filter
-        {
-            UserId = user.GetId(),
-            RadiusMeters = request.Filter.RadiusMeters,
-            AgeFrom = request.Filter.AgeFrom,
-            AgeTo = request.Filter.AgeTo,
-            Gender = request.Filter.Gender,
-            HobbyIds = request.Filter.HobbyIds
-        };
+        var domainFilter = new Domain.Aggregates.Filter(
+            user.GetId(),
+            request.Filter.RadiusMeters,
+            request.Filter.AgeFrom,
+            request.Filter.AgeTo,
+            request.Filter.Gender,
+            request.Filter.HobbyIds);
 
         await userActionsService.UpdateFilterAsync(user.GetId(), domainFilter, ct);
         return ApiResult.Empty;

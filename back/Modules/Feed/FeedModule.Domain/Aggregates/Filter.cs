@@ -1,3 +1,4 @@
+using FeedModule.Domain.Exceptions;
 using FeedModule.Domain.ValueObjects;
 using SharedCore.ValueObjects;
 
@@ -5,23 +6,53 @@ namespace FeedModule.Domain.Aggregates;
 
 public record Filter
 {
-    public required Guid UserId { get; init; }
-    public required int RadiusMeters { get; init; }
-    public required int? AgeFrom { get; init; }
-    public required int? AgeTo { get; init; }
-    public required Gender? Gender { get; init; }
-    public required Guid[] HobbyIds { get; init; }
+    public const int MinAge = 18;
+    public const int MaxDistanceMeters = 200_000;
+    public const int MaxHobbies = 10;
 
-    public static Filter CreateDefault(Guid userId)
+    public Guid UserId { get; init; }
+    public int RadiusMeters { get; init; }
+    public int? AgeFrom { get; init; }
+    public int? AgeTo { get; init; }
+    public Gender? Gender { get; init; }
+    public Guid[] HobbyIds { get; init; }
+
+    public Filter(
+        Guid userId,
+        int radiusMeters,
+        int? ageFrom,
+        int? ageTo,
+        Gender? gender,
+        Guid[] hobbyIds)
     {
-        return new Filter
-        {
-            UserId = userId,
-            RadiusMeters = 30000,
-            AgeFrom = null,
-            AgeTo = null,
-            Gender = null,
-            HobbyIds = []
-        };
+        UserId = userId;
+        RadiusMeters = radiusMeters;
+        AgeFrom = ageFrom;
+        AgeTo = ageTo;
+        Gender = gender;
+        HobbyIds = hobbyIds;
+
+        Validate();
     }
+
+    private void Validate()
+    {
+        if (RadiusMeters < 0 || RadiusMeters > MaxDistanceMeters)
+            throw FilterExceptions.InvalidDistance(MaxDistanceMeters / 1000);
+
+        if (AgeFrom.HasValue && AgeFrom.Value < MinAge)
+            throw FilterExceptions.AgeTooLow(MinAge);
+
+        if (AgeTo.HasValue && AgeTo.Value < MinAge)
+            throw FilterExceptions.AgeTooLow(MinAge);
+
+        if (AgeFrom.HasValue && AgeTo.HasValue && AgeFrom.Value > AgeTo.Value)
+            throw FilterExceptions.InvalidAgeRange();
+
+        if (HobbyIds.Length > MaxHobbies)
+            throw FilterExceptions.TooManyHobbies(MaxHobbies);
+    }
+
+    public static Filter CreateDefault(Guid userId) =>
+        new(userId, radiusMeters: 30000, ageFrom: null, ageTo: null, gender: null, hobbyIds: []);
 }

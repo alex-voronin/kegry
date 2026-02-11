@@ -81,15 +81,13 @@ public class FeedScoringServiceTests
     {
         SetupRepositoryData(locationRepository, userId);
         SetupRepositoryData(userRepository, userId);
-        var filter = new Filter
-        {
-            UserId = userId,
-            RadiusMeters = 5000,
-            AgeFrom = null,
-            AgeTo = null,
-            Gender = null,
-            HobbyIds = []
-        };
+        var filter = new Filter(
+            userId,
+            radiusMeters: 5000,
+            ageFrom: null,
+            ageTo: null,
+            gender: null,
+            hobbyIds: []);
         filterRepository.GetByIdAsync(userId, asNoTracking: true)
             .Returns(filter);
 

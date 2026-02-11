@@ -1,4 +1,3 @@
-using FeedModule.Domain.ValueObjects;
 using SharedCore.ValueObjects;
 
 namespace FeedModule.API.Dto;

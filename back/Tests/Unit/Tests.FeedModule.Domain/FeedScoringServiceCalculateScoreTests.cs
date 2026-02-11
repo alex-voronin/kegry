@@ -141,15 +141,13 @@ public class FeedScoringServiceCalculateScoreTests
             }
         };
 
-        var filter = new Filter
-        {
-            UserId = userProfile.Id,
-            RadiusMeters = FilterDistance,
-            AgeFrom = null,
-            AgeTo = null,
-            Gender = null,
-            HobbyIds = []
-        };
+        var filter = new Filter(
+            userProfile.Id,
+            radiusMeters: FilterDistance,
+            ageFrom: null,
+            ageTo: null,
+            gender: null,
+            hobbyIds: []);
 
         var score = FeedScoringService.CalculateScore(userProfile, candidate, filter);
 
