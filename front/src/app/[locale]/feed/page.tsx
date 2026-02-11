@@ -193,7 +193,13 @@ function FeedFooter({
 }) {
   return (
     <footer className={styles.actions}>
-      <button className={styles.actionButton} onClick={onIgnore}>
+      <button
+        className={styles.actionButton}
+        onClick={(e) => {
+          e.stopPropagation();
+          onIgnore();
+        }}
+      >
         <Image
           className="pointer-events-none"
           src="/assets/feed/ignore-icon.svg"
@@ -205,7 +211,10 @@ function FeedFooter({
       </button>
       <button
         className={styles.actionPrimary}
-        onClick={onInvite}
+        onClick={(e) => {
+          e.stopPropagation();
+          onInvite();
+        }}
         disabled={isInviteDisabled}
       >
         <Image
@@ -217,7 +226,13 @@ function FeedFooter({
           priority
         />
       </button>
-      <button className={styles.actionButton} onClick={onSkip}>
+      <button
+        className={styles.actionButton}
+        onClick={(e) => {
+          e.stopPropagation();
+          onSkip();
+        }}
+      >
         <Image
           className="pointer-events-none"
           src="/assets/feed/skip-icon.svg"
@@ -269,7 +284,7 @@ function WhenSelector({
   ];
 
   return (
-    <div className={styles.whenSelector}>
+    <div className={styles.whenSelector} onClick={(e) => e.stopPropagation()}>
       <SegmentedControl
         options={timeOptions}
         value={value}
@@ -439,14 +454,22 @@ export default function FeedScreen() {
     }
   };
 
+  const handleProfileClick = () => {
+    if (!currentProfile) return;
+    router.push(PAGE_ROUTES.USER_PROFILE(currentProfile.id));
+  };
+
   return (
     <div className={styles.wrapper}>
-      <div className={styles.content}>
-        <FeedHeader
-          router={router}
-          unseenCount={unseenNotificationCount}
-          showPermissionsBadge={showPermissionsBadge}
-        />
+      <div className={styles.content} onClick={handleProfileClick}>
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <div onClick={(e) => e.stopPropagation()}>
+          <FeedHeader
+            router={router}
+            unseenCount={unseenNotificationCount}
+            showPermissionsBadge={showPermissionsBadge}
+          />
+        </div>
         {showLoading && !currentProfile ? (
           <div className={styles.loadingContainer}>
             <Spinner />

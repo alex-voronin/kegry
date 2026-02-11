@@ -11,6 +11,7 @@ export const PAGE_ROUTES = {
   ONBOARDING_COVER: '/onboarding/cover',
   HOW_IT_WORKS: '/how-it-works',
   PROFILE: '/profile',
+  USER_PROFILE: (userId: string) => `/profile/${userId}`,
   PROFILE_EDIT: '/profile/edit',
   PROFILE_COVER: '/profile/cover-image',
   EDIT_PROFILE: '/edit-profile',

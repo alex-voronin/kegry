@@ -8,6 +8,7 @@ import { useParams } from 'next/navigation';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
+import { ModalMenu } from '@/components/ui/modal-menu';
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
 import {
@@ -15,6 +16,9 @@ import {
   calculateAge,
   UserProfileDto,
 } from '@/store/use-user-profile-store';
+import { ReportDialog } from '@/components/ui/report-dialog';
+import { PAGE_ROUTES } from '@/lib/routes';
+import { toast } from 'react-toastify';
 import styles from '../profile.module.css';
 
 export default function UserProfilePage() {
@@ -44,6 +48,30 @@ export default function UserProfilePage() {
   const handleBack = () => {
     router.back();
   };
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  const t = useTranslations('screens.profile.theirProfile');
+  const { blockUser } = useUserProfileStore();
+
+  const handleBlockConfirm = async (message: string) => {
+    try {
+      await blockUser(userId, message);
+      toast.success(t('toast.blocked'));
+      router.push(PAGE_ROUTES.FEED);
+    } catch (error) {
+      toast.error(t('toast.blockFailed'));
+    }
+  };
+
+  const menuOptions = [
+    {
+      icon: '/assets/profile/delete-icon.svg',
+      label: t('menu.blockAndReport'),
+      onClick: () => setIsReportDialogOpen(true),
+      isDestructive: true,
+    },
+  ];
 
   if (isLoading) {
     return (
@@ -77,6 +105,15 @@ export default function UserProfilePage() {
             width={14}
             height={27}
             onClick={handleBack}
+          />
+        }
+        right={
+          <Icon
+            src="/assets/common/more-icon.svg"
+            alt="more"
+            width={24}
+            height={24}
+            onClick={() => setIsMenuOpen(true)}
           />
         }
       />
@@ -133,6 +170,18 @@ export default function UserProfilePage() {
           </div>
         </div>
       </div>
+
+      <ModalMenu
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        options={menuOptions}
+      />
+
+      <ReportDialog
+        isOpen={isReportDialogOpen}
+        onClose={() => setIsReportDialogOpen(false)}
+        onConfirm={handleBlockConfirm}
+      />
     </div>
   );
 }

@@ -268,6 +268,15 @@
         "logOut": "Log Out",
         "delete": "Delete Account"
       },
+      "theirProfile": {
+        "menu": {
+          "blockAndReport": "Block & Report"
+        },
+        "toast": {
+          "blocked": "User blocked",
+          "blockFailed": "Failed to block user"
+        }
+      },
       "deleteAccountDialog": {
         "title": "Are you sure you want to delete your account? This action cannot be undone.",
         "buttonYes": "Yes",

@@ -58,6 +58,7 @@ export interface UserProfileState {
   patchProfile: (data: Partial<PatchProfileRequest>) => Promise<void>;
 
   discardLocalProfileChanges: (serverProfile: UserProfileDto | null) => void;
+  blockUser: (userId: string, reportMessage?: string) => Promise<void>;
 
   reset: () => void;
 }
@@ -171,6 +172,12 @@ export const useUserProfileStore = create<UserProfileState>()(
             selectedHobbyIds: serverProfile.hobbies.map((h) => h.id),
           });
         }
+      },
+
+      blockUser: async (userId: string, reportMessage?: string) => {
+        await apiClient.post(API_ENDPOINTS.FEED.BLOCK(userId), {
+          reportMessage,
+        });
       },
 
       reset: () => set(initialState),
