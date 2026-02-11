@@ -1,6 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useLayoutEffect,
+} from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
@@ -65,6 +71,48 @@ export default function ChatScreen() {
     refreshChat,
     addMessage,
   } = useChatStore();
+
+  const messageListRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
+    const el = messageListRef.current;
+    if (el) {
+      el.scrollTo({ top: el.scrollHeight, behavior });
+    }
+  }, []);
+
+  // Scroll to bottom when messages change
+  useLayoutEffect(() => {
+    if (chat?.messages) {
+      // Use instant scroll for initial load, smooth for new messages
+      const behavior = chat.messages.length > 0 ? 'auto' : 'smooth';
+      scrollToBottom(behavior);
+    }
+  }, [chat?.messages, scrollToBottom]);
+
+  // Scroll on mount
+  useEffect(() => {
+    scrollToBottom('auto');
+  }, [scrollToBottom]);
+
+  // Scroll to bottom on viewport resize (e.g. keyboard open)
+  useEffect(() => {
+    const handleResize = () => {
+      scrollToBottom('auto');
+    };
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize);
+    }
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResize);
+      }
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [scrollToBottom]);
 
   const { registerForegroundHandler, unregisterForegroundHandler } =
     useFcmStore();
@@ -267,7 +315,29 @@ export default function ChatScreen() {
             width={30}
             height={32}
             priority
+            onClick={() => router.push(PAGE_ROUTES.PROFILE)}
           />
+        }
+        title={
+          <div
+            className={styles.titleWrapper}
+            onClick={() =>
+              router.push(PAGE_ROUTES.USER_PROFILE(chat.participant.id))
+            }
+          >
+            <div className={styles.avatarCircle}>
+              <Image
+                src={
+                  chat.participant.avatarUrl ||
+                  '/assets/common/avatar-placeholder.webp'
+                }
+                alt="avatar"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <p className={styles.userName}>{participantName}</p>
+          </div>
         }
         right={
           <div className={styles.headerActionsWrapper}>
@@ -294,22 +364,7 @@ export default function ChatScreen() {
         }
       />
 
-      <div className={styles.titleWrapper}>
-        <div className={styles.avatarCircle}>
-          <Image
-            src={
-              chat.participant.avatarUrl ||
-              '/assets/common/avatar-placeholder.webp'
-            }
-            alt="avatar"
-            fill
-            className="object-cover"
-          />
-        </div>
-        <p className={styles.userName}>{participantName}</p>
-      </div>
-
-      <div className={styles.messageList}>
+      <div ref={messageListRef} className={styles.messageList}>
         {chat.messages.map((msg) => (
           <div
             key={msg.id}

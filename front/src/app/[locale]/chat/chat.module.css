@@ -5,7 +5,7 @@
 }
 
 .titleWrapper {
-  @apply absolute left-1/2 flex -translate-x-1/2 flex-col items-center justify-between py-3;
+  @apply flex translate-y-[-6px] flex-col items-center justify-center;
 }
 
 .avatarCircle {
@@ -25,7 +25,7 @@
 }
 
 .messageList {
-  @apply flex-1 overflow-y-auto p-4 pb-24;
+  @apply flex-1 overflow-y-auto p-4;
 }
 
 .messageRow {
@@ -57,7 +57,7 @@
 }
 
 .footer {
-  @apply bg-form-element absolute right-0 bottom-0 left-0 flex items-end gap-3 px-4 py-3 backdrop-blur-md;
+  @apply bg-form-element flex flex-none items-end gap-3 px-4 py-3 backdrop-blur-md;
 }
 
 .footerIcon {
