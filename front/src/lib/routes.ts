@@ -52,6 +52,8 @@ export const API_ENDPOINTS = {
     LIST: '/api/v1/feed',
     RATE: (userId: string) => `/api/v1/feed/${userId}/rating`,
     INVITE: (userId: string) => `/api/v1/feed/${userId}/invite`,
+    INVITE_EXPIRATION: (userId: string) =>
+      `/api/v1/feed/${userId}/invite-expiration`,
     BLOCK: (userId: string) => `/api/v1/feed/${userId}/block`,
     UNBLOCK: (userId: string) => `/api/v1/feed/${userId}/unblock`,
     SKIP: (userId: string) => `/api/v1/feed/${userId}/skip`,

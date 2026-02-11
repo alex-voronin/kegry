@@ -6,6 +6,7 @@ import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
 import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
+import { computeExpiresAt, InviteExpiration } from '@/lib/invite-utils';
 
 export interface HobbyDto {
   id: string;
@@ -40,7 +41,8 @@ interface FeedState {
   fetchFeedStatus: () => Promise<FeedStatusResponse>;
   fetchFeed: () => Promise<void>;
   refreshFeedIfNeeded: () => Promise<void>;
-  inviteUser: (userId: string) => Promise<void>;
+  inviteUser: (userId: string, when: InviteExpiration) => Promise<void>;
+  getInviteExpiration: (userId: string) => Promise<string | null>;
   skipUser: (userId: string) => Promise<void>;
   ignoreUser: (userId: string) => Promise<void>;
   nextProfile: () => void;
@@ -187,13 +189,26 @@ export const useFeedStore = create<FeedState>()(
         }
       },
 
-      inviteUser: async (userId: string) => {
-        await apiClient.post(API_ENDPOINTS.FEED.INVITE(userId));
+      inviteUser: async (userId: string, when: InviteExpiration) => {
+        await apiClient.post(API_ENDPOINTS.FEED.INVITE(userId), {
+          expiresAt: computeExpiresAt(when),
+        });
         set((state) => ({
           availableInvitesCount: Math.max(0, state.availableInvitesCount - 1),
         }));
         get().nextProfile();
         get().refreshFeedIfNeeded();
+      },
+
+      getInviteExpiration: async (userId: string): Promise<string | null> => {
+        try {
+          const response = await apiClient.get<
+            ApiResult<{ inviteExpiresAt: string | null }>
+          >(API_ENDPOINTS.FEED.INVITE_EXPIRATION(userId));
+          return response.data.result?.inviteExpiresAt ?? null;
+        } catch {
+          return null;
+        }
       },
 
       skipUser: async (userId: string) => {

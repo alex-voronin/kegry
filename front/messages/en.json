@@ -167,7 +167,16 @@
     "feed": {
       "distance": "Distance: {distance} {units}",
       "noProfiles": "No profiles found. Try changing the filters.",
-      "locationRequired": "Location access is required to show profiles nearby. Please enable location in your browser settings."
+      "locationRequired": "Location access is required to show profiles nearby. Please enable location in your browser settings.",
+      "inviteExpirationDialog": {
+        "message": "This person invited you for {when}. Would you like to match their time?",
+        "accept": "Yes, {when}",
+        "decline": "No, maybe next time"
+      },
+      "when": "When",
+      "now": "Now",
+      "today": "Today",
+      "tomorrow": "Tomorrow"
     },
     "chat": {
       "messagePlaceholder": "Message {remaining}/{total}",
@@ -192,10 +201,6 @@
     },
     "filters": {
       "title": "Filters",
-      "when": "When",
-      "now": "Now",
-      "today": "Today",
-      "tomorrow": "Tomorrow",
       "distance": "Search distance",
       "age": "Age",
       "from": "From",

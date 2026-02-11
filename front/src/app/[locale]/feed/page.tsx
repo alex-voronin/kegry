@@ -10,11 +10,13 @@ import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { SegmentedControl } from '@/components/ui/segmented-control';
+import { ModalDialog } from '@/components/ui/modal-dialog';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useFeedStore, UserProfileDto } from '@/store/use-feed-store';
 import { useSettingsStore, DistanceUnits } from '@/store/use-settings-store';
 import { metersToKilometers, metersToMiles } from '@/lib/distance-utils';
 import { toast } from 'react-toastify';
+import { InviteExpiration, expiresAtToWhen } from '@/lib/invite-utils';
 import { useFcmStore } from '@/lib/fcm/store';
 import { NotificationType, FcmPayload } from '@/lib/fcm/types';
 import { checkIfPermissionsDenied } from '@/lib/permissions';
@@ -250,16 +252,20 @@ function AvailableInvites({ count }: { count: number }) {
 function WhenSelector({
   value,
   onChange,
-  tFilters,
+  tFeed,
 }: {
-  value: string;
-  onChange: (val: string) => void;
-  tFilters: ReturnType<typeof useTranslations>;
+  value: InviteExpiration;
+  onChange: (val: InviteExpiration) => void;
+  tFeed: ReturnType<typeof useTranslations>;
 }) {
   const timeOptions = [
-    { value: 'now', label: tFilters('now'), width: 50 },
-    { value: 'today', label: tFilters('today'), width: 60 },
-    { value: 'tomorrow', label: tFilters('tomorrow'), width: 90 },
+    { value: InviteExpiration.Now, label: tFeed('now'), width: 50 },
+    { value: InviteExpiration.Today, label: tFeed('today'), width: 60 },
+    {
+      value: InviteExpiration.Tomorrow,
+      label: tFeed('tomorrow'),
+      width: 90,
+    },
   ];
 
   return (
@@ -267,10 +273,9 @@ function WhenSelector({
       <SegmentedControl
         options={timeOptions}
         value={value}
-        onChange={onChange}
+        onChange={onChange as (val: string) => void}
         // hack, but bg-transparent class doesn't work in some versoins of Safari
         style={{ backgroundColor: 'transparent' }}
-        highlightPrevious
       />
     </div>
   );
@@ -280,13 +285,13 @@ export default function FeedScreen() {
   const tFeed = useTranslations('screens.feed');
   const tCommon = useTranslations('common');
   const tHobbies = useTranslations('components.profile-sections.hobbies');
-  const tFilters = useTranslations('screens.filters');
   const router = useRouter();
   const {
     feed,
     fetchFeedStatus,
     fetchFeed,
     inviteUser,
+    getInviteExpiration,
     skipUser,
     ignoreUser,
     isLoading,
@@ -298,7 +303,11 @@ export default function FeedScreen() {
   } = useFeedStore();
   const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
-  const [when, setWhen] = useState('today');
+  const [when, setWhen] = useState<InviteExpiration>(InviteExpiration.Today);
+  const [expirationPopup, setExpirationPopup] = useState<{
+    isOpen: boolean;
+    suggestedWhen: InviteExpiration;
+  }>({ isOpen: false, suggestedWhen: InviteExpiration.Today });
 
   useEffect(() => {
     const checkPermissions = async () => {
@@ -398,7 +407,24 @@ export default function FeedScreen() {
   const handleInvite = async () => {
     if (!currentProfile) return;
     try {
-      await inviteUser(currentProfile.id);
+      const incomingExpiration = await getInviteExpiration(currentProfile.id);
+      if (incomingExpiration) {
+        const theirWhen = expiresAtToWhen(incomingExpiration);
+        if (theirWhen && theirWhen !== when) {
+          setExpirationPopup({ isOpen: true, suggestedWhen: theirWhen });
+          return;
+        }
+      }
+      await inviteUser(currentProfile.id, when);
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleAcceptSuggestedExpiration = async () => {
+    if (!currentProfile) return;
+    try {
+      await inviteUser(currentProfile.id, expirationPopup.suggestedWhen);
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -457,13 +483,30 @@ export default function FeedScreen() {
             <p className={styles.emptyStateText}>{tFeed('noProfiles')}</p>
           </div>
         )}
-        <WhenSelector value={when} onChange={setWhen} tFilters={tFilters} />
+        <WhenSelector value={when} onChange={setWhen} tFeed={tFeed} />
         <AvailableInvites count={availableInvitesCount} />
         <FeedFooter
           onIgnore={handleIgnore}
           onInvite={handleInvite}
           onSkip={handleSkip}
           isInviteDisabled={availableInvitesCount <= 0}
+        />
+        <ModalDialog
+          isOpen={expirationPopup.isOpen}
+          onClose={() =>
+            setExpirationPopup({ ...expirationPopup, isOpen: false })
+          }
+          message={tFeed('inviteExpirationDialog.message', {
+            when: tFeed(expirationPopup.suggestedWhen).toLowerCase(),
+          })}
+          primaryButtonText={tFeed('inviteExpirationDialog.decline')}
+          onPrimaryAction={() =>
+            setExpirationPopup({ ...expirationPopup, isOpen: false })
+          }
+          secondaryButtonText={tFeed('inviteExpirationDialog.accept', {
+            when: tFeed(expirationPopup.suggestedWhen).toLowerCase(),
+          })}
+          onSecondaryAction={handleAcceptSuggestedExpiration}
         />
       </div>
     </div>
