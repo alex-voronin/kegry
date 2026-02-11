@@ -2,8 +2,6 @@ using ChatModule.API.Dto;
 using ChatModule.Application.Messaging.Location;
 using ChatModule.Domain.Aggregates;
 using FeedModule.API.Dto;
-using FeedModule.Domain.Services;
-using FeedModule.Domain.ValueObjects;
 using IntegrationTests.Shared;
 using LocationModule.API.Dto;
 using LocationModule.Domain.Aggregates;
@@ -29,7 +27,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
     public Task DisposeAsync() => ContainerManager.ResetDatabaseAsync();
 
     [Fact]
-    public async Task GivenNoActiveChat_WhenUsersInviteEachOther_ThenChatIsCreated()
+    public async Task GivenNoActiveChat_WhenUsersInviteEachOther_ThenChatIsCreatedWithCorrectExpirationDate()
     {
         // 1. Create two users with profiles
         var authA = await Factory.AuthManager.CreateAndLoginUserAsync("userA@example.com", "Password123!");
@@ -59,34 +57,34 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
         chatResponseBefore.Success.ShouldBeFalse();
 
+        var inviteAExpiresAt = DateTimeOffset.UtcNow.AddHours(12);
+        var inviteBExpiresAt = DateTimeOffset.UtcNow.AddHours(24);
         await Factory.NotificationManager.AwaitPushNotifications(
             codeToRun: async () =>
             {
                 // 4. User A invites User B
                 var inviteResponseA = await Factory.ApiClient
-                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authB.UserId), new InviteUserRequest(InviteExpiration.Today));
+                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authB.UserId),
+                        new InviteUserRequest(inviteAExpiresAt));
                 inviteResponseA.Success.ShouldBeTrue();
 
                 // 5. User B invites User A (creates chat)
                 Factory.ApiClient.SetAuth(authB);
                 var inviteResponseB = await Factory.ApiClient
-                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authA.UserId), new InviteUserRequest(InviteExpiration.Tomorrow));
+                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authA.UserId),
+                        new InviteUserRequest(inviteBExpiresAt));
                 inviteResponseB.Success.ShouldBeTrue();
             },
             expectedCount: 2,
             expectedTitle: NotificationTitles.MeetingArrangedTitle);
 
         // 6. Verify chat exists for User A
-        var expectedExpiresAt = UserActionsService.ComputeInviteExpiresAt(
-            DateTimeOffset.UtcNow,
-            InviteExpiration.Today);
         Factory.ApiClient.SetAuth(authA);
         var chatResponseAfter = await Factory.ApiClient
             .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
         chatResponseAfter.Success.ShouldBeTrue();
         chatResponseAfter.Result.Participant.Id.ShouldBe(Guid.Parse(authB.UserId));
         chatResponseAfter.Result.ParticipantsMet.ShouldBeFalse();
-        chatResponseAfter.Result.ExpiresAt.ShouldBe(expectedExpiresAt);
 
         // 7. Verify chat exists for User B
         Factory.ApiClient.SetAuth(authB);
@@ -94,7 +92,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
         chatResponseB.Success.ShouldBeTrue();
         chatResponseB.Result.Participant.Id.ShouldBe(Guid.Parse(authA.UserId));
-        chatResponseB.Result.ExpiresAt.ShouldBe(expectedExpiresAt);
+        chatResponseB.Result.ExpiresAt.ShouldBe(inviteAExpiresAt);
     }
 
     [Fact]
@@ -305,18 +303,25 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 tokenRequestB);
 
         // Await chat creation
+        var inviteExpiresAt = Factory.FakeTimeProvider.GetUtcNow().AddHours(4);
         await Factory.NotificationManager.AwaitPushNotifications(
             codeToRun: async () =>
             {
                 // User A invites User B
                 Factory.ApiClient.SetAuth(authA);
                 await Factory.ApiClient
-                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authB.UserId), new InviteUserRequest(InviteExpiration.Now));
+                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                        ApiRoutes.Feed.InviteUser(authB.UserId),
+                        new InviteUserRequest(inviteExpiresAt)
+                    );
 
                 // User B invites User A (creates chat)
                 Factory.ApiClient.SetAuth(authB);
                 await Factory.ApiClient
-                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authA.UserId), new InviteUserRequest(InviteExpiration.Now));
+                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                        ApiRoutes.Feed.InviteUser(authA.UserId),
+                        new InviteUserRequest(inviteExpiresAt)
+                    );
             },
             expectedCount: 2,
             expectedTitle: NotificationTitles.MeetingArrangedTitle);

@@ -22,6 +22,12 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
     public Task InitializeAsync() => Task.CompletedTask;
     public async Task DisposeAsync() => await ContainerManager.ResetDatabaseAsync();
 
+    private DateTimeOffset ComputeExpiresAtForNowOption()
+    {
+        const int expiresNowDurationHours = 4;
+        return Factory.FakeTimeProvider.GetUtcNow().AddHours(expiresNowDurationHours);
+    }
+
     [Fact]
     public async Task GivenOneUser_WhenOpensFeed_ThenReturnsNoUsers()
     {
@@ -187,7 +193,9 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. User A invites User B
         Factory.ApiClient.SetAuth(authA);
         var response = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
-            ApiRoutes.Feed.InviteUser(userBId), new InviteUserRequest(InviteExpiration.Now));
+            ApiRoutes.Feed.InviteUser(userBId),
+            new InviteUserRequest(ComputeExpiresAtForNowOption())
+        );
 
         response.Success.ShouldBeTrue();
     }
@@ -214,10 +222,11 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         beforeInvite.Success.ShouldBeTrue();
         beforeInvite.Result.InviteExpiresAt.ShouldBeNull();
 
-        // 3. User A invites User B with "Tomorrow" expiration
+        // 3. User A invites User B with a known expiration
+        var expiresAt = DateTimeOffset.UtcNow.AddHours(24);
         Factory.ApiClient.SetAuth(authA);
         var inviteResponse = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
-            ApiRoutes.Feed.InviteUser(userBId), new InviteUserRequest(InviteExpiration.Tomorrow));
+            ApiRoutes.Feed.InviteUser(userBId), new InviteUserRequest(expiresAt));
         inviteResponse.Success.ShouldBeTrue();
 
         // 4. User B checks invite expiration from User A — should return expiration date
@@ -226,13 +235,10 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .GetAsync<ApiResult<GetInviteExpirationResponse>>(ApiRoutes.Feed.GetInviteExpiration(authA.UserId));
         afterInvite.Success.ShouldBeTrue();
         afterInvite.Result.InviteExpiresAt.ShouldNotBeNull();
-
-        var expectedExpiration = UserActionsService.ComputeInviteExpiresAt(
-            DateTimeOffset.UtcNow, InviteExpiration.Tomorrow);
-        (afterInvite.Result.InviteExpiresAt.Value - expectedExpiration).ShouldBeLessThan(TimeSpan.FromSeconds(1));
+        afterInvite.Result.InviteExpiresAt.ShouldBe(expiresAt);
 
         // 5. Advance time past expiration — should return null
-        Factory.FakeTimeProvider.SetUtcNow(expectedExpiration.AddSeconds(2));
+        Factory.FakeTimeProvider.SetUtcNow(expiresAt.AddSeconds(2));
         var afterExpiry = await Factory.ApiClient
             .GetAsync<ApiResult<GetInviteExpirationResponse>>(ApiRoutes.Feed.GetInviteExpiration(authA.UserId));
         afterExpiry.Success.ShouldBeTrue();
@@ -260,19 +266,27 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. A and B both invite C
         Factory.ApiClient.SetAuth(authC);
-        await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authA.UserId),
-            new InviteUserRequest(InviteExpiration.Now));
-        await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authB.UserId),
-            new InviteUserRequest(InviteExpiration.Now));
+        await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.InviteUser(authA.UserId),
+            new InviteUserRequest(ComputeExpiresAtForNowOption()));
+        await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.InviteUser(authB.UserId),
+            new InviteUserRequest(ComputeExpiresAtForNowOption()));
 
         // 3. A and B invite C simultaneously
         using var httpClientA = Factory.CreateClient();
         httpClientA.SetAuth(authA);
-        var taskA = httpClientA.PostAsync(ApiRoutes.Feed.InviteUser(userCId), JsonContent.Create(new InviteUserRequest(InviteExpiration.Now)));
+        var taskA = httpClientA.PostAsync(
+            ApiRoutes.Feed.InviteUser(userCId),
+            JsonContent.Create(new InviteUserRequest(ComputeExpiresAtForNowOption()))
+        );
 
         using var httpClientB = Factory.CreateClient();
         httpClientB.SetAuth(authB);
-        var taskB = httpClientA.PostAsync(ApiRoutes.Feed.InviteUser(userCId), JsonContent.Create(new InviteUserRequest(InviteExpiration.Now)));
+        var taskB = httpClientA.PostAsync(
+            ApiRoutes.Feed.InviteUser(userCId),
+            JsonContent.Create(new InviteUserRequest(ComputeExpiresAtForNowOption()))
+        );
         var results = await Task.WhenAll(taskA, taskB);
 
         // 4. Check A status 
@@ -373,7 +387,9 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         response.Success.ShouldBeTrue();
 
         // 3. User A retrieves blocked users
-        var blockedUsersResponse = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<BlockedUserDto>>>(ApiRoutes.Feed.GetBlockedUsers);
+        var blockedUsersResponse =
+            await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<BlockedUserDto>>>(ApiRoutes.Feed
+                .GetBlockedUsers);
         blockedUsersResponse.Success.ShouldBeTrue();
 
         // 4. Assert response contains User B
@@ -414,7 +430,8 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         updateResponse.Success.ShouldBeTrue();
 
         // 3. Verify update
-        var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetSettingsResponse>>(ApiRoutes.Feed.DisplaySettings);
+        var getResponse =
+            await Factory.ApiClient.GetAsync<ApiResult<GetSettingsResponse>>(ApiRoutes.Feed.DisplaySettings);
         getResponse.Success.ShouldBeTrue();
         getResponse.Result.Settings.DistanceUnits.ShouldBe(DistanceUnits.Miles);
     }
@@ -451,7 +468,8 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
     }
 
     [Fact]
-    public async Task GivenUser_WhenInvitesMoreThanLimit_ThenReturnsTooManyRequests_AndReturnsDefaultCounterAfterWaitingForNewDay()
+    public async Task
+        GivenUser_WhenInvitesMoreThanLimit_ThenReturnsTooManyRequests_AndReturnsDefaultCounterAfterWaitingForNewDay()
     {
         Factory.FakeTimeProvider.Reset(DateTime.UtcNow.Date);
 
@@ -477,7 +495,9 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         for (var i = 0; i < FeedParameters.DefaultAvailableInvitesPerDay; i++)
         {
             var response = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
-                ApiRoutes.Feed.InviteUser(candidateIds[i]), new InviteUserRequest(InviteExpiration.Now));
+                ApiRoutes.Feed.InviteUser(candidateIds[i]),
+                new InviteUserRequest(ComputeExpiresAtForNowOption())
+            );
             response.Success.ShouldBeTrue();
 
             var currentStatus = await Factory.ApiClient
@@ -488,7 +508,8 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 4. Try to invite one more user and expect failure
         var failedResponse = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
-            ApiRoutes.Feed.InviteUser(candidateIds[FeedParameters.DefaultAvailableInvitesPerDay]), new InviteUserRequest(InviteExpiration.Now));
+            ApiRoutes.Feed.InviteUser(candidateIds[FeedParameters.DefaultAvailableInvitesPerDay]),
+            new InviteUserRequest(ComputeExpiresAtForNowOption()));
 
         failedResponse.Success.ShouldBeFalse();
         failedResponse.Errors.First().Code.ShouldBe(nameof(ErrorCode.TooManyRequests));

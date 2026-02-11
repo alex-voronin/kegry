@@ -130,7 +130,7 @@ public class FeedEndpoints : IEndpoints
         IUserActionsService userActionsService,
         CancellationToken ct)
     {
-        await userActionsService.InviteUserAsync(user.GetId(), id, request.InviteExpiration, ct);
+        await userActionsService.InviteUserAsync(user.GetId(), id, request.ExpiresAt, ct);
         return ApiResult.Empty;
     }
 

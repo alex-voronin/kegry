@@ -2,8 +2,6 @@ using ChatModule.API.Dto;
 using ChatModule.Application.BackgroundJobs;
 using ChatModule.Infrastructure.Persistence;
 using FeedModule.API.Dto;
-using FeedModule.Domain.Services;
-using FeedModule.Domain.ValueObjects;
 using IntegrationTests.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,14 +25,12 @@ public class ExpiredChatsCollectorTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenExpiredChat_WhenCollectingExpiredChats_ThenChatIsDeletedAndLinksAreRemoved()
     {
-        var invitationExpiration = InviteExpiration.Now;
-        var expirationSpan = UserActionsService.ComputeInviteExpiresAt(DateTime.UtcNow, invitationExpiration) -
-                             DateTime.UtcNow;
+        var expirationSpan = TimeSpan.FromHours(4);
+        var expiresAt = DateTimeOffset.UtcNow - expirationSpan;
 
         Factory.FakeTimeProvider.Reset(
-            DateTime.UtcNow - expirationSpan - TimeSpan.FromHours(1)
+            expiresAt - TimeSpan.FromHours(1)
         );
-
 
         // 1. Create two users
         var authA = await Factory.AuthManager.CreateAndLoginUserAsync("testA@example.com", "Password123!");
@@ -65,11 +61,14 @@ public class ExpiredChatsCollectorTests : IntegrationTestBase, IAsyncLifetime
                 Factory.ApiClient.SetAuth(authA);
                 await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
                     ApiRoutes.Feed.InviteUser(authB.UserId),
-                    new InviteUserRequest(invitationExpiration));
+                    new InviteUserRequest(expiresAt)
+                );
+
                 Factory.ApiClient.SetAuth(authB);
                 await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
                     ApiRoutes.Feed.InviteUser(authA.UserId),
-                    new InviteUserRequest(invitationExpiration));
+                    new InviteUserRequest(expiresAt)
+                );
             },
             expectedCount: 2,
             expectedTitle: NotificationTitles.MeetingArrangedTitle);

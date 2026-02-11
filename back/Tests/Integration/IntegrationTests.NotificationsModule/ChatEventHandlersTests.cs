@@ -1,5 +1,4 @@
 using FeedModule.API.Dto;
-using FeedModule.Domain.ValueObjects;
 using IntegrationTests.Shared;
 using NotificationsModule.API.Dto;
 using SharedCore.Api.Dto;
@@ -47,17 +46,24 @@ public class ChatEventHandlersTests : IntegrationTestBase, IAsyncLifetime
         tokenResponseB.Success.ShouldBeTrue();
 
         // 3. Send invites and await push notifications
+        var inviteExpiresAt = Factory.FakeTimeProvider.GetUtcNow() + TimeSpan.FromHours(4);
         await Factory.NotificationManager.AwaitPushNotifications(
             codeToRun: async () =>
             {
                 Factory.ApiClient.SetAuth(authResponseA);
                 var inviteResponseA = await Factory.ApiClient
-                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(userBId), new InviteUserRequest(InviteExpiration.Now));
+                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                        ApiRoutes.Feed.InviteUser(userBId),
+                        new InviteUserRequest(inviteExpiresAt)
+                    );
                 inviteResponseA.Success.ShouldBeTrue();
 
                 Factory.ApiClient.SetAuth(authResponseB);
                 var inviteResponseB = await Factory.ApiClient
-                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(userAId), new InviteUserRequest(InviteExpiration.Now));
+                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                        ApiRoutes.Feed.InviteUser(userAId),
+                        new InviteUserRequest(inviteExpiresAt)
+                    );
                 inviteResponseB.Success.ShouldBeTrue();
             },
             expectedCount: 2,

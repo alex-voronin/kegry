@@ -25,4 +25,11 @@ public static class FeedExceptions
             HttpStatusCode.TooManyRequests,
             ErrorCode.TooManyRequests);
     }
+
+    public static HttpCodeException InviteExpirationTooFar()
+    {
+        return new HttpCodeException("Invite expiration must not exceed 48 hours from now",
+            HttpStatusCode.BadRequest,
+            ErrorCode.ValidationError);
+    }
 }

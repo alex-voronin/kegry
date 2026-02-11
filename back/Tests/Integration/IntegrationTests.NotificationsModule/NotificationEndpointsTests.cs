@@ -268,7 +268,6 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         using (var scope = Factory.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
-            var devices = await context.Devices.ToListAsync();
             var device = await context.Devices.FirstOrDefaultAsync(d => d.Id == deviceId);
 
             device.ShouldNotBeNull();
