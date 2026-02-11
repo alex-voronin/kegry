@@ -341,6 +341,16 @@ export default function FeedScreen() {
 
   const currentProfile = feed[0] || null;
 
+  // Preload cover images for the next 2 profiles each time the current profile changes
+  useEffect(() => {
+    feed.slice(1, 3).forEach((profile) => {
+      if (profile.coverImageUrl) {
+        const img = new window.Image();
+        img.src = profile.coverImageUrl;
+      }
+    });
+  }, [currentProfile?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
