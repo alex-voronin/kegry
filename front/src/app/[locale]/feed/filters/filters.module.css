@@ -9,7 +9,7 @@
 }
 
 .filterSection {
-  @apply flex flex-col gap-2;
+  @apply relative flex flex-col gap-2;
 }
 
 .ageRangeWrapper {
@@ -42,4 +42,8 @@
 
 .loaderContainer {
   @apply flex h-[80vh] w-full items-center justify-center;
+}
+
+.errorText {
+  @apply text-error absolute -bottom-5 mt-1 ml-2 text-sm;
 }

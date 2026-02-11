@@ -26,6 +26,14 @@ import {
 import { toast } from 'react-toastify';
 import styles from './filters.module.css';
 import stylesCommon from '@/components/ui/common.module.css';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+const MAX_DISTANCE_KM = 200;
+const MAX_DISTANCE_MI = 124;
+const MIN_AGE = 18;
+const MAX_HOBBIES = 10;
 
 export default function FiltersScreen() {
   const t = useTranslations('screens.filters');
@@ -42,18 +50,70 @@ export default function FiltersScreen() {
   const distanceUnits = useSettingsStore((state) => state.distanceUnits);
   const isMiles = distanceUnits === DistanceUnits.Miles;
 
-  const initialFilters = useMemo(
-    () => ({
-      distance: '10',
-      ageFrom: '',
-      ageTo: '',
-      gender: 'any',
-      hobbies: [] as HobbyOption[],
-    }),
-    [],
-  );
+  const schema = useMemo(() => {
+    const maxDist = isMiles ? MAX_DISTANCE_MI : MAX_DISTANCE_KM;
+    const units = isMiles
+      ? tCommon('units.miles')
+      : tCommon('units.kilometers');
 
-  const [filters, setFilters] = useState(initialFilters);
+    return z
+      .object({
+        distance: z
+          .number(t('validation.distance', { max: maxDist, units }))
+          .min(0, t('validation.distance', { max: maxDist, units }))
+          .max(maxDist, t('validation.distance', { max: maxDist, units })),
+        ageFrom: z.union([
+          z.literal(''),
+          z.number().min(MIN_AGE, t('validation.minAge', { min: MIN_AGE })),
+        ]),
+        ageTo: z.union([
+          z.literal(''),
+          z.number().min(MIN_AGE, t('validation.minAge', { min: MIN_AGE })),
+        ]),
+        gender: z.string(),
+        hobbies: z
+          .array(
+            z.object({
+              value: z.string(),
+              label: z.string(),
+            }),
+          )
+          .max(MAX_HOBBIES, t('validation.maxHobbies', { max: MAX_HOBBIES })),
+      })
+      .refine(
+        (data) => {
+          if (data.ageFrom === '' || data.ageTo === '') return true;
+          return data.ageFrom <= data.ageTo;
+        },
+        {
+          message: t('validation.ageRange'),
+          path: ['ageFrom'], // Show error on ageFrom
+        },
+      );
+  }, [isMiles, t, tCommon]);
+
+  type FormData = z.infer<typeof schema>;
+
+  const defaultValues: FormData = {
+    distance: 10,
+    ageFrom: '',
+    ageTo: '',
+    gender: 'any',
+    hobbies: [],
+  };
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors, isValid, isDirty },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues,
+    mode: 'onChange',
+  });
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isLoaded = useRef(false);
 
@@ -73,41 +133,42 @@ export default function FiltersScreen() {
   useEffect(() => {
     if (serverFilters && !isLoaded.current) {
       const distanceValue = isMiles
-        ? metersToMiles(serverFilters.radiusMeters).toString()
-        : metersToKilometers(serverFilters.radiusMeters).toString();
-      setFilters({
-        distance: distanceValue,
-        ageFrom: serverFilters.ageFrom?.toString() || '',
-        ageTo: serverFilters.ageTo?.toString() || '',
+        ? metersToMiles(serverFilters.radiusMeters)
+        : metersToKilometers(serverFilters.radiusMeters);
+
+      // Round to 1 decimal place to avoid long floats
+      const roundedDistance = Math.round(distanceValue * 10) / 10;
+
+      reset({
+        distance: roundedDistance,
+        ageFrom: serverFilters.ageFrom ?? '',
+        ageTo: serverFilters.ageTo ?? '',
         gender: serverFilters.gender || 'any',
         hobbies: serverFilters.hobbyIds.map((id) => ({ value: id, label: '' })),
       });
       isLoaded.current = true;
     }
-  }, [serverFilters, isMiles]);
-
-  const hasChanges = useMemo(() => {
-    return JSON.stringify(filters) !== JSON.stringify(initialFilters);
-  }, [filters, initialFilters]);
+  }, [serverFilters, isMiles, reset]);
 
   const handleBack = () => {
-    if (hasChanges) {
+    if (isDirty) {
       setIsModalOpen(true);
     } else {
       router.back();
     }
   };
 
-  const handleApply = async () => {
+  const onSubmit = async (data: FormData) => {
     const radiusMeters = isMiles
-      ? milesToMeters(parseFloat(filters.distance))
-      : kilometersToMeters(parseFloat(filters.distance));
+      ? milesToMeters(Number(data.distance))
+      : kilometersToMeters(Number(data.distance));
+
     const dto: FilterDto = {
       radiusMeters,
-      ageFrom: filters.ageFrom ? parseInt(filters.ageFrom) : null,
-      ageTo: filters.ageTo ? parseInt(filters.ageTo) : null,
-      gender: filters.gender === 'any' ? null : filters.gender,
-      hobbyIds: filters.hobbies.map((h) => h.value),
+      ageFrom: data.ageFrom === '' ? null : Number(data.ageFrom),
+      ageTo: data.ageTo === '' ? null : Number(data.ageTo),
+      gender: data.gender === 'any' ? null : (data.gender as any),
+      hobbyIds: data.hobbies.map((h) => h.value),
     };
 
     try {
@@ -150,7 +211,7 @@ export default function FiltersScreen() {
         </div>
       ) : (
         <div className={styles.container}>
-          <div className={styles.content}>
+          <form className={styles.content} onSubmit={handleSubmit(onSubmit)}>
             <div className={styles.filterSection}>
               <FormSectionTitle>
                 {t('distance')} (
@@ -159,12 +220,16 @@ export default function FiltersScreen() {
               </FormSectionTitle>
               <Input
                 type="number"
-                value={filters.distance}
-                onChange={(e) =>
-                  setFilters({ ...filters, distance: e.target.value })
-                }
+                step="0.1"
                 className={stylesCommon.inputDark}
+                disabled={isLoading}
+                {...register('distance', { valueAsNumber: true })}
               />
+              {errors.distance && (
+                <div className={styles.errorText}>
+                  {errors.distance.message}
+                </div>
+              )}
             </div>
 
             <div className={styles.filterSection}>
@@ -174,55 +239,77 @@ export default function FiltersScreen() {
                   <span className={styles.ageLabel}>{t('from')}</span>
                   <Input
                     type="number"
-                    value={filters.ageFrom}
                     placeholder={t('any')}
-                    onChange={(e) =>
-                      setFilters({ ...filters, ageFrom: e.target.value })
-                    }
                     className={styles.ageInput}
+                    disabled={isLoading}
+                    {...register('ageFrom', {
+                      setValueAs: (v: string) => (v === '' ? '' : Number(v)),
+                    })}
                   />
                 </div>
                 <div className={styles.ageInputGroup}>
                   <span className={styles.ageLabel}>{t('to')}</span>
                   <Input
                     type="number"
-                    value={filters.ageTo}
                     placeholder={t('any')}
-                    onChange={(e) =>
-                      setFilters({ ...filters, ageTo: e.target.value })
-                    }
                     className={styles.ageInput}
+                    disabled={isLoading}
+                    {...register('ageTo', {
+                      setValueAs: (v: string) => (v === '' ? '' : Number(v)),
+                    })}
                   />
                 </div>
               </div>
+              {errors.ageFrom && (
+                <div className={styles.errorText}>{errors.ageFrom.message}</div>
+              )}
+              {errors.ageTo && (
+                <div className={styles.errorText}>{errors.ageTo.message}</div>
+              )}
             </div>
 
             <div className={styles.filterSection}>
               <FormSectionTitle>{t('gender')}</FormSectionTitle>
-              <SegmentedControl
-                options={genderOptions}
-                value={filters.gender}
-                onChange={(val) => setFilters({ ...filters, gender: val })}
+              <Controller
+                control={control}
+                name="gender"
+                render={({ field }) => (
+                  <SegmentedControl
+                    options={genderOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
               />
             </div>
 
             <div className={styles.filterSection}>
-              <HobbiesSection
-                value={filters.hobbies}
-                onChange={(hobbies) => setFilters({ ...filters, hobbies })}
+              <Controller
+                control={control}
+                name="hobbies"
+                render={({ field }) => (
+                  <HobbiesSection
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
               />
+              {errors.hobbies && (
+                <div className={styles.errorText}>{errors.hobbies.message}</div>
+              )}
             </div>
 
             <div className={styles.applyButtonWrapper}>
               <Button
-                onClick={handleApply}
+                type="submit"
                 className={styles.applyButton}
                 loading={isLoading}
+                disabled={!isValid || isLoading}
               >
                 {t('apply')}
               </Button>
             </div>
-          </div>
+          </form>
 
           <ModalDialog
             isOpen={isModalOpen}
@@ -230,7 +317,7 @@ export default function FiltersScreen() {
             message={t('applyDialog.title')}
             primaryButtonText={t('applyDialog.buttonYes')}
             secondaryButtonText={t('applyDialog.buttonNo')}
-            onPrimaryAction={handleApply}
+            onPrimaryAction={handleSubmit(onSubmit)}
             onSecondaryAction={handleDiscard}
           />
         </div>
