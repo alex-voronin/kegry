@@ -7,7 +7,6 @@ import { FcmState, FcmMessageHandler, FcmApiCallbacks } from './types';
 
 interface FcmStoreState {
   state: FcmState;
-  isFcmAllowed: boolean;
   app: FirebaseApp | null;
   messaging: Messaging | null;
   swRegistration: ServiceWorkerRegistration | null;
@@ -27,7 +26,6 @@ interface FcmStoreState {
   apiCallbacks: FcmApiCallbacks | null;
 
   setState: (state: FcmState) => void;
-  setIsFcmAllowed: (allowed: boolean) => void;
   setApp: (app: FirebaseApp) => void;
   setMessaging: (messaging: Messaging) => void;
   setSwRegistration: (reg: ServiceWorkerRegistration) => void;
@@ -47,7 +45,6 @@ interface FcmStoreState {
 
 const initialState = {
   state: FcmState.IDLE,
-  isFcmAllowed: false,
   app: null as FirebaseApp | null,
   messaging: null as Messaging | null,
   swRegistration: null as ServiceWorkerRegistration | null,
@@ -62,7 +59,6 @@ export const useFcmStore = create<FcmStoreState>()((set) => ({
   ...initialState,
 
   setState: (state) => set({ state }),
-  setIsFcmAllowed: (isFcmAllowed) => set({ isFcmAllowed }),
   setApp: (app) => set({ app }),
   setMessaging: (messaging) => set({ messaging }),
   setSwRegistration: (swRegistration) => set({ swRegistration }),

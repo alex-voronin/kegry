@@ -104,11 +104,7 @@ function isRetriableError(error: any): boolean {
 /* Hook */
 /* ------------------------------------------------------------------ */
 
-export function useFcm() {
-  const messaging = useFcmStore((s) => s.messaging);
-  const unsubForeground = useFcmStore((s) => s.unsubForeground);
-  const isFcmAllowed = useFcmStore((s) => s.isFcmAllowed);
-
+export function useFcm(hasOnboardingCompleted: boolean = false) {
   const {
     setState: setFcmState,
     setApp,
@@ -303,12 +299,15 @@ export function useFcm() {
   /* -------------------------------------------------------------- */
 
   useEffect(() => {
-    if (isFcmAllowed) {
+    console.log('[useFcm] Effect. Allowed:', hasOnboardingCompleted);
+
+    if (hasOnboardingCompleted) {
       transition(FcmState.PERMISSION);
     } else {
       (async () => {
         // Remove foreground listener
-        unsubForeground?.();
+        const unsub = useFcmStore.getState().unsubForeground;
+        unsub?.();
         setUnsubForeground(null);
 
         // Remove SW listener using tracked reference
@@ -342,13 +341,12 @@ export function useFcm() {
       if (swListener) {
         navigator.serviceWorker.removeEventListener('message', swListener);
       }
-      unsubForeground?.();
+      const unsub = useFcmStore.getState().unsubForeground;
+      unsub?.();
     };
   }, [
-    isFcmAllowed,
+    hasOnboardingCompleted,
     transition,
-    unsubForeground,
-    messaging,
     setUnsubForeground,
     setSwMessageListener,
     resetFcmStore,
@@ -399,7 +397,7 @@ export function useFcm() {
   }, []);
 
   useEffect(() => {
-    if (!isFcmAllowed) return;
+    if (!hasOnboardingCompleted) return;
 
     let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -432,5 +430,5 @@ export function useFcm() {
       if (debounceTimer) clearTimeout(debounceTimer);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [isFcmAllowed, checkTokenRefresh, transition]);
+  }, [hasOnboardingCompleted, checkTokenRefresh, transition]);
 }
