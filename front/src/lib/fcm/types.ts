@@ -49,7 +49,3 @@ export interface FcmApiCallbacks {
   onTokenRegister: (deviceId: string, fcmToken: string) => Promise<void>;
   onTokenUnregister: (deviceId: string) => Promise<void>;
 }
-
-export interface FcmStateCallbacks {
-  getIsFcmAllowed: () => boolean;
-}

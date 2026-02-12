@@ -352,7 +352,7 @@ export default function ProfilePage() {
             )}
             <div
               className={cn(styles.field, styles.actionField, 'mt-8')}
-              onClick={() => router.push(PAGE_ROUTES.LOGIN)}
+              onClick={() => router.push(PAGE_ROUTES.LOGIN())}
             >
               <span>{t('menu.logOut')}</span>
             </div>

@@ -3,15 +3,11 @@
 import { create } from 'zustand';
 import { FirebaseApp } from 'firebase/app';
 import { Messaging } from 'firebase/messaging';
-import {
-  FcmState,
-  FcmMessageHandler,
-  FcmApiCallbacks,
-  FcmStateCallbacks,
-} from './types';
+import { FcmState, FcmMessageHandler, FcmApiCallbacks } from './types';
 
 interface FcmStoreState {
   state: FcmState;
+  isFcmAllowed: boolean;
   app: FirebaseApp | null;
   messaging: Messaging | null;
   swRegistration: ServiceWorkerRegistration | null;
@@ -29,9 +25,9 @@ interface FcmStoreState {
 
   // Callbacks
   apiCallbacks: FcmApiCallbacks | null;
-  stateCallbacks: FcmStateCallbacks | null;
 
   setState: (state: FcmState) => void;
+  setIsFcmAllowed: (allowed: boolean) => void;
   setApp: (app: FirebaseApp) => void;
   setMessaging: (messaging: Messaging) => void;
   setSwRegistration: (reg: ServiceWorkerRegistration) => void;
@@ -45,13 +41,13 @@ interface FcmStoreState {
   setBackgroundMessageHandler: (handler: FcmMessageHandler | null) => void;
 
   setApiCallbacks: (callbacks: FcmApiCallbacks | null) => void;
-  setStateCallbacks: (callbacks: FcmStateCallbacks | null) => void;
 
   reset: () => void;
 }
 
 const initialState = {
   state: FcmState.IDLE,
+  isFcmAllowed: false,
   app: null as FirebaseApp | null,
   messaging: null as Messaging | null,
   swRegistration: null as ServiceWorkerRegistration | null,
@@ -60,13 +56,13 @@ const initialState = {
   customForegroundHandlers: [] as FcmMessageHandler[],
   backgroundMessageHandler: null as FcmMessageHandler | null,
   apiCallbacks: null as FcmApiCallbacks | null,
-  stateCallbacks: null as FcmStateCallbacks | null,
 };
 
 export const useFcmStore = create<FcmStoreState>()((set) => ({
   ...initialState,
 
   setState: (state) => set({ state }),
+  setIsFcmAllowed: (isFcmAllowed) => set({ isFcmAllowed }),
   setApp: (app) => set({ app }),
   setMessaging: (messaging) => set({ messaging }),
   setSwRegistration: (swRegistration) => set({ swRegistration }),
@@ -89,7 +85,6 @@ export const useFcmStore = create<FcmStoreState>()((set) => ({
     set({ backgroundMessageHandler: handler }),
 
   setApiCallbacks: (apiCallbacks) => set({ apiCallbacks }),
-  setStateCallbacks: (stateCallbacks) => set({ stateCallbacks }),
 
   reset: () => set(initialState),
 }));

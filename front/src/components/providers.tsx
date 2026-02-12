@@ -8,7 +8,11 @@ import { useBackgroundLocation } from '@/lib/use-background-location';
 import { useFcm } from '@/lib/fcm/use-fcm';
 import { useFcmStore } from '@/lib/fcm/store';
 import { useFeedStore } from '@/store/use-feed-store';
-import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
+import {
+  useAuthStore,
+  RequiredAction,
+  hasCompleteOnboarding,
+} from '@/lib/auth/use-auth-store';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { FcmPayload, NotificationType } from '@/lib/fcm/types';
 import { TawkMessenger } from './tawk-messenger';
@@ -21,8 +25,15 @@ function FcmGlobalHandler() {
     unregisterForegroundHandler,
     setBackgroundMessageHandler,
     setApiCallbacks,
-    setStateCallbacks,
+    setIsFcmAllowed,
   } = useFcmStore();
+
+  useEffect(() => {
+    // Subscribe to auth changes to sync FCM allowed state without re-rendering this component
+    return useAuthStore.subscribe((state) => {
+      setIsFcmAllowed(hasCompleteOnboarding(state));
+    });
+  }, [setIsFcmAllowed]);
 
   const handleForegroundMessage = useCallback(
     (payload: FcmPayload) => {
@@ -83,13 +94,8 @@ function FcmGlobalHandler() {
   );
 
   useEffect(() => {
-    // Register state callbacks
-    setStateCallbacks({
-      getIsFcmAllowed: () => {
-        const { accessToken, requiredAction } = useAuthStore.getState();
-        return !!accessToken && requiredAction === RequiredAction.None;
-      },
-    });
+    // Sync allowed state
+    setIsFcmAllowed(hasCompleteOnboarding(useAuthStore.getState()));
 
     // Register API callbacks
     setApiCallbacks({
@@ -114,14 +120,14 @@ function FcmGlobalHandler() {
       unregisterForegroundHandler(handleForegroundMessage);
       setBackgroundMessageHandler(null);
       setApiCallbacks(null);
-      setStateCallbacks(null);
+      setIsFcmAllowed(false);
     };
   }, [
     registerForegroundHandler,
     unregisterForegroundHandler,
     setBackgroundMessageHandler,
     setApiCallbacks,
-    setStateCallbacks,
+    setIsFcmAllowed,
     handleForegroundMessage,
     handleBackgroundMessage,
   ]);
@@ -129,7 +135,7 @@ function FcmGlobalHandler() {
   return null;
 }
 
-import { registerServiceWorker } from '@/lib/service-worker'; // Add import
+import { registerServiceWorker } from '@/lib/service-worker';
 
 function BackgroundServices() {
   useBackgroundLocation();
@@ -153,11 +159,13 @@ export function Providers({
   locale: string;
   messages: Record<string, any>;
 }) {
+  const canMountGlobalHandlers = useAuthStore(hasCompleteOnboarding);
+
   return (
     <NextIntlClientProvider messages={messages} locale={locale} timeZone="UTC">
       <TawkMessenger />
+      {canMountGlobalHandlers && <FcmGlobalHandler />}
       <BackgroundServices />
-      <FcmGlobalHandler />
       {children}
     </NextIntlClientProvider>
   );

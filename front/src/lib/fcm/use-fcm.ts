@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { initializeApp, getApps } from 'firebase/app';
 import {
   getMessaging,
@@ -31,7 +31,7 @@ const firebaseConfig = {
 const VAPID_KEY = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY!;
 const TOKEN_STORAGE_KEY = 'fcm_token_info';
 const DEVICE_ID_KEY = 'fcm_device_id';
-const TOKEN_TTL = 7 * 24 * 60 * 60 * 1000;
+const TOKEN_TTL = 30 * 24 * 60 * 60 * 1000;
 
 /* ------------------------------------------------------------------ */
 /* Utils */
@@ -81,6 +81,25 @@ function isTokenValid(): boolean {
   return Date.now() - stored.ts < TOKEN_TTL;
 }
 
+function isRetriableError(error: any): boolean {
+  const message = error?.message || '';
+  const code = error?.code || '';
+
+  // Permanent errors (do not retry)
+  if (
+    code === 'messaging/permission-blocked' ||
+    code === 'messaging/unsupported-browser' ||
+    code === 'auth/invalid-api-key' ||
+    message.includes('permission') ||
+    message.includes('unsupported')
+  ) {
+    return false;
+  }
+
+  // Assume other errors (network, timeout, unknown) are retriable
+  return true;
+}
+
 /* ------------------------------------------------------------------ */
 /* Hook */
 /* ------------------------------------------------------------------ */
@@ -88,9 +107,7 @@ function isTokenValid(): boolean {
 export function useFcm() {
   const messaging = useFcmStore((s) => s.messaging);
   const unsubForeground = useFcmStore((s) => s.unsubForeground);
-  const stateCallbacks = useFcmStore((s) => s.stateCallbacks);
-
-  const isFcmAllowed = stateCallbacks?.getIsFcmAllowed() ?? false;
+  const isFcmAllowed = useFcmStore((s) => s.isFcmAllowed);
 
   const {
     setState: setFcmState,
@@ -114,6 +131,9 @@ export function useFcm() {
 
   // Module-level transition mutex
   let transitionMutex: Promise<void> | null = null;
+  const retryCount = useRef(0);
+  const retryTimer = useRef<NodeJS.Timeout | null>(null);
+  const isRetriableRef = useRef(true);
 
   const transition = useCallback(
     async (next: FcmState) => {
@@ -240,14 +260,28 @@ export function useFcm() {
           }
 
           case FcmState.READY:
+            retryCount.current = 0;
             break;
 
           case FcmState.ERROR:
             console.error('[FCM] ERROR state');
+            if (retryCount.current < 5 && isRetriableRef.current) {
+              const delay = Math.pow(2, retryCount.current) * 1000;
+              console.log(`[FCM] Retrying initialization in ${delay}ms...`);
+              retryTimer.current = setTimeout(() => {
+                retryCount.current += 1;
+                transition(FcmState.IDLE);
+              }, delay);
+            } else {
+              console.error(
+                `[FCM] Stopped retrying. Max retries: ${retryCount.current >= 5}, Retriable: ${isRetriableRef.current}`,
+              );
+            }
             break;
         }
       } catch (e) {
         console.error('[FCM] transition failed', e);
+        isRetriableRef.current = isRetriableError(e);
         transition(FcmState.ERROR);
       } finally {
         if (resolveMutex!) resolveMutex();
@@ -319,6 +353,15 @@ export function useFcm() {
     setSwMessageListener,
     resetFcmStore,
   ]);
+
+  // Cleanup retry timer on unmount
+  useEffect(() => {
+    return () => {
+      if (retryTimer.current) {
+        clearTimeout(retryTimer.current);
+      }
+    };
+  }, []);
 
   /* -------------------------------------------------------------- */
   /* Token refresh on visibility change */

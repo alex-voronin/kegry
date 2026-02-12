@@ -59,6 +59,9 @@ export interface ConfirmPasswordResetRequest {
   newPassword: string;
 }
 
+export const hasCompleteOnboarding = (state: AuthState): boolean =>
+  !!state.accessToken && state.requiredAction === RequiredAction.None;
+
 interface AuthState {
   userId: string | null;
   accessToken: string | null;
