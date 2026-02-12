@@ -516,14 +516,18 @@ export default function FeedScreen() {
             <p className={styles.emptyStateText}>{tFeed('noProfiles')}</p>
           </div>
         )}
-        <WhenSelector value={when} onChange={setWhen} tFeed={tFeed} />
-        <AvailableInvites count={availableInvitesCount} />
-        <FeedFooter
-          onIgnore={handleIgnore}
-          onInvite={handleInvite}
-          onSkip={handleSkip}
-          isInviteDisabled={availableInvitesCount <= 0}
-        />
+        {!isLocationDenied && (
+          <>
+            <WhenSelector value={when} onChange={setWhen} tFeed={tFeed} />
+            <AvailableInvites count={availableInvitesCount} />
+            <FeedFooter
+              onIgnore={handleIgnore}
+              onInvite={handleInvite}
+              onSkip={handleSkip}
+              isInviteDisabled={availableInvitesCount <= 0}
+            />
+          </>
+        )}
         <ModalDialog
           isOpen={expirationPopup.isOpen}
           onClose={() =>

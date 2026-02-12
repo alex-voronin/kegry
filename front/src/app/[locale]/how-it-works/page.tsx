@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import styles from './how-it-works.module.css';
+import { getOS } from '@/lib/os-utils';
 
 const TOTAL_SLIDES = 3;
 const SWIPE_THRESHOLD = 30;
@@ -22,6 +23,30 @@ export default function HowItWorksPage() {
   const [isDragging, setIsDragging] = useState(false);
   const touchStartX = useRef(0);
   const wasDragged = useRef(false);
+  const [os, setOs] = useState<'ios' | 'android' | 'other' | null>(null);
+  const buttonRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setOs(getOS());
+  }, []);
+
+  useLayoutEffect(() => {
+    const adjustScroll = () => {
+      if (!buttonRef.current) return;
+      const rect = buttonRef.current.getBoundingClientRect();
+
+      if (rect.bottom > window.innerHeight) {
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: 'smooth',
+        });
+      }
+    };
+
+    // HACK: Delay scroll to ensure the page layout stabilizes after the navbar changes size on mobile clients.
+    const timeoutId = setTimeout(adjustScroll, 100);
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   const handleNext = () => {
     if (currentSlide < TOTAL_SLIDES - 1) {
@@ -182,18 +207,22 @@ export default function HowItWorksPage() {
 
             <div className={styles.slide}>
               <div className={styles.card}>
-                <div className={styles.permissionNote}>
-                  <p>{t('slidePWA.textIphone')}</p>
-                  <p className="mt-2 font-semibold">
-                    {t('slidePWA.instructionIphone')}
-                  </p>
-                </div>
-                <div className={styles.permissionNote}>
-                  <p>{t('slidePWA.textAndroid')}</p>
-                  <p className="mt-2 font-semibold">
-                    {t('slidePWA.instructionAndroid')}
-                  </p>
-                </div>
+                {(os === 'ios' || os === 'other' || os === null) && (
+                  <div className={styles.permissionNote}>
+                    <p>{t('slidePWA.textIphone')}</p>
+                    <p className="mt-2 font-semibold">
+                      {t('slidePWA.instructionIphone')}
+                    </p>
+                  </div>
+                )}
+                {(os === 'android' || os === 'other' || os === null) && (
+                  <div className={styles.permissionNote}>
+                    <p>{t('slidePWA.textAndroid')}</p>
+                    <p className="mt-2 font-semibold">
+                      {t('slidePWA.instructionAndroid')}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -210,12 +239,12 @@ export default function HowItWorksPage() {
             />
           ))}
         </div>
-      </div>
 
-      <div className={styles.footer}>
-        <Button onClick={handleNext} className={styles.continueButton}>
-          {currentSlide === TOTAL_SLIDES - 1 ? t('continue') : t('next')}
-        </Button>
+        <div className={styles.footer} ref={buttonRef}>
+          <Button onClick={handleNext} className={styles.continueButton}>
+            {currentSlide === TOTAL_SLIDES - 1 ? t('continue') : t('next')}
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -35,7 +35,7 @@
         "step1": "1. Browse & Invite",
         "step2": "2. Chat & Plan",
         "step3": "3. Meet & Enjoy",
-        "note": "Hey adventurer! Just a heads-up: invites expire in 2 days. You can have only one chat at a time and 30 messages per chat, so choose wisely. Invite buddies only if you're really ready for a bar adventure and hurry before the hoplings drink all the beer!"
+        "note": "Hey adventurer! Just a heads-up: invites expire, you can have only one chat at a time, and there is a limited number of messages per chat, so choose wisely. Invite buddies only if you're really ready for a bar adventure and hurry before the hoplings drink all the beer!"
       },
       "contactUs": {
         "title": "Contact Us",
@@ -147,7 +147,7 @@
         "notifications": "🔔 We also need notification permissions to let you know about new invites and chat messages!"
       },
       "slidePWA": {
-        "textIphone": " On iPhone, push notifications work only after you add the app to your Home Screen.",
+        "textIphone": "🍎 On iPhone, push notifications work only after you add the app to your Home Screen.",
         "instructionIphone": "Tap Share → Add to Home Screen",
         "textAndroid": "🤖 On Android, we recommend installing the app for the best experience.",
         "instructionAndroid": "Open the browser menu (⋮) → Add to Home Screen"
