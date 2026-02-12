@@ -22,7 +22,6 @@ export default function CoverPage() {
   const t = useTranslations('screens.onboarding');
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const {
     firstName,
@@ -39,7 +38,6 @@ export default function CoverPage() {
   const { selectedHobbyIds, reset: resetHobbies } = useHobbiesStore();
 
   const handleContinue = async () => {
-    setError(null);
     setIsSubmitting(true);
 
     try {
@@ -85,7 +83,7 @@ export default function CoverPage() {
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to create profile';
-      setError(errorMessage);
+      toast.error(errorMessage);
       setIsSubmitting(false);
     }
   };
@@ -100,7 +98,6 @@ export default function CoverPage() {
         {!coverBlob && <Header title={t('uploadCoverTitle')} />}
 
         <div className={cn(styles.footer, !coverBlob ? '' : 'mt-auto')}>
-          {error && <p className={styles.error}>{error}</p>}
           <Button
             variant={ButtonVariant.Default}
             className={styles.createProfileButton}
