@@ -34,10 +34,12 @@
 
 .section {
   @apply text-base leading-relaxed;
+  white-space: pre-wrap;
 }
 
 .permissionNote {
   @apply bg-background rounded-xl p-4 text-base;
+  white-space: pre-wrap;
 }
 
 .indicators {

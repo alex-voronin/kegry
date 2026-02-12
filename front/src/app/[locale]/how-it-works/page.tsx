@@ -158,21 +158,13 @@ export default function HowItWorksPage() {
             <div className={styles.slide}>
               <div className={styles.card}>
                 <div className={styles.section}>
-                  <p>{t('slideFeed.textDontGoAlone')}</p>
-                </div>
-                <div className={styles.section}>
                   <p>{t('slideFeed.textInvites')}</p>
                 </div>
-              </div>
-            </div>
-
-            <div className={styles.slide}>
-              <div className={styles.card}>
                 <div className={styles.section}>
-                  <p>{t('slideChat.textNewChat')}</p>
+                  <p>{t('slideFeed.textNewChat')}</p>
                 </div>
                 <div className={styles.section}>
-                  <p>{t('slideChat.textEndChat')}</p>
+                  <p>{t('slideFeed.textEndChat')}</p>
                 </div>
               </div>
             </div>
@@ -184,6 +176,23 @@ export default function HowItWorksPage() {
                 </div>
                 <div className={styles.permissionNote}>
                   <p>{t('slidePermissions.notifications')}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.slide}>
+              <div className={styles.card}>
+                <div className={styles.permissionNote}>
+                  <p>{t('slidePWA.textIphone')}</p>
+                  <p className="mt-2 font-semibold">
+                    {t('slidePWA.instructionIphone')}
+                  </p>
+                </div>
+                <div className={styles.permissionNote}>
+                  <p>{t('slidePWA.textAndroid')}</p>
+                  <p className="mt-2 font-semibold">
+                    {t('slidePWA.instructionAndroid')}
+                  </p>
                 </div>
               </div>
             </div>
