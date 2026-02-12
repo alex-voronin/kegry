@@ -13,6 +13,7 @@ using NotificationsModule.Infrastructure.Transport.Push;
 using NSubstitute;
 using IntegrationTests.Shared.HttpClients;
 using SecurityModule.Infrastructure.Service;
+using PostHog;
 using Xunit;
 
 namespace IntegrationTests.Shared;
@@ -25,6 +26,8 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
     public NotificationManager NotificationManager { get; private set; } = null!;
     public ResettableTimeProvider FakeTimeProvider { get; init; } = new ResettableTimeProvider(DateTimeOffset.UtcNow);
     public ContainerManager ContainerManager { get; init; } = new ContainerManager();
+    public IPostHogClient PostHogClient { get; private set; } = null!;
+    public IHost Host { get; private set; } = null!;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -75,6 +78,10 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
             services.RemoveAll<IGoogleTokenValidator>();
             services.AddSingleton<IGoogleTokenValidator>(new FakeGoogleTokenValidator());
 
+            services.RemoveAll<IPostHogClient>();
+            PostHogClient = Substitute.For<IPostHogClient>();
+            services.AddSingleton(PostHogClient);
+
             NotificationManager = new NotificationManager(emailSender: emailSender, pushSender: pushSender);
         });
     }
@@ -93,6 +100,8 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
         var httpClient = CreateClient();
         ApiClient = new IntegrationApiClient(httpClient);
         AuthManager = new AuthManager(ApiClient, Services);
+
+        Host = Services.GetRequiredService<IHost>();
 
         await ContainerManager.CreateTestBucketAsync();
         await ContainerManager.InitializeRespawnerAsync();

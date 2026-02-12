@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="PostHog.AspNetCore" />
+      <PackageReference Include="WolverineFx" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Messaging\Account\" />
+      <Folder Include="Messaging\Chat\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Chat\ChatModule.Contracts\ChatModule.Contracts.csproj" />
+      <ProjectReference Include="..\..\Feed\FeedModule.Contracts\FeedModule.Contracts.csproj" />
+      <ProjectReference Include="..\..\Location\LocationModule.Contracts\LocationModule.Contracts.csproj" />
+      <ProjectReference Include="..\..\Security\SecurityModule.Contracts\SecurityModule.Contracts.csproj" />
+      <ProjectReference Include="..\..\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\UserProfile\UserProfileModule.Contracts\UserProfileModule.Contracts.csproj" />
+    </ItemGroup>
+
+</Project>

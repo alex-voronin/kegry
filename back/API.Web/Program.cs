@@ -1,3 +1,4 @@
+using AnalyticsModule.Setup;
 using API.Web.Extensions;
 using API.Web.Startup;
 using JasperFx;
@@ -30,6 +31,7 @@ IFeatureStartup[] startups =
     new FeedModuleStartup(configuration),
     new NotificationsModuleStartup(configuration),
     new ChatModuleStartup(configuration),
+    new AnalyticsModuleStartup(),
     new HttpSerializationStartup(),
     new HttpClientsResilienceStartup(),
     new SwaggerStartup(),
