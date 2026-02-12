@@ -63,7 +63,7 @@ messaging.onBackgroundMessage(async (payload) => {
         body: notification.body ?? '',
         icon:
           notification.icon ?? '/assets/notifications/notification-logo.webp',
-        tag: `hoplingshere-${messageId}`,
+        tag: `hoplingshere-${messageId}`, // tag for deduplication
         data: payload,
       },
     );

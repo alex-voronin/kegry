@@ -129,9 +129,18 @@ function FcmGlobalHandler() {
   return null;
 }
 
+import { registerServiceWorker } from '@/lib/service-worker'; // Add import
+
 function BackgroundServices() {
   useBackgroundLocation();
   useFcm();
+
+  useEffect(() => {
+    registerServiceWorker().catch((err) =>
+      console.error('SW registration failed', err),
+    );
+  }, []);
+
   return null;
 }
 

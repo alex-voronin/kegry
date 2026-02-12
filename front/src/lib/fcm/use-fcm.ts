@@ -82,16 +82,6 @@ function isTokenValid(): boolean {
 }
 
 /* ------------------------------------------------------------------ */
-/* Service Worker */
-/* ------------------------------------------------------------------ */
-
-async function registerServiceWorker(): Promise<ServiceWorkerRegistration> {
-  const reg = await navigator.serviceWorker.register('/sw.js');
-  await navigator.serviceWorker.ready;
-  return reg;
-}
-
-/* ------------------------------------------------------------------ */
 /* Hook */
 /* ------------------------------------------------------------------ */
 
@@ -176,9 +166,15 @@ export function useFcm() {
           }
 
           case FcmState.SW: {
-            const reg = await registerServiceWorker();
-            setSwRegistration(reg);
-            transition(FcmState.TOKEN);
+            await navigator.serviceWorker.ready;
+            const reg = await navigator.serviceWorker.getRegistration();
+            if (reg) {
+              setSwRegistration(reg);
+              transition(FcmState.TOKEN);
+            } else {
+              console.warn('[FCM] SW not ready yet');
+              // Retrying via visibility change or next render
+            }
             break;
           }
 
