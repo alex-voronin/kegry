@@ -39,7 +39,8 @@ public class UserProfileAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             distinctId: Arg.Is(@event.UserId.ToString()),
             personPropertiesToSet: Arg.Is<Dictionary<string, object>>(p => 
                 p["email"].ToString() == @event.Email && 
-                p["name"].ToString() == $"{@event.FirstName} {@event.LastName}"),
+                p["name"].ToString() == $"{@event.FirstName} {@event.LastName}" &&
+                p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev),
             personPropertiesToSetOnce: Arg.Is<Dictionary<string, object>?>(x => x == null),
             cancellationToken: Arg.Any<CancellationToken>()
         );
@@ -65,7 +66,9 @@ public class UserProfileAnalyticsTests : IntegrationTestBase, IAsyncLifetime
         
         Factory.PostHogClient.Received(1).Capture(
             distinctId: @event.UserId.ToString(),
-            eventName: AnalyticsEvents.UserProfile.Updated
+            eventName: AnalyticsEvents.UserProfile.Updated,
+            properties: Arg.Is<Dictionary<string, object>>(p => 
+                p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev)
         );
     }
 }

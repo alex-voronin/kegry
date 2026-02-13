@@ -29,15 +29,18 @@ public class ChatAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             MessageText = "Hello",
             CreatedAt = DateTimeOffset.UtcNow
         };
-        
+
         await Factory.Host
             .TrackActivity()
             .DoNotAssertOnExceptionsDetected()
             .PublishMessageAndWaitAsync(@event);
-        
+
         Factory.PostHogClient.Received(1).Capture(
             distinctId: @event.FromUserId.ToString(),
-            eventName: AnalyticsEvents.Chat.MessageSent
+            eventName: AnalyticsEvents.Chat.MessageSent,
+            properties: Arg.Is<Dictionary<string, object>>(p =>
+                p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev
+            )
         );
     }
 }

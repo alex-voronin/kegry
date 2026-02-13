@@ -1,38 +1,38 @@
+using AnalyticsModule.Application.Services;
 using SecurityModule.Contracts.Events;
-using PostHog;
 using Wolverine.Attributes;
 
 namespace AnalyticsModule.Application.Messaging.Account;
 
 [WolverineHandler]
-public class AccountAnalyticsHandlers(IPostHogClient postHogClient)
+public static class AccountAnalyticsHandlers
 {
-    public void Handle(AccountCreatedEvent @event)
+    public static void Handle(AccountCreatedEvent @event, IAnalyticsService analyticsService)
     {
-        postHogClient.Capture(
+        analyticsService.Capture(
             distinctId: @event.UserId.ToString(),
             eventName: AnalyticsEvents.Account.Created,
             properties: new Dictionary<string, object>
             {
-                { "email", @event.Email }
+                { AnalyticsEvents.Keys.Email, @event.Email },
             });
     }
 
-    public void Handle(AccountDeletedEvent @event)
+    public static void Handle(AccountDeletedEvent @event, IAnalyticsService analyticsService)
     {
-        postHogClient.Capture(
+        analyticsService.Capture(
             distinctId: @event.Id.ToString(),
             eventName: AnalyticsEvents.Account.Deleted);
     }
 
-    public void Handle(PasswordResetRequestedEvent @event)
+    public static void Handle(PasswordResetRequestedEvent @event, IAnalyticsService analyticsService)
     {
-        postHogClient.Capture(
+        analyticsService.Capture(
             distinctId: @event.UserId.ToString(),
             eventName: AnalyticsEvents.Account.PasswordResetRequested,
             properties: new Dictionary<string, object>
             {
-                { "email", @event.Email }
+                { AnalyticsEvents.Keys.Email, @event.Email }
             });
     }
 }

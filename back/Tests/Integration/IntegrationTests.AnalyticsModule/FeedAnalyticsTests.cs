@@ -26,18 +26,42 @@ public class FeedAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             ByUserId = Guid.NewGuid(),
             MeetingExpiresAt = DateTimeOffset.UtcNow.AddDays(1)
         };
-        
+
         await Factory.Host
             .TrackActivity()
             .DoNotAssertOnExceptionsDetected()
             .PublishMessageAndWaitAsync(@event);
-        
+
         Factory.PostHogClient.Received(1).Capture(
             distinctId: @event.ByUserId.ToString(),
             eventName: AnalyticsEvents.Feed.UserInvited,
-            properties: Arg.Is<Dictionary<string, object>>(p => 
-                p["other_user_id"].ToString() == @event.UserId.ToString() &&
-                p["expires_at"].ToString() == @event.MeetingExpiresAt.ToString("o"))
+            properties: Arg.Is<Dictionary<string, object>>(p =>
+                p[AnalyticsEvents.Keys.OtherUserId].ToString() == @event.UserId.ToString() &&
+                p[AnalyticsEvents.Keys.ExpiresAt].ToString() == @event.MeetingExpiresAt.ToString("o") &&
+                p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev)
+        );
+    }
+
+    [Fact]
+    public async Task WhenUserBlocked_ThenUserBlockedEventIsCaptured()
+    {
+        var @event = new UserBlockedEvent
+        {
+            UserId = Guid.NewGuid(),
+            ByUserId = Guid.NewGuid(),
+        };
+
+        await Factory.Host
+            .TrackActivity()
+            .DoNotAssertOnExceptionsDetected()
+            .PublishMessageAndWaitAsync(@event);
+
+        Factory.PostHogClient.Received(1).Capture(
+            distinctId: @event.ByUserId.ToString(),
+            eventName: AnalyticsEvents.Feed.UserInvited,
+            properties: Arg.Is<Dictionary<string, object>>(p =>
+                p[AnalyticsEvents.Keys.OtherUserId].ToString() == @event.UserId.ToString() &&
+                p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev)
         );
     }
 
@@ -46,27 +70,29 @@ public class FeedAnalyticsTests : IntegrationTestBase, IAsyncLifetime
     {
         var userAId = Guid.NewGuid();
         var userBId = Guid.NewGuid();
-        
+
         var @event = new MeetingArrangedEvent
         {
             ExpiresAt = DateTimeOffset.UtcNow.AddDays(1),
-            Participants = [
+            Participants =
+            [
                 new MeetingArrangedEvent.Participant(userAId, "User 1"),
                 new MeetingArrangedEvent.Participant(userBId, "User 2")
             ]
         };
-        
+
         await Factory.Host
             .TrackActivity()
             .DoNotAssertOnExceptionsDetected()
             .PublishMessageAndWaitAsync(@event);
-        
+
         Factory.PostHogClient.Received(1).Capture(
             distinctId: userAId.ToString(),
             eventName: AnalyticsEvents.Feed.MeetingArranged,
-            properties: Arg.Is<Dictionary<string, object>>(p => 
-                p["expires_at"].ToString() == @event.ExpiresAt.ToString("o") &&
-                p["other_user_id"].ToString() == userBId.ToString())
+            properties: Arg.Is<Dictionary<string, object>>(p =>
+                p[AnalyticsEvents.Keys.ExpiresAt].ToString() == @event.ExpiresAt.ToString("o") &&
+                p[AnalyticsEvents.Keys.OtherUserId].ToString() == userBId.ToString() &&
+                p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev)
         );
     }
 
@@ -79,17 +105,18 @@ public class FeedAnalyticsTests : IntegrationTestBase, IAsyncLifetime
         {
             ParticipantIdsFromDeletedChats = [[user1, user2]]
         };
-        
+
         await Factory.Host
             .TrackActivity()
             .DoNotAssertOnExceptionsDetected()
             .PublishMessageAndWaitAsync(@event);
-        
+
         Factory.PostHogClient.Received(1).Capture(
             distinctId: user1.ToString(),
             eventName: AnalyticsEvents.Feed.MeetingEnded,
-            properties: Arg.Is<Dictionary<string, object>>(p => 
-                p["other_user_id"].ToString() == user2.ToString())
+            properties: Arg.Is<Dictionary<string, object>>(p =>
+                p[AnalyticsEvents.Keys.OtherUserId].ToString() == user2.ToString() && 
+                p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev)
         );
     }
 }

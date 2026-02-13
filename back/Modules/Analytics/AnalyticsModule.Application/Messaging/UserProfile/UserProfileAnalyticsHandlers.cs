@@ -1,28 +1,28 @@
+using AnalyticsModule.Application.Services;
 using UserProfileModule.Contracts.Events;
-using PostHog;
 using Wolverine.Attributes;
 
 namespace AnalyticsModule.Application.Messaging.UserProfile;
 
 [WolverineHandler]
-public class UserProfileAnalyticsHandlers(IPostHogClient postHogClient)
+public static class UserProfileAnalyticsHandlers
 {
-    public async Task Handle(UserProfileChangedEvent @event)
+    public static async Task Handle(UserProfileChangedEvent @event, IAnalyticsService analyticsService)
     {
         if (@event.IsNewProfile)
         {
-            postHogClient.Capture(
+            analyticsService.Capture(
                 distinctId: @event.UserId.ToString(),
                 eventName: AnalyticsEvents.UserProfile.Created);
         }
         else
         {
-            postHogClient.Capture(
+            analyticsService.Capture(
                 distinctId: @event.UserId.ToString(),
                 eventName: AnalyticsEvents.UserProfile.Updated);
         }
         
-        await postHogClient.IdentifyAsync(
+        await analyticsService.IdentifyAsync(
             distinctId: @event.UserId.ToString(),
             email: @event.Email,
             name: $"{@event.FirstName} {@event.LastName}");

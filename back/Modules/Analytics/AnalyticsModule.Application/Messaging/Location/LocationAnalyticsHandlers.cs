@@ -1,3 +1,4 @@
+using AnalyticsModule.Application.Services;
 using LocationModule.Contracts.Events;
 using PostHog;
 using Wolverine.Attributes;
@@ -5,9 +6,9 @@ using Wolverine.Attributes;
 namespace AnalyticsModule.Application.Messaging.Location;
 
 [WolverineHandler]
-public class LocationAnalyticsHandlers(IPostHogClient postHogClient)
+public static class LocationAnalyticsHandlers
 {
-    public void Handle(TrackedUsersMetEvent @event)
+    public static void Handle(TrackedUsersMetEvent @event, IAnalyticsService analyticsService)
     {
         if (@event.UserIds.Length != 2)
         {
@@ -16,12 +17,12 @@ public class LocationAnalyticsHandlers(IPostHogClient postHogClient)
 
         var firstUserId = @event.UserIds[0];
         var secondUserId = @event.UserIds[1];
-        postHogClient.Capture(
+        analyticsService.Capture(
             distinctId: firstUserId.ToString(),
             eventName: AnalyticsEvents.Location.UsersMet,
             properties: new Dictionary<string, object>
             {
-                { "other_user_id", secondUserId.ToString() }
+                { AnalyticsEvents.Keys.OtherUserId, secondUserId.ToString() }
             });
     }
 }

@@ -1,15 +1,15 @@
+using AnalyticsModule.Application.Services;
 using ChatModule.Contracts.Events;
-using PostHog;
 using Wolverine.Attributes;
 
 namespace AnalyticsModule.Application.Messaging.Chat;
 
 [WolverineHandler]
-public class ChatAnalyticsHandlers(IPostHogClient postHogClient)
+public static class ChatAnalyticsHandlers
 {
-    public void Handle(ChatMessageSentEvent @event)
+    public static void Handle(ChatMessageSentEvent @event, IAnalyticsService analyticsService)
     {
-        postHogClient.Capture(
+        analyticsService.Capture(
             distinctId: @event.FromUserId.ToString(),
             eventName: AnalyticsEvents.Chat.MessageSent);
     }

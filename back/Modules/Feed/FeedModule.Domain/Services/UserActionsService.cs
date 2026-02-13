@@ -64,7 +64,13 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         feedUserRelation.IsBlocked = true;
         feedUserRelation.ReportMessage = reportMessage;
         feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
-        await _feedUserRelationRepository.SaveChangesAsync(ct);
+        await _feedUserRelationRepository.PublishEventAsync(
+            new UserBlockedEvent()
+            {
+                UserId = otherUserId,
+                ByUserId = myUserId,
+            });
+        await _feedUserRelationRepository.SaveChangesAndFlushMessagesAsync(ct);
     }
 
     public async Task UnblockUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)

@@ -26,16 +26,19 @@ public class AccountAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             Email = "test@example.com",
             ConfirmationCode = "123456"
         };
-        
+
         await Factory.Host
             .TrackActivity()
             .DoNotAssertOnExceptionsDetected()
             .PublishMessageAndWaitAsync(@event);
-        
+
         Factory.PostHogClient.Received(1).Capture(
             distinctId: @event.UserId.ToString(),
             eventName: AnalyticsEvents.Account.Created,
-            properties: Arg.Is<Dictionary<string, object>>(p => p["email"].ToString() == @event.Email)
+            properties: Arg.Is<Dictionary<string, object>>(p =>
+                p[AnalyticsEvents.Keys.Email].ToString() == @event.Email &&
+                p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev
+            )
         );
     }
 
@@ -46,15 +49,18 @@ public class AccountAnalyticsTests : IntegrationTestBase, IAsyncLifetime
         {
             Id = Guid.NewGuid()
         };
-        
+
         await Factory.Host
             .TrackActivity()
             .DoNotAssertOnExceptionsDetected()
             .PublishMessageAndWaitAsync(@event);
-        
+
         Factory.PostHogClient.Received(1).Capture(
             distinctId: @event.Id.ToString(),
-            eventName: AnalyticsEvents.Account.Deleted
+            eventName: AnalyticsEvents.Account.Deleted,
+            properties: Arg.Is<Dictionary<string, object>>(p =>
+                p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev
+            )
         );
     }
 
@@ -67,16 +73,19 @@ public class AccountAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             Email = "reset@example.com",
             ResetToken = "token"
         };
-        
+
         await Factory.Host
             .TrackActivity()
             .DoNotAssertOnExceptionsDetected()
             .PublishMessageAndWaitAsync(@event);
-        
+
         Factory.PostHogClient.Received(1).Capture(
             distinctId: @event.UserId.ToString(),
             eventName: AnalyticsEvents.Account.PasswordResetRequested,
-            properties: Arg.Is<Dictionary<string, object>>(p => p["email"].ToString() == @event.Email)
+            properties: Arg.Is<Dictionary<string, object>>(p =>
+                p[AnalyticsEvents.Keys.Email].ToString() == @event.Email &&
+                p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev
+            )
         );
     }
 }

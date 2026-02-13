@@ -36,7 +36,8 @@ public class LocationAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             distinctId: user1.ToString(),
             eventName: AnalyticsEvents.Location.UsersMet,
             properties: Arg.Is<Dictionary<string, object>>(p => 
-                p["other_user_id"].ToString() == user2.ToString())
+                p[AnalyticsEvents.Keys.OtherUserId].ToString() == user2.ToString() && 
+                p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev)
         );
     }
 }
