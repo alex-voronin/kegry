@@ -31,10 +31,8 @@ export default function NotFound() {
           priority
         />
       </div>
-      <h2 className="text-foreground mb-2 text-2xl font-semibold">
-        {t('title')}
-      </h2>
-      <p className="text-secondary mb-8 text-base">{t('description')}</p>
+
+      <p className="text-primary mb-8 text-base">{t('description')}</p>
       <Button onClick={handleGoHome} className="min-w-[200px]">
         {t('home')}
       </Button>
