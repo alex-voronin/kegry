@@ -16,13 +16,15 @@
 }
 
 .brandName {
-  @apply text-brand text-3xl font-bold;
+  @apply text-brand text-4xl font-bold;
   margin-left: -5.3rem;
+  font-family: var(--font-fundamento), serif;
 }
 
 .beerMug {
   width: 21px;
   height: 29px;
+  transform: translateY(-4px);
 }
 
 .tagline {
@@ -30,14 +32,14 @@
 }
 
 /* Medium mobile (390px+) */
-@media (min-width: 390px) {
+@media (min-width: 340px) {
   .logoImage {
     width: 203px;
     height: 203px;
   }
 
   .brandName {
-    @apply text-4xl;
+    @apply text-5xl;
     margin-left: -6.5rem;
   }
 
@@ -55,7 +57,7 @@
   }
 
   .brandName {
-    @apply text-5xl;
+    @apply text-6xl;
     margin-left: -6rem;
   }
 

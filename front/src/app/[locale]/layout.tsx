@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist, Geist_Mono, Fondamento } from 'next/font/google';
 import { headers } from 'next/headers';
 import '../globals.css';
 import { Providers } from '@/components/providers';
@@ -16,6 +16,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
+});
+
+const fundamento = Fondamento({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-fundamento',
 });
 
 export const metadata: Metadata = {
@@ -54,7 +60,7 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${fundamento.variable} antialiased`}
       >
         <Providers locale={locale} messages={messages}>
           <div className="flex min-h-screen w-full justify-center">

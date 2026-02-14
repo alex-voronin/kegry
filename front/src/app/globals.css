@@ -48,6 +48,7 @@ input[type='number']::-webkit-inner-spin-button {
   --color-active: var(--color-active);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-fundamento: var(--font-fundamento);
   --breakpoint-sm: 500px;
 }
 

@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import Script from 'next/script';
 import { useTranslations } from 'next-intl';
 import { Menu, X } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
@@ -44,7 +43,9 @@ export default function MobileLayout() {
           />
           <div className={mobileStyles.mobileLogoTextWrapper}>
             <div className={mobileStyles.mobileLogoTitleRow}>
-              <span className={mobileStyles.mobileLogoText}>oplingsHere</span>
+              <span className={mobileStyles.mobileLogoText}>
+                icPlork this Inn
+              </span>
               <Image
                 src="/assets/landing/header-mug.webp"
                 alt="Beer"
@@ -194,7 +195,9 @@ export default function MobileLayout() {
           </div>
         </div>
         <div className={`${styles.card} ${mobileStyles.mobilePollCard}`}>
-          <h2 className={styles.cardTitle}>{t('pollsNews.pollTitle')}</h2>
+          <h2 className={mobileStyles.mobileCardTitle}>
+            {t('pollsNews.pollTitle')}
+          </h2>
           <p className={mobileStyles.mobileCardDescription}>
             {t('pollsNews.pollDescription')}
           </p>
@@ -287,7 +290,7 @@ export default function MobileLayout() {
             {t.rich('contactUs.description', {
               email: (chunks) => (
                 <a
-                  href="mailto:contacts@hoplingshere.com"
+                  href="mailto:contacts@hicplork.com"
                   className={styles.actionLink}
                 >
                   {chunks}

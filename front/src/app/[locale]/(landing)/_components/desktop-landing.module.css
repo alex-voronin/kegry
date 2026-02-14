@@ -21,6 +21,7 @@
 .cardTitle {
   @apply mb-4 text-center text-4xl font-bold;
   color: var(--color-landing-heading);
+  font-family: var(--font-landing-title);
 }
 
 .cardDescription {
@@ -56,10 +57,11 @@
 .logoText {
   @apply text-3xl font-bold;
   color: var(--color-landing-heading);
+  font-family: var(--font-landing-title);
 }
 
 .logoSubtitle {
-  @apply ml-[6px] text-sm;
+  @apply translate-y-[-2px] pl-1 text-sm;
   color: var(--color-landing-subheading);
 }
 

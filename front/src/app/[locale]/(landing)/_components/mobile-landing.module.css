@@ -29,11 +29,12 @@
 .mobileLogoText {
   @apply text-2xl font-bold;
   color: var(--color-landing-heading);
+  font-family: var(--font-landing-title);
 }
 
 .mobileLogoSubtitle {
   @apply ml-px text-[12px];
-  transform: translateY(-2px);
+  transform: translateY(-4px);
   color: var(--color-landing-subheading);
 }
 
@@ -142,8 +143,9 @@
 }
 
 .mobileCardTitle {
-  @apply mb-4 text-center text-2xl font-bold;
+  @apply mb-4 text-center text-3xl font-bold;
   color: var(--color-landing-heading);
+  font-family: var(--font-landing-title);
 }
 
 .mobileCardDescription {

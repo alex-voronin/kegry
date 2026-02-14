@@ -38,7 +38,7 @@ export default function DesktopLayout() {
           />
           <div className={styles.logoTextWrapper}>
             <div className={styles.logoTitleRow}>
-              <span className={styles.logoText}>oplingsHere</span>
+              <span className={styles.logoText}>icPlork this Inn</span>
               <Image
                 src="/assets/landing/header-mug.webp"
                 alt="Beer"
@@ -209,7 +209,7 @@ export default function DesktopLayout() {
             {t.rich('contactUs.description', {
               email: (chunks) => (
                 <a
-                  href="mailto:contacts@hoplingshere.com"
+                  href="mailto:contacts@hicplork.com"
                   className={styles.actionLink}
                 >
                   {chunks}

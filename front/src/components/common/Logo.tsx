@@ -22,7 +22,7 @@ export function Logo({ tagline }: LogoProps) {
             className={styles.logoImage}
             priority
           />
-          <span className={styles.brandName}>oplingsHere</span>
+          <span className={styles.brandName}>icPlork</span>
           <Image
             src="/assets/common/beer-mug.webp"
             alt="Beer"

@@ -1,6 +1,6 @@
 {
-  "name": "HoplingsHere",
-  "short_name": "HoplingsHere",
+  "name": "HicPlork",
+  "short_name": "HicPlork",
   "description": "The best stories start off-screen",
   "start_url": "/login?auto-signin=true",
   "display": "standalone",
