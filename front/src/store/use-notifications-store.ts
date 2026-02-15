@@ -13,6 +13,7 @@ export interface NotificationDto {
   text: string;
   createdAt: string;
   expiresAt: string;
+  type: string;
 }
 
 interface NotificationsState {
@@ -60,16 +61,24 @@ export const useNotificationsStore = create<NotificationsState>()(
 
         const { data, totalCount } = response.data.result;
 
+        const filteredData = data.filter((n) => {
+          if (n.type !== 'Invite') {
+            console.error(`Unknown notification type: ${n.type}`, n);
+            return false;
+          }
+          return true;
+        });
+
         if (offset === 0) {
           set({
-            notifications: data,
+            notifications: filteredData,
             totalCount,
             hasMore: data.length < totalCount,
             isLoading: false,
           });
         } else {
           set((state) => ({
-            notifications: [...state.notifications, ...data],
+            notifications: [...state.notifications, ...filteredData],
             totalCount,
             hasMore: state.notifications.length + data.length < totalCount,
             isLoading: false,
