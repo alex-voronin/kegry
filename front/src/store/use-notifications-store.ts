@@ -10,9 +10,9 @@ export interface NotificationDto {
   id: string;
   fromUserId: string | null;
   avatarImageUrl: string | null;
-  primaryText: string;
-  secondaryText: string;
+  text: string;
   createdAt: string;
+  expiresAt: string;
 }
 
 interface NotificationsState {
@@ -97,9 +97,6 @@ export const useNotificationsStore = create<NotificationsState>()(
   }),
 );
 
-export function isNotificationExpired(createdAt: string): boolean {
-  const createdDate = new Date(createdAt);
-  // TODO: get this value from the backend
-  const expirationDate = new Date(createdDate.getTime() + 48 * 60 * 60 * 1000);
-  return new Date() > expirationDate;
+export function isNotificationExpired(expiresAt: string): boolean {
+  return new Date() > new Date(expiresAt);
 }

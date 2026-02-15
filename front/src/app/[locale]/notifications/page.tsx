@@ -14,6 +14,7 @@ import {
   NotificationDto,
   isNotificationExpired,
 } from '@/store/use-notifications-store';
+import { formatNotificationDate } from '@/lib/date';
 import { toast } from 'react-toastify';
 import styles from './notifications.module.css';
 
@@ -47,7 +48,7 @@ export default function NotificationsScreen() {
 
   const handleAccept = async (notif: NotificationDto) => {
     if (!notif.fromUserId) return;
-    if (isNotificationExpired(notif.createdAt)) {
+    if (isNotificationExpired(notif.expiresAt)) {
       toast.error(t('toast.expired'));
       return;
     }
@@ -84,7 +85,7 @@ export default function NotificationsScreen() {
   const getMenuOptions = (notif: NotificationDto) => {
     const options = [];
 
-    if (!isNotificationExpired(notif.createdAt) && notif.fromUserId) {
+    if (!isNotificationExpired(notif.expiresAt) && notif.fromUserId) {
       options.push({
         icon: '/assets/notifications/accept-icon.webp',
         label: t('menu.accept'),
@@ -114,7 +115,6 @@ export default function NotificationsScreen() {
         isDestructive: true,
       });
     }
-
     return options;
   };
 
@@ -146,7 +146,7 @@ export default function NotificationsScreen() {
         ) : (
           <div className={styles.notificationList}>
             {notifications.map((notif) => {
-              const expired = isNotificationExpired(notif.createdAt);
+              const expired = isNotificationExpired(notif.expiresAt);
               return (
                 <div
                   key={notif.id}
@@ -167,10 +167,10 @@ export default function NotificationsScreen() {
                     </div>
                     <div className={styles.notificationBody}>
                       <span className={styles.notificationTitle}>
-                        {notif.primaryText}
+                        {notif.text}
                       </span>
                       <span className={styles.notificationTime}>
-                        {notif.secondaryText}
+                        {formatNotificationDate(notif.expiresAt, t)}
                       </span>
                     </div>
                   </div>
