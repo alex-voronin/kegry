@@ -28,6 +28,8 @@ import EmojiPicker, {
   EmojiStyle,
 } from 'emoji-picker-react';
 
+const LOW_MESSAGE_WARNING_THRESHOLD = 10;
+
 export default function ChatScreen() {
   const t = useTranslations('screens.chat');
   const [message, setMessage] = useState('');
@@ -36,6 +38,7 @@ export default function ChatScreen() {
   const [isSending, setIsSending] = useState(false);
   const [remainingTimeMs, setRemainingTimeMs] = useState<number | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [isLowMessageWarningOpen, setIsLowMessageWarningOpen] = useState(false);
   const router = useRouter();
 
   const emojiPickerRef = useRef<HTMLDivElement>(null);
@@ -211,6 +214,9 @@ export default function ChatScreen() {
     try {
       await sendMessage(message.trim());
       setMessage('');
+      if (remainingMessages === LOW_MESSAGE_WARNING_THRESHOLD + 1) {
+        setIsLowMessageWarningOpen(true);
+      }
     } catch (err: any) {
       toast.error(err.message || t('toast.sendFailed'));
     } finally {
@@ -453,6 +459,16 @@ export default function ChatScreen() {
         secondaryButtonText={t('endMeetingDialog.no')}
         onPrimaryAction={handleEndMeeting}
         onSecondaryAction={() => setShowEndMeetingPrompt(false)}
+      />
+
+      <ModalDialog
+        isOpen={isLowMessageWarningOpen}
+        onClose={() => setIsLowMessageWarningOpen(false)}
+        message={t('lowMessageWarning.message', {
+          count: LOW_MESSAGE_WARNING_THRESHOLD,
+        })}
+        primaryButtonText={t('lowMessageWarning.okButton')}
+        onPrimaryAction={() => setIsLowMessageWarningOpen(false)}
       />
     </div>
   );

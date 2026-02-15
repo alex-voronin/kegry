@@ -49,7 +49,7 @@
 }
 
 .bubbleRight {
-  @apply rounded-2xl rounded-tr-none bg-[#00A3ff];
+  @apply rounded-2xl rounded-tr-none bg-[#B87014];
 }
 
 .timestamp {

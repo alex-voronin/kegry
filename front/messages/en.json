@@ -199,6 +199,10 @@
         "message": "It seems you have met. Has the meeting already ended?",
         "yes": "Yes",
         "no": "No"
+      },
+      "lowMessageWarning": {
+        "message": "Heads up! You have {count} messages left in this chat.",
+        "okButton": "Got it"
       }
     },
     "filters": {
