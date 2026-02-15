@@ -81,9 +81,9 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    expires_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     from_user_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    primary_text = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
-                    secondary_text = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
+                    text = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
                     is_seen = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>

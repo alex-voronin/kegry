@@ -47,8 +47,8 @@ public class UserInvitedEventHandler : DebouncedEventHandlerBase<UserInvitedEven
             UserId = @event.UserId,
             FromUserId = @event.ByUserId,
             CreatedAt = TimeProvider.GetUtcNow(),
-            PrimaryText = _localizer.GetString("InApp.UserInvitedNotification.PrimaryText"),
-            SecondaryText = _dateTimeHumanizer.Humanize(@event.MeetingExpiresAt),
+            ExpiresAt = @event.InviteExpiresAt,
+            Text = _localizer.GetString("InApp.UserInvitedNotification.PrimaryText"),
             IsSeen = false
         };
         await _notificationRepository.AddAsync(notification, ct);

@@ -97,9 +97,9 @@ public class NotificationEndpoints : IEndpoints
                 AvatarImageUrl: x.FromUser != null
                     ? storageService.S3KeyToPublicFileUrl(x.FromUser.AvatarImageS3Key)
                     : null,
-                PrimaryText: x.PrimaryText,
-                SecondaryText: x.SecondaryText,
-                CreatedAt: x.CreatedAt
+                Text: x.Text,
+                CreatedAt: x.CreatedAt,
+                ExpiresAt: x.ExpiresAt
             )
         ).ToArray();
         return ApiResult<PaginatedResponse<NotificationDto>>.Build(

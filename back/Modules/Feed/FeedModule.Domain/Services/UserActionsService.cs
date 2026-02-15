@@ -179,7 +179,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
                 {
                     UserId = otherUserId,
                     ByUserId = myUserId,
-                    MeetingExpiresAt = meToOtherUserRelation.InviteExpiresAt
+                    InviteExpiresAt = meToOtherUserRelation.InviteExpiresAt
                 });
         }
 

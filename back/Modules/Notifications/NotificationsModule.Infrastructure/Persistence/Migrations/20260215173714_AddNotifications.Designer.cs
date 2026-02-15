@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NotificationsModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NotificationsContext))]
-    [Migration("20260110215618_AddNotifications")]
+    [Migration("20260215173714_AddNotifications")]
     partial class AddNotifications
     {
         /// <inheritdoc />
@@ -65,6 +65,10 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at");
+
                     b.Property<Guid?>("FromUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("from_user_id");
@@ -73,17 +77,11 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_seen");
 
-                    b.Property<string>("PrimaryText")
+                    b.Property<string>("Text")
                         .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)")
-                        .HasColumnName("primary_text");
-
-                    b.Property<string>("SecondaryText")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)")
-                        .HasColumnName("secondary_text");
+                        .HasColumnName("text");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")

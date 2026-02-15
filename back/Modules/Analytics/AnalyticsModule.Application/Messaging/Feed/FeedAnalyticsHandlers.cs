@@ -15,7 +15,7 @@ public static class FeedAnalyticsHandlers
             properties: new Dictionary<string, object>
             {
                 { AnalyticsEvents.Keys.OtherUserId, @event.UserId.ToString() },
-                { AnalyticsEvents.Keys.ExpiresAt, @event.MeetingExpiresAt.ToString("o") }
+                { AnalyticsEvents.Keys.ExpiresAt, @event.InviteExpiresAt.ToString("o") }
             });
     }
     

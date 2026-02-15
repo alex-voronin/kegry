@@ -24,7 +24,7 @@ public class FeedAnalyticsTests : IntegrationTestBase, IAsyncLifetime
         {
             UserId = Guid.NewGuid(),
             ByUserId = Guid.NewGuid(),
-            MeetingExpiresAt = DateTimeOffset.UtcNow.AddDays(1)
+            InviteExpiresAt = DateTimeOffset.UtcNow.AddDays(1)
         };
 
         await Factory.Host
@@ -37,7 +37,7 @@ public class FeedAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             eventName: AnalyticsEvents.Feed.UserInvited,
             properties: Arg.Is<Dictionary<string, object>>(p =>
                 p[AnalyticsEvents.Keys.OtherUserId].ToString() == @event.UserId.ToString() &&
-                p[AnalyticsEvents.Keys.ExpiresAt].ToString() == @event.MeetingExpiresAt.ToString("o") &&
+                p[AnalyticsEvents.Keys.ExpiresAt].ToString() == @event.InviteExpiresAt.ToString("o") &&
                 p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev)
         );
     }

@@ -66,8 +66,7 @@ public class NotificationsContext : DbContext
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedNever();
             builder.Property(x => x.UserId).IsRequired();
-            builder.Property(x => x.PrimaryText).IsRequired().HasMaxLength(1024);
-            builder.Property(x => x.SecondaryText).IsRequired().HasMaxLength(1024);
+            builder.Property(x => x.Text).IsRequired().HasMaxLength(1024);
             builder.Property(x => x.CreatedAt).IsRequired();
             builder.Property(x => x.IsSeen).IsRequired();
 

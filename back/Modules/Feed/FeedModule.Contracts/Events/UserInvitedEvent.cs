@@ -5,5 +5,5 @@ namespace FeedModule.Contracts.Events;
 public record UserInvitedEvent : UserEvent
 {
     public required Guid ByUserId { get; init; }
-    public required DateTimeOffset MeetingExpiresAt { get; init; }
+    public required DateTimeOffset InviteExpiresAt { get; init; }
 }

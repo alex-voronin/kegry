@@ -36,13 +36,14 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
             var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
             for (int i = 0; i < 20; i++)
             {
+                var now = DateTimeOffset.UtcNow;
                 context.Notifications.Add(new Notification
                 {
                     Id = Guid.NewGuid(),
                     UserId = userId,
-                    CreatedAt = DateTimeOffset.UtcNow.AddMinutes(-i),
-                    PrimaryText = $"Notification {i}",
-                    SecondaryText = $"Description {i}",
+                    CreatedAt = now.AddMinutes(-i),
+                    ExpiresAt = now,
+                    Text = $"Notification {i}",
                     FromUserId = userId,
                     IsSeen = false
                 });
@@ -60,8 +61,7 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var data = response.Result.Data.ToList();
         data.Count.ShouldBe(10);
         response.Result.TotalCount.ShouldBe(20);
-        data[0].PrimaryText.ShouldBe("Notification 10");
-        data[0].SecondaryText.ShouldBe("Description 10");
+        data[0].Text.ShouldBe("Notification 10");
         data[0].AvatarImageUrl.ShouldBe(TestConfig.S3.PublicUrl + "/avatar.jpg");
     }
 
@@ -86,8 +86,8 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Id = Guid.NewGuid(),
                 UserId = userId,
                 CreatedAt = DateTimeOffset.UtcNow,
-                PrimaryText = "Unseen Notification",
-                SecondaryText = "Description",
+                ExpiresAt = DateTimeOffset.UtcNow,
+                Text = "Unseen Notification",
                 IsSeen = false
             });
             await context.SaveChangesAsync();
@@ -126,8 +126,8 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Id = Guid.NewGuid(),
                 UserId = userId,
                 CreatedAt = DateTimeOffset.UtcNow,
-                PrimaryText = "Unseen 1",
-                SecondaryText = "Description",
+                ExpiresAt = DateTimeOffset.UtcNow,
+                Text = "Unseen 1",
                 IsSeen = false
             });
             context.Notifications.Add(new Notification
@@ -135,8 +135,8 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Id = Guid.NewGuid(),
                 UserId = userId,
                 CreatedAt = DateTimeOffset.UtcNow,
-                PrimaryText = "Seen 1",
-                SecondaryText = "Description",
+                ExpiresAt = DateTimeOffset.UtcNow,
+                Text = "Seen 1",
                 IsSeen = true
             });
             context.Notifications.Add(new Notification
@@ -144,8 +144,8 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Id = Guid.NewGuid(),
                 UserId = userId,
                 CreatedAt = DateTimeOffset.UtcNow,
-                PrimaryText = "Unseen 2",
-                SecondaryText = "Description",
+                ExpiresAt = DateTimeOffset.UtcNow,
+                Text = "Unseen 2",
                 IsSeen = false
             });
             await context.SaveChangesAsync();
