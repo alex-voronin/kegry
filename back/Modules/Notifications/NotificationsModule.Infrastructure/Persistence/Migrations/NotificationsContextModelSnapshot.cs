@@ -80,6 +80,10 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(1024)")
                         .HasColumnName("text");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NotificationsModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NotificationsContext))]
-    [Migration("20260215173714_AddNotifications")]
+    [Migration("20260215200807_AddNotifications")]
     partial class AddNotifications
     {
         /// <inheritdoc />
@@ -82,6 +82,10 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)")
                         .HasColumnName("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")

@@ -93,6 +93,7 @@ public class NotificationEndpoints : IEndpoints
         var dtos = notifications.Select(x =>
             new NotificationDto(
                 Id: x.Id,
+                Type: x.Type,
                 FromUserId: x.FromUserId,
                 AvatarImageUrl: x.FromUser != null
                     ? storageService.S3KeyToPublicFileUrl(x.FromUser.AvatarImageS3Key)

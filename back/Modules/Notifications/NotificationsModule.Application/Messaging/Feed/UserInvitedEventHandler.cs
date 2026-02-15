@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Localization;
 using NotificationModule.Domain.Aggregates;
 using NotificationModule.Domain.Repositories;
+using NotificationModule.Domain.ValueObjects;
 using NotificationsModule.Application.Services;
 using NotificationsModule.Infrastructure.Resources;
 using Serilog;
@@ -44,6 +45,7 @@ public class UserInvitedEventHandler : DebouncedEventHandlerBase<UserInvitedEven
         var notification = new Notification
         {
             Id = Guid.CreateVersion7(),
+            Type = NotificationType.Invite,
             UserId = @event.UserId,
             FromUserId = @event.ByUserId,
             CreatedAt = TimeProvider.GetUtcNow(),

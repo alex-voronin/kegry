@@ -79,6 +79,7 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    type = table.Column<int>(type: "integer", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     expires_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),

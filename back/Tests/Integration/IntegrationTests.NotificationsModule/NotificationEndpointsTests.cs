@@ -2,6 +2,7 @@ using IntegrationTests.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using NotificationModule.Domain.Aggregates;
+using NotificationModule.Domain.ValueObjects;
 using NotificationsModule.API.Dto;
 using NotificationsModule.Infrastructure.Persistence;
 using SharedCore.Api.Dto;
@@ -40,6 +41,7 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 context.Notifications.Add(new Notification
                 {
                     Id = Guid.NewGuid(),
+                    Type = NotificationType.Invite,
                     UserId = userId,
                     CreatedAt = now.AddMinutes(-i),
                     ExpiresAt = now,
@@ -62,6 +64,7 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         data.Count.ShouldBe(10);
         response.Result.TotalCount.ShouldBe(20);
         data[0].Text.ShouldBe("Notification 10");
+        data[0].Type.ShouldBe(NotificationType.Invite);
         data[0].AvatarImageUrl.ShouldBe(TestConfig.S3.PublicUrl + "/avatar.jpg");
     }
 
@@ -84,6 +87,7 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
             context.Notifications.Add(new Notification
             {
                 Id = Guid.NewGuid(),
+                Type = NotificationType.Invite,
                 UserId = userId,
                 CreatedAt = DateTimeOffset.UtcNow,
                 ExpiresAt = DateTimeOffset.UtcNow,
@@ -124,6 +128,7 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
             context.Notifications.Add(new Notification
             {
                 Id = Guid.NewGuid(),
+                Type = NotificationType.Invite,
                 UserId = userId,
                 CreatedAt = DateTimeOffset.UtcNow,
                 ExpiresAt = DateTimeOffset.UtcNow,
@@ -133,6 +138,7 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
             context.Notifications.Add(new Notification
             {
                 Id = Guid.NewGuid(),
+                Type = NotificationType.Invite,
                 UserId = userId,
                 CreatedAt = DateTimeOffset.UtcNow,
                 ExpiresAt = DateTimeOffset.UtcNow,
@@ -142,6 +148,7 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
             context.Notifications.Add(new Notification
             {
                 Id = Guid.NewGuid(),
+                Type = NotificationType.Invite,
                 UserId = userId,
                 CreatedAt = DateTimeOffset.UtcNow,
                 ExpiresAt = DateTimeOffset.UtcNow,
