@@ -36,6 +36,7 @@ public static class AnalyticsEvents
     {
         public const string Email = "email";
         public const string OtherUserId = "other_user_id";
+        public const string ParticipantIds = "participant_ids";
         public const string ExpiresAt = "expires_at";
         public const string Environment = "environment";
     }

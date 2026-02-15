@@ -46,7 +46,7 @@ public static class FeedAnalyticsHandlers
             properties: new Dictionary<string, object>
             {
                 { AnalyticsEvents.Keys.ExpiresAt, @event.ExpiresAt.ToString("o") },
-                { AnalyticsEvents.Keys.OtherUserId, secondUserId.ToString() }
+                { AnalyticsEvents.Keys.ParticipantIds, new [] {firstUserId.ToString(), secondUserId.ToString()} }
             });
     }
 
@@ -66,7 +66,7 @@ public static class FeedAnalyticsHandlers
                 eventName: AnalyticsEvents.Feed.MeetingEnded,
                 properties: new Dictionary<string, object>
                 {
-                    { AnalyticsEvents.Keys.OtherUserId, secondUserId.ToString() }
+                    { AnalyticsEvents.Keys.ParticipantIds, new [] { firstUserId.ToString(), secondUserId.ToString()} }
                 });
         }
     }
