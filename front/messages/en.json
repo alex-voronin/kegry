@@ -203,6 +203,10 @@
       "lowMessageWarning": {
         "message": "Heads up! You have {count} messages left in this chat.",
         "okButton": "Got it"
+      },
+      "firstTimePopup": {
+        "message": "You've both sent invites! A chat is ready for you to plan your meetup.",
+        "okButton": "Let's Chat"
       }
     },
     "filters": {

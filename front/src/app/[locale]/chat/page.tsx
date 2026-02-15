@@ -39,6 +39,7 @@ export default function ChatScreen() {
   const [remainingTimeMs, setRemainingTimeMs] = useState<number | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isLowMessageWarningOpen, setIsLowMessageWarningOpen] = useState(false);
+  const [isFirstTimePopupOpen, setIsFirstTimePopupOpen] = useState(false);
   const router = useRouter();
 
   const emojiPickerRef = useRef<HTMLDivElement>(null);
@@ -190,6 +191,16 @@ export default function ChatScreen() {
   useEffect(() => {
     if (!chat?.expiresAt) return;
 
+    // Check for "first time chat" popup
+    if (chat?.id) {
+      const shownKey = `chat_intro_shown_${chat.id}`;
+      const hasShown = window.localStorage.getItem(shownKey);
+      if (!hasShown) {
+        setIsFirstTimePopupOpen(true);
+        window.localStorage.setItem(shownKey, 'true');
+      }
+    }
+
     setRemainingTimeMs(calculateRemainingTimeMs());
 
     const interval = setInterval(() => {
@@ -197,7 +208,7 @@ export default function ChatScreen() {
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [chat?.expiresAt, calculateRemainingTimeMs]);
+  }, [chat?.id, chat?.expiresAt, calculateRemainingTimeMs]);
 
   const onMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const el = e.target;
@@ -469,6 +480,14 @@ export default function ChatScreen() {
         })}
         primaryButtonText={t('lowMessageWarning.okButton')}
         onPrimaryAction={() => setIsLowMessageWarningOpen(false)}
+      />
+
+      <ModalDialog
+        isOpen={isFirstTimePopupOpen}
+        onClose={() => setIsFirstTimePopupOpen(false)}
+        message={t('firstTimePopup.message')}
+        primaryButtonText={t('firstTimePopup.okButton')}
+        onPrimaryAction={() => setIsFirstTimePopupOpen(false)}
       />
     </div>
   );
