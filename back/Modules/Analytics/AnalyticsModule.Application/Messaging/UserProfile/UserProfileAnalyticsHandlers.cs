@@ -21,7 +21,7 @@ public static class UserProfileAnalyticsHandlers
                 distinctId: @event.UserId.ToString(),
                 eventName: AnalyticsEvents.UserProfile.Updated);
         }
-        
+
         await analyticsService.IdentifyAsync(
             distinctId: @event.UserId.ToString(),
             email: @event.Email,

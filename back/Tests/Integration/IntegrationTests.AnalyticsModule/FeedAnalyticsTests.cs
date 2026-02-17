@@ -3,6 +3,7 @@ using PostHog;
 using NSubstitute;
 using AnalyticsModule.Application;
 using FeedModule.Contracts.Events;
+using Shouldly;
 using Wolverine.Tracking;
 
 namespace IntegrationTests.AnalyticsModule;
@@ -89,21 +90,30 @@ public class FeedAnalyticsTests : IntegrationTestBase, IAsyncLifetime
         Factory.PostHogClient.Received(1).Capture(
             distinctId: userAId.ToString(),
             eventName: AnalyticsEvents.Feed.MeetingArranged,
-            properties: Arg.Is<Dictionary<string, object>>(p =>
-                p[AnalyticsEvents.Keys.ExpiresAt].ToString() == @event.ExpiresAt.ToString("o") &&
-                p[AnalyticsEvents.Keys.OtherUserId].ToString() == userBId.ToString() &&
-                p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev)
+            properties: Arg.Any<Dictionary<string, object>>()
         );
+
+        // hack, but seems it's the only way to check ParticipantIds array content
+        var call = Factory.PostHogClient.ReceivedCalls()
+            .Last(c => c.GetMethodInfo().Name == "Capture");
+        var propsArg = call.GetArguments()[2];
+        propsArg.ShouldNotBeNull();
+        var props = (Dictionary<string, object>)propsArg;
+        props[AnalyticsEvents.Keys.ExpiresAt].ShouldBe(@event.ExpiresAt.ToString("o"));
+        props[AnalyticsEvents.Keys.Environment].ShouldBe(AnalyticsEnv.Dev);
+        props[AnalyticsEvents.Keys.ParticipantIds].ShouldBeEquivalentTo(
+            new[] { userAId.ToString(), userBId.ToString() }
+            );
     }
 
     [Fact]
     public async Task WhenMeetingEnded_ThenMeetingEndedEventIsCaptured()
     {
-        var user1 = Guid.NewGuid();
-        var user2 = Guid.NewGuid();
+        var userAId = Guid.NewGuid();
+        var userBId = Guid.NewGuid();
         var @event = new MeetingsEndedEvent
         {
-            ParticipantIdsFromDeletedChats = [[user1, user2]]
+            ParticipantIdsFromDeletedChats = [[userAId, userBId]]
         };
 
         await Factory.Host
@@ -112,11 +122,18 @@ public class FeedAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             .PublishMessageAndWaitAsync(@event);
 
         Factory.PostHogClient.Received(1).Capture(
-            distinctId: user1.ToString(),
+            distinctId: userAId.ToString(),
             eventName: AnalyticsEvents.Feed.MeetingEnded,
-            properties: Arg.Is<Dictionary<string, object>>(p =>
-                p[AnalyticsEvents.Keys.OtherUserId].ToString() == user2.ToString() && 
-                p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev)
+            properties: Arg.Any<Dictionary<string, object>>()
         );
+
+        // hack, but seems it's the only way to check ParticipantIds array content
+        var call = Factory.PostHogClient.ReceivedCalls()
+            .Last(c => c.GetMethodInfo().Name == "Capture");
+        var propsArg = call.GetArguments()[2];
+        propsArg.ShouldNotBeNull();
+        var props = (Dictionary<string, object>)propsArg;
+        props[AnalyticsEvents.Keys.Environment].ShouldBe(AnalyticsEnv.Dev);
+        props[AnalyticsEvents.Keys.ParticipantIds].ShouldBeEquivalentTo(new[] { userAId.ToString(), userBId.ToString() });
     }
 }

@@ -1,6 +1,7 @@
 using IntegrationTests.Shared.HttpClients;
 using LocationModule.API.Dto;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using SecurityModule.API.Dto;
 using SecurityModule.Domain.Aggregates;
 using SecurityModule.Infrastructure.Persistence;
@@ -8,6 +9,7 @@ using SharedCore.Api.Dto;
 using SharedCore.ValueObjects;
 using Shouldly;
 using UserProfileModule.API.Dto;
+using Wolverine.Tracking;
 
 namespace IntegrationTests.Shared.Managers;
 
@@ -15,11 +17,13 @@ public class AuthManager
 {
     private readonly IntegrationApiClient _apiClient;
     private readonly IServiceProvider _serviceProvider;
+    private readonly IHost _host;
 
-    public AuthManager(IntegrationApiClient apiClient, IServiceProvider serviceProvider)
+    public AuthManager(IntegrationApiClient apiClient, IServiceProvider serviceProvider, IHost host)
     {
         _apiClient = apiClient;
         _serviceProvider = serviceProvider;
+        _host = host;
     }
 
     public async Task<AuthResponse> CreateAndLoginUserAsync(string email, string password)
@@ -58,8 +62,11 @@ public class AuthManager
 
     public async Task CreateDefaultProfileAndSubmitLocation()
     {
-        await CreateProfile();
-        await SubmitLocation();
+        await _host.ExecuteAndWaitAsync(async () =>
+        {
+            await CreateProfile();
+            await SubmitLocation();
+        });
     }
 
     public async Task CreateProfile(

@@ -26,17 +26,17 @@ public class LocationAnalyticsTests : IntegrationTestBase, IAsyncLifetime
         {
             UserIds = [user1, user2]
         };
-        
+
         await Factory.Host
             .TrackActivity()
             .DoNotAssertOnExceptionsDetected()
             .PublishMessageAndWaitAsync(@event);
-        
+
         Factory.PostHogClient.Received(1).Capture(
             distinctId: user1.ToString(),
             eventName: AnalyticsEvents.Location.UsersMet,
-            properties: Arg.Is<Dictionary<string, object>>(p => 
-                p[AnalyticsEvents.Keys.OtherUserId].ToString() == user2.ToString() && 
+            properties: Arg.Is<Dictionary<string, object>>(p =>
+                p[AnalyticsEvents.Keys.OtherUserId].ToString() == user2.ToString() &&
                 p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev)
         );
     }

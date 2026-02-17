@@ -18,7 +18,7 @@ public static class FeedAnalyticsHandlers
                 { AnalyticsEvents.Keys.ExpiresAt, @event.InviteExpiresAt.ToString("o") }
             });
     }
-    
+
     public static void Handle(UserBlockedEvent @event, IAnalyticsService analyticsService)
     {
         analyticsService.Capture(
@@ -39,7 +39,7 @@ public static class FeedAnalyticsHandlers
 
         var firstUserId = @event.Participants[0].UserId;
         var secondUserId = @event.Participants[1].UserId;
-        
+
         analyticsService.Capture(
             distinctId: firstUserId.ToString(),
             eventName: AnalyticsEvents.Feed.MeetingArranged,
@@ -58,7 +58,7 @@ public static class FeedAnalyticsHandlers
             {
                 continue;
             }
-            
+
             var firstUserId = participantIds[0];
             var secondUserId = participantIds[1];
             analyticsService.Capture(

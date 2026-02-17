@@ -25,6 +25,7 @@
     <ItemGroup>
       <ProjectReference Include="..\hoppyfy.me.ServiceDefaults\hoppyfy.me.ServiceDefaults.csproj" />
       <ProjectReference Include="..\Modules\Analytics\AnalyticsModule.Setup\AnalyticsModule.Setup.csproj" />
+      <ProjectReference Include="..\Modules\Engagement\EngagementModule.Setup\EngagementModule.Setup.csproj" />
       <ProjectReference Include="..\Modules\Notifications\NotificationsModule.Setup\NotificationsModule.Setup.csproj" />
       <ProjectReference Include="..\Modules\Security\SecurityModule.Setup\SecurityModule.Setup.csproj" />
       <ProjectReference Include="..\Modules\UserProfile\UserProfileModule.Setup\UserProfileModule.Setup.csproj" />

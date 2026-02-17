@@ -7,6 +7,7 @@ using NotificationsModule.API.Dto;
 using NotificationsModule.Infrastructure.Persistence;
 using SharedCore.Api.Dto;
 using Shouldly;
+using Wolverine.Tracking;
 
 namespace IntegrationTests.NotificationsModule;
 
@@ -258,7 +259,7 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
                     FcmToken = "old-fcm-token",
                     UserId = userId
                 }
-                );
+            );
             await context.SaveChangesAsync();
         }
 
@@ -301,7 +302,7 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 new Device()
                 {
                     Id = deviceId,
-                    FcmToken = "fcm-token-123",
+                    FcmToken = "fcm-token-456",
                     UserId = userId
                 }
             );

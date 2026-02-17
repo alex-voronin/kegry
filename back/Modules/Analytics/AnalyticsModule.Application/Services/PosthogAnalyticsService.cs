@@ -11,7 +11,7 @@ public interface IAnalyticsService
         string distinctId,
         string email,
         string name);
-    
+
     public bool Capture(
         string distinctId,
         string eventName,
@@ -36,13 +36,13 @@ internal class PosthogAnalyticsService : IAnalyticsService, ISingleton
     {
         properties ??= new Dictionary<string, object>();
         properties[AnalyticsEvents.Keys.Environment] = GetAnalyticsEnvName();
-        
+
         return _postHogClient.Capture(
             distinctId: distinctId,
             eventName: eventName,
             properties: properties);
     }
-    
+
     public Task IdentifyAsync(
         string distinctId,
         string email,
@@ -59,7 +59,7 @@ internal class PosthogAnalyticsService : IAnalyticsService, ISingleton
             name: name,
             personPropertiesToSet: properties);
     }
-    
+
     private string GetAnalyticsEnvName()
     {
         return _hostEnvironment.IsDevelopment() ? "dev" : "prod";

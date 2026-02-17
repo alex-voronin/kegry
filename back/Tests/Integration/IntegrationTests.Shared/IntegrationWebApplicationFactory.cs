@@ -97,11 +97,11 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
     {
         await ContainerManager.InitializeAsync();
 
+        Host = Services.GetRequiredService<IHost>();
+
         var httpClient = CreateClient();
         ApiClient = new IntegrationApiClient(httpClient);
-        AuthManager = new AuthManager(ApiClient, Services);
-
-        Host = Services.GetRequiredService<IHost>();
+        AuthManager = new AuthManager(ApiClient, Services, Host);
 
         await ContainerManager.CreateTestBucketAsync();
         await ContainerManager.InitializeRespawnerAsync();

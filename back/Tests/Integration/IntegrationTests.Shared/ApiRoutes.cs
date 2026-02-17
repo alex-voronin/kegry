@@ -57,4 +57,10 @@ public static class ApiRoutes
         public const string ChatRoot = "/api/v1/chat";
         public const string Message = "/api/v1/chat/message";
     }
+
+    public static class Npc
+    {
+        public const string Root = "/api/v1/npc";
+        public static string Invite(string id) => $"/api/v1/npc/{id}/invite";
+    }
 }

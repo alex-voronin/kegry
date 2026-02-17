@@ -29,16 +29,16 @@ public class UserProfileAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             LastName = "Doe",
             AvatarImageS3Key = "avatar.png"
         };
-        
+
         await Factory.Host
             .TrackActivity()
             .DoNotAssertOnExceptionsDetected()
             .PublishMessageAndWaitAsync(@event);
-        
+
         await Factory.PostHogClient.Received(1).IdentifyAsync(
             distinctId: Arg.Is(@event.UserId.ToString()),
-            personPropertiesToSet: Arg.Is<Dictionary<string, object>>(p => 
-                p["email"].ToString() == @event.Email && 
+            personPropertiesToSet: Arg.Is<Dictionary<string, object>>(p =>
+                p["email"].ToString() == @event.Email &&
                 p["name"].ToString() == $"{@event.FirstName} {@event.LastName}" &&
                 p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev),
             personPropertiesToSetOnce: Arg.Is<Dictionary<string, object>?>(x => x == null),
@@ -58,16 +58,16 @@ public class UserProfileAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             LastName = "Doe",
             AvatarImageS3Key = "avatar.png"
         };
-        
+
         await Factory.Host
             .TrackActivity()
             .DoNotAssertOnExceptionsDetected()
             .PublishMessageAndWaitAsync(@event);
-        
+
         Factory.PostHogClient.Received(1).Capture(
             distinctId: @event.UserId.ToString(),
             eventName: AnalyticsEvents.UserProfile.Updated,
-            properties: Arg.Is<Dictionary<string, object>>(p => 
+            properties: Arg.Is<Dictionary<string, object>>(p =>
                 p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev)
         );
     }

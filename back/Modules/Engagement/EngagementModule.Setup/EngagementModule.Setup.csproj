@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>EngagementModule.Setup</AssemblyName>
+        <RootNamespace>EngagementModule.Setup</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Shared\Shared.Setup\Shared.Setup.csproj" />
+      <ProjectReference Include="..\EngagementModule.API\EngagementModule.API.csproj" />
+      <ProjectReference Include="..\EngagementModule.Application\EngagementModule.Application.csproj" />
+      <ProjectReference Include="..\EngagementModule.Infrastructure\EngagementModule.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>

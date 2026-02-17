@@ -26,10 +26,7 @@ public class UserProfileIntegrationTests : IntegrationTestBase, IAsyncLifetime
         var email = "test@example.com";
         var auth = await Factory.AuthManager.CreateAndLoginUserAsync(email, "Password123!");
         Factory.ApiClient.SetAuth(auth);
-        await Factory.Host.ExecuteAndWaitAsync(async () =>
-        {
-            await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
-        });
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Ensure that RequiredAction is none
         using var scope = Factory.Services.CreateScope();

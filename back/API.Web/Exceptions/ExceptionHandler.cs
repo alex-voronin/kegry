@@ -55,7 +55,7 @@ public class ExceptionHandler : IExceptionHandler
         {
             return;
         }
-        
+
         try
         {
             _postHogClient.CaptureException(
