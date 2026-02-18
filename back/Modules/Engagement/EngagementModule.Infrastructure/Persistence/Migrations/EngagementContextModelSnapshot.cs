@@ -54,10 +54,10 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("d6d4f3a8-d445-e700-eacd-5e022bcbe3f6"),
-                            AvatarUrl = "assets/npc/gobby-snugs.jpg",
-                            MonologKey = "GobbySnugs.Monolog",
-                            NameKey = "GobbySnugs.Name"
+                            Id = new Guid("533bcc76-39fa-567c-8c3e-be41f83e2247"),
+                            AvatarUrl = "assets/npc/wibbly-toby.webp",
+                            MonologKey = "WibblyToby.Monolog",
+                            NameKey = "WibblyToby.Name"
                         });
                 });
 

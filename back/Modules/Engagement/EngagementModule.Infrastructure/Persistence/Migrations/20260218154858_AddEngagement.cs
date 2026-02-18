@@ -74,7 +74,7 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                 schema: "engagement",
                 table: "npcs",
                 columns: new[] { "id", "avatar_url", "monolog_key", "name_key" },
-                values: new object[] { new Guid("d6d4f3a8-d445-e700-eacd-5e022bcbe3f6"), "assets/npc/gobby-snugs.jpg", "GobbySnugs.Monolog", "GobbySnugs.Name" });
+                values: new object[] { new Guid("533bcc76-39fa-567c-8c3e-be41f83e2247"), "assets/npc/wibbly-toby.webp", "WibblyToby.Monolog", "WibblyToby.Name" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_user_met_npcs_npc_id",

@@ -55,13 +55,13 @@ public class EngagementContext : DbContext
             builder.Property(x => x.AvatarUrl).IsRequired().HasMaxLength(500);
             builder.Property(x => x.MonologKey).IsRequired();
 
-            const string gobbySnugsKey = "GobbySnugs.Name";
+            const string wibblyTobyKey = "WibblyToby.Name";
             builder.HasData(new Npc
             {
-                Id = gobbySnugsKey.ToDeterministicGuid(),
-                NameKey = gobbySnugsKey,
-                AvatarUrl = "assets/npc/gobby-snugs.jpg",
-                MonologKey = "GobbySnugs.Monolog"
+                Id = wibblyTobyKey.ToDeterministicGuid(),
+                NameKey = wibblyTobyKey,
+                AvatarUrl = "assets/npc/wibbly-toby.webp",
+                MonologKey = "WibblyToby.Monolog"
             });
         });
     }
