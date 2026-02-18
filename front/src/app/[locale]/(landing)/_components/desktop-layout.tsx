@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import Script from 'next/script';
 import { useTranslations } from 'next-intl';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useNewsStore } from '../store/use-news-store';
@@ -33,19 +32,13 @@ export default function DesktopLayout() {
           <Image
             src="/assets/landing/header-logo.webp"
             alt="W"
-            width={45}
+            width={60}
             height={83}
             className={styles.logoIconImage}
           />
           <div className={styles.logoTextWrapper}>
             <div className={styles.logoTitleRow}>
-              <span className={styles.logoText}>ibblycorn & Friends</span>
-              <Image
-                src="/assets/landing/header-mug.webp"
-                alt="Beer"
-                width={20}
-                height={20}
-              />
+              <span className={styles.logoText}>Wibblycorn & Friends</span>
             </div>
             <span className={styles.logoSubtitle}>{t('header.subtitle')}</span>
           </div>

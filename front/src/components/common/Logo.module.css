@@ -1,34 +1,26 @@
 @reference "../../app/globals.css";
 
 .header {
-  @apply flex w-fit flex-col items-end;
-  transform: translateX(-8px);
+  @apply flex w-fit flex-col items-center;
+}
+
+.logoImage {
+  @apply -translate-x-4 object-contain;
+  width: 162px;
+  height: 162px;
 }
 
 .logoRow {
   @apply flex items-end justify-center;
 }
 
-.logoImage {
-  @apply object-contain;
-  width: 162px;
-  height: 162px;
-}
-
 .brandName {
   @apply text-brand text-4xl font-bold;
-  margin-left: -5rem;
   font-family: var(--font-fundamento), serif;
 }
 
-.beerMug {
-  width: 21px;
-  height: 29px;
-  transform: translateY(-4px);
-}
-
 .tagline {
-  @apply text-primary mt-1 text-sm;
+  @apply text-primary mt-1 self-end text-right text-sm;
 }
 
 /* Medium mobile */
@@ -40,7 +32,6 @@
 
   .brandName {
     @apply text-5xl;
-    margin-left: -6.3rem;
   }
 
   .beerMug {
@@ -58,7 +49,6 @@
 
   .brandName {
     @apply text-6xl;
-    margin-left: -5.6rem;
   }
 
   .beerMug {

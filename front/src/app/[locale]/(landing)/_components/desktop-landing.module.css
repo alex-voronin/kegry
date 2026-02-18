@@ -43,11 +43,11 @@
 }
 
 .logoContainer {
-  @apply relative flex flex-row items-center pl-[35px];
+  @apply relative flex flex-row items-center pl-[54px];
 }
 
 .logoTextWrapper {
-  @apply flex flex-col items-start;
+  @apply flex translate-y-[4px] flex-col items-start;
 }
 
 .logoTitleRow {
@@ -61,12 +61,12 @@
 }
 
 .logoSubtitle {
-  @apply ml-2 translate-y-[-2px] text-sm;
+  @apply ml-4 translate-y-[-2px] text-sm;
   color: var(--color-landing-subheading);
 }
 
 .logoIconImage {
-  @apply absolute left-0 translate-y-[11px] rounded-sm;
+  @apply absolute left-0 rounded-sm p-0;
 }
 
 .nav {

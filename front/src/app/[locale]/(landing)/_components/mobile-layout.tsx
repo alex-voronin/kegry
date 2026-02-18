@@ -38,21 +38,15 @@ export default function MobileLayout() {
           <Image
             src="/assets/landing/header-logo.webp"
             alt="W"
-            width={32}
-            height={60}
+            width={50}
+            height={66}
             className={`${styles.logoIconImage} ${mobileStyles.mobileLogoImage}`}
           />
           <div className={mobileStyles.mobileLogoTextWrapper}>
             <div className={mobileStyles.mobileLogoTitleRow}>
               <span className={mobileStyles.mobileLogoText}>
-                ibblycorn & Friends
+                Wibblycorn & Friends
               </span>
-              <Image
-                src="/assets/landing/header-mug.webp"
-                alt="Beer"
-                width={20}
-                height={29}
-              />
             </div>
             <span className={mobileStyles.mobileLogoSubtitle}>
               {t('header.subtitle')}

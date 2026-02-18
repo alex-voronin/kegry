@@ -13,23 +13,16 @@ export function Logo({ tagline }: LogoProps) {
   return (
     <div className="flex w-full justify-center">
       <div className={styles.header}>
+        <Image
+          src="/assets/common/logo.webp"
+          alt="Wibblycorn"
+          width={180}
+          height={254}
+          className={styles.logoImage}
+          priority
+        />
         <div className={styles.logoRow}>
-          <Image
-            src="/assets/common/logo.webp"
-            alt="H"
-            width={180}
-            height={254}
-            className={styles.logoImage}
-            priority
-          />
-          <span className={styles.brandName}>ibblycorn</span>
-          <Image
-            src="/assets/common/beer-mug.webp"
-            alt="Beer"
-            width={32}
-            height={45}
-            className={styles.beerMug}
-          />
+          <span className={styles.brandName}>Wibblycorn</span>
         </div>
         {finalTagline && <p className={styles.tagline}>{finalTagline}</p>}
       </div>

@@ -13,12 +13,12 @@
 }
 
 .mobileLogoImage {
-  transform: translateY(2px);
+  @apply absolute;
 }
 
 .mobileLogoTextWrapper {
   @apply flex flex-col items-start;
-  margin-left: 26px;
+  margin-left: 44px;
   transform: translateY(6px);
 }
 
@@ -27,13 +27,13 @@
 }
 
 .mobileLogoText {
-  @apply ml-1.5 text-2xl font-bold max-[350px]:text-xl;
+  @apply ml-1.5 text-2xl font-bold max-[370px]:text-xl;
   color: var(--color-landing-heading);
   font-family: var(--font-landing-title);
 }
 
 .mobileLogoSubtitle {
-  @apply ml-1 text-[12px];
+  @apply ml-3 text-[12px];
   transform: translateY(-4px);
   color: var(--color-landing-subheading);
 }
@@ -131,7 +131,7 @@
 }
 
 /* Scale up images for tablets */
-@media (min-width: 600px) and (max-width: 900px) {
+@media (min-width: 600px) and (max-width: 950px) {
   .sectionImg {
     transform: scale(1.3);
     margin: 2rem 0;
