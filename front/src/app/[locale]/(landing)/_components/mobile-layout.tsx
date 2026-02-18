@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { Menu, X } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useNewsStore } from '../store/use-news-store';
+import SocialLinks from './social-links';
 import styles from './desktop-landing.module.css';
 import mobileStyles from './mobile-landing.module.css';
 
@@ -319,7 +320,7 @@ export default function MobileLayout() {
 
       {/* Footer */}
       <footer className={mobileStyles.mobileFooter}>
-        <span className={styles.footerCopyright}>{t('footer.copyright')}</span>
+        <SocialLinks />
         <div className={mobileStyles.mobileFooterLinks}>
           <Link href={PAGE_ROUTES.LEGAL.PRIVACY} className={styles.footerLink}>
             {t('footer.mobilePrivacy')}
@@ -337,6 +338,7 @@ export default function MobileLayout() {
             {t('footer.mobileCommunity')}
           </Link>
         </div>
+        <span className={styles.footerCopyright}>{t('footer.copyright')}</span>
       </footer>
     </div>
   );

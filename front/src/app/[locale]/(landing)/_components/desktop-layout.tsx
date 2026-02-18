@@ -7,6 +7,7 @@ import Script from 'next/script';
 import { useTranslations } from 'next-intl';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useNewsStore } from '../store/use-news-store';
+import SocialLinks from './social-links';
 import styles from './desktop-landing.module.css';
 
 export default function DesktopLayout() {
@@ -239,6 +240,7 @@ export default function DesktopLayout() {
       {/* Footer */}
       <footer className={styles.footer}>
         <span className={styles.footerCopyright}>{t('footer.copyright')}</span>
+        <SocialLinks />
         <div className={styles.footerLinks}>
           <Link href={PAGE_ROUTES.LEGAL.PRIVACY} className={styles.footerLink}>
             {t('footer.privacy')}

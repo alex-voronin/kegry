@@ -30,6 +30,7 @@ const STATIC_ASSETS = [
   "/assets/notifications/block-icon.svg",
   "/assets/notifications/ignore-icon.svg",
   "/assets/notifications/notification-logo.webp",
+  "/assets/npc/wibbly-toby.png",
   "/assets/permissions/check-mark.svg",
   "/assets/profile/delete-icon.svg",
   "/assets/profile/edit-icon.svg",

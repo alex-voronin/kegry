@@ -184,3 +184,12 @@
 .footerLink {
   @apply text-sm opacity-70 transition-colors hover:opacity-100;
 }
+
+.socialLinks {
+  @apply flex shrink-0 items-center gap-5;
+}
+
+.socialLink {
+  @apply opacity-60 transition-opacity hover:opacity-100;
+  color: var(--color-landing-text);
+}
