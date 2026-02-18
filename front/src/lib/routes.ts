@@ -78,4 +78,8 @@ export const API_ENDPOINTS = {
   LOCATION: {
     UPDATE: '/api/v1/location',
   },
+  NPC: {
+    GET: '/api/v1/npc',
+    INVITE: (id: string) => `/api/v1/npc/${id}/invite`,
+  },
 } as const;

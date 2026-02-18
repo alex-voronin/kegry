@@ -4,26 +4,36 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
-import { StarRating } from 'react-flexible-star-rating';
 import styles from './feed.module.css';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
-import { SegmentedControl } from '@/components/ui/segmented-control';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useFeedStore, UserProfileDto } from '@/store/use-feed-store';
-import { useSettingsStore, DistanceUnits } from '@/store/use-settings-store';
-import { metersToKilometers, metersToMiles } from '@/lib/distance-utils';
+import { useNpcStore, NpcDto } from '@/store/use-npc-store';
+import { useSettingsStore } from '@/store/use-settings-store';
 import { toast } from 'react-toastify';
 import { InviteExpiration, expiresAtToWhen } from '@/lib/invite-utils';
 import { useFcmStore } from '@/lib/fcm/store';
 import { NotificationType, FcmPayload } from '@/lib/fcm/types';
 import { checkIfPermissionsDenied } from '@/lib/permissions';
+import { SendLocationWithRateLimit } from '@/lib/use-background-location';
 import {
-  SendLocationWithRateLimit,
-  LocationResult,
-} from '@/lib/use-background-location';
+  UserFeedBody,
+  UserFeedFooter,
+  AvailableInvites,
+  WhenSelector,
+} from './_components/user-feed-card';
+import { NpcFeedBody, NpcFeedFooter } from './_components/npc-feed-card';
+
+// --- Discriminated union for feed items ---
+
+type FeedItem =
+  | { kind: 'user'; profile: UserProfileDto }
+  | { kind: 'npc'; npc: NpcDto };
+
+// --- Sub-components ---
 
 function FeedHeader({
   router,
@@ -80,221 +90,7 @@ function FeedHeader({
   );
 }
 
-function FeedBody({
-  currentProfile,
-  isLoading,
-  distanceUnits,
-  tFeed,
-  tCommon,
-  tHobbies,
-}: {
-  currentProfile: UserProfileDto | null;
-  isLoading: boolean;
-  distanceUnits: DistanceUnits;
-  tFeed: ReturnType<typeof useTranslations>;
-  tCommon: ReturnType<typeof useTranslations>;
-  tHobbies: ReturnType<typeof useTranslations>;
-}) {
-  // Show spinner if loading and no cached content
-  if (isLoading && !currentProfile) {
-    return (
-      <div className={styles.loadingContainer}>
-        <Spinner />
-      </div>
-    );
-  }
-
-  if (!currentProfile) {
-    return (
-      <div style={{ textAlign: 'center', marginTop: '50%' }}>
-        No profiles available. Try changing the filter settings.
-      </div>
-    );
-  }
-
-  return (
-    <>
-      {isLoading && (
-        <div className={styles.loadingOverlay}>
-          <Spinner />
-        </div>
-      )}
-      <div>
-        <Image
-          src={currentProfile.coverImageUrl}
-          alt="profile"
-          fill
-          className={styles.profileImage}
-          priority
-        />
-        <div className={styles.imageOverlay} />
-      </div>
-
-      <div className={styles.userInfo}>
-        <div className={styles.ratingRow}>
-          <StarRating
-            initialRating={currentProfile.rating || 0}
-            isReadOnly
-            dimension={12}
-            isHalfRatingEnabled={true}
-          />
-        </div>
-
-        <h1 className={styles.name}>
-          {currentProfile.firstName} {currentProfile.lastName}
-        </h1>
-
-        <div className={styles.location}>
-          <Image
-            src="/assets/feed/location-icon.svg"
-            alt="location"
-            width={20}
-            height={31}
-            priority
-          />
-          <div className={styles.locationText}>
-            <span>
-              {tFeed('distance', {
-                distance:
-                  distanceUnits === DistanceUnits.Miles
-                    ? metersToMiles(currentProfile.distanceMeters)
-                    : metersToKilometers(currentProfile.distanceMeters),
-                units:
-                  distanceUnits === DistanceUnits.Miles
-                    ? tCommon('units.miles')
-                    : tCommon('units.kilometers'),
-              })}
-            </span>
-          </div>
-        </div>
-
-        <div className={styles.tags}>
-          {currentProfile.hobbies.map((hobby) => (
-            <span key={hobby.id} className={styles.tag}>
-              {tHobbies(hobby.name)}
-            </span>
-          ))}
-        </div>
-      </div>
-    </>
-  );
-}
-
-function FeedFooter({
-  onIgnore,
-  onInvite,
-  onSkip,
-  isInviteDisabled,
-}: {
-  onIgnore: () => void;
-  onInvite: () => void;
-  onSkip: () => void;
-  isInviteDisabled: boolean;
-}) {
-  return (
-    <footer className={styles.actions}>
-      <button
-        className={styles.actionButton}
-        onClick={(e) => {
-          e.stopPropagation();
-          onIgnore();
-        }}
-      >
-        <Image
-          className="pointer-events-none"
-          src="/assets/feed/ignore-icon.svg"
-          alt="ignore"
-          width={29}
-          height={29}
-          priority
-        />
-      </button>
-      <button
-        className={styles.actionPrimary}
-        onClick={(e) => {
-          e.stopPropagation();
-          onInvite();
-        }}
-        disabled={isInviteDisabled}
-      >
-        <Image
-          className="pointer-events-none translate-x-[2px]"
-          src="/assets/feed/invite-icon.webp"
-          alt="invite"
-          width={35}
-          height={49}
-          priority
-        />
-      </button>
-      <button
-        className={styles.actionButton}
-        onClick={(e) => {
-          e.stopPropagation();
-          onSkip();
-        }}
-      >
-        <Image
-          className="pointer-events-none"
-          src="/assets/feed/skip-icon.svg"
-          alt="skip"
-          width={24}
-          height={24}
-          priority
-        />
-      </button>
-    </footer>
-  );
-}
-
-function AvailableInvites({ count }: { count: number }) {
-  if (count <= 0) return null;
-  return (
-    <div className={styles.availableInvites}>
-      {Array.from({ length: count }).map((_, i) => (
-        <Image
-          key={i}
-          src="/assets/feed/invite-icon.webp"
-          alt="invite"
-          width={28}
-          height={28}
-          className={styles.inviteCounter}
-        />
-      ))}
-    </div>
-  );
-}
-
-function WhenSelector({
-  value,
-  onChange,
-  tFeed,
-}: {
-  value: InviteExpiration;
-  onChange: (val: InviteExpiration) => void;
-  tFeed: ReturnType<typeof useTranslations>;
-}) {
-  const timeOptions = [
-    { value: InviteExpiration.Now, label: tFeed('now'), width: 50 },
-    { value: InviteExpiration.Today, label: tFeed('today'), width: 60 },
-    {
-      value: InviteExpiration.Tomorrow,
-      label: tFeed('tomorrow'),
-      width: 90,
-    },
-  ];
-
-  return (
-    <div className={styles.whenSelector} onClick={(e) => e.stopPropagation()}>
-      <SegmentedControl
-        options={timeOptions}
-        value={value}
-        onChange={onChange as (val: string) => void}
-        // hack, but bg-transparent class doesn't work in some versoins of Safari
-        style={{ backgroundColor: 'transparent' }}
-      />
-    </div>
-  );
-}
+// --- Main Screen ---
 
 export default function FeedScreen() {
   const tFeed = useTranslations('screens.feed');
@@ -316,6 +112,7 @@ export default function FeedScreen() {
     setUnseenNotificationCount,
     availableInvitesCount,
   } = useFeedStore();
+  const { npc, monolog, fetchNpc, inviteNpc, dismissNpc } = useNpcStore();
   const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
   const [when, setWhen] = useState<InviteExpiration>(InviteExpiration.Today);
@@ -339,7 +136,12 @@ export default function FeedScreen() {
 
   const distanceUnits = useSettingsStore((state) => state.distanceUnits);
 
-  const currentProfile = feed[0] || null;
+  // --- Derive currentItem ---
+  const currentItem: FeedItem | null = feed[0]
+    ? { kind: 'user', profile: feed[0] }
+    : npc
+      ? { kind: 'npc', npc }
+      : null;
 
   // Preload cover images for the next 2 profiles each time the current profile changes
   useEffect(() => {
@@ -349,7 +151,7 @@ export default function FeedScreen() {
         img.src = profile.coverImageUrl;
       }
     });
-  }, [currentProfile?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentItem?.kind === 'user' ? currentItem.profile.id : null]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -382,6 +184,12 @@ export default function FeedScreen() {
           router.push(PAGE_ROUTES.RATE_USER(status.userIdToRate));
           return;
         }
+
+        // If feed is empty, try to fetch an NPC
+        const currentFeed = useFeedStore.getState().feed;
+        if (currentFeed.length === 0) {
+          await fetchNpc();
+        }
       } catch (err: any) {
         toast.error(err.message);
       } finally {
@@ -396,6 +204,7 @@ export default function FeedScreen() {
     fetchFeedStatus,
     fetchFeed,
     fetchUnseenNotificationCount,
+    fetchNpc,
     router,
   ]);
 
@@ -420,19 +229,30 @@ export default function FeedScreen() {
 
   const showLoading = isLoading || !hasHydrated || !isInitialized;
 
+  // --- User action handlers ---
   const handleIgnore = async () => {
-    if (!currentProfile) return;
+    if (currentItem?.kind === 'npc') {
+      dismissNpc();
+      return;
+    }
+    if (currentItem?.kind !== 'user') return;
     try {
-      await ignoreUser(currentProfile.id);
+      await ignoreUser(currentItem.profile.id);
     } catch (err: any) {
       toast.error(err.message);
     }
   };
 
   const handleInvite = async () => {
-    if (!currentProfile) return;
+    if (currentItem?.kind === 'npc') {
+      await inviteNpc(currentItem.npc.id);
+      return;
+    }
+    if (currentItem?.kind !== 'user') return;
     try {
-      const incomingExpiration = await getInviteExpiration(currentProfile.id);
+      const incomingExpiration = await getInviteExpiration(
+        currentItem.profile.id,
+      );
       if (incomingExpiration) {
         const theirWhen = expiresAtToWhen(incomingExpiration);
         if (theirWhen && theirWhen !== when) {
@@ -440,33 +260,121 @@ export default function FeedScreen() {
           return;
         }
       }
-      await inviteUser(currentProfile.id, when);
+      await inviteUser(currentItem.profile.id, when);
     } catch (err: any) {
       toast.error(err.message);
     }
   };
 
   const handleAcceptSuggestedExpiration = async () => {
-    if (!currentProfile) return;
+    if (currentItem?.kind !== 'user') return;
     try {
-      await inviteUser(currentProfile.id, expirationPopup.suggestedWhen);
+      await inviteUser(currentItem.profile.id, expirationPopup.suggestedWhen);
     } catch (err: any) {
       toast.error(err.message);
     }
   };
 
   const handleSkip = async () => {
-    if (!currentProfile) return;
+    if (currentItem?.kind === 'npc') {
+      dismissNpc();
+      return;
+    }
+    if (currentItem?.kind !== 'user') return;
     try {
-      await skipUser(currentProfile.id);
+      await skipUser(currentItem.profile.id);
     } catch (err: any) {
       toast.error(err.message);
     }
   };
 
   const handleProfileClick = () => {
-    if (!currentProfile) return;
-    router.push(PAGE_ROUTES.USER_PROFILE(currentProfile.id));
+    if (currentItem?.kind !== 'user') return;
+    router.push(PAGE_ROUTES.USER_PROFILE(currentItem.profile.id));
+  };
+
+  // --- Render ---
+
+  const renderBody = () => {
+    if (showLoading && !currentItem) {
+      return (
+        <div className={styles.loadingContainer}>
+          <Spinner />
+        </div>
+      );
+    }
+
+    if (isLocationDenied) {
+      return (
+        <div className={styles.emptyState}>
+          <Image
+            src="/assets/feed/geolocation-disabled-placeholder.webp"
+            alt="location required"
+            width={300}
+            height={300}
+            className={styles.emptyStateImage}
+          />
+          <p className={styles.emptyStateText}>{tFeed('locationRequired')}</p>
+        </div>
+      );
+    }
+
+    if (!currentItem) {
+      return (
+        <div className={styles.emptyState}>
+          <Image
+            src="/assets/feed/no-profiles-placeholder.webp"
+            alt="no profiles"
+            width={300}
+            height={300}
+            className={styles.emptyStateImage}
+          />
+          <p className={styles.emptyStateText}>{tFeed('noProfiles')}</p>
+        </div>
+      );
+    }
+
+    if (currentItem.kind === 'npc') {
+      return <NpcFeedBody npc={currentItem.npc} monolog={monolog} />;
+    }
+
+    return (
+      <UserFeedBody
+        currentProfile={currentItem.profile}
+        isLoading={showLoading}
+        distanceUnits={distanceUnits}
+        tFeed={tFeed}
+        tCommon={tCommon}
+        tHobbies={tHobbies}
+      />
+    );
+  };
+
+  const renderFooter = () => {
+    if (isLocationDenied || !currentItem) return null;
+
+    if (currentItem.kind === 'npc') {
+      return (
+        <NpcFeedFooter
+          onInvite={handleInvite}
+          onDismiss={handleSkip}
+          hasMonolog={!!monolog}
+        />
+      );
+    }
+
+    return (
+      <>
+        <WhenSelector value={when} onChange={setWhen} tFeed={tFeed} />
+        <AvailableInvites count={availableInvitesCount} />
+        <UserFeedFooter
+          onIgnore={handleIgnore}
+          onInvite={handleInvite}
+          onSkip={handleSkip}
+          isInviteDisabled={availableInvitesCount <= 0}
+        />
+      </>
+    );
   };
 
   return (
@@ -480,54 +388,8 @@ export default function FeedScreen() {
             showPermissionsBadge={showPermissionsBadge}
           />
         </div>
-        {showLoading && !currentProfile ? (
-          <div className={styles.loadingContainer}>
-            <Spinner />
-          </div>
-        ) : isLocationDenied ? (
-          <div className={styles.emptyState}>
-            <Image
-              src="/assets/feed/geolocation-disabled-placeholder.webp"
-              alt="location required"
-              width={300}
-              height={300}
-              className={styles.emptyStateImage}
-            />
-            <p className={styles.emptyStateText}>{tFeed('locationRequired')}</p>
-          </div>
-        ) : currentProfile ? (
-          <FeedBody
-            currentProfile={currentProfile}
-            isLoading={showLoading}
-            distanceUnits={distanceUnits}
-            tFeed={tFeed}
-            tCommon={tCommon}
-            tHobbies={tHobbies}
-          />
-        ) : (
-          <div className={styles.emptyState}>
-            <Image
-              src="/assets/feed/no-profiles-placeholder.webp"
-              alt="no profiles"
-              width={300}
-              height={300}
-              className={styles.emptyStateImage}
-            />
-            <p className={styles.emptyStateText}>{tFeed('noProfiles')}</p>
-          </div>
-        )}
-        {!isLocationDenied && (
-          <>
-            <WhenSelector value={when} onChange={setWhen} tFeed={tFeed} />
-            <AvailableInvites count={availableInvitesCount} />
-            <FeedFooter
-              onIgnore={handleIgnore}
-              onInvite={handleInvite}
-              onSkip={handleSkip}
-              isInviteDisabled={availableInvitesCount <= 0}
-            />
-          </>
-        )}
+        {renderBody()}
+        {renderFooter()}
         <ModalDialog
           isOpen={expirationPopup.isOpen}
           onClose={() =>

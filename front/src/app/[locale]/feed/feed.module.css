@@ -103,3 +103,27 @@
 .inviteCounter {
   @apply -mb-4;
 }
+
+.npcInfo {
+  @apply pointer-events-none absolute right-0 bottom-30 left-0 z-10 flex justify-center px-4;
+}
+
+.npcName {
+  @apply text-primary text-5xl font-semibold max-[400px]:text-4xl;
+  font-family: var(--font-fundamento), serif;
+}
+
+.monologBubble {
+  @apply absolute right-6 bottom-44 left-6 z-20 rounded-2xl bg-black/50 px-5 py-4 backdrop-blur-xs;
+}
+
+.monologText {
+  @apply text-primary text-base leading-relaxed;
+}
+
+.monologTail {
+  @apply absolute -bottom-2 left-1/2 h-0 w-0 -translate-x-1/2;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid rgb(0 0 0 / 0.5);
+}
