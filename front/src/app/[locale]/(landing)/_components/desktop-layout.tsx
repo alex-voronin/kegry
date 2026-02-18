@@ -32,14 +32,14 @@ export default function DesktopLayout() {
         <div className={styles.logoContainer}>
           <Image
             src="/assets/landing/header-logo.webp"
-            alt="H"
-            width={38}
-            height={64}
+            alt="W"
+            width={45}
+            height={83}
             className={styles.logoIconImage}
           />
           <div className={styles.logoTextWrapper}>
             <div className={styles.logoTitleRow}>
-              <span className={styles.logoText}>icPlork this Inn</span>
+              <span className={styles.logoText}>ibblycorn & Friends</span>
               <Image
                 src="/assets/landing/header-mug.webp"
                 alt="Beer"
@@ -210,7 +210,7 @@ export default function DesktopLayout() {
             {t.rich('contactUs.description', {
               email: (chunks) => (
                 <a
-                  href="mailto:contacts@hicplork.com"
+                  href="mailto:contacts@wibblycorn.com"
                   className={styles.actionLink}
                 >
                   {chunks}

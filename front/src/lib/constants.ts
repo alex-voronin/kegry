@@ -1,1 +1,1 @@
-export const BRAND_NAME = 'HicPlork';
+export const BRAND_NAME = 'Wibblycorn';

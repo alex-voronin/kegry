@@ -37,15 +37,15 @@ export default function MobileLayout() {
         <div className={mobileStyles.mobileLogoContainer}>
           <Image
             src="/assets/landing/header-logo.webp"
-            alt="H"
-            width={28}
+            alt="W"
+            width={32}
             height={60}
             className={`${styles.logoIconImage} ${mobileStyles.mobileLogoImage}`}
           />
           <div className={mobileStyles.mobileLogoTextWrapper}>
             <div className={mobileStyles.mobileLogoTitleRow}>
               <span className={mobileStyles.mobileLogoText}>
-                icPlork this Inn
+                ibblycorn & Friends
               </span>
               <Image
                 src="/assets/landing/header-mug.webp"
@@ -291,7 +291,7 @@ export default function MobileLayout() {
             {t.rich('contactUs.description', {
               email: (chunks) => (
                 <a
-                  href="mailto:contacts@hicplork.com"
+                  href="mailto:contacts@wibblycorn.com"
                   className={styles.actionLink}
                 >
                   {chunks}

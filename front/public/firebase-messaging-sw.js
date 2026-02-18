@@ -58,12 +58,12 @@ messaging.onBackgroundMessage(async (payload) => {
   try {
     await self.registration.showNotification(
       // TODO: Use BRAND_NAME constant here after moving to modular firebase SDK
-      notification.title ?? 'HicPlork',
+      notification.title ?? 'Wibblycorn',
       {
         body: notification.body ?? '',
         icon:
           notification.icon ?? '/assets/notifications/notification-logo.webp',
-        tag: `hicplork-${messageId}`, // tag for deduplication
+        tag: `wibblycorn-${messageId}`, // tag for deduplication
         data: payload,
       },
     );

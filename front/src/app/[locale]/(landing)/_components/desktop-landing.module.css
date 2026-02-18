@@ -55,13 +55,13 @@
 }
 
 .logoText {
-  @apply text-3xl font-bold;
+  @apply ml-2 text-3xl font-bold;
   color: var(--color-landing-heading);
   font-family: var(--font-landing-title);
 }
 
 .logoSubtitle {
-  @apply translate-y-[-2px] pl-1 text-sm;
+  @apply ml-2 translate-y-[-2px] text-sm;
   color: var(--color-landing-subheading);
 }
 

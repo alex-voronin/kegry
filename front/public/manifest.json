@@ -1,6 +1,6 @@
 {
-  "name": "HicPlork",
-  "short_name": "HicPlork",
+  "name": "Wibblycorn",
+  "short_name": "Wibblycorn",
   "description": "The best stories start off-screen",
   "start_url": "/login?auto-signin=true",
   "display": "standalone",

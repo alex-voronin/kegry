@@ -7,7 +7,7 @@ import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 
 const LOCATION_UPDATE_INTERVAL = 60 * 60 * 1000; // 1 hour
 const ENABLE_HIGH_ACCURACY = false;
-const LOCATION_LAST_SENT_KEY = 'hicplork_location_last_sent';
+const LOCATION_LAST_SENT_KEY = 'location_last_sent';
 
 interface GeolocationCoordinates {
   latitude: number;
