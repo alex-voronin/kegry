@@ -274,6 +274,7 @@
     "profile": {
       "title": "My Profile",
       "blockedUsers": "Blocked Users",
+      "friendsAndFoes": "Friends & Foes",
       "coverImage": "Cover Image",
       "settings": "Settings",
       "permissions": "Permissions",
@@ -344,6 +345,10 @@
         "unblocked": "{name} was unblocked",
         "unblockFailed": "Failed to unblock user"
       }
+    },
+    "friendsAndFoes": {
+      "title": "Friends & Foes",
+      "comingSoon": "Coming soon"
     },
     "permissions": {
       "title": "Permissions",

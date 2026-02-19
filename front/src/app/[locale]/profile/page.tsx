@@ -282,9 +282,9 @@ export default function ProfilePage() {
           <div className={styles.actionsSection}>
             <div
               className={cn(styles.field, styles.actionField)}
-              onClick={() => router.push(PAGE_ROUTES.PROFILE_COVER)}
+              onClick={() => router.push(PAGE_ROUTES.FRIENDS_AND_FOES)}
             >
-              <span>{t('coverImage')}</span>
+              <span>{t('friendsAndFoes')}</span>
               <Icon
                 src="/assets/common/disclosure-right-icon.svg"
                 alt="chevron"
@@ -308,9 +308,9 @@ export default function ProfilePage() {
             </div>
             <div
               className={cn(styles.field, styles.actionField)}
-              onClick={() => router.push(PAGE_ROUTES.BLOCKED_USERS)}
+              onClick={() => router.push(PAGE_ROUTES.PROFILE_COVER)}
             >
-              <span>{t('blockedUsers')}</span>
+              <span>{t('coverImage')}</span>
               <Icon
                 src="/assets/common/disclosure-right-icon.svg"
                 alt="chevron"
