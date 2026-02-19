@@ -324,4 +324,95 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
             device.ShouldBeNull();
         }
     }
+
+    [Fact]
+    public async Task GivenUserBInvitesUserA_WhenUserADeletesNotification_ThenNotificationListIsEmpty()
+    {
+        // 1. Create and authorize User A
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("user-a-delete@example.com", "Password123!");
+        var userAId = authA.UserId;
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Create and authorize User B
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("user-b-delete@example.com", "Password123!");
+        var userBId = authB.UserId;
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 3. User B invites User A (triggers UserInvitedEvent → creates notification for User A)
+        await Factory.Host.ExecuteAndWaitAsync(async () =>
+        {
+            var inviteResponse = await Factory.ApiClient.PostAsync<object, ApiResult.EmptyResult>(
+                ApiRoutes.Feed.InviteUser(userAId), new { });
+            inviteResponse.Success.ShouldBeTrue();
+        });
+
+        // 4. Switch to User A and fetch notifications
+        Factory.ApiClient.SetAuth(authA);
+        var notificationsResponse = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
+            ApiRoutes.Notifications.GetNotificationsPaginated(0, 10));
+        notificationsResponse.Success.ShouldBeTrue();
+        notificationsResponse.Result.Data.Count.ShouldBe(1);
+
+        var notification = notificationsResponse.Result.Data.First();
+        notification.FromUserId.ShouldBe(Guid.Parse(userBId));
+
+        // 5. User A deletes the notification
+        var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
+            ApiRoutes.Notifications.DeleteNotification(notification.Id));
+        deleteResponse.Success.ShouldBeTrue();
+
+        // 6. Verify notification list is empty
+        var afterDeleteResponse = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
+            ApiRoutes.Notifications.GetNotificationsPaginated(0, 10));
+        afterDeleteResponse.Success.ShouldBeTrue();
+        afterDeleteResponse.Result.Data.Count.ShouldBe(0);
+        afterDeleteResponse.Result.TotalCount.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task GivenNotification_WhenAnotherUserTriesToDeleteIt_ThenNotificationIsNotRemoved()
+    {
+        // 1. Create User A with a notification
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("owner@example.com", "Password123!");
+        var userAId = Guid.Parse(authA.UserId);
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var notificationId = Guid.NewGuid();
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
+            context.Notifications.Add(new Notification
+            {
+                Id = notificationId,
+                Type = NotificationType.Invite,
+                UserId = userAId,
+                CreatedAt = DateTimeOffset.UtcNow,
+                ExpiresAt = DateTimeOffset.UtcNow.AddHours(24),
+                Text = "User A's notification",
+                IsSeen = false
+            });
+            await context.SaveChangesAsync();
+        }
+
+        // 2. Create User B
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("intruder@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 3. User B tries to delete User A's notification
+        var response = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
+            ApiRoutes.Notifications.DeleteNotification(notificationId));
+        response.Success.ShouldBeTrue(); // Returns success but doesn't actually delete
+
+        // 4. Switch to User A and fetch notifications
+        Factory.ApiClient.SetAuth(authA);
+        var notificationsResponse = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
+            ApiRoutes.Notifications.GetNotificationsPaginated(0, 10));
+        notificationsResponse.Success.ShouldBeTrue();
+        notificationsResponse.Result.Data.Count.ShouldBe(1);
+        notificationsResponse.Result.Data.First().Id.ShouldBe(notificationId);
+    }
 }

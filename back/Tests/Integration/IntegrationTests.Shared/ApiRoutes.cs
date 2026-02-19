@@ -23,6 +23,7 @@ public static class ApiRoutes
         public const string UpdateDeviceToken = "/api/v1/notifications/device/token";
         public static string DeleteDeviceToken(string deviceId) => $"/api/v1/notifications/device/token?deviceId={deviceId}";
         public const string Settings = "/api/v1/notifications/settings";
+        public static string DeleteNotification(Guid id) => $"/api/v1/notifications/{id}";
     }
 
     public static class Feed

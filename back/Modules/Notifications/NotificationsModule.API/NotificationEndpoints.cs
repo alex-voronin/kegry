@@ -27,6 +27,7 @@ public class NotificationEndpoints : IEndpoints
         apiGroup.MapGet("/api/v1/notifications/unseen/count", GetUnseenCount);
         apiGroup.MapGet("/api/v1/notifications/settings", GetSettings);
         apiGroup.MapPut("/api/v1/notifications/settings", UpdateSettings);
+        apiGroup.MapDelete("/api/v1/notifications/{id:guid}", DeleteNotification);
     }
 
     private static async Task<ApiResult.EmptyResult> UpdateFcmToken(
@@ -153,6 +154,23 @@ public class NotificationEndpoints : IEndpoints
         }
 
         await settingsRepository.SaveChangesAsync(ct);
+        return ApiResult.Empty;
+    }
+
+    private static async Task<ApiResult.EmptyResult> DeleteNotification(
+        [FromRoute] Guid id,
+        ClaimsPrincipal user,
+        INotificationRepository notificationRepository,
+        CancellationToken ct)
+    {
+        var notification = await notificationRepository.GetByIdAsync(id, ct: ct);
+        if (notification == null || notification.UserId != user.GetId())
+        {
+            return ApiResult.Empty;
+        }
+
+        notificationRepository.Delete(notification);
+        await notificationRepository.SaveChangesAsync(ct);
         return ApiResult.Empty;
     }
 }
