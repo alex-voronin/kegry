@@ -7,31 +7,22 @@ import { useRouter } from '@/i18n/routing';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { ModalMenu } from '@/components/ui/modal-menu';
-import { Spinner } from '@/components/ui/spinner';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { ReportDialog } from '@/components/ui/report-dialog';
 import { InviteDialog } from '@/components/ui/invite-dialog';
-import {
-  useBlockedUsersStore,
-  BlockedUserDto,
-} from '@/store/use-blocked-users-store';
+import { useBlockedUsersStore } from '@/store/use-blocked-users-store';
 import { useFriendsStore, FriendUserDto } from '@/store/use-friends-store';
-import { useMetNpcsStore, MetNpcDto } from '@/store/use-met-npcs-store';
+import { useMetNpcsStore } from '@/store/use-met-npcs-store';
 import { toast } from 'react-toastify';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { InviteExpiration } from '@/lib/invite-utils';
 import styles from './friends-and-foes.module.css';
+import { SelectedUser } from './types';
+import { FriendsTab } from './_components/friends-tab';
+import { ImaginaryTab } from './_components/imaginary-tab';
+import { BlockedTab } from './_components/blocked-tab';
 
 type Tab = 'friends' | 'imaginary' | 'blocked';
-
-type SelectedUser = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  avatarUrl: string | null;
-  coverUrl?: string;
-  type: 'friend' | 'blocked' | 'imaginary';
-};
 
 export default function FriendsAndFoesPage() {
   const router = useRouter();
@@ -48,14 +39,8 @@ export default function FriendsAndFoesPage() {
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
   const [userToReport, setUserToReport] = useState<SelectedUser | null>(null);
 
-  const {
-    friends,
-    isLoading: friendsLoading,
-    fetchFriends,
-    removeFriend,
-    blockFriend,
-    inviteFriend,
-  } = useFriendsStore();
+  const { fetchFriends, removeFriend, blockFriend, inviteFriend } =
+    useFriendsStore();
 
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const [userToInvite, setUserToInvite] = useState<FriendUserDto | null>(null);
@@ -64,18 +49,9 @@ export default function FriendsAndFoesPage() {
     coverUrl: string;
   } | null>(null);
 
-  const {
-    blockedUsers,
-    isLoading: blockedLoading,
-    fetchBlockedUsers,
-    unblockUser,
-  } = useBlockedUsersStore();
+  const { fetchBlockedUsers, unblockUser } = useBlockedUsersStore();
 
-  const {
-    metNpcs,
-    isLoading: imaginaryLoading,
-    fetchMetNpcs,
-  } = useMetNpcsStore();
+  const { fetchMetNpcs } = useMetNpcsStore();
 
   useEffect(() => {
     if (activeTab === 'friends') {
@@ -173,6 +149,14 @@ export default function FriendsAndFoesPage() {
           },
         },
         {
+          icon: '/assets/friends-and-foes/user-profile-icon.svg',
+          label: t('menu.viewProfile'),
+          onClick: () => {
+            handleViewProfile(selectedUser.id);
+            setSelectedUser(null);
+          },
+        },
+        {
           icon: '/assets/friends-and-foes/unblock-icon.svg',
           label: t('menu.removeFriend'),
           onClick: () => {
@@ -231,208 +215,26 @@ export default function FriendsAndFoesPage() {
     ];
   };
 
-  const renderFriendsTab = () => {
-    if (friendsLoading && friends.length === 0) {
-      return (
-        <div className={styles.emptyState}>
-          <Spinner />
-        </div>
-      );
-    }
-
-    if (friends.length === 0) {
-      return (
-        <div className={styles.emptyState}>
-          <span>{t('noFriends')}</span>
-        </div>
-      );
-    }
-
-    return (
-      <div className={styles.userList}>
-        {friends.map((user) => (
-          <div
-            key={user.id}
-            className={styles.userItem}
-            onClick={() => handleViewProfile(user.id)}
-          >
-            <div className={styles.userItemLeft}>
-              <div className={styles.profileImageWrapper}>
-                <Image
-                  src={
-                    user.avatarUrl || '/assets/common/avatar-placeholder.webp'
-                  }
-                  alt="Profile"
-                  width={48}
-                  height={48}
-                  className="object-cover"
-                />
-              </div>
-              <div className={styles.userBody}>
-                <span className={styles.userName}>
-                  {user.firstName} {user.lastName}
-                </span>
-              </div>
-            </div>
-
-            <div
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedUser({ ...user, type: 'friend' });
-              }}
-            >
-              <Icon
-                src="/assets/common/more-icon.svg"
-                alt="Open menu"
-                width={24}
-                height={24}
-                priority
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  const renderImaginaryTab = () => {
-    if (imaginaryLoading && metNpcs.length === 0) {
-      return (
-        <div className={styles.emptyState}>
-          <Spinner />
-        </div>
-      );
-    }
-
-    if (metNpcs.length === 0) {
-      return (
-        <div className={styles.emptyState}>
-          <span>{t('noImaginary')}</span>
-        </div>
-      );
-    }
-
-    return (
-      <div className={styles.userList}>
-        {metNpcs.map((npc) => (
-          <div
-            key={npc.id}
-            className={styles.userItem}
-            onClick={() =>
-              npc.coverUrl &&
-              setSelectedNpcCover({
-                name: npc.name,
-                coverUrl: npc.coverUrl,
-              })
-            }
-          >
-            <div className={styles.userItemLeft}>
-              <div className={styles.profileImageWrapper}>
-                <Image
-                  src={
-                    npc.avatarUrl || '/assets/common/avatar-placeholder.webp'
-                  }
-                  alt="NPC"
-                  width={48}
-                  height={48}
-                  className="object-cover"
-                />
-              </div>
-              <div className={styles.userBody}>
-                <span className={styles.userName}>{npc.name}</span>
-              </div>
-            </div>
-
-            <div
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedUser({
-                  id: npc.id,
-                  firstName: npc.name,
-                  lastName: '',
-                  avatarUrl: npc.avatarUrl,
-                  coverUrl: npc.coverUrl,
-                  type: 'imaginary',
-                });
-              }}
-            >
-              <Icon
-                src="/assets/common/more-icon.svg"
-                alt="Open menu"
-                width={24}
-                height={24}
-                priority
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  const renderBlockedTab = () => {
-    if (blockedLoading && blockedUsers.length === 0) {
-      return (
-        <div className={styles.emptyState}>
-          <Spinner />
-        </div>
-      );
-    }
-
-    if (blockedUsers.length === 0) {
-      return (
-        <div className={styles.emptyState}>
-          <span>{tBlocked('noBlockedUsers')}</span>
-        </div>
-      );
-    }
-
-    return (
-      <div className={styles.userList}>
-        {blockedUsers.map((user) => (
-          <div
-            key={user.id}
-            className={styles.userItem}
-            onClick={() => setSelectedUser({ ...user, type: 'blocked' })}
-          >
-            <div className={styles.userItemLeft}>
-              <div className={styles.profileImageWrapper}>
-                <Image
-                  src={
-                    user.avatarUrl || '/assets/common/avatar-placeholder.webp'
-                  }
-                  alt="Profile"
-                  width={48}
-                  height={48}
-                  className="object-cover"
-                />
-              </div>
-              <div className={styles.userBody}>
-                <span className={styles.userName}>
-                  {user.firstName} {user.lastName}
-                </span>
-              </div>
-            </div>
-
-            <Icon
-              src="/assets/common/more-icon.svg"
-              alt="Open menu"
-              width={24}
-              height={24}
-              priority
-            />
-          </div>
-        ))}
-      </div>
-    );
-  };
-
   const renderTabContent = () => {
-    if (activeTab === 'friends') return renderFriendsTab();
+    if (activeTab === 'friends') {
+      return (
+        <FriendsTab
+          onSelectUser={setSelectedUser}
+          onViewProfile={handleViewProfile}
+        />
+      );
+    }
 
-    if (activeTab === 'imaginary') return renderImaginaryTab();
+    if (activeTab === 'imaginary') {
+      return (
+        <ImaginaryTab
+          onSelectUser={setSelectedUser}
+          onSelectCover={setSelectedNpcCover}
+        />
+      );
+    }
 
-    return renderBlockedTab();
+    return <BlockedTab onSelectUser={setSelectedUser} />;
   };
 
   return (

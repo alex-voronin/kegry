@@ -360,6 +360,7 @@
         "blocked": "Blocked"
       },
       "menu": {
+        "viewProfile": "View Profile",
         "invite": "Invite",
         "removeFriend": "Remove Friend",
         "blockAndReport": "Block & Report"

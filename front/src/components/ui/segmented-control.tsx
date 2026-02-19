@@ -19,6 +19,7 @@ export interface SegmentedControlProps extends Omit<
   onChange: (value: string) => void;
   className?: string;
   highlightPrevious?: boolean;
+  stretchItems?: boolean;
 }
 
 function getWidth(width: string | number | undefined): string | undefined {
@@ -32,6 +33,7 @@ export function SegmentedControl({
   onChange,
   className,
   highlightPrevious,
+  stretchItems,
   ...props
 }: SegmentedControlProps) {
   const selectedIndex = options.findIndex((o) => o.value === value);
@@ -45,8 +47,12 @@ export function SegmentedControl({
           <button
             key={option.value}
             type="button"
-            className={cn(styles.option, isActive && styles.optionActive)}
-            style={{ width: getWidth(option.width) }}
+            className={cn(
+              styles.option,
+              isActive && styles.optionActive,
+              stretchItems && 'flex-1',
+            )}
+            style={{ width: stretchItems ? undefined : getWidth(option.width) }}
             onClick={() => onChange(option.value)}
           >
             {option.label}

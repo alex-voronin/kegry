@@ -78,7 +78,8 @@ export function InviteDialog({
                   onChange={setSelected}
                   tFeed={t}
                   className={styles.selectorInner}
-                  itemWidth="33%"
+                  fullWidth
+                  stretchItems
                 />
               </div>
 

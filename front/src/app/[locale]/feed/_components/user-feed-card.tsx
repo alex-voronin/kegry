@@ -182,12 +182,16 @@ export function WhenSelector({
   tFeed,
   className,
   itemWidth,
+  fullWidth,
+  stretchItems,
 }: {
   value: InviteExpiration;
   onChange: (val: InviteExpiration) => void;
   tFeed: ReturnType<typeof useTranslations>;
   className?: string;
   itemWidth?: string | number;
+  fullWidth?: boolean;
+  stretchItems?: boolean;
 }) {
   const timeOptions = [
     {
@@ -218,6 +222,8 @@ export function WhenSelector({
         onChange={onChange as (val: string) => void}
         // hack, but bg-transparent class doesn't work in some versions of Safari
         style={{ backgroundColor: 'transparent' }}
+        className={fullWidth ? 'w-full' : undefined}
+        stretchItems={stretchItems}
       />
     </div>
   );
