@@ -357,6 +357,7 @@
         "blocked": "Blocked"
       },
       "menu": {
+        "invite": "Invite",
         "removeFriend": "Remove Friend",
         "blockAndReport": "Block & Report"
       },
@@ -365,7 +366,9 @@
         "fetchImaginaryFailed": "Failed to fetch imaginary friends",
         "removed": "{name} was removed from friends",
         "blocked": "{name} was blocked",
-        "removeFailed": "Failed to remove friend"
+        "removeFailed": "Failed to remove friend",
+        "invited": "{name} was invited",
+        "inviteFailed": "Failed to invite friend"
       }
     },
     "permissions": {
@@ -393,6 +396,14 @@
       "placeholder": "Tell us more...",
       "cancel": "Cancel",
       "confirm": "Block & Report"
+    },
+    "inviteDialog": {
+      "title": "Invite {name}",
+      "now": "Now",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "cancel": "Cancel",
+      "ok": "OK"
     },
     "avatar-cropper": {
       "save": "Save"

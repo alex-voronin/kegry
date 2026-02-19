@@ -180,23 +180,38 @@ export function WhenSelector({
   value,
   onChange,
   tFeed,
+  className,
+  itemWidth,
 }: {
   value: InviteExpiration;
   onChange: (val: InviteExpiration) => void;
   tFeed: ReturnType<typeof useTranslations>;
+  className?: string;
+  itemWidth?: string | number;
 }) {
   const timeOptions = [
-    { value: InviteExpiration.Now, label: tFeed('now'), width: 50 },
-    { value: InviteExpiration.Today, label: tFeed('today'), width: 60 },
+    {
+      value: InviteExpiration.Now,
+      label: tFeed('now'),
+      width: itemWidth ?? 50,
+    },
+    {
+      value: InviteExpiration.Today,
+      label: tFeed('today'),
+      width: itemWidth ?? 60,
+    },
     {
       value: InviteExpiration.Tomorrow,
       label: tFeed('tomorrow'),
-      width: 90,
+      width: itemWidth ?? 90,
     },
   ];
 
   return (
-    <div className={styles.whenSelector} onClick={(e) => e.stopPropagation()}>
+    <div
+      className={className ?? styles.whenSelector}
+      onClick={(e) => e.stopPropagation()}
+    >
       <SegmentedControl
         options={timeOptions}
         value={value}

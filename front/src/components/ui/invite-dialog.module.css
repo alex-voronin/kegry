@@ -1,0 +1,30 @@
+@reference "../../app/globals.css";
+
+.backdrop {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-300;
+}
+
+.modalContainer {
+  @apply bg-form-element w-full max-w-[500px] overflow-hidden rounded-[32px] p-7 text-center transition-transform duration-300 ease-out;
+}
+
+.title {
+  @apply mb-8 text-lg font-medium;
+}
+
+.selectorWrapper {
+  @apply relative mb-8;
+}
+
+.selectorInner {
+  @apply relative flex w-full justify-center;
+  inset: unset;
+}
+
+.buttonGroup {
+  @apply flex items-center justify-center gap-4;
+}
+
+.button {
+  @apply w-[150px] flex-1 py-2 transition-all;
+}

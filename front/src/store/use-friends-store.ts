@@ -3,6 +3,7 @@ import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
 import { ApiResult, PaginatedResponse } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
+import { InviteExpiration, computeExpiresAt } from '@/lib/invite-utils';
 
 export interface FriendUserDto {
   id: string;
@@ -19,6 +20,7 @@ interface FriendsState {
   fetchFriends: (offset?: number, limit?: number) => Promise<void>;
   removeFriend: (userId: string) => Promise<void>;
   blockFriend: (userId: string, reportMessage?: string) => Promise<void>;
+  inviteFriend: (userId: string, when: InviteExpiration) => Promise<void>;
   reset: () => void;
 }
 
@@ -99,6 +101,12 @@ export const useFriendsStore = create<FriendsState>()((set, get) => ({
     } finally {
       set({ isLoading: false });
     }
+  },
+
+  inviteFriend: async (userId: string, when: InviteExpiration) => {
+    await apiClient.post(API_ENDPOINTS.FEED.INVITE(userId), {
+      expiresAt: computeExpiresAt(when),
+    });
   },
 
   reset: () => set(initialState),

@@ -10,6 +10,7 @@ import { ModalMenu } from '@/components/ui/modal-menu';
 import { Spinner } from '@/components/ui/spinner';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { ReportDialog } from '@/components/ui/report-dialog';
+import { InviteDialog } from '@/components/ui/invite-dialog';
 import {
   useBlockedUsersStore,
   BlockedUserDto,
@@ -18,6 +19,7 @@ import { useFriendsStore, FriendUserDto } from '@/store/use-friends-store';
 import { useMetNpcsStore } from '@/store/use-met-npcs-store';
 import { toast } from 'react-toastify';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { InviteExpiration } from '@/lib/invite-utils';
 import styles from './friends-and-foes.module.css';
 
 type Tab = 'friends' | 'imaginary' | 'blocked';
@@ -51,7 +53,11 @@ export default function FriendsAndFoesPage() {
     fetchFriends,
     removeFriend,
     blockFriend,
+    inviteFriend,
   } = useFriendsStore();
+
+  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
+  const [userToInvite, setUserToInvite] = useState<FriendUserDto | null>(null);
 
   const {
     blockedUsers,
@@ -110,6 +116,18 @@ export default function FriendsAndFoesPage() {
     }
   };
 
+  const handleInviteConfirm = async (when: InviteExpiration) => {
+    if (!userToInvite) return;
+    try {
+      await inviteFriend(userToInvite.id, when);
+      toast.success(t('toast.invited', { name: userToInvite.firstName }));
+    } catch (err: any) {
+      toast.error(err.message || t('toast.inviteFailed'));
+    } finally {
+      setUserToInvite(null);
+    }
+  };
+
   const handleBlockConfirm = async (message: string) => {
     if (!userToReport) return;
     try {
@@ -140,6 +158,15 @@ export default function FriendsAndFoesPage() {
 
     if (selectedUser.type === 'friend') {
       return [
+        {
+          icon: '/assets/feed/invite-icon.webp',
+          label: t('menu.invite'),
+          onClick: () => {
+            setUserToInvite(selectedUser);
+            setSelectedUser(null);
+            setIsInviteDialogOpen(true);
+          },
+        },
         {
           icon: '/assets/friends-and-foes/unblock-icon.svg',
           label: t('menu.removeFriend'),
@@ -389,6 +416,13 @@ export default function FriendsAndFoesPage() {
         isOpen={isReportDialogOpen}
         onClose={() => setIsReportDialogOpen(false)}
         onConfirm={handleBlockConfirm}
+      />
+
+      <InviteDialog
+        isOpen={isInviteDialogOpen}
+        friendName={userToInvite?.firstName || ''}
+        onClose={() => setIsInviteDialogOpen(false)}
+        onConfirm={handleInviteConfirm}
       />
     </div>
   );
