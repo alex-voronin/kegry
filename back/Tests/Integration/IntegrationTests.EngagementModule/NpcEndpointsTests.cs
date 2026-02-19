@@ -123,4 +123,46 @@ public class NpcEndpointsTests : IntegrationTestBase, IAsyncLifetime
         inviteResponse2.Success.ShouldBeTrue();
         inviteResponse2.Result.Monolog.ShouldNotBeNullOrEmpty();
     }
+
+    [Fact]
+    public async Task GivenUser_WhenNoNpcsInvited_ThenMetNpcsIsEmpty()
+    {
+        // 1. Create user
+        var auth = await Factory.AuthManager.CreateAndLoginUserAsync("met_npc_empty@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(auth);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Get met NPCs — should be empty
+        var response = await Factory.ApiClient.GetAsync<ApiResult<GetMetNpcsResponse>>(ApiRoutes.Npc.MetNpcs);
+        response.Success.ShouldBeTrue();
+        response.Result.MetNpcs.ShouldNotBeNull();
+        response.Result.MetNpcs.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task GivenUser_WhenInvitesNpc_ThenNpcAppearsInMetNpcs()
+    {
+        // 1. Create user
+        var auth = await Factory.AuthManager.CreateAndLoginUserAsync("met_npc_user@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(auth);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Get Npc to get ID
+        var npcResponse = await Factory.ApiClient.GetAsync<ApiResult<GetNpcResponse>>(ApiRoutes.Npc.Root);
+        npcResponse.Success.ShouldBeTrue();
+        npcResponse.Result.Npc.ShouldNotBeNull();
+        var npcId = npcResponse.Result.Npc.Id;
+        var npcName = npcResponse.Result.Npc.Name;
+
+        // 3. Invite NPC
+        var inviteResponse = await Factory.ApiClient.GetAsync<ApiResult<InviteNpcResponse>>(ApiRoutes.Npc.Invite(npcId));
+        inviteResponse.Success.ShouldBeTrue();
+
+        // 4. Get met NPCs — should contain the invited NPC
+        var metResponse = await Factory.ApiClient.GetAsync<ApiResult<GetMetNpcsResponse>>(ApiRoutes.Npc.MetNpcs);
+        metResponse.Success.ShouldBeTrue();
+        metResponse.Result.MetNpcs.ShouldNotBeEmpty();
+        metResponse.Result.MetNpcs.Any(n => n.Id == npcId).ShouldBeTrue();
+        metResponse.Result.MetNpcs.First(n => n.Id == npcId).Name.ShouldBe(npcName);
+    }
 }

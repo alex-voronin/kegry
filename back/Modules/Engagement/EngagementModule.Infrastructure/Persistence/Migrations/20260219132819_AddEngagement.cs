@@ -21,7 +21,8 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     name_key = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    avatar_url = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    avatar_url = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
+                    cover_url = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
                     monolog_key = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -73,8 +74,8 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
             migrationBuilder.InsertData(
                 schema: "engagement",
                 table: "npcs",
-                columns: new[] { "id", "avatar_url", "monolog_key", "name_key" },
-                values: new object[] { new Guid("533bcc76-39fa-567c-8c3e-be41f83e2247"), "assets/npc/wibbly-toby.webp", "WibblyToby.Monolog", "WibblyToby.Name" });
+                columns: new[] { "id", "avatar_url", "cover_url", "monolog_key", "name_key" },
+                values: new object[] { new Guid("533bcc76-39fa-567c-8c3e-be41f83e2247"), "assets/npc/wibbly-toby-tavern/avatar.webp", "assets/npc/wibbly-toby-tavern/cover.webp", "WibblyToby.Monolog", "WibblyToby.Name" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_user_met_npcs_npc_id",

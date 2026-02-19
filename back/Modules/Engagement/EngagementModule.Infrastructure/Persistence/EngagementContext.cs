@@ -52,7 +52,8 @@ public class EngagementContext : DbContext
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedNever();
             builder.Property(x => x.NameKey).IsRequired().HasMaxLength(100);
-            builder.Property(x => x.AvatarUrl).IsRequired().HasMaxLength(500);
+            builder.Property(x => x.AvatarUrl).IsRequired().HasMaxLength(512);
+            builder.Property(x => x.CoverUrl).IsRequired().HasMaxLength(512);
             builder.Property(x => x.MonologKey).IsRequired();
 
             const string wibblyTobyKey = "WibblyToby.Name";
@@ -60,7 +61,8 @@ public class EngagementContext : DbContext
             {
                 Id = wibblyTobyKey.ToDeterministicGuid(),
                 NameKey = wibblyTobyKey,
-                AvatarUrl = "assets/npc/wibbly-toby.webp",
+                AvatarUrl = "assets/npc/wibbly-toby-tavern/avatar.webp",
+                CoverUrl = "assets/npc/wibbly-toby-tavern/cover.webp",
                 MonologKey = "WibblyToby.Monolog"
             });
         });

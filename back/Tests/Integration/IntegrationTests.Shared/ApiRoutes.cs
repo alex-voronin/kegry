@@ -63,6 +63,7 @@ public static class ApiRoutes
     public static class Npc
     {
         public const string Root = "/api/v1/npc";
+        public const string MetNpcs = "/api/v1/npc/met";
         public static string Invite(string id) => $"/api/v1/npc/{id}/invite";
     }
 }

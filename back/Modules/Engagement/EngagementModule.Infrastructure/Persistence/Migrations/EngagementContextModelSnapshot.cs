@@ -31,9 +31,15 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("AvatarUrl")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)")
                         .HasColumnName("avatar_url");
+
+                    b.Property<string>("CoverUrl")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)")
+                        .HasColumnName("cover_url");
 
                     b.Property<string>("MonologKey")
                         .IsRequired()
@@ -55,7 +61,8 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = new Guid("533bcc76-39fa-567c-8c3e-be41f83e2247"),
-                            AvatarUrl = "assets/npc/wibbly-toby.webp",
+                            AvatarUrl = "assets/npc/wibbly-toby-tavern/avatar.webp",
+                            CoverUrl = "assets/npc/wibbly-toby-tavern/cover.webp",
                             MonologKey = "WibblyToby.Monolog",
                             NameKey = "WibblyToby.Name"
                         });

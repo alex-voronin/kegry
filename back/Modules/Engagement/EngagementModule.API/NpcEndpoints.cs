@@ -1,5 +1,7 @@
 ﻿using System.Security.Claims;
 using EngagementModule.API.Dto;
+using EngagementModule.Domain.Exceptions;
+using EngagementModule.Domain.Repositories;
 using EngagementModule.Domain.Services;
 using EngagementModule.Infrastructure.Resources;
 using Microsoft.AspNetCore.Builder;
@@ -21,6 +23,7 @@ public class NpcEndpoints : IEndpoints
             .WithTags("NPC API")
             .RequireAuthorization();
         apiGroup.MapGet("/api/v1/npc", GetNpc);
+        apiGroup.MapGet("/api/v1/npc/met", GetMetNpcs);
         apiGroup.MapGet("/api/v1/npc/{id:guid}/invite", InviteNpc);
     }
 
@@ -36,10 +39,35 @@ public class NpcEndpoints : IEndpoints
             : new NpcDto(
                 Id: npc.Id.ToString(),
                 Name: localizer.GetString(npc.NameKey),
-                AvatarUrl: npc.AvatarUrl
+                AvatarUrl: npc.AvatarUrl,
+                CoverUrl: npc.CoverUrl
             );
         return ApiResult<GetNpcResponse>.Build(
             new GetNpcResponse(npcDto)
+        );
+    }
+
+    private static async Task<ApiResult<GetMetNpcsResponse>> GetMetNpcs(
+        ClaimsPrincipal userClaims,
+        IUserRepository userRepository,
+        IStringLocalizer<NpcLocalization> localizer,
+        CancellationToken ct)
+    {
+        var user = await userRepository.GetByIdAsync(userClaims.GetId(), 
+            includes: [u => u.MetNpcs], ct: ct);
+        if (user == null)
+        {
+            throw EngagementExceptions.UserNotFound(userClaims.GetId());
+        }
+        
+        var dtos = user.MetNpcs.Select(npc => new MetNpcDto(
+            Id: npc.Id.ToString(),
+            Name: localizer.GetString(npc.NameKey),
+            AvatarUrl: npc.AvatarUrl
+        )).ToArray();
+
+        return ApiResult<GetMetNpcsResponse>.Build(
+            new GetMetNpcsResponse(dtos)
         );
     }
 
