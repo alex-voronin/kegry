@@ -349,10 +349,21 @@
     "friendsAndFoes": {
       "title": "Friends & Foes",
       "comingSoon": "Coming soon",
+      "noFriends": "No friends yet",
       "tabs": {
         "friends": "Friends",
         "imaginary": "Imaginary",
         "blocked": "Blocked"
+      },
+      "menu": {
+        "removeFriend": "Remove Friend",
+        "blockAndReport": "Block & Report"
+      },
+      "toast": {
+        "fetchFailed": "Failed to fetch friends",
+        "removed": "{name} was removed from friends",
+        "blocked": "{name} was blocked",
+        "removeFailed": "Failed to remove friend"
       }
     },
     "permissions": {

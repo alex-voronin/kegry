@@ -9,15 +9,25 @@ import { Icon } from '@/components/ui/icon';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { Spinner } from '@/components/ui/spinner';
 import { SegmentedControl } from '@/components/ui/segmented-control';
+import { ReportDialog } from '@/components/ui/report-dialog';
 import {
   useBlockedUsersStore,
   BlockedUserDto,
 } from '@/store/use-blocked-users-store';
+import { useFriendsStore, FriendUserDto } from '@/store/use-friends-store';
 import { toast } from 'react-toastify';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from './friends-and-foes.module.css';
 
 type Tab = 'friends' | 'imaginary' | 'blocked';
+
+type SelectedUser = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  avatarUrl: string | null;
+  type: 'friend' | 'blocked';
+};
 
 export default function FriendsAndFoesPage() {
   const router = useRouter();
@@ -30,12 +40,37 @@ export default function FriendsAndFoesPage() {
     { value: 'blocked', label: t('tabs.blocked'), width: '33%' },
   ];
   const [activeTab, setActiveTab] = useState<Tab>('friends');
-  const [selectedUser, setSelectedUser] = useState<BlockedUserDto | null>(null);
+  const [selectedUser, setSelectedUser] = useState<SelectedUser | null>(null);
+  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  const [userToReport, setUserToReport] = useState<SelectedUser | null>(null);
 
-  const { blockedUsers, isLoading, fetchBlockedUsers, unblockUser } =
-    useBlockedUsersStore();
+  const {
+    friends,
+    isLoading: friendsLoading,
+    fetchFriends,
+    removeFriend,
+    blockFriend,
+  } = useFriendsStore();
+
+  const {
+    blockedUsers,
+    isLoading: blockedLoading,
+    fetchBlockedUsers,
+    unblockUser,
+  } = useBlockedUsersStore();
 
   useEffect(() => {
+    if (activeTab === 'friends') {
+      const loadFriends = async () => {
+        try {
+          await fetchFriends();
+        } catch (err: any) {
+          toast.error(err.message || t('toast.fetchFailed'));
+        }
+      };
+      loadFriends();
+    }
+
     if (activeTab === 'blocked') {
       const loadBlockedUsers = async () => {
         try {
@@ -46,9 +81,30 @@ export default function FriendsAndFoesPage() {
       };
       loadBlockedUsers();
     }
-  }, [activeTab, fetchBlockedUsers, tBlocked]);
+  }, [activeTab, fetchFriends, fetchBlockedUsers, t, tBlocked]);
 
-  const handleUnblock = async (user: BlockedUserDto) => {
+  const handleRemoveFriend = async (user: SelectedUser) => {
+    try {
+      await removeFriend(user.id);
+      toast.success(t('toast.removed', { name: user.firstName }));
+    } catch (err: any) {
+      toast.error(err.message || t('toast.removeFailed'));
+    }
+  };
+
+  const handleBlockConfirm = async (message: string) => {
+    if (!userToReport) return;
+    try {
+      await blockFriend(userToReport.id, message);
+      toast.success(t('toast.blocked', { name: userToReport.firstName }));
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to block user');
+    } finally {
+      setUserToReport(null);
+    }
+  };
+
+  const handleUnblock = async (user: SelectedUser) => {
     try {
       await unblockUser(user.id);
       toast.success(tBlocked('toast.unblocked', { name: user.firstName }));
@@ -61,46 +117,118 @@ export default function FriendsAndFoesPage() {
     router.push(`${PAGE_ROUTES.PROFILE}/${userId}`);
   };
 
-  const menuOptions = selectedUser
-    ? [
-        {
-          icon: '/assets/friends-and-foes/user-profile-icon.svg',
-          label: tBlocked('menu.viewProfile'),
-          onClick: () => {
-            handleViewProfile(selectedUser.id);
-            setSelectedUser(null);
-          },
-        },
+  const getMenuOptions = () => {
+    if (!selectedUser) return [];
+
+    if (selectedUser.type === 'friend') {
+      return [
         {
           icon: '/assets/friends-and-foes/unblock-icon.svg',
-          label: tBlocked('menu.unblock'),
+          label: t('menu.removeFriend'),
           onClick: () => {
-            handleUnblock(selectedUser);
+            handleRemoveFriend(selectedUser);
             setSelectedUser(null);
           },
         },
-      ]
-    : [];
+        {
+          icon: '/assets/friends-and-foes/user-profile-icon.svg',
+          label: t('menu.blockAndReport'),
+          onClick: () => {
+            setUserToReport(selectedUser);
+            setSelectedUser(null);
+            setIsReportDialogOpen(true);
+          },
+        },
+      ];
+    }
 
-  const renderTabContent = () => {
-    if (activeTab === 'friends') {
+    // Blocked user menu
+    return [
+      {
+        icon: '/assets/friends-and-foes/user-profile-icon.svg',
+        label: tBlocked('menu.viewProfile'),
+        onClick: () => {
+          handleViewProfile(selectedUser.id);
+          setSelectedUser(null);
+        },
+      },
+      {
+        icon: '/assets/friends-and-foes/unblock-icon.svg',
+        label: tBlocked('menu.unblock'),
+        onClick: () => {
+          handleUnblock(selectedUser);
+          setSelectedUser(null);
+        },
+      },
+    ];
+  };
+
+  const renderFriendsTab = () => {
+    if (friendsLoading && friends.length === 0) {
       return (
         <div className={styles.emptyState}>
-          <span>{t('comingSoon')}</span>
+          <Spinner />
         </div>
       );
     }
 
-    if (activeTab === 'imaginary') {
+    if (friends.length === 0) {
       return (
         <div className={styles.emptyState}>
-          <span>{t('comingSoon')}</span>
+          <span>{t('noFriends')}</span>
         </div>
       );
     }
 
-    // Blocked tab
-    if (isLoading && blockedUsers.length === 0) {
+    return (
+      <div className={styles.userList}>
+        {friends.map((user) => (
+          <div
+            key={user.id}
+            className={styles.userItem}
+            onClick={() => handleViewProfile(user.id)}
+          >
+            <div className={styles.userItemLeft}>
+              <div className={styles.profileImageWrapper}>
+                <Image
+                  src={
+                    user.avatarUrl || '/assets/common/avatar-placeholder.webp'
+                  }
+                  alt="Profile"
+                  width={48}
+                  height={48}
+                  className="object-cover"
+                />
+              </div>
+              <div className={styles.userBody}>
+                <span className={styles.userName}>
+                  {user.firstName} {user.lastName}
+                </span>
+              </div>
+            </div>
+
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedUser({ ...user, type: 'friend' });
+              }}
+            >
+              <Icon
+                src="/assets/common/more-icon.svg"
+                alt="Open menu"
+                width={24}
+                height={24}
+                priority
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderBlockedTab = () => {
+    if (blockedLoading && blockedUsers.length === 0) {
       return (
         <div className={styles.emptyState}>
           <Spinner />
@@ -122,7 +250,7 @@ export default function FriendsAndFoesPage() {
           <div
             key={user.id}
             className={styles.userItem}
-            onClick={() => setSelectedUser(user)}
+            onClick={() => setSelectedUser({ ...user, type: 'blocked' })}
           >
             <div className={styles.userItemLeft}>
               <div className={styles.profileImageWrapper}>
@@ -156,6 +284,20 @@ export default function FriendsAndFoesPage() {
     );
   };
 
+  const renderTabContent = () => {
+    if (activeTab === 'friends') return renderFriendsTab();
+
+    if (activeTab === 'imaginary') {
+      return (
+        <div className={styles.emptyState}>
+          <span>{t('comingSoon')}</span>
+        </div>
+      );
+    }
+
+    return renderBlockedTab();
+  };
+
   return (
     <div className="flex flex-1 flex-col">
       <Header
@@ -185,7 +327,13 @@ export default function FriendsAndFoesPage() {
       <ModalMenu
         isOpen={!!selectedUser}
         onClose={() => setSelectedUser(null)}
-        options={menuOptions}
+        options={getMenuOptions()}
+      />
+
+      <ReportDialog
+        isOpen={isReportDialogOpen}
+        onClose={() => setIsReportDialogOpen(false)}
+        onConfirm={handleBlockConfirm}
       />
     </div>
   );

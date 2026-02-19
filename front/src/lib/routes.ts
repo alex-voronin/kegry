@@ -62,6 +62,8 @@ export const API_ENDPOINTS = {
     IGNORE: (userId: string) => `/api/v1/feed/${userId}/ignore`,
     FILTER: '/api/v1/feed/filter',
     BLOCKED_USERS: '/api/v1/feed/blocked-users',
+    FRIENDS: '/api/v1/feed/friends',
+    REMOVE_FRIEND: (userId: string) => `/api/v1/feed/${userId}/remove-friend`,
     SETTINGS: '/api/v1/feed/settings',
   },
   NOTIFICATIONS: {
