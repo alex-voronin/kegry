@@ -91,7 +91,7 @@ export const useNotificationsStore = create<NotificationsState>()(
     },
 
     acceptInvite: async (userId: string, notificationId: string) => {
-      await apiClient.post(API_ENDPOINTS.FEED.INVITE(userId));
+      await apiClient.post(API_ENDPOINTS.FEED.ACCEPT_INVITE(userId));
     },
 
     ignoreInvite: async (userId: string, notificationId: string) => {
