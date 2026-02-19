@@ -33,6 +33,8 @@ public class FeedEndpoints : IEndpoints
         apiGroup.MapGet("/api/v1/feed/filter", GetFilter);
         apiGroup.MapPut("/api/v1/feed/filter", UpdateFilter);
         apiGroup.MapGet("/api/v1/feed/blocked-users", GetBlockedUsers);
+        apiGroup.MapGet("/api/v1/feed/friends", GetFriends);
+        apiGroup.MapPost("/api/v1/feed/{id:guid}/remove-friend", RemoveFriend);
         apiGroup.MapGet("/api/v1/feed/settings", GetSettings);
         apiGroup.MapPut("/api/v1/feed/settings", UpdateSettings);
     }
@@ -267,9 +269,49 @@ public class FeedEndpoints : IEndpoints
         return ApiResult.Empty;
     }
 
+    private static async Task<ApiResult<PaginatedResponse<FriendUserDto>>> GetFriends(
+        [AsParameters] PaginatedRequest request,
+        ClaimsPrincipal user,
+        IUserRepository repository,
+        IS3StorageService storageService,
+        CancellationToken ct)
+    {
+        var friendsPage = await repository.GetFriendsAsync(user.GetId(), request.Offset, request.Limit, ct);
+        var friendsCount = await repository.GetFriendsCount(user.GetId(), ct);
+        var dtos = friendsPage
+            .Select(u => DomainUserToFriendUserDto(u, storageService))
+            .ToArray();
+        return ApiResult<PaginatedResponse<FriendUserDto>>.Build(
+            new PaginatedResponse<FriendUserDto>(
+                Data: dtos,
+                TotalCount: friendsCount
+            )
+        );
+    }
+
+    private static async Task<ApiResult.EmptyResult> RemoveFriend(
+        [FromRoute] Guid id,
+        ClaimsPrincipal user,
+        IUserActionsService userActionsService,
+        CancellationToken ct)
+    {
+        await userActionsService.RemoveFriendAsync(user.GetId(), id, ct);
+        return ApiResult.Empty;
+    }
+
     private static BlockedUserDto DomainUserToBlockedUserDto(User user, IS3StorageService storageService)
     {
         return new BlockedUserDto(
+            Id: user.Id,
+            FirstName: user.FirstName,
+            LastName: user.LastName,
+            AvatarUrl: storageService.S3KeyToPublicFileUrl(user.AvatarImageS3Key)
+        );
+    }
+
+    private static FriendUserDto DomainUserToFriendUserDto(User user, IS3StorageService storageService)
+    {
+        return new FriendUserDto(
             Id: user.Id,
             FirstName: user.FirstName,
             LastName: user.LastName,

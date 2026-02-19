@@ -58,6 +58,10 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_blocked");
 
+                    b.Property<bool>("IsFriend")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_friend");
+
                     b.Property<bool>("IsInMeeting")
                         .HasColumnType("boolean")
                         .HasColumnName("is_in_meeting");

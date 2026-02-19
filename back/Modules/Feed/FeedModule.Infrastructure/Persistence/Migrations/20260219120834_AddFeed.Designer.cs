@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(FeedContext))]
-    [Migration("20260210144410_AddFeed")]
+    [Migration("20260219120834_AddFeed")]
     partial class AddFeed
     {
         /// <inheritdoc />
@@ -60,6 +60,10 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsBlocked")
                         .HasColumnType("boolean")
                         .HasColumnName("is_blocked");
+
+                    b.Property<bool>("IsFriend")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_friend");
 
                     b.Property<bool>("IsInMeeting")
                         .HasColumnType("boolean")

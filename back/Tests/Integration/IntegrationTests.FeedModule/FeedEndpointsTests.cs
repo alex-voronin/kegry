@@ -534,4 +534,88 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         Factory.FakeTimeProvider.Reset(DateTime.UtcNow);
     }
+
+    [Fact]
+    public async Task GivenTwoUsers_WhenMeetingEstablished_ThenBothUsersAppearInFriendsList()
+    {
+        // 1. Create two users and submit locations
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("friend_a@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("friend_b@example.com", "Password123!");
+        var userBId = authB.UserId;
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Establish a meeting (mutual invite)
+        Factory.ApiClient.SetAuth(authA);
+        var inviteResponse = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.InviteUser(userBId),
+            new InviteUserRequest(ComputeExpiresAtForNowOption()));
+        inviteResponse.Success.ShouldBeTrue();
+
+        Factory.ApiClient.SetAuth(authB);
+        var inviteBackResponse = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.InviteUser(authA.UserId),
+            new InviteUserRequest(ComputeExpiresAtForNowOption()));
+        inviteBackResponse.Success.ShouldBeTrue();
+
+        // 3. User A's friends list should contain User B
+        Factory.ApiClient.SetAuth(authA);
+        var friendsA = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<FriendUserDto>>>(
+            ApiRoutes.Feed.GetFriends);
+        friendsA.Success.ShouldBeTrue();
+        friendsA.Result.Data.ShouldNotBeEmpty();
+        friendsA.Result.Data.Any(f => f.Id == Guid.Parse(userBId)).ShouldBeTrue();
+
+        // 4. User B's friends list should contain User A
+        Factory.ApiClient.SetAuth(authB);
+        var friendsB = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<FriendUserDto>>>(
+            ApiRoutes.Feed.GetFriends);
+        friendsB.Success.ShouldBeTrue();
+        friendsB.Result.Data.ShouldNotBeEmpty();
+        friendsB.Result.Data.Any(f => f.Id == Guid.Parse(authA.UserId)).ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task GivenFriends_WhenUserRemovesFriend_ThenFriendDisappearsFromList()
+    {
+        // 1. Create two users and submit locations
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("remover_a@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("remover_b@example.com", "Password123!");
+        var userBId = authB.UserId;
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Establish a meeting (mutual invite)
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.InviteUser(userBId),
+            new InviteUserRequest(ComputeExpiresAtForNowOption()));
+
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.InviteUser(authA.UserId),
+            new InviteUserRequest(ComputeExpiresAtForNowOption()));
+
+        // 3. Verify User B is in User A's friends list
+        Factory.ApiClient.SetAuth(authA);
+        var friendsBefore = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<FriendUserDto>>>(
+            ApiRoutes.Feed.GetFriends);
+        friendsBefore.Result.Data.Any(f => f.Id == Guid.Parse(userBId)).ShouldBeTrue();
+
+        // 4. User A removes User B from friends
+        var removeResponse = await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.RemoveFriend(userBId), null);
+        removeResponse.Success.ShouldBeTrue();
+
+        // 5. User B no longer appears in User A's friends list
+        var friendsAfter = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<FriendUserDto>>>(
+            ApiRoutes.Feed.GetFriends);
+        friendsAfter.Result.Data.Any(f => f.Id == Guid.Parse(userBId)).ShouldBeFalse();
+    }
 }

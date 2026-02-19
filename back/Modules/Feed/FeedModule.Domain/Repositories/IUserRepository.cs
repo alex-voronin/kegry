@@ -14,4 +14,14 @@ public interface IUserRepository : IRepository<User>
     public Task<int> GetBlockedUsersCount(
         Guid userId,
         CancellationToken ct = default);
+
+    public Task<User[]> GetFriendsAsync(
+        Guid userId,
+        int skip,
+        int limit,
+        CancellationToken ct = default);
+
+    public Task<int> GetFriendsCount(
+        Guid userId,
+        CancellationToken ct = default);
 }

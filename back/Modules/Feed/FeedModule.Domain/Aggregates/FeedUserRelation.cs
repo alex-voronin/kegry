@@ -41,6 +41,7 @@ public class FeedUserRelation
         }
     }
 
+    public bool IsFriend { get; set; }
     public bool IsInMeeting { get; set; }
     public bool ShouldRate { get; set; }
     public required DateTimeOffset InviteExpiresAt { get; set; }

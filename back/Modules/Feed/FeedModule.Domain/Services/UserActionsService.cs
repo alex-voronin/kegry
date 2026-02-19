@@ -64,6 +64,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         feedUserRelation.IsBlocked = true;
         feedUserRelation.ReportMessage = reportMessage;
         feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
+        feedUserRelation.IsFriend = false;
         await _feedUserRelationRepository.PublishEventAsync(
             new UserBlockedEvent()
             {
@@ -77,6 +78,14 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
     {
         var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
         feedUserRelation.IsBlocked = false;
+        feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
+        await _feedUserRelationRepository.SaveChangesAsync(ct);
+    }
+
+    public async Task RemoveFriendAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
+    {
+        var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
+        feedUserRelation.IsFriend = false;
         feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
         await _feedUserRelationRepository.SaveChangesAsync(ct);
     }
@@ -222,8 +231,10 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
             ? meToOtherUserRelation.InviteExpiresAt
             : otherToMeUserRelation.InviteExpiresAt;
 
+        otherToMeUserRelation.IsFriend = true;
         otherToMeUserRelation.IsInMeeting = true;
         otherToMeUserRelation.InviteExpiresAt = meetingExpiresAt;
+        meToOtherUserRelation.IsFriend = true;
         meToOtherUserRelation.IsInMeeting = true;
         meToOtherUserRelation.InviteExpiresAt = meetingExpiresAt;
         // the potential race condition when multiple users invite the same user at the same time
