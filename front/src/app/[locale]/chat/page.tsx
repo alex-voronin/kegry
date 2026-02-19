@@ -327,12 +327,14 @@ export default function ChatScreen() {
         className="min-h-[80px]"
         left={
           <Icon
-            src="/assets/common/profile-icon.svg"
-            alt="profile"
-            width={30}
-            height={32}
+            src="/assets/common/disclosure-left-icon.svg"
+            alt="back"
+            width={14}
+            height={27}
             priority
-            onClick={() => router.push(PAGE_ROUTES.PROFILE)}
+            onClick={() =>
+              router.push(`${PAGE_ROUTES.FEED}?auto-chat-redirect=false`)
+            }
           />
         }
         title={

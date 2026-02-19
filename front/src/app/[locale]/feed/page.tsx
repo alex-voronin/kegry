@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
+import { useSearchParams } from 'next/navigation';
 import styles from './feed.module.css';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
@@ -39,10 +40,12 @@ function FeedHeader({
   router,
   unseenCount,
   showPermissionsBadge,
+  isInMeeting,
 }: {
   router: ReturnType<typeof useRouter>;
   unseenCount: number;
   showPermissionsBadge: boolean;
+  isInMeeting: boolean;
 }) {
   return (
     <Header
@@ -62,28 +65,41 @@ function FeedHeader({
       }
       right={
         <div className={styles.headerRightSideIconsWrapper}>
-          <Icon
-            src="/assets/feed/filters-icon.svg"
-            alt="filters"
-            width={32}
-            height={32}
-            priority
-            onClick={() => router.push(PAGE_ROUTES.FEED_FILTERS)}
-          />
-          <Icon
-            src="/assets/feed/notifications-icon.svg"
-            alt="notifications"
-            width={28}
-            height={30}
-            priority
-            onClick={() => router.push(PAGE_ROUTES.NOTIFICATIONS)}
-          >
-            {unseenCount > 0 && (
-              <span className={styles.badge}>
-                {unseenCount > 99 ? '99+' : unseenCount}
-              </span>
-            )}
-          </Icon>
+          {!isInMeeting && (
+            <Icon
+              src="/assets/feed/filters-icon.svg"
+              alt="filters"
+              width={32}
+              height={32}
+              priority
+              onClick={() => router.push(PAGE_ROUTES.FEED_FILTERS)}
+            />
+          )}
+          {isInMeeting ? (
+            <Icon
+              src="/assets/feed/chat-icon.svg"
+              alt="chat"
+              width={28}
+              height={30}
+              priority
+              onClick={() => router.push(PAGE_ROUTES.CHAT)}
+            />
+          ) : (
+            <Icon
+              src="/assets/feed/notifications-icon.svg"
+              alt="notifications"
+              width={28}
+              height={30}
+              priority
+              onClick={() => router.push(PAGE_ROUTES.NOTIFICATIONS)}
+            >
+              {unseenCount > 0 && (
+                <span className={styles.badge}>
+                  {unseenCount > 99 ? '99+' : unseenCount}
+                </span>
+              )}
+            </Icon>
+          )}
         </div>
       }
     />
@@ -97,6 +113,7 @@ export default function FeedScreen() {
   const tCommon = useTranslations('common');
   const tHobbies = useTranslations('components.profile-sections.hobbies');
   const router = useRouter();
+  const searchParams = useSearchParams();
   const {
     feed,
     fetchFeedStatus,
@@ -111,6 +128,7 @@ export default function FeedScreen() {
     fetchUnseenNotificationCount,
     setUnseenNotificationCount,
     availableInvitesCount,
+    isInMeeting,
   } = useFeedStore();
   const { npc, monolog, fetchNpc, inviteNpc, dismissNpc } = useNpcStore();
   const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
@@ -176,8 +194,11 @@ export default function FeedScreen() {
         ]);
 
         if (status.isInMeeting) {
-          router.push(PAGE_ROUTES.CHAT);
-          return;
+          useFeedStore.setState({ isInMeeting: true });
+          if (searchParams.get('auto-chat-redirect') !== 'false') {
+            router.push(PAGE_ROUTES.CHAT);
+            return;
+          }
         }
 
         if (status.userIdToRate) {
@@ -289,6 +310,10 @@ export default function FeedScreen() {
   };
 
   const handleProfileClick = () => {
+    if (isInMeeting) {
+      router.push(PAGE_ROUTES.CHAT);
+      return;
+    }
     if (currentItem?.kind !== 'user') return;
     router.push(PAGE_ROUTES.USER_PROFILE(currentItem.profile.id));
   };
@@ -296,10 +321,25 @@ export default function FeedScreen() {
   // --- Render ---
 
   const renderBody = () => {
-    if (showLoading && !currentItem) {
+    if (showLoading && !currentItem && !isInMeeting) {
       return (
         <div className={styles.loadingContainer}>
           <Spinner />
+        </div>
+      );
+    }
+
+    if (isInMeeting) {
+      return (
+        <div className={styles.emptyState}>
+          <Image
+            src="/assets/feed/go-to-chat.webp"
+            alt="in meeting"
+            width={400}
+            height={370}
+            className={styles.emptyStateImage}
+          />
+          <p className={styles.emptyStateText}>{tFeed('inMeeting')}</p>
         </div>
       );
     }
@@ -351,7 +391,7 @@ export default function FeedScreen() {
   };
 
   const renderFooter = () => {
-    if (isLocationDenied || !currentItem) return null;
+    if (isInMeeting || isLocationDenied || !currentItem) return null;
 
     if (currentItem.kind === 'npc') {
       return (
@@ -386,6 +426,7 @@ export default function FeedScreen() {
             router={router}
             unseenCount={unseenNotificationCount}
             showPermissionsBadge={showPermissionsBadge}
+            isInMeeting={isInMeeting}
           />
         </div>
         {renderBody()}
