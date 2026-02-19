@@ -107,7 +107,7 @@ export default function ProfilePage() {
       onClick: () => router.push(PAGE_ROUTES.LOGIN()),
     },
     {
-      icon: '/assets/profile/delete-icon.svg',
+      icon: '/assets/common/delete-icon.svg',
       label: t('menu.delete'),
       onClick: () => setIsDeleteAccountModalOpen(true),
       isDestructive: true,

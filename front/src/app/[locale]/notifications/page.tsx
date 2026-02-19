@@ -32,6 +32,7 @@ export default function NotificationsScreen() {
     fetchNotifications,
     acceptInvite,
     ignoreInvite,
+    deleteNotification,
     blockUser,
   } = useNotificationsStore();
 
@@ -82,6 +83,14 @@ export default function NotificationsScreen() {
     }
   };
 
+  const handleDelete = async (notif: NotificationDto) => {
+    try {
+      await deleteNotification(notif.id);
+    } catch (err: any) {
+      toast.error(err.message || t('toast.deleteFailed'));
+    }
+  };
+
   const getMenuOptions = (notif: NotificationDto) => {
     const options = [];
 
@@ -106,7 +115,7 @@ export default function NotificationsScreen() {
         },
       });
       options.push({
-        icon: '/assets/notifications/block-icon.svg',
+        icon: '/assets/common/block-icon.svg',
         label: t('menu.blockAndReport'),
         onClick: () => {
           setNotificationToReport(notif);
@@ -115,6 +124,15 @@ export default function NotificationsScreen() {
         isDestructive: true,
       });
     }
+    options.push({
+      icon: '/assets/common/delete-icon.svg',
+      label: t('menu.delete'),
+      onClick: () => {
+        handleDelete(notif);
+        setSelectedNotification(null);
+      },
+      isDestructive: true,
+    });
     return options;
   };
 

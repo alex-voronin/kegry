@@ -250,6 +250,7 @@
       "menu": {
         "accept": "Accept",
         "ignore": "Ignore",
+        "delete": "Delete",
         "blockAndReport": "Block & Report"
       },
       "toast": {
@@ -258,7 +259,8 @@
         "acceptFailed": "Failed to accept invitation",
         "ignoreFailed": "Failed to ignore invitation",
         "blocked": "User blocked",
-        "blockFailed": "Failed to block user"
+        "blockFailed": "Failed to block user",
+        "deleteFailed": "Failed to delete notification"
       }
     },
     "rateUser": {

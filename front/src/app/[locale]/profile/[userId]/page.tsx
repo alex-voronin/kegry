@@ -66,7 +66,7 @@ export default function UserProfilePage() {
 
   const menuOptions = [
     {
-      icon: '/assets/profile/delete-icon.svg',
+      icon: '/assets/common/block-icon.svg',
       label: t('menu.blockAndReport'),
       onClick: () => setIsReportDialogOpen(true),
       isDestructive: true,

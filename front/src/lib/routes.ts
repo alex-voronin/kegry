@@ -72,6 +72,7 @@ export const API_ENDPOINTS = {
     UNSEEN_COUNT: '/api/v1/notifications/unseen/count',
     SETTINGS: '/api/v1/notifications/settings',
     FCM_TOKEN: '/api/v1/notifications/device/token',
+    DELETE: (id: string) => `/api/v1/notifications/${id}`,
   },
   CHAT: {
     GET: '/api/v1/chat',
