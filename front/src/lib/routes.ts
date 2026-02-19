@@ -82,6 +82,7 @@ export const API_ENDPOINTS = {
   },
   NPC: {
     GET: '/api/v1/npc',
+    MET: '/api/v1/npc/met',
     INVITE: (id: string) => `/api/v1/npc/${id}/invite`,
   },
 } as const;

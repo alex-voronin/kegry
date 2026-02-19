@@ -350,6 +350,7 @@
       "title": "Friends & Foes",
       "comingSoon": "Coming soon",
       "noFriends": "No friends yet",
+      "noImaginary": "No imaginary friends yet",
       "tabs": {
         "friends": "Friends",
         "imaginary": "Imaginary",
@@ -361,6 +362,7 @@
       },
       "toast": {
         "fetchFailed": "Failed to fetch friends",
+        "fetchImaginaryFailed": "Failed to fetch imaginary friends",
         "removed": "{name} was removed from friends",
         "blocked": "{name} was blocked",
         "removeFailed": "Failed to remove friend"

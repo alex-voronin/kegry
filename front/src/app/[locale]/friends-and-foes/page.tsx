@@ -15,6 +15,7 @@ import {
   BlockedUserDto,
 } from '@/store/use-blocked-users-store';
 import { useFriendsStore, FriendUserDto } from '@/store/use-friends-store';
+import { useMetNpcsStore } from '@/store/use-met-npcs-store';
 import { toast } from 'react-toastify';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from './friends-and-foes.module.css';
@@ -59,6 +60,12 @@ export default function FriendsAndFoesPage() {
     unblockUser,
   } = useBlockedUsersStore();
 
+  const {
+    metNpcs,
+    isLoading: imaginaryLoading,
+    fetchMetNpcs,
+  } = useMetNpcsStore();
+
   useEffect(() => {
     if (activeTab === 'friends') {
       const loadFriends = async () => {
@@ -71,6 +78,17 @@ export default function FriendsAndFoesPage() {
       loadFriends();
     }
 
+    if (activeTab === 'imaginary') {
+      const loadMetNpcs = async () => {
+        try {
+          await fetchMetNpcs();
+        } catch (err: any) {
+          toast.error(err.message || t('toast.fetchImaginaryFailed'));
+        }
+      };
+      loadMetNpcs();
+    }
+
     if (activeTab === 'blocked') {
       const loadBlockedUsers = async () => {
         try {
@@ -81,7 +99,7 @@ export default function FriendsAndFoesPage() {
       };
       loadBlockedUsers();
     }
-  }, [activeTab, fetchFriends, fetchBlockedUsers, t, tBlocked]);
+  }, [activeTab, fetchFriends, fetchMetNpcs, fetchBlockedUsers, t, tBlocked]);
 
   const handleRemoveFriend = async (user: SelectedUser) => {
     try {
@@ -227,6 +245,49 @@ export default function FriendsAndFoesPage() {
     );
   };
 
+  const renderImaginaryTab = () => {
+    if (imaginaryLoading && metNpcs.length === 0) {
+      return (
+        <div className={styles.emptyState}>
+          <Spinner />
+        </div>
+      );
+    }
+
+    if (metNpcs.length === 0) {
+      return (
+        <div className={styles.emptyState}>
+          <span>{t('noImaginary')}</span>
+        </div>
+      );
+    }
+
+    return (
+      <div className={styles.userList}>
+        {metNpcs.map((npc) => (
+          <div key={npc.id} className={styles.userItem}>
+            <div className={styles.userItemLeft}>
+              <div className={styles.profileImageWrapper}>
+                <Image
+                  src={
+                    npc.avatarUrl || '/assets/common/avatar-placeholder.webp'
+                  }
+                  alt="NPC"
+                  width={48}
+                  height={48}
+                  className="object-cover"
+                />
+              </div>
+              <div className={styles.userBody}>
+                <span className={styles.userName}>{npc.name}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const renderBlockedTab = () => {
     if (blockedLoading && blockedUsers.length === 0) {
       return (
@@ -287,13 +348,7 @@ export default function FriendsAndFoesPage() {
   const renderTabContent = () => {
     if (activeTab === 'friends') return renderFriendsTab();
 
-    if (activeTab === 'imaginary') {
-      return (
-        <div className={styles.emptyState}>
-          <span>{t('comingSoon')}</span>
-        </div>
-      );
-    }
+    if (activeTab === 'imaginary') return renderImaginaryTab();
 
     return renderBlockedTab();
   };
