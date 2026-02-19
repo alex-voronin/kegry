@@ -19,7 +19,6 @@ export const PAGE_ROUTES = {
   NOTIFICATIONS: '/notifications',
   CHAT: '/chat',
   SETTINGS: '/settings',
-  BLOCKED_USERS: '/blocked-users',
   FRIENDS_AND_FOES: '/friends-and-foes',
   RATE_USER: (userId: string) => `/rate-user/${userId}`,
   PERMISSIONS: '/permissions',

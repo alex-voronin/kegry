@@ -19,16 +19,16 @@ import styles from './friends-and-foes.module.css';
 
 type Tab = 'friends' | 'imaginary' | 'blocked';
 
-const TAB_OPTIONS = [
-  { value: 'friends', label: 'Friends', width: '33%' },
-  { value: 'imaginary', label: 'Imaginary', width: '34%' },
-  { value: 'blocked', label: 'Blocked', width: '33%' },
-];
-
 export default function FriendsAndFoesPage() {
   const router = useRouter();
   const t = useTranslations('screens.friendsAndFoes');
   const tBlocked = useTranslations('screens.blockedUsers');
+
+  const TAB_OPTIONS = [
+    { value: 'friends', label: t('tabs.friends'), width: '33%' },
+    { value: 'imaginary', label: t('tabs.imaginary'), width: '34%' },
+    { value: 'blocked', label: t('tabs.blocked'), width: '33%' },
+  ];
   const [activeTab, setActiveTab] = useState<Tab>('friends');
   const [selectedUser, setSelectedUser] = useState<BlockedUserDto | null>(null);
 
@@ -64,7 +64,7 @@ export default function FriendsAndFoesPage() {
   const menuOptions = selectedUser
     ? [
         {
-          icon: '/assets/blocked-users/user-profile-icon.svg',
+          icon: '/assets/friends-and-foes/user-profile-icon.svg',
           label: tBlocked('menu.viewProfile'),
           onClick: () => {
             handleViewProfile(selectedUser.id);
@@ -72,7 +72,7 @@ export default function FriendsAndFoesPage() {
           },
         },
         {
-          icon: '/assets/blocked-users/unblock-icon.svg',
+          icon: '/assets/friends-and-foes/unblock-icon.svg',
           label: tBlocked('menu.unblock'),
           onClick: () => {
             handleUnblock(selectedUser);
