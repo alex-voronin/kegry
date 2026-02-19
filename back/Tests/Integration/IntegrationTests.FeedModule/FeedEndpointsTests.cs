@@ -313,7 +313,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
     }
 
     [Fact]
-    public async Task WhenUserSkipsMultipleUsers_ThenFeedIsRefilledWithNewUsers()
+    public async Task GivenUser_WhenSkipsMultipleUsers_ThenFeedIsRefilledWithNewUsers()
     {
         const int usersToSkipCount = 5;
 
@@ -576,6 +576,116 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         friendsB.Success.ShouldBeTrue();
         friendsB.Result.Data.ShouldNotBeEmpty();
         friendsB.Result.Data.Any(f => f.Id == Guid.Parse(authA.UserId)).ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task GivenTwoUsers_WhenUserAcceptsInviteWithNoAvailableInvites_ThenBothBecameFriends()
+    {
+        Factory.FakeTimeProvider.Reset(DateTime.UtcNow.Date);
+
+        // 1. Create User A
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("accept_a@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Create User B
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("accept_b@example.com", "Password123!");
+        var userBId = authB.UserId;
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 3. Create enough candidate users for User B to exhaust all invites
+        var candidateIds = new List<string>();
+        for (var i = 0; i < FeedParameters.DefaultAvailableInvitesPerDay; i++)
+        {
+            var authCandidate = await Factory.AuthManager
+                .CreateAndLoginUserAsync($"accept_candidate{i}@example.com", "Password123!");
+            candidateIds.Add(authCandidate.UserId);
+            Factory.ApiClient.SetAuth(authCandidate);
+            await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        }
+
+        // 4. User B exhausts all available invites
+        Factory.ApiClient.SetAuth(authB);
+        foreach (var candidateId in candidateIds)
+        {
+            var response = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                ApiRoutes.Feed.InviteUser(candidateId),
+                new InviteUserRequest(ComputeExpiresAtForNowOption()));
+            response.Success.ShouldBeTrue();
+        }
+
+        // 5. Confirm User B has 0 available invites
+        var status = await Factory.ApiClient.GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
+        status.Result.AvailableInvitesCount.ShouldBe(0);
+
+        // 6. User A invites User B
+        Factory.ApiClient.SetAuth(authA);
+        var inviteResponse = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.InviteUser(userBId),
+            new InviteUserRequest(ComputeExpiresAtForNowOption()));
+        inviteResponse.Success.ShouldBeTrue();
+
+        // 7. User B accepts the invite despite having 0 available invites
+        Factory.ApiClient.SetAuth(authB);
+        var acceptResponse = await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.AcceptInvite(authA.UserId), null);
+        acceptResponse.Success.ShouldBeTrue();
+
+        // 8. Both users should be friends
+        Factory.ApiClient.SetAuth(authA);
+        var friendsA = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<FriendUserDto>>>(
+            ApiRoutes.Feed.GetFriends);
+        friendsA.Result.Data.Any(f => f.Id == Guid.Parse(userBId)).ShouldBeTrue();
+
+        Factory.ApiClient.SetAuth(authB);
+        var friendsB = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<FriendUserDto>>>(
+            ApiRoutes.Feed.GetFriends);
+        friendsB.Result.Data.Any(f => f.Id == Guid.Parse(authA.UserId)).ShouldBeTrue();
+
+        Factory.FakeTimeProvider.Reset(DateTime.UtcNow);
+    }
+
+    [Fact]
+    public async Task GivenTwoUsers_WhenUserAcceptsExpiredInvite_ThenReturnsError()
+    {
+        Factory.FakeTimeProvider.Reset(DateTime.UtcNow);
+
+        // 1. Create two users and submit locations
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("expired_a@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("expired_b@example.com", "Password123!");
+        var userBId = authB.UserId;
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. User A invites User B
+        Factory.ApiClient.SetAuth(authA);
+        var expiresAt = ComputeExpiresAtForNowOption();
+        var inviteResponse = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.InviteUser(userBId),
+            new InviteUserRequest(expiresAt));
+        inviteResponse.Success.ShouldBeTrue();
+
+        // 3. Time passes beyond the invite expiration
+        Factory.FakeTimeProvider.SetUtcNow(expiresAt.AddSeconds(2));
+
+        // 4. User B tries to accept the expired invite
+        Factory.ApiClient.SetAuth(authB);
+        var acceptResponse = await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.AcceptInvite(authA.UserId), null);
+        acceptResponse.Success.ShouldBeFalse();
+        acceptResponse.Errors.First().Code.ShouldBe(nameof(ErrorCode.ValidationError));
+
+        // 5. Neither user should be in the other's friends list
+        Factory.ApiClient.SetAuth(authA);
+        var friendsA = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<FriendUserDto>>>(
+            ApiRoutes.Feed.GetFriends);
+        friendsA.Result.Data.Any(f => f.Id == Guid.Parse(userBId)).ShouldBeFalse();
+
+        Factory.FakeTimeProvider.Reset(DateTime.UtcNow);
     }
 
     [Fact]

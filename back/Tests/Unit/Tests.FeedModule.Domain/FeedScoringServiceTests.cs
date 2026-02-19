@@ -64,7 +64,12 @@ public class FeedScoringServiceTests
         await feedCandidateRepository.Received(1).GetFeedCandidatesInRadius(
             userProfile,
             location.Coordinates,
-            defaultFilter,
+            Arg.Is<Filter>(f =>
+                f.UserId == defaultFilter.UserId &&
+                f.AgeFrom == defaultFilter.AgeFrom &&
+                f.AgeTo == defaultFilter.AgeTo &&
+                f.Gender == defaultFilter.Gender &&
+                f.HobbyIds.Length == 0),
             Arg.Any<int>(),
             Arg.Any<int>(),
             Arg.Any<CancellationToken>());

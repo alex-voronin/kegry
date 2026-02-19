@@ -137,29 +137,52 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         }
     }
 
+    public async Task AcceptInviteAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
+    {
+        var now = _timeProvider.GetUtcNow();
+        var otherToMeUserRelation = await _feedUserRelationRepository.GetAsync(otherUserId, myUserId, false, ct);
+        if (otherToMeUserRelation == null || otherToMeUserRelation.IsInviteExpired(now))
+        {
+            throw FeedExceptions.InviteExpired();
+        }
+
+        try
+        {
+            await InviteUserUnsafeAsync(myUserId, otherUserId, otherToMeUserRelation.InviteExpiresAt, ct);
+        }
+        catch (Exception e)
+        {
+            var isInMeeting = await _feedUserRelationRepository.IsInMeetingAsync(otherUserId, ct);
+            if (!isInMeeting)
+            {
+                throw;
+            }
+
+            Log.Information(e, "User {UserId} tried to invite {OtherUserId}, but he is in meeting already",
+                myUserId, otherUserId);
+        }
+    }
+
     public async Task<Filter> GetFilterAsync(Guid userId, CancellationToken ct)
     {
         var filter = await _filterRepository.GetByIdAsync(userId, asNoTracking: true, ct: ct);
         return filter ?? Filter.CreateDefault(userId);
     }
 
-    public async Task UpdateFilterAsync(Guid userId, Filter filter, CancellationToken ct)
+    public async Task UpdateFilterAsync(Filter filter, CancellationToken ct)
     {
-        var existingFilter = await _filterRepository.GetByIdAsync(userId, ct: ct);
+        var existingFilter = await _filterRepository.GetByIdAsync(filter.UserId, ct: ct);
         if (existingFilter == null)
         {
-            await _filterRepository.AddAsync(filter with { UserId = userId }, ct);
+            await _filterRepository.AddAsync(filter, ct);
         }
         else
         {
-            // Update existing filter properties
-            // Since it's a record, we can use 'with' but we need to ensure the repository tracks it or we replace it.
-            // EfCoreFilterRepository inherits from Repository<FeedContext, Filter>, which usually handles updates if the entity is tracked.
-            // However, records might need special handling depending on the Repository implementation.
-            // Let's assume a simple replacement if it's not tracking properly, or just update the tracked entity.
-
-            _filterRepository.Delete(existingFilter);
-            await _filterRepository.AddAsync(filter with { UserId = userId }, ct);
+            existingFilter.RadiusMeters = filter.RadiusMeters;
+            existingFilter.AgeFrom = filter.AgeFrom;
+            existingFilter.AgeTo = filter.AgeTo;
+            existingFilter.Gender = filter.Gender;
+            existingFilter.HobbyIds = filter.HobbyIds;
         }
 
         await _filterRepository.SaveChangesAsync(ct);
@@ -195,7 +218,8 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         await _feedUserRelationRepository.SaveChangesAndFlushMessagesAsync(ct);
     }
 
-    private async Task<FeedUserRelation> GetOrCreateUserRelation(Guid myUserId, Guid otherUserId, CancellationToken ct)
+    private async Task<FeedUserRelation> GetOrCreateUserRelation(Guid myUserId, Guid otherUserId,
+        CancellationToken ct)
     {
         var feedUserRelation = await _feedUserRelationRepository.GetAsync(myUserId, otherUserId, ct: ct);
         if (feedUserRelation == null)
@@ -255,5 +279,4 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
             });
         return true;
     }
-
 }

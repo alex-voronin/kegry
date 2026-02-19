@@ -25,6 +25,7 @@ public class FeedEndpoints : IEndpoints
         apiGroup.MapGet("/api/v1/feed/status", GetFeedStatus);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/rating", PostUserRating);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/invite", InviteUser);
+        apiGroup.MapPost("/api/v1/feed/{id:guid}/accept-invite", AcceptInviteUser);
         apiGroup.MapGet("/api/v1/feed/{id:guid}/invite-expiration", GetInviteExpiration);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/skip", SkipUser);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/block", BlockUser);
@@ -136,6 +137,16 @@ public class FeedEndpoints : IEndpoints
         return ApiResult.Empty;
     }
 
+    private static async Task<ApiResult.EmptyResult> AcceptInviteUser(
+        [FromRoute] Guid id,
+        ClaimsPrincipal user,
+        IUserActionsService userActionsService,
+        CancellationToken ct)
+    {
+        await userActionsService.AcceptInviteAsync(user.GetId(), id, ct);
+        return ApiResult.Empty;
+    }
+
     private static async Task<ApiResult<GetInviteExpirationResponse>> GetInviteExpiration(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
@@ -196,7 +207,7 @@ public class FeedEndpoints : IEndpoints
             request.Filter.Gender,
             request.Filter.HobbyIds);
 
-        await userActionsService.UpdateFilterAsync(user.GetId(), domainFilter, ct);
+        await userActionsService.UpdateFilterAsync(domainFilter, ct);
         return ApiResult.Empty;
     }
 

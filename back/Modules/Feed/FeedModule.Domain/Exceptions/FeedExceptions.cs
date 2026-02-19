@@ -32,4 +32,11 @@ public static class FeedExceptions
             HttpStatusCode.BadRequest,
             ErrorCode.ValidationError);
     }
+
+    public static HttpCodeException InviteExpired()
+    {
+        return new HttpCodeException("The invite has already expired",
+            HttpStatusCode.BadRequest,
+            ErrorCode.ValidationError);
+    }
 }

@@ -1,21 +1,70 @@
 using FeedModule.Domain.Exceptions;
-using FeedModule.Domain.ValueObjects;
 using SharedCore.ValueObjects;
 
 namespace FeedModule.Domain.Aggregates;
 
-public record Filter
+public class Filter
 {
     public const int MinAge = 18;
     public const int MaxDistanceMeters = 200_000;
     public const int MaxHobbies = 10;
 
+    private int _radiusMeters;
+    private int? _ageFrom;
+    private int? _ageTo;
+    private Guid[] _hobbyIds = [];
+
     public Guid UserId { get; init; }
-    public int RadiusMeters { get; init; }
-    public int? AgeFrom { get; init; }
-    public int? AgeTo { get; init; }
-    public Gender? Gender { get; init; }
-    public Guid[] HobbyIds { get; init; }
+
+    public int RadiusMeters
+    {
+        get => _radiusMeters;
+        set
+        {
+            if (value < 0 || value > MaxDistanceMeters)
+                throw FilterExceptions.InvalidDistance(MaxDistanceMeters / 1000);
+            _radiusMeters = value;
+        }
+    }
+
+    public int? AgeFrom
+    {
+        get => _ageFrom;
+        set
+        {
+            if (value.HasValue && value.Value < MinAge)
+                throw FilterExceptions.AgeTooLow(MinAge);
+            if (value.HasValue && _ageTo.HasValue && value.Value > _ageTo.Value)
+                throw FilterExceptions.InvalidAgeRange();
+            _ageFrom = value;
+        }
+    }
+
+    public int? AgeTo
+    {
+        get => _ageTo;
+        set
+        {
+            if (value.HasValue && value.Value < MinAge)
+                throw FilterExceptions.AgeTooLow(MinAge);
+            if (_ageFrom.HasValue && value.HasValue && _ageFrom.Value > value.Value)
+                throw FilterExceptions.InvalidAgeRange();
+            _ageTo = value;
+        }
+    }
+
+    public Gender? Gender { get; set; }
+
+    public Guid[] HobbyIds
+    {
+        get => _hobbyIds;
+        set
+        {
+            if (value.Length > MaxHobbies)
+                throw FilterExceptions.TooManyHobbies(MaxHobbies);
+            _hobbyIds = value;
+        }
+    }
 
     public Filter(
         Guid userId,
@@ -31,26 +80,6 @@ public record Filter
         AgeTo = ageTo;
         Gender = gender;
         HobbyIds = hobbyIds;
-
-        Validate();
-    }
-
-    private void Validate()
-    {
-        if (RadiusMeters < 0 || RadiusMeters > MaxDistanceMeters)
-            throw FilterExceptions.InvalidDistance(MaxDistanceMeters / 1000);
-
-        if (AgeFrom.HasValue && AgeFrom.Value < MinAge)
-            throw FilterExceptions.AgeTooLow(MinAge);
-
-        if (AgeTo.HasValue && AgeTo.Value < MinAge)
-            throw FilterExceptions.AgeTooLow(MinAge);
-
-        if (AgeFrom.HasValue && AgeTo.HasValue && AgeFrom.Value > AgeTo.Value)
-            throw FilterExceptions.InvalidAgeRange();
-
-        if (HobbyIds.Length > MaxHobbies)
-            throw FilterExceptions.TooManyHobbies(MaxHobbies);
     }
 
     public static Filter CreateDefault(Guid userId) =>

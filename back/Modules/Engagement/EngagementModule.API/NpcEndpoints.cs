@@ -53,13 +53,13 @@ public class NpcEndpoints : IEndpoints
         IStringLocalizer<NpcLocalization> localizer,
         CancellationToken ct)
     {
-        var user = await userRepository.GetByIdAsync(userClaims.GetId(), 
+        var user = await userRepository.GetByIdAsync(userClaims.GetId(),
             includes: [u => u.MetNpcs], ct: ct);
         if (user == null)
         {
             throw EngagementExceptions.UserNotFound(userClaims.GetId());
         }
-        
+
         var dtos = user.MetNpcs.Select(npc => new MetNpcDto(
             Id: npc.Id.ToString(),
             Name: localizer.GetString(npc.NameKey),
