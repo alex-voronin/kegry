@@ -63,7 +63,8 @@ public class NpcEndpoints : IEndpoints
         var dtos = user.MetNpcs.Select(npc => new MetNpcDto(
             Id: npc.Id.ToString(),
             Name: localizer.GetString(npc.NameKey),
-            AvatarUrl: npc.AvatarUrl
+            AvatarUrl: npc.AvatarUrl,
+            CoverUrl: npc.CoverUrl
         )).ToArray();
 
         return ApiResult<GetMetNpcsResponse>.Build(

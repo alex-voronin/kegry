@@ -351,6 +351,9 @@
       "comingSoon": "Coming soon",
       "noFriends": "No friends yet",
       "noImaginary": "No imaginary friends yet",
+      "imaginaryMenu": {
+        "show": "Show"
+      },
       "tabs": {
         "friends": "Friends",
         "imaginary": "Imaginary",

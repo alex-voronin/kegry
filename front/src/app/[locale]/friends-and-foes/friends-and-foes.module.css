@@ -35,3 +35,11 @@
 .emptyState {
   @apply text-secondary flex flex-1 items-center justify-center text-center;
 }
+
+.coverOverlay {
+  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/80;
+}
+
+.coverContainer {
+  @apply relative h-[80vh] w-[90vw] max-w-lg overflow-hidden rounded-2xl;
+}

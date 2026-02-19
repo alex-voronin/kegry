@@ -8,6 +8,7 @@ export interface MetNpcDto {
   id: string;
   name: string;
   avatarUrl: string;
+  coverUrl: string;
 }
 
 interface MetNpcsState {

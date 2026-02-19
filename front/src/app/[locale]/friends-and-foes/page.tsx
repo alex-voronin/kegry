@@ -16,7 +16,7 @@ import {
   BlockedUserDto,
 } from '@/store/use-blocked-users-store';
 import { useFriendsStore, FriendUserDto } from '@/store/use-friends-store';
-import { useMetNpcsStore } from '@/store/use-met-npcs-store';
+import { useMetNpcsStore, MetNpcDto } from '@/store/use-met-npcs-store';
 import { toast } from 'react-toastify';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { InviteExpiration } from '@/lib/invite-utils';
@@ -29,7 +29,8 @@ type SelectedUser = {
   firstName: string;
   lastName: string;
   avatarUrl: string | null;
-  type: 'friend' | 'blocked';
+  coverUrl?: string;
+  type: 'friend' | 'blocked' | 'imaginary';
 };
 
 export default function FriendsAndFoesPage() {
@@ -58,6 +59,10 @@ export default function FriendsAndFoesPage() {
 
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const [userToInvite, setUserToInvite] = useState<FriendUserDto | null>(null);
+  const [selectedNpcCover, setSelectedNpcCover] = useState<{
+    name: string;
+    coverUrl: string;
+  } | null>(null);
 
   const {
     blockedUsers,
@@ -187,6 +192,24 @@ export default function FriendsAndFoesPage() {
       ];
     }
 
+    if (selectedUser.type === 'imaginary') {
+      return [
+        {
+          icon: '/assets/friends-and-foes/user-profile-icon.svg',
+          label: t('imaginaryMenu.show'),
+          onClick: () => {
+            if (selectedUser.coverUrl) {
+              setSelectedNpcCover({
+                name: selectedUser.firstName,
+                coverUrl: selectedUser.coverUrl,
+              });
+            }
+            setSelectedUser(null);
+          },
+        },
+      ];
+    }
+
     // Blocked user menu
     return [
       {
@@ -292,7 +315,17 @@ export default function FriendsAndFoesPage() {
     return (
       <div className={styles.userList}>
         {metNpcs.map((npc) => (
-          <div key={npc.id} className={styles.userItem}>
+          <div
+            key={npc.id}
+            className={styles.userItem}
+            onClick={() =>
+              npc.coverUrl &&
+              setSelectedNpcCover({
+                name: npc.name,
+                coverUrl: npc.coverUrl,
+              })
+            }
+          >
             <div className={styles.userItemLeft}>
               <div className={styles.profileImageWrapper}>
                 <Image
@@ -308,6 +341,28 @@ export default function FriendsAndFoesPage() {
               <div className={styles.userBody}>
                 <span className={styles.userName}>{npc.name}</span>
               </div>
+            </div>
+
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedUser({
+                  id: npc.id,
+                  firstName: npc.name,
+                  lastName: '',
+                  avatarUrl: npc.avatarUrl,
+                  coverUrl: npc.coverUrl,
+                  type: 'imaginary',
+                });
+              }}
+            >
+              <Icon
+                src="/assets/common/more-icon.svg"
+                alt="Open menu"
+                width={24}
+                height={24}
+                priority
+              />
             </div>
           </div>
         ))}
@@ -424,6 +479,23 @@ export default function FriendsAndFoesPage() {
         onClose={() => setIsInviteDialogOpen(false)}
         onConfirm={handleInviteConfirm}
       />
+
+      {/* NPC Cover Image Viewer */}
+      {selectedNpcCover && (
+        <div
+          className={styles.coverOverlay}
+          onClick={() => setSelectedNpcCover(null)}
+        >
+          <div className={styles.coverContainer}>
+            <Image
+              src={selectedNpcCover.coverUrl}
+              alt={selectedNpcCover.name}
+              fill
+              className="object-cover"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
