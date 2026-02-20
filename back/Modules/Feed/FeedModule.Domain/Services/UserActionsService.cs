@@ -105,36 +105,34 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         await _feedUserRelationRepository.SaveChangesAsync(ct);
     }
 
-    public async Task InviteUserAsync(Guid myUserId, Guid otherUserId, DateTimeOffset expiresAt,
-        CancellationToken ct)
+    public Task InviteUserAsync(Guid myUserId, Guid otherUserId,
+        DateTimeOffset expiresAt, CancellationToken ct)
     {
-        var now = _timeProvider.GetUtcNow();
-        if (expiresAt > now.AddHours(48))
+        return InviteUserAsync(
+            myUserId: myUserId,
+            otherUserId: otherUserId,
+            expiresAt: expiresAt,
+            ignoreAvailableInvites: false,
+            ct: ct
+        );
+    }
+
+    public async Task InviteFriendAsync(Guid myUserId, Guid otherUserId, DateTimeOffset expiresAt, CancellationToken ct)
+    {
+        var meToOtherUserRelation = await _feedUserRelationRepository.GetAsync(myUserId, otherUserId,
+            asNoTracking: false, ct: ct);
+        if (meToOtherUserRelation == null || !meToOtherUserRelation.IsFriend)
         {
-            throw FeedExceptions.InviteExpirationTooFar();
+            throw FeedExceptions.UserIsNotFriend(otherUserId);
         }
 
-        var availableInvitesCount = await _userActionLimitsService.GetAvailableInvitesAsync(myUserId, ct);
-        if (availableInvitesCount <= 0)
-        {
-            throw FeedExceptions.NoAvailableInvitesLeft(myUserId);
-        }
-
-        try
-        {
-            await InviteUserUnsafeAsync(myUserId, otherUserId, expiresAt, ct);
-        }
-        catch (Exception e)
-        {
-            var isInMeeting = await _feedUserRelationRepository.IsInMeetingAsync(otherUserId, ct);
-            if (!isInMeeting)
-            {
-                throw;
-            }
-
-            Log.Information(e, "User {UserId} tried to invite {OtherUserId}, but he is in meeting already",
-                myUserId, otherUserId);
-        }
+        await InviteUserAsync(
+            myUserId: myUserId,
+            otherUserId: otherUserId,
+            expiresAt: expiresAt,
+            ignoreAvailableInvites: true,
+            ct: ct
+        );
     }
 
     public async Task AcceptInviteAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
@@ -146,21 +144,13 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
             throw FeedExceptions.InviteExpired();
         }
 
-        try
-        {
-            await InviteUserUnsafeAsync(myUserId, otherUserId, otherToMeUserRelation.InviteExpiresAt, ct);
-        }
-        catch (Exception e)
-        {
-            var isInMeeting = await _feedUserRelationRepository.IsInMeetingAsync(otherUserId, ct);
-            if (!isInMeeting)
-            {
-                throw;
-            }
-
-            Log.Information(e, "User {UserId} tried to invite {OtherUserId}, but he is in meeting already",
-                myUserId, otherUserId);
-        }
+        await InviteUserAsync(
+            myUserId: myUserId,
+            otherUserId: otherUserId,
+            expiresAt: otherToMeUserRelation.InviteExpiresAt,
+            ignoreAvailableInvites: true,
+            ct: ct
+        );
     }
 
     public async Task<Filter> GetFilterAsync(Guid userId, CancellationToken ct)
@@ -238,6 +228,41 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         }
 
         return feedUserRelation;
+    }
+
+    private async Task InviteUserAsync(Guid myUserId, Guid otherUserId,
+        DateTimeOffset expiresAt, bool ignoreAvailableInvites, CancellationToken ct)
+    {
+        var now = _timeProvider.GetUtcNow();
+        if (expiresAt > now.AddHours(48))
+        {
+            throw FeedExceptions.InviteExpirationTooFar();
+        }
+
+        if (!ignoreAvailableInvites)
+        {
+            var availableInvitesCount = await _userActionLimitsService.GetAvailableInvitesAsync(myUserId, ct);
+            if (availableInvitesCount <= 0)
+            {
+                throw FeedExceptions.NoAvailableInvitesLeft(myUserId);
+            }
+        }
+
+        try
+        {
+            await InviteUserUnsafeAsync(myUserId, otherUserId, expiresAt, ct);
+        }
+        catch (Exception e)
+        {
+            var isInMeeting = await _feedUserRelationRepository.IsInMeetingAsync(otherUserId, ct);
+            if (!isInMeeting)
+            {
+                throw;
+            }
+
+            Log.Information(e, "User {UserId} tried to invite {OtherUserId}, but he is in meeting already",
+                myUserId, otherUserId);
+        }
     }
 
     private async Task<bool> TryArrangeMeeting(

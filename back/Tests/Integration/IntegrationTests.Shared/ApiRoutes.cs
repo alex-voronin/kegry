@@ -40,6 +40,7 @@ public static class ApiRoutes
         public const string Filter = "/api/v1/feed/filter";
         public const string GetBlockedUsers = "/api/v1/feed/blocked-users";
         public const string GetFriends = "/api/v1/feed/friends";
+        public static string InviteFriend(string userId) => $"/api/v1/feed/friends/{userId}/invite";
         public static string RemoveFriend(string userId) => $"/api/v1/feed/{userId}/remove-friend";
         public const string DisplaySettings = "/api/v1/feed/settings";
     }

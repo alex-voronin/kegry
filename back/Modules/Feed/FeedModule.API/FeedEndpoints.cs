@@ -35,6 +35,7 @@ public class FeedEndpoints : IEndpoints
         apiGroup.MapPut("/api/v1/feed/filter", UpdateFilter);
         apiGroup.MapGet("/api/v1/feed/blocked-users", GetBlockedUsers);
         apiGroup.MapGet("/api/v1/feed/friends", GetFriends);
+        apiGroup.MapPost("/api/v1/feed/friends/{id:guid}/invite", InviteFriend);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/remove-friend", RemoveFriend);
         apiGroup.MapGet("/api/v1/feed/settings", GetSettings);
         apiGroup.MapPut("/api/v1/feed/settings", UpdateSettings);
@@ -133,7 +134,26 @@ public class FeedEndpoints : IEndpoints
         IUserActionsService userActionsService,
         CancellationToken ct)
     {
-        await userActionsService.InviteUserAsync(user.GetId(), id, request.ExpiresAt, ct);
+        await userActionsService.InviteUserAsync(
+            myUserId: user.GetId(),
+            otherUserId: id, 
+            expiresAt: request.ExpiresAt,
+            ct: ct);
+        return ApiResult.Empty;
+    }
+
+    private static async Task<ApiResult.EmptyResult> InviteFriend(
+        [FromRoute] Guid id,
+        [FromBody] InviteUserRequest request,
+        ClaimsPrincipal user,
+        IUserActionsService userActionsService,
+        CancellationToken ct)
+    {
+        await userActionsService.InviteFriendAsync(
+            myUserId: user.GetId(),
+            otherUserId: id, 
+            expiresAt: request.ExpiresAt,
+            ct: ct);
         return ApiResult.Empty;
     }
 

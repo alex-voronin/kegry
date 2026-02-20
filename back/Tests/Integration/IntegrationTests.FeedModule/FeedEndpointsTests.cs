@@ -1,14 +1,18 @@
 using System.Net.Http.Json;
 using FeedModule.API.Dto;
+using FeedModule.Domain.Aggregates;
 using FeedModule.Domain.Repositories;
 using FeedModule.Domain.Services;
 using FeedModule.Domain.ValueObjects;
+using FeedModule.Infrastructure.Persistence;
 using IntegrationTests.Shared;
 using IntegrationTests.Shared.HttpClients;
 using Microsoft.Extensions.DependencyInjection;
+using NotificationsModule.API.Dto;
 using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
 using Shouldly;
+using Wolverine.Tracking;
 
 namespace IntegrationTests.FeedModule;
 
@@ -727,5 +731,117 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var friendsAfter = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<FriendUserDto>>>(
             ApiRoutes.Feed.GetFriends);
         friendsAfter.Result.Data.Any(f => f.Id == Guid.Parse(userBId)).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task GivenTwoUsers_WhenUserInvitesFriendWithNoAvailableInvites_ThenSentInvite()
+    {
+        // 1. Create user A and user B
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("invite_friend_a@example.com", "Password123!");
+        var userAId = authA.UserId;
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("invite_friend_b@example.com", "Password123!");
+        var userBId = authB.UserId;
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Make them friends
+        // It's easier to do this via the database; otherwise, we would have to invite each other,
+        // delete the chat to reset the isInMeeting flags, and wait for notifications
+        // to ensure that the entire sequence has finished. 
+        using var scope = Factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<FeedContext>();
+        var relAToB = new FeedUserRelation
+        {
+            Id = Guid.CreateVersion7(),
+            MyUserId = Guid.Parse(userAId),
+            OtherUserId = Guid.Parse(userBId),
+            InviteExpiresAt = default,
+            InvitedAt = default,
+            SkippedAt = default,
+            LastSeenAt = default,
+            IsFriend = true,
+        };
+        var relBToA = new FeedUserRelation
+        {
+            Id = Guid.CreateVersion7(),
+            MyUserId = Guid.Parse(userBId),
+            OtherUserId = Guid.Parse(userAId),
+            InviteExpiresAt = default,
+            InvitedAt = default,
+            SkippedAt = default,
+            LastSeenAt = default,
+            IsFriend = true,
+        };
+        context.FeedUserRelations.AddRange(relAToB, relBToA);
+        await context.SaveChangesAsync();
+
+        // 3. Create enough candidate users for User B to exhaust all invites
+        Factory.ApiClient.SetAuth(authB);
+        var candidateIds = new List<string>();
+        for (var i = 0; i < FeedParameters.DefaultAvailableInvitesPerDay; i++)
+        {
+            var authCandidate = await Factory.AuthManager
+                .CreateAndLoginUserAsync($"accept_candidate{i}@example.com", "Password123!");
+            candidateIds.Add(authCandidate.UserId);
+            Factory.ApiClient.SetAuth(authCandidate);
+            await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+        }
+
+        // 4. User B exhausts all available invites
+        Factory.ApiClient.SetAuth(authB);
+        foreach (var candidateId in candidateIds)
+        {
+            var response = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                ApiRoutes.Feed.InviteUser(candidateId),
+                new InviteUserRequest(ComputeExpiresAtForNowOption()));
+            response.Success.ShouldBeTrue();
+        }
+
+        // 5. Confirm User B has 0 available invites
+        var status = await Factory.ApiClient.GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
+        status.Result.AvailableInvitesCount.ShouldBe(0);
+
+        // 6. User B invites User A
+        await Factory.Host.ExecuteAndWaitAsync(async () =>
+        {
+            Factory.ApiClient.SetAuth(authB);
+            var inviteResponse = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                ApiRoutes.Feed.InviteFriend(userAId),
+                new InviteUserRequest(ComputeExpiresAtForNowOption()));
+            inviteResponse.Success.ShouldBeTrue();
+        });
+
+        // 7. User A received the invite in notifications
+        Factory.ApiClient.SetAuth(authA);
+        var notificationsResponse = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
+            ApiRoutes.Notifications.GetNotificationsPaginated(0, 10));
+        notificationsResponse.Success.ShouldBeTrue();
+        notificationsResponse.Result.Data.Count.ShouldBe(1);
+        notificationsResponse.Result.Data.First().FromUserId.ShouldBe(Guid.Parse(userBId));
+    }
+
+    [Fact]
+    public async Task GivenNonFriendUser_WhenInvitingViaFriendEndpoint_ThenReturnForbidden()
+    {
+        // 1. Create User A and User B (Non-Friend)
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("a@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("b@example.com", "Password123!");
+        var userBId = authB.UserId;
+
+        // 2. User A tries to invite User C via Friend Endpoint
+        Factory.ApiClient.SetAuth(authA);
+        var request = new InviteUserRequest(DateTimeOffset.UtcNow.AddHours(1));
+        var response = await Factory.ApiClient
+            .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteFriend(userBId), request);
+
+        response.Success.ShouldBeFalse();
+        response.Errors.ShouldContain(e => e.Code == "ValidationError");
+        response.Errors.ShouldContain(e => e.Error.Contains("not a friend"));
     }
 }

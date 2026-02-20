@@ -39,4 +39,11 @@ public static class FeedExceptions
             HttpStatusCode.BadRequest,
             ErrorCode.ValidationError);
     }
+
+    public static HttpCodeException UserIsNotFriend(Guid id)
+    {
+        return new HttpCodeException($"User {id} is not a friend",
+            HttpStatusCode.Forbidden,
+            ErrorCode.ValidationError);
+    }
 }

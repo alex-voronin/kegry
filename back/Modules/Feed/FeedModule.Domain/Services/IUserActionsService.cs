@@ -9,6 +9,7 @@ public interface IUserActionsService
     Task UnblockUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct);
     Task SkipUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct);
     Task InviteUserAsync(Guid myUserId, Guid otherUserId, DateTimeOffset expiresAt, CancellationToken ct);
+    Task InviteFriendAsync(Guid myUserId, Guid otherUserId, DateTimeOffset expiresAt, CancellationToken ct);
     Task AcceptInviteAsync(Guid myUserId, Guid otherUserId, CancellationToken ct);
     Task IgnoreUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct);
     Task<Filter> GetFilterAsync(Guid userId, CancellationToken ct);
