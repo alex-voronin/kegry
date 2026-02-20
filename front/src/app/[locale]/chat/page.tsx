@@ -27,8 +27,45 @@ import EmojiPicker, {
   Theme,
   EmojiStyle,
 } from 'emoji-picker-react';
+import * as linkify from 'linkifyjs';
 
 const LOW_MESSAGE_WARNING_THRESHOLD = 10;
+
+const renderMessageText = (text: string) => {
+  const links = linkify.find(text, 'url');
+  if (links.length === 0) return text;
+
+  const elements = [];
+  let lastIndex = 0;
+
+  links.forEach((link, i) => {
+    if (link.start > lastIndex) {
+      elements.push(text.substring(lastIndex, link.start));
+    }
+    const href = link.href.startsWith('http')
+      ? link.href
+      : `https://${link.href}`;
+    elements.push(
+      <a
+        key={`link-${i}`}
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="wrap-break-words underline"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {link.value}
+      </a>,
+    );
+    lastIndex = link.end;
+  });
+
+  if (lastIndex < text.length) {
+    elements.push(text.substring(lastIndex));
+  }
+
+  return elements;
+};
 
 export default function ChatScreen() {
   const t = useTranslations('screens.chat');
@@ -396,7 +433,7 @@ export default function ChatScreen() {
                 msg.isMine ? styles.bubbleRight : styles.bubbleLeft
               }`}
             >
-              {msg.messageText}
+              {renderMessageText(msg.messageText)}
             </div>
             <span className={styles.timestamp}>
               {formatTime(msg.createdAt)}
