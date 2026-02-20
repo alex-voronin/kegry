@@ -104,7 +104,7 @@ export const useFriendsStore = create<FriendsState>()((set, get) => ({
   },
 
   inviteFriend: async (userId: string, when: InviteExpiration) => {
-    await apiClient.post(API_ENDPOINTS.FEED.INVITE(userId), {
+    await apiClient.post(API_ENDPOINTS.FEED.INVITE_FRIEND(userId), {
       expiresAt: computeExpiresAt(when),
     });
   },
