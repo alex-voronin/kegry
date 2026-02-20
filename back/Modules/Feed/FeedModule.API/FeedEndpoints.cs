@@ -136,7 +136,7 @@ public class FeedEndpoints : IEndpoints
     {
         await userActionsService.InviteUserAsync(
             myUserId: user.GetId(),
-            otherUserId: id, 
+            otherUserId: id,
             expiresAt: request.ExpiresAt,
             ct: ct);
         return ApiResult.Empty;
@@ -151,7 +151,7 @@ public class FeedEndpoints : IEndpoints
     {
         await userActionsService.InviteFriendAsync(
             myUserId: user.GetId(),
-            otherUserId: id, 
+            otherUserId: id,
             expiresAt: request.ExpiresAt,
             ct: ct);
         return ApiResult.Empty;

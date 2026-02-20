@@ -1,7 +1,9 @@
+using EngagementModule.Contracts.Events;
 using EngagementModule.Domain.Aggregates;
 using EngagementModule.Domain.Exceptions;
 using EngagementModule.Domain.Repositories;
 using SharedCore.Services.LifeTimes;
+using Wolverine;
 
 namespace EngagementModule.Domain.Services;
 
@@ -12,12 +14,18 @@ internal class NpcActionsService : INpcActionsService, IScoped
     private readonly INpcRepository _npcRepository;
     private readonly IUserRepository _userRepository;
     private readonly TimeProvider _timeProvider;
+    private readonly IMessageBus _bus;
 
-    public NpcActionsService(INpcRepository npcRepository, IUserRepository userRepository, TimeProvider timeProvider)
+    public NpcActionsService(
+        INpcRepository npcRepository,
+        IUserRepository userRepository,
+        TimeProvider timeProvider,
+        IMessageBus bus)
     {
         _npcRepository = npcRepository;
         _userRepository = userRepository;
         _timeProvider = timeProvider;
+        _bus = bus;
     }
 
     public async Task<Npc?> GetNpcAsync(Guid userId, CancellationToken ct)
@@ -54,6 +62,7 @@ internal class NpcActionsService : INpcActionsService, IScoped
             throw EngagementExceptions.NpcNotFound(npcId);
         }
 
+        await _bus.PublishAsync(new NpcInvitedEvent(NpcId: npcId, UserId: userId));
         if (user.MetNpcs.All(n => n.Id != npcId))
         {
             user.AddMetNpc(npc);

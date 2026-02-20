@@ -156,6 +156,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests.Engagement
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EngagementModule.Application", "Modules\Engagement\EngagementModule.Application\EngagementModule.Application.csproj", "{7E1E4743-6AC1-4363-BE41-DA5B6AF194EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EngagementModule.Contracts", "Modules\Engagement\EngagementModule.Contracts\EngagementModule.Contracts.csproj", "{96BC8C41-A34C-4473-B5D8-5F551E8E575F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -418,6 +420,10 @@ Global
 		{7E1E4743-6AC1-4363-BE41-DA5B6AF194EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E1E4743-6AC1-4363-BE41-DA5B6AF194EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E1E4743-6AC1-4363-BE41-DA5B6AF194EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96BC8C41-A34C-4473-B5D8-5F551E8E575F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96BC8C41-A34C-4473-B5D8-5F551E8E575F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96BC8C41-A34C-4473-B5D8-5F551E8E575F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96BC8C41-A34C-4473-B5D8-5F551E8E575F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1CBC6F16-BB39-4743-B8CB-50987C4B7F47} = {8B4727C6-1303-46DA-9FCC-E230A877807C}
@@ -494,5 +500,6 @@ Global
 		{3079734C-6B86-4178-BCD3-0DD1285D85D0} = {9C22A7D7-B90A-404C-9FEC-3E205D89B004}
 		{3AFC2984-F308-4400-88FE-0E358CB36C52} = {5B8B6067-4EF7-4AB2-8A2A-A77959E7BF2D}
 		{7E1E4743-6AC1-4363-BE41-DA5B6AF194EF} = {9C22A7D7-B90A-404C-9FEC-3E205D89B004}
+		{96BC8C41-A34C-4473-B5D8-5F551E8E575F} = {9C22A7D7-B90A-404C-9FEC-3E205D89B004}
 	EndGlobalSection
 EndGlobal
