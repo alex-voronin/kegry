@@ -99,20 +99,29 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
             origin: 0,
             standardDeviation: filter.RadiusMeters / 2.0);
 
-        // hobbies scoring
+        var hobbyCategoriesScore = 0.0;
         var hobbiesScore = 0.0;
         if (user.Hobbies.Count > 0)
         {
+            // hobbies scoring
             var hobbyIds = user.Hobbies.Select(hobby => hobby.Id).ToHashSet();
-            var matches = candidate.User.Hobbies
+            var hobbyMatches = candidate.User.Hobbies
                 .Count(h => hobbyIds.Contains(h.Id));
+            hobbiesScore = (double)hobbyMatches / hobbyIds.Count;
 
-            hobbiesScore = (double)matches / hobbyIds.Count;
+            // hobby categories scoring
+            var hobbyCategoryIds = user.Hobbies.Select(hobby => hobby.CategoryId).ToHashSet();
+            var categoriesMatches = candidate.User.Hobbies
+                .Select(hobby => hobby.CategoryId)
+                .Distinct()
+                .Count(candidateCategoryId => hobbyCategoryIds.Contains(candidateCategoryId));
+            hobbyCategoriesScore = (double)categoriesMatches / hobbyCategoryIds.Count;
         }
 
         // age scoring
         var daysDifference = Math.Abs(user.Birthday.ToDateTime(TimeOnly.MinValue).Ticks -
-                                      candidate.User.Birthday.ToDateTime(TimeOnly.MinValue).Ticks) / TimeSpan.TicksPerDay;
+                                      candidate.User.Birthday.ToDateTime(TimeOnly.MinValue).Ticks) /
+                             TimeSpan.TicksPerDay;
         var ageScore = MathFunctions.Gaussian(
             value: daysDifference / 365.0,
             origin: 0,
@@ -125,6 +134,7 @@ internal sealed class FeedScoringService : IFeedScoringService, IScoped
 
         return FeedParameters.DistanceWeightInScore * distanceScore +
                FeedParameters.HobbiesWeightInScore * hobbiesScore +
+               FeedParameters.HobbyCategoriesWeightInScore * hobbyCategoriesScore +
                FeedParameters.AgeWeightInScore * ageScore +
                FeedParameters.RatingWeightInScore * ratingScore;
     }

@@ -105,7 +105,11 @@ public class ContainerManager : IAsyncLifetime
         {
             DbAdapter = DbAdapter.Postgres,
             SchemasToInclude = ["feed", "security", "user_profile", "location", "notifications", "wolverine"],
-            TablesToIgnore = [new Table(schema: "user_profile", name: "hobbies")]
+            TablesToIgnore =
+            [
+                new Table(schema: "user_profile", name: "hobby_categories"),
+                new Table(schema: "user_profile", name: "hobbies")
+            ]
         });
     }
 }

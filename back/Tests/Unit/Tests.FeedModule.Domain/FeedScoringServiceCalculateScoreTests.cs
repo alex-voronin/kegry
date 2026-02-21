@@ -10,6 +10,7 @@ public class FeedScoringServiceCalculateScoreTests
 {
     private const double DistanceWeight = FeedParameters.DistanceWeightInScore;
     private const double HobbiesWeight = FeedParameters.HobbiesWeightInScore;
+    private const double HobbyCategoriesWeight = FeedParameters.HobbyCategoriesWeightInScore;
     private const double AgeWeight = FeedParameters.AgeWeightInScore;
     private const double RatingWeightInScore = FeedParameters.RatingWeightInScore;
     private const int FilterDistance = 30000;
@@ -19,11 +20,12 @@ public class FeedScoringServiceCalculateScoreTests
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var hobbyId = Guid.NewGuid();
+        var categoryId = Guid.NewGuid();
         var userProfile = new User
         {
             Id = Guid.NewGuid(),
             Birthday = today,
-            Hobbies = [new Hobby { Id = hobbyId, Name = "Test" }]
+            Hobbies = [new Hobby { Id = hobbyId, CategoryId = categoryId, Name = "Test" }]
         };
 
         var candidate = new FeedCandidate
@@ -35,7 +37,7 @@ public class FeedScoringServiceCalculateScoreTests
             {
                 Id = Guid.NewGuid(),
                 Birthday = today,
-                Hobbies = [new Hobby { Id = hobbyId, Name = "Test" }]
+                Hobbies = [new Hobby { Id = hobbyId, CategoryId = categoryId, Name = "Test" }]
             }
         };
 
@@ -44,7 +46,8 @@ public class FeedScoringServiceCalculateScoreTests
             candidate,
             Filter.CreateDefault(userProfile.Id));
 
-        var expectedScore = DistanceWeight + HobbiesWeight + AgeWeight + RatingWeightInScore;
+        var expectedScore = DistanceWeight + HobbiesWeight + HobbyCategoriesWeight + 
+                            AgeWeight + RatingWeightInScore;
         score.ShouldBe(expectedScore, tolerance: 0.0001);
     }
 
@@ -197,9 +200,9 @@ public class FeedScoringServiceCalculateScoreTests
     public void CalculateScore_HobbiesImpact_PartialMatch()
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        var h1 = new Hobby { Id = Guid.NewGuid(), Name = "H1" };
-        var h2 = new Hobby { Id = Guid.NewGuid(), Name = "H2" };
-        var h3 = new Hobby { Id = Guid.NewGuid(), Name = "H3" };
+        var h1 = new Hobby { Id = Guid.NewGuid(), CategoryId = Guid.NewGuid(), Name = "H1" };
+        var h2 = new Hobby { Id = Guid.NewGuid(), CategoryId = Guid.NewGuid(), Name = "H2" };
+        var h3 = new Hobby { Id = Guid.NewGuid(), CategoryId = Guid.NewGuid(), Name = "H3" };
 
         var userProfile = new User
         {
@@ -227,7 +230,53 @@ public class FeedScoringServiceCalculateScoreTests
             Filter.CreateDefault(userProfile.Id));
 
         var expectedHobbiesScore = 0.667;
-        var expectedTotal = HobbiesWeight * expectedHobbiesScore;
+        var expectedTotal = (HobbiesWeight + HobbyCategoriesWeight) * expectedHobbiesScore;
+        score.ShouldBe(expectedTotal, tolerance: 0.01);
+    }
+    
+    [Fact]
+    public void CalculateScore_HobbyCategoriesImpact_PartialMatch()
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var c1Id = Guid.NewGuid();
+        var c2Id = Guid.NewGuid();
+        var c3Id = Guid.NewGuid();
+
+        var userProfile = new User
+        {
+            Id = Guid.NewGuid(),
+            Birthday = today,
+            Hobbies = [
+                new Hobby { Id = Guid.NewGuid(), CategoryId = c1Id, Name = "U1H1" },
+                new Hobby { Id = Guid.NewGuid(), CategoryId = c1Id, Name = "U1H2" },
+                new Hobby { Id = Guid.NewGuid(), CategoryId = c2Id, Name = "U1H3" },
+            ]
+        };
+
+        var candidate = new FeedCandidate
+        {
+            DistanceMeters = 100000,
+            Rating = 0.5m,
+            LastSeenAt = DateTimeOffset.UtcNow - TimeSpan.FromDays(1),
+            User = new User
+            {
+                Id = Guid.NewGuid(),
+                Birthday = today.AddYears(20),
+                Hobbies = [
+                    new Hobby { Id = Guid.NewGuid(), CategoryId = c1Id, Name = "U2H1" },
+                    new Hobby { Id = Guid.NewGuid(), CategoryId = c3Id, Name = "U2H2" },
+                    new Hobby { Id = Guid.NewGuid(), CategoryId = c3Id, Name = "U2H3" },
+                ]
+            }
+        };
+
+        var score = FeedScoringService.CalculateScore(
+            userProfile,
+            candidate,
+            Filter.CreateDefault(userProfile.Id));
+
+        var expectedCategoriesScore = 0.5;
+        var expectedTotal = HobbyCategoriesWeight * expectedCategoriesScore;
         score.ShouldBe(expectedTotal, tolerance: 0.01);
     }
 }

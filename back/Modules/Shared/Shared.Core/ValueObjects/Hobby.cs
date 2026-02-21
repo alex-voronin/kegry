@@ -1,8 +1,20 @@
 namespace SharedCore.ValueObjects;
 
+public enum HobbyCategory
+{
+    SportAndFitness,
+    ActiveLeisure,
+    FoodAndDrinks,
+    Culture,
+    GeekStuff,
+    Vehicles,
+    Pets,
+    Crafts
+}
+
 public enum Hobby
 {
-    // sport
+    // sport & fitness
     Gym,
     Running,
     Swimming,
@@ -18,6 +30,14 @@ public enum Hobby
     Skating,
     Surfing,
     MartialArts,
+    Pickleball,
+    Meditation,
+    Stretching,
+    Powerlifting,
+    Bodybuilding,
+    TableTennis,
+    Golf,
+    Triathlon,
 
     // active leisure
     Camping,
@@ -31,32 +51,27 @@ public enum Hobby
     Sailing,
     RoadTrips,
     Picnics,
+    Kayaking,
+    Paddleboarding,
+    Backpacking,
+    ScubaDiving,
 
-    // Food
+    // Food & Drinks
     Cooking,
     Baking,
-    Sushi,
     Restaurants,
     Vegetarianism,
     StreetFood,
     Pastry,
     Bbq,
     Seafood,
-    SweetTooth,
-
-    // drinks
-    Wine,
-    Beer,
-    Cocktails,
-    Whiskey,
-    Gin,
-    Vodka,
-    Champagne,
-    Cider,
+    Desserts,
+    SocialDrinking,
     Coffee,
     Tea,
 
     // culture
+    Reading,
     Drawing,
     Photography,
     Dancing,
@@ -70,6 +85,9 @@ public enum Hobby
     Tattoos,
     Movies,
     Animation,
+    Podcasts,
+    Theatre,
+    Blogging,
 
     // Geek stuff
     Gaming,
@@ -77,9 +95,28 @@ public enum Hobby
     Chess,
     ItAndComputerScience,
     Anime,
-    Busyness,
+    Business,
+    Puzzles,
+    LanguageLearning,
+    Collecting,
+    Astronomy,
+    Comics,
 
-    // technical
+    // vehicles
     Cars,
-    Bikes
+    Motorcycles,
+
+    // pets
+    Dogs,
+    Cats,
+    Reptiles,
+    Birds,
+    Aquariums,
+
+    // crafts
+    Gardening,
+    Knitting,
+    Sewing,
+    ThreeDPrinting,
+    Diy
 }
