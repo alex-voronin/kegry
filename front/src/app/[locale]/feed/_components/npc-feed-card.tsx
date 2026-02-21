@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import ReactMarkdown from 'react-markdown';
 import styles from '../feed.module.css';
 import { NpcDto } from '@/store/use-npc-store';
 
@@ -28,7 +29,20 @@ export function NpcFeedBody({
 
       {monolog && (
         <div className={styles.monologBubble}>
-          <p className={styles.monologText}>{monolog}</p>
+          <div className={styles.monologText}>
+            <ReactMarkdown
+              components={{
+                em: ({ ...props }) => (
+                  <em className="text-secondary italic" {...props} />
+                ),
+                strong: ({ ...props }) => (
+                  <strong className="font-bold" {...props} />
+                ),
+              }}
+            >
+              {monolog}
+            </ReactMarkdown>
+          </div>
           <div className={styles.monologTail} />
         </div>
       )}

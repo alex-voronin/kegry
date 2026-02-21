@@ -170,7 +170,7 @@
       "distance": "Distance: {distance} {units}",
       "noProfiles": "No profiles found. Try changing the filters.",
       "locationRequired": "Location access is required to show profiles nearby. Please enable location in your browser settings.",
-      "inMeeting": "You're currently planning a meeting in chat, so you can't invite anyone just yet 😊 Please end the meeting first, then head back to the feed. You'll be able to invite people right away!",
+      "inMeeting": "You're currently planning a meeting, so you can't invite anyone just yet 😊 Please end the meeting first, then go back to the feed. Tap anywhere to open the chat.",
       "inviteExpirationDialog": {
         "message": "This person invited you for {when}. Would you like to match their time?",
         "accept": "Yes, {when}",
