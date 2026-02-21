@@ -70,6 +70,7 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
                     useSpheroid: false
                 )
             )
+            .Where(j => j.User.IsPublic)
             .Where(j => j.User.Id != user.Id)
             .Where(j => j.FeedUserRelation == null || !j.FeedUserRelation.IsBlocked)
             .Where(j => j.FeedUserRelation == null || !j.FeedUserRelation.IsInMeeting)

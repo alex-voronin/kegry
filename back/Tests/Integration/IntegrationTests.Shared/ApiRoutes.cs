@@ -48,6 +48,7 @@ public static class ApiRoutes
     public static class UserProfile
     {
         public const string Profile = "/api/v1/user-profile";
+        public const string Privacy = "/api/v1/user-profile/privacy";
         public const string AvatarUploadUrl = "/api/v1/user-profile/avatar/upload-url";
         public const string CoverUploadUrl = "/api/v1/user-profile/cover/upload-url";
     }

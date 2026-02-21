@@ -230,6 +230,10 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_public");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("text")

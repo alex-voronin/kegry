@@ -6,6 +6,7 @@ namespace FeedModule.Domain.Aggregates.ReadOnly;
 public class User
 {
     public Guid Id { get; init; }
+    public bool IsPublic { get; init; }
     public string FirstName { get; init; } = null!;
     public string LastName { get; init; } = null!;
     public string AvatarImageS3Key { get; init; } = null!;

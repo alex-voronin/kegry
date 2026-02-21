@@ -25,6 +25,7 @@ public class UserProfileEndpoints : IEndpoints
             .RequireAuthorization();
         apiGroup.MapPost("/api/v1/user-profile", CreateUserProfile);
         apiGroup.MapPatch("/api/v1/user-profile", PatchUserProfile);
+        apiGroup.MapPost("/api/v1/user-profile/privacy", UpdatePrivacy);
         apiGroup.MapGet("/api/v1/user-profile/{id:guid?}", GetUserProfile);
 
         // Presigned URLs are better obtained via POST requests because this is semantically correct:
@@ -130,6 +131,7 @@ public class UserProfileEndpoints : IEndpoints
 
         var dto = new UserProfileDto(
             Id: profile.Id.ToString(),
+            IsPublic: profile.IsPublic,
             FirstName: profile.FirstName,
             LastName: profile.LastName,
             Bio: profile.Bio,
@@ -141,6 +143,25 @@ public class UserProfileEndpoints : IEndpoints
         );
 
         return ApiResult<GetUserProfileResponse>.Build(new GetUserProfileResponse(dto));
+    }
+
+    private static async Task<ApiResult.EmptyResult> UpdatePrivacy(
+        [FromBody] UpdatePrivacyRequest request,
+        ClaimsPrincipal user,
+        IUserRepository repository,
+        CancellationToken ct)
+    {
+        var userId = user.GetId();
+        var userProfile = await repository.GetByIdAsync(userId, ct: ct);
+        if (userProfile == null)
+        {
+            throw UserProfileExceptions.ProfileNotFound(userId);
+        }
+
+        userProfile.IsPublic = request.IsPublic;
+        await repository.SaveChangesAsync(ct);
+
+        return ApiResult.Empty;
     }
 
     private static async Task<ApiResult<GetPresignedUrlResponse>> GetAvatarUploadUrl(

@@ -35,6 +35,7 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    is_public = table.Column<bool>(type: "boolean", nullable: false),
                     first_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     last_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     bio = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
@@ -236,6 +237,19 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                 schema: "user_profile",
                 table: "user_hobby_link",
                 column: "users_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_users_id",
+                schema: "user_profile",
+                table: "users",
+                column: "id",
+                filter: "\"is_deleted\" = false");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_users_is_public",
+                schema: "user_profile",
+                table: "users",
+                column: "is_public");
         }
 
         /// <inheritdoc />

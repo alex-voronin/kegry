@@ -12,6 +12,7 @@ using NotificationsModule.API.Dto;
 using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
 using Shouldly;
+using UserProfileModule.API.Dto;
 using Wolverine.Tracking;
 
 namespace IntegrationTests.FeedModule;
@@ -47,6 +48,38 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         feedResponse.Result.ShouldNotBeNull();
         feedResponse.Result.Feed.ShouldNotBeNull();
         feedResponse.Result.Feed.Length.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task GivenTwoUsers_WhenUserIsNonPublic_ThenTheyDisappearFromFeed()
+    {
+        // 1. Create two users and submit locations
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("user_a@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("user_b@example.com", "Password123!");
+        var userBId = authB.UserId;
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. User A sees User B in feed
+        Factory.ApiClient.SetAuth(authA);
+        var feedBefore = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        var firstFeedId = feedBefore.Result.Feed.First().Id;
+        firstFeedId.ShouldBe(Guid.Parse(userBId));
+
+        // 3. User B makes the account non-public
+        Factory.ApiClient.SetAuth(authB);
+        var request = new UpdatePrivacyRequest(IsPublic: false);
+        var updatePrivacyResponse = await Factory.ApiClient.PostAsync<UpdatePrivacyRequest, ApiResult.EmptyResult>(
+            ApiRoutes.UserProfile.Privacy, request);
+        updatePrivacyResponse.Success.ShouldBeTrue();
+
+        // 4. User A can't see User B in feed
+        Factory.ApiClient.SetAuth(authA);
+        var feedAfter = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        feedAfter.Result.Feed.ShouldBeEmpty();
     }
 
     [Fact]

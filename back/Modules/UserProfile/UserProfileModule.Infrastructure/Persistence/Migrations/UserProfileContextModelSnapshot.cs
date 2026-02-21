@@ -719,6 +719,10 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_public");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -727,6 +731,13 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_users");
+
+                    b.HasIndex("Id")
+                        .HasDatabaseName("ix_users_id")
+                        .HasFilter("\"is_deleted\" = false");
+
+                    b.HasIndex("IsPublic")
+                        .HasDatabaseName("ix_users_is_public");
 
                     b.ToTable("users", "user_profile");
                 });

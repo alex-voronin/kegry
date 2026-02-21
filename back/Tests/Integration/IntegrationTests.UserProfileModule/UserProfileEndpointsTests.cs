@@ -214,6 +214,32 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
     }
 
     [Fact]
+    public async Task GivenExistingProfile_WhenUserUpdatesPrivacy_ThenIsPublicUpdated()
+    {
+        // 1. Sign in and create profile
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authResponse);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Get profile before update
+        var getBeforeUpdateResponse = await Factory.ApiClient
+            .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
+        getBeforeUpdateResponse.Result.UserProfile.IsPublic.ShouldBeTrue(); // default is true
+
+        // 3. Update privacy
+        var request = new UpdatePrivacyRequest(IsPublic: false);
+        var response = await Factory.ApiClient.PostAsync<UpdatePrivacyRequest, ApiResult.EmptyResult>(
+            ApiRoutes.UserProfile.Privacy, request);
+        response.Success.ShouldBeTrue();
+
+        // 4. Check profile publicity
+        var getAfterUpdateResponse = await Factory.ApiClient
+            .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
+        getAfterUpdateResponse.Success.ShouldBeTrue();
+        getAfterUpdateResponse.Result.UserProfile.IsPublic.ShouldBeFalse();
+    }
+
+    [Fact]
     public async Task GivenNoProfile_WhenUserGetsProfile_ThenReturnsNotFound()
     {
         // 1. Sign in

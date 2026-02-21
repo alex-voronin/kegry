@@ -41,6 +41,11 @@ public class UserProfileContext : DbContext
                 .UsingEntity(j => j.ToTable("user_hobby_link"));
 
             builder.HasQueryFilter(u => !u.IsDeleted);
+
+            builder.HasIndex(u => u.IsPublic);
+            builder
+                .HasIndex(u => u.Id)
+                .HasFilter("\"is_deleted\" = false");
         });
 
         modelBuilder.Entity<HobbyCategory>(builder =>

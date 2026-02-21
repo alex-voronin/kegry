@@ -46,7 +46,7 @@ public class FeedScoringServiceCalculateScoreTests
             candidate,
             Filter.CreateDefault(userProfile.Id));
 
-        var expectedScore = DistanceWeight + HobbiesWeight + HobbyCategoriesWeight + 
+        var expectedScore = DistanceWeight + HobbiesWeight + HobbyCategoriesWeight +
                             AgeWeight + RatingWeightInScore;
         score.ShouldBe(expectedScore, tolerance: 0.0001);
     }
@@ -233,7 +233,7 @@ public class FeedScoringServiceCalculateScoreTests
         var expectedTotal = (HobbiesWeight + HobbyCategoriesWeight) * expectedHobbiesScore;
         score.ShouldBe(expectedTotal, tolerance: 0.01);
     }
-    
+
     [Fact]
     public void CalculateScore_HobbyCategoriesImpact_PartialMatch()
     {

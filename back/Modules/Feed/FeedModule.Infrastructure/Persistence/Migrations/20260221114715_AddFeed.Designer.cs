@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(FeedContext))]
-    [Migration("20260221110520_AddFeed")]
+    [Migration("20260221114715_AddFeed")]
     partial class AddFeed
     {
         /// <inheritdoc />
@@ -232,6 +232,10 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
+
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_public");
 
                     b.Property<string>("LastName")
                         .IsRequired()

@@ -8,6 +8,8 @@ public class User : ISoftDeletable<Guid>
 {
     public Guid Id { get; init; }
 
+    public bool IsPublic { get; set; } = true;
+
     public required string FirstName
     {
         get;
