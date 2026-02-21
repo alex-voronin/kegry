@@ -25,8 +25,12 @@ const selectStyles = {
     borderColor: 'transparent',
     minHeight: '44px',
     borderRadius: '0',
+    boxShadow: 'none',
     '@media (min-width: 500px)': {
       borderRadius: '12px',
+    },
+    '&:hover': {
+      borderColor: 'none',
     },
   }),
   menu: (base: Record<string, unknown>) => ({
@@ -52,7 +56,6 @@ const selectStyles = {
     ...base,
     color: '#A0A0A0',
     ':hover': {
-      backgroundColor: 'rgba(255,255,255,0.2)',
       color: '#ffffff',
     },
   }),
