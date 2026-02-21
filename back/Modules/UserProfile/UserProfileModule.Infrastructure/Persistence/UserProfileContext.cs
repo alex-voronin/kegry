@@ -42,7 +42,7 @@ public class UserProfileContext : DbContext
 
             builder.HasQueryFilter(u => !u.IsDeleted);
 
-            builder.HasIndex(u => u.IsPublic);
+            builder.HasIndex(u => new { u.Id, u.IsPublic });
             builder
                 .HasIndex(u => u.Id)
                 .HasFilter("\"is_deleted\" = false");

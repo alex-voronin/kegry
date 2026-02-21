@@ -573,6 +573,98 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
     }
 
     [Fact]
+    public async Task
+        GivenInvitedUser_WhenThisUserAcceptsDifferentInvite_ThenAvailableInvitesCountReverted()
+    {
+        // 1. Create users
+        var authMain = await Factory.AuthManager.CreateAndLoginUserAsync("user@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authMain);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("user_a@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("user_b@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Main invites A
+        Factory.ApiClient.SetAuth(authMain);
+        var response = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.InviteUser(authA.UserId),
+            new InviteUserRequest(ComputeExpiresAtForNowOption())
+        );
+        response.Success.ShouldBeTrue();
+
+        var currentStatus = await Factory.ApiClient
+            .GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
+        currentStatus.Success.ShouldBeTrue();
+        currentStatus.Result.AvailableInvitesCount.ShouldBe(FeedParameters.DefaultAvailableInvitesPerDay - 1);
+
+        // 3. Users A and B establish meeting
+        await Factory.Host.ExecuteAndWaitAsync(async () =>
+        {
+            Factory.ApiClient.SetAuth(authA);
+            var inviteAResponse = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                ApiRoutes.Feed.InviteUser(authB.UserId),
+                new InviteUserRequest(ComputeExpiresAtForNowOption())
+            );
+            inviteAResponse.Success.ShouldBeTrue();
+
+            Factory.ApiClient.SetAuth(authB);
+            var inviteBResponse = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                ApiRoutes.Feed.InviteUser(authA.UserId),
+                new InviteUserRequest(ComputeExpiresAtForNowOption())
+            );
+            inviteBResponse.Success.ShouldBeTrue();
+        });
+
+        // 4.Check available invites
+        Factory.ApiClient.SetAuth(authMain);
+        var currentStatusAfter = await Factory.ApiClient
+            .GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
+        currentStatusAfter.Success.ShouldBeTrue();
+        currentStatusAfter.Result.AvailableInvitesCount.ShouldBe(FeedParameters.DefaultAvailableInvitesPerDay);
+    }
+
+    [Fact]
+    public async Task
+       GivenInvitedUser_WhenThisUserBecomesPrivate_ThenAvailableInvitesCountReverted()
+    {
+        // 1. Create users
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("_user_a@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("_user_b@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. A invites B
+        Factory.ApiClient.SetAuth(authA);
+        var response = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.InviteUser(authB.UserId),
+            new InviteUserRequest(ComputeExpiresAtForNowOption())
+        );
+        response.Success.ShouldBeTrue();
+
+        // 3. Users B changes visibility
+        Factory.ApiClient.SetAuth(authB);
+        var request = new UpdatePrivacyRequest(IsPublic: false);
+        var updatePrivacyResponse = await Factory.ApiClient
+            .PostAsync<UpdatePrivacyRequest, ApiResult.EmptyResult>(ApiRoutes.UserProfile.Privacy, request);
+        updatePrivacyResponse.Success.ShouldBeTrue();
+
+        // 4. Check available invites
+        Factory.ApiClient.SetAuth(authA);
+        var currentStatusAfter = await Factory.ApiClient
+            .GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
+        currentStatusAfter.Success.ShouldBeTrue();
+        currentStatusAfter.Result.AvailableInvitesCount.ShouldBe(FeedParameters.DefaultAvailableInvitesPerDay);
+    }
+
+    [Fact]
     public async Task GivenTwoUsers_WhenMeetingEstablished_ThenBothUsersAppearInFriendsList()
     {
         // 1. Create two users and submit locations

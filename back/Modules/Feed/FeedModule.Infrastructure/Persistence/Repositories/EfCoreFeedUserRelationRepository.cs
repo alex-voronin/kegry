@@ -62,9 +62,19 @@ internal class EfCoreFeedUserRelationRepository : RepositoryOutbox<FeedContext, 
     {
         var start = new DateTimeOffset(date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
         var end = start.AddDays(1);
+
         return Context.FeedUserRelations
-            .CountAsync(r => r.MyUserId == userId &&
-                             r.InvitedAt >= start && r.InvitedAt < end, ct);
+            .Where(invite =>
+                invite.MyUserId == userId &&
+                invite.InvitedAt >= start && invite.InvitedAt < end &&
+                !invite.IsBlocked)
+            .Where(invite =>
+                !Context.FeedUserRelations
+                    .Any(meeting => meeting.MyUserId == invite.OtherUserId &&
+                                    meeting.IsInMeeting))
+            .Where(invite => !Context.Users
+                .Any(user => user.Id == invite.OtherUserId && !user.IsPublic))
+            .CountAsync(ct);
     }
 
     public async Task<(bool isInMeeting, Guid? userIdToRate)> GetFeedStatusAsync(Guid userId,

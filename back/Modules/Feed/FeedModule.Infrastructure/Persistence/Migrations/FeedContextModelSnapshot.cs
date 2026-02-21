@@ -106,6 +106,14 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("unq_feed_user_relation_state_active_meeting_per_user")
                         .HasFilter("\"is_in_meeting\" = true");
 
+                    b.HasIndex("MyUserId", "InvitedAt")
+                        .HasDatabaseName("IX_FeedUserRelations_MyUserId_InvitedAt");
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("MyUserId", "InvitedAt"), new[] { "OtherUserId", "IsBlocked" });
+
+                    b.HasIndex("MyUserId", "IsInMeeting")
+                        .HasDatabaseName("IX_FeedUserRelations_MyUserId_IsInMeeting");
+
                     b.HasIndex("MyUserId", "OtherUserId")
                         .IsUnique()
                         .HasDatabaseName("unq_feed_user_relation_pair");

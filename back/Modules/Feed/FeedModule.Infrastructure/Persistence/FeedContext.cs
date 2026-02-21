@@ -71,6 +71,14 @@ public class FeedContext : DbContext
             builder.HasIndex(r => new { r.MyUserId, r.OtherUserId })
                 .IsUnique()
                 .HasDatabaseName("unq_feed_user_relation_pair");
+            // Indexes to speedup EfCoreFeedUserRelationRepository.GetMadeInvitesCountAsync queries // 
+            builder.HasIndex(r => new { r.MyUserId, r.InvitedAt })
+                .HasDatabaseName("IX_FeedUserRelations_MyUserId_InvitedAt")
+                .IncludeProperties(r => new { r.OtherUserId, r.IsBlocked });
+
+            builder.HasIndex(r => new { r.MyUserId, r.IsInMeeting })
+                .HasDatabaseName("IX_FeedUserRelations_MyUserId_IsInMeeting");
+            ////////////////////////////////////////////////////////////////////////////////
 
             builder.Property(r => r.ReportMessage)
                 .HasMaxLength(ValidationParameters.MaxReportMessageLength);

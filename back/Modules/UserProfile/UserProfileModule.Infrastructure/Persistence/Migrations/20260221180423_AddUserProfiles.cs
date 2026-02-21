@@ -246,10 +246,10 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                 filter: "\"is_deleted\" = false");
 
             migrationBuilder.CreateIndex(
-                name: "ix_users_is_public",
+                name: "ix_users_id_is_public",
                 schema: "user_profile",
                 table: "users",
-                column: "is_public");
+                columns: new[] { "id", "is_public" });
         }
 
         /// <inheritdoc />

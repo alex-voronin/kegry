@@ -12,7 +12,7 @@ using UserProfileModule.Infrastructure.Persistence;
 namespace UserProfileModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(UserProfileContext))]
-    [Migration("20260221115255_AddUserProfiles")]
+    [Migration("20260221180423_AddUserProfiles")]
     partial class AddUserProfiles
     {
         /// <inheritdoc />
@@ -739,8 +739,8 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_users_id")
                         .HasFilter("\"is_deleted\" = false");
 
-                    b.HasIndex("IsPublic")
-                        .HasDatabaseName("ix_users_is_public");
+                    b.HasIndex("Id", "IsPublic")
+                        .HasDatabaseName("ix_users_id_is_public");
 
                     b.ToTable("users", "user_profile");
                 });

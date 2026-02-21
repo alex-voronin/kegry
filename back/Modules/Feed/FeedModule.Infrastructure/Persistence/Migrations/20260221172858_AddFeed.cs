@@ -86,6 +86,19 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_FeedUserRelations_MyUserId_InvitedAt",
+                schema: "feed",
+                table: "user_relations",
+                columns: new[] { "my_user_id", "invited_at" })
+                .Annotation("Npgsql:IndexInclude", new[] { "other_user_id", "is_blocked" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FeedUserRelations_MyUserId_IsInMeeting",
+                schema: "feed",
+                table: "user_relations",
+                columns: new[] { "my_user_id", "is_in_meeting" });
+
+            migrationBuilder.CreateIndex(
                 name: "ix_user_relations_invited_at",
                 schema: "feed",
                 table: "user_relations",
