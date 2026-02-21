@@ -15,6 +15,7 @@ export const PAGE_ROUTES = {
   USER_PROFILE: (userId: string) => `/profile/${userId}`,
   PROFILE_EDIT: '/profile/edit',
   PROFILE_COVER: '/profile/cover-image',
+  PRIVACY_SETTINGS: '/profile/privacy',
   EDIT_PROFILE: '/edit-profile',
   NOTIFICATIONS: '/notifications',
   CHAT: '/chat',
@@ -43,6 +44,7 @@ export const API_ENDPOINTS = {
   },
   USER_PROFILE: {
     PROFILE: '/api/v1/user-profile',
+    PRIVACY: '/api/v1/user-profile/privacy',
     AVATAR_UPLOAD_URL: '/api/v1/user-profile/avatar/upload-url',
     COVER_UPLOAD_URL: '/api/v1/user-profile/cover/upload-url',
   },

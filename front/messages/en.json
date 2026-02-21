@@ -277,6 +277,7 @@
       "title": "My Profile",
       "blockedUsers": "Blocked Users",
       "friendsAndFoes": "Friends & Foes",
+      "privacy": "Privacy",
       "coverImage": "Cover Image",
       "settings": "Settings",
       "permissions": "Permissions",
@@ -286,7 +287,12 @@
         "setAvatar": "Set Avatar",
         "setCover": "Set Cover",
         "logOut": "Log Out",
-        "delete": "Delete Account"
+        "delete": "Delete Account",
+        "makePrivate": "Make private",
+        "makePublic": "Make public",
+        "madePrivate": "Profile is now private",
+        "madePublic": "Profile is now public",
+        "privacyError": "Failed to update privacy settings"
       },
       "theirProfile": {
         "menu": {
@@ -302,6 +308,14 @@
         "buttonYes": "Yes",
         "buttonNo": "No"
       }
+    },
+    "privacy": {
+      "title": "Privacy",
+      "publicAccount": "Public account",
+      "publicAccountDesc": "When disabled, your profile will not be shown to others in the feed.",
+      "save": "Save",
+      "saved": "Settings saved",
+      "saveFailed": "Failed to save settings"
     },
     "settings": {
       "title": "Settings",

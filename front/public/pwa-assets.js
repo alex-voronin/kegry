@@ -36,6 +36,7 @@ const STATIC_ASSETS = [
   "/assets/permissions/check-mark.svg",
   "/assets/profile/edit-icon.svg",
   "/assets/profile/logout-icon.svg",
+  "/assets/profile/privacy-icon.svg",
   "/assets/profile/set-photo-icon.svg",
   "/favicon.ico",
   "/icons/icon-192x192.png",

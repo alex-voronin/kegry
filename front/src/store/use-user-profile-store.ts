@@ -23,6 +23,7 @@ export interface UserProfileDto {
   birthday: string; // ISO date string
   gender: Gender;
   hobbies: HobbyDto[];
+  isPublic: boolean;
 }
 
 export interface UserProfileState {
@@ -35,6 +36,7 @@ export interface UserProfileState {
   avatarBase64: string | null;
   coverBlob: Blob | null;
   selectedHobbyIds: string[];
+  isPublic: boolean;
   hasHydrated: boolean;
 
   // API state
@@ -50,12 +52,14 @@ export interface UserProfileState {
   setAvatarBase64: (avatar: string | null) => void;
   setCoverBlob: (cover: Blob | null) => void;
   setSelectedHobbyIds: (hobbyIds: string[]) => void;
+  setIsPublic: (isPublic: boolean) => void;
   setHasHydrated: (hydrated: boolean) => void;
 
   // API methods
   fetchMyProfile: () => Promise<void>;
   fetchUserProfile: (userId: string) => Promise<UserProfileDto | null>;
   patchProfile: (data: Partial<PatchProfileRequest>) => Promise<void>;
+  updatePrivacy: (isPublic: boolean) => Promise<void>;
 
   discardLocalProfileChanges: (serverProfile: UserProfileDto | null) => void;
   blockUser: (userId: string, reportMessage?: string) => Promise<void>;
@@ -72,6 +76,7 @@ export interface PatchProfileRequest {
   avatarImageUrl?: string;
   coverImageUrl?: string;
   hobbyIds?: string[];
+  isPublic?: boolean;
 }
 
 const initialState = {
@@ -83,6 +88,7 @@ const initialState = {
   avatarBase64: null as string | null,
   coverBlob: null as Blob | null,
   selectedHobbyIds: [] as string[],
+  isPublic: true,
   hasHydrated: false,
   serverProfile: null as UserProfileDto | null,
   isLoading: false,
@@ -101,6 +107,7 @@ export const useUserProfileStore = create<UserProfileState>()(
       setAvatarBase64: (avatarBase64) => set({ avatarBase64 }),
       setCoverBlob: (coverBlob) => set({ coverBlob }),
       setSelectedHobbyIds: (selectedHobbyIds) => set({ selectedHobbyIds }),
+      setIsPublic: (isPublic) => set({ isPublic }),
       setHasHydrated: (hydrated) => set({ hasHydrated: hydrated }),
 
       fetchMyProfile: async () => {
@@ -159,6 +166,30 @@ export const useUserProfileStore = create<UserProfileState>()(
         await get().fetchMyProfile();
       },
 
+      updatePrivacy: async (isPublic: boolean) => {
+        const response = await apiClient.post<ApiResult<void>>(
+          API_ENDPOINTS.USER_PROFILE.PRIVACY,
+          { isPublic },
+        );
+
+        if (!response.data.success) {
+          rethrowApiError(
+            new Error(response.data.errors[0]?.error),
+            'Failed to update privacy settings',
+          );
+        }
+
+        set((state) => ({
+          isPublic,
+          serverProfile: state.serverProfile
+            ? {
+                ...state.serverProfile,
+                isPublic,
+              }
+            : state.serverProfile,
+        }));
+      },
+
       discardLocalProfileChanges: (
         serverProfile: UserProfileDto | null = null,
       ) => {
@@ -170,6 +201,7 @@ export const useUserProfileStore = create<UserProfileState>()(
             bio: serverProfile.bio,
             gender: serverProfile.gender,
             selectedHobbyIds: serverProfile.hobbies.map((h) => h.id),
+            isPublic: serverProfile.isPublic,
           });
         }
       },
@@ -195,6 +227,7 @@ export const useUserProfileStore = create<UserProfileState>()(
         gender: state.gender,
         avatarBase64: state.avatarBase64,
         selectedHobbyIds: state.selectedHobbyIds,
+        isPublic: state.isPublic,
       }),
     },
   ),

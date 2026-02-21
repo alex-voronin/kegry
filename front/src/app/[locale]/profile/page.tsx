@@ -54,6 +54,7 @@ export default function ProfilePage() {
     isLoading,
     fetchMyProfile,
     patchProfile,
+    updatePrivacy,
     setAvatarBase64,
   } = useUserProfileStore();
 
@@ -86,6 +87,20 @@ export default function ProfilePage() {
   }, [fetchMyProfile, t]);
 
   const menuOptions = [
+    {
+      icon: '/assets/profile/privacy-icon.svg',
+      label: profile?.isPublic ? t('menu.makePrivate') : t('menu.makePublic'),
+      onClick: async () => {
+        try {
+          await updatePrivacy(!profile?.isPublic);
+          toast.success(
+            profile?.isPublic ? t('menu.madePrivate') : t('menu.madePublic'),
+          );
+        } catch (error) {
+          toast.error(t('menu.privacyError'));
+        }
+      },
+    },
     {
       icon: '/assets/profile/edit-icon.svg',
       label: t('menu.edit'),
@@ -298,6 +313,19 @@ export default function ProfilePage() {
               onClick={() => router.push(PAGE_ROUTES.SETTINGS)}
             >
               <span>{t('settings')}</span>
+              <Icon
+                src="/assets/common/disclosure-right-icon.svg"
+                alt="chevron"
+                width={10}
+                height={18}
+                priority
+              />
+            </div>
+            <div
+              className={cn(styles.field, styles.actionField)}
+              onClick={() => router.push(PAGE_ROUTES.PRIVACY_SETTINGS)}
+            >
+              <span>{t('privacy')}</span>
               <Icon
                 src="/assets/common/disclosure-right-icon.svg"
                 alt="chevron"
