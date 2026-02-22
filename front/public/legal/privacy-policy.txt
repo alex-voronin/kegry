@@ -17,11 +17,14 @@ We do not have a designated Data Protection Officer (DPO) as this is not require
 2.1.5 Interests and social preferences related to friendship
 2.1.6. Any text or content you post in profiles or activity descriptions
 
-2.2 Automatically Collected Information. We may collect:
-2.2.1 Approximate location (IP-based, not precise GPS)
+2.2. Automatically Collected Information. We may collect:
+2.2.1. Approximate location (IP-based, not precise GPS)
 2.2.2. Device information (type, OS, unique identifiers such as advertising ID)
 2.2.3. Usage and interaction data (e.g., profile views, invites sent/received, timestamps, app crashes)
 2.2.4. Log data (IP address, access times, browser/app version)
+
+2.3 Data Obtained via Google OAuth
+Our Service uses Google OAuth to allow you to sign in securely. When you authenticate using your Google Account, we collect your email address and a unique internal identifier. This information is used exclusively to identify your account, maintain your session, and send service-related communications. We use this data solely to provide and improve our services; we do not sell, rent, or trade your Google user data to third parties.
 
 3. Purpose of Processing
 We process your personal data to:
@@ -62,38 +65,42 @@ Analytics data is:
 6.2.3. Not used for advertising or tracking across other services
 We do not sell personal data.
 
-7. Data Storage and Retention
+7. Data Storage
 All personal data is stored and processed exclusively within the European Economic Area (EEA). We do not transfer data outside the EEA.
 Retention:
 7.1. Account data — as long as your account is active.
 7.2. After deletion request — irreversibly deleted or anonymised within 30 days (except backups for 90 days max, then purged; or if legally required, e.g., for disputes).
 7.3. Security logs / abuse reports — up to 12 months (then anonymised or deleted).
-You may delete your account at any time via app settings.
+Your data is stored securely and is only accessible by authorized personnel. We comply with Google’s Limited Use requirements, ensuring that the use of information received from Google APIs adheres to the Google API Service User Data Policy, including the Limited Use requirements.
+
+8. Data Deletion
+8.1. You can revoke our access to your Google data at any time via your Google Security Settings. 
+8.2. You may delete your account at any time via app settings.
 After deletion, your data will be permanently removed within a reasonable period, unless retention is required by law.
 
-8. Your Rights Under GDPR
+9. Your Rights Under GDPR
 You have the right to:
-8.1. Access your personal data
-8.2. Rectify inaccurate or incomplete data
-8.3. Request deletion (“right to be forgotten”)
-8.4. Restrict processing
-8.5. Object to processing
-8.6. Receive your data in a portable format
-8.7. Withdraw consent at any time
+9.1. Access your personal data
+9.2. Rectify inaccurate or incomplete data
+9.3. Request deletion (“right to be forgotten”)
+9.4. Restrict processing
+9.5. Object to processing
+9.6. Receive your data in a portable format
+9.7. Withdraw consent at any time
 You also have the right to lodge a complaint with your local supervisory authority.
 To exercise your rights, contact: contacts@wibblycorn.com
 
-9. Data Security and Breaches
+10. Data Security and Breaches
 We apply appropriate technical and organizational measures to protect personal data.
 In the event of a personal data breach that poses a risk to users, we will notify affected users and relevant authorities as required by law.
 
-10. Children’s Privacy
+11. Children’s Privacy
 Wibblycorn is intended for users aged 18 and older.
 We do not knowingly collect personal data from minors.
 If you believe a minor has provided data, contact us and we will delete it promptly.
 
-11. Changes to This Policy
+12. Changes to This Policy
 We may update this Privacy Policy. Material changes will be notified in-app (banner/pop-up) and/or by email at least 30 days in advance where feasible. Continued use after changes constitutes acceptance.
 
-12. International Data Transfers
+13. International Data Transfers
 We do not transfer personal data outside the EEA. All processing occurs in EU/EEA data centres.
