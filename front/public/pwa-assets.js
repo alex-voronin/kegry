@@ -39,7 +39,11 @@ const STATIC_ASSETS = [
   "/assets/profile/privacy-icon.svg",
   "/assets/profile/set-photo-icon.svg",
   "/favicon.ico",
-  "/icons/icon-192x192.png",
-  "/icons/icon-512x512.png",
+  "/icons/favicon-16.png",
+  "/icons/favicon-192.png",
+  "/icons/favicon-32.png",
+  "/icons/favicon-48.png",
+  "/icons/favicon-512.png",
+  "/icons/favicon.ico",
   "/manifest.json"
 ];
