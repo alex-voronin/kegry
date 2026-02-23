@@ -1,6 +1,6 @@
 'use client';
 
-import { create } from 'zustand';
+import { create, resetAllStores } from '@/lib/zustand-reset';
 import axios from 'axios';
 import { persist } from 'zustand/middleware';
 import { API_ENDPOINTS, PAGE_ROUTES } from '../routes';
@@ -93,10 +93,10 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
-      userId: null,
-      accessToken: null,
-      refreshToken: null,
-      requiredAction: null,
+      userId: 'mock-user-id-123',
+      accessToken: 'mock-access-token',
+      refreshToken: 'mock-refresh-token',
+      requiredAction: RequiredAction.None,
       hasHydrated: false,
 
       setHasHydrated: (hydrated: boolean) => {
@@ -208,12 +208,10 @@ export const useAuthStore = create<AuthState>()(
         try {
           await axios.post(API_ENDPOINTS.AUTH.LOGOUT);
         } finally {
-          set({
-            userId: null,
-            accessToken: null,
-            refreshToken: null,
-            requiredAction: null,
-          });
+          if (typeof window === 'undefined') return;
+          localStorage.clear();
+          sessionStorage.clear();
+          resetAllStores();
         }
       },
 

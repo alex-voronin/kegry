@@ -12,9 +12,6 @@ interface FcmStoreState {
   swRegistration: ServiceWorkerRegistration | null;
   unsubForeground: (() => void) | null;
 
-  // Transition guard
-  // (Module-level mutex used instead)
-
   // SW message listener reference for cleanup
   swMessageListener: ((event: MessageEvent) => void) | null;
 

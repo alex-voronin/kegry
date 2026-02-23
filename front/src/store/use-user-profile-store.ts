@@ -1,6 +1,6 @@
 'use client';
 
-import { create } from 'zustand';
+import { create } from '@/lib/zustand-reset';
 import { persist } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
