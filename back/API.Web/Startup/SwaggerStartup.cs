@@ -12,7 +12,7 @@ public class SwaggerStartup : IFeatureStartup
             c.CustomSchemaIds(type => type.FullName);
             c.SwaggerDoc("v1", new OpenApiInfo
             {
-                Title = "hoppyfy.me API",
+                Title = "hoppyfy API",
                 Version = "v1",
             });
         });
@@ -28,7 +28,7 @@ public class SwaggerStartup : IFeatureStartup
         app.UseSwagger();
         app.UseSwaggerUI(c =>
         {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "hoppyfy.me API");
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "hoppyfy API");
             c.RoutePrefix = string.Empty;
         });
     }

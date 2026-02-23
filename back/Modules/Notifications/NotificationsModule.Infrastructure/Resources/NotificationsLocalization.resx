@@ -37,7 +37,7 @@
         <value>New invitation!</value>
     </data>
     <data name="Email.UserInvited.Body" xml:space="preserve">
-        <value>You have received an invitation from another user! Open &lt;a href=&quot;https://hoppyfy.me/notifications&quot;&gt;Notifications&lt;/a&gt; to view details.</value>
+        <value>You have received an invitation from another user! Open &lt;a href=&quot;https://wibblycorn.com/notifications&quot;&gt;Notifications&lt;/a&gt; to view details.</value>
     </data>
     <data name="Email.ConfirmEmail.Subject" xml:space="preserve">
         <value>Confirm your email</value>
@@ -58,7 +58,7 @@
         <value>New message!</value>
     </data>
     <data name="Email.ChatMessageReceived.Title" xml:space="preserve">
-        <value>You have received a new message from {}! Open &lt;a href=&quot;https://hoppyfy.me/chat&quot;&gt;Chat&lt;/a&gt; to view details.</value>
+        <value>You have received a new message from {}! Open &lt;a href=&quot;https://wibblycorn.com/chat&quot;&gt;Chat&lt;/a&gt; to view details.</value>
     </data>
     <data name="Email.ChatMessageReceived.Body" xml:space="preserve">
         <value>New message!</value>
@@ -67,6 +67,6 @@
         <value>Reset your password</value>
     </data>
     <data name="Email.PasswordReset.Body" xml:space="preserve">
-        <value>You requested a password reset. Follow the link to reset your password: &lt;a href=&quot;https://hoppyfy.me/password-reset?email={0}&amp;token={1}&quot;&gt;https://hoppyfy.me/password-reset?email={0}&amp;token={1}&lt;/a&gt;</value>
+        <value>You requested a password reset. Follow the link to reset your password: &lt;a href=&quot;https://wibblycorn.com/password-reset?email={0}&amp;token={1}&quot;&gt;https://wibblycorn.com/password-reset?email={0}&amp;token={1}&lt;/a&gt;</value>
     </data>
 </root>

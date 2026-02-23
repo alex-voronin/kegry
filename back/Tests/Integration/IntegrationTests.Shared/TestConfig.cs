@@ -23,8 +23,8 @@ public static class TestConfig
     public static readonly AuthTokenConfig AuthToken = new AuthTokenConfig
     {
         Secret = "super-secret-key-that-is-at-least-32-chars-long!",
-        Issuer = "hoppyfy.me",
-        Audience = "hoppyfy.me",
+        Issuer = "hoppyfy",
+        Audience = "hoppyfy",
         AccessTokenDurationInDays = 1,
         RefreshTokenDurationInDays = 7,
         MaxSimultaneousLoggedInDevices = 5
