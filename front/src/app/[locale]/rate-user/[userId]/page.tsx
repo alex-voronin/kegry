@@ -82,7 +82,13 @@ export default function RateUserScreen({ params }: RateUserScreenProps) {
     }
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
+    if (!userProfile) {
+      console.log('No user to rate found, redirecting to feed.');
+      router.replace(PAGE_ROUTES.FEED);
+      return;
+    }
+    await submitRating(userProfile.id, null);
     router.replace(PAGE_ROUTES.FEED);
   };
 

@@ -126,6 +126,7 @@ export const useUserProfileStore = create<UserProfileState>()(
           }
 
           const profile = response.data.result.userProfile;
+          set({ serverProfile: profile });
           get().discardLocalProfileChanges(profile);
           set({ isLoading: false });
         } catch (error) {
@@ -193,15 +194,17 @@ export const useUserProfileStore = create<UserProfileState>()(
       discardLocalProfileChanges: (
         serverProfile: UserProfileDto | null = null,
       ) => {
-        if (serverProfile) {
+        const profile = serverProfile || get().serverProfile;
+        if (profile) {
           set({
-            firstName: serverProfile.firstName,
-            lastName: serverProfile.lastName,
-            birthday: serverProfile.birthday,
-            bio: serverProfile.bio,
-            gender: serverProfile.gender,
-            selectedHobbyIds: serverProfile.hobbies.map((h) => h.id),
-            isPublic: serverProfile.isPublic,
+            serverProfile: profile,
+            firstName: profile.firstName,
+            lastName: profile.lastName,
+            birthday: profile.birthday,
+            bio: profile.bio,
+            gender: profile.gender,
+            selectedHobbyIds: profile.hobbies.map((h) => h.id),
+            isPublic: profile.isPublic,
           });
         }
       },

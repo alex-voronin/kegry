@@ -312,7 +312,7 @@
     "privacy": {
       "title": "Privacy",
       "publicAccount": "Public account",
-      "publicAccountDesc": "When disabled, your profile will not be shown to others in the feed.",
+      "publicAccountDesc": "When disabled, your profile will not be shown to others in the feed",
       "save": "Save",
       "saved": "Settings saved",
       "saveFailed": "Failed to save settings"
@@ -342,6 +342,7 @@
       }
     },
     "coverImage": {
+      "instruction": "Tap anywhere to upload a new cover image",
       "save": "Save",
       "toast": {
         "coverNotSelected": "Please select a cover image",

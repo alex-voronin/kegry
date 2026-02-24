@@ -1,3 +1,11 @@
+import axios from 'axios';
+import apiClient from '@/lib/api-client';
+
+const uploadClient = axios.create({
+  baseURL: '',
+  headers: {},
+});
+
 /**
  * Resize an image to specific dimensions and return as Blob
  */
@@ -149,15 +157,13 @@ export async function uploadImage(
   blob: Blob,
   presignedUrlEndpoint: string,
 ): Promise<string> {
-  const axios = (await import('axios')).default;
-
   interface PresignedUrlResponse {
     uploadUrl: string;
     publicDownloadUrl: string;
   }
 
   // Get presigned URL
-  const presignedResponse = await axios.post<{
+  const presignedResponse = await apiClient.post<{
     success: boolean;
     result: PresignedUrlResponse;
     errors: { error: string }[];
@@ -172,7 +178,7 @@ export async function uploadImage(
   const { uploadUrl, publicDownloadUrl } = presignedResponse.data.result;
 
   // Upload to S3
-  await axios.put(uploadUrl, blob, {
+  await uploadClient.put(uploadUrl, blob, {
     headers: {
       'Content-Type': blob.type || 'image/jpeg',
     },

@@ -29,7 +29,7 @@ interface RateUserState {
   isSubmitting: boolean;
 
   fetchUserToRate: (userId: string) => Promise<void>;
-  submitRating: (userId: string, rating: number) => Promise<void>;
+  submitRating: (userId: string, rating: number | null) => Promise<void>;
   reset: () => void;
 }
 
@@ -58,7 +58,7 @@ export const useRateUserStore = create<RateUserState>((set) => ({
     }
   },
 
-  submitRating: async (userId: string, rating: number) => {
+  submitRating: async (userId: string, rating: number | null) => {
     set({ isSubmitting: true });
     try {
       await apiClient.post(API_ENDPOINTS.FEED.RATE(userId), {

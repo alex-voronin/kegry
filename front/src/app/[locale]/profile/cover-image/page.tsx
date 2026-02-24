@@ -86,6 +86,9 @@ export default function ProfileCoverImagePage() {
         />
 
         <div className={cn(styles.footer, coverBlob ? 'mt-auto' : '')}>
+          <div className="mb-4 text-center text-sm font-semibold">
+            {t('instruction')}
+          </div>
           <Button
             variant={ButtonVariant.Default}
             className={styles.saveButton}
