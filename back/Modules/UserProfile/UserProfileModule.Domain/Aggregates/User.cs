@@ -13,49 +13,72 @@ public class User : ISoftDeletable<Guid>
     public required string FirstName
     {
         get;
-        set => field = ValidateName(
-            fieldName: nameof(FirstName),
-            value: value,
-            maxLength: ValidationParameters.FirstNameMaxLength);
+        set => SetProperty(
+            ref field,
+            ValidateName(
+                fieldName: nameof(FirstName),
+                value: value,
+                maxLength: ValidationParameters.FirstNameMaxLength)
+        );
     } = null!;
 
     public required string LastName
     {
         get;
-        set => field = ValidateName(
-            fieldName: nameof(LastName),
-            value: value,
-            maxLength: ValidationParameters.LastNameMaxLength);
+        set => SetProperty(
+            ref field,
+            ValidateName(
+                fieldName: nameof(LastName),
+                value: value,
+                maxLength: ValidationParameters.LastNameMaxLength)
+        );
     } = null!;
 
     public required string Bio
     {
         get;
-        set => field = ValidateBio(
-            fieldName: nameof(Bio),
-            value: value,
-            maxLength: ValidationParameters.BioMaxLength);
+        set => SetProperty(
+            ref field,
+            ValidateBio(
+                fieldName: nameof(Bio),
+                value: value,
+                maxLength: ValidationParameters.BioMaxLength)
+        );
     } = null!;
 
     public required string AvatarImageS3Key
     {
         get;
-        set => field = ValidateS3Key(nameof(AvatarImageS3Key), value);
+        set => SetProperty(
+            ref field,
+            ValidateS3Key(nameof(AvatarImageS3Key), value)
+        );
     } = null!;
 
     public required string CoverImageS3Key
     {
         get;
-        set => field = ValidateS3Key(nameof(CoverImageS3Key), value);
+        set => SetProperty(
+            ref field,
+            ValidateS3Key(nameof(CoverImageS3Key), value)
+        );
     } = null!;
 
     public required DateOnly Birthday
     {
         get;
-        set => field = ValidateBirthday(nameof(Birthday), value);
+        set => SetProperty(
+            ref field,
+            ValidateBirthday(nameof(Birthday), value)
+        );
     }
 
-    public required Gender Gender { get; set; }
+    public required Gender Gender
+    {
+        get;
+        set => SetProperty(ref field, value);
+    }
+
     public bool IsDeleted { get; set; }
 
     private List<Hobby> _hobbies = new();
@@ -63,7 +86,19 @@ public class User : ISoftDeletable<Guid>
     public IReadOnlyList<Hobby> Hobbies
     {
         get => _hobbies;
-        set => _hobbies = ValidateHobbies(nameof(Hobbies), value);
+        set => SetProperty(
+            ref _hobbies,
+            ValidateHobbies(nameof(Hobbies), value)
+        );
+    }
+
+    public DateTimeOffset ChangedAt { get; private set; }
+
+    // ReSharper disable once RedundantAssignment
+    private void SetProperty<T>(ref T field, T value)
+    {
+        field = value;
+        ChangedAt = DateTimeOffset.UtcNow;
     }
 
     #region ================================= Validation =================================

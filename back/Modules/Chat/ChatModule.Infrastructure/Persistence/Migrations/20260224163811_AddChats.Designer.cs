@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ChatModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ChatContext))]
-    [Migration("20260115101207_AddChats")]
+    [Migration("20260224163811_AddChats")]
     partial class AddChats
     {
         /// <inheritdoc />
@@ -69,6 +69,10 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)")
                         .HasColumnName("avatar_image_s3key");
+
+                    b.Property<DateTimeOffset>("ChangedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("changed_at");
 
                     b.Property<string>("FirstName")
                         .IsRequired()

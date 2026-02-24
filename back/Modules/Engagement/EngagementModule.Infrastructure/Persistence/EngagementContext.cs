@@ -61,8 +61,8 @@ public class EngagementContext : DbContext
             {
                 Id = wibblyTobyKey.ToDeterministicGuid(),
                 NameKey = wibblyTobyKey,
-                AvatarUrl = "assets/npc/wibbly-toby-tavern/avatar.webp",
-                CoverUrl = "assets/npc/wibbly-toby-tavern/cover.webp",
+                AvatarUrl = "/assets/npc/wibbly-toby-tavern/avatar.webp",
+                CoverUrl = "/assets/npc/wibbly-toby-tavern/cover.webp",
                 MonologKey = "WibblyToby.Monolog"
             });
         });

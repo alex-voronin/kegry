@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(FeedContext))]
-    [Migration("20260221172858_AddFeed")]
+    [Migration("20260224163756_AddFeed")]
     partial class AddFeed
     {
         /// <inheritdoc />
@@ -222,6 +222,10 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("Birthday")
                         .HasColumnType("date")
                         .HasColumnName("birthday");
+
+                    b.Property<DateTimeOffset>("ChangedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("changed_at");
 
                     b.Property<string>("CoverImageS3Key")
                         .IsRequired()

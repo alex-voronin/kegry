@@ -9,7 +9,9 @@ namespace Shared.Infrastructure.Storage;
 public interface IS3StorageService
 {
     public string PublicFileUrlToS3Key(string publicFileUrl);
-    public string S3KeyToPublicFileUrl(string s3Key);
+
+    // Timestamp is required to bypass CDN cache after file has changed.
+    public string S3KeyToPublicFileUrl(string s3Key, DateTimeOffset? timestamp);
 
     public Task<string> GetPresignedUploadUrlAsync(
         string key,
@@ -42,9 +44,11 @@ internal class S3StorageService : IS3StorageService, ISingleton
         return publicFileUrl.Substring(_config.PublicUrl.Length + 1);
     }
 
-    public string S3KeyToPublicFileUrl(string s3Key)
+    public string S3KeyToPublicFileUrl(string s3Key, DateTimeOffset? timestamp)
     {
-        return $"{_config.PublicUrl}/{s3Key}";
+        return timestamp.HasValue
+            ? $"{_config.PublicUrl}/{s3Key}?v={timestamp.Value.ToUnixTimeSeconds()}"
+            : $"{_config.PublicUrl}/{s3Key}";
     }
 
     public Task<string> GetPresignedUploadUrlAsync(

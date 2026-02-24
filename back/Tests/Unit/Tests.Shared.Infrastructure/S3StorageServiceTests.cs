@@ -41,8 +41,9 @@ public class S3StorageServiceTests
     public void S3KeyToPublicFileUrl_ShouldReturnUrl_WhenKeyIsProvided()
     {
         var key = "folder/image.jpg";
+        var now = DateTimeOffset.Now;
+        var result = _sut.S3KeyToPublicFileUrl(key, now);
 
-        var result = _sut.S3KeyToPublicFileUrl(key);
-        result.ShouldBe($"{_config.PublicUrl}/{key}");
+        result.ShouldBe($"{_config.PublicUrl}/{key}?v={now.ToUnixTimeSeconds()}");
     }
 }

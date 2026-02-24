@@ -12,7 +12,7 @@ using UserProfileModule.Infrastructure.Persistence;
 namespace UserProfileModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(UserProfileContext))]
-    [Migration("20260221180423_AddUserProfiles")]
+    [Migration("20260224163745_AddUserProfiles")]
     partial class AddUserProfiles
     {
         /// <inheritdoc />
@@ -701,6 +701,10 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("Birthday")
                         .HasColumnType("date")
                         .HasColumnName("birthday");
+
+                    b.Property<DateTimeOffset>("ChangedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("changed_at");
 
                     b.Property<string>("CoverImageS3Key")
                         .IsRequired()

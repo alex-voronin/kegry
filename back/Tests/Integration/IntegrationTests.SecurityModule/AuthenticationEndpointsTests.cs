@@ -134,7 +134,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .SendEmailAsync(Arg.Do<Email>(e =>
             {
                 var match = Regex.Match(e.Body,
-                    @"<a href=""https:\/\/hoppyfy\.me\/password-reset\?email=.+&token=(.+)"">");
+                    @"<a href=""https:\/\/wibblycorn\.com\/password-reset\?email=.+&token=(.+)"">");
                 capturedToken = match.Groups[1].Value;
             }), Arg.Any<CancellationToken>());
 

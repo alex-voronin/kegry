@@ -43,7 +43,8 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                     cover_image_s3key = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     birthday = table.Column<DateOnly>(type: "date", nullable: false),
                     gender = table.Column<int>(type: "integer", nullable: false),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false),
+                    changed_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -27,7 +27,8 @@ public class UserProfileAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             Email = "test@example.com",
             FirstName = "John",
             LastName = "Doe",
-            AvatarImageS3Key = "avatar.png"
+            AvatarImageS3Key = "avatar.png",
+            ChangedAt = DateTimeOffset.Now
         };
 
         await Factory.Host
@@ -56,7 +57,8 @@ public class UserProfileAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             Email = "test@example.com",
             FirstName = "John",
             LastName = "Doe",
-            AvatarImageS3Key = "avatar.png"
+            AvatarImageS3Key = "avatar.png",
+            ChangedAt = DateTimeOffset.Now
         };
 
         await Factory.Host

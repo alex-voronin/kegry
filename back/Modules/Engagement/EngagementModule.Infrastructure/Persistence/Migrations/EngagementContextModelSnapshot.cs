@@ -61,8 +61,8 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = new Guid("533bcc76-39fa-567c-8c3e-be41f83e2247"),
-                            AvatarUrl = "assets/npc/wibbly-toby-tavern/avatar.webp",
-                            CoverUrl = "assets/npc/wibbly-toby-tavern/cover.webp",
+                            AvatarUrl = "/assets/npc/wibbly-toby-tavern/avatar.webp",
+                            CoverUrl = "/assets/npc/wibbly-toby-tavern/cover.webp",
                             MonologKey = "WibblyToby.Monolog",
                             NameKey = "WibblyToby.Name"
                         });

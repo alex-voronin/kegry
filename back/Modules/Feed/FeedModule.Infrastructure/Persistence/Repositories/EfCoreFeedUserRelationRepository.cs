@@ -95,7 +95,7 @@ internal class EfCoreFeedUserRelationRepository : RepositoryOutbox<FeedContext, 
             .AsNoTracking()
             .Where(r => r.MyUserId == userId && r.ShouldRate)
             .OrderByDescending(r => r.LastSeenAt)
-            .Select(r => r.OtherUserId)
+            .Select(r => (Guid?)r.OtherUserId)
             .FirstOrDefaultAsync(ct);
 
         return (false, userIdToRate);

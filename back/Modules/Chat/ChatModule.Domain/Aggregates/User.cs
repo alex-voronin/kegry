@@ -10,6 +10,7 @@ public class User : ISoftDeletable<Guid>
     public required string FirstName { get; set; } = null!;
     public required string LastName { get; set; } = null!;
     public required string AvatarImageS3Key { get; set; } = null!;
+    public required DateTimeOffset ChangedAt { get; set; }
 
     public ActiveChatUserLink? ChatLink { get; set; }
 }

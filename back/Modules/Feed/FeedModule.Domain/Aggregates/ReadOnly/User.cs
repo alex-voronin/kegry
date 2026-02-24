@@ -13,7 +13,8 @@ public class User
     public string CoverImageS3Key { get; init; } = null!;
     public DateOnly Birthday { get; init; }
     public Gender Gender { get; init; }
-    public bool IsDeleted { get; set; }
+    public bool IsDeleted { get; init; }
+    public DateTimeOffset ChangedAt { get; init; }
 
     public IReadOnlyList<Hobby> Hobbies { get; init; } = new List<Hobby>();
 

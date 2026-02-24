@@ -27,7 +27,8 @@ public static class UserProfileEventHandlers
                 Email = @event.Email,
                 FirstName = @event.FirstName,
                 LastName = @event.LastName,
-                AvatarImageS3Key = @event.AvatarImageS3Key
+                AvatarImageS3Key = @event.AvatarImageS3Key,
+                ChangedAt = @event.ChangedAt
             };
         }
         else
@@ -35,6 +36,7 @@ public static class UserProfileEventHandlers
             user.FirstName = @event.FirstName;
             user.LastName = @event.LastName;
             user.AvatarImageS3Key = @event.AvatarImageS3Key;
+            user.ChangedAt = @event.ChangedAt;
         }
 
         await userRepository.SaveAsync(user, ct);

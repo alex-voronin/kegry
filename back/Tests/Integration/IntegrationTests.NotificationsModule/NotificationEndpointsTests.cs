@@ -1,4 +1,5 @@
 using IntegrationTests.Shared;
+using IntegrationTests.Shared.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using NotificationModule.Domain.Aggregates;
@@ -66,7 +67,8 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         response.Result.TotalCount.ShouldBe(20);
         data[0].Text.ShouldBe("Notification 10");
         data[0].Type.ShouldBe(NotificationType.Invite);
-        data[0].AvatarImageUrl.ShouldBe(TestConfig.S3.PublicUrl + "/avatar.jpg");
+        data[0].AvatarImageUrl.ShouldNotBeNull();
+        data[0].AvatarImageUrl!.ShouldBeNewerOrTheSameS3Url(TestConfig.S3.PublicUrl + "/avatar.jpg");
     }
 
     [Fact]

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EngagementModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(EngagementContext))]
-    [Migration("20260219132819_AddEngagement")]
+    [Migration("20260224163821_AddEngagement")]
     partial class AddEngagement
     {
         /// <inheritdoc />
@@ -64,8 +64,8 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = new Guid("533bcc76-39fa-567c-8c3e-be41f83e2247"),
-                            AvatarUrl = "assets/npc/wibbly-toby-tavern/avatar.webp",
-                            CoverUrl = "assets/npc/wibbly-toby-tavern/cover.webp",
+                            AvatarUrl = "/assets/npc/wibbly-toby-tavern/avatar.webp",
+                            CoverUrl = "/assets/npc/wibbly-toby-tavern/cover.webp",
                             MonologKey = "WibblyToby.Monolog",
                             NameKey = "WibblyToby.Name"
                         });

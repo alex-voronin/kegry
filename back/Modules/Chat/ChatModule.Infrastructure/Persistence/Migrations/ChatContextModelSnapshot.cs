@@ -67,6 +67,10 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(128)")
                         .HasColumnName("avatar_image_s3key");
 
+                    b.Property<DateTimeOffset>("ChangedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("changed_at");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(100)

@@ -28,7 +28,7 @@ internal class ProfileImageService : IProfileImageService, ISingleton
             contentType: "image/jpeg",
             contentLength: contentLength,
             expires: TimeSpan.FromMinutes(10));
-        var publicUrl = _storageService.S3KeyToPublicFileUrl(key);
+        var publicUrl = _storageService.S3KeyToPublicFileUrl(key, null);
         return new StorageUrls(presignedUrl, publicUrl);
     }
 
@@ -41,14 +41,14 @@ internal class ProfileImageService : IProfileImageService, ISingleton
             contentType: "image/jpeg",
             contentLength: contentLength,
             expires: TimeSpan.FromMinutes(10));
-        var publicUrl = _storageService.S3KeyToPublicFileUrl(key);
+        var publicUrl = _storageService.S3KeyToPublicFileUrl(key, null);
         return new StorageUrls(presignedUrl, publicUrl);
     }
 
     private string GenerateKey(Guid userId, string fileName)
     {
         var hash = Hash(userId.ToString() + _config.KeySalt);
-        return $"user_{hash}/ {fileName}.jpg";
+        return $"user_{hash}/{fileName}.jpg";
     }
 
     private static string Hash(string input)

@@ -1,4 +1,5 @@
 using IntegrationTests.Shared;
+using IntegrationTests.Shared.Extensions;
 using Serilog;
 using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
@@ -53,19 +54,20 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 3. Check response
         response.Success.ShouldBeTrue();
-        var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
+        var getResponse =
+            await Factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
         getResponse.Success.ShouldBeTrue();
         getResponse.Result.UserProfile.ShouldSatisfyAllConditions(
             p => p.Id.ShouldBe(authResponse.UserId),
-             p => p.FirstName.ShouldBe(request.FirstName),
-             p => p.LastName.ShouldBe(request.LastName),
-             p => p.Bio.ShouldBe(request.Bio),
-             p => p.AvatarImageUrl.ShouldBe(request.AvatarImageUrl),
-             p => p.CoverImageUrl.ShouldBe(request.CoverImageUrl),
-             p => p.Birthday.ShouldBe(request.Birthday),
-             p => p.Gender.ShouldBe(request.Gender),
-             p => p.Hobbies.Select(h => h.Id).ShouldBe(request.HobbyIds, ignoreOrder: true)
-            );
+            p => p.FirstName.ShouldBe(request.FirstName),
+            p => p.LastName.ShouldBe(request.LastName),
+            p => p.Bio.ShouldBe(request.Bio),
+            p => p.AvatarImageUrl.ShouldBeNewerOrTheSameS3Url(request.AvatarImageUrl),
+            p => p.CoverImageUrl.ShouldBeNewerOrTheSameS3Url(request.CoverImageUrl),
+            p => p.Birthday.ShouldBe(request.Birthday),
+            p => p.Gender.ShouldBe(request.Gender),
+            p => p.Hobbies.Select(h => h.Id).ShouldBe(request.HobbyIds, ignoreOrder: true)
+        );
     }
 
     [Fact]
@@ -95,18 +97,20 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         {
             Log.Error(response.Errors.First().Error);
         }
+
         response.Success.ShouldBeTrue();
 
         // 3. Check response
-        var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
+        var getResponse =
+            await Factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
         getResponse.Success.ShouldBeTrue();
         getResponse.Result.UserProfile.ShouldSatisfyAllConditions(
             p => p.Id.ShouldBe(authResponse.UserId),
             p => p.FirstName.ShouldBe(request.FirstName),
             p => p.LastName.ShouldBe(request.LastName),
             p => p.Bio.ShouldBe(request.Bio),
-            p => p.AvatarImageUrl.ShouldBe(request.AvatarImageUrl),
-            p => p.CoverImageUrl.ShouldBe(request.CoverImageUrl),
+            p => p.AvatarImageUrl.ShouldBeNewerOrTheSameS3Url(request.AvatarImageUrl!),
+            p => p.CoverImageUrl.ShouldBeNewerOrTheSameS3Url(request.CoverImageUrl!),
             p => p.Birthday.ShouldBe(request.Birthday!.Value),
             p => p.Gender.ShouldBe(request.Gender!.Value),
             p => p.Hobbies.Select(h => h.Id).ShouldBe(request.HobbyIds, ignoreOrder: true)
@@ -144,6 +148,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         {
             Log.Error(response.Errors.First().Error);
         }
+
         response.Success.ShouldBeTrue();
 
         // 3. Check response
@@ -155,8 +160,8 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
             p => p.FirstName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.FirstName),
             p => p.LastName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.LastName),
             p => p.Bio.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Bio),
-            p => p.AvatarImageUrl.ShouldBe(request.AvatarImageUrl),
-            p => p.CoverImageUrl.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.CoverImageUrl),
+            p => p.AvatarImageUrl.ShouldBeNewerOrTheSameS3Url(request.AvatarImageUrl!),
+            p => p.CoverImageUrl.ShouldBeNewerOrTheSameS3Url(getBeforeUpdateResponse.Result.UserProfile.CoverImageUrl),
             p => p.Birthday.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Birthday),
             p => p.Gender.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Gender),
             p => p.Hobbies.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Hobbies, ignoreOrder: true)
@@ -194,6 +199,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         {
             Log.Error(response.Errors.First().Error);
         }
+
         response.Success.ShouldBeTrue();
 
         // 3. Check response
@@ -205,8 +211,9 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
             p => p.FirstName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.FirstName),
             p => p.LastName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.LastName),
             p => p.Bio.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Bio),
-            p => p.AvatarImageUrl.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.AvatarImageUrl),
-            p => p.CoverImageUrl.ShouldBe(request.CoverImageUrl),
+            p => p.AvatarImageUrl
+                .ShouldBeNewerOrTheSameS3Url(getBeforeUpdateResponse.Result.UserProfile.AvatarImageUrl),
+            p => p.CoverImageUrl.ShouldBeNewerOrTheSameS3Url(request.CoverImageUrl!),
             p => p.Birthday.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Birthday),
             p => p.Gender.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Gender),
             p => p.Hobbies.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Hobbies, ignoreOrder: true)
@@ -247,7 +254,8 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Get profile
-        var response = await Factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
+        var response =
+            await Factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
 
         // 3. Check response
         response.Success.ShouldBeFalse();
@@ -263,12 +271,14 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Get upload url
         var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
-            ApiRoutes.UserProfile.AvatarUploadUrl, new GetPresignedUrlRequest(ContentLength: Validation.MaxAvatarSizeBytes));
+            ApiRoutes.UserProfile.AvatarUploadUrl,
+            new GetPresignedUrlRequest(ContentLength: Validation.MaxAvatarSizeBytes));
 
         // 3. Check response
         response.Success.ShouldBeTrue();
         response.Result.UploadUrl.ShouldNotBeNullOrEmpty();
         response.Result.UploadUrl.ShouldContain("test-bucket");
+        response.Result.UploadUrl.ShouldNotContain("?v=");
     }
 
     [Fact]
@@ -280,12 +290,14 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Get upload url
         var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
-            ApiRoutes.UserProfile.CoverUploadUrl, new GetPresignedUrlRequest(ContentLength: Validation.MaxCoverSizeBytes));
+            ApiRoutes.UserProfile.CoverUploadUrl,
+            new GetPresignedUrlRequest(ContentLength: Validation.MaxCoverSizeBytes));
 
         // 3. Check response
         response.Success.ShouldBeTrue();
         response.Result.UploadUrl.ShouldNotBeNullOrEmpty();
         response.Result.UploadUrl.ShouldContain("test-bucket");
+        response.Result.UploadUrl.ShouldNotContain("?v=");
     }
 
     [Fact]
@@ -297,7 +309,8 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Get upload url
         var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
-            ApiRoutes.UserProfile.AvatarUploadUrl, new GetPresignedUrlRequest(ContentLength: Validation.MaxAvatarSizeBytes + 1));
+            ApiRoutes.UserProfile.AvatarUploadUrl,
+            new GetPresignedUrlRequest(ContentLength: Validation.MaxAvatarSizeBytes + 1));
 
         // 3. Check response
         response.Success.ShouldBeFalse();
@@ -314,7 +327,8 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Get upload url
         var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
-            ApiRoutes.UserProfile.CoverUploadUrl, new GetPresignedUrlRequest(ContentLength: Validation.MaxCoverSizeBytes + 1));
+            ApiRoutes.UserProfile.CoverUploadUrl,
+            new GetPresignedUrlRequest(ContentLength: Validation.MaxCoverSizeBytes + 1));
 
         // 3. Check response
         response.Success.ShouldBeFalse();

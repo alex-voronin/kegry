@@ -55,7 +55,7 @@ public class FeedEndpoints : IEndpoints
                     LastName: f.User.LastName,
                     Rating: f.Rating,
                     DistanceMeters: f.DistanceMeters,
-                    CoverImageUrl: storageService.S3KeyToPublicFileUrl(f.User.CoverImageS3Key),
+                    CoverImageUrl: storageService.S3KeyToPublicFileUrl(f.User.CoverImageS3Key, f.User.ChangedAt),
                     Hobbies: f.User.Hobbies.Select(h =>
                             new HobbyDto
                             (
@@ -336,7 +336,7 @@ public class FeedEndpoints : IEndpoints
             Id: user.Id,
             FirstName: user.FirstName,
             LastName: user.LastName,
-            AvatarUrl: storageService.S3KeyToPublicFileUrl(user.AvatarImageS3Key)
+            AvatarUrl: storageService.S3KeyToPublicFileUrl(user.AvatarImageS3Key, user.ChangedAt)
         );
     }
 
@@ -346,7 +346,7 @@ public class FeedEndpoints : IEndpoints
             Id: user.Id,
             FirstName: user.FirstName,
             LastName: user.LastName,
-            AvatarUrl: storageService.S3KeyToPublicFileUrl(user.AvatarImageS3Key)
+            AvatarUrl: storageService.S3KeyToPublicFileUrl(user.AvatarImageS3Key, user.ChangedAt)
         );
     }
 }

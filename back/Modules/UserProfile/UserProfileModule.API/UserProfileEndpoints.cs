@@ -135,8 +135,8 @@ public class UserProfileEndpoints : IEndpoints
             FirstName: profile.FirstName,
             LastName: profile.LastName,
             Bio: profile.Bio,
-            AvatarImageUrl: storageService.S3KeyToPublicFileUrl(profile.AvatarImageS3Key),
-            CoverImageUrl: storageService.S3KeyToPublicFileUrl(profile.CoverImageS3Key),
+            AvatarImageUrl: storageService.S3KeyToPublicFileUrl(profile.AvatarImageS3Key, profile.ChangedAt),
+            CoverImageUrl: storageService.S3KeyToPublicFileUrl(profile.CoverImageS3Key, profile.ChangedAt),
             Birthday: profile.Birthday,
             Gender: profile.Gender,
             Hobbies: profile.Hobbies.Select(h => new HobbyDto(Id: h.Id, Name: h.Name)).ToArray()
@@ -201,7 +201,8 @@ public class UserProfileEndpoints : IEndpoints
             Email = user.GetEmail(),
             FirstName = profile.FirstName,
             LastName = profile.LastName,
-            AvatarImageS3Key = profile.AvatarImageS3Key
+            AvatarImageS3Key = profile.AvatarImageS3Key,
+            ChangedAt = profile.ChangedAt,
         };
     }
 }

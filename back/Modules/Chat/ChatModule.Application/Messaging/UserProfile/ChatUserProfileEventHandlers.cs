@@ -25,7 +25,8 @@ public static class ChatUserProfileEventHandlers
                 Id = @event.UserId,
                 FirstName = @event.FirstName,
                 LastName = @event.LastName,
-                AvatarImageS3Key = @event.AvatarImageS3Key
+                AvatarImageS3Key = @event.AvatarImageS3Key,
+                ChangedAt = @event.ChangedAt
             };
         }
         else
@@ -33,6 +34,7 @@ public static class ChatUserProfileEventHandlers
             user.FirstName = @event.FirstName;
             user.LastName = @event.LastName;
             user.AvatarImageS3Key = @event.AvatarImageS3Key;
+            user.ChangedAt = @event.ChangedAt;
         }
 
         await userRepository.SaveAsync(user, ct);
