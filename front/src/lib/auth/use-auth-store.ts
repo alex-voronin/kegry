@@ -93,10 +93,10 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
-      userId: 'mock-user-id-123',
-      accessToken: 'mock-access-token',
-      refreshToken: 'mock-refresh-token',
-      requiredAction: RequiredAction.None,
+      userId: null,
+      accessToken: null,
+      refreshToken: null,
+      requiredAction: null,
       hasHydrated: false,
 
       setHasHydrated: (hydrated: boolean) => {
