@@ -15,6 +15,7 @@ import AvatarCropper from '@/components/ui/avatar-cropper';
 import { cn } from '@/lib/utils';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { openTawkChat } from '@/components/tawk-messenger';
+import { useAuthStore } from '@/lib/auth/use-auth-store';
 import {
   useUserProfileStore,
   calculateAge,
@@ -59,6 +60,7 @@ export default function ProfilePage() {
   } = useUserProfileStore();
 
   const { hobbies } = useHobbiesStore();
+  const logout = useAuthStore((state) => state.logout);
 
   const isInitialized = useRef(false);
   const [showPermissionsLink, setShowPermissionsLink] = useState(false);
@@ -85,6 +87,11 @@ export default function ProfilePage() {
     };
     loadProfile();
   }, [fetchMyProfile, t]);
+
+  const handleLogout = async () => {
+    await logout();
+    window.location.href = PAGE_ROUTES.LOGIN();
+  };
 
   const menuOptions = [
     {
@@ -119,7 +126,7 @@ export default function ProfilePage() {
     {
       icon: '/assets/profile/logout-icon.svg',
       label: t('menu.logOut'),
-      onClick: () => router.push(PAGE_ROUTES.LOGIN()),
+      onClick: handleLogout,
     },
     {
       icon: '/assets/common/delete-icon.svg',
@@ -380,7 +387,7 @@ export default function ProfilePage() {
             )}
             <div
               className={cn(styles.field, styles.actionField, 'mt-8')}
-              onClick={() => router.push(PAGE_ROUTES.LOGIN())}
+              onClick={handleLogout}
             >
               <span>{t('menu.logOut')}</span>
             </div>

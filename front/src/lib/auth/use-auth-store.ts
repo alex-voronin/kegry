@@ -209,9 +209,9 @@ export const useAuthStore = create<AuthState>()(
           await axios.post(API_ENDPOINTS.AUTH.LOGOUT);
         } finally {
           if (typeof window === 'undefined') return;
+          resetAllStores();
           localStorage.clear();
           sessionStorage.clear();
-          resetAllStores();
         }
       },
 

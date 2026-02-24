@@ -103,7 +103,7 @@ export default function ForgotPasswordPage() {
             disabled={loading}
             loading={loading}
           >
-            t('submit')
+            {t('submit')}
           </Button>
 
           <Link
