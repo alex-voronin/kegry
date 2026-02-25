@@ -60,7 +60,7 @@ export default function ProfilePage() {
   } = useUserProfileStore();
 
   const { hobbies } = useHobbiesStore();
-  const logout = useAuthStore((state) => state.logout);
+  const { logout, deleteAccount } = useAuthStore();
 
   const isInitialized = useRef(false);
   const [showPermissionsLink, setShowPermissionsLink] = useState(false);
@@ -91,6 +91,18 @@ export default function ProfilePage() {
   const handleLogout = async () => {
     await logout();
     window.location.href = PAGE_ROUTES.LOGIN();
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteAccount();
+      await handleLogout();
+      window.location.href = PAGE_ROUTES.LOGIN();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to delete account');
+    } finally {
+      setIsDeleteAccountModalOpen(false);
+    }
   };
 
   const menuOptions = [
@@ -410,8 +422,8 @@ export default function ProfilePage() {
         message={t('deleteAccountDialog.title')}
         primaryButtonText={t('deleteAccountDialog.buttonYes')}
         secondaryButtonText={t('deleteAccountDialog.buttonNo')}
-        onPrimaryAction={() => console.log('Account deletion is confirmed')}
-        onSecondaryAction={() => console.log('Account deletion is canceled')}
+        onPrimaryAction={handleDeleteAccount}
+        onSecondaryAction={() => setIsDeleteAccountModalOpen(false)}
       />
 
       {isCropperOpen && selectedImage && (

@@ -41,6 +41,7 @@ export const API_ENDPOINTS = {
     CONFIRM_PASSWORD_RESET: '/api/v1/auth/confirm-password-reset',
     RENEW_TOKENS: '/api/v1/auth/renew-tokens',
     GOOGLE: '/api/v1/auth/google',
+    DELETE_ACCOUNT: '/api/v1/auth/account',
   },
   USER_PROFILE: {
     PROFILE: '/api/v1/user-profile',

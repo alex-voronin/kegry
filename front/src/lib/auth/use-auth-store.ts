@@ -82,6 +82,7 @@ interface AuthState {
     encodedToken: string,
     newPassword: string,
   ) => Promise<void>;
+  deleteAccount: () => Promise<void>;
 
   // Internal/Helper action to update tokens
   setAuth: (auth: AuthResponse) => void;
@@ -248,6 +249,14 @@ export const useAuthStore = create<AuthState>()(
           }
         } catch (error) {
           rethrowApiError(error, 'Password reset failed');
+        }
+      },
+
+      deleteAccount: async () => {
+        try {
+          await axios.delete(API_ENDPOINTS.AUTH.DELETE_ACCOUNT);
+        } catch (error) {
+          rethrowApiError(error, 'Account deletion failed');
         }
       },
     }),
