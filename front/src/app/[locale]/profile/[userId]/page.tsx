@@ -92,7 +92,7 @@ export default function UserProfilePage() {
   const displayName = `${profile.firstName} ${profile.lastName}`;
   const age = profile.birthday ? calculateAge(profile.birthday) : null;
   const genderLabel = profile.gender
-    ? tGender(profile.gender === 'male' ? 'male' : 'female')
+    ? tGender(profile.gender === 'Male' ? 'male' : 'female')
     : '';
 
   return (

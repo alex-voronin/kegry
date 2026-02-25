@@ -14,7 +14,7 @@ export function NpcFeedBody({
     <>
       <div>
         <Image
-          src={npc.avatarUrl}
+          src={npc.coverUrl}
           alt={npc.name}
           fill
           className={styles.profileImage}

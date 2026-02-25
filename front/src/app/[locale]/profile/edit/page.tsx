@@ -68,8 +68,8 @@ export default function ProfileEditPage() {
   }, [serverProfile, hobbies.length, fetchMyProfile, fetchHobbies]);
 
   const GENDER_OPTIONS = [
-    { value: 'male' as const, label: tGender('male'), width: 75 },
-    { value: 'female' as const, label: tGender('female'), width: 75 },
+    { value: 'Male' as const, label: tGender('male'), width: 75 },
+    { value: 'Female' as const, label: tGender('female'), width: 75 },
   ];
 
   const selectedHobbiesOptions: HobbyOption[] = hobbies
@@ -101,7 +101,7 @@ export default function ProfileEditPage() {
 
       await patchProfile(patchData);
       toast.success(t('toast.saved'));
-      router.push(PAGE_ROUTES.PROFILE);
+      router.back();
     } catch (err: any) {
       toast.error(err.message || 'Failed to save profile');
     } finally {

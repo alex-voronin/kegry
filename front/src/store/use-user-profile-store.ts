@@ -7,7 +7,7 @@ import { rethrowApiError } from '@/lib/api-error';
 import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
-export type Gender = 'male' | 'female';
+export type Gender = 'Male' | 'Female';
 
 export interface HobbyDto {
   id: string;

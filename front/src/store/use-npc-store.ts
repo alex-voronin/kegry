@@ -23,6 +23,7 @@ export interface NpcDto {
   id: string;
   name: string;
   avatarUrl: string;
+  coverUrl: string;
 }
 
 interface NpcState {

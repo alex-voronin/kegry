@@ -204,7 +204,7 @@ export default function ProfilePage() {
 
   const userGender = profile?.gender || localGender;
   const genderLabel = userGender
-    ? tGender(userGender === 'male' ? 'male' : 'female')
+    ? tGender(userGender === 'Male' ? 'male' : 'female')
     : '';
 
   const userBio = profile?.bio || localBio;

@@ -39,8 +39,8 @@ export default function OnboardingPage() {
   const { hobbies, selectedHobbyIds, setSelectedHobbyIds } = useHobbiesStore();
 
   const GENDER_OPTIONS = [
-    { value: 'male' as const, label: tGender('male'), width: 75 },
-    { value: 'female' as const, label: tGender('female'), width: 75 },
+    { value: 'Male' as const, label: tGender('male'), width: 75 },
+    { value: 'Female' as const, label: tGender('female'), width: 75 },
   ];
 
   const selectedHobbies: HobbyOption[] = hobbies

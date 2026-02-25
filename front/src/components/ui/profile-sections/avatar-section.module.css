@@ -11,3 +11,7 @@
 .avatarImage {
   @apply object-contain;
 }
+
+.hint {
+  @apply text-secondary absolute top-[164px] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-sm;
+}
