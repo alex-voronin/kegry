@@ -137,11 +137,13 @@ public class User : ISoftDeletable<Guid>
         return value;
     }
 
-    private static List<Hobby> ValidateHobbies(string fieldName, IEnumerable<Hobby> value)
+    private static List<Hobby> ValidateHobbies(string fieldName, IReadOnlyList<Hobby> value)
     {
         Validation.ThrowIfInvalid(fieldName,
-            isValid: () => value.Count() <= ValidationParameters.MaxHobbiesCount,
-            validationError: "Maximum number of Hobbies is 10");
+            isValid: () => value.Count >= ValidationParameters.MinHobbiesCount &&
+                           value.Count <= ValidationParameters.MaxHobbiesCount,
+            validationError: $"Number of hobbies must be between " +
+                             $"{ValidationParameters.MinHobbiesCount} and {ValidationParameters.MaxHobbiesCount}");
         return value.ToList();
     }
 

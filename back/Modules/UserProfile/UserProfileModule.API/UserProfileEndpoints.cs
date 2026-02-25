@@ -75,7 +75,7 @@ public class UserProfileEndpoints : IEndpoints
         CancellationToken ct)
     {
         var userId = user.GetId();
-        var userProfile = await repository.GetByIdAsync(userId, ct: ct);
+        var userProfile = await repository.GetByIdAsync(userId, includes:[u => u.Hobbies], ct: ct);
         if (userProfile == null)
         {
             throw UserProfileExceptions.ProfileNotFound(userId);
@@ -99,8 +99,18 @@ public class UserProfileEndpoints : IEndpoints
 
         if (request.HobbyIds != null)
         {
-            var hobbyStubs = await hobbyService.BuildHobbyStubs(request.HobbyIds, ct);
-            userProfile.Hobbies = hobbyStubs;
+            var contextHobbies = userProfile.Hobbies
+                .Where(h => request.HobbyIds.Contains(h.Id)).
+                ToArray();
+            var contextHobbyIds = contextHobbies
+                .Select(h => h.Id)
+                .ToHashSet();
+            var nonContextHobbyIds = request.HobbyIds
+                .Where(id => !contextHobbyIds.Contains(id))
+                .ToArray();
+            var nonContextStubs = await hobbyService.BuildHobbyStubs(nonContextHobbyIds, ct);
+            var newHobbies = contextHobbies.Concat(nonContextStubs).ToArray();
+            userProfile.Hobbies = newHobbies;
         }
 
         var @event = BuildUserChangedEvent(user, userProfile, false);
@@ -139,7 +149,10 @@ public class UserProfileEndpoints : IEndpoints
             CoverImageUrl: storageService.S3KeyToPublicFileUrl(profile.CoverImageS3Key, profile.ChangedAt),
             Birthday: profile.Birthday,
             Gender: profile.Gender,
-            Hobbies: profile.Hobbies.Select(h => new HobbyDto(Id: h.Id, Name: h.Name)).ToArray()
+            Hobbies: profile.Hobbies
+                .OrderBy(h => h.Name)
+                .Select(h => new HobbyDto(Id: h.Id, Name: h.Name))
+                .ToArray()
         );
 
         return ApiResult<GetUserProfileResponse>.Build(new GetUserProfileResponse(dto));

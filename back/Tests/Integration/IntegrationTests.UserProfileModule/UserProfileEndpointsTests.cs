@@ -79,7 +79,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Update profile
-        var request = new PatchUserProfileRequest(
+        var firstRequest = new PatchUserProfileRequest(
             FirstName: "UpdatedName",
             LastName: "UpdatedLastName",
             Bio: "Updated bio",
@@ -91,29 +91,38 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         );
 
         var response = await Factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
-            ApiRoutes.UserProfile.Profile, request);
-
-        if (!response.Success)
-        {
-            Log.Error(response.Errors.First().Error);
-        }
-
+            ApiRoutes.UserProfile.Profile, firstRequest);
         response.Success.ShouldBeTrue();
 
-        // 3. Check response
+        // 3. Update profile again
+        var secondRequest = new PatchUserProfileRequest(
+            FirstName: "UpdatedName",
+            LastName: "UpdatedLastName",
+            Bio: "Updated bio2",
+            AvatarImageUrl: TestConfig.S3.PublicUrl + "/updated.jpg",
+            CoverImageUrl: TestConfig.S3.PublicUrl + "/updated_cover.jpg",
+            Birthday: new DateOnly(1991, 2, 2),
+            Gender: Gender.Female,
+            HobbyIds: ["tennis".ToDeterministicGuid()]
+        );
+        var secondResponse = await Factory.ApiClient
+            .PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(ApiRoutes.UserProfile.Profile, secondRequest);
+        secondResponse.Success.ShouldBeTrue();
+
+        // 4. Check response
         var getResponse =
             await Factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
         getResponse.Success.ShouldBeTrue();
         getResponse.Result.UserProfile.ShouldSatisfyAllConditions(
             p => p.Id.ShouldBe(authResponse.UserId),
-            p => p.FirstName.ShouldBe(request.FirstName),
-            p => p.LastName.ShouldBe(request.LastName),
-            p => p.Bio.ShouldBe(request.Bio),
-            p => p.AvatarImageUrl.ShouldBeNewerOrTheSameS3Url(request.AvatarImageUrl!),
-            p => p.CoverImageUrl.ShouldBeNewerOrTheSameS3Url(request.CoverImageUrl!),
-            p => p.Birthday.ShouldBe(request.Birthday!.Value),
-            p => p.Gender.ShouldBe(request.Gender!.Value),
-            p => p.Hobbies.Select(h => h.Id).ShouldBe(request.HobbyIds, ignoreOrder: true)
+            p => p.FirstName.ShouldBe(secondRequest.FirstName),
+            p => p.LastName.ShouldBe(secondRequest.LastName),
+            p => p.Bio.ShouldBe(secondRequest.Bio),
+            p => p.AvatarImageUrl.ShouldBeNewerOrTheSameS3Url(secondRequest.AvatarImageUrl!),
+            p => p.CoverImageUrl.ShouldBeNewerOrTheSameS3Url(secondRequest.CoverImageUrl!),
+            p => p.Birthday.ShouldBe(secondRequest.Birthday!.Value),
+            p => p.Gender.ShouldBe(secondRequest.Gender!.Value),
+            p => p.Hobbies.Select(h => h.Id).ShouldBe(secondRequest.HobbyIds, ignoreOrder: true)
         );
     }
 

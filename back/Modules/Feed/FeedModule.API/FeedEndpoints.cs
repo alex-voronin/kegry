@@ -56,13 +56,9 @@ public class FeedEndpoints : IEndpoints
                     Rating: f.Rating,
                     DistanceMeters: f.DistanceMeters,
                     CoverImageUrl: storageService.S3KeyToPublicFileUrl(f.User.CoverImageS3Key, f.User.ChangedAt),
-                    Hobbies: f.User.Hobbies.Select(h =>
-                            new HobbyDto
-                            (
-                                Id: h.Id,
-                                Name: h.Name
-                            )
-                        )
+                    Hobbies: f.User.Hobbies
+                        .OrderBy(h => h.Name)
+                        .Select(h => new HobbyDto(Id: h.Id, Name: h.Name))
                         .ToArray()
                 )
             )
