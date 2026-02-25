@@ -9,11 +9,6 @@ const LOCATION_UPDATE_INTERVAL = 60 * 60 * 1000; // 1 hour
 const ENABLE_HIGH_ACCURACY = false;
 const LOCATION_LAST_SENT_KEY = 'location_last_sent';
 
-interface GeolocationCoordinates {
-  latitude: number;
-  longitude: number;
-}
-
 function getLastSentTimestamp(): number {
   if (typeof window === 'undefined') return 0;
   const stored = localStorage.getItem(LOCATION_LAST_SENT_KEY);
@@ -34,52 +29,66 @@ function isRateLimited(): boolean {
 
 export type LocationResult = 'success' | 'denied' | 'error';
 
+let activeRequest: Promise<LocationResult> | null = null;
+
 /**
  * Requests location and sends to server if rate limit allows.
  * Returns a promise with the result status.
  */
 export function SendLocationWithRateLimit(): Promise<LocationResult> {
-  if (typeof window === 'undefined' || !navigator.geolocation) {
-    return Promise.resolve('error');
+  if (activeRequest) {
+    return activeRequest;
   }
 
-  // Check rate limit before requesting location
-  if (isRateLimited()) {
-    return Promise.resolve('success');
-  }
+  activeRequest = (async (): Promise<LocationResult> => {
+    try {
+      if (typeof window === 'undefined' || !navigator.geolocation) {
+        return 'error';
+      }
 
-  return new Promise((resolve) => {
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        // Double-check rate limit (could have been updated by another tab)
-        if (!isRateLimited()) {
-          try {
-            await apiClient.post(API_ENDPOINTS.LOCATION.UPDATE, {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            });
-            setLastSentTimestamp(Date.now());
-            resolve('success');
-          } catch (error) {
-            console.error('Failed to send location:', error);
-            resolve('error');
-          }
-        } else {
-          resolve('success');
-        }
-      },
-      (error) => {
-        console.warn('Location error:', error.message);
-        // Error code 1 = PERMISSION_DENIED
-        resolve(error.code === 1 ? 'denied' : 'error');
-      },
-      {
-        enableHighAccuracy: ENABLE_HIGH_ACCURACY,
-        timeout: 10000,
-        maximumAge: 0,
-      },
-    );
-  });
+      // Check rate limit before requesting location
+      if (isRateLimited()) {
+        return 'success';
+      }
+
+      return await new Promise<LocationResult>((resolve) => {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            // Double-check rate limit (could have been updated by another tab)
+            if (!isRateLimited()) {
+              try {
+                await apiClient.post(API_ENDPOINTS.LOCATION.UPDATE, {
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                });
+                setLastSentTimestamp(Date.now());
+                resolve('success');
+              } catch (error) {
+                console.error('Failed to send location:', error);
+                resolve('error');
+              }
+            } else {
+              resolve('success');
+            }
+          },
+          (error) => {
+            console.warn('Location error:', error.message);
+            // Error code 1 = PERMISSION_DENIED
+            resolve(error.code === 1 ? 'denied' : 'error');
+          },
+          {
+            enableHighAccuracy: ENABLE_HIGH_ACCURACY,
+            timeout: 10000,
+            maximumAge: 300000,
+          },
+        );
+      });
+    } finally {
+      activeRequest = null;
+    }
+  })();
+
+  return activeRequest;
 }
 
 export function useBackgroundLocation() {

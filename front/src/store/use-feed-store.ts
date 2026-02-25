@@ -37,6 +37,7 @@ interface FeedState {
   unseenNotificationCount: number;
   isInMeeting: boolean;
   availableInvitesCount: number;
+  isFetching: boolean;
 
   fetchFeedStatus: () => Promise<FeedStatusResponse>;
   fetchFeed: () => Promise<void>;
@@ -66,6 +67,7 @@ const initialState = {
   unseenNotificationCount: 0,
   isInMeeting: false,
   availableInvitesCount: 0,
+  isFetching: false,
 };
 
 export const useFeedStore = create<FeedState>()(
@@ -100,9 +102,11 @@ export const useFeedStore = create<FeedState>()(
           now - state.lastFetchedAt < CACHE_TTL_MS &&
           state.feed.length >= MIN_PROFILES_THRESHOLD;
 
-        if (isCacheValid) {
+        if (isCacheValid || state.isFetching) {
           return;
         }
+
+        set({ isFetching: true });
 
         const hasStaleData = state.feed.length > 0;
 
@@ -147,8 +151,9 @@ export const useFeedStore = create<FeedState>()(
             });
           }
         } catch (error) {
-          set({ isLoading: false });
           rethrowApiError(error, 'Failed to fetch feed');
+        } finally {
+          set({ isFetching: false });
         }
       },
 
@@ -161,11 +166,14 @@ export const useFeedStore = create<FeedState>()(
         }
 
         if (
-          state.lastFetchedAt &&
-          now - state.lastFetchedAt < FETCH_COOLDOWN_MS
+          (state.lastFetchedAt &&
+            now - state.lastFetchedAt < FETCH_COOLDOWN_MS) ||
+          state.isFetching
         ) {
           return;
         }
+
+        set({ isFetching: true });
 
         try {
           const response = await apiClient.get<
@@ -186,6 +194,8 @@ export const useFeedStore = create<FeedState>()(
           });
         } catch {
           // Silent failure for background refresh
+        } finally {
+          set({ isFetching: false });
         }
       },
 

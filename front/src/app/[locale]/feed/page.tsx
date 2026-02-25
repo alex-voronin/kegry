@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
@@ -172,11 +172,12 @@ export default function FeedScreen() {
   }, [currentItem?.kind === 'user' ? currentItem.profile.id : null]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [isInitialized, setIsInitialized] = useState(false);
+  const initializationStarted = useRef(false);
 
   useEffect(() => {
     const initializeFeed = async () => {
-      if (!hasHydrated) return;
-      if (isInitialized) return;
+      if (!hasHydrated || initializationStarted.current) return;
+      initializationStarted.current = true;
 
       try {
         // Send location first, then fetch feed
