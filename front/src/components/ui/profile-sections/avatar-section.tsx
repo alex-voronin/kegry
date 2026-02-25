@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import styles from './avatar-section.module.css';
 import { useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import AvatarCropper from '../avatar-cropper';
 import { blobToBase64 } from '@/store/use-user-profile-store';
 
@@ -15,6 +16,7 @@ export const AvatarSection = ({
   avatarBase64,
   onAvatarChange,
 }: AvatarSectionProps) => {
+  const t = useTranslations('components.profile-sections.avatar');
   const inputRef = useRef<HTMLInputElement>(null);
   const [imageToCropSrc, setImageToCropSrc] = useState<string | null>(null);
   const [localAvatarUrl, setLocalAvatarUrl] = useState<string | null>(null);
@@ -66,6 +68,7 @@ export const AvatarSection = ({
           height={192}
           className={styles.avatarImage}
         />
+        <div className={styles.hint}>{t('selectAvatar')}</div>
       </div>
     </div>
   );

@@ -435,6 +435,9 @@
         "firstName": "First Name",
         "lastName": "Last Name"
       },
+      "avatar": {
+        "selectAvatar": "Select your avatar"
+      },
       "birthday": {
         "title": "Birthday",
         "placeholder": "Birthday"
@@ -449,7 +452,7 @@
       },
       "bio": {
         "title": "Bio",
-        "placeholder": "Write about yourself...",
+        "placeholder": "Write about yourself... (optional)",
         "maxLength": 200
       },
       "hobbies": {
