@@ -87,6 +87,15 @@ apiClient.interceptors.response.use(
     // Skip retry/refresh for auth endpoints to avoid loops
     const isAuthEndpoint = originalRequest.url?.includes('/auth/');
 
+    // This allows business logic to handle API-level errors directly
+    if (
+      error.response?.status !== 401 &&
+      error.response?.data &&
+      (error.response.data as any).success === false
+    ) {
+      return error.response;
+    }
+
     // --- Token Refresh on 401 ---
     if (
       error.response?.status === 401 &&
