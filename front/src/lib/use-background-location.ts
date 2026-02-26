@@ -37,7 +37,9 @@ let activeRequest: Promise<LocationResult> | null = null;
  */
 export function SendLocationWithRateLimit(): Promise<LocationResult> {
   if (activeRequest) {
-    return activeRequest;
+    return activeRequest.finally(() => {
+      activeRequest = null;
+    });
   }
 
   activeRequest = (async (): Promise<LocationResult> => {
