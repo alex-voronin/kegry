@@ -17,6 +17,7 @@ import { ModalDialog } from '@/components/ui/modal-dialog';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { useFeedFiltersStore, FilterDto } from '@/store/use-feed-filters-store';
 import { useSettingsStore, DistanceUnits } from '@/store/use-settings-store';
+import { useHobbiesStore } from '@/store/use-hobbies-store';
 import {
   metersToKilometers,
   metersToMiles,
@@ -38,6 +39,7 @@ const MAX_HOBBIES = 10;
 export default function FiltersScreen() {
   const t = useTranslations('screens.filters');
   const tCommon = useTranslations('common');
+  const tHobbies = useTranslations('components.profile-sections.hobbies');
   const router = useRouter();
   const {
     filters: serverFilters,
@@ -46,6 +48,12 @@ export default function FiltersScreen() {
     isLoading,
     hasHydrated,
   } = useFeedFiltersStore();
+
+  const {
+    hobbies: storeHobbies,
+    fetchHobbies,
+    isLoading: isHobbiesLoading,
+  } = useHobbiesStore();
 
   const distanceUnits = useSettingsStore((state) => state.distanceUnits);
   const isMiles = distanceUnits === DistanceUnits.Miles;
@@ -122,16 +130,16 @@ export default function FiltersScreen() {
 
     const loadFilters = async () => {
       try {
-        await fetchFilters();
+        await Promise.all([fetchFilters(), fetchHobbies()]);
       } catch (err: any) {
         toast.error(err.message || t('loadFailed'));
       }
     };
     loadFilters();
-  }, [hasHydrated, fetchFilters, t]);
+  }, [hasHydrated, fetchFilters, fetchHobbies, t]);
 
   useEffect(() => {
-    if (serverFilters && !isLoaded.current) {
+    if (serverFilters && storeHobbies.length > 0 && !isLoaded.current) {
       const distanceValue = isMiles
         ? metersToMiles(serverFilters.radiusMeters)
         : metersToKilometers(serverFilters.radiusMeters);
@@ -139,16 +147,25 @@ export default function FiltersScreen() {
       // Round to 1 decimal place to avoid long floats
       const roundedDistance = Math.round(distanceValue * 10) / 10;
 
+      // Map hobby IDs to options with labels
+      const hobbyOptions = serverFilters.hobbyIds.map((id) => {
+        const hobby = storeHobbies.find((h) => h.id === id);
+        return {
+          value: id,
+          label: hobby ? tHobbies(hobby.name) : '',
+        };
+      });
+
       reset({
         distance: roundedDistance,
         ageFrom: serverFilters.ageFrom ?? '',
         ageTo: serverFilters.ageTo ?? '',
         gender: serverFilters.gender || 'any',
-        hobbies: serverFilters.hobbyIds.map((id) => ({ value: id, label: '' })),
+        hobbies: hobbyOptions,
       });
       isLoaded.current = true;
     }
-  }, [serverFilters, isMiles, reset]);
+  }, [serverFilters, storeHobbies, isMiles, reset, tHobbies]);
 
   const handleBack = () => {
     if (isDirty) {
