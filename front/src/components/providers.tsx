@@ -71,7 +71,8 @@ function FcmGlobalHandler() {
     (payload: FcmPayload) => {
       const type = payload?.data?.type;
 
-      if (type === NotificationType.USER_INVITED) {
+      const isInMeeting = useFeedStore.getState().isInMeeting;
+      if (type === NotificationType.USER_INVITED && !isInMeeting) {
         router.replace(PAGE_ROUTES.NOTIFICATIONS);
       }
       if (
