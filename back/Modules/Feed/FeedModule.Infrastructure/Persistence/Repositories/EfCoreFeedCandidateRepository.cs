@@ -31,7 +31,9 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
         var now = _timeProvider.GetUtcNow();
         var skipCutoff = now.AddDays(-skippedUserCutOffInDays);
 
-        var query = _context.Users.AsNoTracking()
+        var query = _context.Users
+            .Include(u => u.Hobbies)
+            .AsNoTracking()
             .Join(
                 _context.Locations.AsNoTracking(),
                 u => u.Id,
