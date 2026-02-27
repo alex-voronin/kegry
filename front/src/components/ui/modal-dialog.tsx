@@ -44,16 +44,21 @@ export function ModalDialog({
           <DialogBackdrop className={styles.backdrop} />
         </TransitionChild>
 
-        <div className="fixed inset-0 z-50 flex items-end justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-end justify-center overflow-hidden p-4">
           <TransitionChild
-            enter="translate-y-full"
-            enterFrom="translate-y-full"
+            enter="transition duration-300 ease-out"
+            enterFrom="translate-y-[calc(100%+200px)]"
             enterTo="translate-y-0"
-            leave="translate-y-0"
+            leave="transition duration-350 ease-in"
             leaveFrom="translate-y-0"
-            leaveTo="translate-y-full"
+            leaveTo="translate-y-[calc(100%+200px)]"
           >
             <DialogPanel className={styles.modalContainer}>
+              <img
+                src="/assets/common/dialog-logo.webp"
+                alt=""
+                className={styles.logo}
+              />
               <DialogTitle className={styles.message}>{message}</DialogTitle>
 
               <div className={styles.buttonGroup}>

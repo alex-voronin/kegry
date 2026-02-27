@@ -5,7 +5,11 @@
 }
 
 .modalContainer {
-  @apply bg-form-element w-full max-w-[500px] overflow-hidden rounded-[32px] p-7 text-center transition-transform duration-300 ease-out;
+  @apply bg-form-element relative w-full max-w-[500px] overflow-visible rounded-[32px] p-7 text-center;
+}
+
+.logo {
+  @apply absolute h-[150px] w-[150px] translate-y-[-156px] object-contain;
 }
 
 .modalEnter {
