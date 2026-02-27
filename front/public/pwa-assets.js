@@ -30,6 +30,7 @@ const STATIC_ASSETS = [
   "/assets/not-found/not-found.webp",
   "/assets/notifications/accept-icon.webp",
   "/assets/notifications/ignore-icon.svg",
+  "/assets/notifications/notification-badge.png",
   "/assets/notifications/notification-logo.webp",
   "/assets/npc/wibbly-toby-tavern/avatar.webp",
   "/assets/npc/wibbly-toby-tavern/cover.webp",

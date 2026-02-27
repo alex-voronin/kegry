@@ -30,6 +30,8 @@ import EmojiPicker, {
 import * as linkify from 'linkifyjs';
 
 const LOW_MESSAGE_WARNING_THRESHOLD = 10;
+const END_MEETING_PROMPT_COOLDOWN = 8 * 60 * 60 * 1000; // 8 hours
+const END_MEETING_PROMPT_CLOSED_AT_KEY = 'end_meeting_prompt_closed_at';
 
 const renderMessageText = (text: string) => {
   const links = linkify.find(text, 'url');
@@ -169,6 +171,23 @@ export default function ChatScreen() {
     loadChat();
   }, [fetchChat, t]);
 
+  // Handle automatic "end meeting" prompt based on participantsMet and cooldown period
+  useEffect(() => {
+    if (chat?.participantsMet) {
+      const lastClosedAt = localStorage.getItem(
+        END_MEETING_PROMPT_CLOSED_AT_KEY,
+      );
+      const now = Date.now();
+
+      if (
+        !lastClosedAt ||
+        now - parseInt(lastClosedAt, 10) > END_MEETING_PROMPT_COOLDOWN
+      ) {
+        setShowEndMeetingPrompt(true);
+      }
+    }
+  }, [chat?.participantsMet, setShowEndMeetingPrompt]);
+
   // Register FCM handler for showEndMeetingSuggestion and chatMessageReceived
   useEffect(() => {
     const handleFcmMessage = (payload: FcmPayload) => {
@@ -275,6 +294,7 @@ export default function ChatScreen() {
   const handleEndMeeting = async () => {
     setShowEndMeetingPrompt(false);
     setIsMenuOpen(false);
+    localStorage.removeItem(END_MEETING_PROMPT_CLOSED_AT_KEY);
     useFeedStore.setState({ isInMeeting: false });
     try {
       await deleteChat();
@@ -282,6 +302,14 @@ export default function ChatScreen() {
     } catch (err: any) {
       toast.error(err.message || t('toast.cancelFailed'));
     }
+  };
+
+  const handleDismissEndMeetingPrompt = () => {
+    setShowEndMeetingPrompt(false);
+    localStorage.setItem(
+      END_MEETING_PROMPT_CLOSED_AT_KEY,
+      Date.now().toString(),
+    );
   };
 
   const onEmojiClick = (emojiData: EmojiClickData) => {
@@ -503,12 +531,12 @@ export default function ChatScreen() {
 
       <ModalDialog
         isOpen={showEndMeetingPrompt}
-        onClose={() => setShowEndMeetingPrompt(false)}
+        onClose={handleDismissEndMeetingPrompt}
         message={t('endMeetingDialog.message')}
         primaryButtonText={t('endMeetingDialog.yes')}
         secondaryButtonText={t('endMeetingDialog.no')}
         onPrimaryAction={handleEndMeeting}
-        onSecondaryAction={() => setShowEndMeetingPrompt(false)}
+        onSecondaryAction={handleDismissEndMeetingPrompt}
       />
 
       <ModalDialog

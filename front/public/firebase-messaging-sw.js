@@ -19,7 +19,7 @@ const MessageType = {
 };
 
 function getMessageId(payload) {
-  return payload.messageId || payload.data?.messageId || null;
+  return payload.messageId || payload.data?.messageId || 'unknown';
 }
 
 function getTargetUrl(userAction) {
@@ -30,9 +30,8 @@ function getTargetUrl(userAction) {
 
 messaging.onBackgroundMessage(async (payload) => {
   const messageId = getMessageId(payload);
-  if (!messageId) return;
 
-  const { notification, data } = payload;
+  const { data } = payload;
 
   // Post to clients
   try {
@@ -52,17 +51,14 @@ messaging.onBackgroundMessage(async (payload) => {
     console.error('[SW] matchAll error:', err);
   }
 
-  // Show notification for non-silent pushes
-  if (!notification) return;
-
   try {
     await self.registration.showNotification(
       // TODO: Use BRAND_NAME constant here after moving to modular firebase SDK
-      notification.title ?? 'Wibblycorn',
+      data.title ?? 'Wibblycorn',
       {
-        body: notification.body ?? '',
-        icon:
-          notification.icon ?? '/assets/notifications/notification-logo.webp',
+        body: data.body ?? '',
+        icon: data.icon ?? '/assets/notifications/notification-logo.webp',
+        badge: '/assets/notifications/notification-badge.png',
         tag: `wibblycorn-${messageId}`, // tag for deduplication
         data: payload,
       },

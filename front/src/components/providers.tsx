@@ -31,7 +31,6 @@ function FcmGlobalHandler() {
     (payload: FcmPayload) => {
       const data = payload?.data || {};
       const type = data.type;
-      const notification = payload?.notification;
       const isInMeeting = useFeedStore.getState().isInMeeting;
 
       // Navigation actions based on type
@@ -52,12 +51,12 @@ function FcmGlobalHandler() {
           navigator.serviceWorker.controller
         ) {
           navigator.serviceWorker.ready.then((registration) => {
-            if (notification) {
-              registration.showNotification(notification.title || BRAND_NAME, {
-                body: notification.body || '',
+            if (data) {
+              registration.showNotification(data.title || BRAND_NAME, {
+                body: data.body || '',
                 icon:
-                  notification.icon ||
-                  '/assets/notifications/notification-logo.webp',
+                  data.icon || '/assets/notifications/notification-logo.webp',
+                badge: '/assets/notifications/notification-badge.png', // webp is not supported for badges
                 data: payload,
               });
             }
@@ -73,13 +72,18 @@ function FcmGlobalHandler() {
       const type = payload?.data?.type;
 
       if (type === NotificationType.USER_INVITED) {
-        router.push(PAGE_ROUTES.NOTIFICATIONS);
+        router.replace(PAGE_ROUTES.NOTIFICATIONS);
       }
       if (
         type === NotificationType.MEETING_ARRANGED ||
-        type === NotificationType.CHAT_MESSAGE_RECEIVED
+        type === NotificationType.CHAT_MESSAGE_RECEIVED ||
+        type === NotificationType.SHOW_END_MEETING_SUGGESTION
       ) {
-        router.push(PAGE_ROUTES.CHAT);
+        router.replace(PAGE_ROUTES.CHAT);
+      }
+
+      if (type === NotificationType.OPEN_RATE_USER_SCREEN) {
+        router.replace(PAGE_ROUTES.FEED);
       }
     },
     [router],
