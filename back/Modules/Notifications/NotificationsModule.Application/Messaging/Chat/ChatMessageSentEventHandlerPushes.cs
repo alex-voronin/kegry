@@ -1,58 +1,29 @@
 using ChatModule.Contracts.Events;
-using Microsoft.Extensions.Caching.Hybrid;
 using NotificationModule.Domain.Repositories;
 using NotificationsModule.Application.Services;
 using Serilog;
 using SharedCore.Services.LifeTimes;
-using Wolverine;
 using Wolverine.Attributes;
 
 namespace NotificationsModule.Application.Messaging.Chat;
 
 [WolverineHandler]
-public class ChatMessageSentEventHandlerPushes : DebouncedEventHandlerBase<ChatMessageSentEvent>, IScoped
+public class ChatMessageSentEventHandlerPushes : IScoped
 {
     private readonly IPushNotificationStrategy _pushNotificationStrategy;
-    private readonly INotificationsSettingsRepository _notificationsSettingsRepository;
 
-    public ChatMessageSentEventHandlerPushes(
-        TimeProvider timeProvider,
-        HybridCache cache,
-        IMessageBus messageBus,
-        IPushNotificationStrategy pushNotificationStrategy,
-        INotificationsSettingsRepository notificationsSettingsRepository) : base(timeProvider, cache, messageBus)
+    public ChatMessageSentEventHandlerPushes(IPushNotificationStrategy pushNotificationStrategy)
     {
         _pushNotificationStrategy = pushNotificationStrategy;
-        _notificationsSettingsRepository = notificationsSettingsRepository;
-        DebounceDurationSeconds = 10;
     }
 
-    public override async Task HandleAsync(ChatMessageSentEvent @event, CancellationToken ct)
+    public async Task HandleAsync(ChatMessageSentEvent @event, CancellationToken ct)
     {
         Log.Information("{HandlerClass} Handling event {@Event}",
             typeof(ChatMessageSentEventHandlerPushes).FullName, @event);
-        var isEventHandled = await DebounceEventAsync(@event, ct);
-        if (!isEventHandled)
-        {
-            // NOTE: Be careful here! This is correct only as long as a user can have a single active chat
-            await _pushNotificationStrategy.SendChatMessageReceivedSilent(@event, ct);
-        }
-    }
-
-    public override Task HandleAsync(ScheduledEventMessage<ChatMessageSentEvent> message, CancellationToken ct)
-    {
-        return HandleScheduledMessageAsync(message, ct);
-    }
-
-    protected override async Task HandleDebouncedEventAsync(ChatMessageSentEvent @event, CancellationToken ct)
-    {
-        Log.Information("{HandlerClass} Handling debounced event {@Event}",
-            typeof(ChatMessageSentEventHandlerPushes).FullName, @event);
-        var (pushesEnabled, _) = await _notificationsSettingsRepository
-            .GetNotificationsEnabledById(@event.ToUserId, ct);
-        if (pushesEnabled)
-        {
-            await _pushNotificationStrategy.SendChatMessageReceived(@event, ct);
-        }
+        // TODO: we should respect here user's push settings, but we can't as 
+        // chat won't work if pushes are disabled.
+        // Must be fixed after switching to Signalr
+        await _pushNotificationStrategy.SendChatMessageReceived(@event, ct);
     }
 }

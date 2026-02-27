@@ -6,6 +6,7 @@ using SecurityModule.API.Dto;
 using SecurityModule.Domain.Aggregates;
 using SecurityModule.Infrastructure.Persistence;
 using SharedCore.Api.Dto;
+using SharedCore.Extensions;
 using SharedCore.ValueObjects;
 using Shouldly;
 using UserProfileModule.API.Dto;
@@ -76,6 +77,7 @@ public class AuthManager
         DateOnly? birthday = null,
         Guid[]? hobbyIds = null)
     {
+        hobbyIds ??= ["boxing".ToDeterministicGuid()];
         var response = await _apiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(ApiRoutes.UserProfile.Profile,
             new CreateUserProfileRequest(
                 FirstName: firstName,

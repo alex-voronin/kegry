@@ -58,7 +58,7 @@ internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
     {
         return SendPush(
             userId: @event.ToUserId,
-            factory: fcmTokens => _pushBuilder.BuildChatMessageReceivedSilentPush(fcmTokens, @event),
+            factory: fcmTokens => _pushBuilder.BuildChatMessageReceivedPush(fcmTokens, @event, true),
             ct: ct);
     }
 
@@ -66,7 +66,7 @@ internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
     {
         return SendPush(
             userId: userId,
-            factory: fcmTokens => _pushBuilder.BuildOpenRateUserScreenSilentPush(fcmTokens, rateeUserId),
+            factory: fcmTokens => _pushBuilder.BuildOpenRateUserScreenPush(fcmTokens, rateeUserId),
             ct: ct);
     }
 
@@ -74,7 +74,7 @@ internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
     {
         return SendPush(
             userId: userId,
-            factory: fcmTokens => _pushBuilder.BuildEndMeetingSuggestionSilentPush(fcmTokens),
+            factory: fcmTokens => _pushBuilder.BuildEndMeetingSuggestionPush(fcmTokens),
             ct: ct);
     }
 

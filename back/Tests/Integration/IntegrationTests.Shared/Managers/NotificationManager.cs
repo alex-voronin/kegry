@@ -23,7 +23,7 @@ public class NotificationManager
     {
         return AwaitPushNotifications(
             codeToRun: codeToRun,
-            pushPredicate: p => p.UnicastMessage!.Notification.Title == expectedTitle,
+            pushPredicate: p => p.UnicastMessage!.Data[FcmPushBuilder.Keys.Title] == expectedTitle,
             expectedCount: expectedCount,
             timeoutSeconds: timeoutSeconds);
     }

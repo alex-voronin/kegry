@@ -21,17 +21,17 @@
     <data name="InApp.UserInvitedNotification.PrimaryText" xml:space="preserve">
         <value>Hi! Let's get a drink!</value>
     </data>
-    <data name="Push.MeetingArranged.Body" xml:space="preserve">
-        <value>{0} is ready to chat</value>
-    </data>
     <data name="Push.MeetingArranged.Title" xml:space="preserve">
         <value>Invitation accepted!</value>
+    </data>
+    <data name="Push.MeetingArranged.Body" xml:space="preserve">
+        <value>Tap to open chat with {0}</value>
     </data>
     <data name="Push.UserInvited.Title" xml:space="preserve">
         <value>New invitation!</value>
     </data>
     <data name="Push.UserInvited.Body" xml:space="preserve">
-        <value>Open Notifications to view details</value>
+        <value>Tap to view details</value>
     </data>
     <data name="Email.UserInvited.Title" xml:space="preserve">
         <value>New invitation!</value>
@@ -55,7 +55,19 @@
         <value>You have received a new message from {0}</value>
     </data>
     <data name="Push.ChatMessageReceived.Body" xml:space="preserve">
-        <value>New message!</value>
+        <value>Tap to read</value>
+    </data>
+    <data name="Push.OpenRateUserScreen.Title" xml:space="preserve">
+        <value>How did it go?</value>
+    </data>
+    <data name="Push.OpenRateUserScreen.Body" xml:space="preserve">
+        <value>Tap to rate your buddy.</value>
+    </data>
+    <data name="Push.EndMeetingSuggestion.Title" xml:space="preserve">
+        <value>All set?</value>
+    </data>
+    <data name="Push.EndMeetingSuggestion.Body" xml:space="preserve">
+        <value>Tap to end the meeting.</value>
     </data>
     <data name="Email.ChatMessageReceived.Title" xml:space="preserve">
         <value>You have received a new message from {}! Open &lt;a href=&quot;https://wibblycorn.com/chat&quot;&gt;Chat&lt;/a&gt; to view details.</value>
