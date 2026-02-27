@@ -25,7 +25,7 @@
 }
 
 .ageInput {
-  @apply h-4 w-16 border-none bg-transparent p-0 text-center text-base placeholder-white focus:ring-0;
+  @apply h-4! w-16! border-none bg-transparent p-0! text-center text-base! placeholder-white! focus:ring-0;
 }
 
 .anyLabel {
