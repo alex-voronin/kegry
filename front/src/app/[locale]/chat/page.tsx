@@ -372,7 +372,7 @@ export default function ChatScreen() {
               alt="back"
               width={20}
               height={26}
-              onClick={() => router.back()}
+              onClick={() => router.replace(PAGE_ROUTES.FEED)}
               priority
             />
           }

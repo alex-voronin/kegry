@@ -153,7 +153,7 @@ export default function ProfilePage() {
   };
 
   const handleBack = () => {
-    router.back();
+    router.replace(PAGE_ROUTES.FEED);
   };
 
   const handleAvatarClick = () => {

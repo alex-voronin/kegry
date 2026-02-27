@@ -17,6 +17,7 @@ import {
 import { formatNotificationDate } from '@/lib/date';
 import { toast } from 'react-toastify';
 import styles from './notifications.module.css';
+import { PAGE_ROUTES } from '@/lib/routes';
 
 export default function NotificationsScreen() {
   const router = useRouter();
@@ -145,7 +146,7 @@ export default function NotificationsScreen() {
             alt="back"
             width={20}
             height={26}
-            onClick={() => router.back()}
+            onClick={() => router.replace(PAGE_ROUTES.FEED)}
             priority
           />
         }
