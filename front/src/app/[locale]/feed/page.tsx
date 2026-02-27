@@ -138,6 +138,9 @@ export default function FeedScreen() {
     isOpen: boolean;
     suggestedWhen: InviteExpiration;
   }>({ isOpen: false, suggestedWhen: InviteExpiration.Today });
+  const [profilesCountToNpc, setProfilesCountToNpc] = useState<number | null>(
+    null,
+  );
 
   useEffect(() => {
     const checkPermissions = async () => {
@@ -154,11 +157,11 @@ export default function FeedScreen() {
 
   const distanceUnits = useSettingsStore((state) => state.distanceUnits);
 
-  // --- Derive currentItem ---
-  const currentItem: FeedItem | null = feed[0]
-    ? { kind: 'user', profile: feed[0] }
-    : npc
-      ? { kind: 'npc', npc }
+  const isNpcTurn = npc && (profilesCountToNpc === 0 || feed.length === 0);
+  const currentItem: FeedItem | null = isNpcTurn
+    ? { kind: 'npc', npc }
+    : feed[0]
+      ? { kind: 'user', profile: feed[0] }
       : null;
 
   // Preload cover images for the next 2 profiles each time the current profile changes
@@ -192,6 +195,7 @@ export default function FeedScreen() {
           fetchFeedStatus(),
           fetchFeed(),
           fetchUnseenNotificationCount(),
+          fetchNpc(),
         ]);
 
         if (status.isInMeeting) {
@@ -207,10 +211,14 @@ export default function FeedScreen() {
           return;
         }
 
-        // If feed is empty, try to fetch an NPC
+        // If an NPC was fetched (or already exists), set a random index
+        const currentNpc = useNpcStore.getState().npc;
         const currentFeed = useFeedStore.getState().feed;
-        if (currentFeed.length === 0) {
-          await fetchNpc();
+        if (currentNpc && currentFeed.length > 0) {
+          const maxIdx = Math.min(3, currentFeed.length);
+          setProfilesCountToNpc(Math.floor(Math.random() * (maxIdx + 1)));
+        } else if (currentNpc) {
+          setProfilesCountToNpc(0);
         }
       } catch (err: any) {
         toast.error(err.message);
@@ -251,15 +259,23 @@ export default function FeedScreen() {
 
   const showLoading = isLoading || !hasHydrated || !isInitialized;
 
+  const decreaseProfilesCountToNpc = () => {
+    if (profilesCountToNpc !== null && profilesCountToNpc > 0) {
+      setProfilesCountToNpc(profilesCountToNpc - 1);
+    }
+  };
+
   // --- User action handlers ---
   const handleIgnore = async () => {
     if (currentItem?.kind === 'npc') {
       dismissNpc();
+      setProfilesCountToNpc(null);
       return;
     }
     if (currentItem?.kind !== 'user') return;
     try {
       await ignoreUser(currentItem.profile.id);
+      decreaseProfilesCountToNpc();
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -283,6 +299,7 @@ export default function FeedScreen() {
         }
       }
       await inviteUser(currentItem.profile.id, when);
+      decreaseProfilesCountToNpc();
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -292,6 +309,7 @@ export default function FeedScreen() {
     if (currentItem?.kind !== 'user') return;
     try {
       await inviteUser(currentItem.profile.id, expirationPopup.suggestedWhen);
+      decreaseProfilesCountToNpc();
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -300,11 +318,13 @@ export default function FeedScreen() {
   const handleSkip = async () => {
     if (currentItem?.kind === 'npc') {
       dismissNpc();
+      setProfilesCountToNpc(null);
       return;
     }
     if (currentItem?.kind !== 'user') return;
     try {
       await skipUser(currentItem.profile.id);
+      decreaseProfilesCountToNpc();
     } catch (err: any) {
       toast.error(err.message);
     }
