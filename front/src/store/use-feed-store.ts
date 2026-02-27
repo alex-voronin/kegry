@@ -55,7 +55,7 @@ interface FeedState {
   reset: () => void;
 }
 
-const FETCH_COOLDOWN_MS = 30 * 1000;
+const FETCH_COOLDOWN_MS = 10 * 1000;
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 const MIN_PROFILES_THRESHOLD = 3;
 

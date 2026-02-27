@@ -128,14 +128,14 @@ export default function FiltersScreen() {
   useEffect(() => {
     if (!hasHydrated) return;
 
-    const loadFilters = async () => {
+    const loadData = async () => {
       try {
         await Promise.all([fetchFilters(), fetchHobbies()]);
       } catch (err: any) {
         toast.error(err.message || t('loadFailed'));
       }
     };
-    loadFilters();
+    loadData();
   }, [hasHydrated, fetchFilters, fetchHobbies, t]);
 
   useEffect(() => {
