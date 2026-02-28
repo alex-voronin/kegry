@@ -3,7 +3,7 @@ body {
   --color-landing-card-bg: #292929;
   --color-landing-heading: #f5eccd;
   --color-landing-subheading: #bdbdbd;
-  --color-landing-text: #ffffff;
+  --color-landing-text: #f0f0f0;
   --color-landing-button: #ffab10;
   --font-landing-title: var(--font-fundamento), serif;
 }

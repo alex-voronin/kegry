@@ -12,7 +12,7 @@ export function FormSectionTitle({
   required = false,
 }: FormSectionTitleProps) {
   return (
-    <h3 className={`pl-2 text-sm text-white/50 sm:pl-0 ${className}`}>
+    <h3 className={`text-secondary pl-2 text-sm sm:pl-0 ${className}`}>
       {children}
       {required && <span className="text-primary ml-0.5 text-base">*</span>}
     </h3>
