@@ -13,9 +13,9 @@ import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
 import {
   useUserProfileStore,
-  calculateAge,
   UserProfileDto,
 } from '@/store/use-user-profile-store';
+import { calculateAge } from '@/lib/date';
 import { ReportDialog } from '@/components/ui/report-dialog';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { toast } from 'react-toastify';

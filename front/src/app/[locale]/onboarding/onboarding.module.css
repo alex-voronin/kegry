@@ -19,3 +19,8 @@
 .continueButton {
   @apply h-[40px] w-[298px];
 }
+
+.errorMessage {
+  @apply mt-1 ml-4 text-sm;
+  color: var(--color-error);
+}

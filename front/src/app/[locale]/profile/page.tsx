@@ -18,9 +18,9 @@ import { openTawkChat } from '@/components/tawk-messenger';
 import { useAuthStore } from '@/lib/auth/use-auth-store';
 import {
   useUserProfileStore,
-  calculateAge,
   blobToBase64,
 } from '@/store/use-user-profile-store';
+import { calculateAge } from '@/lib/date';
 import { useHobbiesStore } from '@/store/use-hobbies-store';
 import { uploadImage } from '@/lib/image-utils';
 import { checkIfPermissionsDenied } from '@/lib/permissions';

@@ -164,6 +164,16 @@
       "back": "Back",
       "legal": {
         "text": "By creating a profile on Wibblycorn, you confirm that you are <age>18 or older</age> and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+      },
+      "validation": {
+        "avatarRequired": "Please select your avatar",
+        "firstNameRequired": "First name is required",
+        "lastNameRequired": "Last name is required",
+        "birthdayRequired": "Birthday is required",
+        "minAge": "You must be at least 18 years old",
+        "genderRequired": "Gender is required",
+        "minHobbies": "Please select at least 1 hobby",
+        "maxHobbies": "You can select up to 10 hobbies"
       }
     },
     "feed": {

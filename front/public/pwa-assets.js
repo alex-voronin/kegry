@@ -9,6 +9,7 @@ const STATIC_ASSETS = [
   "/assets/common/block-icon.svg",
   "/assets/common/camera-placeholder.svg",
   "/assets/common/delete-icon.svg",
+  "/assets/common/dialog-logo.webp",
   "/assets/common/disclosure-left-icon.svg",
   "/assets/common/disclosure-right-icon.svg",
   "/assets/common/logo.webp",
