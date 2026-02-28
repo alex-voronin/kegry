@@ -68,7 +68,7 @@ export const AvatarSection = ({
           height={192}
           className={styles.avatarImage}
         />
-        <div className={styles.hint}>{t('selectAvatar')}</div>
+        {!displayUrl && <div className={styles.hint}>{t('selectAvatar')}</div>}
       </div>
     </div>
   );
