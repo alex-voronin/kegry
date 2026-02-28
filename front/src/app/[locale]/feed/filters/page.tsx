@@ -15,6 +15,7 @@ import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { useFeedFiltersStore, FilterDto } from '@/store/use-feed-filters-store';
 import { useSettingsStore, DistanceUnits } from '@/store/use-settings-store';
 import { useHobbiesStore } from '@/store/use-hobbies-store';
+import { useFeedStore } from '@/store/use-feed-store';
 import {
   metersToKilometers,
   metersToMiles,
@@ -176,6 +177,7 @@ export default function FiltersScreen() {
 
     try {
       await updateFilters(dto);
+      useFeedStore.getState().reset();
       toast.success(t('applySuccess'));
       router.back();
     } catch (err: any) {
