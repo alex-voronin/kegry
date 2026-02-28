@@ -13,6 +13,7 @@ export interface GenderSectionProps {
   options: SegmentedControlOption[];
   value: string | null;
   readOnly?: boolean;
+  required?: boolean;
   onChange: (value: string) => void;
 }
 
@@ -21,12 +22,13 @@ export function GenderSection({
   value,
   onChange,
   readOnly = false,
+  required = false,
 }: GenderSectionProps) {
   const t = useTranslations('components.profile-sections.gender');
 
   return (
     <div className={stylesCommon.sectionContainer}>
-      <FormSectionTitle>{t('title')}</FormSectionTitle>
+      <FormSectionTitle required={required}>{t('title')}</FormSectionTitle>
       <SegmentedControl
         options={options}
         value={value}

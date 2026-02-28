@@ -16,6 +16,7 @@ export interface HobbiesSectionProps {
   value: HobbyOption[];
   onChange: (hobbies: HobbyOption[]) => void;
   readOnly?: boolean;
+  required?: boolean;
 }
 
 const selectStyles = {
@@ -81,6 +82,7 @@ export function HobbiesSection({
   value,
   onChange,
   readOnly = false,
+  required = false,
 }: HobbiesSectionProps) {
   const t = useTranslations('components.profile-sections.hobbies');
   const { hobbies, fetchHobbies, isLoading, hasHydrated } = useHobbiesStore();
@@ -108,7 +110,7 @@ export function HobbiesSection({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-      <FormSectionTitle>{t('title')}</FormSectionTitle>
+      <FormSectionTitle required={required}>{t('title')}</FormSectionTitle>
       <Select
         instanceId="hobby-select"
         isMulti

@@ -124,6 +124,7 @@ export default function OnboardingPage() {
                   <NameSection
                     firstName={value}
                     lastName={lastNameField.value}
+                    required
                     onFirstNameChange={(val) => {
                       onChange(val);
                       setFirstName(val);
@@ -151,6 +152,7 @@ export default function OnboardingPage() {
             render={({ field: { onChange, value } }) => (
               <BirthdaySection
                 birthday={value}
+                required
                 onBirthdayChange={(val) => {
                   onChange(val);
                   setBirthday(val);
@@ -171,6 +173,7 @@ export default function OnboardingPage() {
               <GenderSection
                 options={GENDER_OPTIONS}
                 value={value as Gender}
+                required
                 onChange={(val) => {
                   onChange(val);
                   setGender(val as Gender | null);
@@ -209,6 +212,7 @@ export default function OnboardingPage() {
             render={({ field: { onChange, value } }) => (
               <HobbiesSection
                 value={getSelectedHobbies(value)}
+                required
                 onChange={(selected) => {
                   const ids = selected.map((h) => h.value);
                   onChange(ids);

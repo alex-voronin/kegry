@@ -10,6 +10,7 @@ import stylesCommon from '@/components/ui/common.module.css';
 export interface BirthdaySectionProps {
   birthday: string;
   readOnly?: boolean;
+  required?: boolean;
   onBirthdayChange: (value: string) => void;
 }
 
@@ -17,6 +18,7 @@ export function BirthdaySection({
   birthday,
   onBirthdayChange,
   readOnly = false,
+  required = false,
 }: BirthdaySectionProps) {
   const t = useTranslations('components.profile-sections.birthday');
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -31,7 +33,7 @@ export function BirthdaySection({
 
   return (
     <div className={stylesCommon.sectionContainer}>
-      <FormSectionTitle>{t('title')}</FormSectionTitle>
+      <FormSectionTitle required={required}>{t('title')}</FormSectionTitle>
       <div className="relative flex items-center">
         <input
           ref={inputRef}

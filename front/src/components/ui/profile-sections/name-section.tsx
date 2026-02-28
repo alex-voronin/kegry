@@ -11,6 +11,7 @@ export interface NameSectionProps {
   firstName: string;
   lastName: string;
   readOnly?: boolean;
+  required?: boolean;
   onFirstNameChange: (value: string) => void;
   onLastNameChange: (value: string) => void;
 }
@@ -21,12 +22,13 @@ export function NameSection({
   onFirstNameChange,
   onLastNameChange,
   readOnly = false,
+  required = false,
 }: NameSectionProps) {
   const t = useTranslations('components.profile-sections.name');
 
   return (
     <div className={stylesCommon.sectionContainer}>
-      <FormSectionTitle>{t('title')}</FormSectionTitle>
+      <FormSectionTitle required={required}>{t('title')}</FormSectionTitle>
       <div className={styles.nameFields}>
         <Input
           placeholder={t('firstName')}
