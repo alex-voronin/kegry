@@ -47,7 +47,11 @@ export default function VerifyEmailPage() {
       toast.success(t('successTitle'));
       router.push(PAGE_ROUTES.ONBOARDING);
     } catch (err: any) {
-      toast.error(err.message);
+      if (err.code === 'ValidationError') {
+        toast.error(t('errors.invalidCode'));
+      } else {
+        toast.error(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -57,15 +61,14 @@ export default function VerifyEmailPage() {
     <div className={styles.page}>
       <div className={styles.container}>
         <Logo />
-        <div className="mt-2 flex flex-col items-center gap-2">
-          <h2 className="text-center text-xl font-medium">{t('title')}</h2>
+        <div className="mt-8 flex flex-col items-center gap-2">
           <p className="text-secondary text-center text-sm">
             {t('description')}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className={`${styles.formSection} !mt-4`}>
-          <div className="flex justify-center py-4">
+        <form onSubmit={handleSubmit} className={`${styles.formSection}`}>
+          <div className="flex justify-center">
             <InputOTP
               maxLength={OTP_LENGTH}
               value={value}
@@ -84,14 +87,16 @@ export default function VerifyEmailPage() {
             </InputOTP>
           </div>
 
-          <Button
-            variant={ButtonVariant.Default}
-            className={styles.signInButton}
-            type="submit"
-            disabled={loading || value.length !== OTP_LENGTH}
-          >
-            {loading ? t('verifying') : t('submit')}
-          </Button>
+          <div className="mt-4 flex justify-center">
+            <Button
+              variant={ButtonVariant.Default}
+              className="w-[200px]"
+              type="submit"
+              disabled={loading || value.length !== OTP_LENGTH}
+            >
+              {loading ? t('verifying') : t('submit')}
+            </Button>
+          </div>
 
           <Link
             href={PAGE_ROUTES.LOGIN()}

@@ -51,7 +51,7 @@ export const useRateUserStore = create<RateUserState>((set) => ({
     } catch (error) {
       console.error(
         'Failed to fetch user profile to rate:',
-        extractApiError(error),
+        extractApiError(error)[0],
       );
     } finally {
       set({ isLoading: false });

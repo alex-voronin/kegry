@@ -121,7 +121,6 @@
       }
     },
     "verifyEmail": {
-      "title": "Verify your email",
       "description": "Please enter the 6-digit code sent to your email address.",
       "submit": "Verify Email",
       "verifying": "Verifying...",
@@ -131,7 +130,8 @@
       "backToLogin": "Back to login",
       "resend": "Resend Code",
       "errors": {
-        "userNotFound": "User session not found. Please login again."
+        "userNotFound": "User session not found. Please login again.",
+        "invalidCode": "Invalid verification code"
       }
     },
     "howItWorks": {

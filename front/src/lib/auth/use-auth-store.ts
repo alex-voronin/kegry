@@ -194,14 +194,14 @@ export const useAuthStore = create<AuthState>()(
 
           if (!res.data.success) {
             throw new Error(
-              res.data.errors[0]?.error || 'Email confirmation failed',
+              res.data.errors[0]?.error || 'Email verification failed',
             );
           }
 
           get().setAuth(res.data.result);
           return res.data.result;
         } catch (error) {
-          rethrowApiError(error, 'Email confirmation failed');
+          rethrowApiError(error, 'Email verification failed');
         }
       },
 
