@@ -2,8 +2,10 @@
 
 import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { Control, useController } from 'react-hook-form';
 import Select from 'react-select';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
+import stylesCommon from '@/components/ui/common.module.css';
 import { useHobbiesStore } from '@/store/use-hobbies-store';
 import { toast } from 'react-toastify';
 
@@ -13,8 +15,8 @@ export interface HobbyOption {
 }
 
 export interface HobbiesSectionProps {
-  value: HobbyOption[];
-  onChange: (hobbies: HobbyOption[]) => void;
+  control: Control<any>;
+  onChange?: (hobbies: HobbyOption[]) => void;
   readOnly?: boolean;
   required?: boolean;
 }
@@ -79,13 +81,28 @@ const readOnlySelectStyles = {
 };
 
 export function HobbiesSection({
-  value,
+  control,
   onChange,
   readOnly = false,
   required = false,
 }: HobbiesSectionProps) {
   const t = useTranslations('components.profile-sections.hobbies');
   const { hobbies, fetchHobbies, isLoading, hasHydrated } = useHobbiesStore();
+
+  const {
+    field,
+    fieldState: { error },
+  } = useController({
+    name: 'hobbies',
+    control,
+  });
+
+  const selectedHobbiesOptions: HobbyOption[] = hobbies
+    .filter((h) => (field.value || []).includes(h.id))
+    .map((h) => ({
+      value: h.id,
+      label: t(h.name),
+    }));
 
   useEffect(() => {
     if (!hasHydrated) return;
@@ -109,14 +126,18 @@ export function HobbiesSection({
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+    <div className={stylesCommon.sectionContainer}>
       <FormSectionTitle required={required}>{t('title')}</FormSectionTitle>
       <Select
         instanceId="hobby-select"
         isMulti
         options={hobbyOptions}
-        value={value}
-        onChange={(selected) => onChange(selected as HobbyOption[])}
+        value={selectedHobbiesOptions}
+        onChange={(selected) => {
+          const selectedArray = selected as HobbyOption[];
+          field.onChange(selectedArray.map((h) => h.value));
+          onChange?.(selectedArray);
+        }}
         placeholder={t('placeholder')}
         classNamePrefix="hobby-select"
         isDisabled={readOnly}
@@ -129,6 +150,7 @@ export function HobbiesSection({
             : undefined
         }
       />
+      {error && <p className={stylesCommon.errorMessage}>{error.message}</p>}
     </div>
   );
 }

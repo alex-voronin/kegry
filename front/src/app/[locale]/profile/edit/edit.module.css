@@ -15,3 +15,8 @@
 .saveButton {
   @apply w-full max-w-[200px];
 }
+
+.errorMessage {
+  @apply mt-1 ml-4 text-sm;
+  color: var(--color-error);
+}

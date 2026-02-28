@@ -2,20 +2,21 @@
 
 import * as React from 'react';
 import { useTranslations } from 'next-intl';
+import { Control, useController } from 'react-hook-form';
 import { CalendarIcon } from 'lucide-react';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { cn } from '@/lib/utils';
 import stylesCommon from '@/components/ui/common.module.css';
 
 export interface BirthdaySectionProps {
-  birthday: string;
+  control: Control<any>;
   readOnly?: boolean;
   required?: boolean;
-  onBirthdayChange: (value: string) => void;
+  onBirthdayChange?: (value: string) => void;
 }
 
 export function BirthdaySection({
-  birthday,
+  control,
   onBirthdayChange,
   readOnly = false,
   required = false,
@@ -23,8 +24,17 @@ export function BirthdaySection({
   const t = useTranslations('components.profile-sections.birthday');
   const inputRef = React.useRef<HTMLInputElement>(null);
 
+  const {
+    field,
+    fieldState: { error },
+  } = useController({
+    name: 'birthday',
+    control,
+  });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onBirthdayChange(e.target.value);
+    field.onChange(e);
+    onBirthdayChange?.(e.target.value);
   };
 
   const handleIconClick = () => {
@@ -36,9 +46,10 @@ export function BirthdaySection({
       <FormSectionTitle required={required}>{t('title')}</FormSectionTitle>
       <div className="relative flex items-center">
         <input
+          {...field}
           ref={inputRef}
           type="date"
-          value={birthday || new Date().toISOString().split('T')[0]}
+          value={field.value || new Date().toISOString().split('T')[0]}
           onChange={handleChange}
           readOnly={readOnly}
           max={new Date().toISOString().split('T')[0]}
@@ -46,7 +57,7 @@ export function BirthdaySection({
           className={cn(
             stylesCommon.inputDark,
             'w-full appearance-none pr-10 transition-colors [&::-webkit-calendar-picker-indicator]:hidden',
-            !birthday && 'text-secondary',
+            !field.value && 'text-secondary',
           )}
         />
         <button
@@ -58,6 +69,7 @@ export function BirthdaySection({
           <CalendarIcon className="h-4 w-4" />
         </button>
       </div>
+      {error && <p className={stylesCommon.errorMessage}>{error.message}</p>}
     </div>
   );
 }

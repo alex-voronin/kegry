@@ -9,10 +9,7 @@ import { Icon } from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SegmentedControl } from '@/components/ui/segmented-control';
-import {
-  HobbiesSection,
-  HobbyOption,
-} from '@/components/ui/profile-sections/hobbies-section';
+import { HobbiesSection } from '@/components/ui/profile-sections/hobbies-section';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { useFeedFiltersStore, FilterDto } from '@/store/use-feed-filters-store';
@@ -80,12 +77,7 @@ export default function FiltersScreen() {
         ]),
         gender: z.string(),
         hobbies: z
-          .array(
-            z.object({
-              value: z.string(),
-              label: z.string(),
-            }),
-          )
+          .array(z.string())
           .max(MAX_HOBBIES, t('validation.maxHobbies', { max: MAX_HOBBIES })),
       })
       .refine(
@@ -147,21 +139,15 @@ export default function FiltersScreen() {
       // Round to 1 decimal place to avoid long floats
       const roundedDistance = Math.round(distanceValue * 10) / 10;
 
-      // Map hobby IDs to options with labels
-      const hobbyOptions = serverFilters.hobbyIds.map((id) => {
-        const hobby = storeHobbies.find((h) => h.id === id);
-        return {
-          value: id,
-          label: hobby ? tHobbies(hobby.name) : '',
-        };
-      });
+      // Just map to the array of string IDs to match other forms
+      const hobbyIds = serverFilters.hobbyIds;
 
       reset({
         distance: roundedDistance,
         ageFrom: serverFilters.ageFrom ?? '',
         ageTo: serverFilters.ageTo ?? '',
         gender: serverFilters.gender || 'any',
-        hobbies: hobbyOptions,
+        hobbies: hobbyIds,
       });
       isLoaded.current = true;
     }
@@ -185,7 +171,7 @@ export default function FiltersScreen() {
       ageFrom: data.ageFrom === '' ? null : Number(data.ageFrom),
       ageTo: data.ageTo === '' ? null : Number(data.ageTo),
       gender: data.gender === 'any' ? null : (data.gender as any),
-      hobbyIds: data.hobbies.map((h) => h.value),
+      hobbyIds: data.hobbies,
     };
 
     try {
@@ -301,19 +287,7 @@ export default function FiltersScreen() {
             </div>
 
             <div className={styles.filterSection}>
-              <Controller
-                control={control}
-                name="hobbies"
-                render={({ field }) => (
-                  <HobbiesSection
-                    value={field.value}
-                    onChange={field.onChange}
-                  />
-                )}
-              />
-              {errors.hobbies && (
-                <div className={styles.errorText}>{errors.hobbies.message}</div>
-              )}
+              <HobbiesSection control={control} />
             </div>
 
             <div className={styles.applyButtonWrapper}>

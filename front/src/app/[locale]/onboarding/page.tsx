@@ -18,7 +18,7 @@ import { useHobbiesStore } from '@/store/use-hobbies-store';
 import { HobbyOption } from '@/components/ui/profile-sections/hobbies-section';
 
 import { z } from 'zod';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'react-toastify';
 
@@ -112,119 +112,36 @@ export default function OnboardingPage() {
       />
 
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <Controller
-            control={control}
-            name="firstName"
-            render={({ field: { onChange, value } }) => (
-              <Controller
-                control={control}
-                name="lastName"
-                render={({ field: lastNameField }) => (
-                  <NameSection
-                    firstName={value}
-                    lastName={lastNameField.value}
-                    required
-                    onFirstNameChange={(val) => {
-                      onChange(val);
-                      setFirstName(val);
-                    }}
-                    onLastNameChange={(val) => {
-                      lastNameField.onChange(val);
-                      setLastName(val);
-                    }}
-                  />
-                )}
-              />
-            )}
-          />
-          {(errors.firstName || errors.lastName) && (
-            <p className={styles.errorMessage}>
-              {errors.firstName?.message || errors.lastName?.message}
-            </p>
-          )}
-        </div>
+        <NameSection
+          control={control}
+          required
+          onFirstNameChange={setFirstName}
+          onLastNameChange={setLastName}
+        />
 
-        <div>
-          <Controller
-            control={control}
-            name="birthday"
-            render={({ field: { onChange, value } }) => (
-              <BirthdaySection
-                birthday={value}
-                required
-                onBirthdayChange={(val) => {
-                  onChange(val);
-                  setBirthday(val);
-                }}
-              />
-            )}
-          />
-          {errors.birthday && (
-            <p className={styles.errorMessage}>{errors.birthday.message}</p>
-          )}
-        </div>
+        <BirthdaySection
+          control={control}
+          required
+          onBirthdayChange={setBirthday}
+        />
 
-        <div>
-          <Controller
-            control={control}
-            name="gender"
-            render={({ field: { onChange, value } }) => (
-              <GenderSection
-                options={GENDER_OPTIONS}
-                value={value as Gender}
-                required
-                onChange={(val) => {
-                  onChange(val);
-                  setGender(val as Gender | null);
-                }}
-              />
-            )}
-          />
-          {errors.gender && (
-            <p className={styles.errorMessage}>{errors.gender.message}</p>
-          )}
-        </div>
+        <GenderSection
+          control={control}
+          options={GENDER_OPTIONS}
+          required
+          onChange={(val) => setGender(val as Gender | null)}
+        />
 
-        <div>
-          <Controller
-            control={control}
-            name="bio"
-            render={({ field: { onChange, value } }) => (
-              <BioSection
-                bio={value || ''}
-                onBioChange={(val) => {
-                  onChange(val);
-                  setBio(val);
-                }}
-              />
-            )}
-          />
-          {errors.bio && (
-            <p className={styles.errorMessage}>{errors.bio.message}</p>
-          )}
-        </div>
+        <BioSection control={control} onBioChange={setBio} />
 
-        <div>
-          <Controller
-            control={control}
-            name="hobbies"
-            render={({ field: { onChange, value } }) => (
-              <HobbiesSection
-                value={getSelectedHobbies(value)}
-                required
-                onChange={(selected) => {
-                  const ids = selected.map((h) => h.value);
-                  onChange(ids);
-                  setSelectedHobbyIds(ids);
-                }}
-              />
-            )}
-          />
-          {errors.hobbies && (
-            <p className={styles.errorMessage}>{errors.hobbies.message}</p>
-          )}
-        </div>
+        <HobbiesSection
+          control={control}
+          required
+          onChange={(selected) => {
+            const ids = selected.map((h) => h.value);
+            setSelectedHobbyIds(ids);
+          }}
+        />
 
         <div className={styles.footer}>
           <Button

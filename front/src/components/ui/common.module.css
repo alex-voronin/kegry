@@ -5,5 +5,10 @@
 }
 
 .inputDark {
-  @apply bg-form-element h-[44px] rounded-none border-none px-4 font-sans text-base font-normal sm:rounded-xl;
+  @apply bg-form-element h-[44px] rounded-none border-none px-4! font-sans text-base! font-normal! sm:rounded-xl;
+}
+
+.errorMessage {
+  @apply mt-1 ml-4 text-sm;
+  color: var(--color-error);
 }

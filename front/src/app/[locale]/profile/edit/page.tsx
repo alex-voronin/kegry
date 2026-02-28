@@ -13,7 +13,6 @@ import { BioSection } from '@/components/ui/profile-sections/bio-section';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
-import { PAGE_ROUTES } from '@/lib/routes';
 import {
   useUserProfileStore,
   Gender,
@@ -23,8 +22,14 @@ import { useHobbiesStore } from '@/store/use-hobbies-store';
 import { HobbyOption } from '@/components/ui/profile-sections/hobbies-section';
 import styles from './edit.module.css';
 
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { calculateAge } from '@/lib/date';
+
 export default function ProfileEditPage() {
   const t = useTranslations('screens.editProfile');
+  const tValidation = useTranslations('screens.onboarding.validation');
   const router = useRouter();
   const tHobbies = useTranslations('components.profile-sections.hobbies');
   const tGender = useTranslations('components.profile-sections.gender');
@@ -67,6 +72,41 @@ export default function ProfileEditPage() {
     }
   }, [serverProfile, hobbies.length, fetchMyProfile, fetchHobbies]);
 
+  const localizedSchema = z.object({
+    firstName: z.string().trim().min(1, tValidation('firstNameRequired')),
+    lastName: z.string().trim().min(1, tValidation('lastNameRequired')),
+    birthday: z
+      .string()
+      .min(1, tValidation('birthdayRequired'))
+      .refine((dateString) => {
+        return calculateAge(dateString) >= 18;
+      }, tValidation('minAge')),
+    gender: z.string().min(1, tValidation('genderRequired')),
+    bio: z.string().optional(),
+    hobbies: z
+      .array(z.string())
+      .min(1, tValidation('minHobbies'))
+      .max(10, tValidation('maxHobbies')),
+  });
+
+  type EditProfileFormValues = z.infer<typeof localizedSchema>;
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<EditProfileFormValues>({
+    resolver: zodResolver(localizedSchema),
+    defaultValues: {
+      firstName: firstName || '',
+      lastName: lastName || '',
+      birthday: birthday || '',
+      gender: gender || '',
+      bio: bio || '',
+      hobbies: selectedHobbyIds || [],
+    },
+  });
+
   const GENDER_OPTIONS = [
     { value: 'Male' as const, label: tGender('male'), width: 75 },
     { value: 'Female' as const, label: tGender('female'), width: 75 },
@@ -79,24 +119,16 @@ export default function ProfileEditPage() {
       label: tHobbies(h.name),
     }));
 
-  const handleHobbiesChange = (selected: HobbyOption[]) => {
-    setSelectedHobbyIds(selected.map((h) => h.value));
-  };
-
-  const handleGenderChange = (value: string | null) => {
-    setGender(value as Gender | null);
-  };
-
-  const handleSave = async () => {
+  const onSubmit = async (data: EditProfileFormValues) => {
     setIsSaving(true);
     try {
       const patchData: Partial<PatchProfileRequest> = {
-        firstName,
-        lastName,
-        bio,
-        birthday,
-        gender: gender ?? undefined,
-        hobbyIds: selectedHobbyIds,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        bio: data.bio,
+        birthday: data.birthday,
+        gender: data.gender as Gender,
+        hobbyIds: data.hobbies,
       };
 
       await patchProfile(patchData);
@@ -146,43 +178,42 @@ export default function ProfileEditPage() {
         }
       />
 
-      <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <NameSection
-          firstName={firstName}
-          lastName={lastName}
+          control={control}
           onFirstNameChange={setFirstName}
           onLastNameChange={setLastName}
         />
-
-        <BirthdaySection birthday={birthday} onBirthdayChange={setBirthday} />
-
-        <GenderSection
-          options={GENDER_OPTIONS}
-          value={gender}
-          onChange={handleGenderChange}
+        <BirthdaySection
+          control={control}
+          required
+          onBirthdayChange={setBirthday}
         />
 
-        <BioSection bio={bio} onBioChange={setBio} />
+        <GenderSection
+          control={control}
+          options={GENDER_OPTIONS}
+          required
+          onChange={(val) => setGender(val as Gender | null)}
+        />
+
+        <BioSection control={control} onBioChange={setBio} />
 
         <HobbiesSection
-          value={selectedHobbiesOptions}
-          onChange={handleHobbiesChange}
+          control={control}
+          required
+          onChange={(selected) => {
+            const ids = selected.map((h) => h.value);
+            setSelectedHobbyIds(ids);
+          }}
         />
 
         <div className={styles.footer}>
           <Button
             variant={ButtonVariant.Default}
             className={styles.saveButton}
-            type="button"
-            onClick={handleSave}
-            disabled={
-              !hasChanges ||
-              isSaving ||
-              !firstName ||
-              !lastName ||
-              !birthday ||
-              !gender
-            }
+            type="submit"
+            disabled={!hasChanges || isSaving}
           >
             {isSaving ? <Spinner /> : t('save')}
           </Button>

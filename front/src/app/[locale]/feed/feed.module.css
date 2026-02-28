@@ -1,7 +1,7 @@
 @reference "../../globals.css";
 
 .wrapper {
-  @apply relative h-dvh overflow-hidden;
+  @apply relative h-dvh overflow-hidden sm:rounded-[16px];
 }
 
 .content {
