@@ -226,7 +226,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         if (!result.Succeeded)
         {
             var message = result.Errors.FirstOrDefault()?.Description ?? "Unknown Error";
-            throw CommonExceptions.InternalError(message);
+            throw SecurityExceptions.InvalidConfirmationToken(message);
         }
 
         user.RequiredAction = RequiredAction.OnboardingCompletion;

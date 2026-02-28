@@ -45,4 +45,9 @@ public static class SecurityExceptions
     {
         return new HttpCodeException(description, HttpStatusCode.InternalServerError, ErrorCode.GeneralError);
     }
+    
+    public static HttpCodeException InvalidConfirmationToken(string description)
+    {
+        return new HttpCodeException(description, HttpStatusCode.UnprocessableEntity, ErrorCode.ValidationError);
+    }
 }
