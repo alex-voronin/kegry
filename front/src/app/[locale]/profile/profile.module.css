@@ -59,3 +59,7 @@
 .version {
   @apply text-secondary mt-4 text-center text-sm;
 }
+
+.loadingOverlay {
+  @apply bg-background/80 fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-sm;
+}

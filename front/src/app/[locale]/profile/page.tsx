@@ -35,6 +35,7 @@ export default function ProfilePage() {
   const [isCropperOpen, setIsCropperOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const t = useTranslations('screens.profile');
@@ -95,13 +96,15 @@ export default function ProfilePage() {
   };
 
   const handleDeleteAccount = async () => {
+    setIsDeleting(true);
     try {
       await deleteAccount();
-      await handleLogout();
+      await logout();
       window.location.href = PAGE_ROUTES.LOGIN();
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete account');
     } finally {
+      setIsDeleting(false);
       setIsDeleteAccountModalOpen(false);
     }
   };
@@ -227,7 +230,12 @@ export default function ProfilePage() {
     hobbies.filter((h) => localSelectedHobbyIds.includes(h.id));
 
   return (
-    <div>
+    <div className={cn(isDeleting && 'pointer-events-none')}>
+      {isDeleting && (
+        <div className={styles.loadingOverlay}>
+          <Spinner />
+        </div>
+      )}
       <Header
         title={t('title')}
         left={
