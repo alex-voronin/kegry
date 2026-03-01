@@ -88,7 +88,11 @@ export default function LoginPage() {
         router.push(PAGE_ROUTES.FEED);
       }
     } catch (err: any) {
-      toast.error(err.message || tCommonErrors('network'));
+      if (err.code === 'ValidationError') {
+        toast.error(t('errors.wrongCredentials'));
+      } else {
+        toast.error(err.message);
+      }
     } finally {
       setLoading(false);
     }

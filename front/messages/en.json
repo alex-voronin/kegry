@@ -70,7 +70,8 @@
         "emailInvalid": "Invalid email address",
         "passwordRequired": "Password is required",
         "passwordShort": "Password must be at least 10 characters",
-        "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+        "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+        "wrongCredentials": "Invalid email or password"
       }
     },
     "register": {
@@ -110,7 +111,7 @@
       "newPassword": "New Password",
       "confirmPassword": "Confirm Password",
       "submit": "Change Password",
-      "success": "Password changed successfully. You can now login.",
+      "success": "Password changed successfully. Please log in with your new password.",
       "backToLogin": "Back to login",
       "errors": {
         "passwordRequired": "Password is required",
@@ -124,7 +125,6 @@
       "description": "Please enter the 6-digit code sent to your email address.",
       "submit": "Verify Email",
       "verifying": "Verifying...",
-      "successTitle": "Email verified!",
       "successDescription": "Your email has been successfully verified.",
       "errorTitle": "Verification failed",
       "backToLogin": "Back to login",
@@ -494,7 +494,7 @@
         "camping": "⛺ Camping",
         "hiking": "🥾 Hiking",
         "fishing": "🎣 Fishing",
-        "hunting": "🏹 Hunting",
+        "hunting": "🦌 Hunting",
         "skiing": "⛷️ Skiing",
         "snowboarding": "🏂 Snowboarding",
         "traveling": "✈️ Traveling",
@@ -504,7 +504,7 @@
         "picnics": "🧺 Picnics",
         "kayaking": "🛶 Kayaking",
         "paddleboarding": "🏄 Paddleboarding",
-        "backpacking": "🎒 Backpacking",
+        "backpacking": "🥾 Backpacking",
         "scubadiving": "🤿 Scuba Diving",
         "cooking": "👨‍🍳 Cooking",
         "baking": "🧁 Baking",
@@ -531,7 +531,7 @@
         "fashion": "👗 Fashion",
         "tattoos": "💉 Tattoos",
         "movies": "🎬 Movies",
-        "animation": "🎞️ Animation",
+        "animation": "🎬 Animation",
         "podcasts": "🎧 Podcasts",
         "theatre": "🎭 Theatre",
         "blogging": "📝 Blogging",

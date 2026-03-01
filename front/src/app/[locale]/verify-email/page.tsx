@@ -44,7 +44,6 @@ export default function VerifyEmailPage() {
 
     try {
       await confirmEmail(userId, value);
-      toast.success(t('successTitle'));
       router.push(PAGE_ROUTES.ONBOARDING);
     } catch (err: any) {
       if (err.code === 'ValidationError') {
