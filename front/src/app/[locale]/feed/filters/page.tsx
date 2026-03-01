@@ -308,10 +308,10 @@ export default function FiltersScreen() {
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             message={t('applyDialog.title')}
-            primaryButtonText={t('applyDialog.buttonYes')}
-            secondaryButtonText={t('applyDialog.buttonNo')}
-            onPrimaryAction={handleSubmit(onSubmit)}
-            onSecondaryAction={handleDiscard}
+            primaryButtonText={t('applyDialog.buttonNo')}
+            secondaryButtonText={t('applyDialog.buttonYes')}
+            onPrimaryAction={handleDiscard}
+            onSecondaryAction={handleSubmit(onSubmit)}
           />
         </div>
       )}

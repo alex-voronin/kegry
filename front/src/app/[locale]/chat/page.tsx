@@ -533,10 +533,10 @@ export default function ChatScreen() {
         isOpen={showEndMeetingPrompt}
         onClose={handleDismissEndMeetingPrompt}
         message={t('endMeetingDialog.message')}
-        primaryButtonText={t('endMeetingDialog.yes')}
-        secondaryButtonText={t('endMeetingDialog.no')}
-        onPrimaryAction={handleEndMeeting}
-        onSecondaryAction={handleDismissEndMeetingPrompt}
+        primaryButtonText={t('endMeetingDialog.no')}
+        secondaryButtonText={t('endMeetingDialog.yes')}
+        onPrimaryAction={handleDismissEndMeetingPrompt}
+        onSecondaryAction={handleEndMeeting}
       />
 
       <ModalDialog

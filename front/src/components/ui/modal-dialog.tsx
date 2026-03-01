@@ -17,6 +17,8 @@ interface ModalDialogProps {
   message: string;
   primaryButtonText: string;
   secondaryButtonText?: string;
+  primaryButtonVariant?: ButtonVariant;
+  secondaryButtonVariant?: ButtonVariant;
   onPrimaryAction: () => void;
   onSecondaryAction?: () => void;
 }
@@ -27,6 +29,8 @@ export function ModalDialog({
   message,
   primaryButtonText,
   secondaryButtonText,
+  primaryButtonVariant = ButtonVariant.Default,
+  secondaryButtonVariant = ButtonVariant.Default,
   onPrimaryAction,
   onSecondaryAction,
 }: ModalDialogProps) {
@@ -63,7 +67,7 @@ export function ModalDialog({
 
               <div className={styles.buttonGroup}>
                 <Button
-                  variant={ButtonVariant.Default}
+                  variant={primaryButtonVariant}
                   className={styles.button}
                   onClick={() => {
                     onPrimaryAction();
@@ -74,7 +78,7 @@ export function ModalDialog({
                 </Button>
                 {secondaryButtonText && onSecondaryAction && (
                   <Button
-                    variant={ButtonVariant.Default}
+                    variant={secondaryButtonVariant}
                     className={styles.button}
                     onClick={() => {
                       onSecondaryAction();

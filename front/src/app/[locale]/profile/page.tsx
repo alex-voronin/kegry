@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import { toast } from 'react-toastify';
+import { ButtonVariant } from '@/components/ui/button';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
@@ -420,10 +421,11 @@ export default function ProfilePage() {
         isOpen={isDeleteAccountModalOpen}
         onClose={() => setIsDeleteAccountModalOpen(false)}
         message={t('deleteAccountDialog.title')}
-        primaryButtonText={t('deleteAccountDialog.buttonYes')}
-        secondaryButtonText={t('deleteAccountDialog.buttonNo')}
-        onPrimaryAction={handleDeleteAccount}
-        onSecondaryAction={() => setIsDeleteAccountModalOpen(false)}
+        primaryButtonText={t('deleteAccountDialog.buttonNo')}
+        secondaryButtonText={t('deleteAccountDialog.buttonYes')}
+        secondaryButtonVariant={ButtonVariant.Destructive}
+        onPrimaryAction={() => setIsDeleteAccountModalOpen(false)}
+        onSecondaryAction={handleDeleteAccount}
       />
 
       {isCropperOpen && selectedImage && (
