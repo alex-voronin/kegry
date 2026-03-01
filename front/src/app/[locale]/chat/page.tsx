@@ -552,7 +552,9 @@ export default function ChatScreen() {
       <ModalDialog
         isOpen={isFirstTimePopupOpen}
         onClose={() => setIsFirstTimePopupOpen(false)}
-        message={t('firstTimePopup.message')}
+        message={t('firstTimePopup.message', {
+          count: remainingMessages,
+        })}
         primaryButtonText={t('firstTimePopup.okButton')}
         onPrimaryAction={() => setIsFirstTimePopupOpen(false)}
       />

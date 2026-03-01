@@ -207,7 +207,7 @@
         "cancelFailed": "Failed to end meeting"
       },
       "endMeetingDialog": {
-        "message": "It seems you have met. Has the meeting already ended?",
+        "message": "Seems like you've met! Is the meeting over?",
         "yes": "Yes",
         "no": "No"
       },
@@ -216,7 +216,7 @@
         "okButton": "Got it"
       },
       "firstTimePopup": {
-        "message": "You've both sent invites! A chat is ready for you to plan your meetup.",
+        "message": "You've both sent invites! A chat is ready for you to plan your meetup. You have {count} messages per chat, and it will end automatically once you meet or you can end it anytime from the menu.",
         "okButton": "Let's Chat"
       }
     },
