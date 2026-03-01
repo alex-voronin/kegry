@@ -4,7 +4,7 @@ import axios, {
   InternalAxiosRequestConfig,
 } from 'axios';
 import { useAuthStore } from './auth/use-auth-store';
-import { API_ENDPOINTS } from './routes';
+import { API_ENDPOINTS, PAGE_ROUTES } from './routes';
 
 // --- Configuration ---
 
@@ -93,7 +93,7 @@ apiClient.interceptors.response.use(
       error.response?.data &&
       (error.response.data as any).success === false
     ) {
-      return error.response;
+      return Promise.resolve(error.response);
     }
 
     // --- Token Refresh on 401 ---
@@ -112,7 +112,10 @@ apiClient.interceptors.response.use(
           refreshToken: null,
           requiredAction: null,
         });
-        return Promise.reject(new Error('No refresh token - session expired'));
+        if (typeof window !== 'undefined') {
+          window.location.href = PAGE_ROUTES.LOGIN();
+        }
+        return Promise.reject(new Error('No refresh token. Session expired'));
       }
 
       // Queue this request if refresh is already in progress
@@ -131,9 +134,13 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await axios.post(API_ENDPOINTS.AUTH.RENEW_TOKENS, {
-          refreshToken,
-        });
+        const response = await axios.post(
+          API_ENDPOINTS.AUTH.RENEW_TOKENS,
+          {
+            refreshToken,
+          },
+          { timeout: 10000 },
+        );
 
         const { accessToken, refreshToken: newRefreshToken } =
           response.data.result;
@@ -158,6 +165,9 @@ apiClient.interceptors.response.use(
           refreshToken: null,
           requiredAction: null,
         });
+        if (typeof window !== 'undefined') {
+          window.location.href = PAGE_ROUTES.LOGIN();
+        }
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
