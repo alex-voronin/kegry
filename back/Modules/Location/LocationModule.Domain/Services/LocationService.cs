@@ -2,6 +2,7 @@ using LocationModule.Contracts.Events;
 using LocationModule.Domain.Aggregates;
 using LocationModule.Domain.Repositories;
 using NetTopologySuite.Geometries;
+using Serilog;
 using SharedCore.Services;
 using SharedCore.Services.LifeTimes;
 using Location = LocationModule.Domain.Aggregates.Location;
@@ -15,7 +16,7 @@ internal class LocationService : DomainService<ILocationRepository>, ILocationSe
         internal static readonly TimeSpan CurrentLocationTtl = TimeSpan.FromMinutes(45);
         internal const double ThresholdMeters = 750;
         internal const double MaxSpeedMps = 100; // 360 km/h
-        internal const double MetThresholdMeters = 50;
+        internal const double MetThresholdMeters = 100;
     }
 
     private readonly ITrackedUserPairRepository _trackedUserPairRepository;
@@ -81,6 +82,8 @@ internal class LocationService : DomainService<ILocationRepository>, ILocationSe
             {
                 continue;
             }
+
+            Log.Information("Users {FirstUserId} and {SecondUserId} have met.", pair.FirstUserId, pair.SecondUserId);
 
             _trackedUserPairRepository.Delete(pair);
             pairsRemoved = true;
