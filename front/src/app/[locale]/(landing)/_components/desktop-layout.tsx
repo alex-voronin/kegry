@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useNewsStore } from '../store/use-news-store';
+import Script from 'next/script';
 import SocialLinks from './social-links';
 import styles from './desktop-landing.module.css';
 
@@ -26,6 +27,7 @@ export default function DesktopLayout() {
 
   return (
     <div className={styles.wrapper}>
+      <Script async src="https://tally.so/widgets/embed.js" />
       {/* Fixed Header */}
       <header className={styles.header}>
         <div className={styles.logoContainer}>
@@ -126,14 +128,15 @@ export default function DesktopLayout() {
           <p className={styles.cardDescription}>
             {t('pollsNews.pollDescription')}
           </p>
-          <a
-            href="https://tally.so/r/obGVDN"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            data-tally-open="obGVDN"
+            data-tally-emoji-text="👋"
+            data-tally-emoji-animation="wave"
+            data-tally-auto-close="2500"
             className={styles.pollButton}
           >
             {t('pollsNews.pollButton')}
-          </a>
+          </button>
         </div>
       </section>
 

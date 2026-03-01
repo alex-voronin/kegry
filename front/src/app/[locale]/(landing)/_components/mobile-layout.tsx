@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { Menu, X } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useNewsStore } from '../store/use-news-store';
+import Script from 'next/script';
 import SocialLinks from './social-links';
 import styles from './desktop-landing.module.css';
 import mobileStyles from './mobile-landing.module.css';
@@ -32,6 +33,7 @@ export default function MobileLayout() {
 
   return (
     <div className={styles.wrapper}>
+      <Script async src="https://tally.so/widgets/embed.js" />
       {/* Header */}
       <header className={mobileStyles.mobileHeader}>
         <div className={mobileStyles.mobileLogoContainer}>
@@ -196,14 +198,15 @@ export default function MobileLayout() {
           <p className={mobileStyles.mobileCardDescription}>
             {t('pollsNews.pollDescription')}
           </p>
-          <a
-            href="https://tally.so/r/obGVDN"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            data-tally-open="obGVDN"
+            data-tally-emoji-text="👋"
+            data-tally-emoji-animation="wave"
+            data-tally-auto-close="2500"
             className={styles.pollButton}
           >
             {t('pollsNews.pollButton')}
-          </a>
+          </button>
         </div>
       </section>
 
