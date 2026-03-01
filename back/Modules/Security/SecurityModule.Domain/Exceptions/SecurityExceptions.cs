@@ -50,4 +50,14 @@ public static class SecurityExceptions
     {
         return new HttpCodeException(description, HttpStatusCode.UnprocessableEntity, ErrorCode.ValidationError);
     }
+    
+    public static HttpCodeException WrongCredentials(string description)
+    {
+        return new HttpCodeException(description, HttpStatusCode.UnprocessableEntity, ErrorCode.ValidationError);
+    }
+    
+    public static HttpCodeException LockedOut(string description)
+    {
+        return new HttpCodeException(description, HttpStatusCode.UnprocessableEntity, ErrorCode.TooManyRequests);
+    }
 }

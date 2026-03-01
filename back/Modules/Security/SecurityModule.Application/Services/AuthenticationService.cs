@@ -134,7 +134,12 @@ internal class AuthenticationService : IAuthenticationService, IScoped
             lockoutOnFailure: true);
         if (!result.Succeeded)
         {
-            throw CommonExceptions.InternalError(result.ToString());
+            if (result.IsLockedOut)
+            {
+                throw SecurityExceptions.LockedOut(
+                    "Your account has been locked for 5 minutes. Please try again later.");
+            }
+            throw SecurityExceptions.WrongCredentials("Invalid email or password");
         }
 
         var (accessToken, refreshToken) = await GenerateTokensAsync(user);

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <root>
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
         <xsd:element name="root" msdata:IsDataSet="true">
-            
         </xsd:element>
     </xsd:schema>
     <resheader name="resmimetype">
@@ -13,10 +13,14 @@
         <value>1.3</value>
     </resheader>
     <resheader name="reader">
-        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
     </resheader>
     <resheader name="writer">
-        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
     </resheader>
     <data name="InApp.UserInvitedNotification.PrimaryText" xml:space="preserve">
         <value>Hi! Let's get a drink!</value>
@@ -37,13 +41,22 @@
         <value>New invitation!</value>
     </data>
     <data name="Email.UserInvited.Body" xml:space="preserve">
-        <value>You have received an invitation from another user! Open &lt;a href=&quot;https://wibblycorn.com/notifications&quot;&gt;Notifications&lt;/a&gt; to view details.</value>
+        <value>
+            You have received an invitation from another user!&lt;br /&gt;&lt;br /&gt;
+            Open &lt;a href=&quot;https://wibblycorn.com/notifications&quot;&gt;Notifications&lt;/a&gt; to view details.&lt;br /&gt;&lt;br /&gt;
+            Best regards,&lt;br /&gt;
+            The Wibblycorn Team</value>
     </data>
     <data name="Email.ConfirmEmail.Subject" xml:space="preserve">
-        <value>Confirm your email</value>
+        <value>Verify your email</value>
     </data>
     <data name="Email.ConfirmEmail.Body" xml:space="preserve">
-        <value>Your confirmation code is {0}</value>
+        <value>
+            Your verification code is {0}&lt;br /&gt;&lt;br /&gt;
+            Please note that the code is valid for 10 minutes.&lt;br /&gt;&lt;br /&gt;
+            Best regards,&lt;br /&gt;
+            The Wibblycorn Team
+        </value>
     </data>
     <data name="Email.Common.UnsubscribeText" xml:space="preserve">
         <value>You are receiving this email because you are subscribed to email notifications.</value>
@@ -70,15 +83,25 @@
         <value>Tap to end the meeting.</value>
     </data>
     <data name="Email.ChatMessageReceived.Title" xml:space="preserve">
-        <value>You have received a new message from {}! Open &lt;a href=&quot;https://wibblycorn.com/chat&quot;&gt;Chat&lt;/a&gt; to view details.</value>
+        <value>New message!</value>
     </data>
     <data name="Email.ChatMessageReceived.Body" xml:space="preserve">
-        <value>New message!</value>
+        <value>
+            You have received a new message from {}!&lt;br /&gt;&lt;br /&gt;
+            Open &lt;a href=&quot;https://wibblycorn.com/chat&quot;&gt;Chat&lt;/a&gt; to view details.&lt;br /&gt;&lt;br /&gt;
+            Best regards,&lt;br /&gt;
+            The Wibblycorn Team
+        </value>
     </data>
     <data name="Email.PasswordReset.Subject" xml:space="preserve">
         <value>Reset your password</value>
     </data>
     <data name="Email.PasswordReset.Body" xml:space="preserve">
-        <value>You requested a password reset. Follow the link to reset your password: &lt;a href=&quot;https://wibblycorn.com/password-reset?email={0}&amp;token={1}&quot;&gt;https://wibblycorn.com/password-reset?email={0}&amp;token={1}&lt;/a&gt;</value>
+        <value>
+            You requested a password reset.&lt;br /&gt;&lt;br /&gt;
+            Follow the link to reset your password: &lt;a href=&quot;https://wibblycorn.com/password-reset?email={0}&amp;token={1}&quot;&gt;https://wibblycorn.com/password-reset?email={0}&amp;token={1}&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;
+            Best regards,&lt;br /&gt;
+            The Wibblycorn Team
+        </value>
     </data>
 </root>
