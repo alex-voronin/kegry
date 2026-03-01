@@ -153,10 +153,12 @@ export default function MobileLayout() {
             {t.rich('cheers.description', {
               br: () => <br />,
             })}{' '}
-            <Link href={PAGE_ROUTES.LOGIN(true)} className={styles.actionLink}>
-              {t('cheers.cta')}
-            </Link>
           </p>
+          <div className={mobileStyles.mobileLoginButtonWrapper}>
+            <Link href={PAGE_ROUTES.LOGIN(true)} className={styles.loginButton}>
+              {t('header.nav.login')}
+            </Link>
+          </div>
         </div>
       </section>
 

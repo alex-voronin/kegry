@@ -197,3 +197,7 @@
 .mobileFooterLinks {
   @apply flex flex-wrap justify-center gap-4;
 }
+
+.mobileLoginButtonWrapper {
+  @apply mt-4 flex justify-center;
+}
