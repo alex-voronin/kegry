@@ -183,13 +183,13 @@ export default function HowItWorksPage() {
             <div className={styles.slide}>
               <div className={styles.card}>
                 <div className={styles.section}>
+                  <p>{t('slideFeed.textDontGoAlone')}</p>
+                </div>
+                <div className={styles.section}>
                   <p>{t('slideFeed.textInvites')}</p>
                 </div>
                 <div className={styles.section}>
                   <p>{t('slideFeed.textNewChat')}</p>
-                </div>
-                <div className={styles.section}>
-                  <p>{t('slideFeed.textEndChat')}</p>
                 </div>
               </div>
             </div>

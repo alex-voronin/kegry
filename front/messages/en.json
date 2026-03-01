@@ -137,9 +137,9 @@
     "howItWorks": {
       "greeting": "Hey, adventurer!",
       "slideFeed": {
+        "textDontGoAlone": "Pick a companion and start your journey together!",
         "textInvites": "You have a limited number of invites per day. They reset the next day.",
-        "textNewChat": "Once you've established a connection, a chat opens to plan your meeting.",
-        "textEndChat": "You can cancel it anytime, or it'll end automatically when you're done."
+        "textNewChat": "Once you've both sent invites and established a connection, a chat opens to plan your meeting."
       },
       "slidePermissions": {
         "location": "📍 Geolocation is absolutely necessary for the feed to work. Please allow it when we ask for permission.",
@@ -189,7 +189,10 @@
       "when": "When",
       "now": "Now",
       "today": "Today",
-      "tomorrow": "Tomorrow"
+      "tomorrow": "Tomorrow",
+      "toast": {
+        "noInvites": "No invites left. They'll reset tomorrow."
+      }
     },
     "chat": {
       "messagePlaceholder": "Message {remaining}/{total}",

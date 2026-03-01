@@ -282,6 +282,11 @@ export default function FeedScreen() {
   };
 
   const handleInvite = async () => {
+    if (availableInvitesCount <= 0) {
+      toast.error(tFeed('toast.noInvites'));
+      return;
+    }
+
     if (currentItem?.kind === 'npc') {
       await inviteNpc(currentItem.npc.id);
       return;
@@ -432,7 +437,7 @@ export default function FeedScreen() {
           onIgnore={handleIgnore}
           onInvite={handleInvite}
           onSkip={handleSkip}
-          isInviteDisabled={availableInvitesCount <= 0}
+          isInviteDisabled={false}
         />
       </>
     );
