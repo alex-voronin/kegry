@@ -178,7 +178,6 @@ export default function FiltersScreen() {
     try {
       await updateFilters(dto);
       useFeedStore.getState().reset();
-      toast.success(t('applySuccess'));
       router.back();
     } catch (err: any) {
       toast.error(err.message || 'Failed to update filters');
