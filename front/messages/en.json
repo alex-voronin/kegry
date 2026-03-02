@@ -257,8 +257,8 @@
       "today": "today",
       "rightNow": "right now",
       "tomorrow": "tomorrow",
-      "todayUntil": "today until {h}h",
-      "tomorrowUntil": "tomorrow until {h}h",
+      "todayUntil": "today until {h}:{m}",
+      "tomorrowUntil": "tomorrow until {h}:{m}",
       "ago": "{time} ago",
       "menu": {
         "accept": "Accept",
