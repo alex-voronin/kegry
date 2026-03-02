@@ -19,7 +19,7 @@ const MessageType = {
 };
 
 function getMessageId(payload) {
-  return payload.messageId || payload.data?.messageId || 'unknown';
+  return payload.data?.messageId || payload.messageId || 'unknown';
 }
 
 function getTargetUrl(userAction) {
@@ -73,7 +73,7 @@ self.addEventListener('notificationclick', (event) => {
 
   const payload = event.notification.data;
   const userAction = payload?.data?.userAction;
-  const messageId = payload?.messageId || payload?.data?.messageId;
+  const messageId = payload?.data?.messageId || payload?.messageId;
 
   if (!messageId) return;
 
