@@ -88,7 +88,7 @@ public class FeedEndpoints : IEndpoints
         IUserActionsService userActionsService,
         CancellationToken ct)
     {
-        await userActionsService.RateUserAsync(user.GetId(), request.Id, request.Rating.Value, ct);
+        await userActionsService.RateUserAsync(user.GetId(), request.Id, request.RatingDto.Rating, ct);
         return ApiResult.Empty;
     }
 

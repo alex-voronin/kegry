@@ -121,7 +121,7 @@ public class UserProfileEndpoints : IEndpoints
     }
 
     private static async Task<ApiResult<GetUserProfileResponse>> GetUserProfile(
-        [FromQuery] Guid? id,
+        [FromRoute] Guid? id,
         ClaimsPrincipal user,
         IUserRepository repository,
         IS3StorageService storageService,

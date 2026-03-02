@@ -187,8 +187,17 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
         statusAfterB.Success.ShouldBeTrue();
         statusAfterB.Result.IsInMeeting.ShouldBeFalse();
         statusAfterB.Result.UserIdToRate.ShouldBe(Guid.Parse(authA.UserId));
-    }
 
+        // 7. Verify that UserIdToRate is null after rating updated
+        var rateRequest = new UserRatingDto(4.5m);
+        var rateResponse = await Factory.ApiClient.PostAsync<UserRatingDto, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.RateUser(authA.UserId), rateRequest);
+        rateResponse.Success.ShouldBeTrue();
+        var statusAfterRate = await Factory.ApiClient
+            .GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
+        statusAfterRate.Success.ShouldBeTrue();
+        statusAfterRate.Result.UserIdToRate.ShouldBeNull();
+    }
 
     [Fact]
     public async Task GivenActiveChat_WhenUsersExchangeMessages_ThenBothReceiveSilentPushesAndChatHistory()
