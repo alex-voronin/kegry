@@ -157,7 +157,7 @@ export default function ProfilePage() {
   };
 
   const handleBack = () => {
-    router.replace(PAGE_ROUTES.FEED);
+    router.replace(`${PAGE_ROUTES.FEED}?auto-chat-redirect=false`);
   };
 
   const handleAvatarClick = () => {

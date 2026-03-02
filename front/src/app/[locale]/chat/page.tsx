@@ -511,7 +511,11 @@ export default function ChatScreen() {
           value={message}
           onChange={(e) => onMessageChange(e)}
           onKeyDown={(e) => {
-            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+            if (
+              (e.metaKey || e.ctrlKey) &&
+              e.key === 'Enter' &&
+              remainingMessages > 0
+            ) {
               e.preventDefault();
               handleSendMessage();
             }
