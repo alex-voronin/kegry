@@ -27,7 +27,23 @@ export function createForegroundMessageHandler() {
 
 export function createSwMessageListener(): (event: MessageEvent) => void {
   return (event: MessageEvent) => {
-    const { type, data } = event.data || {};
+    const { type, data, payload } = event.data || {};
+
+    if (type === SwMessageType.FCM_MESSAGE) {
+      const fcmPayload = payload as FcmPayload;
+      if (!fcmPayload) return;
+
+      const handlers = useFcmStore.getState().customForegroundHandlers;
+      handlers.forEach((handler) => {
+        try {
+          handler(fcmPayload);
+        } catch (err) {
+          console.error('[FCM] SW-to-Foreground bridge failed', err);
+        }
+      });
+      return;
+    }
+
     if (type !== SwMessageType.NOTIFICATION_CLICK) return;
 
     // Read handler from store at execution time (fixes stale capture bug)
