@@ -75,7 +75,6 @@ export default function RateUserScreen({ params }: RateUserScreenProps) {
 
     try {
       await submitRating(userProfile.id, rating);
-      toast.success(t('toast.ratingSubmitted'));
       router.replace(PAGE_ROUTES.FEED);
     } catch (error: any) {
       toast.error(error.message || t('toast.submitFailed'));
@@ -138,18 +137,18 @@ export default function RateUserScreen({ params }: RateUserScreenProps) {
             <Button
               variant={ButtonVariant.Default}
               className={styles.button}
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? <Spinner /> : t('submit')}
-            </Button>
-            <Button
-              variant={ButtonVariant.Default}
-              className={styles.button}
               onClick={handleSkip}
               disabled={isSubmitting}
             >
               {t('skip')}
+            </Button>
+            <Button
+              variant={ButtonVariant.Default}
+              className={styles.button}
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? <Spinner /> : t('submit')}
             </Button>
           </div>
         </div>

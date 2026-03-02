@@ -282,8 +282,7 @@
       "skip": "Skip",
       "toast": {
         "ratingRequired": "Please select a rating",
-        "submitFailed": "Failed to submit rating",
-        "ratingSubmitted": "Thank you! Rating has been submitted"
+        "submitFailed": "Failed to submit rating"
       }
     },
     "profile": {
