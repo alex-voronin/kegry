@@ -262,13 +262,11 @@ export default function ChatScreen() {
     if (!chat?.expiresAt) return;
 
     // Check for "first time chat" popup
-    if (chat?.id) {
-      const shownKey = `chat_intro_shown_${chat.id}`;
-      const hasShown = window.localStorage.getItem(shownKey);
-      if (!hasShown) {
-        setIsFirstTimePopupOpen(true);
-        window.localStorage.setItem(shownKey, 'true');
-      }
+    const shownKey = 'chat_intro_shown';
+    const hasShown = window.localStorage.getItem(shownKey);
+    if (!hasShown) {
+      setIsFirstTimePopupOpen(true);
+      window.localStorage.setItem(shownKey, 'true');
     }
 
     setRemainingTimeMs(calculateRemainingTimeMs());
