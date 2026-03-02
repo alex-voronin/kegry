@@ -201,16 +201,30 @@ export default function ChatScreen() {
       }
 
       if (type === NotificationType.CHAT_MESSAGE_RECEIVED) {
-        if (data.messageText && data.createdAt) {
-          addMessage({
-            id: crypto.randomUUID(), // Temp ID until next fetch
-            messageText: data.messageText,
-            createdAt: data.createdAt,
-            isMine: false,
-          });
-        } else {
+        if (!data.messageText || !data.createdAt || !data.chatMessageId) {
           refreshChat();
+          return;
         }
+
+        const currentChat = useChatStore.getState().chat;
+        const messages = currentChat?.messages || [];
+        const lastMessage = messages[messages.length - 1];
+
+        if (
+          lastMessage &&
+          new Date(data.createdAt) < new Date(lastMessage.createdAt)
+        ) {
+          console.warn('[Chat] Out-of-order message detected, reloading chat');
+          refreshChat();
+          return;
+        }
+
+        addMessage({
+          id: data.chatMessageId,
+          messageText: data.messageText,
+          createdAt: data.createdAt,
+          isMine: false,
+        });
       }
     };
 
