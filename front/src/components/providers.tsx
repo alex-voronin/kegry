@@ -38,7 +38,7 @@ function FcmGlobalHandler() {
         router.push(PAGE_ROUTES.CHAT);
       }
       if (type === NotificationType.OPEN_RATE_USER_SCREEN) {
-        const userId = data.RateeId;
+        const userId = data.rateeId;
         if (userId) {
           router.push(PAGE_ROUTES.RATE_USER(userId));
         }
