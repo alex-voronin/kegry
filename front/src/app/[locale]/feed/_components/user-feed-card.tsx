@@ -43,14 +43,16 @@ export function UserFeedBody({
       </div>
 
       <div className={styles.userInfo}>
-        <div className={styles.ratingRow}>
-          <StarRating
-            initialRating={currentProfile.rating || 0}
-            isReadOnly
-            dimension={12}
-            isHalfRatingEnabled={true}
-          />
-        </div>
+        {currentProfile.rating && currentProfile.rating > Number.EPSILON && (
+          <div className={styles.ratingRow}>
+            <StarRating
+              initialRating={currentProfile.rating || 0}
+              isReadOnly
+              dimension={12}
+              isHalfRatingEnabled={true}
+            />
+          </div>
+        )}
 
         <h1 className={styles.name}>
           {currentProfile.firstName} {currentProfile.lastName}
