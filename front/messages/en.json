@@ -21,7 +21,7 @@
       },
       "cheers": {
         "title": "Find your bar buddy right now!",
-        "description": "Up for a drink and good company? No dating. No endless chats. Check a profile, send an invite, arrange a meeting, and there you go, you're at the bar! Talk about life, laugh, vent and keep your head up. If any hobgoblins appear, maybe it's time to slow down a bit 🥴",
+        "description": "Up for a drink and good company? No dating. No endless chats. Check a profile, send an invite, arrange a meetup, and there you go, you're at the bar! Talk about life, laugh, vent and keep your head up. If any hobgoblins appear, maybe it's time to slow down a bit 🥴",
         "cta": "Ready?"
       },
       "pollsNews": {
@@ -137,9 +137,9 @@
     "howItWorks": {
       "greeting": "Hey, adventurer!",
       "slideFeed": {
-        "textDontGoAlone": "Pick a companion and start your journey together!",
-        "textInvites": "You have a limited number of invites per day. They reset the next day.",
-        "textNewChat": "Once you've both sent invites and established a connection, a chat opens to plan your meeting."
+        "textDontGoAlone": "Pick a companion and start your journey together! But keep in mind:",
+        "textInvites": "• You have a limited number of invites per day. Don't worry, they refresh tomorrow.",
+        "textNewChat": "• Once you've both sent invites and match, a chat will open so you can start planning your meetup!🍺"
       },
       "slidePermissions": {
         "location": "📍 Geolocation is absolutely necessary for the feed to work. Please allow it when we ask for permission.",
@@ -180,7 +180,7 @@
       "distance": "Distance: {distance} {units}",
       "noProfiles": "No profiles found. Try changing the filters.",
       "locationRequired": "Location access is required to show profiles nearby. Please enable location in your browser settings.",
-      "inMeeting": "You're currently planning a meeting, so you can't invite anyone just yet 😊 Please end the meeting first, then go back to the feed. Tap anywhere to open the chat.",
+      "inMeeting": "You're currently planning a meetup, so you can't invite anyone just yet 😊 Please end the meetup first, then go back to the feed. Tap anywhere to open the chat.",
       "inviteExpirationDialog": {
         "message": "This person invited you for {when}. Would you like to match their time?",
         "accept": "Yes, {when}",
@@ -199,18 +199,18 @@
       "timer": "{minutes}:{seconds}",
       "noActiveChat": "No active chat",
       "timerInfoDialog": {
-        "title": "The timer shows a countdown until the chat ends. When the time expires or the chat is ended manually, you will be able to scroll the feed again and invite users to meetings.",
+        "title": "The timer shows a countdown until the chat ends. When the time expires or the chat is ended manually, you will be able to scroll the feed again and invite users to meetups.",
         "okButton": "OK"
       },
       "menu": {
-        "cancel": "End meeting"
+        "cancel": "End meetup"
       },
       "toast": {
         "sendFailed": "Failed to send message",
-        "cancelFailed": "Failed to end meeting"
+        "cancelFailed": "Failed to end meetup"
       },
       "endMeetingDialog": {
-        "message": "Seems like you've met! Is the meeting over?",
+        "message": "Seems like you've met! Is the meetup over?",
         "yes": "Yes",
         "no": "No"
       },
@@ -276,7 +276,7 @@
       }
     },
     "rateUser": {
-      "howWasIt": "How did your meeting go?",
+      "howWasIt": "How did your meetup go?",
       "submit": "Submit",
       "skip": "Skip",
       "toast": {
