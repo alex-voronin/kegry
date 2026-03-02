@@ -4,6 +4,7 @@ namespace ChatModule.Contracts.Events;
 
 public record ChatMessageSentEvent : IdempotentEventBase
 {
+    public required Guid MessageId { get; init; }
     public required Guid ToUserId { get; init; }
     public required Guid FromUserId { get; init; }
     public required string FromUserName { get; init; }

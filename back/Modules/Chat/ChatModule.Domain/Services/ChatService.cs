@@ -97,6 +97,7 @@ internal class ChatService : DomainService<IChatRepository>, IChatService, IScop
         var fromUser = chat.UserLinks.First(l => l.UserId == userId).User;
         var @event = new ChatMessageSentEvent()
         {
+            MessageId = message.Id,
             ToUserId = toUser.Id,
             FromUserId = fromUser.Id,
             FromUserName = fromUser.FirstName,

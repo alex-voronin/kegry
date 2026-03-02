@@ -22,6 +22,7 @@ public class ChatAnalyticsTests : IntegrationTestBase, IAsyncLifetime
     {
         var @event = new ChatMessageSentEvent
         {
+            MessageId = Guid.NewGuid(),
             ToUserId = Guid.NewGuid(),
             FromUserId = Guid.NewGuid(),
             FromUserName = "User",

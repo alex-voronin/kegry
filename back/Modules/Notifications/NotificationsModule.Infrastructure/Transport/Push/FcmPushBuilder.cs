@@ -38,12 +38,20 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         public static readonly string MessageText = nameof(MessageText).ToCamelCase();
         public static readonly string CreatedAt = nameof(CreatedAt).ToCamelCase();
         public static readonly string RateeId = nameof(RateeId).ToCamelCase();
+        public static readonly string ChatMessageId = nameof(ChatMessageId).ToCamelCase();
         public static readonly string Type = nameof(Type).ToCamelCase();
         public static readonly string MessageId = nameof(MessageId).ToCamelCase();
         public static readonly string IsSilent = nameof(IsSilent).ToCamelCase();
     }
 
     private readonly IStringLocalizer<NotificationsLocalization> _localizer;
+    private readonly WebpushConfig _highPriorityConfig = new WebpushConfig()
+    {
+        Headers = new Dictionary<string, string>()
+        {
+            { "Urgency", "high" }
+        }
+    };
 
     public FcmPushBuilder(IStringLocalizer<NotificationsLocalization> localizer)
     {
@@ -65,7 +73,8 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         return BuildPushMessages(
             fcmTokens: fcmTokens,
             notification: null,
-            data: data);
+            data: data,
+            webPushConfig: _highPriorityConfig);
     }
 
     public PushMessage BuildUserInvitedPush(string[] fcmTokens)
@@ -83,7 +92,8 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         return BuildPushMessages(
             fcmTokens: fcmTokens,
             notification: null,
-            data: data);
+            data: data,
+            webPushConfig: _highPriorityConfig);
     }
 
     public PushMessage BuildChatMessageReceivedPush(string[] fcmTokens, ChatMessageSentEvent @event,
@@ -95,7 +105,8 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         var data = new Dictionary<string, string>()
         {
             // The same Id squashes messages to the same user in a mobile device's notification center
-            { Keys.MessageId, @event.FromUserId.ToString() }, 
+            { Keys.MessageId, @event.FromUserId.ToString() },
+            { Keys.ChatMessageId, @event.MessageId.ToString() },
             { Keys.Title, title },
             { Keys.Body, body },
             { Keys.Icon, @event.FromUserAvatarUrl },
@@ -109,7 +120,8 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         return BuildPushMessages(
             fcmTokens: fcmTokens,
             notification: null,
-            data: data);
+            data: data,
+            webPushConfig: _highPriorityConfig);
     }
 
     public PushMessage BuildOpenRateUserScreenPush(string[] fcmTokens, Guid rateeUserId)

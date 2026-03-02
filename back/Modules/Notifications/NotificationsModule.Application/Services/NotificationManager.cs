@@ -46,11 +46,6 @@ internal class NotificationManager : INotificationManager, IScoped
             );
     }
 
-    public Task SendChatMessageReceivedSilent(ChatMessageSentEvent @event, CancellationToken ct = default)
-    {
-        return _pushNotificationStrategy.SendChatMessageReceivedSilent(@event, ct);
-    }
-
     private async Task SendNotifications(
         Guid userId,
         Func<INotificationStrategy, Task> sendFunc,

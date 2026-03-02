@@ -9,7 +9,6 @@ namespace NotificationsModule.Application.Services;
 
 public interface IPushNotificationStrategy : INotificationStrategy
 {
-    public Task SendChatMessageReceivedSilent(ChatMessageSentEvent @event, CancellationToken ct = default);
     public Task SendOpenRateUserScreenSilent(Guid userId, Guid rateeUserId, CancellationToken ct = default);
     public Task SendEndMeetingSuggestion(Guid userId, CancellationToken ct = default);
 }
@@ -51,14 +50,6 @@ internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
         return SendPush(
             userId: @event.ToUserId,
             factory: fcmTokens => _pushBuilder.BuildChatMessageReceivedPush(fcmTokens, @event),
-            ct: ct);
-    }
-
-    public Task SendChatMessageReceivedSilent(ChatMessageSentEvent @event, CancellationToken ct = default)
-    {
-        return SendPush(
-            userId: @event.ToUserId,
-            factory: fcmTokens => _pushBuilder.BuildChatMessageReceivedPush(fcmTokens, @event, true),
             ct: ct);
     }
 

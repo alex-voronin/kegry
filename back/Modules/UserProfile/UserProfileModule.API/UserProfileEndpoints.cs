@@ -75,7 +75,7 @@ public class UserProfileEndpoints : IEndpoints
         CancellationToken ct)
     {
         var userId = user.GetId();
-        var userProfile = await repository.GetByIdAsync(userId, includes:[u => u.Hobbies], ct: ct);
+        var userProfile = await repository.GetByIdAsync(userId, includes: [u => u.Hobbies], ct: ct);
         if (userProfile == null)
         {
             throw UserProfileExceptions.ProfileNotFound(userId);
