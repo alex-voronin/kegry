@@ -510,6 +510,12 @@ export default function ChatScreen() {
         <textarea
           value={message}
           onChange={(e) => onMessageChange(e)}
+          onKeyDown={(e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+              e.preventDefault();
+              handleSendMessage();
+            }
+          }}
           className={styles.input}
           placeholder={t('messagePlaceholder', {
             remaining: remainingMessages,
