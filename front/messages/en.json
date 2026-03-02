@@ -235,6 +235,7 @@
       "male": "Male",
       "female": "Female",
       "hobbies": "Hobbies",
+      "hobbiesPlaceholder": "Select hobbies…",
       "hobbyName": "Hobby name",
       "apply": "Apply",
       "applyDialog": {

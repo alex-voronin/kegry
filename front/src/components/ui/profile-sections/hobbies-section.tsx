@@ -19,6 +19,7 @@ export interface HobbiesSectionProps {
   onChange?: (hobbies: HobbyOption[]) => void;
   readOnly?: boolean;
   required?: boolean;
+  placeholder?: string;
 }
 
 const selectStyles = {
@@ -85,6 +86,7 @@ export function HobbiesSection({
   onChange,
   readOnly = false,
   required = false,
+  placeholder,
 }: HobbiesSectionProps) {
   const t = useTranslations('components.profile-sections.hobbies');
   const { hobbies, fetchHobbies, isLoading, hasHydrated } = useHobbiesStore();
@@ -138,7 +140,7 @@ export function HobbiesSection({
           field.onChange(selectedArray.map((h) => h.value));
           onChange?.(selectedArray);
         }}
-        placeholder={t('placeholder')}
+        placeholder={placeholder || t('placeholder')}
         classNamePrefix="hobby-select"
         isDisabled={readOnly}
         isClearable={!readOnly}

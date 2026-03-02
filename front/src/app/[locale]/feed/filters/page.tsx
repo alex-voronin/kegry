@@ -288,7 +288,10 @@ export default function FiltersScreen() {
             </div>
 
             <div className={styles.filterSection}>
-              <HobbiesSection control={control} />
+              <HobbiesSection
+                control={control}
+                placeholder={t('hobbiesPlaceholder')}
+              />
             </div>
 
             <div className={styles.applyButtonWrapper}>
