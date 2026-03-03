@@ -141,6 +141,7 @@ export default function FeedScreen() {
   const [profilesCountToNpc, setProfilesCountToNpc] = useState<number | null>(
     null,
   );
+  const [isInvitePromptOpen, setIsInvitePromptOpen] = useState(false);
 
   useEffect(() => {
     const checkPermissions = async () => {
@@ -237,6 +238,28 @@ export default function FeedScreen() {
     fetchNpc,
     router,
   ]);
+
+  useEffect(() => {
+    if (isInitialized && !showPermissionsBadge) {
+      const hasSeenPrompt = localStorage.getItem(
+        'has_seen_invite_friends_prompt',
+      );
+      if (!hasSeenPrompt) {
+        setIsInvitePromptOpen(true);
+      }
+    }
+  }, [isInitialized, showPermissionsBadge]);
+
+  const handleCloseInvitePrompt = () => {
+    localStorage.setItem('has_seen_invite_friends_prompt', 'true');
+    setIsInvitePromptOpen(false);
+  };
+
+  const handleGoToInvite = () => {
+    localStorage.setItem('has_seen_invite_friends_prompt', 'true');
+    setIsInvitePromptOpen(false);
+    router.push(`${PAGE_ROUTES.FRIENDS_AND_FOES}?share=true`);
+  };
 
   const { registerForegroundHandler, unregisterForegroundHandler } =
     useFcmStore();
@@ -473,6 +496,15 @@ export default function FeedScreen() {
             when: tFeed(expirationPopup.suggestedWhen).toLowerCase(),
           })}
           onSecondaryAction={handleAcceptSuggestedExpiration}
+        />
+        <ModalDialog
+          isOpen={isInvitePromptOpen}
+          onClose={handleCloseInvitePrompt}
+          message={tFeed('invitePrompt.message')}
+          primaryButtonText={tFeed('invitePrompt.later')}
+          onPrimaryAction={handleCloseInvitePrompt}
+          secondaryButtonText={tFeed('invitePrompt.letsGo')}
+          onSecondaryAction={handleGoToInvite}
         />
       </div>
     </div>

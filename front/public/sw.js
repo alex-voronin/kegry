@@ -4,7 +4,7 @@ importScripts('/firebase-messaging-sw.js');
 // 2. Import auto-generated static assets
 importScripts('/pwa-assets.js');
 
-const CACHE_NAME = 'hoppyfy-static-v1';
+const CACHE_NAME = 'wibblycorn-static-v1';
 
 // STATIC_ASSETS is defined in pwa-assets.js
 const ASSETS_TO_CACHE =

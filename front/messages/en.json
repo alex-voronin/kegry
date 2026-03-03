@@ -3,6 +3,9 @@
     "errors": {
       "network": "Network error. Please try again."
     },
+    "toast": {
+      "linkCopied": "Link copied to clipboard"
+    },
     "units": {
       "kilometers": "km",
       "miles": "mi"
@@ -192,6 +195,11 @@
       "tomorrow": "Tomorrow",
       "toast": {
         "noInvites": "No invites left. They'll reset tomorrow."
+      },
+      "invitePrompt": {
+        "message": "Let's grow Wibblycorn together! 😊\nInvite your friends with a referral link: more people = way more adventures and fun. Bring 2 friends and get a special reward: exclusive imaginary friend as a thank you! 🎉",
+        "later": "Later",
+        "letsGo": "Let's Go"
       }
     },
     "chat": {
@@ -387,7 +395,8 @@
         "viewProfile": "View Profile",
         "invite": "Invite",
         "removeFriend": "Remove Friend",
-        "blockAndReport": "Block & Report"
+        "blockAndReport": "Block & Report",
+        "shareLink": "Share a link"
       },
       "toast": {
         "fetchFailed": "Failed to fetch friends",
@@ -397,6 +406,11 @@
         "removeFailed": "Failed to remove friend",
         "invited": "{name} was invited",
         "inviteFailed": "Failed to invite friend"
+      },
+      "shareFallback": {
+        "title": "Share a link",
+        "instruction": "Automatic copy failed. Please copy the link manually:",
+        "close": "Close"
       }
     },
     "permissions": {

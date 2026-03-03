@@ -29,7 +29,7 @@
 }
 
 .message {
-  @apply mb-8 text-lg font-medium;
+  @apply mb-8 text-lg font-medium whitespace-pre-wrap;
 }
 
 .buttonGroup {

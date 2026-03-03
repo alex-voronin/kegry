@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useRouter } from '@/i18n/routing';
+import { useSearchParams } from 'next/navigation';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { ModalMenu } from '@/components/ui/modal-menu';
@@ -13,6 +14,7 @@ import { InviteDialog } from '@/components/ui/invite-dialog';
 import { useBlockedUsersStore } from '@/store/use-blocked-users-store';
 import { useFriendsStore, FriendUserDto } from '@/store/use-friends-store';
 import { useMetNpcsStore } from '@/store/use-met-npcs-store';
+import { useAuthStore } from '@/lib/auth/use-auth-store';
 import { toast } from 'react-toastify';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { InviteExpiration } from '@/lib/invite-utils';
@@ -21,12 +23,15 @@ import { SelectedUser } from './types';
 import { FriendsTab } from './_components/friends-tab';
 import { ImaginaryTab } from './_components/imaginary-tab';
 import { BlockedTab } from './_components/blocked-tab';
+import { ShareFallbackDialog } from './_components/share-fallback-dialog';
 
 type Tab = 'friends' | 'imaginary' | 'blocked';
 
 export default function FriendsAndFoesPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations('screens.friendsAndFoes');
+  const tCommon = useTranslations('common');
   const tBlocked = useTranslations('screens.blockedUsers');
 
   const TAB_OPTIONS = [
@@ -38,9 +43,13 @@ export default function FriendsAndFoesPage() {
   const [selectedUser, setSelectedUser] = useState<SelectedUser | null>(null);
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
   const [userToReport, setUserToReport] = useState<SelectedUser | null>(null);
+  const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
+  const [isShareFallbackOpen, setIsShareFallbackOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
 
   const { fetchFriends, removeFriend, blockFriend, inviteFriend } =
     useFriendsStore();
+  const { userId } = useAuthStore();
 
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const [userToInvite, setUserToInvite] = useState<FriendUserDto | null>(null);
@@ -52,6 +61,14 @@ export default function FriendsAndFoesPage() {
   const { fetchBlockedUsers, unblockUser } = useBlockedUsersStore();
 
   const { fetchMetNpcs } = useMetNpcsStore();
+
+  useEffect(() => {
+    if (searchParams.get('share') === 'true') {
+      setIsAddMenuOpen(true);
+      // Clean up the URL
+      router.replace(PAGE_ROUTES.FRIENDS_AND_FOES);
+    }
+  }, [searchParams, router]);
 
   useEffect(() => {
     if (activeTab === 'friends') {
@@ -128,6 +145,34 @@ export default function FriendsAndFoesPage() {
     } catch (err: any) {
       toast.error(err.message || tBlocked('toast.unblockFailed'));
     }
+  };
+
+  const handleShareLink = async () => {
+    const shareData = {
+      title: 'Wibblycorn',
+      text: 'Join me on Wibblycorn!',
+      url:
+        userId != null
+          ? `${window.location.origin}?ref=${userId}`
+          : window.location.origin,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error('Error sharing:', err);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareData.url);
+        toast.success(tCommon('toast.linkCopied'));
+      } catch (err) {
+        setShareUrl(shareData.url);
+        setIsShareFallbackOpen(true);
+      }
+    }
+    setIsAddMenuOpen(false);
   };
 
   const handleViewProfile = (userId: string) => {
@@ -251,6 +296,18 @@ export default function FriendsAndFoesPage() {
           />
         }
         title={t('title')}
+        right={
+          activeTab === 'friends' && (
+            <Icon
+              src="/assets/friends-and-foes/plus-icon.svg"
+              alt="add friend"
+              width={24}
+              height={24}
+              onClick={() => setIsAddMenuOpen(true)}
+              priority
+            />
+          )
+        }
       />
 
       <div className={styles.tabBar}>
@@ -267,6 +324,24 @@ export default function FriendsAndFoesPage() {
         isOpen={!!selectedUser}
         onClose={() => setSelectedUser(null)}
         options={getMenuOptions()}
+      />
+
+      <ModalMenu
+        isOpen={isAddMenuOpen}
+        onClose={() => setIsAddMenuOpen(false)}
+        options={[
+          {
+            icon: '/assets/friends-and-foes/share-icon.svg',
+            label: t('menu.shareLink'),
+            onClick: handleShareLink,
+          },
+        ]}
+      />
+
+      <ShareFallbackDialog
+        isOpen={isShareFallbackOpen}
+        onClose={() => setIsShareFallbackOpen(false)}
+        url={shareUrl}
       />
 
       <ReportDialog
