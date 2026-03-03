@@ -27,3 +27,7 @@
 .instructions {
   @apply text-secondary text-sm leading-relaxed whitespace-pre-line;
 }
+
+.checkIcon {
+  @apply shrink-0;
+}

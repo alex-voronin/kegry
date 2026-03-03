@@ -55,6 +55,7 @@ export default function PermissionsPage() {
               alt="check"
               width={24}
               height={24}
+              className={styles.checkIcon}
               priority
             />
           )}
@@ -67,10 +68,11 @@ export default function PermissionsPage() {
           </div>
           {permissions.notificationAllowed && (
             <Icon
-              src="/assets/common/check-icon.svg"
+              src="/assets/permissions/check-mark.svg"
               alt="check"
               width={24}
               height={24}
+              className={styles.checkIcon}
               priority
             />
           )}
