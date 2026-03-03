@@ -50,7 +50,6 @@ export default function SettingsPage() {
   const handleSave = async () => {
     try {
       await saveSettings();
-      toast.success(t('saved'));
       router.back();
     } catch (error) {
       toast.error(t('saveFailed'));
@@ -68,7 +67,7 @@ export default function SettingsPage() {
     },
   ];
 
-  if (isLoading && distanceUnits === null) {
+  if (serverSettings === null) {
     return (
       <div className="flex h-dvh items-center justify-center">
         <Spinner />

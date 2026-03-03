@@ -326,7 +326,6 @@
       "publicAccount": "Public account",
       "publicAccountDesc": "When disabled, your profile will not be shown to others in the feed",
       "save": "Save",
-      "saved": "Settings saved",
       "saveFailed": "Failed to save settings"
     },
     "settings": {
@@ -342,16 +341,12 @@
       "kmFull": "km (kilometers)",
       "miFull": "mi (miles)",
       "save": "Save",
-      "saved": "Settings saved",
       "saveFailed": "Failed to save settings",
       "fetchFailed": "Failed to fetch settings"
     },
     "editProfile": {
       "title": "Edit Profile",
-      "save": "Save",
-      "toast": {
-        "saved": "Profile updated"
-      }
+      "save": "Save"
     },
     "coverImage": {
       "instruction": "Tap anywhere to upload a new cover image",

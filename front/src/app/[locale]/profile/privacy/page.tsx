@@ -43,7 +43,6 @@ export default function PrivacyPage() {
   const handleSave = async () => {
     try {
       await updatePrivacy(isPublic);
-      toast.success(t('saved'));
       router.back();
     } catch (error) {
       toast.error(t('saveFailed'));

@@ -92,6 +92,7 @@ export default function ProfileEditPage() {
   type EditProfileFormValues = z.infer<typeof localizedSchema>;
 
   const {
+    reset,
     control,
     handleSubmit,
     formState: { errors },
@@ -106,6 +107,19 @@ export default function ProfileEditPage() {
       hobbies: selectedHobbyIds || [],
     },
   });
+
+  useEffect(() => {
+    if (serverProfile) {
+      reset({
+        firstName: firstName,
+        lastName: lastName,
+        birthday: birthday,
+        gender: gender || '',
+        bio: bio,
+        hobbies: selectedHobbyIds,
+      });
+    }
+  }, [serverProfile, reset]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const GENDER_OPTIONS = [
     { value: 'Male' as const, label: tGender('male'), width: 75 },
@@ -132,7 +146,6 @@ export default function ProfileEditPage() {
       };
 
       await patchProfile(patchData);
-      toast.success(t('toast.saved'));
       router.back();
     } catch (err: any) {
       toast.error(err.message || 'Failed to save profile');
@@ -146,7 +159,7 @@ export default function ProfileEditPage() {
     router.back();
   };
 
-  if (isLoading && !serverProfile) {
+  if (serverProfile === null) {
     return (
       <div className="flex flex-1 items-center justify-center">
         <Spinner />

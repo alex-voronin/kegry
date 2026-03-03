@@ -5,8 +5,8 @@ import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
 export enum DistanceUnits {
-  Kilometers = 0,
-  Miles = 1,
+  Kilometers = 'Kilometers',
+  Miles = 'Miles',
 }
 
 export interface SettingsDto {
