@@ -278,6 +278,13 @@ export default function ChatScreen() {
     return () => clearInterval(interval);
   }, [chat?.id, chat?.expiresAt, calculateRemainingTimeMs]);
 
+  // Auto-cancel meeting when timer expires
+  useEffect(() => {
+    if (remainingTimeMs === 0) {
+      handleEndMeeting();
+    }
+  }, [remainingTimeMs]);
+
   const onMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const el = e.target;
     setMessage(el.value);
