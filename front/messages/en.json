@@ -199,7 +199,7 @@
       "timer": "{minutes}:{seconds}",
       "noActiveChat": "No active chat",
       "timerInfoDialog": {
-        "title": "The timer shows a countdown until the chat ends. When the time expires or the chat is ended manually, you will be able to scroll the feed again and invite users to meetups.",
+        "title": "The timer is counting down until the chat ends. Once the time's up (or if someone ends it early), you'll be able to invite people to meetups again 😊",
         "okButton": "OK"
       },
       "menu": {

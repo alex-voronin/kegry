@@ -57,11 +57,15 @@
 }
 
 .footer {
-  @apply bg-form-element flex flex-none items-end gap-3 px-4 py-3 backdrop-blur-md;
+  @apply bg-form-element flex flex-none items-end gap-3 px-4 py-2 backdrop-blur-md;
 }
 
 .footerIcon {
-  @apply mb-1;
+  @apply mb-1.5;
+}
+
+.sendButton {
+  @apply flex h-9 w-9 items-center justify-center rounded-full bg-[#B87014];
 }
 
 .input {

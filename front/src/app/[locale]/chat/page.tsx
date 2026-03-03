@@ -28,6 +28,7 @@ import EmojiPicker, {
   EmojiStyle,
 } from 'emoji-picker-react';
 import * as linkify from 'linkifyjs';
+import { cn } from '@/lib/utils';
 
 const LOW_MESSAGE_WARNING_THRESHOLD = 10;
 const END_MEETING_PROMPT_COOLDOWN = 8 * 60 * 60 * 1000; // 8 hours
@@ -77,12 +78,15 @@ export default function ChatScreen() {
   const [isSending, setIsSending] = useState(false);
   const [remainingTimeMs, setRemainingTimeMs] = useState<number | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [maxEmojiPickerHeight, setMaxEmojiPickerHeight] = useState<number>(350);
   const [isLowMessageWarningOpen, setIsLowMessageWarningOpen] = useState(false);
   const [isFirstTimePopupOpen, setIsFirstTimePopupOpen] = useState(false);
   const router = useRouter();
 
   const emojiPickerRef = useRef<HTMLDivElement>(null);
   const emojiButtonRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -139,13 +143,25 @@ export default function ChatScreen() {
   }, [scrollToBottom]);
 
   // Scroll to bottom on viewport resize (e.g. keyboard open)
+  // and update emoji picker max height
   useEffect(() => {
     const handleResize = () => {
       scrollToBottom('auto');
+
+      if (window.visualViewport) {
+        const viewportHeight = window.visualViewport.height;
+        const headerHeight = headerRef.current?.offsetHeight || 80;
+        const footerHeight = footerRef.current?.offsetHeight || 60;
+        const availableHeight =
+          viewportHeight - headerHeight - footerHeight - 20;
+        setMaxEmojiPickerHeight(Math.max(200, availableHeight));
+      }
     };
 
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', handleResize);
+      // Also trigger on mount/load to get initial keyboard-less height
+      handleResize();
     }
     window.addEventListener('resize', handleResize);
 
@@ -408,6 +424,7 @@ export default function ChatScreen() {
   return (
     <div className={styles.wrapper}>
       <Header
+        ref={headerRef}
         className="min-h-[80px]"
         left={
           <Icon
@@ -489,7 +506,7 @@ export default function ChatScreen() {
         ))}
       </div>
 
-      <footer className={styles.footer}>
+      <footer ref={footerRef} className={styles.footer}>
         {showEmojiPicker && (
           <div ref={emojiPickerRef} className={styles.emojiPickerWrapper}>
             <EmojiPicker
@@ -498,6 +515,10 @@ export default function ChatScreen() {
               lazyLoadEmojis={true}
               emojiStyle={EmojiStyle.NATIVE}
               width={300}
+              height={maxEmojiPickerHeight}
+              previewConfig={{
+                showPreview: false,
+              }}
             />
           </div>
         )}
@@ -532,16 +553,22 @@ export default function ChatScreen() {
           })}
           rows={1}
         />
-        <Icon
-          className={styles.footerIcon}
-          src="/assets/chat/send-icon.svg"
-          alt="send"
-          width={28}
-          height={28}
-          priority
-          disabled={remainingMessages <= 0}
-          onClick={handleSendMessage}
-        />
+        <div
+          className={cn(
+            styles.sendButton,
+            remainingMessages <= 0 ? 'opacity-50' : 'hover:opacity-80',
+          )}
+          onClick={remainingMessages > 0 ? handleSendMessage : undefined}
+        >
+          <Image
+            className="ml-1"
+            src="/assets/chat/send-icon.svg"
+            alt="send"
+            width={21}
+            height={21}
+            priority
+          />
+        </div>
       </footer>
 
       <ModalMenu

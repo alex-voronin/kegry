@@ -70,3 +70,9 @@ body {
 .Toastify__toast-theme--dark {
   background: #272727;
 }
+
+.EmojiPickerReact {
+  --epr-horizontal-padding: 4px !important;
+  --epr-header-padding: 4px !important;
+  --epr-category-label-height: 24px !important;
+}
