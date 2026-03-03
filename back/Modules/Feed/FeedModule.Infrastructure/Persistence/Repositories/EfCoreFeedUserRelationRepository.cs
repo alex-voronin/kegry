@@ -45,7 +45,14 @@ internal class EfCoreFeedUserRelationRepository : RepositoryOutbox<FeedContext, 
         return Context.FeedUserRelations
             .Where(r => userIds.Contains(r.MyUserId) && r.IsInMeeting)
             .ExecuteUpdateAsync(setter =>
-                    setter.SetProperty(r => r.IsInMeeting, false),
+                    setter
+                        .SetProperty(r => r.IsInMeeting, false)
+                        // Set LastSeenAt just in case to move the other user down in the feed. 
+                        .SetProperty(r => r.LastSeenAt, DateTimeOffset.UtcNow)
+                        // Reset InviteExpiresAt to avoid a situation where you invite another user
+                        // from the friends page after meeting ends and the next meeting is established immediately
+                        // without accepting invite by another user
+                        .SetProperty(r => r.InviteExpiresAt, DateTimeOffset.UtcNow),
                 ct);
     }
 
