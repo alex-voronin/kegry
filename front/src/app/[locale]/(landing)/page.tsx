@@ -3,11 +3,13 @@ import DesktopLayout from './_components/desktop-layout';
 import MobileLayout from './_components/mobile-layout';
 import styles from './layout.module.css';
 import { AgeVerification } from './_components/AgeVerification';
+import { ReferrerTracker } from './_components/ReferrerTracker';
+import { Suspense } from 'react';
 import { BRAND_NAME } from '@/lib/constants';
 
 export const metadata: Metadata = {
   title: `${BRAND_NAME} — Find Your Bar Buddy`,
-  description: `${BRAND_NAME} helps you find bar buddies. No dating apps, no endless texting - just spontaneous real-life meetups at the bar. The best stories start off-screen!`,
+  description: `${BRAND_NAME} helps you find bar buddies. No dating, no endless texting - just spontaneous real-life meetups at the bar. The best stories start off-screen!`,
 
   keywords: [
     'bar buddy',
@@ -67,6 +69,9 @@ export const metadata: Metadata = {
 export default function LandingPage() {
   return (
     <>
+      <Suspense>
+        <ReferrerTracker />
+      </Suspense>
       <AgeVerification />
       <div className={styles.desktopOnly}>
         <DesktopLayout />

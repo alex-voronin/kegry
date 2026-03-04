@@ -43,8 +43,11 @@ export default function LoginPage() {
       } else {
         router.replace(PAGE_ROUTES.FEED);
       }
+    } else if (hasHydrated && shouldRedirect) {
+      // Clean up the URL if we are not redirecting
+      router.replace(PAGE_ROUTES.LOGIN());
     }
-  }, [isRedirecting, requiredAction, router]);
+  }, [isRedirecting, requiredAction, router, hasHydrated, shouldRedirect]);
 
   const schema = z.object({
     email: z.email(t('errors.emailInvalid')).min(1, t('errors.emailRequired')),

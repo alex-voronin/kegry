@@ -142,7 +142,7 @@
       "slideFeed": {
         "textDontGoAlone": "Pick a companion and start your journey together! But keep in mind:",
         "textInvites": "• You have a limited number of invites per day. Don't worry, they refresh tomorrow.",
-        "textNewChat": "• Once you've both sent invites and match, a chat will open so you can start planning your meetup!🍺"
+        "textNewChat": "• Once you've both sent invites and match, a chat will open so you can start planning your meetup! 🍺"
       },
       "slidePermissions": {
         "location": "📍 Geolocation is absolutely necessary for the feed to work. Please allow it when we ask for permission.",
@@ -197,7 +197,7 @@
         "noInvites": "No invites left. They'll reset tomorrow."
       },
       "invitePrompt": {
-        "message": "Let's grow Wibblycorn together! 😊\nInvite your friends with a referral link: more people = way more adventures and fun. Bring 2 friends and get a special reward: exclusive imaginary friend as a thank you! 🎉",
+        "message": "Let's grow Wibblycorn together! 😊\nInvite your friends with a referral link: more people = way more adventures and fun. Bring a friend and get a special reward: special imaginary friend as a thank you! 🎉",
         "later": "Later",
         "letsGo": "Let's Go"
       }

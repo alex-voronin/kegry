@@ -17,6 +17,10 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import styles from './cover.module.css';
+import {
+  clearReferrerId,
+  getReferrerId,
+} from '@/app/[locale]/(landing)/_components/ReferrerTracker';
 
 export default function CoverPage() {
   const t = useTranslations('screens.onboarding');
@@ -68,6 +72,8 @@ export default function CoverPage() {
         API_ENDPOINTS.USER_PROFILE.COVER_UPLOAD_URL,
       );
 
+      const referrerId = getReferrerId();
+
       await apiClient.post(API_ENDPOINTS.USER_PROFILE.PROFILE, {
         firstName,
         lastName,
@@ -77,7 +83,12 @@ export default function CoverPage() {
         birthday,
         gender: gender,
         hobbyIds: selectedHobbyIds,
+        referrerId: referrerId || null,
       });
+
+      if (referrerId) {
+        clearReferrerId();
+      }
 
       router.push(PAGE_ROUTES.HOW_IT_WORKS);
     } catch (err) {

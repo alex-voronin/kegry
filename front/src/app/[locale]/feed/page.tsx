@@ -239,8 +239,8 @@ export default function FeedScreen() {
     router,
   ]);
 
-  useEffect(() => {
-    if (isInitialized && !showPermissionsBadge) {
+  const triggerReferralPrompt = () => {
+    if (!showPermissionsBadge) {
       const hasSeenPrompt = localStorage.getItem(
         'has_seen_invite_friends_prompt',
       );
@@ -248,7 +248,7 @@ export default function FeedScreen() {
         setIsInvitePromptOpen(true);
       }
     }
-  }, [isInitialized, showPermissionsBadge]);
+  };
 
   const handleCloseInvitePrompt = () => {
     localStorage.setItem('has_seen_invite_friends_prompt', 'true');
@@ -299,6 +299,7 @@ export default function FeedScreen() {
     try {
       await ignoreUser(currentItem.profile.id);
       decreaseProfilesCountToNpc();
+      triggerReferralPrompt();
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -328,6 +329,11 @@ export default function FeedScreen() {
       }
       await inviteUser(currentItem.profile.id, when);
       decreaseProfilesCountToNpc();
+      if (!incomingExpiration) {
+        // Only trigger referral prompt if we didn't receive their invite before
+        // or this action will redirect to the chat almost immediately
+        triggerReferralPrompt();
+      }
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -353,6 +359,7 @@ export default function FeedScreen() {
     try {
       await skipUser(currentItem.profile.id);
       decreaseProfilesCountToNpc();
+      triggerReferralPrompt();
     } catch (err: any) {
       toast.error(err.message);
     }

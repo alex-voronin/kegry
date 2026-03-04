@@ -153,7 +153,7 @@ export default function FriendsAndFoesPage() {
       text: 'Join me on Wibblycorn!',
       url:
         userId != null
-          ? `${window.location.origin}?ref=${userId}`
+          ? `${window.location.origin}?referrer=${userId}`
           : window.location.origin,
     };
 
