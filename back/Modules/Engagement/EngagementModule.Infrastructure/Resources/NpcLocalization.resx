@@ -18,11 +18,14 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="WibblyToby.Name" xml:space="preserve">
+    <data name="Corn.Name" xml:space="preserve">
         <value>Wibbly Toby</value>
     </data>
-    <data name="WibblyToby.Monolog" xml:space="preserve">
+    <data name="Corn.Monolog" xml:space="preserve">
         <value>Hey! What?! Who drank the beer from your mug? The dark, thick one with that fresh foam you just can't resist? I can't even imagine! It definitely wasn't me. But here's a little gift for you anyway. *[Brings you a bundle of straw]* Just in case. And definitely not because I'm trying to make up for something I totally didn't do.</value>
+    </data>
+    <data name="Cockatrice.Name" xml:space="preserve">
+        <value>Clumsy Benny</value>
     </data>
    
 </root>

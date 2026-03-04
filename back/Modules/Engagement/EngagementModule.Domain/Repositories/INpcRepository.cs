@@ -5,5 +5,5 @@ namespace EngagementModule.Domain.Repositories;
 
 public interface INpcRepository : IRepository<Npc>
 {
-    Task<Npc> GetAnyAsync(CancellationToken ct = default);
+    Task<Npc> GetAnyAsync(bool isSecret, CancellationToken ct = default);
 }

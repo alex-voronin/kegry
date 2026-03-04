@@ -16,6 +16,7 @@ public interface IPushBuilder
     PushMessage BuildChatMessageReceivedPush(string[] fcmTokens, ChatMessageSentEvent @event, bool silent = false);
     PushMessage BuildOpenRateUserScreenPush(string[] fcmTokens, Guid rateeUserId);
     PushMessage BuildEndMeetingSuggestionPush(string[] fcmTokens);
+    PushMessage BuildRefererRewardReceived(string[] fcmTokens);
 }
 
 internal class FcmPushBuilder : IPushBuilder, ISingleton
@@ -27,6 +28,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         public static readonly string ChatMessageReceived = nameof(ChatMessageReceived).ToCamelCase();
         public static readonly string OpenRateUserScreen = nameof(OpenRateUserScreen).ToCamelCase();
         public static readonly string ShowEndMeetingSuggestion = nameof(ShowEndMeetingSuggestion).ToCamelCase();
+        public static readonly string RefererRewardReceived = nameof(RefererRewardReceived).ToCamelCase();
     }
 
     internal static class Keys
@@ -151,6 +153,23 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
             { Keys.Title, title },
             { Keys.Body, body },
             { Keys.Type, PushType.ShowEndMeetingSuggestion },
+        };
+
+        return BuildPushMessages(
+            fcmTokens: fcmTokens,
+            notification: null,
+            data: data);
+    }
+
+    public PushMessage BuildRefererRewardReceived(string[] fcmTokens)
+    {
+        var title = _localizer.GetString("Push.RefererRewardReceived.Title");
+        var body = _localizer.GetString("Push.RefererRewardReceived.Body");
+        var data = new Dictionary<string, string>()
+        {
+            { Keys.Title, title },
+            { Keys.Body, body },
+            { Keys.Type, PushType.RefererRewardReceived },
         };
 
         return BuildPushMessages(

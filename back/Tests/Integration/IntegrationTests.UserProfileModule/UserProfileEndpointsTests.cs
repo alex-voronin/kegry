@@ -30,6 +30,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Create profile
         var request = new CreateUserProfileRequest(
+            ReferrerId: null,
             FirstName: "John",
             LastName: "Doe",
             Bio: "My bio",

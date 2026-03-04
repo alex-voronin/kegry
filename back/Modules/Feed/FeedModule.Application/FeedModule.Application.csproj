@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Chat\ChatModule.Contracts\ChatModule.Contracts.csproj" />
       <ProjectReference Include="..\..\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\UserProfile\UserProfileModule.Contracts\UserProfileModule.Contracts.csproj" />
       <ProjectReference Include="..\FeedModule.Domain\FeedModule.Domain.csproj" />
     </ItemGroup>
 

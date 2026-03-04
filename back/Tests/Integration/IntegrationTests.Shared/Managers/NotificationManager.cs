@@ -18,19 +18,6 @@ public class NotificationManager
     public Task AwaitPushNotifications(
         Func<Task> codeToRun,
         int expectedCount,
-        string expectedTitle,
-        int timeoutSeconds = 5)
-    {
-        return AwaitPushNotifications(
-            codeToRun: codeToRun,
-            pushPredicate: p => p.UnicastMessage!.Data[FcmPushBuilder.Keys.Title] == expectedTitle,
-            expectedCount: expectedCount,
-            timeoutSeconds: timeoutSeconds);
-    }
-
-    public Task AwaitSilentPushNotifications(
-        Func<Task> codeToRun,
-        int expectedCount,
         string? expectedType = null,
         int timeoutSeconds = 5)
     {

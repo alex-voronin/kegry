@@ -38,10 +38,7 @@ public class EngagementContext : DbContext
                         .WithMany()
                         .HasForeignKey("user_id")
                         .HasPrincipalKey(u => u.Id),
-                    j =>
-                    {
-                        j.HasKey("user_id", "npc_id");
-                    });
+                    j => { j.HasKey("user_id", "npc_id"); });
 
             builder.HasQueryFilter(x => !x.IsDeleted);
         });
@@ -56,15 +53,30 @@ public class EngagementContext : DbContext
             builder.Property(x => x.CoverUrl).IsRequired().HasMaxLength(512);
             builder.Property(x => x.MonologKey).IsRequired();
 
-            const string wibblyTobyKey = "WibblyToby.Name";
-            builder.HasData(new Npc
-            {
-                Id = wibblyTobyKey.ToDeterministicGuid(),
-                NameKey = wibblyTobyKey,
-                AvatarUrl = "/assets/npc/wibbly-toby-tavern/avatar.webp",
-                CoverUrl = "/assets/npc/wibbly-toby-tavern/cover.webp",
-                MonologKey = "WibblyToby.Monolog"
-            });
+            const string cornKey = "Corn.Name";
+            const string cockatriceKey = "Cockatrice.Name";
+            builder.HasData(
+                new Npc
+                {
+                    Id = cornKey.ToDeterministicGuid(),
+                    IsSecret = false,
+                    NameKey = cornKey,
+                    AvatarUrl = "/assets/npc/corn-tavern/avatar.webp",
+                    CoverUrl = "/assets/npc/corn-tavern/cover.webp",
+                    MonologKey = "Corn.Monolog"
+                },
+                new Npc
+                {
+                    Id = cockatriceKey.ToDeterministicGuid(),
+                    IsSecret = true,
+                    NameKey = cockatriceKey,
+                    AvatarUrl = "/assets/npc/cockatrice/avatar.webp",
+                    CoverUrl = "/assets/npc/cockatrice/cover.webp",
+                    // just in case if we need this monolog later. For now a user can't see it, so the key isn't added 
+                    // to localization resources
+                    MonologKey = "Cockatrice.Monolog"
+                }
+            );
         });
     }
 }

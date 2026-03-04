@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Chat\ChatModule.Contracts\ChatModule.Contracts.csproj" />
+      <ProjectReference Include="..\..\Engagement\EngagementModule.Contracts\EngagementModule.Contracts.csproj" />
       <ProjectReference Include="..\..\Feed\FeedModule.Contracts\FeedModule.Contracts.csproj" />
       <ProjectReference Include="..\..\Location\LocationModule.Contracts\LocationModule.Contracts.csproj" />
       <ProjectReference Include="..\..\Security\SecurityModule.Contracts\SecurityModule.Contracts.csproj" />

@@ -38,7 +38,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
             .And(_feedUserRelationRepository)
             .StartTransactionAsync(ct);
 
-        var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
+        var feedUserRelation = await _feedUserRelationRepository.GetOrCreateAsync(myUserId, otherUserId, ct: ct);
         feedUserRelation.ShouldRate = false;
 
         if (rating != null)
@@ -60,7 +60,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
 
     public async Task BlockUserAsync(Guid myUserId, Guid otherUserId, string? reportMessage, CancellationToken ct)
     {
-        var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
+        var feedUserRelation = await _feedUserRelationRepository.GetOrCreateAsync(myUserId, otherUserId, ct: ct);
         feedUserRelation.IsBlocked = true;
         feedUserRelation.ReportMessage = reportMessage;
         feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
@@ -76,7 +76,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
 
     public async Task UnblockUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
     {
-        var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
+        var feedUserRelation = await _feedUserRelationRepository.GetOrCreateAsync(myUserId, otherUserId, ct: ct);
         feedUserRelation.IsBlocked = false;
         feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
         await _feedUserRelationRepository.SaveChangesAsync(ct);
@@ -84,7 +84,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
 
     public async Task RemoveFriendAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
     {
-        var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
+        var feedUserRelation = await _feedUserRelationRepository.GetOrCreateAsync(myUserId, otherUserId, ct: ct);
         feedUserRelation.IsFriend = false;
         feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
         await _feedUserRelationRepository.SaveChangesAsync(ct);
@@ -92,7 +92,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
 
     public async Task SkipUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
     {
-        var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
+        var feedUserRelation = await _feedUserRelationRepository.GetOrCreateAsync(myUserId, otherUserId, ct: ct);
         feedUserRelation.SkippedAt = _timeProvider.GetUtcNow();
         feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
         await _feedUserRelationRepository.SaveChangesAsync(ct);
@@ -100,7 +100,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
 
     public async Task IgnoreUserAsync(Guid myUserId, Guid otherUserId, CancellationToken ct)
     {
-        var feedUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
+        var feedUserRelation = await _feedUserRelationRepository.GetOrCreateAsync(myUserId, otherUserId, ct: ct);
         feedUserRelation.LastSeenAt = _timeProvider.GetUtcNow();
         await _feedUserRelationRepository.SaveChangesAsync(ct);
     }
@@ -184,7 +184,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         CancellationToken ct)
     {
         var now = _timeProvider.GetUtcNow();
-        var meToOtherUserRelation = await GetOrCreateUserRelation(myUserId, otherUserId, ct);
+        var meToOtherUserRelation = await _feedUserRelationRepository.GetOrCreateAsync(myUserId, otherUserId, ct: ct);
         meToOtherUserRelation.InvitedAt = now;
         meToOtherUserRelation.InviteExpiresAt = expiresAt;
         meToOtherUserRelation.LastSeenAt = now;
@@ -206,28 +206,6 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         }
 
         await _feedUserRelationRepository.SaveChangesAndFlushMessagesAsync(ct);
-    }
-
-    private async Task<FeedUserRelation> GetOrCreateUserRelation(Guid myUserId, Guid otherUserId,
-        CancellationToken ct)
-    {
-        var feedUserRelation = await _feedUserRelationRepository.GetAsync(myUserId, otherUserId, ct: ct);
-        if (feedUserRelation == null)
-        {
-            feedUserRelation = new FeedUserRelation
-            {
-                Id = Guid.CreateVersion7(),
-                MyUserId = myUserId,
-                OtherUserId = otherUserId,
-                InvitedAt = DateTimeOffset.MinValue,
-                InviteExpiresAt = DateTimeOffset.MinValue,
-                SkippedAt = DateTimeOffset.MinValue,
-                LastSeenAt = _timeProvider.GetUtcNow()
-            };
-            await _feedUserRelationRepository.AddAsync(feedUserRelation, ct);
-        }
-
-        return feedUserRelation;
     }
 
     private async Task InviteUserAsync(Guid myUserId, Guid otherUserId,

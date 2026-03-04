@@ -76,7 +76,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 inviteResponseB.Success.ShouldBeTrue();
             },
             expectedCount: 2,
-            expectedTitle: NotificationTitles.MeetingArrangedTitle);
+            expectedType: FcmPushBuilder.PushType.MeetingArranged);
 
         // 6. Verify chat exists for User A
         Factory.ApiClient.SetAuth(authA);
@@ -116,7 +116,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 3. Update users' locations and wait for silent pushes
         ChatParticipantsMetEventHandler.MetEventDelay = TimeSpan.FromMilliseconds(100);
-        await Factory.NotificationManager.AwaitSilentPushNotifications(
+        await Factory.NotificationManager.AwaitPushNotifications(
             codeToRun: async () =>
             {
                 Factory.FakeTimeProvider.SetUtcNow(DateTime.UtcNow + TimeSpan.FromHours(1));
@@ -158,7 +158,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
         statusBefore.Result.IsInMeeting.ShouldBeTrue();
 
         // 3. User A deletes the chat, and we are waiting for delivery of pushes to both users
-        await Factory.NotificationManager.AwaitSilentPushNotifications(
+        await Factory.NotificationManager.AwaitPushNotifications(
             codeToRun: async () =>
             {
                 var deleteResponse = await Factory.ApiClient
@@ -333,7 +333,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
                     );
             },
             expectedCount: 2,
-            expectedTitle: NotificationTitles.MeetingArrangedTitle);
+            expectedType: FcmPushBuilder.PushType.MeetingArranged);
 
         return (authA, authB);
     }

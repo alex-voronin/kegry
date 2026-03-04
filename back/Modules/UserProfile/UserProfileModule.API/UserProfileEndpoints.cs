@@ -59,7 +59,11 @@ public class UserProfileEndpoints : IEndpoints
         };
         await repository.AddAsync(profile, ct);
 
-        var @event = BuildUserChangedEvent(user, profile, true);
+        var @event = BuildUserChangedEvent(
+            user: user,
+            profile: profile,
+            isNewProfile: true,
+            referrerId: request.ReferrerId);
         await repository.PublishEventAsync(@event);
         await repository.SaveChangesAndFlushMessagesAsync(ct);
 
@@ -113,7 +117,11 @@ public class UserProfileEndpoints : IEndpoints
             userProfile.Hobbies = newHobbies;
         }
 
-        var @event = BuildUserChangedEvent(user, userProfile, false);
+        var @event = BuildUserChangedEvent(
+            user: user,
+            profile: userProfile,
+            isNewProfile: true,
+            referrerId: null);
         await repository.PublishEventAsync(@event);
         await repository.SaveChangesAndFlushMessagesAsync(ct);
 
@@ -205,11 +213,15 @@ public class UserProfileEndpoints : IEndpoints
         );
     }
 
-    private static UserProfileChangedEvent BuildUserChangedEvent(ClaimsPrincipal user, User profile, bool isNewProfile)
+    private static UserProfileChangedEvent BuildUserChangedEvent(ClaimsPrincipal user,
+        User profile,
+        bool isNewProfile,
+        Guid? referrerId)
     {
         return new UserProfileChangedEvent
         {
             IsNewProfile = isNewProfile,
+            ReferrerId = referrerId,
             UserId = user.GetId(),
             Email = user.GetEmail(),
             FirstName = profile.FirstName,

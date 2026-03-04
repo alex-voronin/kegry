@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EngagementModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(EngagementContext))]
-    [Migration("20260224163821_AddEngagement")]
+    [Migration("20260304131657_AddEngagement")]
     partial class AddEngagement
     {
         /// <inheritdoc />
@@ -44,6 +44,10 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(512)")
                         .HasColumnName("cover_url");
 
+                    b.Property<bool>("IsSecret")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_secret");
+
                     b.Property<string>("MonologKey")
                         .IsRequired()
                         .HasColumnType("text")
@@ -63,11 +67,21 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("533bcc76-39fa-567c-8c3e-be41f83e2247"),
-                            AvatarUrl = "/assets/npc/wibbly-toby-tavern/avatar.webp",
-                            CoverUrl = "/assets/npc/wibbly-toby-tavern/cover.webp",
-                            MonologKey = "WibblyToby.Monolog",
-                            NameKey = "WibblyToby.Name"
+                            Id = new Guid("f7f487f8-0d3c-6e39-efd7-0c2be686b864"),
+                            AvatarUrl = "/assets/npc/corn-tavern/avatar.webp",
+                            CoverUrl = "/assets/npc/corn-tavern/cover.webp",
+                            IsSecret = false,
+                            MonologKey = "Corn.Monolog",
+                            NameKey = "Corn.Name"
+                        },
+                        new
+                        {
+                            Id = new Guid("78c08461-c88c-4a9b-8061-6cdeb1273b47"),
+                            AvatarUrl = "/assets/npc/cockatrice/avatar.webp",
+                            CoverUrl = "/assets/npc/cockatrice/cover.webp",
+                            IsSecret = true,
+                            MonologKey = "Cockatrice.Monolog",
+                            NameKey = "Cockatrice.Name"
                         });
                 });
 
@@ -80,6 +94,10 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
+
+                    b.Property<Guid?>("RefererId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("referer_id");
 
                     b.Property<DateTimeOffset>("SeenNpcAt")
                         .HasColumnType("timestamp with time zone")

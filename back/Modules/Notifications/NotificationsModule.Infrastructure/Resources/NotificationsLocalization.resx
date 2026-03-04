@@ -26,13 +26,13 @@
         <value>Hi! Let's get a drink!</value>
     </data>
     <data name="Push.MeetingArranged.Title" xml:space="preserve">
-        <value>Invitation accepted!</value>
+        <value>Invitation accepted! 🤝</value>
     </data>
     <data name="Push.MeetingArranged.Body" xml:space="preserve">
         <value>Tap to open chat with {0}</value>
     </data>
     <data name="Push.UserInvited.Title" xml:space="preserve">
-        <value>New invitation!</value>
+        <value>New invitation! 🎉</value>
     </data>
     <data name="Push.UserInvited.Body" xml:space="preserve">
         <value>Tap to view details</value>
@@ -71,16 +71,22 @@
         <value>Tap to read</value>
     </data>
     <data name="Push.OpenRateUserScreen.Title" xml:space="preserve">
-        <value>How did it go?</value>
+        <value>How did it go? 🤔</value>
     </data>
     <data name="Push.OpenRateUserScreen.Body" xml:space="preserve">
-        <value>Tap to rate your buddy.</value>
+        <value>Tap to rate your buddy</value>
     </data>
     <data name="Push.EndMeetingSuggestion.Title" xml:space="preserve">
-        <value>All set?</value>
+        <value>All set? 👍</value>
     </data>
     <data name="Push.EndMeetingSuggestion.Body" xml:space="preserve">
-        <value>Tap to end the meeting.</value>
+        <value>Tap to end the meeting</value>
+    </data>
+    <data name="Push.RefererRewardReceived.Title" xml:space="preserve">
+        <value>Your friend just joined! 👋</value>
+    </data>
+    <data name="Push.RefererRewardReceived.Body" xml:space="preserve">
+        <value>New imaginary friend unlocked! Tap to see</value>
     </data>
     <data name="Email.ChatMessageReceived.Title" xml:space="preserve">
         <value>New message!</value>

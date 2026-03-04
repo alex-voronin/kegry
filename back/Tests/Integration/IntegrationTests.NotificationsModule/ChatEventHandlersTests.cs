@@ -1,6 +1,7 @@
 using FeedModule.API.Dto;
 using IntegrationTests.Shared;
 using NotificationsModule.API.Dto;
+using NotificationsModule.Infrastructure.Transport.Push;
 using SharedCore.Api.Dto;
 using Shouldly;
 
@@ -67,6 +68,6 @@ public class ChatEventHandlersTests : IntegrationTestBase, IAsyncLifetime
                 inviteResponseB.Success.ShouldBeTrue();
             },
             expectedCount: 2,
-            expectedTitle: NotificationTitles.MeetingArrangedTitle);
+            expectedType: FcmPushBuilder.PushType.MeetingArranged);
     }
 }

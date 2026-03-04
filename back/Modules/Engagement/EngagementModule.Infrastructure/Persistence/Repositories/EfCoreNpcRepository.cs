@@ -21,9 +21,9 @@ public class EfCoreNpcRepository : Repository<EngagementContext, Npc>, INpcRepos
         _timeProvider = timeProvider;
     }
 
-    public async Task<Npc> GetAnyAsync(CancellationToken ct = default)
+    public async Task<Npc> GetAnyAsync(bool isSecret, CancellationToken ct = default)
     {
-        var npcCount = await GetNpcCountAsync();
+        var npcCount = await GetNpcCountAsync(isSecret);
         if (npcCount == 0)
         {
             throw new InvalidOperationException("Npc not found");
@@ -31,15 +31,18 @@ public class EfCoreNpcRepository : Repository<EngagementContext, Npc>, INpcRepos
 
         var randomIndex = Random.Shared.Next(npcCount);
         return await Context.Npcs
+            .Where(n => n.IsSecret == isSecret)
             .Skip(randomIndex)
             .FirstAsync(ct);
     }
 
-    private async Task<int> GetNpcCountAsync()
+    private async Task<int> GetNpcCountAsync(bool isSecret)
     {
         return await _cache.GetOrCreateAsync(NpcCountCacheKey, async entry =>
         {
-            var count = await Context.Npcs.CountAsync();
+            var count = await Context.Npcs
+                .Where(n => n.IsSecret == isSecret)
+                .CountAsync();
             var now = _timeProvider.GetUtcNow();
             entry.AbsoluteExpiration = count > 0 ? now + TimeSpan.FromDays(1) : now;
             return count;

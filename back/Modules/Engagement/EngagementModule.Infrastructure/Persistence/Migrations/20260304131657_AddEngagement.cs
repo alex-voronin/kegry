@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace EngagementModule.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
@@ -20,6 +22,7 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    is_secret = table.Column<bool>(type: "boolean", nullable: false),
                     name_key = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     avatar_url = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
                     cover_url = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
@@ -36,6 +39,7 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    referer_id = table.Column<Guid>(type: "uuid", nullable: true),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: false),
                     seen_npc_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
@@ -74,8 +78,12 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
             migrationBuilder.InsertData(
                 schema: "engagement",
                 table: "npcs",
-                columns: new[] { "id", "avatar_url", "cover_url", "monolog_key", "name_key" },
-                values: new object[] { new Guid("533bcc76-39fa-567c-8c3e-be41f83e2247"), "/assets/npc/wibbly-toby-tavern/avatar.webp", "/assets/npc/wibbly-toby-tavern/cover.webp", "WibblyToby.Monolog", "WibblyToby.Name" });
+                columns: new[] { "id", "avatar_url", "cover_url", "is_secret", "monolog_key", "name_key" },
+                values: new object[,]
+                {
+                    { new Guid("78c08461-c88c-4a9b-8061-6cdeb1273b47"), "/assets/npc/cockatrice/avatar.webp", "/assets/npc/cockatrice/cover.webp", true, "Cockatrice.Monolog", "Cockatrice.Name" },
+                    { new Guid("f7f487f8-0d3c-6e39-efd7-0c2be686b864"), "/assets/npc/corn-tavern/avatar.webp", "/assets/npc/corn-tavern/cover.webp", false, "Corn.Monolog", "Corn.Name" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "ix_user_met_npcs_npc_id",

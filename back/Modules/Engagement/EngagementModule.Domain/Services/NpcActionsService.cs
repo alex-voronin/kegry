@@ -42,7 +42,7 @@ internal class NpcActionsService : INpcActionsService, IScoped
         }
 
         user.SeenNpcAt = _timeProvider.GetUtcNow();
-        var npc = await _npcRepository.GetAnyAsync(ct);
+        var npc = await _npcRepository.GetAnyAsync(isSecret: false, ct);
         await _userRepository.SaveChangesAsync(ct: ct);
 
         return npc;

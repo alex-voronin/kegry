@@ -1,3 +1,4 @@
+using Amazon.Util.Internal;
 using FeedModule.Domain.Aggregates;
 using FeedModule.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -10,8 +11,13 @@ namespace FeedModule.Infrastructure.Persistence.Repositories;
 internal class EfCoreFeedUserRelationRepository : RepositoryOutbox<FeedContext, FeedUserRelation>,
     IFeedUserRelationRepository, IScoped
 {
-    public EfCoreFeedUserRelationRepository(IDbContextOutbox<FeedContext> contextOutbox) : base(contextOutbox)
+    private readonly TimeProvider _timeProvider;
+
+    public EfCoreFeedUserRelationRepository(
+        IDbContextOutbox<FeedContext> contextOutbox,
+        TimeProvider timeProvider) : base(contextOutbox)
     {
+        _timeProvider = timeProvider;
     }
 
     public async Task<FeedUserRelation?> GetAsync(Guid myUserId, Guid otherUserId, bool asNoTracking = false,
@@ -24,6 +30,31 @@ internal class EfCoreFeedUserRelationRepository : RepositoryOutbox<FeedContext, 
         }
 
         return await query.FirstOrDefaultAsync(fp => fp.MyUserId == myUserId && fp.OtherUserId == otherUserId, ct);
+    }
+
+    public async Task<FeedUserRelation> GetOrCreateAsync(
+        Guid myUserId,
+        Guid otherUserId,
+        bool asNoTracking = false,
+        CancellationToken ct = default)
+    {
+        var feedUserRelation = await GetAsync(myUserId, otherUserId, asNoTracking, ct);
+        if (feedUserRelation == null)
+        {
+            feedUserRelation = new FeedUserRelation
+            {
+                Id = Guid.CreateVersion7(),
+                MyUserId = myUserId,
+                OtherUserId = otherUserId,
+                InvitedAt = DateTimeOffset.MinValue,
+                InviteExpiresAt = DateTimeOffset.MinValue,
+                SkippedAt = DateTimeOffset.MinValue,
+                LastSeenAt = _timeProvider.GetUtcNow()
+            };
+            await AddAsync(feedUserRelation, ct);
+        }
+
+        return feedUserRelation;
     }
 
     public async Task<bool> IsInMeetingAsync(Guid userId, CancellationToken ct = default)

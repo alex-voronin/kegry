@@ -11,6 +11,7 @@ public interface IPushNotificationStrategy : INotificationStrategy
 {
     public Task SendOpenRateUserScreenSilent(Guid userId, Guid rateeUserId, CancellationToken ct = default);
     public Task SendEndMeetingSuggestion(Guid userId, CancellationToken ct = default);
+    public Task SendRefererRewardReceived(Guid userId, CancellationToken ct = default);
 }
 
 internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
@@ -66,6 +67,14 @@ internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
         return SendPush(
             userId: userId,
             factory: fcmTokens => _pushBuilder.BuildEndMeetingSuggestionPush(fcmTokens),
+            ct: ct);
+    }
+
+    public Task SendRefererRewardReceived(Guid userId, CancellationToken ct = default)
+    {
+        return SendPush(
+            userId: userId,
+            factory: fcmTokens => _pushBuilder.BuildRefererRewardReceived(fcmTokens),
             ct: ct);
     }
 

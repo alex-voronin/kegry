@@ -71,7 +71,7 @@ public class ExpiredChatsCollectorTests : IntegrationTestBase, IAsyncLifetime
                 );
             },
             expectedCount: 2,
-            expectedTitle: NotificationTitles.MeetingArrangedTitle);
+            expectedType: FcmPushBuilder.PushType.MeetingArranged);
 
         // Verify chat exists
         var chatResponse = await Factory.ApiClient.GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
@@ -81,7 +81,7 @@ public class ExpiredChatsCollectorTests : IntegrationTestBase, IAsyncLifetime
         Factory.FakeTimeProvider.Advance(expirationSpan + TimeSpan.FromHours(1));
 
         // 4. Trigger collection and check that pushes has been sent
-        await Factory.NotificationManager.AwaitSilentPushNotifications(
+        await Factory.NotificationManager.AwaitPushNotifications(
             codeToRun: async () =>
             {
                 using var scope = Factory.Services.CreateScope();
