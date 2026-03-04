@@ -82,10 +82,10 @@
     <data name="Push.EndMeetingSuggestion.Body" xml:space="preserve">
         <value>Tap to end the meeting</value>
     </data>
-    <data name="Push.RefererRewardReceived.Title" xml:space="preserve">
+    <data name="Push.ReferrerRewardReceived.Title" xml:space="preserve">
         <value>Your friend just joined! 👋</value>
     </data>
-    <data name="Push.RefererRewardReceived.Body" xml:space="preserve">
+    <data name="Push.ReferrerRewardReceived.Body" xml:space="preserve">
         <value>New imaginary friend unlocked! Tap to see</value>
     </data>
     <data name="Email.ChatMessageReceived.Title" xml:space="preserve">

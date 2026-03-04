@@ -31,7 +31,7 @@ public static class UserProfileEventHandlers
             user = new User
             {
                 Id = @event.UserId,
-                RefererId = @event.ReferrerId,
+                ReferrerId = @event.ReferrerId,
                 SeenNpcAt = DateTimeOffset.MinValue
             };
         }
@@ -53,25 +53,25 @@ public static class UserProfileEventHandlers
         IMessageBus bus,
         CancellationToken ct)
     {
-        var referer = await userRepository.GetByIdAsync(referrerId,
+        var referrer = await userRepository.GetByIdAsync(referrerId,
             includes: [u => u.MetNpcs],
             ct: ct);
-        if (referer == null)
+        if (referrer == null)
         {
             Log.Error("Referrer {ReferrerId} doesn't exist", referrerId);
             return;
         }
 
         var npc = await npcRepository.GetAnyAsync(isSecret: true, ct: ct);
-        var isNewNpcForUser = referer.MetNpcs.All(n => n.Id != npc.Id);
+        var isNewNpcForUser = referrer.MetNpcs.All(n => n.Id != npc.Id);
         if (!isNewNpcForUser)
         {
             return;
         }
 
-        referer.AddMetNpc(npc);
+        referrer.AddMetNpc(npc);
         await userRepository.SaveChangesAsync(ct);
 
-        await bus.PublishAsync(new RefererRewardReceivedEvent(referrerId));
+        await bus.PublishAsync(new ReferrerRewardReceivedEvent(referrerId));
     }
 }

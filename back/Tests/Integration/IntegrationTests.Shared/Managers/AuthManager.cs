@@ -61,17 +61,17 @@ public class AuthManager
         return signinResponse.Result.Auth;
     }
 
-    public async Task CreateDefaultProfileAndSubmitLocation(Guid? refererId = null)
+    public async Task CreateDefaultProfileAndSubmitLocation(Guid? referrerId = null)
     {
         await _host.ExecuteAndWaitAsync(async () =>
         {
-            await CreateProfile(refererId: refererId);
+            await CreateProfile(referrerId: referrerId);
             await SubmitLocation();
         });
     }
 
     public async Task CreateProfile(
-        Guid? refererId = null,
+        Guid? referrerId = null,
         string firstName = "Main",
         string lastName = "MainLastName",
         Gender gender = Gender.Male,
@@ -81,7 +81,7 @@ public class AuthManager
         hobbyIds ??= ["boxing".ToDeterministicGuid()];
         var response = await _apiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(ApiRoutes.UserProfile.Profile,
             new CreateUserProfileRequest(
-                ReferrerId: refererId,
+                ReferrerId: referrerId,
                 FirstName: firstName,
                 LastName: lastName,
                 Bio: "Bio",

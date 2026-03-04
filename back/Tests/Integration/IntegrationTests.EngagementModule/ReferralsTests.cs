@@ -21,7 +21,7 @@ public class ReferralsTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenUser_WhenRefersAnotherUser_ThenReceivesSecretNpc_AndUsersAreFriends()
     {
-        // 1. Create referer user A and submit token for FCM
+        // 1. Create referrer user A and submit token for FCM
         var authA = await Factory.AuthManager.CreateAndLoginUserAsync("userA@example.com", "Password123!");
         Factory.ApiClient.SetAuth(authA);
         await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
@@ -40,10 +40,10 @@ public class ReferralsTests : IntegrationTestBase, IAsyncLifetime
             codeToRun: async () =>
             {
                 Factory.ApiClient.SetAuth(authB);
-                await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation(refererId: userAId);
+                await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation(referrerId: userAId);
             },
             expectedCount: 1,
-            expectedType: FcmPushBuilder.PushType.RefererRewardReceived);
+            expectedType: FcmPushBuilder.PushType.ReferrerRewardReceived);
 
         // 3. Verify users are friends
         Factory.ApiClient.SetAuth(authA);

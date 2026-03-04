@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EngagementModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(EngagementContext))]
-    [Migration("20260304131657_AddEngagement")]
+    [Migration("20260304195049_AddEngagement")]
     partial class AddEngagement
     {
         /// <inheritdoc />
@@ -95,9 +95,9 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
-                    b.Property<Guid?>("RefererId")
+                    b.Property<Guid?>("ReferrerId")
                         .HasColumnType("uuid")
-                        .HasColumnName("referer_id");
+                        .HasColumnName("referrer_id");
 
                     b.Property<DateTimeOffset>("SeenNpcAt")
                         .HasColumnType("timestamp with time zone")

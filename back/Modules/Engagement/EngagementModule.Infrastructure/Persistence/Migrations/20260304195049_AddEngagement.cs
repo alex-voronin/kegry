@@ -39,7 +39,7 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    referer_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    referrer_id = table.Column<Guid>(type: "uuid", nullable: true),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: false),
                     seen_npc_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },

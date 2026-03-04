@@ -92,9 +92,9 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
-                    b.Property<Guid?>("RefererId")
+                    b.Property<Guid?>("ReferrerId")
                         .HasColumnType("uuid")
-                        .HasColumnName("referer_id");
+                        .HasColumnName("referrer_id");
 
                     b.Property<DateTimeOffset>("SeenNpcAt")
                         .HasColumnType("timestamp with time zone")

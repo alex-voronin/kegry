@@ -5,7 +5,7 @@ namespace EngagementModule.Domain.Aggregates;
 public class User : ISoftDeletable<Guid>
 {
     public required Guid Id { get; init; }
-    public Guid? RefererId { get; set; }
+    public Guid? ReferrerId { get; init; }
     public bool IsDeleted { get; set; }
     public required DateTimeOffset SeenNpcAt { get; set; }
 

@@ -21,13 +21,13 @@ public class UserProfileEventHandlers
             return;
         }
 
-        var userToRefererRelation = await userRelationRepository.GetOrCreateAsync(
+        var userToReferrerRelation = await userRelationRepository.GetOrCreateAsync(
             @event.UserId, @event.ReferrerId.Value, ct: ct);
-        userToRefererRelation.IsFriend = true;
+        userToReferrerRelation.IsFriend = true;
 
-        var refererToUserRelation = await userRelationRepository.GetOrCreateAsync(
+        var referrerToUserRelation = await userRelationRepository.GetOrCreateAsync(
             @event.ReferrerId.Value, @event.UserId, ct: ct);
-        refererToUserRelation.IsFriend = true;
+        referrerToUserRelation.IsFriend = true;
 
         await userRelationRepository.SaveChangesAsync(ct);
     }
