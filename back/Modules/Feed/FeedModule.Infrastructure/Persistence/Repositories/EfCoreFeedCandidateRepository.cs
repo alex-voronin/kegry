@@ -42,14 +42,14 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
             )
             .LeftJoin(
                 _context.FeedUserRelations.AsNoTracking()
-                    .Where(fur => fur.MyUserId == user.Id),
+                    .Where(r => r.MyUserId == user.Id),
                 j => j.User.Id,
-                fp => fp.OtherUserId,
-                (j, fur) => new
+                r => r.OtherUserId,
+                (j, r) => new
                 {
                     j.User,
                     j.Location,
-                    FeedUserRelation = fur
+                    FeedUserRelation = r
                 }
             )
             .LeftJoin(

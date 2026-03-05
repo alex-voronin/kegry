@@ -190,6 +190,14 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         meToOtherUserRelation.LastSeenAt = now;
 
         var otherToMeUserRelation = await _feedUserRelationRepository.GetAsync(otherUserId, myUserId, false, ct);
+        if (otherToMeUserRelation != null && otherToMeUserRelation.IsBlocked)
+        {
+            // Save changes to consume the invite and return silently to imitate a successful user invitation,
+            // regardless of the blocked state.
+            await _feedUserRelationRepository.SaveChangesAsync(ct);
+            return;
+        }
+
         if (otherToMeUserRelation != null && !otherToMeUserRelation.IsInviteExpired(now))
         {
             await TryArrangeMeeting(otherToMeUserRelation, meToOtherUserRelation, ct);

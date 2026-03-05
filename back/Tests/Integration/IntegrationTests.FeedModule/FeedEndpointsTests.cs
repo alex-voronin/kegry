@@ -129,7 +129,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var feedBefore = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
         feedBefore.Result.Feed.Any(f => f.Id == Guid.Parse(userBId)).ShouldBeTrue();
 
-        // 3. User A blocks User B
+        // 3. User A skips User B
         var response = await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
             ApiRoutes.Feed.SkipUser(userBId), null);
         response.Success.ShouldBeTrue();
@@ -968,5 +968,57 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         response.Success.ShouldBeFalse();
         response.Errors.ShouldContain(e => e.Code == "ValidationError");
         response.Errors.ShouldContain(e => e.Error.Contains("not a friend"));
+    }
+
+    [Fact]
+    public async Task GivenBlockedUser_WhenTheyInvite_ThenInviteIsNotSent()
+    {
+        // 1. Create users
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("normalUserA@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("blockedUserB@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Create device tokens for push notifications
+        var tokenRequestA = new UpdateFcmTokenRequest("devA", "tokenA");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.ApiClient
+            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+                tokenRequestA);
+
+        var tokenRequestB = new UpdateFcmTokenRequest("devB", "tokenB");
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.ApiClient
+            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+                tokenRequestB);
+
+        // 3. User A blocks User B
+        Factory.ApiClient.SetAuth(authA);
+        var blockRequest = new BlockUserRequest(null);
+        var response = await Factory.ApiClient.PostAsync<BlockUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.BlockUser(authB.UserId), blockRequest);
+        response.Success.ShouldBeTrue();
+
+        // 4. User B invites User A
+        await Factory.Host.ExecuteAndWaitAsync(async () =>
+        {
+            var inviteExpiresAt = Factory.FakeTimeProvider.GetUtcNow().AddHours(4);
+            Factory.ApiClient.SetAuth(authB);
+            await Factory.ApiClient
+                .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                    ApiRoutes.Feed.InviteUser(authA.UserId),
+                    new InviteUserRequest(inviteExpiresAt)
+                );
+        });
+
+        // 5. Check that notification list for user A is empty
+        Factory.ApiClient.SetAuth(authA);
+        var notificationsResponse = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
+            ApiRoutes.Notifications.GetNotificationsPaginated(0, 10));
+        notificationsResponse.Success.ShouldBeTrue();
+        notificationsResponse.Result.TotalCount.ShouldBe(0);
     }
 }
