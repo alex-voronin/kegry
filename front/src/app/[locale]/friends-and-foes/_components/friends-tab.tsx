@@ -1,8 +1,12 @@
+import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { useFriendsStore } from '@/store/use-friends-store';
+import { useInView } from 'react-intersection-observer';
+import { useViewportItemCount } from '@/hooks/use-viewport-item-count';
+import { toast } from 'react-toastify';
 import styles from '../friends-and-foes.module.css';
 import { SelectedUser } from '../types';
 
@@ -13,7 +17,44 @@ interface FriendsTabProps {
 
 export function FriendsTab({ onSelectUser, onViewProfile }: FriendsTabProps) {
   const t = useTranslations('screens.friendsAndFoes');
-  const { friends, isLoading } = useFriendsStore();
+  const { friends, isLoading, hasMore, fetchFriends } = useFriendsStore();
+
+  const { ref: pageBottomRef, inView } = useInView({
+    threshold: 0,
+    rootMargin: '200px',
+  });
+
+  const limit = useViewportItemCount({
+    itemHeight: 72,
+    reservedHeight: 130, // Header + Segmented Control tab bar
+    buffer: 4,
+  });
+
+  useEffect(() => {
+    if (friends.length === 0) {
+      const loadFriends = async () => {
+        try {
+          await fetchFriends(0, limit);
+        } catch (err: any) {
+          toast.error(err.message || t('toast.fetchFailed'));
+        }
+      };
+      loadFriends();
+    }
+  }, [fetchFriends, t, friends.length, limit]);
+
+  useEffect(() => {
+    if (inView && hasMore && !isLoading && friends.length > 0) {
+      const loadNextPage = async () => {
+        try {
+          await fetchFriends(friends.length, limit);
+        } catch (err: any) {
+          toast.error(err.message || t('toast.fetchFailed'));
+        }
+      };
+      loadNextPage();
+    }
+  }, [inView, hasMore, isLoading, friends.length, fetchFriends, t, limit]);
 
   if (isLoading && friends.length === 0) {
     return (
@@ -72,6 +113,11 @@ export function FriendsTab({ onSelectUser, onViewProfile }: FriendsTabProps) {
           </div>
         </div>
       ))}
+      {hasMore && (
+        <div ref={pageBottomRef} className="flex justify-center py-4">
+          <Spinner />
+        </div>
+      )}
     </div>
   );
 }

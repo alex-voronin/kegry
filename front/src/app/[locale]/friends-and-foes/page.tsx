@@ -70,41 +70,6 @@ export default function FriendsAndFoesPage() {
     }
   }, [searchParams, router]);
 
-  useEffect(() => {
-    if (activeTab === 'friends') {
-      const loadFriends = async () => {
-        try {
-          await fetchFriends();
-        } catch (err: any) {
-          toast.error(err.message || t('toast.fetchFailed'));
-        }
-      };
-      loadFriends();
-    }
-
-    if (activeTab === 'imaginary') {
-      const loadMetNpcs = async () => {
-        try {
-          await fetchMetNpcs();
-        } catch (err: any) {
-          toast.error(err.message || t('toast.fetchImaginaryFailed'));
-        }
-      };
-      loadMetNpcs();
-    }
-
-    if (activeTab === 'blocked') {
-      const loadBlockedUsers = async () => {
-        try {
-          await fetchBlockedUsers();
-        } catch (err: any) {
-          toast.error(err.message || tBlocked('toast.fetchFailed'));
-        }
-      };
-      loadBlockedUsers();
-    }
-  }, [activeTab, fetchFriends, fetchMetNpcs, fetchBlockedUsers, t, tBlocked]);
-
   const handleRemoveFriend = async (user: SelectedUser) => {
     try {
       await removeFriend(user.id);

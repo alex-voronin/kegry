@@ -1,8 +1,10 @@
+import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { useMetNpcsStore } from '@/store/use-met-npcs-store';
+import { toast } from 'react-toastify';
 import styles from '../friends-and-foes.module.css';
 import { SelectedUser } from '../types';
 
@@ -16,7 +18,20 @@ export function ImaginaryTab({
   onSelectCover,
 }: ImaginaryTabProps) {
   const t = useTranslations('screens.friendsAndFoes');
-  const { metNpcs, isLoading } = useMetNpcsStore();
+  const { metNpcs, isLoading, fetchMetNpcs } = useMetNpcsStore();
+
+  useEffect(() => {
+    if (metNpcs.length === 0) {
+      const loadMetNpcs = async () => {
+        try {
+          await fetchMetNpcs();
+        } catch (err: any) {
+          toast.error(err.message || t('toast.fetchImaginaryFailed'));
+        }
+      };
+      loadMetNpcs();
+    }
+  }, [fetchMetNpcs, metNpcs.length, t]);
 
   if (isLoading && metNpcs.length === 0) {
     return (
