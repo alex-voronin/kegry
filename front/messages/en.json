@@ -269,8 +269,8 @@
       "tomorrowUntil": "tomorrow until {h}:{m}",
       "ago": "{time} ago",
       "menu": {
+        "viewProfile": "View Profile",
         "accept": "Accept",
-        "ignore": "Ignore",
         "delete": "Delete",
         "blockAndReport": "Block & Report"
       },

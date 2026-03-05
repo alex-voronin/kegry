@@ -53,11 +53,9 @@ export default function NotificationsScreen() {
 
   useEffect(() => {
     // Initial load
-    if (notifications.length === 0) {
+    if (notifications.length === 0 && !isLoading) {
       const loadNotifications = async () => {
         try {
-          // If limit is still 20 default and we are calculating, we might want to wait,
-          // but we can just use the state limit which will be updated quickly
           await fetchNotifications(0, limit);
         } catch (err: any) {
           toast.error(err.message || t('toast.loadFailed'));
@@ -65,7 +63,7 @@ export default function NotificationsScreen() {
       };
       loadNotifications();
     }
-  }, [fetchNotifications, t, notifications.length, limit]);
+  }, [fetchNotifications, t, notifications.length, isLoading]);
 
   useEffect(() => {
     // Load more when scrolled to the bottom
@@ -137,6 +135,17 @@ export default function NotificationsScreen() {
   const getMenuOptions = (notif: NotificationDto) => {
     const options = [];
 
+    if (notif.fromUserId) {
+      options.push({
+        icon: '/assets/friends-and-foes/user-profile-icon.svg',
+        label: t('menu.viewProfile'),
+        onClick: () => {
+          router.push(PAGE_ROUTES.USER_PROFILE(notif.fromUserId!));
+          setSelectedNotification(null);
+        },
+      });
+    }
+
     if (!isNotificationExpired(notif.expiresAt) && notif.fromUserId) {
       options.push({
         icon: '/assets/notifications/accept-icon.webp',
@@ -149,14 +158,6 @@ export default function NotificationsScreen() {
     }
 
     if (notif.fromUserId) {
-      options.push({
-        icon: '/assets/notifications/ignore-icon.svg',
-        label: t('menu.ignore'),
-        onClick: () => {
-          handleIgnore(notif);
-          setSelectedNotification(null);
-        },
-      });
       options.push({
         icon: '/assets/common/block-icon.svg',
         label: t('menu.blockAndReport'),
@@ -212,6 +213,11 @@ export default function NotificationsScreen() {
                 <div
                   key={notif.id}
                   className={`${styles.notificationItem} ${expired ? styles.expired : ''}`}
+                  onClick={() => {
+                    if (notif.fromUserId) {
+                      setSelectedNotification(notif);
+                    }
+                  }}
                 >
                   <div className={styles.notificationItemLeft}>
                     <div className={styles.profileImageWrapper}>
@@ -245,6 +251,7 @@ export default function NotificationsScreen() {
                         height={24}
                         className="object-fill"
                         priority
+                        stopPropagation
                         onClick={() => handleAccept(notif)}
                       />
                     )}
@@ -254,6 +261,7 @@ export default function NotificationsScreen() {
                       width={24}
                       height={24}
                       priority
+                      stopPropagation
                       onClick={() => setSelectedNotification(notif)}
                     />
                   </div>

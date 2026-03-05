@@ -11,6 +11,7 @@ interface IconProps {
   priority?: boolean;
   className?: string;
   disabled?: boolean;
+  stopPropagation?: boolean;
   onClick?: () => void;
   children?: React.ReactNode;
 }
@@ -23,12 +24,21 @@ export function Icon({
   priority,
   className,
   disabled,
+  stopPropagation,
   onClick,
   children,
 }: IconProps) {
+  const handleClick = (e: React.MouseEvent) => {
+    if (disabled) return;
+    if (stopPropagation) {
+      e.stopPropagation();
+    }
+    onClick?.();
+  };
+
   return (
     <div
-      onClick={disabled ? undefined : onClick}
+      onClick={handleClick}
       className={cn(
         'relative hover:brightness-75 active:brightness-75',
         disabled && 'pointer-events-none opacity-30',

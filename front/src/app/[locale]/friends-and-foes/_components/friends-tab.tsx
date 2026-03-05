@@ -97,20 +97,15 @@ export function FriendsTab({ onSelectUser, onViewProfile }: FriendsTabProps) {
             </div>
           </div>
 
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              onSelectUser({ ...user, type: 'friend' });
-            }}
-          >
-            <Icon
-              src="/assets/common/more-icon.svg"
-              alt="Open menu"
-              width={24}
-              height={24}
-              priority
-            />
-          </div>
+          <Icon
+            src="/assets/common/more-icon.svg"
+            alt="Open menu"
+            width={24}
+            height={24}
+            priority
+            stopPropagation
+            onClick={() => onSelectUser({ ...user, type: 'friend' })}
+          />
         </div>
       ))}
       {hasMore && (

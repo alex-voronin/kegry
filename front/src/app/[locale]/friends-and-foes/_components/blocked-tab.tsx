@@ -118,6 +118,8 @@ export function BlockedTab({ onSelectUser }: BlockedTabProps) {
             width={24}
             height={24}
             priority
+            stopPropagation
+            onClick={() => onSelectUser({ ...user, type: 'blocked' })}
           />
         </div>
       ))}
