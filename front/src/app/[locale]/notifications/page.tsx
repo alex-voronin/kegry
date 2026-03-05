@@ -9,6 +9,8 @@ import { Icon } from '@/components/ui/icon';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { ReportDialog } from '@/components/ui/report-dialog';
 import { Spinner } from '@/components/ui/spinner';
+import { useInView } from 'react-intersection-observer';
+import { useViewportItemCount } from '@/hooks/use-viewport-item-count';
 import {
   useNotificationsStore,
   NotificationDto,
@@ -27,9 +29,21 @@ export default function NotificationsScreen() {
   const [notificationToReport, setNotificationToReport] =
     useState<NotificationDto | null>(null);
 
+  const { ref: pageBottomRef, inView } = useInView({
+    threshold: 0,
+    rootMargin: '200px', // Trigger slightly before reaching the bottom
+  });
+
+  const limit = useViewportItemCount({
+    itemHeight: 72,
+    reservedHeight: 60,
+    buffer: 4,
+  });
+
   const {
     notifications,
     isLoading,
+    hasMore,
     fetchNotifications,
     acceptInvite,
     ignoreInvite,
@@ -38,15 +52,43 @@ export default function NotificationsScreen() {
   } = useNotificationsStore();
 
   useEffect(() => {
-    const loadNotifications = async () => {
-      try {
-        await fetchNotifications();
-      } catch (err: any) {
-        toast.error(err.message || t('toast.loadFailed'));
-      }
-    };
-    loadNotifications();
-  }, [fetchNotifications, t]);
+    // Initial load
+    if (notifications.length === 0) {
+      const loadNotifications = async () => {
+        try {
+          // If limit is still 20 default and we are calculating, we might want to wait,
+          // but we can just use the state limit which will be updated quickly
+          await fetchNotifications(0, limit);
+        } catch (err: any) {
+          toast.error(err.message || t('toast.loadFailed'));
+        }
+      };
+      loadNotifications();
+    }
+  }, [fetchNotifications, t, notifications.length, limit]);
+
+  useEffect(() => {
+    // Load more when scrolled to the bottom
+    if (inView && hasMore && !isLoading && notifications.length > 0) {
+      const loadNextPage = async () => {
+        try {
+          // The current length is the offset for the next page
+          await fetchNotifications(notifications.length, limit);
+        } catch (err: any) {
+          toast.error(err.message || t('toast.loadFailed'));
+        }
+      };
+      loadNextPage();
+    }
+  }, [
+    inView,
+    hasMore,
+    isLoading,
+    notifications.length,
+    fetchNotifications,
+    t,
+    limit,
+  ]);
 
   const handleAccept = async (notif: NotificationDto) => {
     if (!notif.fromUserId) return;
@@ -218,6 +260,11 @@ export default function NotificationsScreen() {
                 </div>
               );
             })}
+            {hasMore && (
+              <div ref={pageBottomRef} className="flex justify-center py-4">
+                <Spinner />
+              </div>
+            )}
           </div>
         )}
       </div>
