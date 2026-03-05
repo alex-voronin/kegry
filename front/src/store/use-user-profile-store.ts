@@ -138,7 +138,7 @@ export const useUserProfileStore = create<UserProfileState>()(
       fetchUserProfile: async (userId: string) => {
         const response = await apiClient.get<
           ApiResult<{ userProfile: UserProfileDto }>
-        >(`${API_ENDPOINTS.USER_PROFILE.PROFILE}?id=${userId}`);
+        >(`${API_ENDPOINTS.USER_PROFILE.PROFILE}/${userId}`);
 
         if (!response.data.success) {
           rethrowApiError(
