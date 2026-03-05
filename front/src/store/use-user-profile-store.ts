@@ -213,6 +213,14 @@ export const useUserProfileStore = create<UserProfileState>()(
         await apiClient.post(API_ENDPOINTS.FEED.BLOCK(userId), {
           reportMessage,
         });
+
+        const { useFeedStore } = await import('./use-feed-store');
+        const feedStore = useFeedStore.getState();
+        if (feedStore.feed.some((p) => p.id === userId)) {
+          useFeedStore.setState({
+            feed: feedStore.feed.filter((p) => p.id !== userId),
+          });
+        }
       },
 
       reset: () => set(initialState),
