@@ -53,7 +53,7 @@ export default function NotificationsScreen() {
 
   useEffect(() => {
     // Initial load
-    if (notifications.length === 0 && !isLoading) {
+    if (notifications.length === 0 && !isLoading && hasMore) {
       const loadNotifications = async () => {
         try {
           await fetchNotifications(0, limit);
@@ -63,7 +63,7 @@ export default function NotificationsScreen() {
       };
       loadNotifications();
     }
-  }, [fetchNotifications, t, notifications.length, isLoading]);
+  }, [fetchNotifications, t, notifications.length, isLoading, hasMore]);
 
   useEffect(() => {
     // Load more when scrolled to the bottom
