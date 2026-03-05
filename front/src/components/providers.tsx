@@ -63,6 +63,26 @@ function FcmGlobalHandler() {
           });
         }
       }
+
+      // Show system notification for referrer rewards
+      if (type === NotificationType.REFERRER_REWARD_RECEIVED) {
+        if (
+          'serviceWorker' in navigator &&
+          navigator.serviceWorker.controller
+        ) {
+          navigator.serviceWorker.ready.then((registration) => {
+            if (data) {
+              registration.showNotification(data.title || BRAND_NAME, {
+                body: data.body || '',
+                icon:
+                  data.icon || '/assets/notifications/notification-logo.webp',
+                badge: '/assets/notifications/notification-badge.png',
+                data: payload,
+              });
+            }
+          });
+        }
+      }
     },
     [router],
   );
@@ -85,6 +105,10 @@ function FcmGlobalHandler() {
 
       if (type === NotificationType.OPEN_RATE_USER_SCREEN) {
         router.replace(PAGE_ROUTES.FEED);
+      }
+
+      if (type === NotificationType.REFERRER_REWARD_RECEIVED) {
+        router.replace(`${PAGE_ROUTES.FRIENDS_AND_FOES}?tab=imaginary`);
       }
     },
     [router],

@@ -25,6 +25,7 @@ export enum NotificationType {
   CHAT_MESSAGE_RECEIVED = 'chatMessageReceived',
   OPEN_RATE_USER_SCREEN = 'openRateUserScreen',
   SHOW_END_MEETING_SUGGESTION = 'showEndMeetingSuggestion',
+  REFERRER_REWARD_RECEIVED = 'referrerRewardReceived',
 }
 
 export enum SwMessageType {

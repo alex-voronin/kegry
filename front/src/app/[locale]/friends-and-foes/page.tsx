@@ -39,7 +39,11 @@ export default function FriendsAndFoesPage() {
     { value: 'imaginary', label: t('tabs.imaginary'), width: '34%' },
     { value: 'blocked', label: t('tabs.blocked'), width: '33%' },
   ];
-  const [activeTab, setActiveTab] = useState<Tab>('friends');
+  const [activeTab, setActiveTab] = useState<Tab>(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'imaginary' || tabParam === 'blocked') return tabParam;
+    return 'friends';
+  });
   const [selectedUser, setSelectedUser] = useState<SelectedUser | null>(null);
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
   const [userToReport, setUserToReport] = useState<SelectedUser | null>(null);
@@ -65,7 +69,13 @@ export default function FriendsAndFoesPage() {
   useEffect(() => {
     if (searchParams.get('share') === 'true') {
       setIsAddMenuOpen(true);
-      // Clean up the URL
+    }
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'imaginary' || tabParam === 'blocked') {
+      setActiveTab(tabParam);
+    }
+    // Clean up query params from the URL
+    if (searchParams.get('share') || searchParams.get('tab')) {
       router.replace(PAGE_ROUTES.FRIENDS_AND_FOES);
     }
   }, [searchParams, router]);

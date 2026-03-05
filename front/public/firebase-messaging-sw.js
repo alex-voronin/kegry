@@ -22,9 +22,16 @@ function getMessageId(payload) {
   return payload.data?.messageId || payload.messageId || 'unknown';
 }
 
-function getTargetUrl(userAction) {
-  if (userAction === 'openNotificationsScreen') return '/notifications';
-  if (userAction === 'openChatScreen') return '/chat';
+function getTargetUrl(type) {
+  if (type === 'userInvited') return '/notifications';
+  if (
+    type === 'chatMessageReceived' ||
+    type === 'meetingArranged' ||
+    type === 'showEndMeetingSuggestion'
+  )
+    return '/chat';
+  if (type === 'referrerRewardReceived')
+    return '/friends-and-foes?tab=imaginary';
   return '/';
 }
 
@@ -72,12 +79,12 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
   const payload = event.notification.data;
-  const userAction = payload?.data?.userAction;
+  const type = payload?.data?.type;
   const messageId = payload?.data?.messageId || payload?.messageId;
 
   if (!messageId) return;
 
-  const targetUrl = getTargetUrl(userAction);
+  const targetUrl = getTargetUrl(type);
 
   event.waitUntil(
     (async () => {
@@ -98,7 +105,7 @@ self.addEventListener('notificationclick', (event) => {
           }
         }
 
-        // No window found, open target URL based on userAction
+        // No window found, open target URL based on notification type
         await self.clients.openWindow(targetUrl);
       } catch (err) {
         console.error('[SW] notificationclick error:', err);
