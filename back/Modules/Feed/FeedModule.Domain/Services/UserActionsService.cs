@@ -185,6 +185,13 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
     {
         var now = _timeProvider.GetUtcNow();
         var meToOtherUserRelation = await _feedUserRelationRepository.GetOrCreateAsync(myUserId, otherUserId, ct: ct);
+
+        if (meToOtherUserRelation.InviteExpiresAt > now)
+        {
+            // Do nothing if already invited
+            return;
+        }
+
         meToOtherUserRelation.InvitedAt = now;
         meToOtherUserRelation.InviteExpiresAt = expiresAt;
         meToOtherUserRelation.LastSeenAt = now;
