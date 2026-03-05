@@ -31,7 +31,7 @@ export function BlockedTab({ onSelectUser }: BlockedTabProps) {
   });
 
   useEffect(() => {
-    if (blockedUsers.length === 0) {
+    if (blockedUsers.length === 0 && !isLoading && hasMore) {
       const loadBlockedUsers = async () => {
         try {
           await fetchBlockedUsers(0, limit);
@@ -41,7 +41,14 @@ export function BlockedTab({ onSelectUser }: BlockedTabProps) {
       };
       loadBlockedUsers();
     }
-  }, [fetchBlockedUsers, tBlocked, blockedUsers.length, limit]);
+  }, [
+    fetchBlockedUsers,
+    tBlocked,
+    blockedUsers.length,
+    limit,
+    isLoading,
+    hasMore,
+  ]);
 
   useEffect(() => {
     if (inView && hasMore && !isLoading && blockedUsers.length > 0) {

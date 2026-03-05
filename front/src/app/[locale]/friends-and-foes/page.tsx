@@ -79,6 +79,15 @@ export default function FriendsAndFoesPage() {
       router.replace(PAGE_ROUTES.FRIENDS_AND_FOES);
     }
   }, [searchParams, router]);
+  useEffect(() => {
+    return () => {
+      // Clear stores when leaving the page so they refresh when reopened,
+      // but tabs themselves control the loading state and timing.
+      useFriendsStore.getState().reset();
+      useBlockedUsersStore.getState().reset();
+      useMetNpcsStore.getState().reset();
+    };
+  }, []);
 
   const handleRemoveFriend = async (user: SelectedUser) => {
     try {

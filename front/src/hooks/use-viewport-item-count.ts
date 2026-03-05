@@ -24,7 +24,13 @@ export function useViewportItemCount({
   buffer = 4,
   fallback = 20,
 }: UseViewportItemCountOptions): number {
-  const [count, setCount] = useState(fallback);
+  const [count, setCount] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const availableHeight = window.innerHeight - reservedHeight;
+      return Math.ceil(availableHeight / itemHeight) + buffer;
+    }
+    return fallback;
+  });
 
   useEffect(() => {
     const calculate = () => {
@@ -33,6 +39,7 @@ export function useViewportItemCount({
       setCount(itemsThatFit + buffer);
     };
 
+    // Recalculate just in case, though initializer should have it mostly right for the first render
     calculate();
 
     window.addEventListener('resize', calculate);

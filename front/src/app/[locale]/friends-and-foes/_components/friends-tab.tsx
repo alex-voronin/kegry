@@ -31,7 +31,7 @@ export function FriendsTab({ onSelectUser, onViewProfile }: FriendsTabProps) {
   });
 
   useEffect(() => {
-    if (friends.length === 0) {
+    if (friends.length === 0 && !isLoading && hasMore) {
       const loadFriends = async () => {
         try {
           await fetchFriends(0, limit);
@@ -41,7 +41,7 @@ export function FriendsTab({ onSelectUser, onViewProfile }: FriendsTabProps) {
       };
       loadFriends();
     }
-  }, [fetchFriends, t, friends.length, limit]);
+  }, [fetchFriends, t, friends.length, limit, isLoading, hasMore]);
 
   useEffect(() => {
     if (inView && hasMore && !isLoading && friends.length > 0) {
