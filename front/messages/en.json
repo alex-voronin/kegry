@@ -42,10 +42,10 @@
       },
       "contactUs": {
         "title": "Contact Us",
-        "description": "You might be wondering the same thing we are: are these hobgoblins the same or different? Honestly, we're not sure yet... We still haven't figured out how to tell them apart. If you happen to know how to, or if you have any questions or suggestions about the service, we'd be happy to hear from you via email at <email>contacts@wibblycorn.com</email> or through our <chat>chat</chat>."
+        "description": "You might be wondering the same thing we are: are these hobgoblins the same or different? Honestly, we're not sure yet... We still haven't figured out how to tell them apart. If you happen to know how to, or if you have any questions or suggestions about the service, we'd be happy to hear from you via email at <email>contacts@kegry.com</email> or through our <chat>chat</chat>."
       },
       "footer": {
-        "copyright": "© 2026 Wibblycorn™. All rights reserved.",
+        "copyright": "© 2026 Kegrycorn™. All rights reserved.",
         "privacy": "Privacy Policy",
         "consent": "Consent to Communication",
         "terms": "Terms of Service",
@@ -94,7 +94,7 @@
         "passwordMismatch": "Passwords do not match"
       },
       "legal": {
-        "text": "By signing up to Wibblycorn, you confirm that you are <age>18 or older</age> and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+        "text": "By signing up to Kegrycorn, you confirm that you are <age>18 or older</age> and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
       }
     },
     "forgot": {
@@ -166,7 +166,7 @@
       "creating": "Creating profile...",
       "back": "Back",
       "legal": {
-        "text": "By creating a profile on Wibblycorn, you confirm that you are <age>18 or older</age> and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+        "text": "By creating a profile on Kegrycorn, you confirm that you are <age>18 or older</age> and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
       },
       "validation": {
         "avatarRequired": "Please select your avatar",
@@ -197,7 +197,7 @@
         "noInvites": "No invites left. They'll reset tomorrow."
       },
       "invitePrompt": {
-        "message": "Let's grow Wibblycorn together! 😊\nInvite your friends with a referral link: more people = way more adventures and fun. Bring a friend and get a special reward: special imaginary friend as a thank you! 🎉",
+        "message": "Let's grow Kegrycorn together! 😊\nInvite your friends with a referral link: more people = way more adventures and fun. Bring a friend and get a special reward: special imaginary friend as a thank you! 🎉",
         "later": "Later",
         "letsGo": "Let's Go"
       }

@@ -47,7 +47,7 @@ export default function MobileLayout() {
           <div className={mobileStyles.mobileLogoTextWrapper}>
             <div className={mobileStyles.mobileLogoTitleRow}>
               <span className={mobileStyles.mobileLogoText}>
-                Wibblycorn & Friends
+                Kegrycorn & Friends
               </span>
             </div>
             <span className={mobileStyles.mobileLogoSubtitle}>
@@ -290,7 +290,7 @@ export default function MobileLayout() {
             {t.rich('contactUs.description', {
               email: (chunks) => (
                 <a
-                  href="mailto:contacts@wibblycorn.com"
+                  href="mailto:contacts@kegry.com"
                   className={styles.actionLink}
                 >
                   {chunks}

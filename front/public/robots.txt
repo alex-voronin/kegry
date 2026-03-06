@@ -4,4 +4,4 @@ Disallow: /api/
 Disallow: /login
 Disallow: /login?*
 
-Sitemap: https://wibblycorn.com/sitemap.xml
+Sitemap: https://kegry.com/sitemap.xml

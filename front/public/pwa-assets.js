@@ -45,7 +45,6 @@ const STATIC_ASSETS = [
   "/assets/profile/privacy-icon.svg",
   "/assets/profile/set-photo-icon.svg",
   "/favicon.ico",
-  "/icons/apple-touch-icon.png",
   "/icons/favicon-16.png",
   "/icons/favicon-192.png",
   "/icons/favicon-32.png",

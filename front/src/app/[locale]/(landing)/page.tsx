@@ -18,12 +18,13 @@ export const metadata: Metadata = {
     'real life social',
     'bar meetups',
     'offline friends',
-    'wibblycorn',
+    'kegrycorn',
+    'kegry',
     'goblins',
     'off-screen stories',
   ],
 
-  metadataBase: new URL('https://wibblycorn.com'),
+  metadataBase: new URL('https://kegry.com'),
 
   alternates: {
     canonical: '/',
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
     title: `${BRAND_NAME} - Find Your Bar Buddy`,
     description:
       'Real bar buddies, real conversations, no dating. The best stories start off-screen!',
-    url: 'https://wibblycorn.com',
+    url: 'https://kegry.com',
     siteName: BRAND_NAME,
     images: [
       {

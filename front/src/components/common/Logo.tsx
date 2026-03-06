@@ -15,14 +15,14 @@ export function Logo({ tagline }: LogoProps) {
       <div className={styles.header}>
         <Image
           src="/assets/common/logo.webp"
-          alt="Wibblycorn"
+          alt="Kegrycorn"
           width={180}
           height={254}
           className={styles.logoImage}
           priority
         />
         <div className={styles.logoRow}>
-          <span className={styles.brandName}>Wibblycorn</span>
+          <span className={styles.brandName}>Kegrycorn</span>
         </div>
         {finalTagline && <p className={styles.tagline}>{finalTagline}</p>}
       </div>

@@ -1,6 +1,6 @@
 {
-  "name": "Wibblycorn",
-  "short_name": "Wibblycorn",
+  "name": "Kegrycorn",
+  "short_name": "Kegrycorn",
   "description": "The best stories start off-screen",
   "start_url": "/login?auto-signin=true",
   "display": "standalone",

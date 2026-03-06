@@ -43,9 +43,9 @@
     <data name="Email.UserInvited.Body" xml:space="preserve">
         <value>
             You have received an invitation from another user!&lt;br /&gt;&lt;br /&gt;
-            Open &lt;a href=&quot;https://wibblycorn.com/notifications&quot;&gt;Notifications&lt;/a&gt; to view details.&lt;br /&gt;&lt;br /&gt;
+            Open &lt;a href=&quot;https://kegry.com/notifications&quot;&gt;Notifications&lt;/a&gt; to view details.&lt;br /&gt;&lt;br /&gt;
             Best regards,&lt;br /&gt;
-            The Wibblycorn Team</value>
+            The Kegrycorn Team</value>
     </data>
     <data name="Email.ConfirmEmail.Subject" xml:space="preserve">
         <value>Verify your email</value>
@@ -55,7 +55,7 @@
             Your verification code is {0}&lt;br /&gt;&lt;br /&gt;
             Please note that the code is valid for 10 minutes.&lt;br /&gt;&lt;br /&gt;
             Best regards,&lt;br /&gt;
-            The Wibblycorn Team
+            The Kegrycorn Team
         </value>
     </data>
     <data name="Email.Common.UnsubscribeText" xml:space="preserve">
@@ -94,9 +94,9 @@
     <data name="Email.ChatMessageReceived.Body" xml:space="preserve">
         <value>
             You have received a new message from {}!&lt;br /&gt;&lt;br /&gt;
-            Open &lt;a href=&quot;https://wibblycorn.com/chat&quot;&gt;Chat&lt;/a&gt; to view details.&lt;br /&gt;&lt;br /&gt;
+            Open &lt;a href=&quot;https://kegry.com/chat&quot;&gt;Chat&lt;/a&gt; to view details.&lt;br /&gt;&lt;br /&gt;
             Best regards,&lt;br /&gt;
-            The Wibblycorn Team
+            The Kegrycorn Team
         </value>
     </data>
     <data name="Email.PasswordReset.Subject" xml:space="preserve">
@@ -105,9 +105,9 @@
     <data name="Email.PasswordReset.Body" xml:space="preserve">
         <value>
             You requested a password reset.&lt;br /&gt;&lt;br /&gt;
-            Follow the link to reset your password: &lt;a href=&quot;https://wibblycorn.com/password-reset?email={0}&amp;token={1}&quot;&gt;https://wibblycorn.com/password-reset?email={0}&amp;token={1}&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;
+            Follow the link to reset your password: &lt;a href=&quot;https://kegry.com/password-reset?email={0}&amp;token={1}&quot;&gt;https://kegry.com/password-reset?email={0}&amp;token={1}&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;
             Best regards,&lt;br /&gt;
-            The Wibblycorn Team
+            The Kegrycorn Team
         </value>
     </data>
 </root>

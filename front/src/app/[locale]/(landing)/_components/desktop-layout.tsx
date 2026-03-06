@@ -40,7 +40,7 @@ export default function DesktopLayout() {
           />
           <div className={styles.logoTextWrapper}>
             <div className={styles.logoTitleRow}>
-              <span className={styles.logoText}>Wibblycorn & Friends</span>
+              <span className={styles.logoText}>Kegrycorn & Friends</span>
             </div>
             <span className={styles.logoSubtitle}>{t('header.subtitle')}</span>
           </div>
@@ -206,7 +206,7 @@ export default function DesktopLayout() {
             {t.rich('contactUs.description', {
               email: (chunks) => (
                 <a
-                  href="mailto:contacts@wibblycorn.com"
+                  href="mailto:contacts@kegry.com"
                   className={styles.actionLink}
                 >
                   {chunks}
