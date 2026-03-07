@@ -35,14 +35,6 @@ export const useMetNpcsStore = create<MetNpcsState>()((set) => ({
         API_ENDPOINTS.NPC.MET,
       );
 
-      if (!response.data.success) {
-        set({ isLoading: false });
-        rethrowApiError(
-          new Error(response.data.errors[0]?.error),
-          'Failed to fetch met NPCs',
-        );
-      }
-
       set({
         metNpcs: response.data.result.metNpcs,
         isLoading: false,

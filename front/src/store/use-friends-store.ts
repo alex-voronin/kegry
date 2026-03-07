@@ -43,14 +43,6 @@ export const useFriendsStore = create<FriendsState>()((set, get) => ({
         ApiResult<PaginatedResponse<FriendUserDto>>
       >(`${API_ENDPOINTS.FEED.FRIENDS}?offset=${offset}&limit=${limit}`);
 
-      if (!response.data.success) {
-        set({ isLoading: false });
-        rethrowApiError(
-          new Error(response.data.errors[0]?.error),
-          'Failed to fetch friends',
-        );
-      }
-
       const { data, totalCount } = response.data.result;
 
       if (offset === 0) {

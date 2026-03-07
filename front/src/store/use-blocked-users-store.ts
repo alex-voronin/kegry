@@ -39,14 +39,6 @@ export const useBlockedUsersStore = create<BlockedUsersState>()((set, get) => ({
         ApiResult<PaginatedResponse<BlockedUserDto>>
       >(`${API_ENDPOINTS.FEED.BLOCKED_USERS}?offset=${offset}&limit=${limit}`);
 
-      if (!response.data.success) {
-        set({ isLoading: false });
-        rethrowApiError(
-          new Error(response.data.errors[0]?.error),
-          'Failed to fetch blocked users',
-        );
-      }
-
       const { data, totalCount } = response.data.result;
 
       if (offset === 0) {

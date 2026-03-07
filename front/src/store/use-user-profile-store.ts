@@ -117,14 +117,6 @@ export const useUserProfileStore = create<UserProfileState>()(
             ApiResult<{ userProfile: UserProfileDto }>
           >(API_ENDPOINTS.USER_PROFILE.PROFILE);
 
-          if (!response.data.success) {
-            set({ isLoading: false });
-            rethrowApiError(
-              new Error(response.data.errors[0]?.error),
-              'Failed to fetch profile',
-            );
-          }
-
           const profile = response.data.result.userProfile;
           set({ serverProfile: profile });
           get().discardLocalProfileChanges(profile);
@@ -140,13 +132,6 @@ export const useUserProfileStore = create<UserProfileState>()(
           ApiResult<{ userProfile: UserProfileDto }>
         >(`${API_ENDPOINTS.USER_PROFILE.PROFILE}/${userId}`);
 
-        if (!response.data.success) {
-          rethrowApiError(
-            new Error(response.data.errors[0]?.error),
-            'Failed to fetch user profile',
-          );
-        }
-
         return response.data.result.userProfile;
       },
 
@@ -155,13 +140,6 @@ export const useUserProfileStore = create<UserProfileState>()(
           API_ENDPOINTS.USER_PROFILE.PROFILE,
           data,
         );
-
-        if (!response.data.success) {
-          rethrowApiError(
-            new Error(response.data.errors[0]?.error),
-            'Failed to update profile',
-          );
-        }
 
         // Refresh profile after update
         await get().fetchMyProfile();
@@ -172,13 +150,6 @@ export const useUserProfileStore = create<UserProfileState>()(
           API_ENDPOINTS.USER_PROFILE.PRIVACY,
           { isPublic },
         );
-
-        if (!response.data.success) {
-          rethrowApiError(
-            new Error(response.data.errors[0]?.error),
-            'Failed to update privacy settings',
-          );
-        }
 
         set((state) => ({
           isPublic,

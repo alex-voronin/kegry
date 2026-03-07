@@ -80,14 +80,6 @@ export const useHobbiesStore = create<HobbiesState>()(
             API_ENDPOINTS.HOBBIES.LIST,
           );
 
-          if (!response.data.success) {
-            set({ isLoading: false });
-            rethrowApiError(
-              new Error(response.data.errors[0]?.error),
-              'Failed to fetch hobbies',
-            );
-          }
-
           const hobbies = response.data.result.hobbies.map((h) => ({
             id: h.id,
             name: h.name,

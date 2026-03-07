@@ -16,6 +16,10 @@ export function extractApiError(
   error: unknown,
   fallback = 'An error occurred',
 ): [string, string] {
+  if (error instanceof ApiRequestError) {
+    return [error.message, error.code || 'unknown'];
+  }
+
   if (axios.isAxiosError(error)) {
     const apiError = error.response?.data?.errors?.[0];
     if (apiError) {

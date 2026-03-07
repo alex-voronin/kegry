@@ -181,6 +181,10 @@ export default function ChatScreen() {
       try {
         await fetchChat();
       } catch (err: any) {
+        if (err.code === 'NotFound') {
+          router.replace(PAGE_ROUTES.FEED);
+          return;
+        }
         toast.error(err.message || t('toast.loadFailed'));
       }
     };

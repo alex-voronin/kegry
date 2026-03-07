@@ -52,14 +52,6 @@ export const useNotificationsStore = create<NotificationsState>()(
           `${API_ENDPOINTS.NOTIFICATIONS.LIST}?offset=${offset}&limit=${limit}`,
         );
 
-        if (!response.data.success) {
-          set({ isLoading: false });
-          rethrowApiError(
-            new Error(response.data.errors[0]?.error),
-            'Failed to fetch notifications',
-          );
-        }
-
         const { data, totalCount } = response.data.result;
 
         if (offset === 0) {

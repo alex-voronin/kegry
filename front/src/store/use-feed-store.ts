@@ -80,13 +80,6 @@ export const useFeedStore = create<FeedState>()(
           API_ENDPOINTS.FEED.STATUS,
         );
 
-        if (!response.data.success) {
-          rethrowApiError(
-            new Error(response.data.errors[0]?.error),
-            'Failed to fetch feed status',
-          );
-        }
-
         set({
           isInMeeting: response.data.result.isInMeeting,
           availableInvitesCount: response.data.result.availableInvitesCount,
@@ -118,14 +111,6 @@ export const useFeedStore = create<FeedState>()(
           const response = await apiClient.get<
             ApiResult<{ feed: UserProfileDto[] }>
           >(API_ENDPOINTS.FEED.LIST);
-
-          if (!response.data.success) {
-            set({ isLoading: false });
-            rethrowApiError(
-              new Error(response.data.errors[0]?.error),
-              'Failed to fetch feed',
-            );
-          }
 
           const newFeed = response.data.result.feed;
 
@@ -179,10 +164,6 @@ export const useFeedStore = create<FeedState>()(
           const response = await apiClient.get<
             ApiResult<{ feed: UserProfileDto[] }>
           >(API_ENDPOINTS.FEED.LIST);
-
-          if (!response.data.success) {
-            return;
-          }
 
           const newFeed = response.data.result.feed;
           const existingIds = new Set(state.feed.map((p) => p.id));

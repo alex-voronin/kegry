@@ -60,14 +60,6 @@ export const useChatStore = create<ChatState>()((set, get) => ({
         API_ENDPOINTS.CHAT.GET,
       );
 
-      if (!response.data.success) {
-        set({ isLoading: false });
-        rethrowApiError(
-          new Error(response.data.errors[0]?.error),
-          'Failed to fetch chat',
-        );
-      }
-
       set({ chat: response.data.result, isLoading: false });
     } catch (error) {
       set({ isLoading: false });
@@ -80,9 +72,7 @@ export const useChatStore = create<ChatState>()((set, get) => ({
       API_ENDPOINTS.CHAT.GET,
     );
 
-    if (response.data.success) {
-      set({ chat: response.data.result });
-    }
+    set({ chat: response.data.result });
   },
 
   sendMessage: async (text: string) => {

@@ -63,14 +63,6 @@ export const useFeedFiltersStore = create<FeedFiltersState>()(
             API_ENDPOINTS.FEED.FILTER,
           );
 
-          if (!response.data.success) {
-            set({ isLoading: false });
-            rethrowApiError(
-              new Error(response.data.errors[0]?.error),
-              'Failed to fetch filters',
-            );
-          }
-
           set({
             filters: response.data.result.filter,
             lastFetchedAt: now,
@@ -89,14 +81,6 @@ export const useFeedFiltersStore = create<FeedFiltersState>()(
             API_ENDPOINTS.FEED.FILTER,
             { filter: filters },
           );
-
-          if (!response.data.success) {
-            set({ isLoading: false });
-            rethrowApiError(
-              new Error(response.data.errors[0]?.error),
-              'Failed to update filters',
-            );
-          }
 
           set({ filters, lastFetchedAt: Date.now(), isLoading: false });
         } catch (error) {
