@@ -49,7 +49,15 @@ export default function NotificationsScreen() {
     ignoreInvite,
     deleteNotification,
     blockUser,
+    reset,
   } = useNotificationsStore();
+
+  useEffect(() => {
+    return () => {
+      // Clear store when leaving the page so it refreshes when reopened.
+      reset();
+    };
+  }, [reset]);
 
   useEffect(() => {
     // Initial load
