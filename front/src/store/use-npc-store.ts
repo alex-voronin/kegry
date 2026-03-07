@@ -3,6 +3,7 @@
 import { create } from '@/lib/zustand-reset';
 import apiClient from '@/lib/api-client';
 import { ApiResult } from '@/lib/api-types';
+import { useFeedStore } from './use-feed-store';
 import { API_ENDPOINTS } from '@/lib/routes';
 
 // --- 1-hour cooldown for NPC requests ---
@@ -69,6 +70,7 @@ export const useNpcStore = create<NpcState>()((set) => ({
   },
 
   inviteNpc: async (id: string) => {
+    useFeedStore.getState().setIsActionProcessing(true);
     try {
       const response = await apiClient.get<ApiResult<{ monolog: string }>>(
         API_ENDPOINTS.NPC.INVITE(id),
@@ -79,10 +81,16 @@ export const useNpcStore = create<NpcState>()((set) => ({
       }
     } catch (error) {
       console.error('Failed to invite NPC', error);
+    } finally {
+      useFeedStore.getState().setIsActionProcessing(false);
     }
   },
 
-  dismissNpc: () => set({ npc: null, monolog: null }),
+  dismissNpc: () => {
+    useFeedStore.getState().setIsActionProcessing(true);
+    set({ npc: null, monolog: null });
+    useFeedStore.getState().setIsActionProcessing(false);
+  },
 
   reset: () => set(initialState),
 }));

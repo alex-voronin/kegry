@@ -54,10 +54,12 @@ export function NpcFeedFooter({
   onInvite,
   onDismiss,
   hasMonolog,
+  isProcessing,
 }: {
   onInvite: () => void;
   onDismiss: () => void;
   hasMonolog: boolean;
+  isProcessing: boolean;
 }) {
   return (
     <footer className={styles.actions}>
@@ -67,6 +69,7 @@ export function NpcFeedFooter({
           e.stopPropagation();
           onDismiss();
         }}
+        disabled={isProcessing}
       >
         <Image
           className="pointer-events-none"
@@ -84,6 +87,7 @@ export function NpcFeedFooter({
             e.stopPropagation();
             onInvite();
           }}
+          disabled={isProcessing}
         >
           <Image
             className="pointer-events-none translate-x-[2px]"

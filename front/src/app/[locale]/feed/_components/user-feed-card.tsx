@@ -99,11 +99,13 @@ export function UserFeedFooter({
   onInvite,
   onSkip,
   isInviteDisabled,
+  isProcessing,
 }: {
   onIgnore: () => void;
   onInvite: () => void;
   onSkip: () => void;
   isInviteDisabled: boolean;
+  isProcessing: boolean;
 }) {
   return (
     <footer className={styles.actions}>
@@ -113,6 +115,7 @@ export function UserFeedFooter({
           e.stopPropagation();
           onIgnore();
         }}
+        disabled={isProcessing}
       >
         <Image
           className="pointer-events-none"
@@ -129,7 +132,7 @@ export function UserFeedFooter({
           e.stopPropagation();
           onInvite();
         }}
-        disabled={isInviteDisabled}
+        disabled={isInviteDisabled || isProcessing}
       >
         <Image
           className="pointer-events-none translate-x-[2px]"
@@ -146,6 +149,7 @@ export function UserFeedFooter({
           e.stopPropagation();
           onSkip();
         }}
+        disabled={isProcessing}
       >
         <Image
           className="pointer-events-none"

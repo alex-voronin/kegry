@@ -38,6 +38,7 @@ interface FeedState {
   isInMeeting: boolean;
   availableInvitesCount: number;
   isFetching: boolean;
+  isActionProcessing: boolean;
 
   fetchFeedStatus: () => Promise<FeedStatusResponse>;
   fetchFeed: () => Promise<void>;
@@ -46,6 +47,7 @@ interface FeedState {
   getInviteExpiration: (userId: string) => Promise<string | null>;
   skipUser: (userId: string) => Promise<void>;
   ignoreUser: (userId: string) => Promise<void>;
+  setIsActionProcessing: (isProcessing: boolean) => void;
   nextProfile: () => void;
   setHasHydrated: () => void;
   fetchUnseenNotificationCount: () => Promise<void>;
@@ -68,6 +70,7 @@ const initialState = {
   isInMeeting: false,
   availableInvitesCount: 0,
   isFetching: false,
+  isActionProcessing: false,
 };
 
 export const useFeedStore = create<FeedState>()(
@@ -181,14 +184,19 @@ export const useFeedStore = create<FeedState>()(
       },
 
       inviteUser: async (userId: string, when: InviteExpiration) => {
-        await apiClient.post(API_ENDPOINTS.FEED.INVITE(userId), {
-          expiresAt: computeExpiresAt(when),
-        });
-        set((state) => ({
-          availableInvitesCount: Math.max(0, state.availableInvitesCount - 1),
-        }));
-        get().nextProfile();
-        get().refreshFeedIfNeeded();
+        set({ isActionProcessing: true });
+        try {
+          await apiClient.post(API_ENDPOINTS.FEED.INVITE(userId), {
+            expiresAt: computeExpiresAt(when),
+          });
+          set((state) => ({
+            availableInvitesCount: Math.max(0, state.availableInvitesCount - 1),
+          }));
+          get().nextProfile();
+          get().refreshFeedIfNeeded();
+        } finally {
+          set({ isActionProcessing: false });
+        }
       },
 
       getInviteExpiration: async (userId: string): Promise<string | null> => {
@@ -203,16 +211,29 @@ export const useFeedStore = create<FeedState>()(
       },
 
       skipUser: async (userId: string) => {
-        await apiClient.post(API_ENDPOINTS.FEED.SKIP(userId));
-        get().nextProfile();
-        get().refreshFeedIfNeeded();
+        set({ isActionProcessing: true });
+        try {
+          await apiClient.post(API_ENDPOINTS.FEED.SKIP(userId));
+          get().nextProfile();
+          get().refreshFeedIfNeeded();
+        } finally {
+          set({ isActionProcessing: false });
+        }
       },
 
       ignoreUser: async (userId: string) => {
-        await apiClient.post(API_ENDPOINTS.FEED.IGNORE(userId));
-        get().nextProfile();
-        get().refreshFeedIfNeeded();
+        set({ isActionProcessing: true });
+        try {
+          await apiClient.post(API_ENDPOINTS.FEED.IGNORE(userId));
+          get().nextProfile();
+          get().refreshFeedIfNeeded();
+        } finally {
+          set({ isActionProcessing: false });
+        }
       },
+
+      setIsActionProcessing: (isActionProcessing) =>
+        set({ isActionProcessing }),
 
       nextProfile: () => {
         const state = get();

@@ -129,6 +129,7 @@ export default function FeedScreen() {
     setUnseenNotificationCount,
     availableInvitesCount,
     isInMeeting,
+    isActionProcessing,
   } = useFeedStore();
   const { npc, monolog, fetchNpc, inviteNpc, dismissNpc } = useNpcStore();
   const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
@@ -346,6 +347,8 @@ export default function FeedScreen() {
       decreaseProfilesCountToNpc();
     } catch (err: any) {
       toast.error(err.message);
+    } finally {
+      setExpirationPopup({ ...expirationPopup, isOpen: false });
     }
   };
 
@@ -455,6 +458,7 @@ export default function FeedScreen() {
           onInvite={handleInvite}
           onDismiss={handleSkip}
           hasMonolog={!!monolog}
+          isProcessing={isActionProcessing}
         />
       );
     }
@@ -468,6 +472,7 @@ export default function FeedScreen() {
           onInvite={handleInvite}
           onSkip={handleSkip}
           isInviteDisabled={false}
+          isProcessing={isActionProcessing}
         />
       </>
     );
