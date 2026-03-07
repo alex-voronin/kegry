@@ -30,17 +30,26 @@ export default function UserProfilePage() {
   const tBio = useTranslations('components.profile-sections.bio');
   const tHobbies = useTranslations('components.profile-sections.hobbies');
   const tAge = useTranslations('components.profile-sections.age');
+  const t = useTranslations('screens.profile.theirProfile');
 
   const { fetchUserProfile } = useUserProfileStore();
   const [profile, setProfile] = useState<UserProfileDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  const { blockUser } = useUserProfileStore();
 
   useEffect(() => {
     const loadProfile = async () => {
       setIsLoading(true);
-      const data = await fetchUserProfile(userId);
-      setProfile(data);
-      setIsLoading(false);
+      try {
+        const data = await fetchUserProfile(userId);
+        setProfile(data);
+      } catch (error) {
+        toast.error(t('toast.loadFailed'));
+      } finally {
+        setIsLoading(false);
+      }
     };
     loadProfile();
   }, [userId, fetchUserProfile]);
@@ -48,11 +57,6 @@ export default function UserProfilePage() {
   const handleBack = () => {
     router.back();
   };
-
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
-  const t = useTranslations('screens.profile.theirProfile');
-  const { blockUser } = useUserProfileStore();
 
   const handleBlockConfirm = async (message: string) => {
     try {
@@ -75,17 +79,43 @@ export default function UserProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-1 items-center justify-center">
-        <Spinner />
-      </div>
+      <>
+        <Header
+          left={
+            <Icon
+              src="/assets/common/disclosure-left-icon.svg"
+              alt="back"
+              width={14}
+              height={27}
+              onClick={handleBack}
+            />
+          }
+        />
+        <div className="flex flex-1 items-center justify-center">
+          <Spinner />
+        </div>
+      </>
     );
   }
 
   if (!profile) {
     return (
-      <div className="flex flex-1 items-center justify-center">
-        <span className="text-secondary">User not found</span>
-      </div>
+      <>
+        <Header
+          left={
+            <Icon
+              src="/assets/common/disclosure-left-icon.svg"
+              alt="back"
+              width={14}
+              height={27}
+              onClick={handleBack}
+            />
+          }
+        />
+        <div className="flex flex-1 items-center justify-center">
+          <span className="text-secondary">{t('notFound')}</span>
+        </div>
+      </>
     );
   }
 

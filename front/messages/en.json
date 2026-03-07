@@ -320,8 +320,10 @@
         },
         "toast": {
           "blocked": "User blocked",
-          "blockFailed": "Failed to block user"
-        }
+          "blockFailed": "Failed to block user",
+          "loadFailed": "Failed to load user profile"
+        },
+        "notFound": "User not found"
       },
       "deleteAccountDialog": {
         "title": "Are you sure you want to delete your account? This action cannot be undone.",
