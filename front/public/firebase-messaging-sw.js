@@ -37,6 +37,7 @@ function getTargetUrl(type) {
 
 messaging.onBackgroundMessage(async (payload) => {
   const messageId = getMessageId(payload);
+  const type = payload?.data?.type || '';
 
   const { data } = payload;
 
@@ -66,7 +67,7 @@ messaging.onBackgroundMessage(async (payload) => {
         body: data.body ?? '',
         icon: data.icon ?? '/assets/notifications/notification-logo.webp',
         badge: '/assets/notifications/notification-badge.png',
-        tag: `kegrycorn-${messageId}`, // tag for deduplication
+        tag: `${type}-${messageId}`, // tag for deduplication
         data: payload,
       },
     );

@@ -31,6 +31,7 @@ function FcmGlobalHandler() {
     (payload: FcmPayload) => {
       const data = payload?.data || {};
       const type = data.type;
+      const messageId = data.messageId;
       const isInMeeting = useFeedStore.getState().isInMeeting;
 
       // Navigation actions based on type
@@ -44,8 +45,17 @@ function FcmGlobalHandler() {
         }
       }
 
+      let showNotification = false;
       // Show system notification for invitations (when not in meeting)
       if (type === NotificationType.USER_INVITED && !isInMeeting) {
+        showNotification = true;
+      }
+
+      if (type === NotificationType.REFERRER_REWARD_RECEIVED) {
+        showNotification = true;
+      }
+
+      if (showNotification) {
         if (
           'serviceWorker' in navigator &&
           navigator.serviceWorker.controller
@@ -57,26 +67,7 @@ function FcmGlobalHandler() {
                 icon:
                   data.icon || '/assets/notifications/notification-logo.webp',
                 badge: '/assets/notifications/notification-badge.png', // webp is not supported for badges
-                data: payload,
-              });
-            }
-          });
-        }
-      }
-
-      // Show system notification for referrer rewards
-      if (type === NotificationType.REFERRER_REWARD_RECEIVED) {
-        if (
-          'serviceWorker' in navigator &&
-          navigator.serviceWorker.controller
-        ) {
-          navigator.serviceWorker.ready.then((registration) => {
-            if (data) {
-              registration.showNotification(data.title || BRAND_NAME, {
-                body: data.body || '',
-                icon:
-                  data.icon || '/assets/notifications/notification-logo.webp',
-                badge: '/assets/notifications/notification-badge.png',
+                tag: `${type}-${messageId}`, // tag for deduplication
                 data: payload,
               });
             }
