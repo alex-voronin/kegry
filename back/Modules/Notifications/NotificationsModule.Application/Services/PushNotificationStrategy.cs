@@ -1,5 +1,4 @@
 using ChatModule.Contracts.Events;
-using NotificationModule.Domain.Aggregates;
 using NotificationModule.Domain.Repositories;
 using NotificationsModule.Infrastructure.Transport.Push;
 using Serilog;
@@ -9,9 +8,8 @@ namespace NotificationsModule.Application.Services;
 
 public interface IPushNotificationStrategy : INotificationStrategy
 {
-    public Task SendOpenRateUserScreenSilent(Guid userId, Guid rateeUserId, CancellationToken ct = default);
+    public Task SendOpenRateUserScreen(Guid userId, Guid rateeUserId, CancellationToken ct = default);
     public Task SendEndMeetingSuggestion(Guid userId, CancellationToken ct = default);
-    public Task SendReferrerRewardReceived(Guid userId, CancellationToken ct = default);
 }
 
 internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
@@ -54,7 +52,7 @@ internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
             ct: ct);
     }
 
-    public Task SendOpenRateUserScreenSilent(Guid userId, Guid rateeUserId, CancellationToken ct = default)
+    public Task SendOpenRateUserScreen(Guid userId, Guid rateeUserId, CancellationToken ct = default)
     {
         return SendPush(
             userId: userId,

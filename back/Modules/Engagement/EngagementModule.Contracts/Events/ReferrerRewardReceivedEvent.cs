@@ -1,3 +1,5 @@
+using SharedCore.Events;
+
 namespace EngagementModule.Contracts.Events;
 
-public record ReferrerRewardReceivedEvent(Guid UserId);
+public record ReferrerRewardReceivedEvent : UserEvent;

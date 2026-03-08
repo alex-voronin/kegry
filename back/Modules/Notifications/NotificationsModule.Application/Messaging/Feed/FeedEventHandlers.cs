@@ -1,4 +1,5 @@
 using FeedModule.Contracts.Events;
+using NotificationModule.Domain.Repositories;
 using NotificationsModule.Application.Services;
 using Serilog;
 using Wolverine.Attributes;
@@ -11,6 +12,7 @@ public static class FeedEventHandlers
     public static async Task HandleAsync(
         MeetingsEndedEvent @event,
         IPushNotificationStrategy pushNotificationStrategy,
+        INotificationsSettingsRepository notificationsSettingsRepository,
         CancellationToken ct = default)
     {
         Log.Information("{HandlerClass} Handling event {@Event}", typeof(FeedEventHandlers).FullName, @event);
@@ -31,10 +33,19 @@ public static class FeedEventHandlers
             {
                 var firstUserId = participantIds[0];
                 var secondUserId = participantIds[1];
-                await pushNotificationStrategy.SendOpenRateUserScreenSilent(firstUserId, secondUserId,
-                    ct);
-                await pushNotificationStrategy.SendOpenRateUserScreenSilent(secondUserId, firstUserId,
-                    ct);
+
+                var userIdToPushesEnabledDict = await notificationsSettingsRepository
+                    .GetPushesEnabledByIds([firstUserId, secondUserId], ct);
+
+                if (userIdToPushesEnabledDict.GetValueOrDefault(firstUserId, false))
+                {
+                    await pushNotificationStrategy.SendOpenRateUserScreen(firstUserId, secondUserId, ct);
+                }
+
+                if (userIdToPushesEnabledDict.GetValueOrDefault(secondUserId, false))
+                {
+                    await pushNotificationStrategy.SendOpenRateUserScreen(secondUserId, firstUserId, ct);
+                }
             }
             catch (Exception e)
             {

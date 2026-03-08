@@ -46,6 +46,14 @@ internal class NotificationManager : INotificationManager, IScoped
             );
     }
 
+    public Task SendReferrerRewardReceived(Guid userId, CancellationToken ct = default)
+    {
+        return SendNotifications(userId,
+            sendFunc: strategy => strategy.SendReferrerRewardReceived(userId, ct),
+            ct: ct
+        );
+    }
+
     private async Task SendNotifications(
         Guid userId,
         Func<INotificationStrategy, Task> sendFunc,

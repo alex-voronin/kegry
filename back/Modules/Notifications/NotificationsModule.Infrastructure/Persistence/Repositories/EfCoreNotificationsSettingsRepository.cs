@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using NotificationModule.Domain.Aggregates;
 using NotificationModule.Domain.Repositories;
 using Shared.Infrastructure.Persistence;
@@ -23,5 +24,25 @@ internal class EfCoreNotificationsSettingsRepository :
         var pushesEnabled = notificationsSettings?.PushesEnabled ?? DefaultPushesEnabled;
         var emailsEnabled = notificationsSettings?.EmailsEnabled ?? DefaultEmailsEnabled;
         return (pushesEnabled, emailsEnabled);
+    }
+
+    public async Task<IReadOnlyDictionary<Guid, bool>> GetPushesEnabledByIds(Guid[] ids, CancellationToken ct = default)
+    {
+        var idSet = ids.ToHashSet(); // small performance optimization
+        var foundDict = await Context.NotificationsSettings
+            .Where(s => idSet.Contains(s.UserId))
+            .ToDictionaryAsync(
+                s => s.UserId,
+                s => s.PushesEnabled,
+                cancellationToken: ct
+            );
+
+        var result = new Dictionary<Guid, bool>(ids.Length);
+        foreach (var id in ids)
+        {
+            result[id] = foundDict.TryGetValue(id, out var enabled) ? enabled : DefaultPushesEnabled;
+        }
+
+        return result;
     }
 }

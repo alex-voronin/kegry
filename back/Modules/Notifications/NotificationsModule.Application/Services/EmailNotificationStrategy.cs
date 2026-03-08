@@ -65,6 +65,14 @@ public class EmailNotificationStrategy : IEmailNotificationStrategy, IScoped
             ct: ct);
     }
 
+    public Task SendReferrerRewardReceived(Guid userId, CancellationToken ct = default)
+    {
+        return SendEmail(
+            userId: userId,
+            factory: email => _emailBuilder.BuildReferrerRewardReceived(email),
+            ct: ct);
+    }
+
     private async Task SendEmail(Guid userId, Func<string, Email> factory,
         CancellationToken ct = default)
     {

@@ -1,4 +1,5 @@
 using ChatModule.Contracts.Events;
+using NotificationModule.Domain.Repositories;
 using NotificationsModule.Application.Services;
 using Serilog;
 using Wolverine.Attributes;
@@ -41,6 +42,7 @@ public static class ChatEventHandlers
     public static async Task HandleAsync(
         ChatParticipantsMetEvent @event,
         IPushNotificationStrategy pushNotificationStrategy,
+        INotificationsSettingsRepository notificationsSettingsRepository,
         CancellationToken ct = default)
     {
         Log.Information("{HandlerClass} Handling event {@Event}", typeof(ChatEventHandlers).FullName, @event);
@@ -51,11 +53,17 @@ public static class ChatEventHandlers
                                         $"were provided: {string.Join(", ", @event.ParticipantIds.Length)}");
         }
 
+        var userIdToPushesEnabledDict = await notificationsSettingsRepository
+            .GetPushesEnabledByIds(@event.ParticipantIds, ct);
+
         foreach (var participantId in @event.ParticipantIds)
         {
             try
             {
-                await pushNotificationStrategy.SendEndMeetingSuggestion(participantId, ct);
+                if (userIdToPushesEnabledDict.GetValueOrDefault(participantId, false))
+                {
+                    await pushNotificationStrategy.SendEndMeetingSuggestion(participantId, ct);
+                }
             }
             catch (Exception e)
             {

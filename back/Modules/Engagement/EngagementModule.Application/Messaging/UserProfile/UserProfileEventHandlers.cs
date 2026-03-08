@@ -72,6 +72,6 @@ public static class UserProfileEventHandlers
         referrer.AddMetNpc(npc);
         await userRepository.SaveChangesAsync(ct);
 
-        await bus.PublishAsync(new ReferrerRewardReceivedEvent(referrerId));
+        await bus.PublishAsync(new ReferrerRewardReceivedEvent { UserId = referrerId });
     }
 }
