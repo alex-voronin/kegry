@@ -25,11 +25,12 @@ internal class EfCoreRefreshTokenRepository : Repository<SecurityContext, Refres
             .FirstOrDefaultAsync(x => x.Jti == jti);
     }
 
-    public async Task<int> TokensCountAsync(Guid userId)
+    public async Task<int> ActiveTokensCountAsync(Guid userId)
     {
         return await Context.RefreshTokens
             .AsNoTracking()
             .Where(x => x.UserId == userId)
+            .Where(x => x.ExpiresAt > DateTime.UtcNow)
             .CountAsync();
     }
 

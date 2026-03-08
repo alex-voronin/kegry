@@ -36,7 +36,7 @@ internal class RefreshTokenService : DomainService<IRefreshTokenRepository>, IRe
             throw SecurityExceptions.AccessTokenAlreadyExists(user.Email!);
         }
 
-        var tokensCount = await Repository.TokensCountAsync(user.Id);
+        var tokensCount = await Repository.ActiveTokensCountAsync(user.Id);
         if (tokensCount >= maxSimultaneousLoggedInDevices)
         {
             throw SecurityExceptions.AccessTokensLimitPerUserIsReached(user.Email!);

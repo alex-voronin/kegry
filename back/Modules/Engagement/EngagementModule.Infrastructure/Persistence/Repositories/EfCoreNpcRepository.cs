@@ -8,7 +8,6 @@ namespace EngagementModule.Infrastructure.Persistence.Repositories;
 
 public class EfCoreNpcRepository : Repository<EngagementContext, Npc>, INpcRepository
 {
-    private const string NpcCountCacheKey = "npc_count";
     private readonly IMemoryCache _cache;
     private readonly TimeProvider _timeProvider;
 
@@ -38,7 +37,7 @@ public class EfCoreNpcRepository : Repository<EngagementContext, Npc>, INpcRepos
 
     private async Task<int> GetNpcCountAsync(bool isSecret)
     {
-        return await _cache.GetOrCreateAsync(NpcCountCacheKey, async entry =>
+        return await _cache.GetOrCreateAsync($"npc_count-secret={isSecret}", async entry =>
         {
             var count = await Context.Npcs
                 .Where(n => n.IsSecret == isSecret)

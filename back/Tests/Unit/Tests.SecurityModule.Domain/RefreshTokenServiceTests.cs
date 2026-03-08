@@ -34,7 +34,7 @@ public class RefreshTokenServiceTests
         timeProvider.SetUtcNow(fixedNow);
         var jti = Guid.NewGuid();
         repository.GetByJtiAsync(jti.ToString()).Returns((RefreshToken?)null);
-        repository.TokensCountAsync(_user.Id).Returns(MaxSimultaneousLoggedInDevices - 1);
+        repository.ActiveTokensCountAsync(_user.Id).Returns(MaxSimultaneousLoggedInDevices - 1);
 
         var result = await service.CreateRefreshTokenAsync(
             user: _user,
@@ -87,7 +87,7 @@ public class RefreshTokenServiceTests
     {
         var jti = Guid.NewGuid();
         repository.GetByJtiAsync(jti.ToString()).Returns((RefreshToken?)null);
-        repository.TokensCountAsync(_user.Id).Returns(MaxSimultaneousLoggedInDevices);
+        repository.ActiveTokensCountAsync(_user.Id).Returns(MaxSimultaneousLoggedInDevices);
 
         var exception = await Should.ThrowAsync<HttpCodeException>(async () =>
             await service.CreateRefreshTokenAsync(

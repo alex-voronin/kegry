@@ -20,6 +20,7 @@ public interface IFeedUserRelationRepository : IRepositoryOutbox<FeedUserRelatio
     public Task ResetMeetingsAsync(Guid[] userIds, CancellationToken ct = default);
     public Task ResetExpiredMeetingsAsync(CancellationToken ct = default);
     public Task<int> GetMadeInvitesCountAsync(Guid userId, DateOnly date, CancellationToken ct = default);
+    public Task DeleteForUserAsync(Guid userId, CancellationToken ct = default);
 
     public Task<(bool isInMeeting, Guid? userIdToRate)> GetFeedStatusAsync(
         Guid userId,

@@ -36,13 +36,7 @@ internal class EfCoreUserRepository : Repository<FeedContext, User>, IUserReposi
 
     public async Task<User[]> GetFriendsAsync(Guid userId, int skip, int limit, CancellationToken ct = default)
     {
-        var users = await Context.FeedUserRelations
-            .AsNoTracking()
-            .Where(r => r.MyUserId == userId && r.IsFriend && !r.IsBlocked)
-            .Join(Context.Users,
-                relation => relation.OtherUserId,
-                user => user.Id,
-                (relation, user) => user)
+        var users = await FriendsQuery(userId)
             .OrderBy(u => u.FirstName)
             .ThenBy(u => u.LastName)
             .Skip(skip)
@@ -54,7 +48,17 @@ internal class EfCoreUserRepository : Repository<FeedContext, User>, IUserReposi
 
     public Task<int> GetFriendsCount(Guid userId, CancellationToken ct = default)
     {
+        return FriendsQuery(userId).CountAsync(ct);
+    }
+
+    private IQueryable<User> FriendsQuery(Guid userId)
+    {
         return Context.FeedUserRelations
-            .CountAsync(r => r.MyUserId == userId && r.IsFriend && !r.IsBlocked, ct);
+            .AsNoTracking()
+            .Where(r => r.MyUserId == userId && r.IsFriend && !r.IsBlocked)
+            .Join(Context.Users,
+                relation => relation.OtherUserId,
+                user => user.Id,
+                (relation, user) => user);
     }
 }

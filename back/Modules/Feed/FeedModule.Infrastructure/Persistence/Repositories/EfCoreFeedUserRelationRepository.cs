@@ -138,4 +138,11 @@ internal class EfCoreFeedUserRelationRepository : RepositoryOutbox<FeedContext, 
 
         return (false, userIdToRate);
     }
+
+    public Task DeleteForUserAsync(Guid userId, CancellationToken ct = default)
+    {
+        return Context.FeedUserRelations
+            .Where(r => r.MyUserId == userId || r.OtherUserId == userId)
+            .ExecuteDeleteAsync(ct);
+    }
 }
