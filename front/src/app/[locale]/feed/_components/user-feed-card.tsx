@@ -8,6 +8,7 @@ import { UserProfileDto } from '@/store/use-feed-store';
 import { DistanceUnits } from '@/store/use-settings-store';
 import { metersToKilometers, metersToMiles } from '@/lib/distance-utils';
 import { InviteExpiration } from '@/lib/invite-utils';
+import { cn } from '@/lib/utils';
 
 export function UserFeedBody({
   currentProfile,
@@ -99,23 +100,27 @@ export function UserFeedFooter({
   onInvite,
   onSkip,
   isInviteDisabled,
-  isProcessing,
+  isPerformingAction,
 }: {
   onIgnore: () => void;
   onInvite: () => void;
   onSkip: () => void;
   isInviteDisabled: boolean;
-  isProcessing: boolean;
+  isPerformingAction: boolean;
 }) {
   return (
-    <footer className={styles.actions}>
+    <footer
+      className={cn(
+        styles.actions,
+        isPerformingAction && styles.isPerformingAction,
+      )}
+    >
       <button
         className={styles.actionButton}
         onClick={(e) => {
           e.stopPropagation();
           onIgnore();
         }}
-        disabled={isProcessing}
       >
         <Image
           className="pointer-events-none"
@@ -132,7 +137,7 @@ export function UserFeedFooter({
           e.stopPropagation();
           onInvite();
         }}
-        disabled={isInviteDisabled || isProcessing}
+        disabled={isInviteDisabled}
       >
         <Image
           className="pointer-events-none translate-x-[2px]"
@@ -149,7 +154,6 @@ export function UserFeedFooter({
           e.stopPropagation();
           onSkip();
         }}
-        disabled={isProcessing}
       >
         <Image
           className="pointer-events-none"

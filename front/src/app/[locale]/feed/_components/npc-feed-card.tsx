@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 import ReactMarkdown from 'react-markdown';
 import styles from '../feed.module.css';
 import { NpcDto } from '@/store/use-npc-store';
@@ -54,22 +55,26 @@ export function NpcFeedFooter({
   onInvite,
   onDismiss,
   hasMonolog,
-  isProcessing,
+  isPerformingAction,
 }: {
   onInvite: () => void;
   onDismiss: () => void;
   hasMonolog: boolean;
-  isProcessing: boolean;
+  isPerformingAction: boolean;
 }) {
   return (
-    <footer className={styles.actions}>
+    <footer
+      className={cn(
+        styles.actions,
+        isPerformingAction && styles.isPerformingAction,
+      )}
+    >
       <button
         className={styles.actionButton}
         onClick={(e) => {
           e.stopPropagation();
           onDismiss();
         }}
-        disabled={isProcessing}
       >
         <Image
           className="pointer-events-none"
@@ -87,7 +92,6 @@ export function NpcFeedFooter({
             e.stopPropagation();
             onInvite();
           }}
-          disabled={isProcessing}
         >
           <Image
             className="pointer-events-none translate-x-[2px]"

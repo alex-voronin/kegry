@@ -70,7 +70,7 @@ export const useNpcStore = create<NpcState>()((set) => ({
   },
 
   inviteNpc: async (id: string) => {
-    useFeedStore.getState().setIsActionProcessing(true);
+    useFeedStore.getState().setIsPerformingAction(true);
     try {
       const response = await apiClient.get<ApiResult<{ monolog: string }>>(
         API_ENDPOINTS.NPC.INVITE(id),
@@ -82,14 +82,14 @@ export const useNpcStore = create<NpcState>()((set) => ({
     } catch (error) {
       console.error('Failed to invite NPC', error);
     } finally {
-      useFeedStore.getState().setIsActionProcessing(false);
+      useFeedStore.getState().setIsPerformingAction(false);
     }
   },
 
   dismissNpc: () => {
-    useFeedStore.getState().setIsActionProcessing(true);
+    useFeedStore.getState().setIsPerformingAction(true);
     set({ npc: null, monolog: null });
-    useFeedStore.getState().setIsActionProcessing(false);
+    useFeedStore.getState().setIsPerformingAction(false);
   },
 
   reset: () => set(initialState),

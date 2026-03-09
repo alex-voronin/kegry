@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
@@ -129,7 +130,7 @@ export default function FeedScreen() {
     setUnseenNotificationCount,
     availableInvitesCount,
     isInMeeting,
-    isActionProcessing,
+    isPerformingAction,
   } = useFeedStore();
   const { npc, monolog, fetchNpc, inviteNpc, dismissNpc } = useNpcStore();
   const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
@@ -458,7 +459,7 @@ export default function FeedScreen() {
           onInvite={handleInvite}
           onDismiss={handleSkip}
           hasMonolog={!!monolog}
-          isProcessing={isActionProcessing}
+          isPerformingAction={isPerformingAction}
         />
       );
     }
@@ -471,8 +472,8 @@ export default function FeedScreen() {
           onIgnore={handleIgnore}
           onInvite={handleInvite}
           onSkip={handleSkip}
-          isInviteDisabled={false}
-          isProcessing={isActionProcessing}
+          isInviteDisabled={availableInvitesCount == 0}
+          isPerformingAction={isPerformingAction}
         />
       </>
     );
