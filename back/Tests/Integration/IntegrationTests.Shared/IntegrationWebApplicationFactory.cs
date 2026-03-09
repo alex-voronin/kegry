@@ -14,6 +14,7 @@ using NSubstitute;
 using IntegrationTests.Shared.HttpClients;
 using SecurityModule.Infrastructure.Service;
 using PostHog;
+using Wolverine;
 using Xunit;
 
 namespace IntegrationTests.Shared;
@@ -83,6 +84,8 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
             services.AddSingleton(PostHogClient);
 
             NotificationManager = new NotificationManager(emailSender: emailSender, pushSender: pushSender);
+
+            services.ConfigureWolverine(opts => { opts.Durability.ScheduledJobPollingTime = TimeSpan.FromSeconds(1); });
         });
     }
 

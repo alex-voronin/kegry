@@ -77,7 +77,7 @@ namespace LocationModule.Infrastructure.Persistence.Migrations
                 schema: "location",
                 table: "tracked_users",
                 column: "second_user_id");
-            
+
             // Don't delete! Important index for good feed performance.
             migrationBuilder.Sql(@"
                 CREATE INDEX IF NOT EXISTS ix_locations_geog
