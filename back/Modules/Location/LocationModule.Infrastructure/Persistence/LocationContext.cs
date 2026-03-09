@@ -28,6 +28,10 @@ public class LocationContext : DbContext
 
             builder.HasIndex(l => l.Coordinates)
                 .HasMethod("gist");
+
+            builder.HasIndex(l => l.UserId)
+                .IncludeProperties(l => l.Coordinates)
+                .HasDatabaseName("ix_locations_userid_covering");
         });
 
         modelBuilder.Entity<TrackedUserPair>(builder =>

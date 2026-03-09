@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LocationModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(LocationContext))]
-    [Migration("20260112185051_AddLocations")]
+    [Migration("20260309135045_AddLocations")]
     partial class AddLocations
     {
         /// <inheritdoc />
@@ -51,6 +51,11 @@ namespace LocationModule.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_locations_coordinates");
 
                     NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Coordinates"), "gist");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_locations_userid_covering");
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("UserId"), new[] { "Coordinates" });
 
                     b.ToTable("locations", "location");
                 });

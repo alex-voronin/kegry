@@ -49,6 +49,11 @@ namespace LocationModule.Infrastructure.Persistence.Migrations
 
                     NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Coordinates"), "gist");
 
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_locations_userid_covering");
+
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("UserId"), new[] { "Coordinates" });
+
                     b.ToTable("locations", "location");
                 });
 

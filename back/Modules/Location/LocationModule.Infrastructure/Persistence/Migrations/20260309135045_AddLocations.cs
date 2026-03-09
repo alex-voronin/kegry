@@ -54,6 +54,13 @@ namespace LocationModule.Infrastructure.Persistence.Migrations
                 .Annotation("Npgsql:IndexMethod", "gist");
 
             migrationBuilder.CreateIndex(
+                name: "ix_locations_userid_covering",
+                schema: "location",
+                table: "locations",
+                column: "user_id")
+                .Annotation("Npgsql:IndexInclude", new[] { "coordinates" });
+
+            migrationBuilder.CreateIndex(
                 name: "ix_tracked_users_expires_at",
                 schema: "location",
                 table: "tracked_users",
@@ -70,6 +77,12 @@ namespace LocationModule.Infrastructure.Persistence.Migrations
                 schema: "location",
                 table: "tracked_users",
                 column: "second_user_id");
+            
+            // Don't delete! Important index for good feed performance.
+            migrationBuilder.Sql(@"
+                CREATE INDEX IF NOT EXISTS ix_locations_geog
+                ON location.locations USING GIST ((coordinates::geography));
+            ");
         }
 
         /// <inheritdoc />

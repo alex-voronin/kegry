@@ -40,6 +40,14 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
                 l => l.UserId,
                 (u, l) => new { User = u, Location = l }
             )
+            .Where(j =>
+                EF.Functions.IsWithinDistance(
+                    geometry: j.Location.Coordinates,
+                    anotherGeometry: userCoordinates,
+                    distance: filter.RadiusMeters,
+                    useSpheroid: false
+                )
+            )
             .LeftJoin(
                 _context.FeedUserRelations.AsNoTracking()
                     .Where(r => r.MyUserId == user.Id),
@@ -63,14 +71,6 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
                     j.FeedUserRelation,
                     UserRating = ur
                 }
-            )
-            .Where(j =>
-                EF.Functions.IsWithinDistance(
-                    geometry: j.Location.Coordinates,
-                    anotherGeometry: userCoordinates,
-                    distance: filter.RadiusMeters,
-                    useSpheroid: false
-                )
             )
             .Where(j => j.User.IsPublic)
             .Where(j => j.User.Id != user.Id)
