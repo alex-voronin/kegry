@@ -23,7 +23,6 @@ export default function RegisterPage() {
   const tCommonErrors = useTranslations('common.errors');
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const signup = useAuthStore((state) => state.signup);
   const signinWithGoogle = useAuthStore((state) => state.signinWithGoogle);
@@ -86,7 +85,7 @@ export default function RegisterPage() {
   };
 
   const handleGoogleSuccess = async (credential: string) => {
-    setGoogleLoading(true);
+    setLoading(true);
     try {
       const result = await signinWithGoogle(credential);
 
@@ -98,7 +97,7 @@ export default function RegisterPage() {
     } catch (err: any) {
       toast.error(err.message || tCommonErrors('network'));
     } finally {
-      setGoogleLoading(false);
+      setLoading(false);
     }
   };
 

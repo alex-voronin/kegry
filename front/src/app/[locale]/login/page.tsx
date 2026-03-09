@@ -25,7 +25,6 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const signin = useAuthStore((state) => state.signin);
   const signinWithGoogle = useAuthStore((state) => state.signinWithGoogle);
@@ -102,7 +101,7 @@ export default function LoginPage() {
   };
 
   const handleGoogleSuccess = async (credential: string) => {
-    setGoogleLoading(true);
+    setLoading(true);
     try {
       const result = await signinWithGoogle(credential);
 
@@ -114,7 +113,7 @@ export default function LoginPage() {
     } catch (err: any) {
       toast.error(err.message || tCommonErrors('network'));
     } finally {
-      setGoogleLoading(false);
+      setLoading(false);
     }
   };
 

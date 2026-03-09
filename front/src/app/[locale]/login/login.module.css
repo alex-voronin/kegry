@@ -59,7 +59,7 @@
 }
 
 .signInButton {
-  @apply px-8;
+  @apply w-[120px];
 }
 
 .actionsRow {
