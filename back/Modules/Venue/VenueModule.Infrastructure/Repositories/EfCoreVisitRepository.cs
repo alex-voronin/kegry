@@ -6,17 +6,24 @@ using VenueModule.Infrastructure.Persistence;
 
 namespace VenueModule.Infrastructure.Repositories;
 
-public class EfCoreVisitRepository : Repository<VenueContext, Visit>, IVisitRepository 
+public class EfCoreVisitRepository : Repository<VenueContext, Visit>, IVisitRepository
 {
     public EfCoreVisitRepository(VenueContext context) : base(context)
     {
     }
 
-    public Task<Visit?> GetLastVisit(Guid userId, Guid venueId)
+    public Task<Visit?> GetLastVisitAsync(Guid userId, Guid venueId, CancellationToken ct = default)
     {
         return Context.Visits
-            .Where(v => v.UserId == userId &&  v.VenueId == venueId )
+            .Where(v => v.UserId == userId && v.VenueId == venueId)
             .OrderByDescending(v => v.CheckedInAt)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(ct);
+    }
+
+    public Task<int> GetVisitCountAsync(Guid userId, Guid venueId, CancellationToken ct = default)
+    {
+        return Context.Visits
+            .Where(v => v.UserId == userId && v.VenueId == venueId)
+            .CountAsync(ct);
     }
 }

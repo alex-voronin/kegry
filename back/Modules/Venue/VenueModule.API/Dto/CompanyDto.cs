@@ -4,5 +4,4 @@ public record CompanyDto(
     string Id,
     string Name,
     string? Email,
-    string? AvatarImageUrl,
-    VenueDto[] Venues);
+    string? AvatarImageUrl);

@@ -26,19 +26,20 @@ public class VenueEndpoints : IEndpoints
             .WithTags("Venue Management API")
             .RequireAuthorization();
         managementApiGroup.MapPost("/api/v1/company", CreateCompany);
-        managementApiGroup.MapPatch("/api/v1/company/{companyId:guid?}", PatchCompany);
-        managementApiGroup.MapPost("/api/v1/company/{companyId:guid?}/venue", CreateVenue);
-        managementApiGroup.MapPatch("/api/v1/venue/{id:guid?}", PatchVenue);
-        managementApiGroup.MapGet("/api/v1/company/{companyId:guid?}", GetCompany);
-        managementApiGroup.MapPost("/api/v1/venue/{id:guid?}/check-in", CheckInToVenue);
-        managementApiGroup.MapPost("/api/v1/company/{companyId:guid?}/avatar/upload-url", GetAvatarUploadUrl);
-        managementApiGroup.MapPost("/api/v1/company/{companyId:guid?}/venue/{venueId:guid?}/cover/upload-url",
+        managementApiGroup.MapGet("/api/v1/company/{companyId:guid}", GetCompany);
+        managementApiGroup.MapPatch("/api/v1/company/{companyId:guid}", PatchCompany);
+        managementApiGroup.MapPost("/api/v1/company/{companyId:guid}/venue", CreateVenue);
+        managementApiGroup.MapPatch("/api/v1/venue/{id:guid}", PatchVenue);
+        managementApiGroup.MapPost("/api/v1/venue/{id:guid}/check-in", CheckInToVenue);
+        managementApiGroup.MapPost("/api/v1/company/{companyId:guid}/avatar/upload-url", GetAvatarUploadUrl);
+        managementApiGroup.MapPost("/api/v1/company/{companyId:guid}/venue/{venueId:guid}/cover/upload-url",
             GetCoverUploadUrl);
 
         var usersApiGroup = app.MapGroup("")
             .WithTags("Venue Users API")
             .RequireAuthorization();
         usersApiGroup.MapPost("/api/v1/venues", GetVenues);
+        usersApiGroup.MapGet("/api/v1/venue/{id:guid?}", GetVenue);
     }
 
     private static async Task<ApiResult.EmptyResult> CreateCompany(
@@ -52,7 +53,7 @@ public class VenueEndpoints : IEndpoints
 
         var company = new Company
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.CreateVersion7(),
             OwnerId = userId,
             Name = request.Name,
             Email = request.Email,
@@ -124,7 +125,7 @@ public class VenueEndpoints : IEndpoints
 
         var venue = new Venue
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.CreateVersion7(),
             CompanyId = company.Id,
             CoverImageS3Key = request.CoverImageUrl != null
                 ? storageService.PublicFileUrlToS3Key(request.CoverImageUrl)
@@ -142,6 +143,7 @@ public class VenueEndpoints : IEndpoints
 
         return ApiResult.Empty;
     }
+
 
     private static async Task<ApiResult.EmptyResult> PatchVenue(
         [FromRoute] Guid id,
@@ -218,32 +220,16 @@ public class VenueEndpoints : IEndpoints
             throw VenueExceptions.VenueNotFound(companyId);
         }
 
-        var dto = new CompanyDto(
-            Id: company.Id.ToString(),
-            Name: company.Name,
-            Email: company.Email,
-            AvatarImageUrl: storageService.S3KeyToPublicFileUrl(company.AvatarImageS3Key, company.ChangedAt),
-            Venues: company.Venues
-                .Select(v => new VenueDto(
-                    Id: v.Id.ToString(),
-                    Latitude: v.Coordinates.Y,
-                    Longitude: v.Coordinates.X,
-                    Address: v.Address,
-                    GoogleMapsUrl: v.GoogleMapsUrl,
-                    InstagramUrl: v.InstagramUrl,
-                    PhoneNumber: v.PhoneNumber,
-                    CoverImageUrl: v.CoverImageS3Key != null
-                        ? storageService.S3KeyToPublicFileUrl(v.CoverImageS3Key, company.ChangedAt)
-                        : null,
-                    CompanyAvatarImageUrl: storageService.S3KeyToPublicFileUrl(company.AvatarImageS3Key,
-                        company.ChangedAt),
-                    Promos: v.Promos
-                        .Select(p => new PromoDto(Body: p.Body))
-                        .ToArray()))
-                .ToArray()
-        );
+        var companyDto = DomainCompanyToDto(storageService, company);
+        var venuesDto = company.Venues
+            .Select(v => DomainVenueToDto(storageService, v))
+            .ToArray();
 
-        return ApiResult<GetCompanyResponse>.Build(new GetCompanyResponse(dto));
+        return ApiResult<GetCompanyResponse>.Build(
+            new GetCompanyResponse(
+                Company: companyDto,
+                Venues: venuesDto)
+        );
     }
 
     private static async Task<ApiResult<EmptyResponse>> CheckInToVenue(
@@ -323,39 +309,86 @@ public class VenueEndpoints : IEndpoints
         );
     }
 
-    private static async Task<ApiResult<PaginatedResponse<VenueDto>>> GetVenues(
+    private static async Task<ApiResult<PaginatedResponse<VenueListItemDto>>> GetVenues(
         [AsParameters] PaginatedRequest request,
         ICompanyRepository repository,
         IS3StorageService storageService,
         CancellationToken ct)
     {
         var (venues, totalCount) = await repository.GetVenuesPaginatedAsync(request.Offset, request.Limit, ct);
+        var dtos = venues
+            .Select(v =>
+                new VenueListItemDto(
+                    Id: v.Id.ToString(),
+                    CompanyName: v.Company.Name,
+                    CompanyAvatarImageUrl: storageService
+                        .S3KeyToPublicFileUrl(v.Company.AvatarImageS3Key, v.Company.ChangedAt),
+                    Address: v.Address
+                )
+            )
+            .ToArray();
+        return ApiResult<PaginatedResponse<VenueListItemDto>>.Build(
+            new PaginatedResponse<VenueListItemDto>(dtos, totalCount)
+        );
+    }
 
-        var dtos = new VenueDto[venues.Length];
-        for (var i = 0; i < venues.Length; i++)
+    private static async Task<ApiResult<GetVenueResponse>> GetVenue(
+        [FromQuery] Guid venueId,
+        ClaimsPrincipal user,
+        IVenueRepository repository,
+        ILoyaltyService loyaltyService,
+        IS3StorageService storageService,
+        CancellationToken ct)
+    {
+        var venue = await repository.GetByIdAsync(venueId, includes: [v => v.Company], ct: ct);
+        if (venue == null)
         {
-            var v = venues[i];
-            dtos[i] = new VenueDto(
-                Id: v.Id.ToString(),
-                Latitude: v.Coordinates.Y,
-                Longitude: v.Coordinates.X,
-                Address: v.Address,
-                GoogleMapsUrl: v.GoogleMapsUrl,
-                InstagramUrl: v.InstagramUrl,
-                PhoneNumber: v.PhoneNumber,
-                CoverImageUrl: v.CoverImageS3Key != null
-                    ? storageService.S3KeyToPublicFileUrl(v.CoverImageS3Key, v.ChangedAt)
-                    : null,
-                CompanyAvatarImageUrl: storageService.S3KeyToPublicFileUrl(v.Company.AvatarImageS3Key,
-                    v.Company.ChangedAt),
-                Promos: v.Promos
-                    .Select(p => new PromoDto(Body: p.Body))
-                    .ToArray()
-            );
+            throw VenueExceptions.VenueNotFound(venueId);
         }
 
-        return ApiResult<PaginatedResponse<VenueDto>>.Build(
-            new PaginatedResponse<VenueDto>(dtos, totalCount)
+        var companyDto = DomainCompanyToDto(storageService, venue.Company);
+        var venueDto = DomainVenueToDto(storageService, venue);
+        var loyaltyLevel = await loyaltyService.GetLoyaltyLevelAsync(
+            userId: user.GetId(),
+            venueId: venueId,
+            ct: ct);
+
+        return ApiResult<GetVenueResponse>.Build(
+            new GetVenueResponse(
+                Company: companyDto,
+                Venue: venueDto,
+                LoyaltyLevel: loyaltyLevel)
+        );
+    }
+
+    private static VenueDto DomainVenueToDto(IS3StorageService storageService, Venue venue)
+    {
+        return new VenueDto(
+            Id: venue.Id.ToString(),
+            Latitude: venue.Coordinates.Y,
+            Longitude: venue.Coordinates.X,
+            Address: venue.Address,
+            GoogleMapsUrl: venue.GoogleMapsUrl,
+            InstagramUrl: venue.InstagramUrl,
+            PhoneNumber: venue.PhoneNumber,
+            CoverImageUrl: venue.CoverImageS3Key != null
+                ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.ChangedAt)
+                : null,
+            CompanyAvatarImageUrl: storageService.S3KeyToPublicFileUrl(venue.Company.AvatarImageS3Key,
+                venue.Company.ChangedAt),
+            Promos: venue.Promos
+                .Select(p => new PromoDto(Body: p.Body))
+                .ToArray()
+        );
+    }
+
+    private static CompanyDto DomainCompanyToDto(IS3StorageService storageService, Company company)
+    {
+        return new CompanyDto(
+            Id: company.Id.ToString(),
+            Name: company.Name,
+            Email: company.Email,
+            AvatarImageUrl: storageService.S3KeyToPublicFileUrl(company.AvatarImageS3Key, company.ChangedAt)
         );
     }
 }

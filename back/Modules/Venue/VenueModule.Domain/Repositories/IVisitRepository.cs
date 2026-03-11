@@ -5,5 +5,6 @@ namespace VenueModule.Domain.Repositories;
 
 public interface IVisitRepository : IRepository<Visit>
 {
-    Task<Visit?> GetLastVisit(Guid userId, Guid venueId);
+    Task<Visit?> GetLastVisitAsync(Guid userId, Guid venueId, CancellationToken ct = default);
+    Task<int> GetVisitCountAsync(Guid userId, Guid venueId, CancellationToken ct = default);
 }

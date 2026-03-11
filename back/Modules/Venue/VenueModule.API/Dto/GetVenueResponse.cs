@@ -1,3 +1,3 @@
 namespace VenueModule.API.Dto;
 
-public record GetVenueResponse(VenueDto Venue);
+public record GetVenueResponse(CompanyDto Company, VenueDto Venue, int LoyaltyLevel);
