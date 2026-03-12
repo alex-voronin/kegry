@@ -62,12 +62,16 @@ public class VenueContext : DbContext
             entity.Property(v => v.Address)
                 .IsRequired()
                 .HasMaxLength(500);
+            entity.Property(v => v.WebsiteUrl)
+                .HasMaxLength(500);
             entity.Property(v => v.GoogleMapsUrl)
                 .HasMaxLength(500);
             entity.Property(v => v.InstagramUrl)
                 .HasMaxLength(200);
             entity.Property(v => v.PhoneNumber)
                 .HasMaxLength(20);
+            entity.Property(v => v.WorkingHours)
+                .HasMaxLength(500);
             entity.Property(v => v.CompanyId)
                 .IsRequired();
             entity.Property(v => v.Coordinates)

@@ -12,9 +12,11 @@ public class Venue
     public string? CoverImageS3Key { get; set; }
     public required Point Coordinates { get; set; }
     public string Address { get; set; } = null!;
+    public string? WebsiteUrl { get; set; }
     public string? GoogleMapsUrl { get; set; }
     public string? InstagramUrl { get; set; }
     public string? PhoneNumber { get; set; }
+    public string? WorkingHours { get; set; }
     public ICollection<Promo> Promos { get; set; }
     public DateTimeOffset ChangedAt { get; set; }
 }

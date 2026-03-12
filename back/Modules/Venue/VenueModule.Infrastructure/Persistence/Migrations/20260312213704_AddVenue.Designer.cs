@@ -13,7 +13,7 @@ using VenueModule.Infrastructure.Persistence;
 namespace VenueModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(VenueContext))]
-    [Migration("20260312114547_AddVenue")]
+    [Migration("20260312213704_AddVenue")]
     partial class AddVenue
     {
         /// <inheritdoc />
@@ -142,6 +142,16 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
                         .HasColumnName("phone_number");
+
+                    b.Property<string>("WebsiteUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("website_url");
+
+                    b.Property<string>("WorkingHours")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("working_hours");
 
                     b.HasKey("Id")
                         .HasName("pk_venues");

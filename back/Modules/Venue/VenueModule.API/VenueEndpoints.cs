@@ -375,9 +375,11 @@ public class VenueEndpoints : IEndpoints
             Latitude: venue.Coordinates.Y,
             Longitude: venue.Coordinates.X,
             Address: venue.Address,
+            WebsiteUrl: venue.WebsiteUrl,
             GoogleMapsUrl: venue.GoogleMapsUrl,
             InstagramUrl: venue.InstagramUrl,
             PhoneNumber: venue.PhoneNumber,
+            WorkingHours: venue.WorkingHours,
             CoverImageUrl: venue.CoverImageS3Key != null
                 ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.ChangedAt)
                 : null,

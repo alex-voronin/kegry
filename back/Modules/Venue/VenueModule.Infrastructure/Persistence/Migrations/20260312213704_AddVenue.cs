@@ -46,9 +46,11 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     cover_image_s3key = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     coordinates = table.Column<Point>(type: "geography(Point, 4326)", nullable: false),
                     address = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    website_url = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     google_maps_url = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     instagram_url = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     phone_number = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    working_hours = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     changed_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
