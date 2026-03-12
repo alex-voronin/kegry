@@ -424,6 +424,19 @@
       "notificationsTitle": "Notifications",
       "notificationsDesc": "The app will work without notifications enabled, but you won't receive invitations or new message notifications. The user experience of some features will also be degraded.",
       "instructions": "To enable permissions:\n1. Tap the lock icon 🔒 or settings icon in your browser address bar.\n2. Tap 'Permissions' or 'Site Settings'.\n3. Allow 'Location' and 'Notifications'.\n4. Refresh this page."
+    },
+    "venues": {
+      "title": "Venues",
+      "noVenues": "No venues found nearby.",
+      "locationRequired": "Location access is required to show venues nearby. Please enable location in your browser settings.",
+      "distance": "{distance} {units}",
+      "menu": {
+        "viewVenue": "View Venue",
+        "openInMaps": "Open on Google Maps"
+      },
+      "toast": {
+        "loadFailed": "Failed to load venues"
+      }
     }
   },
   "components": {

@@ -77,7 +77,7 @@ function FeedHeader({
             />
           )}
           <Icon
-            src="/assets/common/venues-icon.svg"
+            src="/assets/venue/venue-icon.svg"
             alt="venues"
             width={30}
             height={30}

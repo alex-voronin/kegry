@@ -362,7 +362,7 @@ export default function ChatScreen() {
       onClick: handleEndMeeting,
     },
     {
-      icon: '/assets/common/venue-icon.svg',
+      icon: '/assets/venue/venue-icon.svg',
       label: t('menu.venues'),
       onClick: () => {
         router.push(PAGE_ROUTES.VENUES);

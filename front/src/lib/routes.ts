@@ -87,6 +87,7 @@ export const API_ENDPOINTS = {
   LOCATION: {
     UPDATE: '/api/v1/location',
   },
+  VENUES: '/api/v1/venues',
   NPC: {
     GET: '/api/v1/npc',
     MET: '/api/v1/npc/met',
