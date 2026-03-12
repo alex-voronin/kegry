@@ -8,6 +8,7 @@ export const PAGE_ROUTES = {
   PASSWORD_RESET: '/password-reset',
   FEED: '/feed',
   FEED_FILTERS: '/feed/filters',
+  VENUES: '/venues',
   ONBOARDING: '/onboarding',
   ONBOARDING_COVER: '/onboarding/cover',
   HOW_IT_WORKS: '/how-it-works',

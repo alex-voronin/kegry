@@ -211,7 +211,8 @@
         "okButton": "OK"
       },
       "menu": {
-        "cancel": "End meetup"
+        "cancel": "End meetup",
+        "venues": "Explore venues"
       },
       "toast": {
         "sendFailed": "Failed to send message",

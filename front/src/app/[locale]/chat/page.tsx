@@ -361,6 +361,13 @@ export default function ChatScreen() {
       label: t('menu.cancel'),
       onClick: handleEndMeeting,
     },
+    {
+      icon: '/assets/common/venue-icon.svg',
+      label: t('menu.venues'),
+      onClick: () => {
+        router.push(PAGE_ROUTES.VENUES);
+      },
+    },
   ];
 
   const sentMessagesCount = chat?.messages.filter((m) => m.isMine).length ?? 0;

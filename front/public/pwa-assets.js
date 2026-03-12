@@ -15,6 +15,7 @@ const STATIC_ASSETS = [
   "/assets/common/logo.webp",
   "/assets/common/more-icon.svg",
   "/assets/common/profile-icon.svg",
+  "/assets/common/venue-icon.svg",
   "/assets/feed/chat-icon.svg",
   "/assets/feed/filters-icon.svg",
   "/assets/feed/geolocation-disabled-placeholder.webp",

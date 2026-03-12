@@ -76,6 +76,14 @@ function FeedHeader({
               onClick={() => router.push(PAGE_ROUTES.FEED_FILTERS)}
             />
           )}
+          <Icon
+            src="/assets/common/venues-icon.svg"
+            alt="venues"
+            width={30}
+            height={30}
+            priority
+            onClick={() => router.push(PAGE_ROUTES.VENUES)}
+          />
           {isInMeeting ? (
             <Icon
               src="/assets/feed/chat-icon.svg"
