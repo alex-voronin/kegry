@@ -13,7 +13,7 @@
 }
 
 .coverOverlay {
-  @apply absolute inset-0 bg-black/40;
+  @apply absolute inset-0 bg-black/60;
 }
 
 .mainContent {
@@ -41,24 +41,12 @@
   @apply border-background bg-accent absolute -bottom-1 left-1/2 flex min-h-[24px] min-w-[24px] -translate-x-1/2 items-center justify-center rounded-full border px-1.5 text-lg font-bold text-black;
 }
 
-.companyHeader {
-  @apply mt-2 flex justify-center px-4;
-}
-
-.companyNameWrapper {
-  @apply relative inline-flex items-center;
-}
-
-.userName {
-  @apply text-primary text-2xl font-bold;
-}
-
-.instagramWrapper {
-  @apply text-secondary absolute top-1/2 left-full ml-[10px] -translate-y-1/2 cursor-pointer hover:opacity-75 active:opacity-50;
+.companyName {
+  @apply text-primary mx-auto w-[min(420px,calc(100vw-6rem))] text-2xl font-bold;
 }
 
 .content {
-  @apply mt-4 flex w-full flex-col gap-0.5 px-0 sm:px-4;
+  @apply flex w-full flex-col gap-0.5 px-0 sm:px-4;
 }
 
 .section {

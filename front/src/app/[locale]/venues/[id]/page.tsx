@@ -97,6 +97,7 @@ export default function VenueDetailScreen() {
               onClick={handleBack}
             />
           }
+          title={<h1 className={styles.companyName}>{company.name}</h1>}
           right={
             <Icon
               src="/assets/common/more-icon.svg"
@@ -134,23 +135,6 @@ export default function VenueDetailScreen() {
             />
           </div>
           <div className={styles.loyaltyLevel}>{loyaltyLevel}</div>
-        </div>
-
-        {/* Company Name & Instagram */}
-        <div className={styles.companyHeader}>
-          <div className={styles.companyNameWrapper}>
-            <h1 className={styles.userName}>{company.name}</h1>
-            {venue.instagramUrl && (
-              <div
-                className={styles.instagramWrapper}
-                onClick={() =>
-                  window.open(venue.instagramUrl as string, '_blank')
-                }
-              >
-                <InstagramIcon />
-              </div>
-            )}
-          </div>
         </div>
 
         <div className={styles.content}>
@@ -207,6 +191,23 @@ export default function VenueDetailScreen() {
                       height={24}
                     />
                     <span className={styles.fieldText}>{venue.websiteUrl}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Instagram */}
+              {venue.instagramUrl && (
+                <div
+                  className={cn(styles.field, styles.actionField)}
+                  onClick={() =>
+                    window.open(venue.instagramUrl as string, '_blank')
+                  }
+                >
+                  <div className={styles.actionLabel}>
+                    <InstagramIcon />
+                    <span className={styles.fieldText}>
+                      {venue.instagramUrl.split('/').at(-1)}
+                    </span>
                   </div>
                 </div>
               )}
