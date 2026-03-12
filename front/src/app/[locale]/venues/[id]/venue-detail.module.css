@@ -1,0 +1,106 @@
+@reference "../../../globals.css";
+
+.wrapper {
+  @apply relative flex min-h-screen flex-col overflow-hidden sm:rounded-[16px];
+}
+
+.coverContainer {
+  @apply relative h-[150px] w-full shrink-0;
+}
+
+.coverImage {
+  @apply object-cover;
+}
+
+.coverOverlay {
+  @apply absolute inset-0 bg-black/40;
+}
+
+.mainContent {
+  @apply relative -mt-10 flex flex-1 flex-col rounded-t-3xl pt-14 pb-20;
+}
+
+.workingHoursText {
+  @apply text-base leading-relaxed whitespace-pre-line;
+}
+
+/* Avatar overlapping the cover and mainContent */
+.avatarSection {
+  @apply absolute -top-12 left-1/2 flex -translate-x-1/2 flex-col items-center;
+}
+
+.avatarContainer {
+  @apply border-background bg-background relative h-24 w-24 overflow-hidden rounded-full border-4;
+}
+
+.avatarImage {
+  @apply object-contain;
+}
+
+.loyaltyLevel {
+  @apply border-background bg-accent absolute -bottom-1 left-1/2 flex min-h-[24px] min-w-[24px] -translate-x-1/2 items-center justify-center rounded-full border px-1.5 text-lg font-bold text-black;
+}
+
+.companyHeader {
+  @apply mt-2 flex justify-center px-4;
+}
+
+.companyNameWrapper {
+  @apply relative inline-flex items-center;
+}
+
+.userName {
+  @apply text-primary text-2xl font-bold;
+}
+
+.instagramWrapper {
+  @apply text-secondary absolute top-1/2 left-full ml-[10px] -translate-y-1/2 cursor-pointer hover:opacity-75 active:opacity-50;
+}
+
+.content {
+  @apply mt-4 flex w-full flex-col gap-0.5 px-0 sm:px-4;
+}
+
+.section {
+  @apply mt-2 flex flex-col gap-1;
+}
+
+.field {
+  @apply bg-form-element flex min-h-[48px] items-center px-4 py-3 sm:rounded-xl;
+}
+
+.fieldContent {
+  @apply flex flex-1 flex-col;
+}
+
+.fieldLabel {
+  @apply text-secondary mb-1 text-sm;
+}
+
+.fieldText {
+  @apply text-primary leading-relaxed;
+}
+
+.actionField {
+  @apply hover:bg-hover active:bg-active cursor-pointer justify-between;
+}
+
+.actionLabel {
+  @apply text-primary flex items-center gap-3;
+}
+
+.promoList {
+  @apply flex flex-col gap-1;
+}
+
+.promoItem {
+  @apply bg-form-element text-primary px-4 py-3 text-base leading-relaxed sm:rounded-xl;
+}
+
+.loadingOverlay {
+  @apply bg-background/80 absolute inset-0 z-100 flex items-center justify-center backdrop-blur-sm;
+}
+
+.emptyState {
+  @apply text-secondary flex flex-1 items-center justify-center;
+}

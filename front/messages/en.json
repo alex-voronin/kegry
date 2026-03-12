@@ -437,6 +437,18 @@
       "toast": {
         "loadFailed": "Failed to load venues"
       }
+    },
+    "venueDetail": {
+      "contacts": "Contacts",
+      "address": "Address",
+      "workingHours": "Working Hours",
+      "promotions": "Promotions 🎉",
+      "notFound": "Venue not found",
+      "menu": {
+        "openInstagram": "Open Instagram",
+        "openWebsite": "Open Website",
+        "openInMaps": "Open on Google Maps"
+      }
     }
   },
   "components": {

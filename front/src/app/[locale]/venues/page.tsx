@@ -96,6 +96,7 @@ export default function VenuesScreen() {
       icon: '/assets/venue/venue-icon.svg',
       label: t('menu.viewVenue'),
       onClick: () => {
+        router.push(PAGE_ROUTES.VENUE_DETAIL(venue.id));
         setSelectedVenue(null);
       },
     },

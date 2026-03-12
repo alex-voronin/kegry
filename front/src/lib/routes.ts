@@ -9,6 +9,7 @@ export const PAGE_ROUTES = {
   FEED: '/feed',
   FEED_FILTERS: '/feed/filters',
   VENUES: '/venues',
+  VENUE_DETAIL: (id: string) => `/venues/${id}`,
   ONBOARDING: '/onboarding',
   ONBOARDING_COVER: '/onboarding/cover',
   HOW_IT_WORKS: '/how-it-works',
@@ -88,6 +89,7 @@ export const API_ENDPOINTS = {
     UPDATE: '/api/v1/location',
   },
   VENUES: '/api/v1/venues',
+  VENUE: (id: string) => `/api/v1/venue/${id}`,
   NPC: {
     GET: '/api/v1/npc',
     MET: '/api/v1/npc/met',
