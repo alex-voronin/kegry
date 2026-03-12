@@ -39,7 +39,7 @@ public class VenueEndpoints : IEndpoints
             .WithTags("Venue Users API")
             .RequireAuthorization();
         usersApiGroup.MapPost("/api/v1/venues", GetVenues);
-        usersApiGroup.MapGet("/api/v1/venue/{id:guid?}", GetVenue);
+        usersApiGroup.MapGet("/api/v1/venue/{id:guid}", GetVenue);
     }
 
     private static async Task<ApiResult.EmptyResult> CreateCompany(
@@ -381,8 +381,6 @@ public class VenueEndpoints : IEndpoints
             CoverImageUrl: venue.CoverImageS3Key != null
                 ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.ChangedAt)
                 : null,
-            CompanyAvatarImageUrl: storageService.S3KeyToPublicFileUrl(venue.Company.AvatarImageS3Key,
-                venue.Company.ChangedAt),
             Promos: venue.Promos
                 .Select(p => new PromoDto(Body: p.Body))
                 .ToArray()

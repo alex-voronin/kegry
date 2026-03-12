@@ -8,6 +8,5 @@ public record VenueDto(
     string? GoogleMapsUrl,
     string? InstagramUrl,
     string? PhoneNumber,
-    string CompanyAvatarImageUrl,
     string? CoverImageUrl,
     PromoDto[] Promos);
