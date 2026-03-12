@@ -107,10 +107,10 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
                 j.User,
                 j.UserRating!.Rating,
                 DistanceMeters =
-                    PostgisFunctions.DistanceSphere(
-                        j.Location.Coordinates,
-                        userCoordinates
-                    ),
+                    EF.Functions.Distance(
+                        geometry: j.Location.Coordinates,
+                        anotherGeometry: userCoordinates,
+                        useSpheroid: false),
                 LastSeenAt = j.FeedUserRelation != null ? j.FeedUserRelation.LastSeenAt : (DateTimeOffset?)null
             })
             .OrderBy(candidate => candidate.LastSeenAt.HasValue ? 1 : 0)

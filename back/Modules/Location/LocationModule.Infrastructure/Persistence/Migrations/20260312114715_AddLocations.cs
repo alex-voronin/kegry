@@ -24,7 +24,7 @@ namespace LocationModule.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    coordinates = table.Column<Point>(type: "geometry(Point, 4326)", nullable: false),
+                    coordinates = table.Column<Point>(type: "geography(Point, 4326)", nullable: false),
                     timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -77,12 +77,6 @@ namespace LocationModule.Infrastructure.Persistence.Migrations
                 schema: "location",
                 table: "tracked_users",
                 column: "second_user_id");
-
-            // Don't delete! Important index for good feed performance.
-            migrationBuilder.Sql(@"
-                CREATE INDEX IF NOT EXISTS ix_locations_geog
-                ON location.locations USING GIST ((coordinates::geography));
-            ");
         }
 
         /// <inheritdoc />

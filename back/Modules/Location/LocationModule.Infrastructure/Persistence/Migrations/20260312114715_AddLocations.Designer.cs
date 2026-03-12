@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LocationModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(LocationContext))]
-    [Migration("20260309135045_AddLocations")]
+    [Migration("20260312114715_AddLocations")]
     partial class AddLocations
     {
         /// <inheritdoc />
@@ -37,7 +37,7 @@ namespace LocationModule.Infrastructure.Persistence.Migrations
 
                     b.Property<Point>("Coordinates")
                         .IsRequired()
-                        .HasColumnType("geometry(Point, 4326)")
+                        .HasColumnType("geography(Point, 4326)")
                         .HasColumnName("coordinates");
 
                     b.Property<DateTimeOffset>("Timestamp")

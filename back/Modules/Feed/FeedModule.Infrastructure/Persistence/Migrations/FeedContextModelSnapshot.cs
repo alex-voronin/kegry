@@ -188,7 +188,7 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
 
                     b.Property<Point>("Coordinates")
                         .IsRequired()
-                        .HasColumnType("geometry(Point, 4326)")
+                        .HasColumnType("geography(Point, 4326)")
                         .HasColumnName("coordinates");
 
                     b.Property<DateTime>("Timestamp")

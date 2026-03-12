@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(FeedContext))]
-    [Migration("20260224163756_AddFeed")]
+    [Migration("20260312114615_AddFeed")]
     partial class AddFeed
     {
         /// <inheritdoc />
@@ -191,7 +191,7 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
 
                     b.Property<Point>("Coordinates")
                         .IsRequired()
-                        .HasColumnType("geometry(Point, 4326)")
+                        .HasColumnType("geography(Point, 4326)")
                         .HasColumnName("coordinates");
 
                     b.Property<DateTime>("Timestamp")

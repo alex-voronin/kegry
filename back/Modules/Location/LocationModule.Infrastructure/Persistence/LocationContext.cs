@@ -23,7 +23,7 @@ public class LocationContext : DbContext
             builder.HasKey(l => l.UserId);
 
             builder.Property(l => l.Coordinates)
-                .HasColumnType("geometry(Point, 4326)")
+                .HasColumnType("geography(Point, 4326)")
                 .IsRequired();
 
             builder.HasIndex(l => l.Coordinates)

@@ -51,10 +51,6 @@ public class FeedContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDbFunction(typeof(PostgisFunctions).GetMethod(nameof(PostgisFunctions.DistanceSphere))!)
-            .HasName("ST_DistanceSphere")
-            .HasSchema("public");
-
         modelBuilder.Entity<FeedUserRelation>(builder =>
         {
             builder.ToTable("user_relations", "feed");
@@ -149,7 +145,7 @@ public class FeedContext : DbContext
             builder.HasKey(e => e.UserId);
 
             builder.Property(l => l.Coordinates)
-                .HasColumnType("geometry(Point, 4326)")
+                .HasColumnType("geography(Point, 4326)")
                 .IsRequired();
 
             builder.Metadata.SetIsTableExcludedFromMigrations(true);
