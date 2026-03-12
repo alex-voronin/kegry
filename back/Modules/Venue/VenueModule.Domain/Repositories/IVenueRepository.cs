@@ -3,4 +3,14 @@ using VenueModule.Domain.ValueObjects;
 
 namespace VenueModule.Domain.Repositories;
 
-public interface IVenueRepository : IRepository<Venue>;
+public record VenueWithDistance(Venue Venue, double DistanceMeters);
+
+public interface IVenueRepository : IRepository<Venue>
+{
+    Task<(VenueWithDistance[], int TotalCount)> GetVenuesPaginatedAsync(
+        double latitude,
+        double longitude,
+        int offset,
+        int limit,
+        CancellationToken ct);
+}

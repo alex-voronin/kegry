@@ -7,7 +7,7 @@ using CoreValidation = SharedCore.Validation.Validation;
 public static class Validation
 {
     public const int MaxAvatarSizeBytes = 1024 * 1024;
-    public const int MaxCoverSizeBytes = 2 *1024 * 1024;
+    public const int MaxCoverSizeBytes = 2 * 1024 * 1024;
     public const double MaxCheckInDistanceMeters = 100.0;
 
     public static void ThrowIfFileSizeExceed(int contentLength, int limit)

@@ -1,0 +1,10 @@
+using Microsoft.AspNetCore.Mvc;
+using SharedCore.Api.Dto;
+
+namespace VenueModule.API.Dto;
+
+public record GetVenuesRequest(
+    [FromQuery] double Latitude,
+    [FromQuery] double Longitude,
+    [FromQuery] int Offset = 0,
+    [FromQuery] int Limit = 20) : PaginatedRequest(Offset, Limit);

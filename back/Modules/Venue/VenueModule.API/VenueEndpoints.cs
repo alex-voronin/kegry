@@ -310,20 +310,26 @@ public class VenueEndpoints : IEndpoints
     }
 
     private static async Task<ApiResult<PaginatedResponse<VenueListItemDto>>> GetVenues(
-        [AsParameters] PaginatedRequest request,
-        ICompanyRepository repository,
+        [AsParameters] GetVenuesRequest request,
+        IVenueRepository repository,
         IS3StorageService storageService,
         CancellationToken ct)
     {
-        var (venues, totalCount) = await repository.GetVenuesPaginatedAsync(request.Offset, request.Limit, ct);
+        var (venues, totalCount) = await repository.GetVenuesPaginatedAsync(
+            latitude: request.Latitude,
+            longitude: request.Longitude,
+            offset: request.Offset,
+            limit: request.Limit,
+            ct: ct);
         var dtos = venues
             .Select(v =>
                 new VenueListItemDto(
-                    Id: v.Id.ToString(),
-                    CompanyName: v.Company.Name,
+                    Id: v.Venue.Id.ToString(),
+                    CompanyName: v.Venue.Company.Name,
                     CompanyAvatarImageUrl: storageService
-                        .S3KeyToPublicFileUrl(v.Company.AvatarImageS3Key, v.Company.ChangedAt),
-                    Address: v.Address
+                        .S3KeyToPublicFileUrl(v.Venue.Company.AvatarImageS3Key, v.Venue.Company.ChangedAt),
+                    Address: v.Venue.Address,
+                    DistanceMeters: (int)v.DistanceMeters
                 )
             )
             .ToArray();

@@ -57,7 +57,7 @@ internal class VenueImageService : IVenueImageService, ISingleton
         var venueHash = Hash(venuId.ToString() + _config.KeySalt);
         return $"company_{companyHash}/venue_{venueHash}/{fileName}.jpg";
     }
-    
+
     private static string Hash(string input)
     {
         var bytes = Encoding.UTF8.GetBytes(input);

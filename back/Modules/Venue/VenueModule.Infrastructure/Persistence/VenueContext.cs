@@ -28,7 +28,6 @@ public class VenueContext : DbContext
         modelBuilder.Entity<Company>(entity =>
         {
             entity.ToTable("companies");
-
             entity.HasKey(c => c.Id);
             entity.Property(c => c.Name)
                 .IsRequired()
@@ -47,7 +46,7 @@ public class VenueContext : DbContext
                 .WithOne(v => v.Company)
                 .HasForeignKey(v => v.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
+
             entity.HasIndex(c => c.Name).IsUnique();
         });
     }
@@ -72,8 +71,11 @@ public class VenueContext : DbContext
             entity.Property(v => v.CompanyId)
                 .IsRequired();
             entity.Property(v => v.Coordinates)
+                .HasColumnType("geography(Point, 4326)")
                 .IsRequired();
             entity.HasIndex(v => v.CompanyId);
+            entity.HasIndex(v => v.Coordinates)
+                .HasMethod("gist");
             entity.Property(c => c.ChangedAt)
                 .IsRequired()
                 .ValueGeneratedOnAddOrUpdate()

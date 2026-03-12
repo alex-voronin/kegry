@@ -44,7 +44,7 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     company_id = table.Column<Guid>(type: "uuid", nullable: false),
                     cover_image_s3key = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    coordinates = table.Column<Point>(type: "geometry", nullable: false),
+                    coordinates = table.Column<Point>(type: "geography(Point, 4326)", nullable: false),
                     address = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     google_maps_url = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     instagram_url = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
@@ -118,6 +118,13 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                 schema: "venue",
                 table: "venues",
                 column: "company_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_venues_coordinates",
+                schema: "venue",
+                table: "venues",
+                column: "coordinates")
+                .Annotation("Npgsql:IndexMethod", "gist");
 
             migrationBuilder.CreateIndex(
                 name: "ix_visits_venue_id",

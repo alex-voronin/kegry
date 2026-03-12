@@ -20,7 +20,7 @@ public class VenueModuleStartup : AppModuleStartupBase<VenueContext>
         )
     {
     }
-    
+
     protected override void RegisterEfCoreContexts(IServiceCollection services, string dbConnectionString)
     {
         services.AddDbContextWithWolverineIntegration<VenueContext>(options =>

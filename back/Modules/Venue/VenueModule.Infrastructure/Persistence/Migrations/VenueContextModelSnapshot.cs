@@ -117,7 +117,7 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
 
                     b.Property<Point>("Coordinates")
                         .IsRequired()
-                        .HasColumnType("geometry")
+                        .HasColumnType("geography(Point, 4326)")
                         .HasColumnName("coordinates");
 
                     b.Property<string>("CoverImageS3Key")
@@ -145,6 +145,11 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CompanyId")
                         .HasDatabaseName("ix_venues_company_id");
+
+                    b.HasIndex("Coordinates")
+                        .HasDatabaseName("ix_venues_coordinates");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Coordinates"), "gist");
 
                     b.ToTable("venues", "venue");
                 });

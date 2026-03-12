@@ -1,6 +1,7 @@
 using VenueModule.Domain.Aggregates;
 
 namespace VenueModule.Domain.ValueObjects;
+
 using NetTopologySuite.Geometries;
 
 public class Venue

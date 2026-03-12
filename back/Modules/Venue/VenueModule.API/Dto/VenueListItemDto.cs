@@ -4,5 +4,6 @@ public record VenueListItemDto(
     string Id,
     string CompanyAvatarImageUrl,
     string CompanyName,
-    string Address
+    string Address,
+    int DistanceMeters
 );

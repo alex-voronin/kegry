@@ -15,10 +15,10 @@ public static class VenueExceptions
         return new HttpCodeException("You must be within 100 meters of the venue to check in",
             HttpStatusCode.BadRequest, ErrorCode.ValidationError);
     }
-    
+
     public static HttpCodeException SomeoneElseCompany(Guid id)
     {
-        return new HttpCodeException($"Company with id {id} doesn't belong to you", 
+        return new HttpCodeException($"Company with id {id} doesn't belong to you",
             HttpStatusCode.NotFound, ErrorCode.NotFound);
     }
 }
