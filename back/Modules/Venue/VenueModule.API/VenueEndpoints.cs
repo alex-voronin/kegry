@@ -329,7 +329,8 @@ public class VenueEndpoints : IEndpoints
                     CompanyAvatarImageUrl: storageService
                         .S3KeyToPublicFileUrl(v.Venue.Company.AvatarImageS3Key, v.Venue.Company.ChangedAt),
                     Address: v.Venue.Address,
-                    DistanceMeters: (int)v.DistanceMeters
+                    DistanceMeters: (int)v.DistanceMeters,
+                    GoogleMapsUrl: v.Venue.GoogleMapsUrl
                 )
             )
             .ToArray();
