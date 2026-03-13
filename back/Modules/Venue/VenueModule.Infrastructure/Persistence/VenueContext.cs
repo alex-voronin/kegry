@@ -38,10 +38,6 @@ public class VenueContext : DbContext
                 .HasMaxLength(200);
             entity.Property(c => c.AvatarImageS3Key)
                 .HasMaxLength(500);
-            entity.Property(c => c.ChangedAt)
-                .IsRequired()
-                .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.HasMany(c => c.Venues)
                 .WithOne(v => v.Company)
                 .HasForeignKey(v => v.CompanyId)
@@ -80,13 +76,11 @@ public class VenueContext : DbContext
             entity.HasIndex(v => v.CompanyId);
             entity.HasIndex(v => v.Coordinates)
                 .HasMethod("gist");
-            entity.Property(c => c.ChangedAt)
-                .IsRequired()
-                .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.OwnsMany(v => v.Promos, promo =>
             {
                 promo.ToTable("venue_promos");
+                promo.Property(p => p.Body)
+                    .HasMaxLength(1000);
             });
         });
     }

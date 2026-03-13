@@ -25,13 +25,13 @@ public class VenueEndpoints : IEndpoints
             .WithTags("Venue Management API")
             .RequireAuthorization();
         managementApiGroup.MapPost("/api/v1/company", CreateCompany);
-        managementApiGroup.MapGet("/api/v1/company/{companyId:guid}", GetCompany);
-        managementApiGroup.MapPatch("/api/v1/company/{companyId:guid}", PatchCompany);
-        managementApiGroup.MapPost("/api/v1/company/{companyId:guid}/venue", CreateVenue);
+        managementApiGroup.MapGet("/api/v1/company", GetCompany);
+        managementApiGroup.MapPatch("/api/v1/company", PatchCompany);
+        managementApiGroup.MapPost("/api/v1/company/venue", CreateVenue);
         managementApiGroup.MapPatch("/api/v1/venue/{id:guid}", PatchVenue);
-        managementApiGroup.MapPost("/api/v1/company/{companyId:guid}/avatar/upload-url", GetAvatarUploadUrl);
-        managementApiGroup.MapPost("/api/v1/company/{companyId:guid}/venue/{venueId:guid}/cover/upload-url",
-            GetCoverUploadUrl);
+        managementApiGroup.MapDelete("/api/v1/venue/{id:guid}", DeleteVenue);
+        managementApiGroup.MapPost("/api/v1/company/avatar/upload-url", GetAvatarUploadUrl);
+        managementApiGroup.MapPost("/api/v1/company/venue/{venueId:guid}/cover/upload-url", GetCoverUploadUrl);
 
         var usersApiGroup = app.MapGroup("")
             .WithTags("Venue Users API")
@@ -52,7 +52,7 @@ public class VenueEndpoints : IEndpoints
 
         var company = new Company
         {
-            Id = Guid.CreateVersion7(),
+            Id = userId,
             OwnerId = userId,
             Name = request.Name,
             Email = request.Email,
@@ -67,23 +67,21 @@ public class VenueEndpoints : IEndpoints
     }
 
     private static async Task<ApiResult.EmptyResult> PatchCompany(
-        [FromRoute] Guid companyId,
         [FromBody] PatchCompanyRequest request,
         ClaimsPrincipal user,
         ICompanyRepository repository,
         IS3StorageService storageService,
         CancellationToken ct)
     {
-        var company = await repository.GetByIdAsync(companyId, ct: ct);
+        var company = await repository.GetByOwnerIdAsync(
+            ownerId: user.GetId(),
+            asNoTracking: true,
+            includeVenues: true,
+            ct: ct);
 
         if (company == null)
         {
-            throw VenueExceptions.VenueNotFound(companyId);
-        }
-
-        if (company.OwnerId != user.GetId())
-        {
-            throw VenueExceptions.SomeoneElseCompany(companyId);
+            throw VenueExceptions.CompanyNotFound();
         }
 
         company.Name = request.Name ?? company.Name;
@@ -100,26 +98,21 @@ public class VenueEndpoints : IEndpoints
     }
 
     private static async Task<ApiResult.EmptyResult> CreateVenue(
-        [FromRoute] Guid companyId,
         [FromBody] CreateVenueRequest request,
         ClaimsPrincipal user,
-        ICompanyRepository repository,
+        ICompanyRepository companyRepository,
+        IVenueRepository venueRepository,
         IS3StorageService storageService,
         CancellationToken ct)
     {
-        var company = await repository.GetByIdAsync(
-            companyId,
-            includes: [c => c.Venues],
+        var company = await companyRepository.GetByOwnerIdAsync(
+            ownerId: user.GetId(),
+            asNoTracking: true,
+            includeVenues: true,
             ct: ct);
-
         if (company == null)
         {
-            throw VenueExceptions.VenueNotFound(companyId);
-        }
-
-        if (company.OwnerId != user.GetId())
-        {
-            throw VenueExceptions.SomeoneElseCompany(companyId);
+            throw VenueExceptions.CompanyNotFound();
         }
 
         var venue = new Venue
@@ -131,18 +124,19 @@ public class VenueEndpoints : IEndpoints
                 : null,
             Coordinates = new Point(request.Longitude, request.Latitude) { SRID = 4326 },
             Address = request.Address,
+            WebsiteUrl = request.WebsiteUrl,
             GoogleMapsUrl = request.GoogleMapsUrl,
             InstagramUrl = request.InstagramUrl,
             PhoneNumber = request.PhoneNumber,
+            WorkingHours = request.WorkingHours,
             Promos = request.Promos?.Select(p => new Promo { Body = p.Body }).ToList() ?? []
         };
 
-        company.Venues.Add(venue);
-        await repository.SaveChangesAsync(ct);
+        await venueRepository.AddAsync(venue, ct);
+        await venueRepository.SaveChangesAsync(ct);
 
         return ApiResult.Empty;
     }
-
 
     private static async Task<ApiResult.EmptyResult> PatchVenue(
         [FromRoute] Guid id,
@@ -185,9 +179,11 @@ public class VenueEndpoints : IEndpoints
         }
 
         venue.Address = request.Address ?? venue.Address;
+        venue.WebsiteUrl = request.WebsiteUrl ?? venue.WebsiteUrl;
         venue.GoogleMapsUrl = request.GoogleMapsUrl ?? venue.GoogleMapsUrl;
         venue.InstagramUrl = request.InstagramUrl ?? venue.InstagramUrl;
         venue.PhoneNumber = request.PhoneNumber ?? venue.PhoneNumber;
+        venue.WorkingHours = request.WorkingHours ?? venue.WorkingHours;
 
         if (request.Promos != null)
         {
@@ -202,21 +198,54 @@ public class VenueEndpoints : IEndpoints
         return ApiResult.Empty;
     }
 
+    private static async Task<ApiResult.EmptyResult> DeleteVenue(
+        [FromRoute] Guid id,
+        ClaimsPrincipal user,
+        ICompanyRepository companyRepository,
+        IVenueRepository venueRepository,
+        CancellationToken ct)
+    {
+        var venue = await venueRepository.GetByIdAsync(
+            id,
+            includes: [v => v.Promos],
+            ct: ct);
+
+        if (venue == null)
+        {
+            throw VenueExceptions.VenueNotFound(id);
+        }
+
+        var company = await companyRepository.GetByIdAsync(venue.CompanyId, ct: ct);
+        if (company == null)
+        {
+            throw VenueExceptions.VenueNotFound(venue.CompanyId);
+        }
+
+        if (company.OwnerId != user.GetId())
+        {
+            throw VenueExceptions.SomeoneElseCompany(company.Id);
+        }
+
+        venueRepository.Delete(venue);
+        await venueRepository.SaveChangesAsync(ct);
+        return ApiResult.Empty;
+    }
+
     private static async Task<ApiResult<GetCompanyResponse>> GetCompany(
-        [FromRoute] Guid companyId,
         ICompanyRepository repository,
+        ClaimsPrincipal user,
         IS3StorageService storageService,
         CancellationToken ct)
     {
-        var company = await repository.GetByIdAsync(
-            companyId,
+        var company = await repository.GetByOwnerIdAsync(
+            ownerId: user.GetId(),
             asNoTracking: true,
-            includes: [c => c.Venues],
+            includeVenues: true,
             ct: ct);
 
         if (company == null)
         {
-            throw VenueExceptions.VenueNotFound(companyId);
+            throw VenueExceptions.CompanyNotFound();
         }
 
         var companyDto = DomainCompanyToDto(storageService, company);
@@ -245,20 +274,19 @@ public class VenueEndpoints : IEndpoints
             userLatitude: request.Latitude,
             userLongitude: request.Longitude,
             ct: ct);
-       
+
         return ApiResult<EmptyResponse>.Build(EmptyResponse.Empty);
     }
 
     private static async Task<ApiResult<GetPresignedUrlResponse>> GetAvatarUploadUrl(
         [FromBody] GetPresignedUrlRequest request,
-        [FromQuery] Guid companyId,
         ClaimsPrincipal user,
         IVenueImageService imageService,
         CancellationToken ct)
     {
         Validation.ThrowIfFileSizeExceed(request.ContentLength, Validation.MaxAvatarSizeBytes);
         var urls = await imageService.GetCompanyAvatarUploadUrlAsync(
-            companyId: companyId,
+            companyId: user.GetId(),
             contentLength: request.ContentLength,
             ct: ct);
         return ApiResult<GetPresignedUrlResponse>.Build(
@@ -267,15 +295,15 @@ public class VenueEndpoints : IEndpoints
     }
 
     private static async Task<ApiResult<GetPresignedUrlResponse>> GetCoverUploadUrl(
-        [FromQuery] Guid companyId,
         [FromQuery] Guid venueId,
         [FromBody] GetPresignedUrlRequest request,
+        ClaimsPrincipal user,
         IVenueImageService imageService,
         CancellationToken ct)
     {
         Validation.ThrowIfFileSizeExceed(request.ContentLength, Validation.MaxCoverSizeBytes);
         var urls = await imageService.GetVenueCoverUploadUrlAsync(
-            companyId: companyId,
+            companyId: user.GetId(),
             venueId: venueId,
             contentLength: request.ContentLength,
             ct: ct);

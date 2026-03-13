@@ -5,6 +5,11 @@ namespace VenueModule.Domain.Exceptions;
 
 public static class VenueExceptions
 {
+    public static HttpCodeException CompanyNotFound()
+    {
+        return new HttpCodeException("No companies found", HttpStatusCode.NotFound, ErrorCode.NotFound);
+    }
+    
     public static HttpCodeException VenueNotFound(Guid id)
     {
         return new HttpCodeException($"Venue with id {id} not found", HttpStatusCode.NotFound, ErrorCode.NotFound);

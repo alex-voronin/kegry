@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Shared.Infrastructure.Persistence;
 using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.Repositories;
@@ -9,5 +10,28 @@ public class EfCoreCompanyRepository : Repository<VenueContext, Company>, ICompa
 {
     public EfCoreCompanyRepository(VenueContext context) : base(context)
     {
+    }
+
+    public Task<Company?> GetByOwnerIdAsync(
+        Guid ownerId,
+        bool asNoTracking = false,
+        bool includeVenues = false,
+        CancellationToken ct = default)
+    {
+        IQueryable<Company> query = Context.Companies;
+        
+        if (includeVenues)
+        {
+            query = query.Include(c => c.Venues);
+        }
+
+        if (asNoTracking)
+        {
+            query = query.AsNoTracking();
+        }
+
+        return query
+            .Where(c => c.OwnerId == ownerId)
+            .FirstOrDefaultAsync(ct);
     }
 }
