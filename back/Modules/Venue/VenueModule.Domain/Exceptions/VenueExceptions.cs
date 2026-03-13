@@ -21,4 +21,10 @@ public static class VenueExceptions
         return new HttpCodeException($"Company with id {id} doesn't belong to you",
             HttpStatusCode.NotFound, ErrorCode.NotFound);
     }
+    
+    public static HttpCodeException AlreadyCheckedInRecently()
+    {
+        return new HttpCodeException("You've already checked in",
+            HttpStatusCode.UnprocessableEntity, ErrorCode.TooManyRequests);
+    }
 }

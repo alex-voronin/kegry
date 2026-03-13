@@ -8,7 +8,6 @@ using Shared.Infrastructure.Storage;
 using SharedCore.Api;
 using SharedCore.Api.Dto;
 using SharedCore.Extensions;
-using SharedCore.Geolocation;
 using VenueModule.API.Dto;
 using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.Exceptions;
@@ -30,7 +29,6 @@ public class VenueEndpoints : IEndpoints
         managementApiGroup.MapPatch("/api/v1/company/{companyId:guid}", PatchCompany);
         managementApiGroup.MapPost("/api/v1/company/{companyId:guid}/venue", CreateVenue);
         managementApiGroup.MapPatch("/api/v1/venue/{id:guid}", PatchVenue);
-        managementApiGroup.MapPost("/api/v1/venue/{id:guid}/check-in", CheckInToVenue);
         managementApiGroup.MapPost("/api/v1/company/{companyId:guid}/avatar/upload-url", GetAvatarUploadUrl);
         managementApiGroup.MapPost("/api/v1/company/{companyId:guid}/venue/{venueId:guid}/cover/upload-url",
             GetCoverUploadUrl);
@@ -40,6 +38,7 @@ public class VenueEndpoints : IEndpoints
             .RequireAuthorization();
         usersApiGroup.MapPost("/api/v1/venues", GetVenues);
         usersApiGroup.MapGet("/api/v1/venue/{id:guid}", GetVenue);
+        usersApiGroup.MapPost("/api/v1/venue/{id:guid}/check-in", CheckInToVenue);
     }
 
     private static async Task<ApiResult.EmptyResult> CreateCompany(
@@ -236,41 +235,17 @@ public class VenueEndpoints : IEndpoints
         [FromRoute] Guid id,
         [FromBody] CheckInRequest request,
         ClaimsPrincipal user,
-        IVenueRepository venueRepository,
-        IVisitRepository visitRepository,
+        ILoyaltyService loyaltyService,
         CancellationToken ct)
     {
         var userId = user.GetId();
-
-        var venue = await venueRepository.GetByIdAsync(
-            id,
-            asNoTracking: true,
+        await loyaltyService.CheckInToVenue(
+            userId: userId,
+            venueId: id,
+            userLatitude: request.Latitude,
+            userLongitude: request.Longitude,
             ct: ct);
-
-        if (venue == null)
-        {
-            throw VenueExceptions.VenueNotFound(id);
-        }
-
-        var distanceMeters = Haversine.DistanceMeters(
-            request.Latitude, request.Longitude,
-            venue.Coordinates.Y, venue.Coordinates.X);
-
-        if (distanceMeters > Validation.MaxCheckInDistanceMeters)
-        {
-            throw VenueExceptions.TooFarFromVenue();
-        }
-
-        var visit = new Visit
-        {
-            UserId = userId,
-            VenueId = id,
-            CheckedInAt = DateTimeOffset.UtcNow
-        };
-
-        await visitRepository.AddAsync(visit, ct);
-        await visitRepository.SaveChangesAsync(ct);
-
+       
         return ApiResult<EmptyResponse>.Build(EmptyResponse.Empty);
     }
 
