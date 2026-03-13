@@ -1,8 +1,8 @@
 using NetTopologySuite.Geometries;
 using SharedCore.Validation;
-using VenueModule.Domain.Aggregates;
+using VenueModule.Domain.ValueObjects;
 
-namespace VenueModule.Domain.ValueObjects;
+namespace VenueModule.Domain.Aggregates;
 
 public class Venue
 {

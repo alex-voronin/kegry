@@ -4,6 +4,7 @@ using VenueModule.Domain.ValueObjects;
 using VenueModule.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
+using VenueModule.Domain.Aggregates;
 
 namespace VenueModule.Infrastructure.Repositories;
 

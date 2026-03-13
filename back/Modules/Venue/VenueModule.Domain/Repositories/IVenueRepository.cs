@@ -1,4 +1,5 @@
 using SharedCore.Interfaces;
+using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.ValueObjects;
 
 namespace VenueModule.Domain.Repositories;
