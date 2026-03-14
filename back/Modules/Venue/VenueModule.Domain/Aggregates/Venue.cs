@@ -1,3 +1,4 @@
+using GeoTimeZone;
 using NetTopologySuite.Geometries;
 using SharedCore.Validation;
 using VenueModule.Domain.ValueObjects;
@@ -19,7 +20,19 @@ public class Venue
         );
     }
 
-    public required Point Coordinates { get; set; }
+    public required Point Coordinates
+    {
+        get;
+        set
+        {
+            if (SetProperty(ref field, value))
+            {
+                TimeZoneId = TimeZoneLookup.GetTimeZone(value.Y, value.X).Result;
+            }
+        }
+    }
+
+    public string TimeZoneId { get; private set; } = null!;
 
     public required string Address
     {
@@ -76,12 +89,22 @@ public class Venue
     }
 
     public ICollection<Promo> Promos { get; set; } = new List<Promo>();
+
+    private readonly List<Discount> _discounts = [];
+    public IReadOnlyCollection<Discount> Discounts => _discounts.AsReadOnly();
+
     public DateTimeOffset ChangedAt { get; private set; }
 
-    private void SetProperty<T>(ref T field, T value)
+    private bool SetProperty<T>(ref T field, T value)
     {
+        if (EqualityComparer<T>.Default.Equals(field, value))
+        {
+            return false;
+        }
+
         field = value;
         ChangedAt = DateTimeOffset.UtcNow;
+        return true;
     }
 
     #region ================================= Validation =================================

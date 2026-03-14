@@ -19,7 +19,7 @@ public class EfCoreCompanyRepository : Repository<VenueContext, Company>, ICompa
         CancellationToken ct = default)
     {
         IQueryable<Company> query = Context.Companies;
-        
+
         if (includeVenues)
         {
             query = query.Include(c => c.Venues);

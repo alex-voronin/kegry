@@ -150,7 +150,6 @@ public class VenueEndpoints : IEndpoints
         var venue = await VenueOwnerGuard.RequireVenueOwnerAsync(
             id, user, venueRepository, companyRepository, ct);
 
-        venue.Promos = venue.Promos ?? [];
         if (request.CoverImageUrl != null)
         {
             venue.CoverImageS3Key = storageService.PublicFileUrlToS3Key(request.CoverImageUrl);
@@ -323,16 +322,23 @@ public class VenueEndpoints : IEndpoints
 
         var companyDto = DomainCompanyToDto(storageService, venue.Company);
         var venueDto = DomainVenueToDto(storageService, venue);
-        var loyaltyLevel = await loyaltyService.GetLoyaltyLevelAsync(
+        var loyaltyLevel = await loyaltyService.GetLoyaltyLevelWithDiscountAsync(
             userId: user.GetId(),
             venueId: venueId,
             ct: ct);
+
+        var loyaltyLevelDto = new LoyaltyLevelWithDiscountDto(
+            UserLoyaltyLevel: loyaltyLevel.UserLoyaltyLevel,
+            VisitsCount: loyaltyLevel.VisitsCount,
+            VisitsToNextLoyaltyLevel: loyaltyLevel.VisitsToNextLoyaltyLevel,
+            Discount: loyaltyLevel.Discount
+        );
 
         return ApiResult<GetVenueResponse>.Build(
             new GetVenueResponse(
                 Company: companyDto,
                 Venue: venueDto,
-                LoyaltyLevel: loyaltyLevel)
+                LoyaltyLevel: loyaltyLevelDto)
         );
     }
 

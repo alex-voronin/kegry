@@ -173,7 +173,7 @@ public class DiscountManagementEndpoints : IEndpoints
 
         return ApiResult.Empty;
     }
-    
+
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     private static DiscountDto DomainDiscountToDto(Discount d) => new(

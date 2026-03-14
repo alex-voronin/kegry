@@ -6,9 +6,18 @@ using VenueModule.Domain.Repositories;
 
 namespace VenueModule.Domain.Services;
 
+public record LoyaltyLevelWithDiscount(
+    int UserLoyaltyLevel,
+    int VisitsCount,
+    int VisitsToNextLoyaltyLevel,
+    int Discount);
+
 public interface ILoyaltyService
 {
-    Task<int> GetLoyaltyLevelAsync(Guid userId, Guid venueId, CancellationToken ct = default);
+    Task<LoyaltyLevelWithDiscount> GetLoyaltyLevelWithDiscountAsync(
+        Guid userId,
+        Guid venueId,
+        CancellationToken ct = default);
 
     Task CheckInToVenue(
         Guid userId, Guid venueId,
@@ -20,14 +29,22 @@ public class LoyaltyService : ILoyaltyService, IScoped
 {
     internal const double MaxCheckInDistanceMeters = 100.0;
     internal const double CheckInCooldownHours = 12;
-    
+
     private readonly IVenueRepository _venueRepository;
     private readonly IVisitRepository _visitRepository;
+    private readonly ILoyaltyLevelRepository _loyaltyLevelRepository;
+    private readonly IDiscountRepository _discountRepository;
 
-    public LoyaltyService(IVenueRepository venueRepository, IVisitRepository visitRepository)
+    public LoyaltyService(
+        IVenueRepository venueRepository,
+        IVisitRepository visitRepository,
+        ILoyaltyLevelRepository loyaltyLevelRepository,
+        IDiscountRepository discountRepository)
     {
         _venueRepository = venueRepository;
         _visitRepository = visitRepository;
+        _loyaltyLevelRepository = loyaltyLevelRepository;
+        _discountRepository = discountRepository;
     }
 
     public async Task CheckInToVenue(
@@ -75,9 +92,64 @@ public class LoyaltyService : ILoyaltyService, IScoped
         await _visitRepository.SaveChangesAsync(ct);
     }
 
-    public async Task<int> GetLoyaltyLevelAsync(Guid userId, Guid venueId, CancellationToken ct = default)
+    public async Task<LoyaltyLevelWithDiscount> GetLoyaltyLevelWithDiscountAsync(
+        Guid userId,
+        Guid venueId,
+        CancellationToken ct = default)
     {
-        var visits = await _visitRepository.GetVisitCountAsync(userId, venueId, ct);
-        return visits > 999 ? 999 : visits;
+        var venue = await _venueRepository.GetByIdAsync(venueId, asNoTracking: true, ct: ct);
+
+        var visitsCount = await _visitRepository.GetVisitCountAsync(userId, venueId, ct);
+        var levels = await _loyaltyLevelRepository.GetByVenueIdAsync(venueId, ct);
+
+        var (currentLoyaltyLevel, visitsToNextLoyaltyLevel) = GetCurrentLoyaltyLevel(levels, visitsCount);
+
+        var discounts = await _discountRepository.GetByVenueIdAsync(venueId, ct);
+
+        var timeZone = TimeZoneInfo.FindSystemTimeZoneById(venue.TimeZoneId);
+        var venueLocalTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);
+        var today = venueLocalTime.DayOfWeek;
+
+        var applicableDiscounts = discounts
+            .Where(d => today switch
+            {
+                DayOfWeek.Sunday => d.ActiveBySunday,
+                DayOfWeek.Monday => d.ActiveByMonday,
+                DayOfWeek.Tuesday => d.ActiveByTuesday,
+                DayOfWeek.Wednesday => d.ActiveByWednesday,
+                DayOfWeek.Thursday => d.ActiveByThursday,
+                DayOfWeek.Friday => d.ActiveByFriday,
+                DayOfWeek.Saturday => d.ActiveBySaturday,
+                _ => false
+            })
+            // If LoyaltyLevelId is null, it's for everyone. Otherwise, requires the user to be at least that level.
+            .Where(d => d.LoyaltyLevelId == null || currentLoyaltyLevel >= d.LoyaltyLevelId)
+            .ToList();
+
+        var maxDiscount = applicableDiscounts.Count > 0 ? applicableDiscounts.Max(d => d.Percent) : 0;
+        return new LoyaltyLevelWithDiscount(currentLoyaltyLevel, visitsCount, visitsToNextLoyaltyLevel, maxDiscount);
+    }
+
+    private static (int currentLoyaltyLevel, int visitsToNextLoyaltyLevel) GetCurrentLoyaltyLevel(
+        List<LoyaltyLevel> levels, int visitsCount)
+    {
+        var currentLoyaltyLevel = 0;
+        var visitsToNextLoyaltyLevel = 0;
+        if (levels.Count > 0)
+        {
+            var nextLevel = levels.FirstOrDefault(l => visitsCount < l.VisitsUpperBound);
+            if (nextLevel != null)
+            {
+                currentLoyaltyLevel = nextLevel.Id;
+                visitsToNextLoyaltyLevel = nextLevel.VisitsUpperBound - visitsCount;
+            }
+            else
+            {
+                currentLoyaltyLevel = levels.Max(l => l.Id);
+                visitsToNextLoyaltyLevel = 0;
+            }
+        }
+
+        return (currentLoyaltyLevel, visitsToNextLoyaltyLevel);
     }
 }

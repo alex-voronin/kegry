@@ -77,9 +77,16 @@ public class VenueContext : DbContext
             entity.Property(v => v.Coordinates)
                 .HasColumnType("geography(Point, 4326)")
                 .IsRequired();
+            entity.Property(v => v.TimeZoneId)
+                .IsRequired()
+                .HasMaxLength(100);
             entity.HasIndex(v => v.CompanyId);
             entity.HasIndex(v => v.Coordinates)
                 .HasMethod("gist");
+            entity.HasMany(v => v.Discounts)
+                .WithOne()
+                .HasForeignKey(d => d.VenueId)
+                .OnDelete(DeleteBehavior.Cascade);
             entity.OwnsMany(v => v.Promos, promo =>
             {
                 promo.ToTable("venue_promos");

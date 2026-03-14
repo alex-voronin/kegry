@@ -10,5 +10,5 @@ public interface ICompanyRepository : IRepository<Company>
         Guid ownerId,
         bool asNoTracking = false,
         bool includeVenues = false,
-        CancellationToken ct = default) ;
+        CancellationToken ct = default);
 }
