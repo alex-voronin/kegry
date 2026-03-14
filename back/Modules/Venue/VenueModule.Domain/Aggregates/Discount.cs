@@ -7,11 +7,5 @@ public class Discount
     public int? LoyaltyLevelId { get; set; }
     public LoyaltyLevel? LoyaltyLevel { get; init; }
     public int Percent { get; set; }
-    public bool ActiveBySunday { get; set; }
-    public bool ActiveByMonday { get; set; }
-    public bool ActiveByTuesday { get; set; }
-    public bool ActiveByWednesday { get; set; }
-    public bool ActiveByThursday { get; set; }
-    public bool ActiveByFriday { get; set; }
-    public bool ActiveBySaturday { get; set; }
+    public ICollection<DiscountDay> Days { get; set; } = [];
 }

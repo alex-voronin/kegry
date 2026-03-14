@@ -45,6 +45,7 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     company_id = table.Column<Guid>(type: "uuid", nullable: false),
                     cover_image_s3key = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     coordinates = table.Column<Point>(type: "geography(Point, 4326)", nullable: false),
+                    time_zone_id = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     address = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     website_url = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     google_maps_url = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
@@ -139,13 +140,7 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     venue_id = table.Column<Guid>(type: "uuid", nullable: false),
                     loyalty_level_id = table.Column<int>(type: "integer", nullable: true),
                     percent = table.Column<int>(type: "integer", nullable: false),
-                    active_by_sunday = table.Column<bool>(type: "boolean", nullable: false),
-                    active_by_monday = table.Column<bool>(type: "boolean", nullable: false),
-                    active_by_tuesday = table.Column<bool>(type: "boolean", nullable: false),
-                    active_by_wednesday = table.Column<bool>(type: "boolean", nullable: false),
-                    active_by_thursday = table.Column<bool>(type: "boolean", nullable: false),
-                    active_by_friday = table.Column<bool>(type: "boolean", nullable: false),
-                    active_by_saturday = table.Column<bool>(type: "boolean", nullable: false)
+                    venue_id1 = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -162,6 +157,33 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         column: x => x.venue_id,
                         principalSchema: "venue",
                         principalTable: "venues",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_discounts_venues_venue_id1",
+                        column: x => x.venue_id1,
+                        principalSchema: "venue",
+                        principalTable: "venues",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "discount_days",
+                schema: "venue",
+                columns: table => new
+                {
+                    discount_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    day_of_week = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_discount_days", x => new { x.discount_id, x.day_of_week });
+                    table.CheckConstraint("CK_discount_days_day_of_week", "\"day_of_week\" IN (0, 1, 2, 3, 4, 5, 6)");
+                    table.ForeignKey(
+                        name: "fk_discount_days_discounts_discount_id",
+                        column: x => x.discount_id,
+                        principalSchema: "venue",
+                        principalTable: "discounts",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -184,6 +206,12 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                 schema: "venue",
                 table: "discounts",
                 column: "venue_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_discounts_venue_id1",
+                schema: "venue",
+                table: "discounts",
+                column: "venue_id1");
 
             migrationBuilder.CreateIndex(
                 name: "ix_loyalty_levels_venue_id",
@@ -215,7 +243,7 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "discounts",
+                name: "discount_days",
                 schema: "venue");
 
             migrationBuilder.DropTable(
@@ -224,6 +252,10 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "visits",
+                schema: "venue");
+
+            migrationBuilder.DropTable(
+                name: "discounts",
                 schema: "venue");
 
             migrationBuilder.DropTable(

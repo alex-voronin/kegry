@@ -5,10 +5,4 @@ public record DiscountDto(
     string VenueId,
     int? LoyaltyLevelId,
     int Percent,
-    bool ActiveBySunday,
-    bool ActiveByMonday,
-    bool ActiveByTuesday,
-    bool ActiveByWednesday,
-    bool ActiveByThursday,
-    bool ActiveByFriday,
-    bool ActiveBySaturday);
+    DayOfWeek[] Days);

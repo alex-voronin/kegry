@@ -15,6 +15,7 @@ public class EfCoreDiscountRepository : Repository<VenueContext, Discount>, IDis
     public Task<List<Discount>> GetByVenueIdAsync(Guid venueId, CancellationToken ct = default)
     {
         return Context.Discounts
+            .Include(d => d.Days)
             .AsNoTracking()
             .Where(d => d.VenueId == venueId)
             .ToListAsync(ct);

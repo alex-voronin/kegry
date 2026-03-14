@@ -11,6 +11,7 @@ public class VenueContext : DbContext
     public DbSet<Visit> Visits => Set<Visit>();
     public DbSet<LoyaltyLevel> LoyaltyLevels => Set<LoyaltyLevel>();
     public DbSet<Discount> Discounts => Set<Discount>();
+    public DbSet<DiscountDay> DiscountDays => Set<DiscountDay>();
 
     public VenueContext(DbContextOptions<VenueContext> options)
         : base(options)
@@ -25,6 +26,7 @@ public class VenueContext : DbContext
         ConfigureVisit(modelBuilder);
         ConfigureLoyaltyLevel(modelBuilder);
         ConfigureDiscount(modelBuilder);
+        ConfigureDiscountDay(modelBuilder);
     }
 
     private static void ConfigureCompany(ModelBuilder modelBuilder)
@@ -87,6 +89,10 @@ public class VenueContext : DbContext
                 .WithOne()
                 .HasForeignKey(d => d.VenueId)
                 .OnDelete(DeleteBehavior.Cascade);
+            entity.HasMany(v => v.LoyaltyLevels)
+                .WithOne()
+                .HasForeignKey(l => l.VenueId)
+                .OnDelete(DeleteBehavior.Cascade);
             entity.OwnsMany(v => v.Promos, promo =>
             {
                 promo.ToTable("venue_promos");
@@ -118,10 +124,6 @@ public class VenueContext : DbContext
             entity.ToTable("loyalty_levels");
             entity.HasKey(l => new { l.Id, l.VenueId });
             entity.ToTable(t => t.HasCheckConstraint("CK_loyalty_levels_Id", "\"Id\" IN (0, 1, 2)"));
-            entity.HasOne<Venue>()
-                .WithMany()
-                .HasForeignKey(l => l.VenueId)
-                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 
@@ -138,8 +140,24 @@ public class VenueContext : DbContext
                 .OnDelete(DeleteBehavior.SetNull);
             entity.HasOne<Venue>()
                 .WithMany()
-                .HasForeignKey(d => d.VenueId)
+                .HasForeignKey(d => d.VenueId);
+            entity.HasMany(d => d.Days)
+                .WithOne()
+                .HasForeignKey(dd => dd.DiscountId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    private static void ConfigureDiscountDay(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<DiscountDay>(entity =>
+        {
+            entity.ToTable("discount_days");
+            entity.HasKey(d => new { d.DiscountId, d.DayOfWeek });
+
+            // Enforce that DayOfWeek is exactly 0-6 (Sunday-Saturday)
+            entity.ToTable(t =>
+                t.HasCheckConstraint("CK_discount_days_day_of_week", "\"day_of_week\" IN (0, 1, 2, 3, 4, 5, 6)"));
         });
     }
 }

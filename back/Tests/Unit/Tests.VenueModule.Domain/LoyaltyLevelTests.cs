@@ -64,7 +64,7 @@ public class LoyaltyLevelTests
     [Fact]
     public void ValidateCollection_WhenEmpty_ThenDoesNotThrow()
     {
-        Should.NotThrow(() => LoyaltyLevel.ValidateCollection([]));
+        Should.NotThrow(() => LoyaltyLevel.ValidateLevelsCountAndOrder([]));
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class LoyaltyLevelTests
             MakeLevel(1, 10),
             MakeLevel(2, 20),
         };
-        Should.NotThrow(() => LoyaltyLevel.ValidateCollection(levels));
+        Should.NotThrow(() => LoyaltyLevel.ValidateLevelsCountAndOrder(levels));
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public class LoyaltyLevelTests
             MakeLevel(2, 20),
             MakeLevel(2, 30), // duplicate Id but we're testing count, not Id uniqueness
         };
-        Should.Throw<HttpCodeException>(() => LoyaltyLevel.ValidateCollection(levels))
+        Should.Throw<HttpCodeException>(() => LoyaltyLevel.ValidateLevelsCountAndOrder(levels))
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 
@@ -104,7 +104,7 @@ public class LoyaltyLevelTests
             MakeLevel(0, 5),
             MakeLevel(1, 15),
         };
-        Should.NotThrow(() => LoyaltyLevel.ValidateCollection(levels));
+        Should.NotThrow(() => LoyaltyLevel.ValidateLevelsCountAndOrder(levels));
     }
 
     [Fact]
@@ -115,7 +115,7 @@ public class LoyaltyLevelTests
             MakeLevel(0, 10),
             MakeLevel(1, 10),
         };
-        Should.Throw<HttpCodeException>(() => LoyaltyLevel.ValidateCollection(levels))
+        Should.Throw<HttpCodeException>(() => LoyaltyLevel.ValidateLevelsCountAndOrder(levels))
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 
@@ -127,7 +127,7 @@ public class LoyaltyLevelTests
             MakeLevel(0, 20),
             MakeLevel(1, 10),
         };
-        Should.Throw<HttpCodeException>(() => LoyaltyLevel.ValidateCollection(levels))
+        Should.Throw<HttpCodeException>(() => LoyaltyLevel.ValidateLevelsCountAndOrder(levels))
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 
@@ -140,7 +140,7 @@ public class LoyaltyLevelTests
             MakeLevel(2, 5),  // highest Id, lowest bound
             MakeLevel(0, 20), // lowest Id, highest bound
         };
-        Should.Throw<HttpCodeException>(() => LoyaltyLevel.ValidateCollection(levels))
+        Should.Throw<HttpCodeException>(() => LoyaltyLevel.ValidateLevelsCountAndOrder(levels))
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 

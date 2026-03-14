@@ -25,7 +25,7 @@ public class LoyaltyLevel
     /// Validates that a collection of loyalty levels has 0–3 items,
     /// all Ids are in {0,1,2}, and VisitsUpperBound is strictly ascending by Id.
     /// </summary>
-    public static void ValidateCollection(IReadOnlyCollection<LoyaltyLevel> levels)
+    public static void ValidateLevelsCountAndOrder(IReadOnlyCollection<LoyaltyLevel> levels)
     {
         if (levels.Count > 3)
             throw VenueExceptions.InvalidLoyaltyLevelCount();

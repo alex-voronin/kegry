@@ -13,7 +13,7 @@ using VenueModule.Infrastructure.Persistence;
 namespace VenueModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(VenueContext))]
-    [Migration("20260314104034_AddVenue")]
+    [Migration("20260314133248_AddVenue")]
     partial class AddVenue
     {
         /// <inheritdoc />
@@ -77,34 +77,6 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<bool>("ActiveByFriday")
-                        .HasColumnType("boolean")
-                        .HasColumnName("active_by_friday");
-
-                    b.Property<bool>("ActiveByMonday")
-                        .HasColumnType("boolean")
-                        .HasColumnName("active_by_monday");
-
-                    b.Property<bool>("ActiveBySaturday")
-                        .HasColumnType("boolean")
-                        .HasColumnName("active_by_saturday");
-
-                    b.Property<bool>("ActiveBySunday")
-                        .HasColumnType("boolean")
-                        .HasColumnName("active_by_sunday");
-
-                    b.Property<bool>("ActiveByThursday")
-                        .HasColumnType("boolean")
-                        .HasColumnName("active_by_thursday");
-
-                    b.Property<bool>("ActiveByTuesday")
-                        .HasColumnType("boolean")
-                        .HasColumnName("active_by_tuesday");
-
-                    b.Property<bool>("ActiveByWednesday")
-                        .HasColumnType("boolean")
-                        .HasColumnName("active_by_wednesday");
-
                     b.Property<int?>("LoyaltyLevelId")
                         .HasColumnType("integer")
                         .HasColumnName("loyalty_level_id");
@@ -117,16 +89,42 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("venue_id");
 
+                    b.Property<Guid?>("VenueId1")
+                        .HasColumnType("uuid")
+                        .HasColumnName("venue_id1");
+
                     b.HasKey("Id")
                         .HasName("pk_discounts");
 
                     b.HasIndex("VenueId")
                         .HasDatabaseName("ix_discounts_venue_id");
 
+                    b.HasIndex("VenueId1")
+                        .HasDatabaseName("ix_discounts_venue_id1");
+
                     b.HasIndex("LoyaltyLevelId", "VenueId")
                         .HasDatabaseName("ix_discounts_loyalty_level_id_venue_id");
 
                     b.ToTable("discounts", "venue");
+                });
+
+            modelBuilder.Entity("VenueModule.Domain.Aggregates.DiscountDay", b =>
+                {
+                    b.Property<Guid>("DiscountId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("discount_id");
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("integer")
+                        .HasColumnName("day_of_week");
+
+                    b.HasKey("DiscountId", "DayOfWeek")
+                        .HasName("pk_discount_days");
+
+                    b.ToTable("discount_days", "venue", t =>
+                        {
+                            t.HasCheckConstraint("CK_discount_days_day_of_week", "\"day_of_week\" IN (0, 1, 2, 3, 4, 5, 6)");
+                        });
                 });
 
             modelBuilder.Entity("VenueModule.Domain.Aggregates.LoyaltyLevel", b =>
@@ -201,6 +199,12 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(20)")
                         .HasColumnName("phone_number");
 
+                    b.Property<string>("TimeZoneId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("time_zone_id");
+
                     b.Property<string>("WebsiteUrl")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
@@ -257,6 +261,11 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_discounts_venues_venue_id");
 
+                    b.HasOne("VenueModule.Domain.Aggregates.Venue", null)
+                        .WithMany("Discounts")
+                        .HasForeignKey("VenueId1")
+                        .HasConstraintName("fk_discounts_venues_venue_id1");
+
                     b.HasOne("VenueModule.Domain.Aggregates.LoyaltyLevel", "LoyaltyLevel")
                         .WithMany()
                         .HasForeignKey("LoyaltyLevelId", "VenueId")
@@ -266,10 +275,20 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     b.Navigation("LoyaltyLevel");
                 });
 
+            modelBuilder.Entity("VenueModule.Domain.Aggregates.DiscountDay", b =>
+                {
+                    b.HasOne("VenueModule.Domain.Aggregates.Discount", null)
+                        .WithMany("Days")
+                        .HasForeignKey("DiscountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_discount_days_discounts_discount_id");
+                });
+
             modelBuilder.Entity("VenueModule.Domain.Aggregates.LoyaltyLevel", b =>
                 {
                     b.HasOne("VenueModule.Domain.Aggregates.Venue", null)
-                        .WithMany()
+                        .WithMany("LoyaltyLevels")
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -332,6 +351,18 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("VenueModule.Domain.Aggregates.Company", b =>
                 {
                     b.Navigation("Venues");
+                });
+
+            modelBuilder.Entity("VenueModule.Domain.Aggregates.Discount", b =>
+                {
+                    b.Navigation("Days");
+                });
+
+            modelBuilder.Entity("VenueModule.Domain.Aggregates.Venue", b =>
+                {
+                    b.Navigation("Discounts");
+
+                    b.Navigation("LoyaltyLevels");
                 });
 #pragma warning restore 612, 618
         }

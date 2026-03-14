@@ -97,31 +97,27 @@ public class LoyaltyService : ILoyaltyService, IScoped
         Guid venueId,
         CancellationToken ct = default)
     {
-        var venue = await _venueRepository.GetByIdAsync(venueId, asNoTracking: true, ct: ct);
+        var venue = await _venueRepository.GetByIdAsync(venueId,
+            asNoTracking: true,
+            includes: [v => v.Discounts, v => v.LoyaltyLevels],
+            ct: ct);
+
+        if (venue == null)
+        {
+            throw VenueExceptions.VenueNotFound(venueId);
+        }
 
         var visitsCount = await _visitRepository.GetVisitCountAsync(userId, venueId, ct);
-        var levels = await _loyaltyLevelRepository.GetByVenueIdAsync(venueId, ct);
 
-        var (currentLoyaltyLevel, visitsToNextLoyaltyLevel) = GetCurrentLoyaltyLevel(levels, visitsCount);
-
-        var discounts = await _discountRepository.GetByVenueIdAsync(venueId, ct);
+        var (currentLoyaltyLevel, visitsToNextLoyaltyLevel) = GetCurrentLoyaltyLevel(
+            venue.LoyaltyLevels, visitsCount);
 
         var timeZone = TimeZoneInfo.FindSystemTimeZoneById(venue.TimeZoneId);
         var venueLocalTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);
         var today = venueLocalTime.DayOfWeek;
 
-        var applicableDiscounts = discounts
-            .Where(d => today switch
-            {
-                DayOfWeek.Sunday => d.ActiveBySunday,
-                DayOfWeek.Monday => d.ActiveByMonday,
-                DayOfWeek.Tuesday => d.ActiveByTuesday,
-                DayOfWeek.Wednesday => d.ActiveByWednesday,
-                DayOfWeek.Thursday => d.ActiveByThursday,
-                DayOfWeek.Friday => d.ActiveByFriday,
-                DayOfWeek.Saturday => d.ActiveBySaturday,
-                _ => false
-            })
+        var applicableDiscounts = venue.Discounts
+            .Where(d => d.Days.Any(day => day.DayOfWeek == today))
             // If LoyaltyLevelId is null, it's for everyone. Otherwise, requires the user to be at least that level.
             .Where(d => d.LoyaltyLevelId == null || currentLoyaltyLevel >= d.LoyaltyLevelId)
             .ToList();
@@ -131,7 +127,7 @@ public class LoyaltyService : ILoyaltyService, IScoped
     }
 
     private static (int currentLoyaltyLevel, int visitsToNextLoyaltyLevel) GetCurrentLoyaltyLevel(
-        List<LoyaltyLevel> levels, int visitsCount)
+        IReadOnlyCollection<LoyaltyLevel> levels, int visitsCount)
     {
         var currentLoyaltyLevel = 0;
         var visitsToNextLoyaltyLevel = 0;

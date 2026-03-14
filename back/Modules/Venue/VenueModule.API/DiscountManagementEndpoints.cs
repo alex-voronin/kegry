@@ -55,7 +55,6 @@ public class DiscountManagementEndpoints : IEndpoints
         ILoyaltyLevelRepository loyaltyLevelRepository,
         CancellationToken ct)
     {
-        // Build domain objects first — property setters validate Id ∈ {1,2,3} and VisitsUpperBound > 0
         var levels = request.LoyaltyLevels
             .Select(dto => new LoyaltyLevel
             {
@@ -65,14 +64,15 @@ public class DiscountManagementEndpoints : IEndpoints
             })
             .ToArray();
 
-        // Collection-level rules: count ≤ 3, strictly ascending VisitsUpperBound by Id
-        LoyaltyLevel.ValidateCollection(levels);
+        LoyaltyLevel.ValidateLevelsCountAndOrder(levels);
 
         await VenueOwnerGuard.RequireVenueOwnerAsync(venueId, user, venueRepository, companyRepository, ct);
         await loyaltyLevelRepository.DeleteAllForVenueAsync(venueId, ct);
 
         foreach (var level in levels)
+        {
             await loyaltyLevelRepository.AddAsync(level, ct);
+        }
 
         await loyaltyLevelRepository.SaveChangesAsync(ct);
 
@@ -101,19 +101,17 @@ public class DiscountManagementEndpoints : IEndpoints
     {
         await VenueOwnerGuard.RequireVenueOwnerAsync(venueId, user, venueRepository, companyRepository, ct);
 
+        var discountId = Guid.CreateVersion7();
         var discount = new Discount
         {
-            Id = Guid.CreateVersion7(),
+            Id = discountId,
             VenueId = venueId,
             LoyaltyLevelId = request.LoyaltyLevelId,
             Percent = request.Percent,
-            ActiveBySunday = request.ActiveBySunday,
-            ActiveByMonday = request.ActiveByMonday,
-            ActiveByTuesday = request.ActiveByTuesday,
-            ActiveByWednesday = request.ActiveByWednesday,
-            ActiveByThursday = request.ActiveByThursday,
-            ActiveByFriday = request.ActiveByFriday,
-            ActiveBySaturday = request.ActiveBySaturday
+            Days = request.Days
+                .Distinct()
+                .Select(d => new DiscountDay { DiscountId = discountId, DayOfWeek = d })
+                .ToList()
         };
 
         await discountRepository.AddAsync(discount, ct);
@@ -136,17 +134,21 @@ public class DiscountManagementEndpoints : IEndpoints
 
         var discount = await discountRepository.GetByIdAsync(id, ct: ct);
         if (discount == null || discount.VenueId != venueId)
+        {
             throw VenueExceptions.DiscountNotFound(id);
+        }
 
         discount.LoyaltyLevelId = request.LoyaltyLevelId ?? discount.LoyaltyLevelId;
         discount.Percent = request.Percent ?? discount.Percent;
-        discount.ActiveBySunday = request.ActiveBySunday ?? discount.ActiveBySunday;
-        discount.ActiveByMonday = request.ActiveByMonday ?? discount.ActiveByMonday;
-        discount.ActiveByTuesday = request.ActiveByTuesday ?? discount.ActiveByTuesday;
-        discount.ActiveByWednesday = request.ActiveByWednesday ?? discount.ActiveByWednesday;
-        discount.ActiveByThursday = request.ActiveByThursday ?? discount.ActiveByThursday;
-        discount.ActiveByFriday = request.ActiveByFriday ?? discount.ActiveByFriday;
-        discount.ActiveBySaturday = request.ActiveBySaturday ?? discount.ActiveBySaturday;
+
+        if (request.Days != null)
+        {
+            discount.Days.Clear();
+            foreach (var day in request.Days.Distinct())
+            {
+                discount.Days.Add(new DiscountDay { DiscountId = id, DayOfWeek = day });
+            }
+        }
 
         await discountRepository.SaveChangesAsync(ct);
 
@@ -166,7 +168,9 @@ public class DiscountManagementEndpoints : IEndpoints
 
         var discount = await discountRepository.GetByIdAsync(id, ct: ct);
         if (discount == null || discount.VenueId != venueId)
+        {
             throw VenueExceptions.DiscountNotFound(id);
+        }
 
         discountRepository.Delete(discount);
         await discountRepository.SaveChangesAsync(ct);
@@ -181,11 +185,9 @@ public class DiscountManagementEndpoints : IEndpoints
         VenueId: d.VenueId.ToString(),
         LoyaltyLevelId: d.LoyaltyLevelId,
         Percent: d.Percent,
-        ActiveBySunday: d.ActiveBySunday,
-        ActiveByMonday: d.ActiveByMonday,
-        ActiveByTuesday: d.ActiveByTuesday,
-        ActiveByWednesday: d.ActiveByWednesday,
-        ActiveByThursday: d.ActiveByThursday,
-        ActiveByFriday: d.ActiveByFriday,
-        ActiveBySaturday: d.ActiveBySaturday);
+        Days: d.Days
+            .Select(day => day.DayOfWeek)
+            .Order()
+            .ToArray()
+    );
 }
