@@ -32,4 +32,28 @@ public static class VenueExceptions
         return new HttpCodeException("You've already checked in",
             HttpStatusCode.UnprocessableEntity, ErrorCode.TooManyRequests);
     }
+
+    public static HttpCodeException DiscountNotFound(Guid id)
+    {
+        return new HttpCodeException($"Discount with id {id} not found", HttpStatusCode.NotFound, ErrorCode.NotFound);
+    }
+
+    public static HttpCodeException InvalidLoyaltyLevelCount()
+    {
+        return new HttpCodeException("LoyaltyLevels array must contain between 0 and 3 items",
+            HttpStatusCode.BadRequest, ErrorCode.ValidationError);
+    }
+
+    public static HttpCodeException InvalidLoyaltyLevelId()
+    {
+        return new HttpCodeException("LoyaltyLevel Id must be 0, 1, or 2",
+            HttpStatusCode.BadRequest, ErrorCode.ValidationError);
+    }
+
+    public static HttpCodeException InvalidLoyaltyLevelOrder()
+    {
+        return new HttpCodeException(
+            "LoyaltyLevel VisitsUpperBound must be strictly ascending by Id (Id 0 < Id 1 < Id 2)",
+            HttpStatusCode.BadRequest, ErrorCode.ValidationError);
+    }
 }

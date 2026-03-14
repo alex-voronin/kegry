@@ -67,30 +67,92 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     b.ToTable("companies", "venue");
                 });
 
-            modelBuilder.Entity("VenueModule.Domain.Aggregates.Visit", b =>
+            modelBuilder.Entity("VenueModule.Domain.Aggregates.Discount", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnName("id");
+
+                    b.Property<bool>("ActiveByFriday")
+                        .HasColumnType("boolean")
+                        .HasColumnName("active_by_friday");
+
+                    b.Property<bool>("ActiveByMonday")
+                        .HasColumnType("boolean")
+                        .HasColumnName("active_by_monday");
+
+                    b.Property<bool>("ActiveBySaturday")
+                        .HasColumnType("boolean")
+                        .HasColumnName("active_by_saturday");
+
+                    b.Property<bool>("ActiveBySunday")
+                        .HasColumnType("boolean")
+                        .HasColumnName("active_by_sunday");
+
+                    b.Property<bool>("ActiveByThursday")
+                        .HasColumnType("boolean")
+                        .HasColumnName("active_by_thursday");
+
+                    b.Property<bool>("ActiveByTuesday")
+                        .HasColumnType("boolean")
+                        .HasColumnName("active_by_tuesday");
+
+                    b.Property<bool>("ActiveByWednesday")
+                        .HasColumnType("boolean")
+                        .HasColumnName("active_by_wednesday");
+
+                    b.Property<int?>("LoyaltyLevelId")
+                        .HasColumnType("integer")
+                        .HasColumnName("loyalty_level_id");
+
+                    b.Property<int>("Percent")
+                        .HasColumnType("integer")
+                        .HasColumnName("percent");
 
                     b.Property<Guid>("VenueId")
                         .HasColumnType("uuid")
                         .HasColumnName("venue_id");
 
-                    b.Property<DateTimeOffset>("CheckedInAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("checked_in_at");
-
-                    b.HasKey("UserId", "VenueId")
-                        .HasName("pk_visits");
+                    b.HasKey("Id")
+                        .HasName("pk_discounts");
 
                     b.HasIndex("VenueId")
-                        .HasDatabaseName("ix_visits_venue_id");
+                        .HasDatabaseName("ix_discounts_venue_id");
 
-                    b.ToTable("visits", "venue");
+                    b.HasIndex("LoyaltyLevelId", "VenueId")
+                        .HasDatabaseName("ix_discounts_loyalty_level_id_venue_id");
+
+                    b.ToTable("discounts", "venue");
                 });
 
-            modelBuilder.Entity("VenueModule.Domain.ValueObjects.Venue", b =>
+            modelBuilder.Entity("VenueModule.Domain.Aggregates.LoyaltyLevel", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("VenueId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("venue_id");
+
+                    b.Property<int>("VisitsUpperBound")
+                        .HasColumnType("integer")
+                        .HasColumnName("visits_upper_bound");
+
+                    b.HasKey("Id", "VenueId")
+                        .HasName("pk_loyalty_levels");
+
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("ix_loyalty_levels_venue_id");
+
+                    b.ToTable("loyalty_levels", "venue", t =>
+                        {
+                            t.HasCheckConstraint("CK_loyalty_levels_Id", "\"Id\" IN (0, 1, 2)");
+                        });
+                });
+
+            modelBuilder.Entity("VenueModule.Domain.Aggregates.Venue", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -162,15 +224,56 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("VenueModule.Domain.Aggregates.Visit", b =>
                 {
-                    b.HasOne("VenueModule.Domain.ValueObjects.Venue", null)
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<Guid>("VenueId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("venue_id");
+
+                    b.Property<DateTimeOffset>("CheckedInAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("checked_in_at");
+
+                    b.HasKey("UserId", "VenueId")
+                        .HasName("pk_visits");
+
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("ix_visits_venue_id");
+
+                    b.ToTable("visits", "venue");
+                });
+
+            modelBuilder.Entity("VenueModule.Domain.Aggregates.Discount", b =>
+                {
+                    b.HasOne("VenueModule.Domain.Aggregates.Venue", null)
                         .WithMany()
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_visits_venues_venue_id");
+                        .HasConstraintName("fk_discounts_venues_venue_id");
+
+                    b.HasOne("VenueModule.Domain.Aggregates.LoyaltyLevel", "LoyaltyLevel")
+                        .WithMany()
+                        .HasForeignKey("LoyaltyLevelId", "VenueId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_discounts_loyalty_levels_loyalty_level_id_venue_id");
+
+                    b.Navigation("LoyaltyLevel");
                 });
 
-            modelBuilder.Entity("VenueModule.Domain.ValueObjects.Venue", b =>
+            modelBuilder.Entity("VenueModule.Domain.Aggregates.LoyaltyLevel", b =>
+                {
+                    b.HasOne("VenueModule.Domain.Aggregates.Venue", null)
+                        .WithMany()
+                        .HasForeignKey("VenueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_loyalty_levels_venues_venue_id");
+                });
+
+            modelBuilder.Entity("VenueModule.Domain.Aggregates.Venue", b =>
                 {
                     b.HasOne("VenueModule.Domain.Aggregates.Company", "Company")
                         .WithMany("Venues")
@@ -211,6 +314,16 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("Promos");
+                });
+
+            modelBuilder.Entity("VenueModule.Domain.Aggregates.Visit", b =>
+                {
+                    b.HasOne("VenueModule.Domain.Aggregates.Venue", null)
+                        .WithMany()
+                        .HasForeignKey("VenueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_visits_venues_venue_id");
                 });
 
             modelBuilder.Entity("VenueModule.Domain.Aggregates.Company", b =>

@@ -9,6 +9,8 @@ public class VenueContext : DbContext
     public DbSet<Company> Companies => Set<Company>();
     public DbSet<Venue> Venues => Set<Venue>();
     public DbSet<Visit> Visits => Set<Visit>();
+    public DbSet<LoyaltyLevel> LoyaltyLevels => Set<LoyaltyLevel>();
+    public DbSet<Discount> Discounts => Set<Discount>();
 
     public VenueContext(DbContextOptions<VenueContext> options)
         : base(options)
@@ -21,6 +23,8 @@ public class VenueContext : DbContext
         ConfigureCompany(modelBuilder);
         ConfigureVenue(modelBuilder);
         ConfigureVisit(modelBuilder);
+        ConfigureLoyaltyLevel(modelBuilder);
+        ConfigureDiscount(modelBuilder);
     }
 
     private static void ConfigureCompany(ModelBuilder modelBuilder)
@@ -96,6 +100,38 @@ public class VenueContext : DbContext
             entity.HasOne<Venue>()
                 .WithMany()
                 .HasForeignKey(v => v.VenueId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    private static void ConfigureLoyaltyLevel(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<LoyaltyLevel>(entity =>
+        {
+            entity.ToTable("loyalty_levels");
+            entity.HasKey(l => new { l.Id, l.VenueId });
+            entity.ToTable(t => t.HasCheckConstraint("CK_loyalty_levels_Id", "\"Id\" IN (0, 1, 2)"));
+            entity.HasOne<Venue>()
+                .WithMany()
+                .HasForeignKey(l => l.VenueId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    private static void ConfigureDiscount(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Discount>(entity =>
+        {
+            entity.ToTable("discounts");
+            entity.HasKey(d => d.Id);
+            entity.HasOne(d => d.LoyaltyLevel)
+                .WithMany()
+                .HasForeignKey(d => new { d.LoyaltyLevelId, d.VenueId })
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne<Venue>()
+                .WithMany()
+                .HasForeignKey(d => d.VenueId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }

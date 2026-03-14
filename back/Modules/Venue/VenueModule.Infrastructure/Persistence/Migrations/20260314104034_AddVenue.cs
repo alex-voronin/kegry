@@ -66,6 +66,28 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "loyalty_levels",
+                schema: "venue",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false),
+                    venue_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    visits_upper_bound = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_loyalty_levels", x => new { x.id, x.venue_id });
+                    table.CheckConstraint("CK_loyalty_levels_Id", "\"Id\" IN (0, 1, 2)");
+                    table.ForeignKey(
+                        name: "fk_loyalty_levels_venues_venue_id",
+                        column: x => x.venue_id,
+                        principalSchema: "venue",
+                        principalTable: "venues",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "venue_promos",
                 schema: "venue",
                 columns: table => new
@@ -108,12 +130,66 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "discounts",
+                schema: "venue",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    venue_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    loyalty_level_id = table.Column<int>(type: "integer", nullable: true),
+                    percent = table.Column<int>(type: "integer", nullable: false),
+                    active_by_sunday = table.Column<bool>(type: "boolean", nullable: false),
+                    active_by_monday = table.Column<bool>(type: "boolean", nullable: false),
+                    active_by_tuesday = table.Column<bool>(type: "boolean", nullable: false),
+                    active_by_wednesday = table.Column<bool>(type: "boolean", nullable: false),
+                    active_by_thursday = table.Column<bool>(type: "boolean", nullable: false),
+                    active_by_friday = table.Column<bool>(type: "boolean", nullable: false),
+                    active_by_saturday = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_discounts", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_discounts_loyalty_levels_loyalty_level_id_venue_id",
+                        columns: x => new { x.loyalty_level_id, x.venue_id },
+                        principalSchema: "venue",
+                        principalTable: "loyalty_levels",
+                        principalColumns: new[] { "id", "venue_id" },
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "fk_discounts_venues_venue_id",
+                        column: x => x.venue_id,
+                        principalSchema: "venue",
+                        principalTable: "venues",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "ix_companies_name",
                 schema: "venue",
                 table: "companies",
                 column: "name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_discounts_loyalty_level_id_venue_id",
+                schema: "venue",
+                table: "discounts",
+                columns: new[] { "loyalty_level_id", "venue_id" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_discounts_venue_id",
+                schema: "venue",
+                table: "discounts",
+                column: "venue_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_loyalty_levels_venue_id",
+                schema: "venue",
+                table: "loyalty_levels",
+                column: "venue_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_venues_company_id",
@@ -139,11 +215,19 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "discounts",
+                schema: "venue");
+
+            migrationBuilder.DropTable(
                 name: "venue_promos",
                 schema: "venue");
 
             migrationBuilder.DropTable(
                 name: "visits",
+                schema: "venue");
+
+            migrationBuilder.DropTable(
+                name: "loyalty_levels",
                 schema: "venue");
 
             migrationBuilder.DropTable(

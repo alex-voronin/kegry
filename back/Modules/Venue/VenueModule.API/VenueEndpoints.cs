@@ -27,11 +27,11 @@ public class VenueEndpoints : IEndpoints
         managementApiGroup.MapPost("/api/v1/company", CreateCompany);
         managementApiGroup.MapGet("/api/v1/company", GetCompany);
         managementApiGroup.MapPatch("/api/v1/company", PatchCompany);
-        managementApiGroup.MapPost("/api/v1/company/venue", CreateVenue);
+        managementApiGroup.MapPost("/api/v1/venue", CreateVenue);
         managementApiGroup.MapPatch("/api/v1/venue/{id:guid}", PatchVenue);
         managementApiGroup.MapDelete("/api/v1/venue/{id:guid}", DeleteVenue);
         managementApiGroup.MapPost("/api/v1/company/avatar/upload-url", GetAvatarUploadUrl);
-        managementApiGroup.MapPost("/api/v1/company/venue/{venueId:guid}/cover/upload-url", GetCoverUploadUrl);
+        managementApiGroup.MapPost("/api/v1/venue/{venueId:guid}/cover/upload-url", GetCoverUploadUrl);
 
         var usersApiGroup = app.MapGroup("")
             .WithTags("Venue Users API")
@@ -147,27 +147,10 @@ public class VenueEndpoints : IEndpoints
         IS3StorageService storageService,
         CancellationToken ct)
     {
-        var venue = await venueRepository.GetByIdAsync(
-            id,
-            includes: [v => v.Promos],
-            ct: ct);
+        var venue = await VenueOwnerGuard.RequireVenueOwnerAsync(
+            id, user, venueRepository, companyRepository, ct);
 
-        if (venue == null)
-        {
-            throw VenueExceptions.VenueNotFound(id);
-        }
-
-        var company = await companyRepository.GetByIdAsync(venue.CompanyId, ct: ct);
-        if (company == null)
-        {
-            throw VenueExceptions.VenueNotFound(venue.CompanyId);
-        }
-
-        if (company.OwnerId != user.GetId())
-        {
-            throw VenueExceptions.SomeoneElseCompany(company.Id);
-        }
-
+        venue.Promos = venue.Promos ?? [];
         if (request.CoverImageUrl != null)
         {
             venue.CoverImageS3Key = storageService.PublicFileUrlToS3Key(request.CoverImageUrl);
@@ -205,26 +188,8 @@ public class VenueEndpoints : IEndpoints
         IVenueRepository venueRepository,
         CancellationToken ct)
     {
-        var venue = await venueRepository.GetByIdAsync(
-            id,
-            includes: [v => v.Promos],
-            ct: ct);
-
-        if (venue == null)
-        {
-            throw VenueExceptions.VenueNotFound(id);
-        }
-
-        var company = await companyRepository.GetByIdAsync(venue.CompanyId, ct: ct);
-        if (company == null)
-        {
-            throw VenueExceptions.VenueNotFound(venue.CompanyId);
-        }
-
-        if (company.OwnerId != user.GetId())
-        {
-            throw VenueExceptions.SomeoneElseCompany(company.Id);
-        }
+        var venue = await VenueOwnerGuard.RequireVenueOwnerAsync(
+            id, user, venueRepository, companyRepository, ct);
 
         venueRepository.Delete(venue);
         await venueRepository.SaveChangesAsync(ct);
