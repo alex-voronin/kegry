@@ -235,7 +235,7 @@ public class B2BVenueEndpoints : IEndpoints
     }
 
     private static async Task<ApiResult<GetPresignedUrlResponse>> GetCoverUploadUrl(
-        [FromQuery] Guid venueId,
+        [FromRoute] Guid venueId,
         [FromBody] GetPresignedUrlRequest request,
         ClaimsPrincipal user,
         IVenueImageService imageService,

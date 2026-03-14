@@ -12,6 +12,7 @@ public class VenueContext : DbContext
     public DbSet<LoyaltyLevel> LoyaltyLevels => Set<LoyaltyLevel>();
     public DbSet<Discount> Discounts => Set<Discount>();
     public DbSet<DiscountDay> DiscountDays => Set<DiscountDay>();
+    public DbSet<UserLoyalty> UserLoyalties => Set<UserLoyalty>();
 
     public VenueContext(DbContextOptions<VenueContext> options)
         : base(options)
@@ -27,6 +28,7 @@ public class VenueContext : DbContext
         ConfigureLoyaltyLevel(modelBuilder);
         ConfigureDiscount(modelBuilder);
         ConfigureDiscountDay(modelBuilder);
+        ConfigureUserVenueLoyalty(modelBuilder);
     }
 
     private static void ConfigureCompany(ModelBuilder modelBuilder)
@@ -123,7 +125,7 @@ public class VenueContext : DbContext
         {
             entity.ToTable("loyalty_levels");
             entity.HasKey(l => new { l.Id, l.VenueId });
-            entity.ToTable(t => t.HasCheckConstraint("CK_loyalty_levels_id", "\"id\" IN (0, 1, 2)"));
+            entity.ToTable(t => t.HasCheckConstraint("CK_loyalty_levels_id", "\"id\" IN (0, 1, 2, 3)"));
         });
     }
 
@@ -136,10 +138,10 @@ public class VenueContext : DbContext
             entity.HasOne(d => d.LoyaltyLevel)
                 .WithMany()
                 .HasForeignKey(d => new { d.LoyaltyLevelId, d.VenueId })
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.SetNull);
-            entity.HasOne<Venue>()
-                .WithMany()
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(d => d.Venue)
+                .WithMany(v => v.Discounts)
                 .HasForeignKey(d => d.VenueId);
             entity.HasMany(d => d.Days)
                 .WithOne()
@@ -158,6 +160,23 @@ public class VenueContext : DbContext
             // Enforce that DayOfWeek is exactly 0-6 (Sunday-Saturday)
             entity.ToTable(t =>
                 t.HasCheckConstraint("CK_discount_days_day_of_week", "\"day_of_week\" IN (0, 1, 2, 3, 4, 5, 6)"));
+        });
+    }
+
+    private static void ConfigureUserVenueLoyalty(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<UserLoyalty>(entity =>
+        {
+            entity.ToTable("user_loyalties");
+            entity.HasKey(u => new { u.UserId, u.VenueId });
+            entity.HasOne<Venue>()
+                .WithMany()
+                .HasForeignKey(u => u.VenueId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne<LoyaltyLevel>()
+                .WithMany()
+                .HasForeignKey(u => new { u.LoyaltyLevelId, u.VenueId })
+                .OnDelete(DeleteBehavior.NoAction);
         });
     }
 }

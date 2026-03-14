@@ -13,7 +13,7 @@ using VenueModule.Infrastructure.Persistence;
 namespace VenueModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(VenueContext))]
-    [Migration("20260314144055_AddVenue")]
+    [Migration("20260314200252_AddVenue")]
     partial class AddVenue
     {
         /// <inheritdoc />
@@ -77,7 +77,7 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<int?>("LoyaltyLevelId")
+                    b.Property<int>("LoyaltyLevelId")
                         .HasColumnType("integer")
                         .HasColumnName("loyalty_level_id");
 
@@ -89,18 +89,11 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("venue_id");
 
-                    b.Property<Guid?>("VenueId1")
-                        .HasColumnType("uuid")
-                        .HasColumnName("venue_id1");
-
                     b.HasKey("Id")
                         .HasName("pk_discounts");
 
                     b.HasIndex("VenueId")
                         .HasDatabaseName("ix_discounts_venue_id");
-
-                    b.HasIndex("VenueId1")
-                        .HasDatabaseName("ix_discounts_venue_id1");
 
                     b.HasIndex("LoyaltyLevelId", "VenueId")
                         .HasDatabaseName("ix_discounts_loyalty_level_id_venue_id");
@@ -149,8 +142,38 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
 
                     b.ToTable("loyalty_levels", "venue", t =>
                         {
-                            t.HasCheckConstraint("CK_loyalty_levels_id", "\"id\" IN (0, 1, 2)");
+                            t.HasCheckConstraint("CK_loyalty_levels_id", "\"id\" IN (0, 1, 2, 3)");
                         });
+                });
+
+            modelBuilder.Entity("VenueModule.Domain.Aggregates.UserLoyalty", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<Guid>("VenueId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("venue_id");
+
+                    b.Property<int>("LoyaltyLevelId")
+                        .HasColumnType("integer")
+                        .HasColumnName("loyalty_level_id");
+
+                    b.Property<int>("VisitsCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("visits_count");
+
+                    b.HasKey("UserId", "VenueId")
+                        .HasName("pk_user_loyalties");
+
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("ix_user_loyalties_venue_id");
+
+                    b.HasIndex("LoyaltyLevelId", "VenueId")
+                        .HasDatabaseName("ix_user_loyalties_loyalty_level_id_venue_id");
+
+                    b.ToTable("user_loyalties", "venue");
                 });
 
             modelBuilder.Entity("VenueModule.Domain.Aggregates.Venue", b =>
@@ -254,25 +277,23 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("VenueModule.Domain.Aggregates.Discount", b =>
                 {
-                    b.HasOne("VenueModule.Domain.Aggregates.Venue", null)
-                        .WithMany()
+                    b.HasOne("VenueModule.Domain.Aggregates.Venue", "Venue")
+                        .WithMany("Discounts")
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_discounts_venues_venue_id");
 
-                    b.HasOne("VenueModule.Domain.Aggregates.Venue", null)
-                        .WithMany("Discounts")
-                        .HasForeignKey("VenueId1")
-                        .HasConstraintName("fk_discounts_venues_venue_id1");
-
                     b.HasOne("VenueModule.Domain.Aggregates.LoyaltyLevel", "LoyaltyLevel")
                         .WithMany()
                         .HasForeignKey("LoyaltyLevelId", "VenueId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("fk_discounts_loyalty_levels_loyalty_level_id_venue_id");
 
                     b.Navigation("LoyaltyLevel");
+
+                    b.Navigation("Venue");
                 });
 
             modelBuilder.Entity("VenueModule.Domain.Aggregates.DiscountDay", b =>
@@ -293,6 +314,23 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_loyalty_levels_venues_venue_id");
+                });
+
+            modelBuilder.Entity("VenueModule.Domain.Aggregates.UserLoyalty", b =>
+                {
+                    b.HasOne("VenueModule.Domain.Aggregates.Venue", null)
+                        .WithMany()
+                        .HasForeignKey("VenueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_loyalties_venues_venue_id");
+
+                    b.HasOne("VenueModule.Domain.Aggregates.LoyaltyLevel", null)
+                        .WithMany()
+                        .HasForeignKey("LoyaltyLevelId", "VenueId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_loyalties_loyalty_levels_loyalty_level_id_venue_id");
                 });
 
             modelBuilder.Entity("VenueModule.Domain.Aggregates.Venue", b =>

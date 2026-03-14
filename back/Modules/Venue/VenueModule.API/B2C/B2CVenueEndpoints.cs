@@ -22,7 +22,7 @@ public class B2CVenueEndpoints : IEndpoints
     public static void MapEndpoints(IEndpointRouteBuilder app)
     {
         var usersApiGroup = app.MapGroup("")
-            .WithTags("Venue Users API")
+            .WithTags("Venue User API")
             .RequireAuthorization();
         usersApiGroup.MapPost("/api/v1/venues", GetVenues);
         usersApiGroup.MapGet("/api/v1/venue/{id:guid}", GetVenue);
@@ -78,7 +78,7 @@ public class B2CVenueEndpoints : IEndpoints
     }
 
     private static async Task<ApiResult<GetVenueResponse>> GetVenue(
-        [FromQuery] Guid venueId,
+        [FromRoute] Guid venueId,
         ClaimsPrincipal user,
         IVenueRepository repository,
         ILoyaltyService loyaltyService,

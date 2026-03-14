@@ -6,4 +6,13 @@ namespace VenueModule.Domain.Repositories;
 public interface IDiscountRepository : IRepository<Discount>
 {
     Task<List<Discount>> GetByVenueIdAsync(Guid venueId, CancellationToken ct = default);
+
+    Task<(List<Discount> Items, int TotalCount)> GetAvailableForUserAsync(
+        Guid userId,
+        double latitude,
+        double longitude,
+        DayOfWeek dayOfWeek,
+        int offset,
+        int limit,
+        CancellationToken ct = default);
 }

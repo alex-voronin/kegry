@@ -12,14 +12,6 @@ public class EfCoreVisitRepository : Repository<VenueContext, Visit>, IVisitRepo
     {
     }
 
-    public Task<Visit?> GetLastVisitAsync(Guid userId, Guid venueId, CancellationToken ct = default)
-    {
-        return Context.Visits
-            .Where(v => v.UserId == userId && v.VenueId == venueId)
-            .OrderByDescending(v => v.CheckedInAt)
-            .FirstOrDefaultAsync(ct);
-    }
-
     public Task<int> GetVisitCountAsync(Guid userId, Guid venueId, CancellationToken ct = default)
     {
         return Context.Visits

@@ -1,6 +1,5 @@
 using Shared.Infrastructure.Persistence;
 using VenueModule.Domain.Repositories;
-using VenueModule.Domain.ValueObjects;
 using VenueModule.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
@@ -47,5 +46,26 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
             .ToArrayAsync(ct);
 
         return (venues, totalCount);
+    }
+
+    public async Task<(Venue? venue, Visit? lastVisit, UserLoyalty? userLoyalty)> GetVenueWithLastVisitsAndUserLoyalty(
+        Guid venueId, Guid userId, CancellationToken ct)
+    {
+        var res = await Context.Venues
+            .AsNoTracking()
+            .Where(v => v.Id == venueId)
+            .Select(v => new
+            {
+                Venue = v,
+                LastVisit = Context.Visits
+                    .Where(vis => vis.UserId == userId && vis.VenueId == venueId)
+                    .OrderByDescending(vis => vis.CheckedInAt)
+                    .FirstOrDefault(),
+                VisitCount = Context.UserLoyalties
+                    .Where(vis => vis.UserId == userId && vis.VenueId == venueId)
+                    .FirstOrDefault()
+            })
+            .FirstOrDefaultAsync(ct);
+        return res == null ? (null, null, null) : (res.Venue, res.LastVisit, res.VisitCount);
     }
 }
