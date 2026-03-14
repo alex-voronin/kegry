@@ -1,4 +1,6 @@
-namespace VenueModule.API.Dto;
+using VenueModule.API.Shared;
+
+namespace VenueModule.API.B2B.Dto;
 
 public record CreateVenueRequest(
     double Latitude,

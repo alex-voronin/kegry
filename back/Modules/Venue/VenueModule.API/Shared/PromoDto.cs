@@ -1,3 +1,3 @@
-namespace VenueModule.API.Dto;
+namespace VenueModule.API.Shared;
 
 public record PromoDto(string Body);

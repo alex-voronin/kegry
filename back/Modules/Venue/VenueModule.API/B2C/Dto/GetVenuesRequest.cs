@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SharedCore.Api.Dto;
 
-namespace VenueModule.API.Dto;
+namespace VenueModule.API.B2C.Dto;
 
 public record GetVenuesRequest(
     [FromQuery] double Latitude,

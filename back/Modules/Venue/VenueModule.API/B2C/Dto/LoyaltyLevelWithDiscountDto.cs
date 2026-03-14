@@ -1,4 +1,4 @@
-namespace VenueModule.API.Dto;
+namespace VenueModule.API.B2C.Dto;
 
 public record LoyaltyLevelWithDiscountDto(
     int UserLoyaltyLevel,

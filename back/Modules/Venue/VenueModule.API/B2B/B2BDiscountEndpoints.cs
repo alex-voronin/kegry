@@ -5,14 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using SharedCore.Api;
 using SharedCore.Api.Dto;
-using VenueModule.API.Dto;
+using VenueModule.API.B2B.Dto;
 using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.Exceptions;
 using VenueModule.Domain.Repositories;
 
-namespace VenueModule.API;
+namespace VenueModule.API.B2B;
 
-public class DiscountManagementEndpoints : IEndpoints
+public class B2BDiscountEndpoints : IEndpoints
 {
     public static void MapEndpoints(IEndpointRouteBuilder app)
     {

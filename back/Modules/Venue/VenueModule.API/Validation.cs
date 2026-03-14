@@ -1,4 +1,4 @@
-using VenueModule.API.Dto;
+using VenueModule.API.B2B.Dto;
 
 namespace VenueModule.API;
 
