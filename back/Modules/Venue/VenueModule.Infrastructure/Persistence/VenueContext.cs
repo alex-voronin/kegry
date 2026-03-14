@@ -123,7 +123,7 @@ public class VenueContext : DbContext
         {
             entity.ToTable("loyalty_levels");
             entity.HasKey(l => new { l.Id, l.VenueId });
-            entity.ToTable(t => t.HasCheckConstraint("CK_loyalty_levels_Id", "\"Id\" IN (0, 1, 2)"));
+            entity.ToTable(t => t.HasCheckConstraint("CK_loyalty_levels_id", "\"id\" IN (0, 1, 2)"));
         });
     }
 

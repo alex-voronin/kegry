@@ -78,7 +78,7 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_loyalty_levels", x => new { x.id, x.venue_id });
-                    table.CheckConstraint("CK_loyalty_levels_Id", "\"Id\" IN (0, 1, 2)");
+                    table.CheckConstraint("CK_loyalty_levels_id", "\"id\" IN (0, 1, 2)");
                     table.ForeignKey(
                         name: "fk_loyalty_levels_venues_venue_id",
                         column: x => x.venue_id,

@@ -13,7 +13,7 @@ using VenueModule.Infrastructure.Persistence;
 namespace VenueModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(VenueContext))]
-    [Migration("20260314133248_AddVenue")]
+    [Migration("20260314144055_AddVenue")]
     partial class AddVenue
     {
         /// <inheritdoc />
@@ -149,7 +149,7 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
 
                     b.ToTable("loyalty_levels", "venue", t =>
                         {
-                            t.HasCheckConstraint("CK_loyalty_levels_Id", "\"Id\" IN (0, 1, 2)");
+                            t.HasCheckConstraint("CK_loyalty_levels_id", "\"id\" IN (0, 1, 2)");
                         });
                 });
 
