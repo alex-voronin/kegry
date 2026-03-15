@@ -25,7 +25,7 @@ public class EfCoreDiscountRepository : Repository<VenueContext, Discount>, IDis
             .ToListAsync(ct);
     }
 
-    public async Task<(List<Discount> Items, int TotalCount)> GetAvailableForUserAsync(
+    public async Task<(List<Discount> Discounts, int TotalCount)> GetAvailableForUserAsync(
         Guid userId,
         double latitude,
         double longitude,

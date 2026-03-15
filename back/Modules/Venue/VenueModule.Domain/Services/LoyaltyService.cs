@@ -1,3 +1,4 @@
+using GeoTimeZone;
 using SharedCore.Geolocation;
 using SharedCore.Services.LifeTimes;
 using VenueModule.Domain.Aggregates;
@@ -14,6 +15,14 @@ public record LoyaltyLevelWithDiscount(
 
 public interface ILoyaltyService
 {
+    Task<(List<Discount> Discounts, int TotalCount)> GetAvailableDiscountsAsync(
+        Guid userId,
+        double latitude,
+        double longitude,
+        int offset,
+        int limit,
+        CancellationToken ct);
+
     Task<LoyaltyLevelWithDiscount> GetLoyaltyLevelWithDiscountAsync(
         Guid userId,
         Guid venueId,
@@ -33,15 +42,40 @@ internal class LoyaltyService : ILoyaltyService, IScoped
     private readonly IVenueRepository _venueRepository;
     private readonly IVisitRepository _visitRepository;
     private readonly IUserLoyaltyRepository _userLoyaltyRepository;
+    private readonly IDiscountRepository _discountRepository;
 
     public LoyaltyService(
         IVenueRepository venueRepository,
         IVisitRepository visitRepository,
-        IUserLoyaltyRepository userLoyaltyRepository)
+        IUserLoyaltyRepository userLoyaltyRepository,
+        IDiscountRepository discountRepository)
     {
         _venueRepository = venueRepository;
         _visitRepository = visitRepository;
         _userLoyaltyRepository = userLoyaltyRepository;
+        _discountRepository = discountRepository;
+    }
+
+    public async Task<(List<Discount> Discounts, int TotalCount)> GetAvailableDiscountsAsync(
+        Guid userId,
+        double latitude,
+        double longitude,
+        int offset,
+        int limit,
+        CancellationToken ct)
+    {
+        var timezoneId = TimeZoneLookup.GetTimeZone(latitude, longitude).Result;
+        var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timezoneId);
+        var userLocalTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);
+        var dayOfWeek = userLocalTime.DayOfWeek;
+        return await _discountRepository.GetAvailableForUserAsync(
+            userId: userId,
+            latitude: latitude,
+            longitude: longitude,
+            dayOfWeek: dayOfWeek,
+            offset: offset,
+            limit: limit,
+            ct: ct);
     }
 
     public async Task CheckInToVenue(

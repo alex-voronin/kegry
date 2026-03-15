@@ -7,7 +7,7 @@ public interface IDiscountRepository : IRepository<Discount>
 {
     Task<List<Discount>> GetByVenueIdAsync(Guid venueId, CancellationToken ct = default);
 
-    Task<(List<Discount> Items, int TotalCount)> GetAvailableForUserAsync(
+    Task<(List<Discount> Discounts, int TotalCount)> GetAvailableForUserAsync(
         Guid userId,
         double latitude,
         double longitude,
