@@ -68,6 +68,7 @@ export default function VenuesScreen() {
 
   useEffect(() => {
     const init = async () => {
+      if (limit === 0) return;
       const { locationAllowed } = await checkPermissionStatus();
       if (!locationAllowed) {
         setIsLocationDenied(true);
@@ -83,7 +84,8 @@ export default function VenuesScreen() {
 
     window.addEventListener('focus', init);
     return () => window.removeEventListener('focus', init);
-  }, [limit, venues.length, isLoading]); // Fetch when limit is calculated or returned from background
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [limit, venues.length]); // Fetch when limit is calculated or returned from background
 
   useEffect(() => {
     if (inView && hasMore && !isLoading && venues.length > 0) {
