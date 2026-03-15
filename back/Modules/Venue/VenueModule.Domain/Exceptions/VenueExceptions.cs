@@ -53,7 +53,7 @@ public static class VenueExceptions
     public static HttpCodeException InvalidLoyaltyLevelOrder()
     {
         return new HttpCodeException(
-            "LoyaltyLevel VisitsUpperBound must be strictly ascending by Id (Id 0 < Id 1 < Id 2)",
+            "LoyaltyLevel must be strictly ascending by Id (Id 0 < Id 1 < Id 2)",
             HttpStatusCode.BadRequest, ErrorCode.ValidationError);
     }
 }

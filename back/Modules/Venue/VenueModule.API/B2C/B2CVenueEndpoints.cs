@@ -101,7 +101,8 @@ public class B2CVenueEndpoints : IEndpoints
         var loyaltyLevelDto = new LoyaltyLevelWithDiscountDto(
             UserLoyaltyLevel: loyaltyLevel.UserLoyaltyLevel,
             VisitsCount: loyaltyLevel.VisitsCount,
-            VisitsToNextLoyaltyLevel: loyaltyLevel.VisitsToNextLoyaltyLevel,
+            VisitsLowerBound: loyaltyLevel.VisitsLowerBound,
+            VisitsUpperBound: loyaltyLevel.VisitsUpperBound,
             Discount: loyaltyLevel.Discount
         );
 

@@ -10,7 +10,8 @@ namespace VenueModule.Domain.Services;
 public record LoyaltyLevelWithDiscount(
     int UserLoyaltyLevel,
     int VisitsCount,
-    int VisitsToNextLoyaltyLevel,
+    int VisitsLowerBound,
+    int VisitsUpperBound,
     int Discount);
 
 public interface ILoyaltyService
@@ -132,7 +133,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         await _visitRepository.AddAsync(visit, ct);
 
         var newVisitsCount = userLoyalty.VisitsCount + 1;
-        var (currentLoyaltyLevelId, _) = GetCurrentLoyaltyLevel(venue.LoyaltyLevels, newVisitsCount);
+        var (currentLoyaltyLevelId, _, _) = GetCurrentLoyaltyLevel(venue.LoyaltyLevels, newVisitsCount);
 
         userLoyalty.LoyaltyLevelId = currentLoyaltyLevelId;
         userLoyalty.VisitsCount = newVisitsCount;
@@ -160,7 +161,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         var userLoyalty = await _userLoyaltyRepository.GetByUserAndVenueId(userId, venueId, ct);
         var visitsCount = userLoyalty?.VisitsCount ?? 0;
 
-        var (currentLoyaltyLevel, visitsToNextLoyaltyLevel) = GetCurrentLoyaltyLevel(
+        var (currentLoyaltyLevel, visitsLowerBound, visitsUpperBound) = GetCurrentLoyaltyLevel(
             venue.LoyaltyLevels, visitsCount);
 
         var timeZone = TimeZoneInfo.FindSystemTimeZoneById(venue.TimeZoneId);
@@ -173,30 +174,42 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             .ToList();
 
         var maxDiscount = applicableDiscounts.Count > 0 ? applicableDiscounts.Max(d => d.Percent) : 0;
-        return new LoyaltyLevelWithDiscount(currentLoyaltyLevel, visitsCount, visitsToNextLoyaltyLevel, maxDiscount);
+        return new LoyaltyLevelWithDiscount(
+            UserLoyaltyLevel: currentLoyaltyLevel,
+            VisitsCount: visitsCount, 
+            VisitsLowerBound: visitsLowerBound,
+            VisitsUpperBound: visitsUpperBound,
+            Discount: maxDiscount);
     }
 
-    internal static (int currentLoyaltyLevel, int visitsToNextLoyaltyLevel) GetCurrentLoyaltyLevel(
+    internal static (int currentLoyaltyLevel, int visitsLowerBound, int visitsUpperBound) GetCurrentLoyaltyLevel(
         IReadOnlyCollection<LoyaltyLevel> levels, int visitsCount)
     {
-        var currentLoyaltyLevel = 0;
-        var visitsToNextLoyaltyLevel = 0;
-
-        if (levels.Count > 0)
+        if (levels.Count == 0)
         {
-            var nextLevel = levels.FirstOrDefault(l => visitsCount < l.VisitsUpperBound);
-            if (nextLevel != null)
+            return (0, 0, -1);
+        }
+        
+        var sortedLevels = levels.OrderBy(l => l.VisitsUpperBound).ToArray();
+        var maxLevel = sortedLevels[^1];
+        
+        var currentLoyaltyLevel = maxLevel.Id;
+        var visitsLowerBound = maxLevel.VisitsUpperBound;
+        var visitsUpperBound = -1;
+        
+        LoyaltyLevel? prevLevel = null;
+        foreach (var level in sortedLevels)
+        {
+            if (visitsCount < level.VisitsUpperBound)
             {
-                currentLoyaltyLevel = nextLevel.Id;
-                visitsToNextLoyaltyLevel = nextLevel.VisitsUpperBound - visitsCount;
+                currentLoyaltyLevel = level.Id;
+                visitsLowerBound = prevLevel?.VisitsUpperBound ?? 0;
+                visitsUpperBound = level.VisitsUpperBound;
+                break;
             }
-            else
-            {
-                currentLoyaltyLevel = levels.Max(l => l.Id);
-                visitsToNextLoyaltyLevel = 0;
-            }
+            prevLevel = level;
         }
 
-        return (currentLoyaltyLevel, visitsToNextLoyaltyLevel);
+        return (currentLoyaltyLevel, visitsLowerBound, visitsUpperBound);
     }
 }

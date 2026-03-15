@@ -14,20 +14,21 @@ public class LoyaltyServiceTests
         var levels = Array.Empty<LoyaltyLevel>();
         var result = LoyaltyService.GetCurrentLoyaltyLevel(levels, 0);
         result.currentLoyaltyLevel.ShouldBe(0);
-        result.visitsToNextLoyaltyLevel.ShouldBe(0);
+        result.visitsLowerBound.ShouldBe(0);
+        result.visitsUpperBound.ShouldBe(-1);
     }
 
     [Theory]
-    // visitsCount, expectedLevelId, expectedVisitsNeeded
-    [InlineData(0, 0, 5)]
-    [InlineData(4, 0, 1)]
-    [InlineData(5, 1, 5)]
-    [InlineData(10, 2, 5)]
-    [InlineData(14, 2, 1)]
-    [InlineData(20, 3, 0)]
-    [InlineData(25, 3, 0)]
+    // visitsCount, expectedLevelId, expectedLowerBound, expectedUpperBound
+    [InlineData(0, 0, 0, 5)]
+    [InlineData(4, 0, 0, 5)]
+    [InlineData(5, 1, 5, 10)]
+    [InlineData(10, 2, 10, 15)]
+    [InlineData(14, 2, 10, 15)]
+    [InlineData(20, 3, 20, -1)]
+    [InlineData(25, 3, 20, -1)]
     public void GetCurrentLoyaltyLevel_WithVariousVisits_ReturnsExpectedResult(
-        int visitsCount, int expectedLevelId, int expectedVisitsNeeded)
+        int visitsCount, int expectedLevelId, int expectedLowerBound, int expectedUpperBound)
     {
         var levels = new List<LoyaltyLevel>
         {
@@ -38,6 +39,7 @@ public class LoyaltyServiceTests
         };
         var result = LoyaltyService.GetCurrentLoyaltyLevel(levels, visitsCount);
         result.currentLoyaltyLevel.ShouldBe(expectedLevelId);
-        result.visitsToNextLoyaltyLevel.ShouldBe(expectedVisitsNeeded);
+        result.visitsLowerBound.ShouldBe(expectedLowerBound);
+        result.visitsUpperBound.ShouldBe(expectedUpperBound);
     }
 }
