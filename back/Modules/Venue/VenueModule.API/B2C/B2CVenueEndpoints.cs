@@ -78,24 +78,24 @@ public class B2CVenueEndpoints : IEndpoints
     }
 
     private static async Task<ApiResult<GetVenueResponse>> GetVenue(
-        [FromRoute] Guid venueId,
+        [FromRoute] Guid id,
         ClaimsPrincipal user,
         IVenueRepository repository,
         ILoyaltyService loyaltyService,
         IS3StorageService storageService,
         CancellationToken ct)
     {
-        var venue = await repository.GetByIdAsync(venueId, includes: [v => v.Company], ct: ct);
+        var venue = await repository.GetByIdAsync(id, includes: [v => v.Company], ct: ct);
         if (venue == null)
         {
-            throw VenueExceptions.VenueNotFound(venueId);
+            throw VenueExceptions.VenueNotFound(id);
         }
 
         var companyDto = DomainCompanyToDto(storageService, venue.Company);
         var venueDto = DomainVenueToDto(storageService, venue);
         var loyaltyLevel = await loyaltyService.GetLoyaltyLevelWithDiscountAsync(
             userId: user.GetId(),
-            venueId: venueId,
+            venueId: id,
             ct: ct);
 
         var loyaltyLevelDto = new LoyaltyLevelWithDiscountDto(

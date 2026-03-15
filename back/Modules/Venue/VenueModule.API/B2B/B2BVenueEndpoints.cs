@@ -32,7 +32,7 @@ public class B2BVenueEndpoints : IEndpoints
         managementApiGroup.MapPatch("/api/v1/venue/{id:guid}", PatchVenue);
         managementApiGroup.MapDelete("/api/v1/venue/{id:guid}", DeleteVenue);
         managementApiGroup.MapPost("/api/v1/company/avatar/upload-url", GetAvatarUploadUrl);
-        managementApiGroup.MapPost("/api/v1/venue/{venueId:guid}/cover/upload-url", GetCoverUploadUrl);
+        managementApiGroup.MapPost("/api/v1/venue/{id:guid}/cover/upload-url", GetCoverUploadUrl);
     }
 
     private static async Task<ApiResult.EmptyResult> CreateCompany(
@@ -235,7 +235,7 @@ public class B2BVenueEndpoints : IEndpoints
     }
 
     private static async Task<ApiResult<GetPresignedUrlResponse>> GetCoverUploadUrl(
-        [FromRoute] Guid venueId,
+        [FromRoute] Guid id,
         [FromBody] GetPresignedUrlRequest request,
         ClaimsPrincipal user,
         IVenueImageService imageService,
@@ -244,7 +244,7 @@ public class B2BVenueEndpoints : IEndpoints
         Validation.ThrowIfFileSizeExceed(request.ContentLength, Validation.MaxCoverSizeBytes);
         var urls = await imageService.GetVenueCoverUploadUrlAsync(
             companyId: user.GetId(),
-            venueId: venueId,
+            venueId: id,
             contentLength: request.ContentLength,
             ct: ct);
         return ApiResult<GetPresignedUrlResponse>.Build(
