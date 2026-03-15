@@ -10,11 +10,23 @@ import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { ModalMenu } from '@/components/ui/modal-menu';
+import { ModalDialog } from '@/components/ui/modal-dialog';
+import { ButtonVariant } from '@/components/ui/button';
 import { useVenueStore } from '@/store/use-venue-store';
 import { cn } from '@/lib/utils';
 import { toast } from 'react-toastify';
+import { HelpCircle } from 'lucide-react';
 import styles from './venue-detail.module.css';
 import { InstagramIcon } from './_components/instagram-icon';
+
+function calculateProgressPercentage(
+  count: number,
+  lower: number,
+  upper: number,
+) {
+  if (upper <= lower) return 100;
+  return Math.max(0, Math.min(100, ((count - lower) / (upper - lower)) * 100));
+}
 
 export default function VenueDetailScreen() {
   const router = useRouter();
@@ -25,6 +37,7 @@ export default function VenueDetailScreen() {
   const { currentVenue, isLoading, fetchVenue, reset } = useVenueStore();
   const [isInitializing, setIsInitializing] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
 
   useEffect(() => {
     const loadVenue = async () => {
@@ -109,17 +122,19 @@ export default function VenueDetailScreen() {
           }
         />
         {venue.coverImageUrl ? (
-          <Image
-            src={venue.coverImageUrl}
-            alt="Venue Cover"
-            fill
-            className={styles.coverImage}
-            priority
-          />
+          <>
+            <Image
+              src={venue.coverImageUrl}
+              alt="Venue Cover"
+              fill
+              className={styles.coverImage}
+              priority
+            />
+            <div className={styles.coverOverlay} />
+          </>
         ) : (
-          <div className="h-full w-full bg-slate-300" />
+          <div className="h-full w-full" />
         )}
-        <div className={styles.coverOverlay} />
       </div>
 
       {/* Main Content Area (Rounded Top) */}
@@ -134,10 +149,64 @@ export default function VenueDetailScreen() {
               className={styles.avatarImage}
             />
           </div>
-          <div className={styles.loyaltyLevel}>{loyaltyLevel}</div>
         </div>
 
         <div className={styles.content}>
+          {(loyaltyLevel.discount > 0 ||
+            loyaltyLevel.userLoyaltyLevel > 0 ||
+            loyaltyLevel.visitsUpperBound != null) && (
+            <div className={styles.section}>
+              <FormSectionTitle>{t('myDiscount')}</FormSectionTitle>
+              <div
+                className={cn(styles.field, styles.loyaltyCard)}
+                onClick={() => setIsInfoDialogOpen(true)}
+              >
+                <div className={styles.loyaltyHeader}>
+                  <div className={styles.loyaltyLevelTitle}>
+                    <span>
+                      {t('level')} {loyaltyLevel.userLoyaltyLevel}
+                    </span>
+                  </div>
+
+                  <span className={styles.loyaltyDiscount}>
+                    {t('discount', { percent: loyaltyLevel.discount })}
+                  </span>
+                </div>
+                {loyaltyLevel.visitsUpperBound !== null && (
+                  <div className={styles.progressContainer}>
+                    <div className={styles.progressBarBg}>
+                      <div
+                        className={styles.progressBarFill}
+                        style={{
+                          width: `${calculateProgressPercentage(
+                            loyaltyLevel.visitsCount,
+                            loyaltyLevel.visitsLowerBound,
+                            loyaltyLevel.visitsUpperBound,
+                          )}%`,
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center gap-1.5 self-end">
+                      <div className={styles.progressText}>
+                        {t('visits', {
+                          current:
+                            loyaltyLevel.visitsCount -
+                            loyaltyLevel.visitsLowerBound,
+                          total:
+                            loyaltyLevel.visitsUpperBound -
+                            loyaltyLevel.visitsLowerBound,
+                        })}
+                      </div>
+                      <div className="text-secondary">
+                        <HelpCircle size={14} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className={styles.section}>
             <FormSectionTitle>{t('address')}</FormSectionTitle>
             <div
@@ -270,6 +339,21 @@ export default function VenueDetailScreen() {
               ]
             : []),
         ]}
+      />
+
+      <ModalDialog
+        isOpen={isInfoDialogOpen}
+        onClose={() => setIsInfoDialogOpen(false)}
+        message={
+          loyaltyLevel.nextLevelDiscount != null
+            ? t('nextDiscountLevelInfo', {
+                percent: loyaltyLevel.nextLevelDiscount,
+              })
+            : t('maxDiscountLevelReached')
+        }
+        primaryButtonText="OK"
+        primaryButtonVariant={ButtonVariant.Default}
+        onPrimaryAction={() => setIsInfoDialogOpen(false)}
       />
     </div>
   );

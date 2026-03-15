@@ -444,6 +444,12 @@
       "workingHours": "Working Hours",
       "promotions": "Promotions 🎉",
       "notFound": "Venue not found",
+      "myDiscount": "My Discount",
+      "level": "Level",
+      "discount": "Discount: {percent}%",
+      "nextDiscountLevelInfo": "Next discount level is: {percent}%",
+      "maxDiscountLevelReached": "The maximum discount has been reached.",
+      "visits": "{current}/{total} visits to next level",
       "menu": {
         "openInstagram": "Open Instagram",
         "openWebsite": "Open Website",

@@ -29,10 +29,18 @@ export interface VenueDto {
   promos: PromoDto[];
 }
 
+export interface LoyaltyLevelWithDiscountDto {
+  userLoyaltyLevel: number;
+  visitsCount: number;
+  visitsLowerBound: number;
+  visitsUpperBound: number;
+  discount: number;
+}
+
 export interface GetVenueResponse {
   company: CompanyDto;
   venue: VenueDto;
-  loyaltyLevel: number;
+  loyaltyLevel: LoyaltyLevelWithDiscountDto;
 }
 
 interface VenueState {
