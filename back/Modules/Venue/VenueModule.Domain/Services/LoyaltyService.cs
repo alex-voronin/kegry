@@ -11,8 +11,9 @@ public record LoyaltyLevelWithDiscount(
     int UserLoyaltyLevel,
     int VisitsCount,
     int VisitsLowerBound,
-    int VisitsUpperBound,
-    int Discount);
+    int? VisitsUpperBound,
+    int Discount,
+    int? NextLevelDiscount);
 
 public interface ILoyaltyService
 {
@@ -173,21 +174,26 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             .Where(d => currentLoyaltyLevel >= d.LoyaltyLevelId)
             .ToList();
 
-        var maxDiscount = applicableDiscounts.Count > 0 ? applicableDiscounts.Max(d => d.Percent) : 0;
+        var nextLevelDiscount = venue.Discounts
+            .Where(d => d.Days.Any(day => day.DayOfWeek == today))
+            .Where(d => d.LoyaltyLevelId == currentLoyaltyLevel + 1)
+            .FirstOrDefault();      
+        var maxAvailableDiscount = applicableDiscounts.Count > 0 ? applicableDiscounts.Max(d => d.Percent) : 0;
         return new LoyaltyLevelWithDiscount(
             UserLoyaltyLevel: currentLoyaltyLevel,
             VisitsCount: visitsCount, 
             VisitsLowerBound: visitsLowerBound,
             VisitsUpperBound: visitsUpperBound,
-            Discount: maxDiscount);
+            Discount: maxAvailableDiscount,
+            NextLevelDiscount: nextLevelDiscount?.Percent);
     }
 
-    internal static (int currentLoyaltyLevel, int visitsLowerBound, int visitsUpperBound) GetCurrentLoyaltyLevel(
+    internal static (int currentLoyaltyLevel, int visitsLowerBound, int? visitsUpperBound) GetCurrentLoyaltyLevel(
         IReadOnlyCollection<LoyaltyLevel> levels, int visitsCount)
     {
         if (levels.Count == 0)
         {
-            return (0, 0, -1);
+            return (0, 0, null);
         }
         
         var sortedLevels = levels.OrderBy(l => l.VisitsUpperBound).ToArray();

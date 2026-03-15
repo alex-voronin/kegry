@@ -20,7 +20,7 @@ public class LoyaltyLevelTests
 
     [Theory]
     [InlineData(-1)]
-    [InlineData(3)]
+    [InlineData(4)]
     [InlineData(100)]
     public void LoyaltyLevel_WhenIdIsOutOfRange_ThenThrows(int invalidId)
     {
@@ -40,22 +40,11 @@ public class LoyaltyLevelTests
     }
 
     [Theory]
-    [InlineData(0)]
     [InlineData(-1)]
     [InlineData(-100)]
     public void LoyaltyLevel_WhenVisitsUpperBoundIsNotPositive_ThenThrows(int invalidValue)
     {
         Should.Throw<HttpCodeException>(() => _ = new LoyaltyLevel { Id = 0, VenueId = Guid.NewGuid(), VisitsUpperBound = invalidValue })
-            .ErrorCode.ShouldBe(ErrorCode.ValidationError);
-    }
-
-    [Theory]
-    [InlineData(0)]
-    [InlineData(-5)]
-    public void VisitsUpperBound_WhenSetToNotPositive_ThenThrows(int invalidValue)
-    {
-        var level = new LoyaltyLevel { Id = 0, VenueId = Guid.NewGuid(), VisitsUpperBound = 10 };
-        Should.Throw<HttpCodeException>(() => level.VisitsUpperBound = invalidValue)
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 

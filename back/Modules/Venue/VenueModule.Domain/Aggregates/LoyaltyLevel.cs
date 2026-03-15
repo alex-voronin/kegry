@@ -13,7 +13,11 @@ public class LoyaltyLevel
 
     public Guid VenueId { get; init; }
 
-    public int VisitsUpperBound { get; set; }
+    public int VisitsUpperBound
+    {
+        get;
+        set => field = ValidateUpperBound(value);
+    }
 
     // ── Validation ────────────────────────────────────────────────────────────
 
@@ -37,6 +41,12 @@ public class LoyaltyLevel
     private static int ValidateId(int value)
     {
         Validation.ThrowIfInvalid(nameof(Id), () => value >= 0 && value <= 3, "LoyaltyLevel Id must be [0..3]");
+        return value;
+    }
+
+    private static int ValidateUpperBound(int value)
+    {
+        Validation.ThrowIfInvalid(nameof(Id), () => value >= 0, "UpperBound must be >= 0");
         return value;
     }
 }

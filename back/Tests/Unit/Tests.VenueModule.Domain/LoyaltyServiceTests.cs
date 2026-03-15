@@ -7,7 +7,6 @@ namespace Tests.VenueModule.Domain;
 
 public class LoyaltyServiceTests
 {
-
     [Fact]
     public void GetCurrentLoyaltyLevel_WhenLevelsEmpty_ReturnsZeroes()
     {
@@ -15,7 +14,7 @@ public class LoyaltyServiceTests
         var result = LoyaltyService.GetCurrentLoyaltyLevel(levels, 0);
         result.currentLoyaltyLevel.ShouldBe(0);
         result.visitsLowerBound.ShouldBe(0);
-        result.visitsUpperBound.ShouldBe(-1);
+        result.visitsUpperBound.ShouldBe(null);
     }
 
     [Theory]
