@@ -113,6 +113,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
             otherUserId: otherUserId,
             expiresAt: expiresAt,
             ignoreAvailableInvites: false,
+            throwInMeetingException: false,
             ct: ct
         );
     }
@@ -131,6 +132,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
             otherUserId: otherUserId,
             expiresAt: expiresAt,
             ignoreAvailableInvites: true,
+            throwInMeetingException: false,
             ct: ct
         );
     }
@@ -149,6 +151,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
             otherUserId: otherUserId,
             expiresAt: otherToMeUserRelation.InviteExpiresAt,
             ignoreAvailableInvites: true,
+            throwInMeetingException: true,
             ct: ct
         );
     }
@@ -181,7 +184,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
     // It's unsafe because can throw exception when two users invite the same user at the same time.
     // Since the user can be only in one meeting.
     private async Task InviteUserUnsafeAsync(Guid myUserId, Guid otherUserId, DateTimeOffset expiresAt,
-        CancellationToken ct)
+        bool throwInMeetingException, CancellationToken ct = default)
     {
         var now = _timeProvider.GetUtcNow();
         var meToOtherUserRelation = await _feedUserRelationRepository.GetOrCreateAsync(myUserId, otherUserId, ct: ct);
@@ -207,7 +210,14 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
 
         if (otherToMeUserRelation != null && !otherToMeUserRelation.IsInviteExpired(now))
         {
-            await TryArrangeMeeting(otherToMeUserRelation, meToOtherUserRelation, ct);
+            var succeed = await TryArrangeMeeting(
+                meToOtherUserRelation: meToOtherUserRelation,
+                otherToMeUserRelation: otherToMeUserRelation,
+                ct: ct);
+            if (!succeed && throwInMeetingException)
+            {
+                throw FeedExceptions.UserAlreadyInMeeting();
+            }
         }
         else
         {
@@ -223,8 +233,13 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         await _feedUserRelationRepository.SaveChangesAndFlushMessagesAsync(ct);
     }
 
-    private async Task InviteUserAsync(Guid myUserId, Guid otherUserId,
-        DateTimeOffset expiresAt, bool ignoreAvailableInvites, CancellationToken ct)
+    private async Task InviteUserAsync(
+        Guid myUserId,
+        Guid otherUserId,
+        DateTimeOffset expiresAt,
+        bool ignoreAvailableInvites,
+        bool throwInMeetingException,
+        CancellationToken ct = default)
     {
         var now = _timeProvider.GetUtcNow();
         if (expiresAt > now.AddHours(48))
@@ -243,12 +258,17 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
 
         try
         {
-            await InviteUserUnsafeAsync(myUserId, otherUserId, expiresAt, ct);
+            await InviteUserUnsafeAsync(
+                myUserId: myUserId,
+                otherUserId: otherUserId,
+                expiresAt: expiresAt,
+                throwInMeetingException: throwInMeetingException,
+                ct: ct);
         }
         catch (Exception e)
         {
             var isInMeeting = await _feedUserRelationRepository.IsInMeetingAsync(otherUserId, ct);
-            if (!isInMeeting)
+            if (!isInMeeting || throwInMeetingException)
             {
                 throw;
             }

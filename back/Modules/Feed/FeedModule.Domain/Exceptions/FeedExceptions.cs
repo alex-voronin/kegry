@@ -46,4 +46,11 @@ public static class FeedExceptions
             HttpStatusCode.Forbidden,
             ErrorCode.ValidationError);
     }
+
+    public static HttpCodeException UserAlreadyInMeeting()
+    {
+        return new HttpCodeException("The user already has a meetup scheduled.",
+            HttpStatusCode.Forbidden,
+            ErrorCode.ValidationError);
+    }
 }

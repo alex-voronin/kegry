@@ -25,7 +25,7 @@ public class FeedEndpoints : IEndpoints
         apiGroup.MapGet("/api/v1/feed/status", GetFeedStatus);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/rating", PostUserRating);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/invite", InviteUser);
-        apiGroup.MapPost("/api/v1/feed/{id:guid}/accept-invite", AcceptInviteUser);
+        apiGroup.MapPost("/api/v1/feed/{id:guid}/accept-invite", AcceptInvite);
         apiGroup.MapGet("/api/v1/feed/{id:guid}/invite-expiration", GetInviteExpiration);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/skip", SkipUser);
         apiGroup.MapPost("/api/v1/feed/{id:guid}/block", BlockUser);
@@ -153,7 +153,7 @@ public class FeedEndpoints : IEndpoints
         return ApiResult.Empty;
     }
 
-    private static async Task<ApiResult.EmptyResult> AcceptInviteUser(
+    private static async Task<ApiResult.EmptyResult> AcceptInvite(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         IUserActionsService userActionsService,
