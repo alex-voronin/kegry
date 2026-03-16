@@ -8,6 +8,7 @@ import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { Spinner } from '@/components/ui/spinner';
+import { ListItem } from '@/components/ui/list-item';
 import { useInView } from 'react-intersection-observer';
 import { useViewportItemCount } from '@/hooks/use-viewport-item-count';
 import { useVenuesStore, VenueListItemDto } from '@/store/use-venues-store';
@@ -150,47 +151,32 @@ export default function VenuesScreen() {
         ) : (
           <div className={styles.venueList}>
             {venues.map((venue) => (
-              <div
+              <ListItem
                 key={venue.id}
-                className={styles.venueItem}
+                className="cursor-pointer"
                 onClick={() => setSelectedVenue(venue)}
-              >
-                <div className={styles.venueItemLeft}>
-                  <div className={styles.venueImageWrapper}>
-                    <Icon
-                      src={
-                        venue.companyAvatarImageUrl ||
-                        '/assets/common/venues-icon.svg'
-                      }
-                      alt={venue.companyName}
-                      width={48}
-                      height={48}
-                    />
-                  </div>
-                  <div className={styles.venueBody}>
-                    <span className={styles.venueTitle}>
-                      {venue.companyName}
+                avatarUrl={venue.companyAvatarImageUrl || '/assets/common/venues-icon.svg'}
+                avatarAlt={venue.companyName}
+                title={venue.companyName}
+                subtitle={
+                  <>
+                    <span>
+                      {t('distance', {
+                        distance:
+                          distanceUnits === DistanceUnits.Miles
+                            ? metersToMiles(venue.distanceMeters)
+                            : metersToKilometers(venue.distanceMeters),
+                        units:
+                          distanceUnits === DistanceUnits.Miles
+                            ? tCommon('units.miles')
+                            : tCommon('units.kilometers'),
+                      })}
                     </span>
-                    <div className={styles.venueDetails}>
-                      <span>
-                        {t('distance', {
-                          distance:
-                            distanceUnits === DistanceUnits.Miles
-                              ? metersToMiles(venue.distanceMeters)
-                              : metersToKilometers(venue.distanceMeters),
-                          units:
-                            distanceUnits === DistanceUnits.Miles
-                              ? tCommon('units.miles')
-                              : tCommon('units.kilometers'),
-                        })}
-                      </span>
-                      <span>•</span>
-                      <span>{venue.address}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={styles.venueItemRight}>
+                    <span>•</span>
+                    <span>{venue.address}</span>
+                  </>
+                }
+                rightEl={
                   <Icon
                     src="/assets/common/more-icon.svg"
                     alt="more"
@@ -200,8 +186,8 @@ export default function VenuesScreen() {
                     stopPropagation
                     onClick={() => setSelectedVenue(venue)}
                   />
-                </div>
-              </div>
+                }
+              />
             ))}
             {hasMore && (
               <div ref={pageBottomRef} className="flex justify-center py-4">

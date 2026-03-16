@@ -1,0 +1,33 @@
+@reference "../../app/globals.css";
+
+.item {
+  @apply bg-form-element hover:bg-hover flex items-center justify-between px-4 py-3 sm:rounded-xl;
+}
+
+.itemLeft {
+  @apply flex items-center gap-4;
+}
+
+.imageWrapper {
+  @apply relative h-12 w-12 shrink-0 overflow-hidden rounded-full;
+}
+
+.body {
+  @apply flex flex-col;
+}
+
+.title {
+  @apply text-base leading-tight font-normal;
+}
+
+.subtitle {
+  @apply text-secondary flex items-center gap-1 text-sm leading-tight;
+}
+
+.itemRight {
+  @apply flex items-center gap-2;
+}
+
+.expired {
+  @apply opacity-50 grayscale;
+}

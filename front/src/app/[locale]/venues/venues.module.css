@@ -8,38 +8,6 @@
   @apply flex flex-col gap-0.5;
 }
 
-.venueItem {
-  @apply bg-form-element hover:bg-hover flex items-center justify-between px-4 py-3 sm:rounded-xl;
-}
-
-.venueItemLeft {
-  @apply flex items-center gap-4;
-}
-
-.venueImageWrapper {
-  @apply relative h-12 w-12 shrink-0 overflow-hidden rounded-full;
-}
-
-.venueBody {
-  @apply flex flex-col;
-}
-
-.venueTitle {
-  @apply text-base leading-tight font-normal;
-}
-
-.venueDetails {
-  @apply text-secondary flex items-center gap-1 text-sm leading-tight;
-}
-
-.moreButton {
-  @apply hover:bg-hover active:bg-active h-10 w-10 items-center justify-center rounded-full;
-}
-
-.venueItemRight {
-  @apply flex items-center gap-2;
-}
-
 .emptyText {
   @apply px-8 text-sm;
 }

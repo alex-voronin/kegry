@@ -9,6 +9,7 @@ import { Icon } from '@/components/ui/icon';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { ReportDialog } from '@/components/ui/report-dialog';
 import { Spinner } from '@/components/ui/spinner';
+import { ListItem } from '@/components/ui/list-item';
 import { useInView } from 'react-intersection-observer';
 import { useViewportItemCount } from '@/hooks/use-viewport-item-count';
 import {
@@ -218,62 +219,45 @@ export default function NotificationsScreen() {
             {notifications.map((notif) => {
               const expired = isNotificationExpired(notif.expiresAt);
               return (
-                <div
+                <ListItem
                   key={notif.id}
-                  className={`${styles.notificationItem} ${expired ? styles.expired : ''}`}
+                  expired={expired}
+                  className={notif.fromUserId ? 'cursor-pointer' : ''}
                   onClick={() => {
                     if (notif.fromUserId) {
                       setSelectedNotification(notif);
                     }
                   }}
-                >
-                  <div className={styles.notificationItemLeft}>
-                    <div className={styles.profileImageWrapper}>
-                      <Image
-                        src={
-                          notif.avatarImageUrl ||
-                          '/assets/common/avatar-placeholder.webp'
-                        }
-                        alt="Profile"
-                        width={48}
-                        height={48}
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className={styles.notificationBody}>
-                      <span className={styles.notificationTitle}>
-                        {notif.text}
-                      </span>
-                      <span className={styles.notificationTime}>
-                        {formatNotificationDate(notif.expiresAt, t)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className={styles.notificationItemRight}>
-                    {!expired && notif.fromUserId && (
+                  avatarUrl={notif.avatarImageUrl || '/assets/common/avatar-placeholder.webp'}
+                  avatarAlt="Profile"
+                  title={notif.text}
+                  subtitle={formatNotificationDate(notif.expiresAt, t)}
+                  rightEl={
+                    <>
+                      {!expired && notif.fromUserId && (
+                        <Icon
+                          src="/assets/notifications/accept-icon.webp"
+                          alt="accept"
+                          width={24}
+                          height={24}
+                          className="object-fill"
+                          priority
+                          stopPropagation
+                          onClick={() => handleAccept(notif)}
+                        />
+                      )}
                       <Icon
-                        src="/assets/notifications/accept-icon.webp"
-                        alt="accept"
+                        src="/assets/common/more-icon.svg"
+                        alt="more"
                         width={24}
                         height={24}
-                        className="object-fill"
                         priority
                         stopPropagation
-                        onClick={() => handleAccept(notif)}
+                        onClick={() => setSelectedNotification(notif)}
                       />
-                    )}
-                    <Icon
-                      src="/assets/common/more-icon.svg"
-                      alt="more"
-                      width={24}
-                      height={24}
-                      priority
-                      stopPropagation
-                      onClick={() => setSelectedNotification(notif)}
-                    />
-                  </div>
-                </div>
+                    </>
+                  }
+                />
               );
             })}
             {hasMore && (
