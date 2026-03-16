@@ -5,4 +5,5 @@ public record AvailableDiscountDto(
     string CompanyAvatarImageUrl,
     string VenueId,
     string VenueAddress,
+    string? GoogleMapsUrl,
     int Percent);

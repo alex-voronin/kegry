@@ -298,6 +298,7 @@
       "title": "My Profile",
       "blockedUsers": "Blocked Users",
       "friendsAndFoes": "Friends & Foes",
+      "offersAndDeals": "Offers & Deals",
       "privacy": "Privacy",
       "coverImage": "Cover Image",
       "settings": "Settings",
@@ -424,6 +425,18 @@
       "notificationsTitle": "Notifications",
       "notificationsDesc": "The app will work without notifications enabled, but you won't receive invitations or new message notifications. The user experience of some features will also be degraded.",
       "instructions": "To enable permissions:\n1. Tap the lock icon 🔒 or settings icon in your browser address bar.\n2. Tap 'Permissions' or 'Site Settings'.\n3. Allow 'Location' and 'Notifications'.\n4. Refresh this page."
+    },
+    "offersAndDeals": {
+      "title": "Offers & Deals",
+      "noOffers": "You have no available offers right now. Visit venues to unlock discounts!",
+      "locationRequired": "Location access is required to show your closest offers. Please enable location in your browser settings.",
+      "menu": {
+        "viewVenue": "View Venue",
+        "openInMaps": "Open on Google Maps"
+      },
+      "toast": {
+        "loadFailed": "Failed to load your offers"
+      }
     },
     "venues": {
       "title": "Venues",

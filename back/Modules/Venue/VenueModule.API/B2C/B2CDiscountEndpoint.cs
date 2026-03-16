@@ -45,6 +45,7 @@ public class B2CDiscountEndpoint : IEndpoints
                     d.Venue.Company.AvatarImageS3Key, d.Venue.Company.ChangedAt),
                 VenueId: d.VenueId.ToString(),
                 VenueAddress: d.Venue.Address,
+                GoogleMapsUrl: d.Venue.GoogleMapsUrl,
                 Percent: d.Percent
             ))
             .ToArray();

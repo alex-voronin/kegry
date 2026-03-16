@@ -325,6 +325,19 @@ export default function ProfilePage() {
           <div className={styles.actionsSection}>
             <div
               className={cn(styles.field, styles.actionField)}
+              onClick={() => router.push(PAGE_ROUTES.OFFERS_AND_DEALS)}
+            >
+              <span>{t('offersAndDeals')}</span>
+              <Icon
+                src="/assets/common/disclosure-right-icon.svg"
+                alt="chevron"
+                width={10}
+                height={18}
+                priority
+              />
+            </div>
+            <div
+              className={cn(styles.field, styles.actionField)}
               onClick={() => router.push(PAGE_ROUTES.FRIENDS_AND_FOES)}
             >
               <span>{t('friendsAndFoes')}</span>

@@ -17,6 +17,7 @@ export const PAGE_ROUTES = {
   USER_PROFILE: (userId: string) => `/profile/${userId}`,
   PROFILE_EDIT: '/profile/edit',
   PROFILE_COVER: '/profile/cover-image',
+  OFFERS_AND_DEALS: '/profile/offers-and-deals',
   PRIVACY_SETTINGS: '/profile/privacy',
   EDIT_PROFILE: '/edit-profile',
   NOTIFICATIONS: '/notifications',
@@ -87,6 +88,9 @@ export const API_ENDPOINTS = {
   },
   LOCATION: {
     UPDATE: '/api/v1/location',
+  },
+  DISCOUNTS: {
+    AVAILABLE: '/api/v1/discounts/available',
   },
   VENUES: '/api/v1/venues',
   VENUE: (id: string) => `/api/v1/venue/${id}`,
