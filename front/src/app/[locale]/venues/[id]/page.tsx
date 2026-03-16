@@ -12,7 +12,7 @@ import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { ButtonVariant } from '@/components/ui/button';
-import { useVenueStore } from '@/store/use-venue-store';
+import { useVenueStore } from './use-venue-store';
 import { cn } from '@/lib/utils';
 import { toast } from 'react-toastify';
 import { HelpCircle } from 'lucide-react';

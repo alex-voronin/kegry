@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
-import { useFriendsStore } from '@/store/use-friends-store';
+import { useFriendsStore } from '../use-friends-store';
 import { useInView } from 'react-intersection-observer';
 import { useViewportItemCount } from '@/hooks/use-viewport-item-count';
 import { toast } from 'react-toastify';

@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
-import { useMetNpcsStore } from '@/store/use-met-npcs-store';
+import { useMetNpcsStore } from '../use-met-npcs-store';
 import { toast } from 'react-toastify';
 import styles from '../friends-and-foes.module.css';
 import { SelectedUser } from '../types';

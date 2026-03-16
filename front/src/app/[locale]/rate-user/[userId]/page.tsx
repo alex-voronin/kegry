@@ -7,7 +7,7 @@ import { useRouter } from '@/i18n/routing';
 import { StarRating } from 'react-flexible-star-rating';
 import styles from './rate-user.module.css';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { useRateUserStore } from '@/store/use-rate-user-store';
+import { useRateUserStore } from './use-rate-user-store';
 import { toast } from 'react-toastify';
 import { Spinner } from '@/components/ui/spinner';
 import { Button, ButtonVariant } from '@/components/ui/button';

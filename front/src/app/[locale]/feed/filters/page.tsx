@@ -12,10 +12,10 @@ import { SegmentedControl } from '@/components/ui/segmented-control';
 import { HobbiesSection } from '@/components/ui/profile-sections/hobbies-section';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
-import { useFeedFiltersStore, FilterDto } from '@/store/use-feed-filters-store';
-import { useSettingsStore, DistanceUnits } from '@/store/use-settings-store';
+import { useFeedFiltersStore, FilterDto } from './use-feed-filters-store';
+import { useSettingsStore, DistanceUnits } from '@/app/[locale]/settings/use-settings-store';
 import { useHobbiesStore } from '@/store/use-hobbies-store';
-import { useFeedStore } from '@/store/use-feed-store';
+import { useFeedStore } from '../use-feed-store';
 import {
   metersToKilometers,
   metersToMiles,

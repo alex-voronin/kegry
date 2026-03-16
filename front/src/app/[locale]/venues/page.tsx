@@ -11,11 +11,11 @@ import { Spinner } from '@/components/ui/spinner';
 import { ListItem } from '@/components/ui/list-item';
 import { useInView } from 'react-intersection-observer';
 import { useViewportItemCount } from '@/hooks/use-viewport-item-count';
-import { useVenuesStore, VenueListItemDto } from '@/store/use-venues-store';
+import { useVenuesStore, VenueListItemDto } from './use-venues-store';
 import { toast } from 'react-toastify';
 import { checkPermissionStatus } from '@/lib/permissions';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { useSettingsStore, DistanceUnits } from '@/store/use-settings-store';
+import { useSettingsStore, DistanceUnits } from '@/app/[locale]/settings/use-settings-store';
 import { metersToKilometers, metersToMiles } from '@/lib/distance-utils';
 import styles from './venues.module.css';
 

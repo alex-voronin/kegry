@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import ReactMarkdown from 'react-markdown';
 import styles from '../feed.module.css';
-import { NpcDto } from '@/store/use-npc-store';
+import { NpcDto } from '../use-npc-store';
 
 export function NpcFeedBody({
   npc,

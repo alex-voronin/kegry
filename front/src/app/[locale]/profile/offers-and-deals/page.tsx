@@ -14,7 +14,7 @@ import { useViewportItemCount } from '@/hooks/use-viewport-item-count';
 import { toast } from 'react-toastify';
 import { checkPermissionStatus } from '@/lib/permissions';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { useOffersStore, AvailableDiscountDto } from '@/store/use-offers-store';
+import { useOffersStore, AvailableDiscountDto } from './use-offers-store';
 import styles from './page.module.css';
 
 export default function OffersAndDealsScreen() {

@@ -16,7 +16,7 @@ import {
   useNotificationsStore,
   NotificationDto,
   isNotificationExpired,
-} from '@/store/use-notifications-store';
+} from '@/app/[locale]/notifications/use-notifications-store';
 import { formatNotificationDate } from '@/lib/date';
 import { toast } from 'react-toastify';
 import styles from './notifications.module.css';

@@ -8,7 +8,7 @@ import { Icon } from '@/components/ui/icon';
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { Toggle } from '@/components/ui/toggle';
-import { useSettingsStore, DistanceUnits } from '@/store/use-settings-store';
+import { useSettingsStore, DistanceUnits } from './use-settings-store';
 import { useUserProfileStore } from '@/store/use-user-profile-store';
 import { toast } from 'react-toastify';
 import styles from './settings.module.css';

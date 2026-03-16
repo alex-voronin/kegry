@@ -18,8 +18,8 @@ import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { Spinner } from '@/components/ui/spinner';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { useChatStore } from '@/store/use-chat-store';
-import { useFeedStore } from '@/store/use-feed-store';
+import { useChatStore } from './use-chat-store';
+import { useFeedStore } from '@/app/[locale]/feed/use-feed-store';
 import { useFcmStore } from '@/lib/fcm/store';
 import { FcmPayload, NotificationType } from '@/lib/fcm/types';
 import EmojiPicker, {
