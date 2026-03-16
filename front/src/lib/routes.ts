@@ -18,7 +18,6 @@ export const PAGE_ROUTES = {
   PROFILE_EDIT: '/profile/edit',
   PROFILE_COVER: '/profile/cover-image',
   OFFERS_AND_DEALS: '/profile/offers-and-deals',
-  PRIVACY_SETTINGS: '/profile/privacy',
   EDIT_PROFILE: '/edit-profile',
   NOTIFICATIONS: '/notifications',
   CHAT: '/chat',

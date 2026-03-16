@@ -364,19 +364,6 @@ export default function ProfilePage() {
             </div>
             <div
               className={cn(styles.field, styles.actionField)}
-              onClick={() => router.push(PAGE_ROUTES.PRIVACY_SETTINGS)}
-            >
-              <span>{t('privacy')}</span>
-              <Icon
-                src="/assets/common/disclosure-right-icon.svg"
-                alt="chevron"
-                width={10}
-                height={18}
-                priority
-              />
-            </div>
-            <div
-              className={cn(styles.field, styles.actionField)}
               onClick={() => router.push(PAGE_ROUTES.PROFILE_COVER)}
             >
               <span>{t('coverImage')}</span>

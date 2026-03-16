@@ -7,9 +7,9 @@ import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { ModalMenu } from '@/components/ui/modal-menu';
-import { Spinner } from '@/components/ui/spinner';
 import { Toggle } from '@/components/ui/toggle';
 import { useSettingsStore, DistanceUnits } from '@/store/use-settings-store';
+import { useUserProfileStore } from '@/store/use-user-profile-store';
 import { toast } from 'react-toastify';
 import styles from './settings.module.css';
 
@@ -21,7 +21,7 @@ export default function SettingsPage() {
     distanceUnits,
     pushesEnabled,
     emailsEnabled,
-    isLoading,
+    isLoading: isSettingsLoading,
     fetchSettings,
     updateDistanceUnits,
     togglePushes,
@@ -30,18 +30,31 @@ export default function SettingsPage() {
     serverSettings,
   } = useSettingsStore();
 
+  const {
+    serverProfile,
+    isPublic,
+    isLoading: isProfileLoading,
+    fetchMyProfile,
+    setIsPublic,
+    updatePrivacy,
+  } = useUserProfileStore();
+
   const [isDistanceMenuOpen, setIsDistanceMenuOpen] = useState(false);
 
+  const loadData = async () => {
+    try {
+      await Promise.all([
+        fetchSettings(),
+        serverProfile ? Promise.resolve() : fetchMyProfile(),
+      ]);
+    } catch (error) {
+      toast.error(t('fetchFailed'));
+    }
+  };
+
   useEffect(() => {
-    const loadSettings = async () => {
-      try {
-        await fetchSettings();
-      } catch (error) {
-        toast.error(t('fetchFailed'));
-      }
-    };
-    loadSettings();
-  }, [fetchSettings, t]);
+    loadData();
+  }, [fetchSettings, fetchMyProfile, serverProfile, t]);
 
   const handleBack = () => {
     router.back();
@@ -49,7 +62,11 @@ export default function SettingsPage() {
 
   const handleSave = async () => {
     try {
-      await saveSettings();
+      const promises = [];
+      if (hasSettingsChanges) promises.push(saveSettings());
+      if (hasPrivacyChanges) promises.push(updatePrivacy(isPublic));
+
+      await Promise.all(promises);
       router.back();
     } catch (error) {
       toast.error(t('saveFailed'));
@@ -67,19 +84,18 @@ export default function SettingsPage() {
     },
   ];
 
-  if (serverSettings === null) {
-    return (
-      <div className="flex h-dvh items-center justify-center">
-        <Spinner />
-      </div>
-    );
-  }
-
-  const hasChanges =
+  const hasSettingsChanges =
     serverSettings != null &&
     (distanceUnits !== serverSettings?.distanceUnits ||
       pushesEnabled !== serverSettings?.pushesEnabled ||
       emailsEnabled !== serverSettings?.emailsEnabled);
+
+  const hasPrivacyChanges =
+    serverProfile != null && isPublic !== serverProfile?.isPublic;
+
+  const hasChanges = hasSettingsChanges || hasPrivacyChanges;
+
+  const isLoading = isSettingsLoading || isProfileLoading;
 
   return (
     <div>
@@ -97,6 +113,23 @@ export default function SettingsPage() {
       />
       <div className={styles.container}>
         <div className="mt-4">
+          <h3 className={styles.sectionTitle}>{t('publicAccount')}</h3>
+          <div className={styles.group}>
+            <div className={styles.groupItem}>
+              <div className={styles.itemContent}>
+                <span className={styles.itemLabel}>{t('publicAccount')}</span>
+                <span className={styles.itemDescription}>
+                  {t('publicAccountDesc')}
+                </span>
+              </div>
+              <Toggle
+                checked={isPublic}
+                onChange={setIsPublic}
+                srTitle={t('publicAccount')}
+              />
+            </div>
+          </div>
+
           <h3 className={styles.sectionTitle}>{t('distanceUnits')}</h3>
           <div
             className={`${styles.item} ${styles.itemClickable}`}

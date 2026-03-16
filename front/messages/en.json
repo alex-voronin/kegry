@@ -299,7 +299,6 @@
       "blockedUsers": "Blocked Users",
       "friendsAndFoes": "Friends & Foes",
       "offersAndDeals": "Offers & Deals",
-      "privacy": "Privacy",
       "coverImage": "Cover Image",
       "settings": "Settings",
       "permissions": "Permissions",
@@ -333,15 +332,10 @@
         "buttonNo": "No"
       }
     },
-    "privacy": {
-      "title": "Privacy",
-      "publicAccount": "Public account",
-      "publicAccountDesc": "When disabled, your profile will not be shown to others in the feed",
-      "save": "Save",
-      "saveFailed": "Failed to save settings"
-    },
     "settings": {
       "title": "Settings",
+      "publicAccount": "Public account",
+      "publicAccountDesc": "When disabled, your profile will not be shown to others in the feed",
       "distanceUnits": "Distance units",
       "notifications": "Notifications",
       "push": "Push",
