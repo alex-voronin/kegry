@@ -1,4 +1,5 @@
 using VenueModule.API.B2B.Dto;
+using VenueModule.API.B2B.Shared;
 
 namespace VenueModule.API;
 

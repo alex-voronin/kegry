@@ -9,15 +9,18 @@ using SharedCore.Api;
 using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 using SharedCore.Policies;
+using VenueModule.API.B2B.Discount;
+using VenueModule.API.B2B.Discount.Dto;
 using VenueModule.API.B2B.Dto;
-using VenueModule.API.Shared;
+using VenueModule.API.B2B.Shared;
+using VenueModule.API.B2B.Venues.Dto;
 using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.Exceptions;
 using VenueModule.Domain.Repositories;
 using VenueModule.Domain.Services;
 using VenueModule.Domain.ValueObjects;
 
-namespace VenueModule.API.B2B;
+namespace VenueModule.API.B2B.Venues;
 
 public class B2BVenueEndpoints : IEndpoints
 {
@@ -26,73 +29,15 @@ public class B2BVenueEndpoints : IEndpoints
         var managementApiGroup = app.MapGroup("")
             .WithTags("Venue Management API")
             .RequireAuthorization(AuthPolicies.B2BAdmin);
-        managementApiGroup.MapPost("/api/v1/company", CreateCompany);
-        managementApiGroup.MapGet("/api/v1/company", GetCompany);
-        managementApiGroup.MapPatch("/api/v1/company", PatchCompany);
-        managementApiGroup.MapPost("/api/v1/venue", CreateVenue);
+        managementApiGroup.MapPost("/api/v1/company{companyId;guid}/venue", CreateVenue);
+        managementApiGroup.MapGet("/api/v1/venue/{id:guid}", GetVenue);
         managementApiGroup.MapPatch("/api/v1/venue/{id:guid}", PatchVenue);
         managementApiGroup.MapDelete("/api/v1/venue/{id:guid}", DeleteVenue);
-        managementApiGroup.MapPost("/api/v1/company/avatar/upload-url", GetAvatarUploadUrl);
         managementApiGroup.MapPost("/api/v1/venue/{id:guid}/cover/upload-url", GetCoverUploadUrl);
     }
 
-    private static async Task<ApiResult.EmptyResult> CreateCompany(
-        [FromBody] CreateCompanyRequest request,
-        ClaimsPrincipal user,
-        ICompanyRepository repository,
-        IS3StorageService storageService,
-        CancellationToken ct)
-    {
-        var userId = user.GetId();
-
-        var company = new Company
-        {
-            Id = userId,
-            OwnerId = userId,
-            Name = request.Name,
-            Email = request.Email,
-            AvatarImageS3Key = storageService.PublicFileUrlToS3Key(request.AvatarImageUrl),
-            Venues = []
-        };
-
-        await repository.AddAsync(company, ct);
-        await repository.SaveChangesAsync(ct);
-
-        return ApiResult.Empty;
-    }
-
-    private static async Task<ApiResult.EmptyResult> PatchCompany(
-        [FromBody] PatchCompanyRequest request,
-        ClaimsPrincipal user,
-        ICompanyRepository repository,
-        IS3StorageService storageService,
-        CancellationToken ct)
-    {
-        var company = await repository.GetByOwnerIdAsync(
-            ownerId: user.GetId(),
-            asNoTracking: true,
-            includeVenues: true,
-            ct: ct);
-
-        if (company == null)
-        {
-            throw VenueExceptions.CompanyNotFound();
-        }
-
-        company.Name = request.Name ?? company.Name;
-        company.Email = request.Email ?? company.Email;
-
-        if (request.AvatarImageUrl != null)
-        {
-            company.AvatarImageS3Key = storageService.PublicFileUrlToS3Key(request.AvatarImageUrl);
-        }
-
-        await repository.SaveChangesAsync(ct);
-
-        return ApiResult.Empty;
-    }
-
     private static async Task<ApiResult.EmptyResult> CreateVenue(
+        [FromRoute] Guid companyId,
         [FromBody] CreateVenueRequest request,
         ClaimsPrincipal user,
         ICompanyRepository companyRepository,
@@ -100,10 +45,10 @@ public class B2BVenueEndpoints : IEndpoints
         IS3StorageService storageService,
         CancellationToken ct)
     {
-        var company = await companyRepository.GetByOwnerIdAsync(
+        var company = await companyRepository.GetByIdAsync(
+            companyId: companyId,
             ownerId: user.GetId(),
             asNoTracking: true,
-            includeVenues: true,
             ct: ct);
         if (company == null)
         {
@@ -131,6 +76,27 @@ public class B2BVenueEndpoints : IEndpoints
         await venueRepository.SaveChangesAsync(ct);
 
         return ApiResult.Empty;
+    }
+
+    private static async Task<ApiResult<GetVenueResponse>> GetVenue(
+        [FromRoute] Guid id,
+        ClaimsPrincipal user,
+        IVenueRepository venueRepository,
+        IS3StorageService storageService,
+        CancellationToken ct)
+    {
+        var venue = await venueRepository.GetByIdAsync(id,
+            asNoTracking: true,
+            includes: [v => v.Discounts, v => v.LoyaltyLevels],
+            ct: ct);
+        if (venue == null)
+        {
+            throw VenueExceptions.VenueNotFound(id);
+        }
+
+        return ApiResult<GetVenueResponse>.Build(
+            new GetVenueResponse(DomainVenueToDto(storageService, venue))
+        );
     }
 
     private static async Task<ApiResult.EmptyResult> PatchVenue(
@@ -190,59 +156,20 @@ public class B2BVenueEndpoints : IEndpoints
         return ApiResult.Empty;
     }
 
-    private static async Task<ApiResult<GetCompanyResponse>> GetCompany(
-        ICompanyRepository repository,
-        ClaimsPrincipal user,
-        IS3StorageService storageService,
-        CancellationToken ct)
-    {
-        var company = await repository.GetByOwnerIdAsync(
-            ownerId: user.GetId(),
-            asNoTracking: true,
-            includeVenues: true,
-            ct: ct);
-
-        if (company == null)
-        {
-            throw VenueExceptions.CompanyNotFound();
-        }
-
-        var companyDto = DomainCompanyToDto(storageService, company);
-        var venuesDto = company.Venues
-            .Select(v => DomainVenueToDto(storageService, v))
-            .ToArray();
-
-        return ApiResult<GetCompanyResponse>.Build(
-            new GetCompanyResponse(
-                Company: companyDto,
-                Venues: venuesDto)
-        );
-    }
-
-    private static async Task<ApiResult<GetPresignedUrlResponse>> GetAvatarUploadUrl(
-        [FromBody] GetPresignedUrlRequest request,
-        ClaimsPrincipal user,
-        IVenueImageService imageService,
-        CancellationToken ct)
-    {
-        Validation.ThrowIfFileSizeExceed(request.ContentLength, Validation.MaxAvatarSizeBytes);
-        var urls = await imageService.GetCompanyAvatarUploadUrlAsync(
-            companyId: user.GetId(),
-            contentLength: request.ContentLength,
-            ct: ct);
-        return ApiResult<GetPresignedUrlResponse>.Build(
-            new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl)
-        );
-    }
 
     private static async Task<ApiResult<GetPresignedUrlResponse>> GetCoverUploadUrl(
         [FromRoute] Guid id,
         [FromBody] GetPresignedUrlRequest request,
+        IVenueRepository venueRepository,
+        ICompanyRepository companyRepository,
         ClaimsPrincipal user,
         IVenueImageService imageService,
         CancellationToken ct)
     {
         Validation.ThrowIfFileSizeExceed(request.ContentLength, Validation.MaxCoverSizeBytes);
+        await VenueOwnerGuard.RequireVenueOwnerAsync(
+            id, user, venueRepository, companyRepository, ct);
+        
         var urls = await imageService.GetVenueCoverUploadUrlAsync(
             companyId: user.GetId(),
             venueId: id,
@@ -270,17 +197,13 @@ public class B2BVenueEndpoints : IEndpoints
                 : null,
             Promos: venue.Promos
                 .Select(p => new PromoDto(Body: p.Body))
+                .ToArray(),
+            Discounts: venue.Discounts
+                .Select(B2BDiscountEndpoints.DomainDiscountToDto)
+                .ToArray(),
+            LoyaltyLevels: venue.LoyaltyLevels
+                .Select(l => new LoyaltyLevelDto(l.Id, l.VisitsUpperBound))
                 .ToArray()
-        );
-    }
-
-    private static CompanyDto DomainCompanyToDto(IS3StorageService storageService, Company company)
-    {
-        return new CompanyDto(
-            Id: company.Id.ToString(),
-            Name: company.Name,
-            Email: company.Email,
-            AvatarImageUrl: storageService.S3KeyToPublicFileUrl(company.AvatarImageS3Key, company.ChangedAt)
         );
     }
 }

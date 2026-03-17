@@ -29,6 +29,7 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     avatar_image_s3key = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     email = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     changed_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -210,11 +211,10 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_companies_name",
+                name: "ix_companies_owner_id",
                 schema: "venue",
                 table: "companies",
-                column: "name",
-                unique: true);
+                column: "owner_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_discounts_loyalty_level_id_venue_id",

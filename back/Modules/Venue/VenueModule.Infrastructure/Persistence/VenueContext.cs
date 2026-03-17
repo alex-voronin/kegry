@@ -50,8 +50,7 @@ public class VenueContext : DbContext
                 .WithOne(v => v.Company)
                 .HasForeignKey(v => v.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasIndex(c => c.Name).IsUnique();
+            entity.HasIndex(c => c.OwnerId);
         });
     }
 

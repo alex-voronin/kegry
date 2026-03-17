@@ -13,7 +13,7 @@ using VenueModule.Infrastructure.Persistence;
 namespace VenueModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(VenueContext))]
-    [Migration("20260314200252_AddVenue")]
+    [Migration("20260317120644_AddVenue")]
     partial class AddVenue
     {
         /// <inheritdoc />
@@ -45,6 +45,10 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("changed_at");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
                     b.Property<string>("Email")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
@@ -63,9 +67,8 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_companies");
 
-                    b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("ix_companies_name");
+                    b.HasIndex("OwnerId")
+                        .HasDatabaseName("ix_companies_owner_id");
 
                     b.ToTable("companies", "venue");
                 });

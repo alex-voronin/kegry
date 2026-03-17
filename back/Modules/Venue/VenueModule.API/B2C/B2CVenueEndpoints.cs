@@ -1,6 +1,7 @@
 using Shared.Infrastructure.Storage;
 using VenueModule.API.B2C.Dto;
 using VenueModule.API.Shared;
+using GetVenueResponse = VenueModule.API.B2C.Dto.GetVenueResponse;
 
 namespace VenueModule.API.B2C;
 
@@ -25,8 +26,8 @@ public class B2CVenueEndpoints : IEndpoints
             .WithTags("Venue User API")
             .RequireAuthorization();
         usersApiGroup.MapPost("/api/v1/venues", GetVenues);
-        usersApiGroup.MapGet("/api/v1/venue/{id:guid}", GetVenue);
-        usersApiGroup.MapPost("/api/v1/venue/{id:guid}/check-in", CheckInToVenue);
+        usersApiGroup.MapGet("/api/v1/venues/{id:guid}", GetVenue);
+        usersApiGroup.MapPost("/api/v1/venues/{id:guid}/check-in", CheckInToVenue);
     }
 
     private static async Task<ApiResult<EmptyResponse>> CheckInToVenue(

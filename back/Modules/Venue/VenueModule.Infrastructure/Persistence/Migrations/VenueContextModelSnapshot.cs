@@ -42,6 +42,10 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("changed_at");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
                     b.Property<string>("Email")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
@@ -60,9 +64,8 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_companies");
 
-                    b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("ix_companies_name");
+                    b.HasIndex("OwnerId")
+                        .HasDatabaseName("ix_companies_owner_id");
 
                     b.ToTable("companies", "venue");
                 });

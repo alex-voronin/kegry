@@ -1,5 +1,4 @@
 ﻿using SharedCore.Validation;
-using VenueModule.Domain.ValueObjects;
 
 namespace VenueModule.Domain.Aggregates;
 
@@ -35,6 +34,7 @@ public class Company
         );
     }
 
+    public required DateTimeOffset CreatedAt { get; init; }
     public DateTimeOffset ChangedAt { get; private set; }
     public IReadOnlyCollection<Venue> Venues { get; init; } = new List<Venue>();
 

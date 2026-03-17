@@ -108,7 +108,8 @@ public class CompanyTests
             OwnerId = Guid.NewGuid(),
             Name = "Test Company",
             AvatarImageS3Key = "avatars/company.jpg",
-            Email = "test@company.com"
+            Email = "test@company.com",
+            CreatedAt = DateTime.UtcNow,
         };
     }
 }

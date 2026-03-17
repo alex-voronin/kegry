@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.Routing;
 using SharedCore.Api;
 using SharedCore.Api.Dto;
 using SharedCore.Policies;
-using VenueModule.API.B2B.Dto;
+using VenueModule.API.B2B.Discount.Dto;
 using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.Exceptions;
 using VenueModule.Domain.Repositories;
 
-namespace VenueModule.API.B2B;
+namespace VenueModule.API.B2B.Discount;
 
 public class B2BDiscountEndpoints : IEndpoints
 {
@@ -103,7 +103,7 @@ public class B2BDiscountEndpoints : IEndpoints
         await VenueOwnerGuard.RequireVenueOwnerAsync(venueId, user, venueRepository, companyRepository, ct);
 
         var discountId = Guid.CreateVersion7();
-        var discount = new Discount
+        var discount = new Domain.Aggregates.Discount
         {
             Id = discountId,
             VenueId = venueId,
@@ -181,7 +181,7 @@ public class B2BDiscountEndpoints : IEndpoints
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 
-    private static DiscountDto DomainDiscountToDto(Discount d) => new(
+    internal static DiscountDto DomainDiscountToDto(Domain.Aggregates.Discount d) => new(
         Id: d.Id.ToString(),
         VenueId: d.VenueId.ToString(),
         LoyaltyLevelId: d.LoyaltyLevelId,

@@ -1,11 +1,11 @@
 using VenueModule.API.Shared;
 
-namespace VenueModule.API.B2B.Dto;
+namespace VenueModule.API.B2B.Venues.Dto;
 
-public record PatchVenueRequest(
-    double? Latitude,
-    double? Longitude,
-    string? Address,
+public record CreateVenueRequest(
+    double Latitude,
+    double Longitude,
+    string Address,
     string? WebsiteUrl,
     string? GoogleMapsUrl,
     string? InstagramUrl,
