@@ -7,7 +7,7 @@ import { useRouter } from '@/i18n/routing';
 import { useBackgroundLocation } from '@/lib/use-background-location';
 import { useFcm } from '@/lib/fcm/use-fcm';
 import { useFcmStore } from '@/lib/fcm/store';
-import { useFeedStore } from '@/app/[locale]/feed/use-feed-store';
+import { useFeedStore } from '@/app/b2c/[locale]/feed/use-feed-store';
 import {
   useAuthStore,
   RequiredAction,

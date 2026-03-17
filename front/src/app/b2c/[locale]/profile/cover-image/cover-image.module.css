@@ -1,0 +1,25 @@
+@reference "../../../../../app/globals.css";
+
+.wrapper {
+  @apply relative flex h-screen min-h-screen w-full flex-col overflow-hidden;
+}
+
+.coverLayer {
+  @apply absolute inset-0 z-0 h-full w-full;
+}
+
+.contentLayer {
+  @apply pointer-events-none relative z-10 flex h-full w-full flex-col justify-between;
+}
+
+.contentLayer > * {
+  @apply pointer-events-auto;
+}
+
+.footer {
+  @apply mb-6 flex w-full flex-col items-center gap-2 px-4;
+}
+
+.saveButton {
+  @apply h-[40px] w-full max-w-[300px];
+}

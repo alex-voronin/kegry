@@ -1,0 +1,29 @@
+@reference "../../../../../app/globals.css";
+
+.backdrop {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-300;
+}
+
+.modalContainer {
+  @apply bg-form-element relative w-full max-w-[500px] overflow-visible rounded-[32px] p-7 text-center;
+}
+
+.title {
+  @apply mb-4 text-center text-xl font-semibold;
+}
+
+.instruction {
+  @apply text-secondary mb-4 text-center text-sm;
+}
+
+.linkWrapper {
+  @apply bg-background mb-8 rounded-xl p-4 text-left break-all;
+}
+
+.link {
+  @apply text-primary text-sm font-medium select-all;
+}
+
+.button {
+  @apply w-full py-3;
+}

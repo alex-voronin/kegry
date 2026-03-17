@@ -185,7 +185,7 @@ export const useUserProfileStore = create<UserProfileState>()(
           reportMessage,
         });
 
-        const { useFeedStore } = await import('@/app/[locale]/feed/use-feed-store');
+        const { useFeedStore } = await import('@/app/b2c/[locale]/feed/use-feed-store');
         const feedStore = useFeedStore.getState();
         if (feedStore.feed.some((p) => p.id === userId)) {
           useFeedStore.setState({

@@ -1,0 +1,49 @@
+@reference "../../../../globals.css";
+
+.container {
+  @apply flex flex-col sm:p-4 sm:pt-0;
+}
+
+.content {
+  @apply flex-1 space-y-6 pb-24;
+}
+
+.filterSection {
+  @apply relative flex flex-col gap-2;
+}
+
+.ageRangeWrapper {
+  @apply bg-form-element flex items-center gap-4 px-4 py-3 sm:rounded-xl;
+}
+
+.ageInputGroup {
+  @apply flex items-center gap-2;
+}
+
+.ageLabel {
+  @apply text-secondary text-sm;
+}
+
+.ageInput {
+  @apply h-4! w-16! border-none bg-transparent p-0! text-center text-base! placeholder-white! focus:ring-0;
+}
+
+.anyLabel {
+  @apply text-base;
+}
+
+.applyButtonWrapper {
+  @apply mt-auto flex justify-center pt-4 pb-4;
+}
+
+.applyButton {
+  @apply w-[298px];
+}
+
+.loaderContainer {
+  @apply flex h-[80vh] w-full items-center justify-center;
+}
+
+.errorText {
+  @apply text-error absolute -bottom-5 mt-1 ml-2 text-sm;
+}

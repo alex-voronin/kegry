@@ -1,0 +1,93 @@
+@reference "../../../globals.css";
+
+.wrapper {
+  @apply relative flex h-dvh flex-col overflow-hidden;
+}
+
+.titleWrapper {
+  @apply flex translate-y-[-6px] flex-col items-center justify-center;
+}
+
+.avatarCircle {
+  @apply relative m-auto h-12 w-12 overflow-hidden rounded-full;
+}
+
+.userName {
+  @apply mt-1 text-sm;
+}
+
+.headerActionsWrapper {
+  @apply flex items-center gap-2;
+}
+
+.timer {
+  @apply text-sm;
+}
+
+.messageList {
+  @apply flex-1 overflow-y-auto p-4;
+}
+
+.messageRow {
+  @apply mb-4 flex w-full flex-col;
+}
+
+.messageRowLeft {
+  @apply items-start;
+}
+
+.messageRowRight {
+  @apply items-end;
+}
+
+.messageBubble {
+  @apply relative max-w-[85%] px-4 py-3 text-base leading-relaxed;
+}
+
+.bubbleLeft {
+  @apply rounded-2xl rounded-tl-none bg-[#292929];
+}
+
+.bubbleRight {
+  @apply rounded-2xl rounded-tr-none bg-[#B87014];
+}
+
+.timestamp {
+  @apply mt-1 px-1 text-[12px];
+}
+
+.footer {
+  @apply bg-form-element flex flex-none items-end gap-3 px-4 py-2 backdrop-blur-md;
+}
+
+.footerIcon {
+  @apply mb-1.5;
+}
+
+.sendButton {
+  @apply flex h-9 w-9 items-center justify-center rounded-full bg-[#B87014];
+}
+
+.input {
+  @apply placeholder:text-secondary max-h-[150px] flex-1 resize-none border-none bg-transparent py-1 text-lg outline-none;
+}
+
+.loadingWrapper {
+  @apply flex flex-1 items-center justify-center;
+}
+
+.emptyState {
+  @apply text-secondary flex flex-1 items-center justify-center text-center;
+}
+
+.popupOverlay {
+  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/60;
+}
+
+.popupContent {
+  @apply bg-form-element mx-6 max-w-sm rounded-2xl p-6 text-center text-base leading-relaxed;
+}
+
+.emojiPickerWrapper {
+  @apply absolute bottom-full left-4 z-50 mb-2;
+}

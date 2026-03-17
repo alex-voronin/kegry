@@ -1,0 +1,46 @@
+@reference "../../../../globals.css";
+
+.wrapper {
+  @apply relative flex h-screen min-h-screen w-full flex-col overflow-hidden;
+}
+
+.coverLayer {
+  @apply absolute inset-0 z-0 h-full w-full;
+}
+
+.contentLayer {
+  @apply pointer-events-none relative z-10 flex h-full w-full flex-col justify-between p-4;
+}
+
+/* Allow pointer events on interactive elements specifically */
+.contentLayer > * {
+  @apply pointer-events-auto;
+}
+
+.mainContent {
+  @apply flex w-full flex-col items-center gap-4 pt-4;
+}
+
+.subtitle {
+  @apply text-center text-sm text-white/80 drop-shadow-md;
+}
+
+.error {
+  @apply rounded-md bg-black/50 p-2 text-center text-sm text-red-500;
+}
+
+.footer {
+  @apply mb-6 flex w-full flex-col items-center gap-4;
+}
+
+.createProfileButton {
+  @apply h-[40px] w-full max-w-[300px];
+}
+
+.legalText {
+  @apply max-w-[300px] text-center text-base text-white/80;
+}
+
+.legalLink {
+  @apply font-medium text-white underline hover:no-underline;
+}

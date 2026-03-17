@@ -1,0 +1,8 @@
+{
+  "screens": {
+    "home": {
+      "title": "Kegrycorn for Business",
+      "description": "Welcome to the Business Portal. Manage your venues, track visits, and create offers."
+    }
+  }
+}

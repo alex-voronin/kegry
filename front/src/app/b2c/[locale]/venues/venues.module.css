@@ -1,0 +1,17 @@
+@reference "../../../../app/globals.css";
+
+.content {
+  @apply flex flex-1 flex-col sm:p-4 sm:pt-0;
+}
+
+.venueList {
+  @apply flex flex-col gap-0.5;
+}
+
+.emptyText {
+  @apply px-8 text-sm;
+}
+
+.emptyState {
+  @apply text-secondary flex flex-1 flex-col items-center justify-center gap-4 text-center;
+}

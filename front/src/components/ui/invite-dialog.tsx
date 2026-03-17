@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button, ButtonVariant } from './button';
 import { InviteExpiration } from '@/lib/invite-utils';
-import { WhenSelector } from '@/app/[locale]/feed/_components/user-feed-card';
+import { WhenSelector } from '@/app/b2c/[locale]/feed/_components/user-feed-card';
 import styles from './invite-dialog.module.css';
 
 interface InviteDialogProps {

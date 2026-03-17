@@ -1,0 +1,195 @@
+@reference "../../../../globals.css";
+@import './landing-theme.css';
+
+/* ===== Common ===== */
+
+.actionLink {
+  @apply cursor-pointer transition-opacity hover:opacity-80;
+  color: var(--color-landing-button);
+}
+
+.sideImage {
+  @apply shrink-0;
+}
+
+/* ===== Shared Card Styles ===== */
+.card {
+  @apply rounded-xl p-8;
+  background-color: var(--color-landing-card-bg);
+}
+
+.cardTitle {
+  @apply mb-4 text-center text-4xl font-bold;
+  color: var(--color-landing-heading);
+  font-family: var(--font-landing-title);
+}
+
+.cardDescription {
+  @apply text-lg leading-relaxed;
+}
+
+/* ===== Global Wrapper ===== */
+.wrapper {
+  @apply mx-auto min-h-screen w-full max-w-[1470px];
+  background-color: var(--color-landing-bg);
+  color: var(--color-landing-text);
+}
+
+/* ===== Header ===== */
+.header {
+  @apply fixed top-0 right-0 left-0 z-50 flex items-center justify-between px-8 py-4;
+  background-color: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(4px);
+}
+
+.logoContainer {
+  @apply relative flex flex-row items-center pl-[54px];
+}
+
+.logoTextWrapper {
+  @apply flex translate-y-[4px] flex-col items-start;
+}
+
+.logoTitleRow {
+  @apply flex items-center gap-1;
+}
+
+.logoText {
+  @apply ml-2 text-3xl font-bold;
+  color: var(--color-landing-heading);
+  font-family: var(--font-landing-title);
+}
+
+.logoSubtitle {
+  @apply ml-4 translate-y-[-2px] text-sm;
+  color: var(--color-landing-subheading);
+}
+
+.logoIconImage {
+  @apply absolute left-0 rounded-sm p-0;
+}
+
+.nav {
+  @apply flex items-center gap-8;
+}
+
+.navLink {
+  @apply cursor-pointer text-base font-medium transition-colors hover:opacity-80;
+}
+
+.loginButton {
+  @apply rounded-md px-6 py-2 text-sm font-semibold transition-colors;
+  background-color: var(--color-landing-button);
+  color: #000000;
+}
+
+.loginButton:hover {
+  opacity: 0.9;
+}
+
+/* ===== Cheers Section ===== */
+.cheers {
+  @apply flex items-center justify-between gap-5 px-16 pt-24 pb-[20px];
+}
+
+/* ===== Polls & News Section ===== */
+.pollsNewsSection {
+  @apply flex scroll-mt-[100px] items-stretch gap-8 px-16;
+}
+
+.pollCard {
+  @apply flex flex-1 flex-col justify-between p-8;
+}
+
+.pollButton {
+  @apply m-auto mt-4 w-fit rounded-md px-6 py-2 text-sm font-semibold text-black transition-colors;
+  background-color: var(--color-landing-button);
+}
+
+.pollButton:hover {
+  opacity: 0.9;
+}
+
+.newsCard {
+  @apply flex flex-1 flex-col p-8;
+}
+
+.newsList {
+  @apply flex flex-col gap-4;
+}
+
+.newsItem {
+  @apply flex items-start gap-4 text-lg;
+}
+
+.newsDate {
+  @apply font-semibold;
+}
+
+/* ===== How It Works Section ===== */
+.howItWorksSection {
+  @apply flex scroll-mt-[100px] items-center gap-0 px-16 py-[20px];
+}
+
+.howItWorksSteps {
+  @apply mt-8 grid grid-cols-[1.3fr_1fr_1fr] gap-4;
+}
+
+.step {
+  @apply flex h-full flex-col items-center text-center;
+}
+
+.stepTitle {
+  @apply mb-4 text-base;
+}
+
+.stepImage {
+  @apply mx-auto my-auto object-contain;
+}
+
+.howItWorksNote {
+  @apply mt-8 text-lg leading-relaxed;
+}
+
+.decorativeImageWrapper {
+  @apply shrink-0 translate-x-[30px];
+}
+
+.decorativeImage {
+  @apply rounded-lg object-contain;
+}
+
+/* ===== Contact Us Section ===== */
+.contactSection {
+  @apply flex scroll-mt-[100px] items-start gap-8 px-16 py-0;
+}
+
+.contactCard {
+  @apply flex-1;
+}
+
+/* ===== Footer ===== */
+.footer {
+  @apply flex items-center justify-between border-t border-white/10 px-16 py-6;
+}
+
+.footerCopyright {
+  @apply text-sm opacity-70;
+}
+
+.footerLinks {
+  @apply flex gap-8;
+}
+
+.footerLink {
+  @apply text-sm opacity-70 transition-colors hover:opacity-100;
+}
+
+.socialLinks {
+  @apply flex shrink-0 items-center gap-5;
+}
+
+.socialLink {
+  @apply opacity-60 transition-opacity hover:opacity-100;
+  color: var(--color-landing-text);
+}
