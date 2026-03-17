@@ -86,8 +86,7 @@ export default function LoginPage() {
       if (result.requiredAction === RequiredAction.EmailVerification) {
         router.push(PAGE_ROUTES.B2B.VERIFY_EMAIL);
       } else {
-        // TODO: implement
-        router.push(PAGE_ROUTES.B2B.HOME);
+        router.push(PAGE_ROUTES.B2B.COMPANIES);
       }
     } catch (err: any) {
       if (err.code === 'ValidationError') {
@@ -104,8 +103,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const result = await signinWithGoogle(credential, UserType.B2B);
-      // TODO: implement
-      router.push(PAGE_ROUTES.B2B.HOME);
+      router.push(PAGE_ROUTES.B2B.COMPANIES);
     } catch (err: any) {
       toast.error(err.message || tCommonErrors('network'));
     } finally {

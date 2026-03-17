@@ -64,19 +64,21 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${fundamento.variable} antialiased`}
       >
         <Providers locale={locale} messages={messages}>
-          <div className="bg-surface text-foreground flex min-h-screen w-full flex-col">
-            <ToastContainer
-              theme="dark"
-              position="bottom-center"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop={true}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              pauseOnHover
-            />
-            {children}
+          <div className="flex min-h-screen w-full justify-center">
+            <main className="bg-surface text-foreground relative flex w-full max-w-[500px] flex-col sm:rounded-[16px]">
+              <ToastContainer
+                theme="dark"
+                position="bottom-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={true}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                pauseOnHover
+              />
+              {children}
+            </main>
           </div>
         </Providers>
       </body>

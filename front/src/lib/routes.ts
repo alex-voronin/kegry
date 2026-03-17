@@ -39,6 +39,7 @@ export const PAGE_ROUTES = {
     FORGOT_PASSWORD: '/forgot',
     VERIFY_EMAIL: '/verify-email',
     PASSWORD_RESET: '/password-reset',
+    COMPANIES: '/companies',
   },
 } as const;
 
@@ -107,4 +108,5 @@ export const API_ENDPOINTS = {
     MET: '/api/v1/npc/met',
     INVITE: (id: string) => `/api/v1/npc/${id}/invite`,
   },
+  COMPANIES: '/api/v1/companies',
 } as const;

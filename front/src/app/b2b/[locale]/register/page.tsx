@@ -74,8 +74,7 @@ export default function RegisterPage() {
       if (result.requiredAction === RequiredAction.EmailVerification) {
         router.push(PAGE_ROUTES.B2B.VERIFY_EMAIL);
       } else {
-        // TODO: implement
-        router.push(PAGE_ROUTES.B2B.HOME);
+        router.push(PAGE_ROUTES.B2B.COMPANIES);
       }
     } catch (err: any) {
       toast.error(err.message || tCommonErrors('network'));
@@ -88,8 +87,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       const result = await signinWithGoogle(credential, UserType.B2B);
-      // TODO: implement
-      router.push(PAGE_ROUTES.B2B.HOME);
+      router.push(PAGE_ROUTES.B2B.COMPANIES);
     } catch (err: any) {
       toast.error(err.message || tCommonErrors('network'));
     } finally {

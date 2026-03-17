@@ -90,6 +90,16 @@
         "userNotFound": "User session not found. Please login again.",
         "invalidCode": "Invalid verification code"
       }
+    },
+    "companies": {
+      "title": "Companies",
+      "noCompanies": "No companies found.",
+      "toast": {
+        "loadFailed": "Failed to load companies"
+      },
+      "menu": {
+        "viewCompany": "View Company"
+      }
     }
   }
 }
