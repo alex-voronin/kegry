@@ -12,6 +12,7 @@ import { useCompaniesStore, CompanyDto } from './use-companies-store';
 import { toast } from 'react-toastify';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from './companies.module.css';
+import { Sidebar, SidebarIcon, useSidebar } from '@/components/b2b/Sidebar';
 
 export default function CompaniesPage() {
   const router = useRouter();
@@ -19,8 +20,9 @@ export default function CompaniesPage() {
   const [selectedCompany, setSelectedCompany] = useState<CompanyDto | null>(
     null,
   );
+  const { isOpen, open, close } = useSidebar();
 
-  const { companies, isLoading, fetchCompanies, reset } = useCompaniesStore();
+  const { companies, isLoading, fetchCompanies } = useCompaniesStore();
 
   useEffect(() => {
     fetchCompanies().catch(() => {
@@ -39,18 +41,9 @@ export default function CompaniesPage() {
   ];
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="relative flex flex-1 flex-col overflow-hidden">
       <Header
-        left={
-          <Icon
-            src="/assets/common/profile-icon.svg"
-            alt="profile"
-            width={30}
-            height={32}
-            onClick={() => router.push(PAGE_ROUTES.B2B.HOME)}
-            priority
-          />
-        }
+        left={<SidebarIcon onClick={open} />}
         title={t('title')}
         right={
           <Icon
@@ -66,6 +59,8 @@ export default function CompaniesPage() {
         }
       />
 
+      <Sidebar isOpen={isOpen} onClose={close} />
+
       <div className={styles.content}>
         {isLoading && companies.length === 0 ? (
           <div className={styles.emptyState}>
@@ -73,9 +68,7 @@ export default function CompaniesPage() {
           </div>
         ) : companies.length === 0 ? (
           <div className={styles.emptyState}>
-            <span className={styles.emptyStateText}>
-              {t('noCompanies')}
-            </span>
+            <span className={styles.emptyStateText}>{t('noCompanies')}</span>
           </div>
         ) : (
           <div className={styles.companyList}>

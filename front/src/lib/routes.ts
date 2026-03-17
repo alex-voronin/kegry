@@ -40,6 +40,7 @@ export const PAGE_ROUTES = {
     VERIFY_EMAIL: '/verify-email',
     PASSWORD_RESET: '/password-reset',
     COMPANIES: '/companies',
+    VENUES: '/venues',
   },
 } as const;
 

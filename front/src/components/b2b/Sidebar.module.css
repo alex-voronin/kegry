@@ -1,0 +1,53 @@
+@reference "../../app/globals.css";
+
+.drawerOverlay {
+  @apply fixed inset-0 z-60;
+  background-color: rgba(0, 0, 0, 0);
+  pointer-events: none;
+  transition: background-color 0.3s ease;
+}
+
+.drawerOverlayOpen {
+  background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+}
+
+.drawer {
+  @apply absolute top-0 left-0 z-70 flex h-full w-[280px] flex-col p-6;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  background-color: #292929;
+}
+
+.drawerOpen {
+  transform: translateX(0);
+}
+
+.drawerCloseButton {
+  @apply mb-8 self-start p-2;
+  color: var(--color-primary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.drawerNav {
+  @apply flex flex-1 flex-col gap-6;
+}
+
+.drawerNavLink {
+  @apply flex cursor-pointer items-center gap-3 text-lg font-medium transition-opacity;
+  color: var(--color-primary);
+}
+
+.drawerNavLink:hover {
+  opacity: 0.8;
+}
+
+.drawerNavLinkActive {
+  color: var(--color-accent);
+}
+
+.drawerNavBottom {
+  @apply mt-auto flex flex-col gap-6;
+}
