@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SecurityModule.API.Dto;
 using SecurityModule.Domain.Aggregates;
+using SecurityModule.Domain.ValueObjects;
 using SecurityModule.Infrastructure.Persistence;
 using SharedCore.Api.Dto;
 using SharedCore.Extensions;
@@ -30,7 +31,7 @@ public class AuthManager
     public async Task<AuthResponse> CreateAndLoginUserAsync(string email, string password)
     {
         // 1. Sign up
-        var signupRequest = new SignUpRequest(email, password);
+        var signupRequest = new SignUpRequest(email, password, UserType.B2C);
         var signupResponse = await _apiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
             ApiRoutes.Auth.Signup, signupRequest);
 

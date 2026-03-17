@@ -1,3 +1,5 @@
+using SecurityModule.Domain.ValueObjects;
+
 namespace SecurityModule.API.Dto;
 
-public record SignUpRequest(string Email, string Password);
+public record SignUpRequest(string Email, string Password, UserType UserType);

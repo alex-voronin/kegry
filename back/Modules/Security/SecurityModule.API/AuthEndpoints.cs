@@ -61,9 +61,12 @@ public class AuthEndpoints : IEndpoints
 
     private static async Task<ApiResult<AuthResponse>> Signup(
         IAuthenticationService authenticationService,
-        [FromBody] SignInRequest request)
+        [FromBody] SignUpRequest request)
     {
-        var result = await authenticationService.SignupAsync(email: request.Email, password: request.Password);
+        var result = await authenticationService.SignupAsync(
+            email: request.Email, 
+            password: request.Password, 
+            userType: request.UserType);
         return ApiResult<AuthResponse>.Build(
             AuthResultToResponse(result)
         );
@@ -76,7 +79,7 @@ public class AuthEndpoints : IEndpoints
         IOptions<GoogleAuthConfig> googleAuthConfig)
     {
         var payload = await googleTokenValidator.ValidateAsync(request.IdToken, googleAuthConfig.Value.ClientId);
-        var result = await authenticationService.SigninExternalAsync(payload.Email);
+        var result = await authenticationService.SigninExternalAsync(payload.Email, request.UserType);
         return ApiResult<AuthResponse>.Build(
             AuthResultToResponse(result)
         );

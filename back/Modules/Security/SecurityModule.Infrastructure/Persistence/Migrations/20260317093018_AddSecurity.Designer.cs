@@ -12,7 +12,7 @@ using SecurityModule.Infrastructure.Persistence;
 namespace SecurityModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SecurityContext))]
-    [Migration("20260131170101_AddSecurity")]
+    [Migration("20260317093018_AddSecurity")]
     partial class AddSecurity
     {
         /// <inheritdoc />
@@ -306,6 +306,10 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean")
                         .HasColumnName("two_factor_enabled");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)

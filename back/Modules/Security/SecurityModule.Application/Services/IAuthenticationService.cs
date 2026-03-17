@@ -1,4 +1,5 @@
 using SecurityModule.Domain.Aggregates;
+using SecurityModule.Domain.ValueObjects;
 
 namespace SecurityModule.Application.Services;
 
@@ -12,9 +13,10 @@ public interface IAuthenticationService
 
     public Task<AuthResult> SignupAsync(
         string email,
-        string password);
+        string password,
+        UserType userType);
 
-    public Task<AuthResult> SigninExternalAsync(string email);
+    public Task<AuthResult> SigninExternalAsync(string email, UserType userType);
 
     public Task<bool> IsUserExistAsync(string email);
     public Task<AuthResult> ConfirmEmailAsync(string userId, string token);

@@ -4,6 +4,7 @@ using NSubstitute;
 using SecurityModule.Domain.Aggregates;
 using SecurityModule.Domain.Repositories;
 using SecurityModule.Domain.Services;
+using SecurityModule.Domain.ValueObjects;
 using Shouldly;
 using SharedCore.Exceptions;
 using Tests.Shared.AutoFixture;
@@ -19,6 +20,7 @@ public class RefreshTokenServiceTests
     {
         Id = Guid.NewGuid(),
         Email = "test@example.com",
+        Type = UserType.B2C,
         RequiredAction = RequiredAction.None
     };
 

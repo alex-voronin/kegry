@@ -8,6 +8,7 @@ using Shared.Infrastructure.Storage;
 using SharedCore.Api;
 using SharedCore.Api.Dto;
 using SharedCore.Extensions;
+using SharedCore.Policies;
 using VenueModule.API.B2B.Dto;
 using VenueModule.API.Shared;
 using VenueModule.Domain.Aggregates;
@@ -24,7 +25,7 @@ public class B2BVenueEndpoints : IEndpoints
     {
         var managementApiGroup = app.MapGroup("")
             .WithTags("Venue Management API")
-            .RequireAuthorization();
+            .RequireAuthorization(AuthPolicies.B2BAdmin);
         managementApiGroup.MapPost("/api/v1/company", CreateCompany);
         managementApiGroup.MapGet("/api/v1/company", GetCompany);
         managementApiGroup.MapPatch("/api/v1/company", PatchCompany);

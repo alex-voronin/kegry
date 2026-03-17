@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using SharedCore.Api;
 using SharedCore.Api.Dto;
+using SharedCore.Policies;
 using VenueModule.API.B2B.Dto;
 using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.Exceptions;
@@ -18,7 +19,7 @@ public class B2BDiscountEndpoints : IEndpoints
     {
         var group = app.MapGroup("")
             .WithTags("Discount & Loyalty Management API")
-            .RequireAuthorization();
+            .RequireAuthorization(AuthPolicies.B2BAdmin);
 
         // LoyaltyLevel endpoints
         group.MapGet("/api/v1/venue/{venueId:guid}/loyalty-levels", GetLoyaltyLevels);

@@ -1,15 +1,19 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using SecurityModule.Application.Configs;
+using SecurityModule.Application.Services;
 using SecurityModule.Domain.Aggregates;
+using SecurityModule.Domain.ValueObjects;
 using SecurityModule.Infrastructure;
 using SecurityModule.Infrastructure.Persistence;
 using Shared.Setup;
+using SharedCore.Policies;
 
 namespace SecurityModule.Setup;
 
@@ -47,7 +51,17 @@ public class SecurityModuleStartup : AppModuleStartupBase<SecurityContext>
             .ValidateOnStart();
 
         RegisterEfCoreAsAuthenticationStore(appBuilder.Services);
-        appBuilder.Services.AddAuthorization();
+        appBuilder.Services.AddAuthorization(options =>
+        {
+            options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+
+            options.AddPolicy(AuthPolicies.B2BAdmin, policy =>
+                policy.RequireClaim("UserType", nameof(UserType.B2B))
+                    .RequireRole(AuthRoles.Admin)
+            );
+        });
         RegisterAuthenticationSchemes(appBuilder.Services, appBuilder.Configuration);
     }
 

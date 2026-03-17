@@ -36,6 +36,7 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    type = table.Column<int>(type: "integer", nullable: false),
                     required_action = table.Column<int>(type: "integer", nullable: false),
                     has_google_auth = table.Column<bool>(type: "boolean", nullable: false),
                     user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),

@@ -10,6 +10,7 @@ using SecurityModule.Domain.Services;
 using SecurityModule.Application.Configs;
 using SecurityModule.Domain.Aggregates;
 using SecurityModule.Domain.Repositories;
+using SecurityModule.Domain.ValueObjects;
 using SecurityModule.Infrastructure.Service;
 using Serilog;
 using SharedCore.Exceptions;
@@ -56,7 +57,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         return _userRepository.IsUserExistAsync(email);
     }
 
-    public async Task<AuthResult> SignupAsync(string email, string password)
+    public async Task<AuthResult> SignupAsync(string email, string password, UserType userType)
     {
         var user = await _userManager.FindByEmailAsync(email);
 
@@ -78,6 +79,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
                 Id = Guid.CreateVersion7(),
                 UserName = email,
                 Email = email,
+                Type = userType,
                 RequiredAction = RequiredAction.EmailVerification,
             };
             var result = await _userManager.CreateAsync(user, password);
@@ -150,7 +152,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
             RefreshToken: refreshToken);
     }
 
-    public async Task<AuthResult> SigninExternalAsync(string email)
+    public async Task<AuthResult> SigninExternalAsync(string email, UserType userType)
     {
         var user = await _userManager.FindByEmailAsync(email);
 
@@ -162,6 +164,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
                 UserName = email,
                 Email = email,
                 EmailConfirmed = true,
+                Type =  userType,
                 RequiredAction = RequiredAction.OnboardingCompletion,
                 HasGoogleAuth = true,
             };
@@ -370,6 +373,8 @@ internal class AuthenticationService : IAuthenticationService, IScoped
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email!),
             new Claim(JwtRegisteredClaimNames.Jti, jti.ToString()),
+            new Claim(AuthClaims.UserType, user.Type.ToString()),
+            new Claim(ClaimTypes.Role, AuthRoles.Admin),
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authTokenConfig.Secret));

@@ -11,6 +11,7 @@ using NSubstitute;
 using NSubstitute.ClearExtensions;
 using SecurityModule.API.Dto;
 using SecurityModule.Domain.Aggregates;
+using SecurityModule.Domain.ValueObjects;
 using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
 using Shouldly;
@@ -43,7 +44,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 1. Signup
         var email = "asd@gmail.com";
-        var request = new SignUpRequest(Email: email, Password: "123456789Qwe");
+        var request = new SignUpRequest(Email: email, Password: "123456789Qwe", UserType: UserType.B2C);
 
         var signinResponse = await Factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
             ApiRoutes.Auth.Signup, request);
@@ -71,7 +72,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
     public async Task GivenNoUsers_WhenUserSignsUpAndPassesInvalidEmail_ThenEmailErrorIsReturned()
     {
         var email = "asd@asldk.com";
-        var request = new SignUpRequest(Email: email, Password: "123456789Qwe");
+        var request = new SignUpRequest(Email: email, Password: "123456789Qwe", UserType: UserType.B2C);
 
         var signinResponse = await Factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
             ApiRoutes.Auth.Signup, request);
@@ -322,7 +323,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 1. Sign up
         var email = "googleuser@gmail.com";
         var token = FakeGoogleTokenValidator.CreateToken(email);
-        var request = new GoogleIdTokenRequest(token);
+        var request = new GoogleIdTokenRequest(token, UserType.B2C);
 
         var result = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, ApiResult<AuthResponse>>(
             ApiRoutes.Auth.Google, request);
@@ -347,7 +348,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 1. Signup via Google
         var email = "googleuser@gmail.com";
         var token = FakeGoogleTokenValidator.CreateToken(email);
-        var request = new GoogleIdTokenRequest(token);
+        var request = new GoogleIdTokenRequest(token, UserType:UserType.B2C);
 
         var signupResponse = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, ApiResult<AuthResponse>>(
             ApiRoutes.Auth.Google, request);
@@ -375,7 +376,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 1. Signup via email/password
         var email = "regularuser@gmail.com";
         var token = FakeGoogleTokenValidator.CreateToken(email);
-        var request = new GoogleIdTokenRequest(token);
+        var request = new GoogleIdTokenRequest(token, UserType: UserType.B2C);
         var auth = await Factory.AuthManager.CreateAndLoginUserAsync(email, "Password123!");
 
         {
@@ -413,11 +414,11 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
     {
         // 1. Signup via email but don't confirm
         var email = "unconfirmed@gmail.com";
-        var signupRequest = new SignUpRequest(Email: email, Password: "Password123!");
+        var signupRequest = new SignUpRequest(Email: email, Password: "Password123!", UserType: UserType.B2C);
         await Factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(ApiRoutes.Auth.Signup, signupRequest);
 
         var token = FakeGoogleTokenValidator.CreateToken(email);
-        var googleRequest = new GoogleIdTokenRequest(token);
+        var googleRequest = new GoogleIdTokenRequest(token, UserType: UserType.B2C);
 
         // 2. Login via Google
         var result = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, ApiResult<AuthResponse>>(
