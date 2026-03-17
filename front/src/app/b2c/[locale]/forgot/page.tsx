@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Logo } from '@/components/common/Logo';
+import { cn } from '@/lib/utils';
 
 export default function ForgotPasswordPage() {
   const t = useTranslations('screens.forgot');
@@ -98,7 +99,7 @@ export default function ForgotPasswordPage() {
 
           <Button
             variant={ButtonVariant.Default}
-            className={styles.signInButton}
+            className={cn(styles.signInButton, 'm-auto')}
             type="submit"
             disabled={loading}
             loading={loading}

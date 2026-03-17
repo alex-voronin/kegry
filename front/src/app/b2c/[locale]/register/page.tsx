@@ -7,7 +7,11 @@ import { useTranslations } from 'next-intl';
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
+import {
+  useAuthStore,
+  RequiredAction,
+  UserType,
+} from '@/lib/auth/use-auth-store';
 import { useGoogleSignIn } from '@/lib/auth/use-google-sign-in';
 import { Link } from '@/i18n/routing';
 import { PAGE_ROUTES } from '@/lib/routes';
@@ -66,7 +70,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const result = await signup(data.email, data.password);
+      const result = await signup(data.email, data.password, UserType.B2C);
 
       if (result.requiredAction === RequiredAction.EmailVerification) {
         router.push(PAGE_ROUTES.VERIFY_EMAIL);
@@ -87,7 +91,7 @@ export default function RegisterPage() {
   const handleGoogleSuccess = async (credential: string) => {
     setLoading(true);
     try {
-      const result = await signinWithGoogle(credential);
+      const result = await signinWithGoogle(credential, UserType.B2C);
 
       if (result.requiredAction === RequiredAction.OnboardingCompletion) {
         router.push(PAGE_ROUTES.ONBOARDING);

@@ -145,6 +145,7 @@ public class AuthEndpoints : IEndpoints
     {
         return new AuthResponse(
             UserId: result.User.Id.ToString(),
+            UserType: result.User.Type,
             RequiredAction: result.User.RequiredAction,
             AccessToken: result.AccessToken,
             RefreshToken: result.RefreshToken

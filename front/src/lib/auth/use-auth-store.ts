@@ -22,6 +22,11 @@ export interface ApiResult<T> {
   errors: ApiError[];
 }
 
+export enum UserType {
+  B2B = 'B2B',
+  B2C = 'B2C',
+}
+
 export enum RequiredAction {
   None = 'None',
   EmailVerification = 'EmailVerification',
@@ -30,6 +35,7 @@ export enum RequiredAction {
 
 export interface AuthResponse {
   userId: string;
+  userType: UserType;
   requiredAction: RequiredAction;
   accessToken: string | null;
   refreshToken: string | null;
@@ -72,8 +78,15 @@ interface AuthState {
   setHasHydrated: (hydrated: boolean) => void;
 
   signin: (email: string, password: string) => Promise<AuthResponse>;
-  signup: (email: string, password: string) => Promise<AuthResponse>;
-  signinWithGoogle: (idToken: string) => Promise<AuthResponse>;
+  signup: (
+    email: string,
+    password: string,
+    userType: UserType,
+  ) => Promise<AuthResponse>;
+  signinWithGoogle: (
+    idToken: string,
+    userType: UserType,
+  ) => Promise<AuthResponse>;
   confirmEmail: (userId: string, token: string) => Promise<AuthResponse>;
   logout: () => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
@@ -145,11 +158,11 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      signup: async (email, password) => {
+      signup: async (email, password, userType) => {
         try {
           const signupRes = await axios.post<ApiResult<AuthResponse>>(
             API_ENDPOINTS.AUTH.SIGNUP,
-            { email, password },
+            { email, password, userType },
           );
 
           if (!signupRes.data.success) {
@@ -164,11 +177,11 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      signinWithGoogle: async (idToken) => {
+      signinWithGoogle: async (idToken, userType) => {
         try {
           const res = await axios.post<ApiResult<AuthResponse>>(
             API_ENDPOINTS.AUTH.GOOGLE,
-            { idToken },
+            { idToken, userType },
           );
 
           if (!res.data.success) {

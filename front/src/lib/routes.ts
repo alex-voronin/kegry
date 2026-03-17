@@ -31,6 +31,15 @@ export const PAGE_ROUTES = {
     CONSENT: '/consent-to-communication',
     GUIDELINES: '/community-guidelines',
   },
+  B2B: {
+    HOME: '/',
+    LOGIN: (autoSignin?: boolean) =>
+      autoSignin ? '/login?auto-signin=true' : '/login',
+    REGISTER: '/register',
+    FORGOT_PASSWORD: '/forgot',
+    VERIFY_EMAIL: '/verify-email',
+    PASSWORD_RESET: '/password-reset',
+  },
 } as const;
 
 export const API_ENDPOINTS = {
