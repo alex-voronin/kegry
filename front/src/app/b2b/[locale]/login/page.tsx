@@ -1,19 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Script from 'next/script';
 import { useRouter } from '@/i18n/routing';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Button, ButtonVariant } from '@/components/ui/button';
-import { Eye, EyeOff } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 import {
   useAuthStore,
   RequiredAction,
   UserType,
 } from '@/lib/auth/use-auth-store';
-import { useGoogleSignIn } from '@/lib/auth/use-google-sign-in';
 import { Link } from '@/i18n/routing';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from '@/app/b2c/[locale]/login/login.module.css';
@@ -22,6 +18,10 @@ import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { createLoginSchema } from '@/lib/auth/login-schema';
+import { EmailField } from '@/components/auth/fields/EmailField';
+import { PasswordField } from '@/components/auth/fields/PasswordField';
+import { GoogleSignInButton } from '@/components/auth/google/GoogleSignInButton';
 
 export default function LoginPage() {
   const t = useTranslations('screens.login');
@@ -29,7 +29,6 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const signin = useAuthStore((state) => state.signin);
   const signinWithGoogle = useAuthStore((state) => state.signinWithGoogle);
   const { accessToken, hasHydrated, requiredAction } = useAuthStore();
@@ -52,17 +51,7 @@ export default function LoginPage() {
     }
   }, [isRedirecting, requiredAction, router, hasHydrated, shouldRedirect]);
 
-  const schema = z.object({
-    email: z.email(t('errors.emailInvalid')).min(1, t('errors.emailRequired')),
-    password: z
-      .string()
-      .min(1, t('errors.passwordRequired'))
-      .min(10, t('errors.passwordShort'))
-      .refine(
-        (pw) => /[A-Z]/.test(pw) && /[a-z]/.test(pw) && /[0-9]/.test(pw),
-        { message: t('errors.passwordComplexity') },
-      ),
-  });
+  const schema = createLoginSchema(t);
 
   type FormData = z.infer<typeof schema>;
 
@@ -111,28 +100,12 @@ export default function LoginPage() {
     }
   };
 
-  const { renderButton, isGoogleLoaded, onScriptLoad } = useGoogleSignIn({
-    onSuccess: handleGoogleSuccess,
-    onError: (error) => toast.error(error.message),
-  });
-
-  useEffect(() => {
-    if (isGoogleLoaded) {
-      renderButton('google-signin-button');
-    }
-  }, [isGoogleLoaded, renderButton]);
-
   if (!hasHydrated || isRedirecting) {
     return null;
   }
 
   return (
     <>
-      <Script
-        src="https://accounts.google.com/gsi/client"
-        strategy="afterInteractive"
-        onLoad={onScriptLoad}
-      />
       <div className={styles.page}>
         <div className={styles.container}>
           <Logo />
@@ -142,12 +115,11 @@ export default function LoginPage() {
             className={styles.formSection}
           >
             <div className={styles.inputWrapper}>
-              <Input
-                type="email"
+              <EmailField
                 placeholder={t('email')}
                 className={styles.inputCredentials}
                 disabled={loading}
-                {...register('email')}
+                inputProps={register('email')}
               />
               {errors.email && (
                 <div className={styles.fieldError}>{errors.email.message}</div>
@@ -156,27 +128,21 @@ export default function LoginPage() {
 
             <div className={styles.passwordWrapper}>
               <div className={styles.passwordInputWrapper}>
-                <Input
-                  type={showPassword ? 'text' : 'password'}
+                <PasswordField
                   placeholder={t('password')}
                   className={styles.inputCredentials}
                   disabled={loading}
-                  {...register('password')}
+                  eyeButtonClassName={styles.eyeButton}
+                  inputProps={register('password')}
+                  extra={
+                    <Link
+                      href={PAGE_ROUTES.B2B.FORGOT_PASSWORD}
+                      className={styles.forgotLink}
+                    >
+                      {t('forgot')}
+                    </Link>
+                  }
                 />
-                <button
-                  type="button"
-                  className={styles.eyeButton}
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-                <Link
-                  href={PAGE_ROUTES.B2B.FORGOT_PASSWORD}
-                  className={styles.forgotLink}
-                >
-                  {t('forgot')}
-                </Link>
               </div>
               {errors.password && (
                 <div className={styles.fieldError}>
@@ -206,7 +172,10 @@ export default function LoginPage() {
           <div className={styles.footer}>
             <div className={styles.divider}>
               <div className={styles.dividerText}>{t('orContinueWith')}</div>
-              <div id="google-signin-button"></div>
+              <GoogleSignInButton
+                onSuccess={handleGoogleSuccess}
+                onError={(error) => toast.error(error.message)}
+              />
             </div>
           </div>
         </div>
