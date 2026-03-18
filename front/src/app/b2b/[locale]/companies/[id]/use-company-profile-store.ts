@@ -17,6 +17,7 @@ interface CompanyProfileState {
   selectedCompany: CompanyDetailDto | null;
   isLoading: boolean;
   fetchCompany: (id: string) => Promise<void>;
+  deleteCompany: (id: string) => Promise<void>;
   reset: () => void;
 }
 
@@ -37,6 +38,9 @@ export const useCompanyProfileStore = create<CompanyProfileState>()((set) => ({
       set({ isLoading: false });
       throw error;
     }
+  },
+  deleteCompany: async (id: string) => {
+    await apiClient.delete(API_ENDPOINTS.COMPANIES.BY_ID(id));
   },
   reset: () => set({ selectedCompany: null, isLoading: false }),
 }));

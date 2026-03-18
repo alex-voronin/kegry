@@ -39,7 +39,7 @@ export default function CompaniesPage() {
         title={t('title')}
         right={
           <Icon
-            src="/assets/b2b/common/plus-icon.svg"
+            src="/assets/b2b/plus-icon.svg"
             alt="add company"
             width={24}
             height={24}
@@ -68,7 +68,8 @@ export default function CompaniesPage() {
                 className="cursor-pointer"
                 onClick={() => handleCompanyClick(company.id)}
                 avatarUrl={
-                  company.avatarImageUrl || '/assets/common/venues-icon.svg'
+                  company.avatarImageUrl ||
+                  '/assets/b2b/avatar-placeholder.webp'
                 }
                 avatarAlt={company.name}
                 title={company.name}

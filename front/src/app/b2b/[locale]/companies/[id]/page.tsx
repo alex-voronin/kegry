@@ -62,7 +62,7 @@ export default function CompanyProfilePage() {
 
   const menuOptions = [
     {
-      icon: '/assets/profile/edit-icon.svg',
+      icon: '/assets/b2b/edit-icon.svg',
       label: t('menu.edit'),
       onClick: () => {
         setIsMenuOpen(false);
@@ -70,7 +70,7 @@ export default function CompanyProfilePage() {
       },
     },
     {
-      icon: '/assets/common/delete-icon.svg',
+      icon: '/assets/b2b/delete-icon.svg',
       label: t('menu.delete'),
       onClick: () => {
         setIsMenuOpen(false);
@@ -99,7 +99,7 @@ export default function CompanyProfilePage() {
         title={t('title')}
         left={
           <Icon
-            src="/assets/common/disclosure-left-icon.svg"
+            src="/assets/b2b/disclosure-left-icon.svg"
             alt="back"
             width={14}
             height={27}
@@ -108,7 +108,7 @@ export default function CompanyProfilePage() {
         }
         right={
           <Icon
-            src="/assets/common/more-icon.svg"
+            src="/assets/b2b/more-icon.svg"
             alt="more"
             width={24}
             height={24}
@@ -125,7 +125,7 @@ export default function CompanyProfilePage() {
                 <img
                   src={
                     selectedCompany.avatarImageUrl ||
-                    '/assets/common/avatar-placeholder.webp'
+                    '/assets/b2b/avatar-placeholder.webp'
                   }
                   alt="avatar"
                   className={styles.avatarImage}
@@ -173,7 +173,7 @@ export default function CompanyProfilePage() {
                     className="cursor-pointer"
                     onClick={() => handleVenueClick(venue.id)}
                     avatarUrl={
-                      venue.coverImageUrl || '/assets/common/venues-icon.svg'
+                      venue.coverImageUrl || '/assets/b2b/venue-icon.svg'
                     }
                     avatarAlt={venue.address}
                     title={venue.address}
@@ -204,7 +204,6 @@ export default function CompanyProfilePage() {
         secondaryButtonVariant={ButtonVariant.Destructive}
         onPrimaryAction={() => setIsDeleteModalOpen(false)}
         onSecondaryAction={handleDeleteConfirm}
-        isLoading={isDeleting}
       />
     </>
   );
