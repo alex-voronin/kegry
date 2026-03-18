@@ -41,6 +41,7 @@ export const PAGE_ROUTES = {
     PASSWORD_RESET: '/password-reset',
     COMPANIES: '/companies',
     COMPANIES_CREATE: '/companies/create',
+    COMPANIES_DETAIL: (id: string) => `/companies/${id}`,
     VENUES: '/venues',
   },
 } as const;

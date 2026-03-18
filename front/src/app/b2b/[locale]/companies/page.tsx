@@ -12,14 +12,12 @@ import { useCompaniesStore, CompanyDto } from './use-companies-store';
 import { toast } from 'react-toastify';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from './companies.module.css';
-import { Sidebar, SidebarIcon, useSidebar } from '@/components/b2b/Sidebar';
+import { useSidebar, SidebarIcon, Sidebar } from '@/components/b2b/Sidebar';
+import { ChevronRight } from 'lucide-react';
 
 export default function CompaniesPage() {
   const router = useRouter();
   const t = useTranslations('screens.companies');
-  const [selectedCompany, setSelectedCompany] = useState<CompanyDto | null>(
-    null,
-  );
   const { isOpen, open, close } = useSidebar();
 
   const { companies, isLoading, fetchCompanies } = useCompaniesStore();
@@ -30,15 +28,9 @@ export default function CompaniesPage() {
     });
   }, [fetchCompanies, t]);
 
-  const getMenuOptions = (company: CompanyDto) => [
-    {
-      icon: '/assets/common/venues-icon.svg',
-      label: t('menu.viewCompany'),
-      onClick: () => {
-        setSelectedCompany(null);
-      },
-    },
-  ];
+  const handleCompanyClick = (id: string) => {
+    router.push(PAGE_ROUTES.B2B.COMPANIES_DETAIL(id));
+  };
 
   return (
     <div className="relative flex flex-1 flex-col overflow-hidden">
@@ -74,35 +66,19 @@ export default function CompaniesPage() {
               <ListItem
                 key={company.id}
                 className="cursor-pointer"
-                onClick={() => setSelectedCompany(company)}
+                onClick={() => handleCompanyClick(company.id)}
                 avatarUrl={
                   company.avatarImageUrl || '/assets/common/venues-icon.svg'
                 }
                 avatarAlt={company.name}
                 title={company.name}
                 subtitle={company.email || ''}
-                rightEl={
-                  <Icon
-                    src="/assets/common/more-icon.svg"
-                    alt="more"
-                    width={24}
-                    height={24}
-                    priority
-                    stopPropagation
-                    onClick={() => setSelectedCompany(company)}
-                  />
-                }
+                rightEl={<ChevronRight size={24} className="text-secondary" />}
               />
             ))}
           </div>
         )}
       </div>
-
-      <ModalMenu
-        isOpen={!!selectedCompany}
-        onClose={() => setSelectedCompany(null)}
-        options={selectedCompany ? getMenuOptions(selectedCompany) : []}
-      />
     </div>
   );
 }
