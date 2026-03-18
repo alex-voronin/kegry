@@ -11,7 +11,7 @@ public class LoyaltyLevel
         init => field = ValidateId(value);
     }
 
-    public Guid VenueId { get; init; }
+    public Guid CompanyId { get; init; }
 
     public int VisitsUpperBound
     {

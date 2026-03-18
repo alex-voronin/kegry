@@ -65,8 +65,10 @@ public class B2CVenueEndpoints : IEndpoints
                 new VenueListItemDto(
                     Id: v.Venue.Id.ToString(),
                     CompanyName: v.Venue.Company.Name,
-                    CompanyAvatarImageUrl: storageService
-                        .S3KeyToPublicFileUrl(v.Venue.Company.AvatarImageS3Key, v.Venue.Company.ChangedAt),
+                    CompanyAvatarImageUrl: v.Venue.Company.AvatarImageS3Key != null
+                        ? storageService
+                            .S3KeyToPublicFileUrl(v.Venue.Company.AvatarImageS3Key, v.Venue.Company.ChangedAt)
+                        : null,
                     Address: v.Venue.Address,
                     DistanceMeters: (int)v.DistanceMeters,
                     GoogleMapsUrl: v.Venue.GoogleMapsUrl
@@ -143,7 +145,9 @@ public class B2CVenueEndpoints : IEndpoints
             Id: company.Id.ToString(),
             Name: company.Name,
             Email: company.Email,
-            AvatarImageUrl: storageService.S3KeyToPublicFileUrl(company.AvatarImageS3Key, company.ChangedAt)
+            AvatarImageUrl: company.AvatarImageS3Key != null
+                ? storageService.S3KeyToPublicFileUrl(company.AvatarImageS3Key, company.ChangedAt)
+                : null
         );
     }
 }

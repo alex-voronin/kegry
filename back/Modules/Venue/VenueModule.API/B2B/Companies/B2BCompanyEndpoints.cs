@@ -9,6 +9,7 @@ using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 using SharedCore.Policies;
 using VenueModule.API.B2B.Companies.Dto;
+using VenueModule.API.B2B.Discount.Dto;
 using VenueModule.API.B2B.Shared;
 using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.Exceptions;
@@ -89,6 +90,7 @@ public class B2BCompanyEndpoints : IEndpoints
             ownerId: user.GetId(),
             asNoTracking: true,
             includeVenues: true,
+            includeLoyaltyLevels: true,
             ct: ct);
         if (company == null)
         {
@@ -207,7 +209,10 @@ public class B2BCompanyEndpoints : IEndpoints
             Email: company.Email,
             AvatarImageUrl: company.AvatarImageS3Key != null
                 ? storageService.S3KeyToPublicFileUrl(company.AvatarImageS3Key, company.ChangedAt)
-                : null
+                : null,
+            LoyaltyLevels: company.LoyaltyLevels
+                .Select(l => new LoyaltyLevelDto(l.Id, l.VisitsUpperBound))
+                .ToArray()
         );
     }
 }

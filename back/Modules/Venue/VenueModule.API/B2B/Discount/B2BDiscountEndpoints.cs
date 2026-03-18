@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using SharedCore.Api;
 using SharedCore.Api.Dto;
+using SharedCore.Extensions;
 using SharedCore.Policies;
 using VenueModule.API.B2B.Discount.Dto;
 using VenueModule.Domain.Aggregates;
@@ -22,8 +23,8 @@ public class B2BDiscountEndpoints : IEndpoints
             .RequireAuthorization(AuthPolicies.B2BAdmin);
 
         // LoyaltyLevel endpoints
-        group.MapGet("/api/v1/venue/{venueId:guid}/loyalty-levels", GetLoyaltyLevels);
-        group.MapPut("/api/v1/venue/{venueId:guid}/loyalty-levels", UpsertLoyaltyLevels);
+        group.MapGet("/api/v1/company/{companyId:guid}/loyalty-levels", GetLoyaltyLevels);
+        group.MapPut("/api/v1/company/{venueId:guid}/loyalty-levels", UpsertLoyaltyLevels);
 
         // Discount endpoints
         group.MapGet("/api/v1/venue/{venueId:guid}/discounts", GetDiscounts);
@@ -35,11 +36,11 @@ public class B2BDiscountEndpoints : IEndpoints
     // ── LoyaltyLevel endpoints ────────────────────────────────────────────────
 
     private static async Task<ApiResult<LoyaltyLevelDto[]>> GetLoyaltyLevels(
-        [FromRoute] Guid venueId,
+        [FromRoute] Guid companyId,
         ILoyaltyLevelRepository repository,
         CancellationToken ct)
     {
-        var levels = await repository.GetByVenueIdAsync(venueId, ct);
+        var levels = await repository.GetByCompanyIdAsync(companyId, ct);
         var dtos = levels
             .Select(l => new LoyaltyLevelDto(l.Id, l.VisitsUpperBound))
             .ToArray();
@@ -48,7 +49,7 @@ public class B2BDiscountEndpoints : IEndpoints
     }
 
     private static async Task<ApiResult.EmptyResult> UpsertLoyaltyLevels(
-        [FromRoute] Guid venueId,
+        [FromRoute] Guid companyId,
         [FromBody] UpsertLoyaltyLevelsRequest request,
         ClaimsPrincipal user,
         IVenueRepository venueRepository,
@@ -60,16 +61,26 @@ public class B2BDiscountEndpoints : IEndpoints
             .Select(dto => new LoyaltyLevel
             {
                 Id = dto.Id,
-                VenueId = venueId,
+                CompanyId = companyId,
                 VisitsUpperBound = dto.VisitsUpperBound
             })
             .ToArray();
 
         LoyaltyLevel.ValidateLevelsCountAndOrder(levels);
 
-        await VenueOwnerGuard.RequireVenueOwnerAsync(venueId, user, venueRepository, companyRepository, ct);
-        await loyaltyLevelRepository.DeleteAllForVenueAsync(venueId, ct);
-
+        var company = await companyRepository.GetByIdAsync(
+            companyId: companyId,
+            ownerId: user.GetId(),
+            asNoTracking: true,
+            includeVenues: false,
+            ct: ct);
+        if (company == null)
+        {
+            throw VenueExceptions.CompanyNotFound();
+        }
+        
+        await loyaltyLevelRepository.DeleteAllForCompanyAsync(companyId, ct);
+        
         foreach (var level in levels)
         {
             await loyaltyLevelRepository.AddAsync(level, ct);

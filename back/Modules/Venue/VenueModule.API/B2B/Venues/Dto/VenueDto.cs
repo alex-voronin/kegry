@@ -14,5 +14,4 @@ public record VenueDto(
     string? WorkingHours,
     string? CoverImageUrl,
     PromoDto[] Promos,
-    DiscountDto[] Discounts,
-    LoyaltyLevelDto[] LoyaltyLevels);
+    DiscountDto[] Discounts);

@@ -14,7 +14,7 @@ public class LoyaltyLevelTests
     [InlineData(2)]
     public void LoyaltyLevel_WhenIdIsValid_ThenInitializes(int validId)
     {
-        var level = new LoyaltyLevel { Id = validId, VenueId = Guid.NewGuid(), VisitsUpperBound = 5 };
+        var level = new LoyaltyLevel { Id = validId, CompanyId = Guid.NewGuid(), VisitsUpperBound = 5 };
         level.Id.ShouldBe(validId);
     }
 
@@ -24,7 +24,8 @@ public class LoyaltyLevelTests
     [InlineData(100)]
     public void LoyaltyLevel_WhenIdIsOutOfRange_ThenThrows(int invalidId)
     {
-        Should.Throw<HttpCodeException>(() => _ = new LoyaltyLevel { Id = invalidId, VenueId = Guid.NewGuid(), VisitsUpperBound = 5 })
+        Should.Throw<HttpCodeException>(() => _ = new LoyaltyLevel
+                { Id = invalidId, CompanyId = Guid.NewGuid(), VisitsUpperBound = 5 })
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 
@@ -35,7 +36,7 @@ public class LoyaltyLevelTests
     [InlineData(100)]
     public void LoyaltyLevel_WhenVisitsUpperBoundIsPositive_ThenInitializes(int value)
     {
-        var level = new LoyaltyLevel { Id = 0, VenueId = Guid.NewGuid(), VisitsUpperBound = value };
+        var level = new LoyaltyLevel { Id = 0, CompanyId = Guid.NewGuid(), VisitsUpperBound = value };
         level.VisitsUpperBound.ShouldBe(value);
     }
 
@@ -44,7 +45,8 @@ public class LoyaltyLevelTests
     [InlineData(-100)]
     public void LoyaltyLevel_WhenVisitsUpperBoundIsNotPositive_ThenThrows(int invalidValue)
     {
-        Should.Throw<HttpCodeException>(() => _ = new LoyaltyLevel { Id = 0, VenueId = Guid.NewGuid(), VisitsUpperBound = invalidValue })
+        Should.Throw<HttpCodeException>(() => _ = new LoyaltyLevel
+                { Id = 0, CompanyId = Guid.NewGuid(), VisitsUpperBound = invalidValue })
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 
@@ -126,7 +128,7 @@ public class LoyaltyLevelTests
         // Provide levels out of Id order — ValidateCollection sorts by Id before checking
         var levels = new[]
         {
-            MakeLevel(2, 5),  // highest Id, lowest bound
+            MakeLevel(2, 5), // highest Id, lowest bound
             MakeLevel(0, 20), // lowest Id, highest bound
         };
         Should.Throw<HttpCodeException>(() => LoyaltyLevel.ValidateLevelsCountAndOrder(levels))
@@ -136,5 +138,5 @@ public class LoyaltyLevelTests
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private static LoyaltyLevel MakeLevel(int id, int visitsUpperBound) =>
-        new() { Id = id, VenueId = Guid.NewGuid(), VisitsUpperBound = visitsUpperBound };
+        new() { Id = id, CompanyId = Guid.NewGuid(), VisitsUpperBound = visitsUpperBound };
 }

@@ -27,7 +27,7 @@ public class VenueContext : DbContext
         ConfigureLoyaltyLevel(modelBuilder);
         ConfigureDiscount(modelBuilder);
         ConfigureDiscountDay(modelBuilder);
-        ConfigureUserVenueLoyalty(modelBuilder);
+        ConfigureUserLoyalty(modelBuilder);
     }
 
     private static void ConfigureCompany(ModelBuilder modelBuilder)
@@ -51,6 +51,10 @@ public class VenueContext : DbContext
                 .HasForeignKey(v => v.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
             entity.HasIndex(c => c.OwnerId);
+            entity.HasMany(v => v.LoyaltyLevels)
+                .WithOne()
+                .HasForeignKey(l => l.CompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
             
             entity.HasIndex(u => u.IsDeleted);
             entity.HasQueryFilter(c => !c.IsDeleted);
@@ -93,10 +97,6 @@ public class VenueContext : DbContext
                 .WithOne()
                 .HasForeignKey(d => d.VenueId)
                 .OnDelete(DeleteBehavior.Cascade);
-            entity.HasMany(v => v.LoyaltyLevels)
-                .WithOne()
-                .HasForeignKey(l => l.VenueId)
-                .OnDelete(DeleteBehavior.Cascade);
             entity.OwnsMany(v => v.Promos, promo =>
             {
                 promo.ToTable("venue_promos");
@@ -129,7 +129,7 @@ public class VenueContext : DbContext
         modelBuilder.Entity<LoyaltyLevel>(entity =>
         {
             entity.ToTable("loyalty_levels");
-            entity.HasKey(l => new { l.Id, l.VenueId });
+            entity.HasKey(l => new { l.Id, l.CompanyId });
             entity.ToTable(t => t.HasCheckConstraint("CK_loyalty_levels_id", "\"id\" IN (0, 1, 2, 3)"));
         });
     }
@@ -168,19 +168,19 @@ public class VenueContext : DbContext
         });
     }
 
-    private static void ConfigureUserVenueLoyalty(ModelBuilder modelBuilder)
+    private static void ConfigureUserLoyalty(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<UserLoyalty>(entity =>
         {
             entity.ToTable("user_loyalties");
-            entity.HasKey(u => new { u.UserId, u.VenueId });
-            entity.HasOne<Venue>()
+            entity.HasKey(u => new { u.UserId, u.CompanyId });
+            entity.HasOne<Company>()
                 .WithMany()
-                .HasForeignKey(u => u.VenueId)
+                .HasForeignKey(u => u.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
             entity.HasOne<LoyaltyLevel>()
                 .WithMany()
-                .HasForeignKey(u => new { u.LoyaltyLevelId, u.VenueId })
+                .HasForeignKey(u => new { u.LoyaltyLevelId, u.CompanyId })
                 .OnDelete(DeleteBehavior.NoAction);
         });
     }

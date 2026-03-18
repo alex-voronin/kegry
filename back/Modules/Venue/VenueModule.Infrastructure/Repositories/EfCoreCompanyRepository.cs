@@ -14,8 +14,10 @@ public class EfCoreCompanyRepository : Repository<VenueContext, Company>, ICompa
     }
 
     [Obsolete("Use GetByIdAsync(Guid companyId, Guid ownerId) instead", true)]
-    public override Task<Company?> GetByIdAsync<TId>(TId id, 
-        bool asNoTracking = false, 
+#pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
+    public override Task<Company?> GetByIdAsync<TId>(TId id,
+#pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
+        bool asNoTracking = false,
         Expression<Func<Company, object?>>[]? includes = null,
         CancellationToken ct = default)
     {
@@ -58,12 +60,18 @@ public class EfCoreCompanyRepository : Repository<VenueContext, Company>, ICompa
         Guid ownerId,
         bool asNoTracking = false,
         bool includeVenues = false,
+        bool includeLoyaltyLevels = false,
         CancellationToken ct = default)
     {
         IQueryable<Company> query = Context.Companies;
         if (includeVenues)
         {
             query = query.Include(c => c.Venues);
+        }
+
+        if (includeLoyaltyLevels)
+        {
+            query = query.Include(c => c.LoyaltyLevels);
         }
 
         if (asNoTracking)

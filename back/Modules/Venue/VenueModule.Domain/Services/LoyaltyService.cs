@@ -94,21 +94,21 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             userId: userId,
             ct: ct);
 
+        if (venue == null)
+        {
+            throw VenueExceptions.VenueNotFound(venueId);
+        }
+        
         if (userLoyalty == null)
         {
             userLoyalty = new UserLoyalty
             {
                 UserId = userId,
-                VenueId = venueId,
+                CompanyId = venue.CompanyId,
                 LoyaltyLevelId = 0,
                 VisitsCount = 0
             };
             await _userLoyaltyRepository.AddAsync(userLoyalty, ct);
-        }
-
-        if (venue == null)
-        {
-            throw VenueExceptions.VenueNotFound(venueId);
         }
 
         var distanceMeters = Haversine.DistanceMeters(
@@ -134,7 +134,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         await _visitRepository.AddAsync(visit, ct);
 
         var newVisitsCount = userLoyalty.VisitsCount + 1;
-        var (currentLoyaltyLevelId, _, _) = GetCurrentLoyaltyLevel(venue.LoyaltyLevels, newVisitsCount);
+        var (currentLoyaltyLevelId, _, _) = GetCurrentLoyaltyLevel(venue.Company.LoyaltyLevels, newVisitsCount);
 
         userLoyalty.LoyaltyLevelId = currentLoyaltyLevelId;
         userLoyalty.VisitsCount = newVisitsCount;
@@ -149,21 +149,17 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         Guid venueId,
         CancellationToken ct = default)
     {
-        var venue = await _venueRepository.GetByIdAsync(venueId,
-            asNoTracking: true,
-            includes: [v => v.Discounts, v => v.LoyaltyLevels],
-            ct: ct);
-
+        var venue = await _venueRepository.GetByIdWithLyaltylevelsAndDiscounts(venueId, ct);
         if (venue == null)
         {
             throw VenueExceptions.VenueNotFound(venueId);
         }
 
-        var userLoyalty = await _userLoyaltyRepository.GetByUserAndVenueId(userId, venueId, ct);
+        var userLoyalty = await _userLoyaltyRepository.GetByUserAndCompanyId(userId, venue.CompanyId, ct);
         var visitsCount = userLoyalty?.VisitsCount ?? 0;
 
         var (currentLoyaltyLevel, visitsLowerBound, visitsUpperBound) = GetCurrentLoyaltyLevel(
-            venue.LoyaltyLevels, visitsCount);
+            venue.Company.LoyaltyLevels, visitsCount);
 
         var timeZone = TimeZoneInfo.FindSystemTimeZoneById(venue.TimeZoneId);
         var venueLocalTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);

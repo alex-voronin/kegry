@@ -5,6 +5,6 @@ namespace VenueModule.Domain.Repositories;
 
 public interface ILoyaltyLevelRepository : IRepository<LoyaltyLevel>
 {
-    Task<List<LoyaltyLevel>> GetByVenueIdAsync(Guid venueId, CancellationToken ct = default);
-    Task DeleteAllForVenueAsync(Guid venueId, CancellationToken ct = default);
+    Task<List<LoyaltyLevel>> GetByCompanyIdAsync(Guid venueId, CancellationToken ct = default);
+    Task DeleteAllForCompanyAsync(Guid companyId, CancellationToken ct = default);
 }

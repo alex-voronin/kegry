@@ -39,6 +39,28 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "loyalty_levels",
+                schema: "venue",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false),
+                    company_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    visits_upper_bound = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_loyalty_levels", x => new { x.id, x.company_id });
+                    table.CheckConstraint("CK_loyalty_levels_id", "\"id\" IN (0, 1, 2, 3)");
+                    table.ForeignKey(
+                        name: "fk_loyalty_levels_companies_company_id",
+                        column: x => x.company_id,
+                        principalSchema: "venue",
+                        principalTable: "companies",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "venues",
                 schema: "venue",
                 columns: table => new
@@ -70,20 +92,55 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "loyalty_levels",
+                name: "user_loyalties",
                 schema: "venue",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false),
-                    venue_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    visits_upper_bound = table.Column<int>(type: "integer", nullable: false)
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    company_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    visits_count = table.Column<int>(type: "integer", nullable: false),
+                    loyalty_level_id = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_loyalty_levels", x => new { x.id, x.venue_id });
-                    table.CheckConstraint("CK_loyalty_levels_id", "\"id\" IN (0, 1, 2, 3)");
+                    table.PrimaryKey("pk_user_loyalties", x => new { x.user_id, x.company_id });
                     table.ForeignKey(
-                        name: "fk_loyalty_levels_venues_venue_id",
+                        name: "fk_user_loyalties_companies_company_id",
+                        column: x => x.company_id,
+                        principalSchema: "venue",
+                        principalTable: "companies",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_user_loyalties_loyalty_levels_loyalty_level_id_company_id",
+                        columns: x => new { x.loyalty_level_id, x.company_id },
+                        principalSchema: "venue",
+                        principalTable: "loyalty_levels",
+                        principalColumns: new[] { "id", "company_id" });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "discounts",
+                schema: "venue",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    venue_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    loyalty_level_id = table.Column<int>(type: "integer", nullable: false),
+                    percent = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_discounts", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_discounts_loyalty_levels_loyalty_level_id_venue_id",
+                        columns: x => new { x.loyalty_level_id, x.venue_id },
+                        principalSchema: "venue",
+                        principalTable: "loyalty_levels",
+                        principalColumns: new[] { "id", "company_id" },
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_discounts_venues_venue_id",
                         column: x => x.venue_id,
                         principalSchema: "venue",
                         principalTable: "venues",
@@ -127,63 +184,6 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     table.PrimaryKey("pk_visits", x => new { x.user_id, x.venue_id });
                     table.ForeignKey(
                         name: "fk_visits_venues_venue_id",
-                        column: x => x.venue_id,
-                        principalSchema: "venue",
-                        principalTable: "venues",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "discounts",
-                schema: "venue",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    venue_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    loyalty_level_id = table.Column<int>(type: "integer", nullable: false),
-                    percent = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_discounts", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_discounts_loyalty_levels_loyalty_level_id_venue_id",
-                        columns: x => new { x.loyalty_level_id, x.venue_id },
-                        principalSchema: "venue",
-                        principalTable: "loyalty_levels",
-                        principalColumns: new[] { "id", "venue_id" },
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_discounts_venues_venue_id",
-                        column: x => x.venue_id,
-                        principalSchema: "venue",
-                        principalTable: "venues",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "user_loyalties",
-                schema: "venue",
-                columns: table => new
-                {
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    venue_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    visits_count = table.Column<int>(type: "integer", nullable: false),
-                    loyalty_level_id = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_user_loyalties", x => new { x.user_id, x.venue_id });
-                    table.ForeignKey(
-                        name: "fk_user_loyalties_loyalty_levels_loyalty_level_id_venue_id",
-                        columns: x => new { x.loyalty_level_id, x.venue_id },
-                        principalSchema: "venue",
-                        principalTable: "loyalty_levels",
-                        principalColumns: new[] { "id", "venue_id" });
-                    table.ForeignKey(
-                        name: "fk_user_loyalties_venues_venue_id",
                         column: x => x.venue_id,
                         principalSchema: "venue",
                         principalTable: "venues",
@@ -237,22 +237,22 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                 column: "venue_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_loyalty_levels_venue_id",
+                name: "ix_loyalty_levels_company_id",
                 schema: "venue",
                 table: "loyalty_levels",
-                column: "venue_id");
+                column: "company_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_loyalties_loyalty_level_id_venue_id",
+                name: "ix_user_loyalties_company_id",
                 schema: "venue",
                 table: "user_loyalties",
-                columns: new[] { "loyalty_level_id", "venue_id" });
+                column: "company_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_loyalties_venue_id",
+                name: "ix_user_loyalties_loyalty_level_id_company_id",
                 schema: "venue",
                 table: "user_loyalties",
-                column: "venue_id");
+                columns: new[] { "loyalty_level_id", "company_id" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_venues_company_id",

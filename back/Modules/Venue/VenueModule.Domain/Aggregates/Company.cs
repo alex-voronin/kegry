@@ -37,6 +37,8 @@ public class Company : ISoftDeletable<Guid>
 
     public required DateTimeOffset CreatedAt { get; init; }
     public DateTimeOffset ChangedAt { get; private set; }
+    private readonly List<LoyaltyLevel> _loyaltyLevels = [];
+    public IReadOnlyCollection<LoyaltyLevel> LoyaltyLevels => _loyaltyLevels.AsReadOnly();
     public IReadOnlyCollection<Venue> Venues { get; init; } = new List<Venue>();
     public bool IsDeleted { get; set; }
 

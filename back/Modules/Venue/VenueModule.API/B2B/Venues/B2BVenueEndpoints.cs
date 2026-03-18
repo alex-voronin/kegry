@@ -87,7 +87,7 @@ public class B2BVenueEndpoints : IEndpoints
     {
         var venue = await venueRepository.GetByIdAsync(id,
             asNoTracking: true,
-            includes: [v => v.Discounts, v => v.LoyaltyLevels],
+            includes: [v => v.Discounts],
             ct: ct);
         if (venue == null)
         {
@@ -199,9 +199,6 @@ public class B2BVenueEndpoints : IEndpoints
                 .ToArray(),
             Discounts: venue.Discounts
                 .Select(B2BDiscountEndpoints.DomainDiscountToDto)
-                .ToArray(),
-            LoyaltyLevels: venue.LoyaltyLevels
-                .Select(l => new LoyaltyLevelDto(l.Id, l.VisitsUpperBound))
                 .ToArray()
         );
     }

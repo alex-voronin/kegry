@@ -12,19 +12,19 @@ public class EfCoreLoyaltyLevelRepository : Repository<VenueContext, LoyaltyLeve
     {
     }
 
-    public Task<List<LoyaltyLevel>> GetByVenueIdAsync(Guid venueId, CancellationToken ct = default)
+    public Task<List<LoyaltyLevel>> GetByCompanyIdAsync(Guid companyId, CancellationToken ct = default)
     {
         return Context.LoyaltyLevels
             .AsNoTracking()
-            .Where(l => l.VenueId == venueId)
+            .Where(l => l.CompanyId == companyId)
             .OrderBy(l => l.Id)
             .ToListAsync(ct);
     }
 
-    public async Task DeleteAllForVenueAsync(Guid venueId, CancellationToken ct = default)
+    public async Task DeleteAllForCompanyAsync(Guid companyId, CancellationToken ct = default)
     {
         var levels = await Context.LoyaltyLevels
-            .Where(l => l.VenueId == venueId)
+            .Where(l => l.CompanyId == companyId)
             .ToListAsync(ct);
 
         Context.LoyaltyLevels.RemoveRange(levels);

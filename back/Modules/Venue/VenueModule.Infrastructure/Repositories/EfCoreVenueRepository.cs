@@ -48,10 +48,23 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
         return (venues, totalCount);
     }
 
+    public Task<Venue?> GetByIdWithLyaltylevelsAndDiscounts(Guid id, CancellationToken ct)
+    {
+        return Context.Venues
+            .Include(v => v.Company)
+            .ThenInclude(c => c.LoyaltyLevels)
+            .Include(v => v.Discounts)
+            .AsNoTracking()
+            .Where(v => v.Id == id)
+            .FirstOrDefaultAsync(ct);
+    }
+
     public async Task<(Venue? venue, Visit? lastVisit, UserLoyalty? userLoyalty)> GetVenueWithLastVisitsAndUserLoyalty(
         Guid venueId, Guid userId, CancellationToken ct)
     {
         var res = await Context.Venues
+            .Include(v => v.Company)
+            .ThenInclude(c => c.LoyaltyLevels)
             .AsNoTracking()
             .Where(v => v.Id == venueId)
             .Select(v => new
@@ -62,7 +75,7 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
                     .OrderByDescending(vis => vis.CheckedInAt)
                     .FirstOrDefault(),
                 VisitCount = Context.UserLoyalties
-                    .Where(vis => vis.UserId == userId && vis.VenueId == venueId)
+                    .Where(l => l.UserId == userId && l.CompanyId == v.CompanyId)
                     .FirstOrDefault()
             })
             .FirstOrDefaultAsync(ct);

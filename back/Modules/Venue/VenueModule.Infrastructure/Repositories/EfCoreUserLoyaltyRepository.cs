@@ -12,10 +12,10 @@ public class EfCoreUserLoyaltyRepository : Repository<VenueContext, UserLoyalty>
     {
     }
 
-    public Task<UserLoyalty?> GetByUserAndVenueId(Guid userId, Guid venueId, CancellationToken ct = default)
+    public Task<UserLoyalty?> GetByUserAndCompanyId(Guid userId, Guid companyId, CancellationToken ct = default)
     {
         return Context.UserLoyalties
-            .Where(l => l.UserId == userId && l.VenueId == venueId)
+            .Where(l => l.UserId == userId && l.CompanyId == companyId)
             .FirstOrDefaultAsync(ct);
     }
 }

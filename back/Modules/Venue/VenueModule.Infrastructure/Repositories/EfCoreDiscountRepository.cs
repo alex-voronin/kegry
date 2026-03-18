@@ -47,7 +47,7 @@ public class EfCoreDiscountRepository : Repository<VenueContext, Discount>, IDis
                 d.LoyaltyLevelId == 0 ||
                 Context.UserLoyalties
                     .Any(l => l.UserId == userId &&
-                              l.VenueId == d.VenueId &&
+                              l.CompanyId == d.Venue.CompanyId &&
                               l.LoyaltyLevelId >= d.LoyaltyLevelId));
 
         var totalCount = await baseQuery.CountAsync(ct);

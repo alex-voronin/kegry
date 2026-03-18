@@ -94,9 +94,6 @@ public class Venue : ISoftDeletable<Guid>
     private readonly List<Discount> _discounts = [];
     public IReadOnlyCollection<Discount> Discounts => _discounts.AsReadOnly();
 
-    private readonly List<LoyaltyLevel> _loyaltyLevels = [];
-    public IReadOnlyCollection<LoyaltyLevel> LoyaltyLevels => _loyaltyLevels.AsReadOnly();
-
     public DateTimeOffset ChangedAt { get; private set; }
 
     private bool SetProperty<T>(ref T field, T value)
