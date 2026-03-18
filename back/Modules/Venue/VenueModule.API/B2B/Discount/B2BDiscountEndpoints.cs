@@ -24,7 +24,7 @@ public class B2BDiscountEndpoints : IEndpoints
 
         // LoyaltyLevel endpoints
         group.MapGet("/api/v1/company/{companyId:guid}/loyalty-levels", GetLoyaltyLevels);
-        group.MapPut("/api/v1/company/{venueId:guid}/loyalty-levels", UpsertLoyaltyLevels);
+        group.MapPut("/api/v1/company/{companyId:guid}/loyalty-levels", UpdateLoyaltyLevels);
 
         // Discount endpoints
         group.MapGet("/api/v1/venue/{venueId:guid}/discounts", GetDiscounts);
@@ -42,51 +42,43 @@ public class B2BDiscountEndpoints : IEndpoints
     {
         var levels = await repository.GetByCompanyIdAsync(companyId, ct);
         var dtos = levels
-            .Select(l => new LoyaltyLevelDto(l.Id, l.VisitsUpperBound))
+            .Select(l => new LoyaltyLevelDto(l.Id, l.VisitsUpperBound, l.IsActive))
             .ToArray();
 
         return ApiResult<LoyaltyLevelDto[]>.Build(dtos);
     }
 
-    private static async Task<ApiResult.EmptyResult> UpsertLoyaltyLevels(
+    private static async Task<ApiResult.EmptyResult> UpdateLoyaltyLevels(
         [FromRoute] Guid companyId,
-        [FromBody] UpsertLoyaltyLevelsRequest request,
+        [FromBody] UpdateLoyaltyLevelsRequest request,
         ClaimsPrincipal user,
-        IVenueRepository venueRepository,
         ICompanyRepository companyRepository,
-        ILoyaltyLevelRepository loyaltyLevelRepository,
         CancellationToken ct)
     {
-        var levels = request.LoyaltyLevels
-            .Select(dto => new LoyaltyLevel
-            {
-                Id = dto.Id,
-                CompanyId = companyId,
-                VisitsUpperBound = dto.VisitsUpperBound
-            })
-            .ToArray();
-
-        LoyaltyLevel.ValidateLevelsCountAndOrder(levels);
+        var newLevelsDict = request.LoyaltyLevels.ToDictionary(x => x.Id);
 
         var company = await companyRepository.GetByIdAsync(
             companyId: companyId,
             ownerId: user.GetId(),
-            asNoTracking: true,
+            asNoTracking: false,
             includeVenues: false,
+            includeLoyaltyLevels: true,
             ct: ct);
         if (company == null)
         {
             throw VenueExceptions.CompanyNotFound();
         }
         
-        await loyaltyLevelRepository.DeleteAllForCompanyAsync(companyId, ct);
-        
-        foreach (var level in levels)
+        foreach (var oldLevel in company.LoyaltyLevels)
         {
-            await loyaltyLevelRepository.AddAsync(level, ct);
+            var newLevel = newLevelsDict.GetValueOrDefault(oldLevel.Id);
+            if (newLevel != null)
+            {
+                oldLevel.VisitsUpperBound = newLevel.VisitsUpperBound;
+                oldLevel.IsActive = newLevel.IsActive;
+            }
         }
-
-        await loyaltyLevelRepository.SaveChangesAsync(ct);
+        await companyRepository.SaveChangesAsync(ct);
 
         return ApiResult.Empty;
     }

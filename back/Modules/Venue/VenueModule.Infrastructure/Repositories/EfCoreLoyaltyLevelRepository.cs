@@ -20,13 +20,4 @@ public class EfCoreLoyaltyLevelRepository : Repository<VenueContext, LoyaltyLeve
             .OrderBy(l => l.Id)
             .ToListAsync(ct);
     }
-
-    public async Task DeleteAllForCompanyAsync(Guid companyId, CancellationToken ct = default)
-    {
-        var levels = await Context.LoyaltyLevels
-            .Where(l => l.CompanyId == companyId)
-            .ToListAsync(ct);
-
-        Context.LoyaltyLevels.RemoveRange(levels);
-    }
 }

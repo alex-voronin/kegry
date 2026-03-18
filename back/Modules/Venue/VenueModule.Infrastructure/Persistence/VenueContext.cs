@@ -49,12 +49,12 @@ public class VenueContext : DbContext
             entity.HasMany(c => c.Venues)
                 .WithOne(v => v.Company)
                 .HasForeignKey(v => v.CompanyId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
             entity.HasIndex(c => c.OwnerId);
             entity.HasMany(v => v.LoyaltyLevels)
                 .WithOne()
                 .HasForeignKey(l => l.CompanyId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
             
             entity.HasIndex(u => u.IsDeleted);
             entity.HasQueryFilter(c => !c.IsDeleted);
@@ -96,7 +96,7 @@ public class VenueContext : DbContext
             entity.HasMany(v => v.Discounts)
                 .WithOne()
                 .HasForeignKey(d => d.VenueId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
             entity.OwnsMany(v => v.Promos, promo =>
             {
                 promo.ToTable("venue_promos");
@@ -114,7 +114,11 @@ public class VenueContext : DbContext
         modelBuilder.Entity<Visit>(entity =>
         {
             entity.ToTable("visits");
-            entity.HasKey(v => new { v.UserId, v.VenueId });
+            entity.HasKey(v => v.Id);
+            entity.Property(v => v.UserId)
+                .IsRequired();
+            entity.Property(v => v.VenueId)
+                .IsRequired();
             entity.Property(v => v.CheckedInAt)
                 .IsRequired();
             entity.HasOne<Venue>()
@@ -131,6 +135,8 @@ public class VenueContext : DbContext
             entity.ToTable("loyalty_levels");
             entity.HasKey(l => new { l.Id, l.CompanyId });
             entity.ToTable(t => t.HasCheckConstraint("CK_loyalty_levels_id", "\"id\" IN (0, 1, 2, 3)"));
+            
+            entity.HasQueryFilter(c => !c.IsActive);
         });
     }
 
@@ -142,12 +148,13 @@ public class VenueContext : DbContext
             entity.HasKey(d => d.Id);
             entity.HasOne(d => d.LoyaltyLevel)
                 .WithMany()
-                .HasForeignKey(d => new { d.LoyaltyLevelId, d.VenueId })
+                .HasForeignKey(d => new { d.LoyaltyLevelId, d.CompanyId })
                 .IsRequired()
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
             entity.HasOne(d => d.Venue)
                 .WithMany(v => v.Discounts)
-                .HasForeignKey(d => d.VenueId);
+                .HasForeignKey(d => d.VenueId)
+                .OnDelete(DeleteBehavior.Cascade);
             entity.HasMany(d => d.Days)
                 .WithOne()
                 .HasForeignKey(dd => dd.DiscountId)

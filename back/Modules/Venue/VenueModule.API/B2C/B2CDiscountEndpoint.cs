@@ -41,8 +41,8 @@ public class B2CDiscountEndpoint : IEndpoints
         var dtos = discounts
             .Select(d => new AvailableDiscountDto(
                 CompanyName: d.Venue.Company.Name,
-                CompanyAvatarImageUrl: storageService.S3KeyToPublicFileUrl(
-                    d.Venue.Company.AvatarImageS3Key, d.Venue.Company.ChangedAt),
+                CompanyAvatarImageUrl: d.Venue.Company.AvatarImageS3Key != null ? storageService.S3KeyToPublicFileUrl(
+                    d.Venue.Company.AvatarImageS3Key, d.Venue.Company.ChangedAt) : null,
                 VenueId: d.VenueId.ToString(),
                 VenueAddress: d.Venue.Address,
                 GoogleMapsUrl: d.Venue.GoogleMapsUrl,

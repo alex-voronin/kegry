@@ -29,12 +29,13 @@ public class LoyaltyServiceTests
     public void GetCurrentLoyaltyLevel_WithVariousVisits_ReturnsExpectedResult(
         int visitsCount, int expectedLevelId, int expectedLowerBound, int expectedUpperBound)
     {
+        var companyId = Guid.NewGuid();
         var levels = new List<LoyaltyLevel>
         {
-            new LoyaltyLevel { Id = 0, VisitsUpperBound = 5 },
-            new LoyaltyLevel { Id = 1, VisitsUpperBound = 10 },
-            new LoyaltyLevel { Id = 2, VisitsUpperBound = 15 },
-            new LoyaltyLevel { Id = 3, VisitsUpperBound = 20 }
+            new LoyaltyLevel { Id = 0, CompanyId = companyId, VisitsUpperBound = 5, IsActive = true},
+            new LoyaltyLevel { Id = 1, CompanyId = companyId, VisitsUpperBound = 10, IsActive = true },
+            new LoyaltyLevel { Id = 2, CompanyId = companyId, VisitsUpperBound = 15, IsActive = true },
+            new LoyaltyLevel { Id = 3, CompanyId = companyId, VisitsUpperBound = 20, IsActive = true }
         };
         var result = LoyaltyService.GetCurrentLoyaltyLevel(levels, visitsCount);
         result.currentLoyaltyLevel.ShouldBe(expectedLevelId);

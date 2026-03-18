@@ -49,8 +49,9 @@ public class B2BCompanyEndpoints : IEndpoints
             OwnerId = userId,
             Name = request.Name,
             Email = request.Email,
-            CreatedAt = DateTimeOffset.UtcNow
+            CreatedAt = DateTimeOffset.UtcNow,
         };
+        company.SetDefaultLoyaltyLevels();
 
         await repository.AddAsync(company, ct);
         await repository.SaveChangesAsync(ct);
@@ -149,6 +150,7 @@ public class B2BCompanyEndpoints : IEndpoints
         var company = await repository.GetByIdAsync(
             companyId: id,
             ownerId: user.GetId(),
+            includeVenues: true,
             asNoTracking: true,
             ct: ct);
         if (company == null)
@@ -156,6 +158,10 @@ public class B2BCompanyEndpoints : IEndpoints
             throw VenueExceptions.CompanyNotFound();
         }
 
+        foreach (var venue in company.Venues)
+        {
+            venue.IsDeleted = true;
+        }
         company.IsDeleted = true;
         await repository.SaveChangesAsync(ct);
 
@@ -211,7 +217,7 @@ public class B2BCompanyEndpoints : IEndpoints
                 ? storageService.S3KeyToPublicFileUrl(company.AvatarImageS3Key, company.ChangedAt)
                 : null,
             LoyaltyLevels: company.LoyaltyLevels
-                .Select(l => new LoyaltyLevelDto(l.Id, l.VisitsUpperBound))
+                .Select(l => new LoyaltyLevelDto(l.Id, l.VisitsUpperBound, l.IsActive))
                 .ToArray()
         );
     }

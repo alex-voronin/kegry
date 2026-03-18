@@ -42,6 +42,21 @@ public class Company : ISoftDeletable<Guid>
     public IReadOnlyCollection<Venue> Venues { get; init; } = new List<Venue>();
     public bool IsDeleted { get; set; }
 
+    public void SetDefaultLoyaltyLevels()
+    {
+        if (_loyaltyLevels.Any())
+        {
+            throw new InvalidOperationException("Default loyalty levels are already set.");
+        }
+
+        _loyaltyLevels.AddRange([
+            new LoyaltyLevel { Id = 0, CompanyId = Id, VisitsUpperBound = 3, IsActive = false},
+            new LoyaltyLevel { Id = 1, CompanyId = Id, VisitsUpperBound = 10, IsActive = false},
+            new LoyaltyLevel { Id = 2, CompanyId = Id, VisitsUpperBound = 15, IsActive = false},
+            new LoyaltyLevel { Id = 3, CompanyId = Id, VisitsUpperBound = 20, IsActive = false}
+        ]);
+    }
+    
     #region ================================= Validation =================================
 
     private void SetProperty<T>(ref T field, T value)

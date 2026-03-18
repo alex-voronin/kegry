@@ -127,6 +127,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
 
         var visit = new Visit
         {
+            Id = Guid.CreateVersion7(),
             UserId = userId,
             VenueId = venueId,
             CheckedInAt = DateTimeOffset.UtcNow

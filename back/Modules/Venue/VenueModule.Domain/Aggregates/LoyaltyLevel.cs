@@ -5,19 +5,21 @@ namespace VenueModule.Domain.Aggregates;
 
 public class LoyaltyLevel
 {
-    public int Id
+    public required int Id
     {
         get;
         init => field = ValidateId(value);
     }
 
-    public Guid CompanyId { get; init; }
+    public required Guid CompanyId { get; init; }
 
-    public int VisitsUpperBound
+    public required int VisitsUpperBound
     {
         get;
         set => field = ValidateUpperBound(value);
     }
+    
+    public required bool IsActive { get; set; }
 
     // ── Validation ────────────────────────────────────────────────────────────
 

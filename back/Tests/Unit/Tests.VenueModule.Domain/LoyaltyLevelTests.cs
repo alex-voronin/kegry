@@ -14,7 +14,7 @@ public class LoyaltyLevelTests
     [InlineData(2)]
     public void LoyaltyLevel_WhenIdIsValid_ThenInitializes(int validId)
     {
-        var level = new LoyaltyLevel { Id = validId, CompanyId = Guid.NewGuid(), VisitsUpperBound = 5 };
+        var level = new LoyaltyLevel { Id = validId, CompanyId = Guid.NewGuid(), VisitsUpperBound = 5, IsActive = true};
         level.Id.ShouldBe(validId);
     }
 
@@ -25,7 +25,7 @@ public class LoyaltyLevelTests
     public void LoyaltyLevel_WhenIdIsOutOfRange_ThenThrows(int invalidId)
     {
         Should.Throw<HttpCodeException>(() => _ = new LoyaltyLevel
-                { Id = invalidId, CompanyId = Guid.NewGuid(), VisitsUpperBound = 5 })
+                { Id = invalidId, CompanyId = Guid.NewGuid(), VisitsUpperBound = 5, IsActive = true })
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 
@@ -36,7 +36,7 @@ public class LoyaltyLevelTests
     [InlineData(100)]
     public void LoyaltyLevel_WhenVisitsUpperBoundIsPositive_ThenInitializes(int value)
     {
-        var level = new LoyaltyLevel { Id = 0, CompanyId = Guid.NewGuid(), VisitsUpperBound = value };
+        var level = new LoyaltyLevel { Id = 0, CompanyId = Guid.NewGuid(), VisitsUpperBound = value, IsActive = true };
         level.VisitsUpperBound.ShouldBe(value);
     }
 
@@ -46,7 +46,7 @@ public class LoyaltyLevelTests
     public void LoyaltyLevel_WhenVisitsUpperBoundIsNotPositive_ThenThrows(int invalidValue)
     {
         Should.Throw<HttpCodeException>(() => _ = new LoyaltyLevel
-                { Id = 0, CompanyId = Guid.NewGuid(), VisitsUpperBound = invalidValue })
+                { Id = 0, CompanyId = Guid.NewGuid(), VisitsUpperBound = invalidValue, IsActive = true })
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 
@@ -138,5 +138,5 @@ public class LoyaltyLevelTests
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private static LoyaltyLevel MakeLevel(int id, int visitsUpperBound) =>
-        new() { Id = id, CompanyId = Guid.NewGuid(), VisitsUpperBound = visitsUpperBound };
+        new() { Id = id, CompanyId = Guid.NewGuid(), VisitsUpperBound = visitsUpperBound, IsActive = true };
 }

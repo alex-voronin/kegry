@@ -5,6 +5,7 @@ public class Discount
     public Guid Id { get; init; }
     public Guid VenueId { get; init; }
     public Venue Venue { get; init; } = null!;
+    public Guid CompanyId { get; init; }
     public int LoyaltyLevelId { get; set; }
     public LoyaltyLevel LoyaltyLevel { get; init; } = null!;
     public int Percent { get; set; }

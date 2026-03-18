@@ -2,7 +2,8 @@ namespace VenueModule.Domain.Aggregates;
 
 public class Visit
 {
-    public Guid UserId { get; init; }
-    public Guid VenueId { get; init; }
-    public DateTimeOffset CheckedInAt { get; init; }
+    public required Guid Id { get; set; }
+    public required Guid UserId { get; init; }
+    public required Guid VenueId { get; init; }
+    public required DateTimeOffset CheckedInAt { get; init; }
 }
