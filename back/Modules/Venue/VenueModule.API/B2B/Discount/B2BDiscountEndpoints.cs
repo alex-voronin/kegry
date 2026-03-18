@@ -50,13 +50,11 @@ public class B2BDiscountEndpoints : IEndpoints
 
     private static async Task<ApiResult.EmptyResult> UpdateLoyaltyLevels(
         [FromRoute] Guid companyId,
-        [FromBody] UpdateLoyaltyLevelsRequest request,
+        [FromBody] UpdateLoyaltyLevelRequest request,
         ClaimsPrincipal user,
         ICompanyRepository companyRepository,
         CancellationToken ct)
     {
-        var newLevelsDict = request.LoyaltyLevels.ToDictionary(x => x.Id);
-
         var company = await companyRepository.GetByIdAsync(
             companyId: companyId,
             ownerId: user.GetId(),
@@ -68,15 +66,12 @@ public class B2BDiscountEndpoints : IEndpoints
         {
             throw VenueExceptions.CompanyNotFound();
         }
-        
-        foreach (var oldLevel in company.LoyaltyLevels)
+
+        var loyaltyLevel = company.LoyaltyLevels.FirstOrDefault(l => l.Id == request.LoyaltyLevel.Id);
+        if (loyaltyLevel != null)
         {
-            var newLevel = newLevelsDict.GetValueOrDefault(oldLevel.Id);
-            if (newLevel != null)
-            {
-                oldLevel.VisitsUpperBound = newLevel.VisitsUpperBound;
-                oldLevel.IsActive = newLevel.IsActive;
-            }
+            loyaltyLevel.VisitsUpperBound = request.LoyaltyLevel.VisitsUpperBound;
+            loyaltyLevel.IsActive = request.LoyaltyLevel.IsActive;
         }
         await companyRepository.SaveChangesAsync(ct);
 
