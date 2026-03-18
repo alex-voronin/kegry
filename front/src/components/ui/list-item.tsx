@@ -4,7 +4,7 @@ import { Icon } from './icon';
 import styles from './list-item.module.css';
 
 interface ListItemProps {
-  avatarUrl: string;
+  avatarUrl?: string;
   avatarAlt?: string;
   title: React.ReactNode;
   subtitle: React.ReactNode;
@@ -12,6 +12,7 @@ interface ListItemProps {
   onClick?: () => void;
   className?: string;
   expired?: boolean;
+  leadingIcon?: React.ReactNode;
 }
 
 export function ListItem({
@@ -23,6 +24,7 @@ export function ListItem({
   onClick,
   className,
   expired,
+  leadingIcon,
 }: ListItemProps) {
   return (
     <div
@@ -31,13 +33,21 @@ export function ListItem({
     >
       <div className={styles.itemLeft}>
         <div className={styles.imageWrapper}>
-          <Image
-            src={avatarUrl}
-            alt={avatarAlt}
-            width={48}
-            height={48}
-            className="object-cover"
-          />
+          {leadingIcon ? (
+            <div className="flex h-full w-full items-center justify-center">
+              {leadingIcon}
+            </div>
+          ) : (
+            avatarUrl && (
+              <Image
+                src={avatarUrl}
+                alt={avatarAlt}
+                width={48}
+                height={48}
+                className="object-cover"
+              />
+            )
+          )}
         </div>
         <div className={styles.body}>
           <span className={styles.title}>{title}</span>

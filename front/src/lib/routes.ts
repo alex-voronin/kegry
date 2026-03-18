@@ -43,6 +43,8 @@ export const PAGE_ROUTES = {
     COMPANIES_CREATE: '/companies/create',
     COMPANIES_DETAIL: (id: string) => `/companies/${id}`,
     COMPANIES_EDIT: (id: string) => `/companies/${id}/edit`,
+    COMPANY_LOYALTY_LEVEL: (companyId: string, levelId: number) =>
+      `/companies/${companyId}/loyalty-levels/${levelId}`,
     VENUES: '/venues',
   },
 } as const;
@@ -116,5 +118,9 @@ export const API_ENDPOINTS = {
     BASE: '/api/v1/companies',
     BY_ID: (id: string) => `/api/v1/company/${id}`,
     AVATAR_UPLOAD_URL: (id: string) => `/api/v1/company/${id}/avatar/upload-url`,
+  },
+  LOYALTY_LEVELS: {
+    BY_COMPANY_ID: (companyId: string) =>
+      `/api/v1/company/${companyId}/loyalty-levels`,
   },
 } as const;

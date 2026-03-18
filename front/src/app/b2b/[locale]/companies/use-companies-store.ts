@@ -8,6 +8,13 @@ export interface CompanyDto {
   name: string;
   email: string | null;
   avatarImageUrl: string | null;
+  loyaltyLevels: LoyaltyLevelDto[];
+}
+
+export interface LoyaltyLevelDto {
+  id: number;
+  visitsUpperBound: number;
+  isActive: boolean;
 }
 
 interface CompaniesState {

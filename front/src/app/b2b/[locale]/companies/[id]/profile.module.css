@@ -24,7 +24,7 @@
 }
 
 .venuesSection {
-  @apply mt-8 flex w-full flex-col gap-2 pb-10;
+  @apply mt-8 flex w-full flex-col gap-2 pb-4;
 }
 
 .venuesHeader {

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { useRouter, useParams } from 'next/navigation';
-import { ChevronRight, Plus } from 'lucide-react';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { ChevronDown, ChevronRight, Plus, Medal } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
@@ -24,13 +24,25 @@ export default function CompanyProfilePage() {
   const tCreate = useTranslations('screens.createCompany');
   const router = useRouter();
   const { id } = useParams() as { id: string };
+  const searchParams = useSearchParams();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isLoyaltyExpanded, setIsLoyaltyExpanded] = useState(
+    searchParams.get('expanded') === 'loyalty',
+  );
 
   const { selectedCompany, isLoading, fetchCompany, deleteCompany } =
     useCompanyProfileStore();
+
+  useEffect(() => {
+    if (searchParams.get('expanded')) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('expanded');
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (id) {
@@ -58,6 +70,10 @@ export default function CompanyProfilePage() {
   const handleVenueClick = (venueId: string) => {
     // Placeholder for venue detail
     console.log('Venue click:', venueId);
+  };
+
+  const handleLoyaltyLevelClick = (levelId: number) => {
+    router.push(PAGE_ROUTES.B2B.COMPANY_LOYALTY_LEVEL(id, levelId));
   };
 
   const menuOptions = [
@@ -151,6 +167,55 @@ export default function CompanyProfilePage() {
               placeholder={tCreate('emailPlaceholder')}
               className={stylesCommon.inputDark}
             />
+          </div>
+
+          <div className={styles.venuesSection}>
+            <div className={styles.venuesHeader}>
+              <button
+                type="button"
+                className="flex w-full items-center justify-between"
+                onClick={() => setIsLoyaltyExpanded((v) => !v)}
+              >
+                <h2 className={styles.venuesTitle}>
+                  {t('loyaltyLevelsTitle')}
+                </h2>
+                <ChevronDown
+                  size={24}
+                  className={`text-secondary transition-transform ${
+                    isLoyaltyExpanded ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+            </div>
+
+            {isLoyaltyExpanded && (
+              <div className={styles.venueList}>
+                {selectedCompany.loyaltyLevels.map((level) => (
+                  <ListItem
+                    key={level.id}
+                    className="cursor-pointer"
+                    onClick={() => handleLoyaltyLevelClick(level.id)}
+                    avatarAlt={`level ${level.id}`}
+                    title={`Level ${level.id}`}
+                    subtitle={t('loyaltyLevelSubtitle', {
+                      visitsUpperBound: level.visitsUpperBound,
+                    })}
+                    expired={!level.isActive}
+                    leadingIcon={
+                      <Medal
+                        size={24}
+                        className={
+                          level.isActive ? 'text-primary' : 'text-secondary'
+                        }
+                      />
+                    }
+                    rightEl={
+                      <ChevronRight size={24} className="text-secondary" />
+                    }
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           <div className={styles.venuesSection}>

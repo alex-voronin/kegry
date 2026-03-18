@@ -125,6 +125,8 @@
     },
     "companyProfile": {
       "title": "Company",
+      "loyaltyLevelsTitle": "Loyalty levels",
+      "loyaltyLevelSubtitle": "Visits under: {visitsUpperBound}",
       "venuesTitle": "Venues",
       "noVenues": "No venues found.",
       "addVenue": "Add Venue",
@@ -136,6 +138,18 @@
         "title": "Are you sure you want to delete this company?",
         "buttonNo": "No",
         "buttonYes": "Delete"
+      }
+    },
+    "editLoyaltyLevel": {
+      "title": "Edit loyalty level",
+      "isActive": "Active",
+      "visitsUpperBound": "Visits under",
+      "submit": "Save",
+      "validation": {
+        "visitsUpperBoundMin": "Must be at least 1"
+      },
+      "toast": {
+        "updateFailed": "Failed to update loyalty level"
       }
     },
     "sidebar": {

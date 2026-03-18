@@ -138,7 +138,7 @@ export default function CompanyEditPage() {
         title={t('title')}
         left={
           <Icon
-            src="/assets/common/disclosure-left-icon.svg"
+            src="/assets/b2b/disclosure-left-icon.svg"
             alt="back"
             width={14}
             height={27}
