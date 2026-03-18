@@ -66,7 +66,7 @@ export default function CompanyProfilePage() {
       label: t('menu.edit'),
       onClick: () => {
         setIsMenuOpen(false);
-        // router.push(PAGE_ROUTES.B2B.COMPANIES_EDIT(id));
+        router.push(PAGE_ROUTES.B2B.COMPANIES_EDIT(id));
       },
     },
     {

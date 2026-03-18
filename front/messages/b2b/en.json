@@ -116,6 +116,13 @@
         "createFailed": "Failed to create company"
       }
     },
+    "editCompany": {
+      "title": "Edit Company",
+      "submit": "Save",
+      "toast": {
+        "updateFailed": "Failed to update company"
+      }
+    },
     "companyProfile": {
       "title": "Company",
       "venuesTitle": "Venues",

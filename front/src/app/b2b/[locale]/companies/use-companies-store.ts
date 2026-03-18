@@ -19,7 +19,10 @@ interface CompaniesState {
     id: string,
     contentLength: number,
   ) => Promise<{ uploadUrl: string; publicDownloadUrl: string }>;
-  patchCompany: (id: string, avatarImageUrl: string) => Promise<void>;
+  patchCompany: (
+    id: string,
+    patch: { name?: string; email?: string; avatarImageUrl?: string },
+  ) => Promise<void>;
   reset: () => void;
 }
 
@@ -57,10 +60,8 @@ export const useCompaniesStore = create<CompaniesState>()(
         );
         return response.data.result;
       },
-      patchCompany: async (id: string, avatarImageUrl: string) => {
-        await apiClient.patch(API_ENDPOINTS.COMPANIES.BY_ID(id), {
-          avatarImageUrl,
-        });
+      patchCompany: async (id, patch) => {
+        await apiClient.patch(API_ENDPOINTS.COMPANIES.BY_ID(id), patch);
       },
       reset: () => set({ companies: [], isLoading: false }),
     }),

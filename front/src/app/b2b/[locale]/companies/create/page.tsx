@@ -100,7 +100,7 @@ export default function CompanyCreatePage() {
       );
 
       // 3. Patch company with avatar URL
-      await patchCompany(id, publicUrl);
+      await patchCompany(id, { avatarImageUrl: publicUrl });
 
       router.push(PAGE_ROUTES.B2B.COMPANIES);
     } catch (err: any) {

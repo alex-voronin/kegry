@@ -42,6 +42,7 @@ export const PAGE_ROUTES = {
     COMPANIES: '/companies',
     COMPANIES_CREATE: '/companies/create',
     COMPANIES_DETAIL: (id: string) => `/companies/${id}`,
+    COMPANIES_EDIT: (id: string) => `/companies/${id}/edit`,
     VENUES: '/venues',
   },
 } as const;
