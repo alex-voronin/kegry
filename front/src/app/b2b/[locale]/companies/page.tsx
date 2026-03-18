@@ -47,13 +47,11 @@ export default function CompaniesPage() {
         title={t('title')}
         right={
           <Icon
-            src="/assets/friends-and-foes/plus-icon.svg"
+            src="/assets/b2b/common/plus-icon.svg"
             alt="add company"
             width={24}
             height={24}
-            onClick={() => {
-              /* Handle add company */
-            }}
+            onClick={() => router.push(PAGE_ROUTES.B2B.COMPANIES_CREATE)}
             priority
           />
         }

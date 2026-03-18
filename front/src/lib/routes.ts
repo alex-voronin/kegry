@@ -40,6 +40,7 @@ export const PAGE_ROUTES = {
     VERIFY_EMAIL: '/verify-email',
     PASSWORD_RESET: '/password-reset',
     COMPANIES: '/companies',
+    COMPANIES_CREATE: '/companies/create',
     VENUES: '/venues',
   },
 } as const;
@@ -109,5 +110,9 @@ export const API_ENDPOINTS = {
     MET: '/api/v1/npc/met',
     INVITE: (id: string) => `/api/v1/npc/${id}/invite`,
   },
-  COMPANIES: '/api/v1/companies',
+  COMPANIES: {
+    BASE: '/api/v1/companies',
+    BY_ID: (id: string) => `/api/v1/company/${id}`,
+    AVATAR_UPLOAD_URL: (id: string) => `/api/v1/company/${id}/avatar/upload-url`,
+  },
 } as const;

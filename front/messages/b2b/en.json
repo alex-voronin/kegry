@@ -101,6 +101,21 @@
         "viewCompany": "View Company"
       }
     },
+    "createCompany": {
+      "title": "Create Company",
+      "name": "Company Name",
+      "email": "Company Email",
+      "emailPlaceholder": "Company Email (Optional)",
+      "submit": "Create",
+      "validation": {
+        "nameRequired": "Company name is required",
+        "emailInvalid": "Invalid email address",
+        "avatarRequired": "Company avatar is required"
+      },
+      "toast": {
+        "createFailed": "Failed to create company"
+      }
+    },
     "sidebar": {
       "profile": "Profile",
       "companies": "Companies",
