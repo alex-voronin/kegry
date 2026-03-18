@@ -28,6 +28,7 @@ public class B2BCompanyEndpoints : IEndpoints
         managementApiGroup.MapPost("/api/v1/companies", CreateCompany);
         managementApiGroup.MapGet("/api/v1/companies", GetCompanies);
         managementApiGroup.MapGet("/api/v1/company/{id:guid}", GetCompany);
+        managementApiGroup.MapDelete("/api/v1/company/{id:guid}", DeleteCompany);
         managementApiGroup.MapPatch("/api/v1/company/{id:guid}", PatchCompany);
         managementApiGroup.MapPost("/api/v1/company/{id:guid}/avatar/upload-url", GetAvatarUploadUrl);
     }
@@ -135,6 +136,28 @@ public class B2BCompanyEndpoints : IEndpoints
         await repository.SaveChangesAsync(ct);
 
         return ApiResult.Empty;
+    }
+
+    private static async Task<IResult> DeleteCompany(
+        [FromRoute] Guid id,
+        ClaimsPrincipal user,
+        ICompanyRepository repository,
+        CancellationToken ct)
+    {
+        var company = await repository.GetByIdAsync(
+            companyId: id,
+            ownerId: user.GetId(),
+            asNoTracking: true,
+            ct: ct);
+        if (company == null)
+        {
+            throw VenueExceptions.CompanyNotFound();
+        }
+
+        company.IsDeleted = true;
+        await repository.SaveChangesAsync(ct);
+
+        return Results.Ok(ApiResult.Empty);
     }
 
     private static async Task<ApiResult<GetPresignedUrlResponse>> GetAvatarUploadUrl(

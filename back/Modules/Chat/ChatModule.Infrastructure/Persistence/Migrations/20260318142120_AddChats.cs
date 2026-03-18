@@ -115,6 +115,18 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                 table: "chats",
                 column: "id",
                 filter: "\"is_deleted\" = false");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_chats_is_deleted",
+                schema: "meetings",
+                table: "chats",
+                column: "is_deleted");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_users_is_deleted",
+                schema: "meetings",
+                table: "users",
+                column: "is_deleted");
         }
 
         /// <inheritdoc />

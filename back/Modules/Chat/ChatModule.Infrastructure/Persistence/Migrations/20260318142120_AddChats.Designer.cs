@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ChatModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ChatContext))]
-    [Migration("20260224163811_AddChats")]
+    [Migration("20260318142120_AddChats")]
     partial class AddChats
     {
         /// <inheritdoc />
@@ -55,6 +55,9 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_chats_id")
                         .HasFilter("\"is_deleted\" = false");
 
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("ix_chats_is_deleted");
+
                     b.ToTable("chats", "meetings");
                 });
 
@@ -92,6 +95,9 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_users");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("ix_users_is_deleted");
 
                     b.ToTable("users", "meetings");
                 });

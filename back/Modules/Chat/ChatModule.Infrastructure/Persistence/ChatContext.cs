@@ -23,21 +23,25 @@ public class ChatContext : DbContext
         modelBuilder.Entity<User>(builder =>
         {
             builder.ToTable("users");
+            builder.HasKey(u => u.Id);
             builder.Property(x => x.Id).ValueGeneratedNever();
             builder.Property(x => x.FirstName).HasMaxLength(100);
             builder.Property(x => x.LastName).HasMaxLength(100);
             builder.Property(x => x.AvatarImageS3Key).HasMaxLength(128);
 
+            builder.HasIndex(u => u.IsDeleted);
             builder.HasQueryFilter(x => !x.IsDeleted);
         });
 
         modelBuilder.Entity<Chat>(builder =>
         {
             builder.ToTable("chats");
+            builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedNever();
 
             builder.HasQueryFilter(x => !x.IsDeleted);
 
+            builder.HasIndex(u => u.IsDeleted);
             builder
                 .HasIndex(x => x.Id)
                 .HasFilter("\"is_deleted\" = false");
@@ -64,6 +68,7 @@ public class ChatContext : DbContext
         modelBuilder.Entity<ChatMessage>(builder =>
         {
             builder.ToTable("chat_messages");
+            builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedNever();
             builder.Property(x => x.Text).HasMaxLength(ValidationParameters.MaxMessageLength);
 

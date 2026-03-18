@@ -103,6 +103,9 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_users");
 
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("ix_users_is_deleted");
+
                     b.ToTable("users", "engagement");
                 });
 

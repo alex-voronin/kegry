@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using VenueModule.Domain.Aggregates;
-using VenueModule.Domain.ValueObjects;
 
 namespace VenueModule.Infrastructure.Persistence;
 
@@ -37,6 +36,7 @@ public class VenueContext : DbContext
         {
             entity.ToTable("companies");
             entity.HasKey(c => c.Id);
+            entity.Property(h => h.Id).ValueGeneratedNever();
             entity.Property(c => c.Name)
                 .IsRequired()
                 .HasMaxLength(200);
@@ -51,6 +51,9 @@ public class VenueContext : DbContext
                 .HasForeignKey(v => v.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
             entity.HasIndex(c => c.OwnerId);
+            
+            entity.HasIndex(u => u.IsDeleted);
+            entity.HasQueryFilter(c => !c.IsDeleted);
         });
     }
 
@@ -100,6 +103,9 @@ public class VenueContext : DbContext
                 promo.Property(p => p.Body)
                     .HasMaxLength(1000);
             });
+            
+            entity.HasIndex(u => u.IsDeleted);
+            entity.HasQueryFilter(c => !c.IsDeleted);
         });
     }
 

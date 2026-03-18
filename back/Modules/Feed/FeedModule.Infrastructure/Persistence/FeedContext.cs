@@ -54,6 +54,7 @@ public class FeedContext : DbContext
         modelBuilder.Entity<FeedUserRelation>(builder =>
         {
             builder.ToTable("user_relations", "feed");
+            builder.HasKey(r => r.Id);
             builder.Property(r => r.Id)
                 .ValueGeneratedNever();
             builder.Property(r => r.Rating)

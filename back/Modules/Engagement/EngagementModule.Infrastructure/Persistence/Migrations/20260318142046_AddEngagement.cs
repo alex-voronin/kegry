@@ -90,6 +90,12 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                 schema: "engagement",
                 table: "user_met_npcs",
                 column: "npc_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_users_is_deleted",
+                schema: "engagement",
+                table: "users",
+                column: "is_deleted");
         }
 
         /// <inheritdoc />

@@ -740,6 +740,9 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_users_id")
                         .HasFilter("\"is_deleted\" = false");
 
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("ix_users_is_deleted");
+
                     b.HasIndex("Id", "IsPublic")
                         .HasDatabaseName("ix_users_id_is_public");
 

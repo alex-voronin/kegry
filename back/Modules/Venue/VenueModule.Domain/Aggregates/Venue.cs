@@ -1,11 +1,12 @@
 using GeoTimeZone;
 using NetTopologySuite.Geometries;
+using SharedCore.Interfaces;
 using SharedCore.Validation;
 using VenueModule.Domain.ValueObjects;
 
 namespace VenueModule.Domain.Aggregates;
 
-public class Venue
+public class Venue : ISoftDeletable<Guid>
 {
     public Guid Id { get; init; }
     public Guid CompanyId { get; init; }
@@ -109,6 +110,7 @@ public class Venue
         ChangedAt = DateTimeOffset.UtcNow;
         return true;
     }
+    public bool IsDeleted { get; set; }
 
     #region ================================= Validation =================================
 

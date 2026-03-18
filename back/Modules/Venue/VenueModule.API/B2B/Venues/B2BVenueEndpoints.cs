@@ -150,8 +150,7 @@ public class B2BVenueEndpoints : IEndpoints
     {
         var venue = await VenueOwnerGuard.RequireVenueOwnerAsync(
             id, user, venueRepository, companyRepository, ct);
-
-        venueRepository.Delete(venue);
+        venue.IsDeleted = true;
         await venueRepository.SaveChangesAsync(ct);
         return ApiResult.Empty;
     }

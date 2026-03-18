@@ -1,8 +1,9 @@
-﻿using SharedCore.Validation;
+﻿using SharedCore.Interfaces;
+using SharedCore.Validation;
 
 namespace VenueModule.Domain.Aggregates;
 
-public class Company
+public class Company : ISoftDeletable<Guid>
 {
     public Guid Id { get; init; }
     public Guid OwnerId { get; init; }
@@ -37,6 +38,7 @@ public class Company
     public required DateTimeOffset CreatedAt { get; init; }
     public DateTimeOffset ChangedAt { get; private set; }
     public IReadOnlyCollection<Venue> Venues { get; init; } = new List<Venue>();
+    public bool IsDeleted { get; set; }
 
     #region ================================= Validation =================================
 

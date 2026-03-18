@@ -40,6 +40,7 @@ public class EngagementContext : DbContext
                         .HasPrincipalKey(u => u.Id),
                     j => { j.HasKey("user_id", "npc_id"); });
 
+            builder.HasIndex(x => x.IsDeleted);
             builder.HasQueryFilter(x => !x.IsDeleted);
         });
 

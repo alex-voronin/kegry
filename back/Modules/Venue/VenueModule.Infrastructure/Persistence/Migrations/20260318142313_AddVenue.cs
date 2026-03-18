@@ -27,10 +27,11 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     owner_id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    avatar_image_s3key = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    avatar_image_s3key = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     email = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    changed_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    changed_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -53,7 +54,8 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     instagram_url = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     phone_number = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
                     working_hours = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    changed_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    changed_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -211,6 +213,12 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "ix_companies_is_deleted",
+                schema: "venue",
+                table: "companies",
+                column: "is_deleted");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_companies_owner_id",
                 schema: "venue",
                 table: "companies",
@@ -258,6 +266,12 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                 table: "venues",
                 column: "coordinates")
                 .Annotation("Npgsql:IndexMethod", "gist");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_venues_is_deleted",
+                schema: "venue",
+                table: "venues",
+                column: "is_deleted");
 
             migrationBuilder.CreateIndex(
                 name: "ix_visits_venue_id",

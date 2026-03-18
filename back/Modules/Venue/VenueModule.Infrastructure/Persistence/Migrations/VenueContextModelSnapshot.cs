@@ -28,12 +28,10 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("VenueModule.Domain.Aggregates.Company", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
                     b.Property<string>("AvatarImageS3Key")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
                         .HasColumnName("avatar_image_s3key");
@@ -51,6 +49,10 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("email");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -63,6 +65,9 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_companies");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("ix_companies_is_deleted");
 
                     b.HasIndex("OwnerId")
                         .HasDatabaseName("ix_companies_owner_id");
@@ -217,6 +222,10 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("instagram_url");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
@@ -248,6 +257,9 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_venues_coordinates");
 
                     NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Coordinates"), "gist");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("ix_venues_is_deleted");
 
                     b.ToTable("venues", "venue");
                 });

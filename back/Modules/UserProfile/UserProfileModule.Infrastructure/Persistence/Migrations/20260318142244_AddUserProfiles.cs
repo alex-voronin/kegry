@@ -251,6 +251,12 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                 schema: "user_profile",
                 table: "users",
                 columns: new[] { "id", "is_public" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_users_is_deleted",
+                schema: "user_profile",
+                table: "users",
+                column: "is_deleted");
         }
 
         /// <inheritdoc />

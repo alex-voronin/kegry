@@ -22,6 +22,7 @@ public class UserProfileContext : DbContext
         modelBuilder.Entity<User>(builder =>
         {
             builder.ToTable("users");
+            builder.HasKey(u => u.Id);
             builder.Property(u => u.Id).ValueGeneratedNever();
             builder.Property(u => u.FirstName)
                 .IsRequired()
@@ -42,6 +43,7 @@ public class UserProfileContext : DbContext
 
             builder.HasQueryFilter(u => !u.IsDeleted);
 
+            builder.HasIndex(u => u.IsDeleted);
             builder.HasIndex(u => new { u.Id, u.IsPublic });
             builder
                 .HasIndex(u => u.Id)
@@ -51,6 +53,7 @@ public class UserProfileContext : DbContext
         modelBuilder.Entity<HobbyCategory>(builder =>
         {
             builder.ToTable("hobby_categories");
+            builder.HasKey(c => c.Id);
             builder.Property(c => c.Id).ValueGeneratedNever();
             builder.Property(c => c.Name).HasMaxLength(100);
             builder.HasIndex(c => c.Name)
@@ -60,6 +63,7 @@ public class UserProfileContext : DbContext
         modelBuilder.Entity<Hobby>(builder =>
         {
             builder.ToTable("hobbies");
+            builder.HasKey(h => h.Id);
             builder.Property(h => h.Id).ValueGeneratedNever();
             builder.Property(h => h.Name).HasMaxLength(100);
             builder.HasIndex(h => h.Name)

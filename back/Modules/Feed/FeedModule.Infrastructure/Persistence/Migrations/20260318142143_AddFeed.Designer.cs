@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(FeedContext))]
-    [Migration("20260312114615_AddFeed")]
+    [Migration("20260318142143_AddFeed")]
     partial class AddFeed
     {
         /// <inheritdoc />
