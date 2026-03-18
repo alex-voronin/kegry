@@ -9,7 +9,6 @@ using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 using SharedCore.Policies;
 using VenueModule.API.B2B.Companies.Dto;
-using VenueModule.API.B2B.Dto;
 using VenueModule.API.B2B.Shared;
 using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.Exceptions;
@@ -33,7 +32,7 @@ public class B2BCompanyEndpoints : IEndpoints
         managementApiGroup.MapPost("/api/v1/company/{id:guid}/avatar/upload-url", GetAvatarUploadUrl);
     }
 
-    private static async Task<ApiResult.EmptyResult> CreateCompany(
+    private static async Task<ApiResult<CreateCompanyResponse>> CreateCompany(
         [FromBody] CreateCompanyRequest request,
         ClaimsPrincipal user,
         ICompanyRepository repository,
@@ -48,15 +47,13 @@ public class B2BCompanyEndpoints : IEndpoints
             OwnerId = userId,
             Name = request.Name,
             Email = request.Email,
-            AvatarImageS3Key = storageService.PublicFileUrlToS3Key(request.AvatarImageUrl),
-            Venues = [],
             CreatedAt = DateTimeOffset.UtcNow
         };
 
         await repository.AddAsync(company, ct);
         await repository.SaveChangesAsync(ct);
 
-        return ApiResult.Empty;
+        return ApiResult<CreateCompanyResponse>.Build(new CreateCompanyResponse(company.Id));
     }
 
     private static async Task<ApiResult<GetCompaniesResponse>> GetCompanies(
@@ -178,14 +175,16 @@ public class B2BCompanyEndpoints : IEndpoints
                 : null
         );
     }
-    
+
     private static CompanyDto DomainCompanyToDto(IS3StorageService storageService, Company company)
     {
         return new CompanyDto(
             Id: company.Id.ToString(),
             Name: company.Name,
             Email: company.Email,
-            AvatarImageUrl: storageService.S3KeyToPublicFileUrl(company.AvatarImageS3Key, company.ChangedAt)
+            AvatarImageUrl: company.AvatarImageS3Key != null
+                ? storageService.S3KeyToPublicFileUrl(company.AvatarImageS3Key, company.ChangedAt)
+                : null
         );
     }
 }

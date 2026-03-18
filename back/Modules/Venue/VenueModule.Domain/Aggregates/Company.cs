@@ -16,14 +16,14 @@ public class Company
         );
     } = null!;
 
-    public required string AvatarImageS3Key
+    public string? AvatarImageS3Key
     {
         get;
         set => SetProperty(
             ref field,
             ValidateS3Key(nameof(AvatarImageS3Key), value)
         );
-    } = null!;
+    }
 
     public string? Email
     {
@@ -53,12 +53,12 @@ public class Company
         return value.Trim();
     }
 
-    private static string ValidateS3Key(string fieldName, string value)
+    private static string ValidateS3Key(string fieldName, string? value)
     {
         Validation.ThrowIfNullOrWhiteSpace(fieldName, value);
-        Validation.ThrowIfLengthExceeded(fieldName, value, ValidationParameters.S3KeyMaxLength);
-        Validation.ThrowIfInvalid(fieldName, () => !value.StartsWith('/'), "S3 key shouldn't start with /");
-        return value.Trim();
+        Validation.ThrowIfLengthExceeded(fieldName, value!, ValidationParameters.S3KeyMaxLength);
+        Validation.ThrowIfInvalid(fieldName, () => !value!.StartsWith('/'), "S3 key shouldn't start with /");
+        return value!.Trim();
     }
 
     private static string? ValidateEmail(string fieldName, string? value)
