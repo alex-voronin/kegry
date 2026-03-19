@@ -18,25 +18,30 @@ public class LoyaltyLevel
         get;
         set => field = ValidateUpperBound(value);
     }
-    
+
     public required bool IsActive { get; set; }
 
     // ── Validation ────────────────────────────────────────────────────────────
 
-    /// <summary>
-    /// Validates that a collection of loyalty levels has 0–3 items,
-    /// all Ids are in {0,1,2}, and VisitsUpperBound is strictly ascending by Id.
-    /// </summary>
     public static void ValidateLevelsCountAndOrder(IReadOnlyCollection<LoyaltyLevel> levels)
     {
-        if (levels.Count > 3)
+        if (levels.Count > 4)
+        {
             throw VenueExceptions.InvalidLoyaltyLevelCount();
+        }
 
         var sorted = levels.OrderBy(l => l.Id).ToArray();
         for (var i = 1; i < sorted.Length; i++)
         {
             if (sorted[i].VisitsUpperBound <= sorted[i - 1].VisitsUpperBound)
+            {
                 throw VenueExceptions.InvalidLoyaltyLevelOrder();
+            }
+
+            if (sorted[i].IsActive && !sorted[i - 1].IsActive)
+            {
+                throw VenueExceptions.GapsInLoyaltyLevelOrder();
+            }
         }
     }
 

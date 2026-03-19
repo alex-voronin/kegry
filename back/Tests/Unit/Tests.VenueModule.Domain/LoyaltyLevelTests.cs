@@ -14,7 +14,8 @@ public class LoyaltyLevelTests
     [InlineData(2)]
     public void LoyaltyLevel_WhenIdIsValid_ThenInitializes(int validId)
     {
-        var level = new LoyaltyLevel { Id = validId, CompanyId = Guid.NewGuid(), VisitsUpperBound = 5, IsActive = true};
+        var level = new LoyaltyLevel
+        { Id = validId, CompanyId = Guid.NewGuid(), VisitsUpperBound = 5, IsActive = true };
         level.Id.ShouldBe(validId);
     }
 
@@ -25,7 +26,7 @@ public class LoyaltyLevelTests
     public void LoyaltyLevel_WhenIdIsOutOfRange_ThenThrows(int invalidId)
     {
         Should.Throw<HttpCodeException>(() => _ = new LoyaltyLevel
-                { Id = invalidId, CompanyId = Guid.NewGuid(), VisitsUpperBound = 5, IsActive = true })
+        { Id = invalidId, CompanyId = Guid.NewGuid(), VisitsUpperBound = 5, IsActive = true })
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 
@@ -46,7 +47,7 @@ public class LoyaltyLevelTests
     public void LoyaltyLevel_WhenVisitsUpperBoundIsNotPositive_ThenThrows(int invalidValue)
     {
         Should.Throw<HttpCodeException>(() => _ = new LoyaltyLevel
-                { Id = 0, CompanyId = Guid.NewGuid(), VisitsUpperBound = invalidValue, IsActive = true })
+        { Id = 0, CompanyId = Guid.NewGuid(), VisitsUpperBound = invalidValue, IsActive = true })
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 
@@ -73,13 +74,13 @@ public class LoyaltyLevelTests
     [Fact]
     public void ValidateCollection_WhenMoreThanThreeLevels_ThenThrows()
     {
-        // Bypassing property validation to test collection count independently
         var levels = new[]
         {
             MakeLevel(0, 5),
             MakeLevel(1, 10),
             MakeLevel(2, 20),
-            MakeLevel(2, 30), // duplicate Id but we're testing count, not Id uniqueness
+            MakeLevel(3, 30),
+            MakeLevel(3, 40)
         };
         Should.Throw<HttpCodeException>(() => LoyaltyLevel.ValidateLevelsCountAndOrder(levels))
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
@@ -135,8 +136,28 @@ public class LoyaltyLevelTests
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 
+    [Fact]
+    public void ValidateCollection_WhenGapInActiveLevels_ThenThrows()
+    {
+        var levels = new[]
+        {
+            MakeLevel(0, 5),
+            MakeLevel(1, 10, false),
+            MakeLevel(2, 15),
+        };
+        Should.Throw<HttpCodeException>(() => LoyaltyLevel.ValidateLevelsCountAndOrder(levels))
+            .ErrorCode.ShouldBe(ErrorCode.ValidationError);
+    }
+
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    private static LoyaltyLevel MakeLevel(int id, int visitsUpperBound) =>
-        new() { Id = id, CompanyId = Guid.NewGuid(), VisitsUpperBound = visitsUpperBound, IsActive = true };
+    private static LoyaltyLevel MakeLevel(int id, int visitsUpperBound, bool isActive = true) =>
+        new()
+        {
+            Id = id,
+            CompanyId = Guid.NewGuid(),
+            VisitsUpperBound = visitsUpperBound,
+            IsActive = isActive
+        };
 }

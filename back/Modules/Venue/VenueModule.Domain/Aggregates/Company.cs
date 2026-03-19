@@ -56,7 +56,7 @@ public class Company : ISoftDeletable<Guid>
             new LoyaltyLevel { Id = 3, CompanyId = Id, VisitsUpperBound = 20, IsActive = false}
         ]);
     }
-    
+
     #region ================================= Validation =================================
 
     private void SetProperty<T>(ref T field, T value)

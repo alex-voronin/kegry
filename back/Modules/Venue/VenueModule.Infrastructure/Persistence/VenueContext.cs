@@ -55,7 +55,7 @@ public class VenueContext : DbContext
                 .WithOne()
                 .HasForeignKey(l => l.CompanyId)
                 .OnDelete(DeleteBehavior.NoAction);
-            
+
             entity.HasIndex(u => u.IsDeleted);
             entity.HasQueryFilter(c => !c.IsDeleted);
         });
@@ -103,7 +103,7 @@ public class VenueContext : DbContext
                 promo.Property(p => p.Body)
                     .HasMaxLength(1000);
             });
-            
+
             entity.HasIndex(u => u.IsDeleted);
             entity.HasQueryFilter(c => !c.IsDeleted);
         });
@@ -135,7 +135,7 @@ public class VenueContext : DbContext
             entity.ToTable("loyalty_levels");
             entity.HasKey(l => new { l.Id, l.CompanyId });
             entity.ToTable(t => t.HasCheckConstraint("CK_loyalty_levels_id", "\"id\" IN (0, 1, 2, 3)"));
-            
+
             entity.HasQueryFilter(c => !c.IsActive);
         });
     }

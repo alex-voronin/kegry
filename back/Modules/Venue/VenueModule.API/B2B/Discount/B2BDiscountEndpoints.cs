@@ -73,6 +73,7 @@ public class B2BDiscountEndpoints : IEndpoints
             loyaltyLevel.VisitsUpperBound = request.LoyaltyLevel.VisitsUpperBound;
             loyaltyLevel.IsActive = request.LoyaltyLevel.IsActive;
         }
+        LoyaltyLevel.ValidateLevelsCountAndOrder(company.LoyaltyLevels);
         await companyRepository.SaveChangesAsync(ct);
 
         return ApiResult.Empty;

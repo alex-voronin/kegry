@@ -348,7 +348,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 1. Signup via Google
         var email = "googleuser@gmail.com";
         var token = FakeGoogleTokenValidator.CreateToken(email);
-        var request = new GoogleIdTokenRequest(token, UserType:UserType.B2C);
+        var request = new GoogleIdTokenRequest(token, UserType: UserType.B2C);
 
         var signupResponse = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, ApiResult<AuthResponse>>(
             ApiRoutes.Auth.Google, request);

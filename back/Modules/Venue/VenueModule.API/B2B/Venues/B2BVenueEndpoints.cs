@@ -10,7 +10,6 @@ using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 using SharedCore.Policies;
 using VenueModule.API.B2B.Discount;
-using VenueModule.API.B2B.Discount.Dto;
 using VenueModule.API.B2B.Dto;
 using VenueModule.API.B2B.Shared;
 using VenueModule.API.B2B.Venues.Dto;
@@ -29,14 +28,14 @@ public class B2BVenueEndpoints : IEndpoints
         var managementApiGroup = app.MapGroup("")
             .WithTags("Venue Management API")
             .RequireAuthorization(AuthPolicies.B2BAdmin);
-        managementApiGroup.MapPost("/api/v1/company{companyId;guid}/venue", CreateVenue);
+        managementApiGroup.MapPost("/api/v1/company{companyId:guid}/venue", CreateVenue);
         managementApiGroup.MapGet("/api/v1/venue/{id:guid}", GetVenue);
         managementApiGroup.MapPatch("/api/v1/venue/{id:guid}", PatchVenue);
         managementApiGroup.MapDelete("/api/v1/venue/{id:guid}", DeleteVenue);
         managementApiGroup.MapPost("/api/v1/venue/{id:guid}/cover/upload-url", GetCoverUploadUrl);
     }
 
-    private static async Task<ApiResult.EmptyResult> CreateVenue(
+    private static async Task<ApiResult<CreateVenueResponse>> CreateVenue(
         [FromRoute] Guid companyId,
         [FromBody] CreateVenueRequest request,
         ClaimsPrincipal user,
@@ -75,7 +74,9 @@ public class B2BVenueEndpoints : IEndpoints
         await venueRepository.AddAsync(venue, ct);
         await venueRepository.SaveChangesAsync(ct);
 
-        return ApiResult.Empty;
+        return ApiResult<CreateVenueResponse>.Build(
+            new CreateVenueResponse(venue.Id)
+        );
     }
 
     private static async Task<ApiResult<GetVenueResponse>> GetVenue(
@@ -168,7 +169,7 @@ public class B2BVenueEndpoints : IEndpoints
         Validation.ThrowIfFileSizeExceed(request.ContentLength, Validation.MaxCoverSizeBytes);
         await VenueOwnerGuard.RequireVenueOwnerAsync(
             id, user, venueRepository, companyRepository, ct);
-        
+
         var urls = await imageService.GetVenueCoverUploadUrlAsync(
             companyId: user.GetId(),
             venueId: id,

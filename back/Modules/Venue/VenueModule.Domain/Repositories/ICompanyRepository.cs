@@ -11,7 +11,7 @@ public interface ICompanyRepository : IRepository<Company>
         bool asNoTracking = false,
         bool includeVenues = false,
         CancellationToken ct = default);
-    
+
     public Task<Company?> GetByIdAsync(
         Guid companyId,
         Guid ownerId,

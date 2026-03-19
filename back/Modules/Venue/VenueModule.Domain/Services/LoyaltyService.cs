@@ -98,7 +98,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         {
             throw VenueExceptions.VenueNotFound(venueId);
         }
-        
+
         if (userLoyalty == null)
         {
             userLoyalty = new UserLoyalty
@@ -174,11 +174,11 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         var nextLevelDiscount = venue.Discounts
             .Where(d => d.Days.Any(day => day.DayOfWeek == today))
             .Where(d => d.LoyaltyLevelId == currentLoyaltyLevel + 1)
-            .FirstOrDefault();      
+            .FirstOrDefault();
         var maxAvailableDiscount = applicableDiscounts.Count > 0 ? applicableDiscounts.Max(d => d.Percent) : 0;
         return new LoyaltyLevelWithDiscount(
             UserLoyaltyLevel: currentLoyaltyLevel,
-            VisitsCount: visitsCount, 
+            VisitsCount: visitsCount,
             VisitsLowerBound: visitsLowerBound,
             VisitsUpperBound: visitsUpperBound,
             Discount: maxAvailableDiscount,
@@ -192,14 +192,14 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         {
             return (0, 0, null);
         }
-        
+
         var sortedLevels = levels.OrderBy(l => l.VisitsUpperBound).ToArray();
         var maxLevel = sortedLevels[^1];
-        
+
         var currentLoyaltyLevel = maxLevel.Id;
         var visitsLowerBound = maxLevel.VisitsUpperBound;
         var visitsUpperBound = -1;
-        
+
         LoyaltyLevel? prevLevel = null;
         foreach (var level in sortedLevels)
         {

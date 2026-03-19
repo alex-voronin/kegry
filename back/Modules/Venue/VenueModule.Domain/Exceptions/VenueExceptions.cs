@@ -44,16 +44,17 @@ public static class VenueExceptions
             HttpStatusCode.BadRequest, ErrorCode.ValidationError);
     }
 
-    public static HttpCodeException InvalidLoyaltyLevelId()
-    {
-        return new HttpCodeException("LoyaltyLevel Id must be 0, 1, or 2",
-            HttpStatusCode.BadRequest, ErrorCode.ValidationError);
-    }
-
     public static HttpCodeException InvalidLoyaltyLevelOrder()
     {
         return new HttpCodeException(
-            "LoyaltyLevel must be strictly ascending by Id (Id 0 < Id 1 < Id 2)",
+            "Loyalty levels must be strictly ascending by visits count",
+            HttpStatusCode.BadRequest, ErrorCode.ValidationError);
+    }
+
+    public static HttpCodeException GapsInLoyaltyLevelOrder()
+    {
+        return new HttpCodeException(
+            "Loyalty levels can't have a disabled level between active ones.",
             HttpStatusCode.BadRequest, ErrorCode.ValidationError);
     }
 }

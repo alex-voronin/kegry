@@ -164,7 +164,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
                 UserName = email,
                 Email = email,
                 EmailConfirmed = true,
-                Type =  userType,
+                Type = userType,
                 RequiredAction = RequiredAction.OnboardingCompletion,
                 HasGoogleAuth = true,
             };

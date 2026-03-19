@@ -64,8 +64,8 @@ public class AuthEndpoints : IEndpoints
         [FromBody] SignUpRequest request)
     {
         var result = await authenticationService.SignupAsync(
-            email: request.Email, 
-            password: request.Password, 
+            email: request.Email,
+            password: request.Password,
             userType: request.UserType);
         return ApiResult<AuthResponse>.Build(
             AuthResultToResponse(result)
