@@ -29,7 +29,7 @@ public class B2BDealsEndpoints : IEndpoints
         //Promo endpoints
         group.MapPost("/api/v1/venue/{venueId:guid}/promotions", CreatePromotion);
         group.MapPut("/api/v1/venue/{venueId:guid}/promotions/{id:guid}", UpdatePromotion);
-        group.MapDelete("/api/v1/venue/{venueId:guid}/promotion/{id:guid}", DeletePromotion);
+        group.MapDelete("/api/v1/venue/{venueId:guid}/promotions/{id:guid}", DeletePromotion);
 
         // Discount endpoints
         group.MapGet("/api/v1/venue/{venueId:guid}/discounts", GetDiscounts);
@@ -78,6 +78,7 @@ public class B2BDealsEndpoints : IEndpoints
             loyaltyLevel.VisitsUpperBound = request.LoyaltyLevel.VisitsUpperBound;
             loyaltyLevel.IsActive = request.LoyaltyLevel.IsActive;
         }
+
         LoyaltyLevel.ValidateLevelsCountAndOrder(company.LoyaltyLevels);
         await companyRepository.SaveChangesAsync(ct);
 
@@ -86,7 +87,7 @@ public class B2BDealsEndpoints : IEndpoints
 
     // ── Discount endpoints ────────────────────────────────────────────────────
 
-    private static async Task<ApiResult.EmptyResult> CreatePromotion(
+    private static async Task<ApiResult<CreatePromotionResponse>> CreatePromotion(
         [FromRoute] Guid venueId,
         [FromBody] CreatePromotionRequest request,
         ClaimsPrincipal user,
@@ -113,7 +114,9 @@ public class B2BDealsEndpoints : IEndpoints
         await promoRepository.AddAsync(promo, ct);
         await promoRepository.SaveChangesAsync(ct);
 
-        return ApiResult.Empty;
+        return ApiResult<CreatePromotionResponse>.Build(
+            new CreatePromotionResponse(promo.Id)
+        );
     }
 
     private static async Task<ApiResult.EmptyResult> UpdatePromotion(
@@ -139,6 +142,7 @@ public class B2BDealsEndpoints : IEndpoints
         {
             throw VenueExceptions.PromoNotFound(id);
         }
+
         promo.Body = request.Body;
 
         await promoRepository.SaveChangesAsync(ct);
@@ -186,7 +190,7 @@ public class B2BDealsEndpoints : IEndpoints
         return ApiResult<DiscountDto[]>.Build(discounts.Select(DomainDiscountToDto).ToArray());
     }
 
-    private static async Task<ApiResult.EmptyResult> CreateDiscount(
+    private static async Task<ApiResult<CreateDiscountResponse>> CreateDiscount(
         [FromRoute] Guid venueId,
         [FromBody] CreateDiscountRequest request,
         ClaimsPrincipal user,
@@ -219,7 +223,9 @@ public class B2BDealsEndpoints : IEndpoints
         await discountRepository.AddAsync(discount, ct);
         await discountRepository.SaveChangesAsync(ct);
 
-        return ApiResult.Empty;
+        return ApiResult<CreateDiscountResponse>.Build(
+            new CreateDiscountResponse(discount.Id)
+        );
     }
 
     private static async Task<ApiResult.EmptyResult> UpdateDiscount(
