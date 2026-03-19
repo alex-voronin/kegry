@@ -14,7 +14,7 @@ import { useVenueStore } from './use-venue-store';
 import { toast } from 'react-toastify';
 import styles from './venue-detail.module.css';
 import { InstagramIcon } from './_components/instagram-icon';
-import { Plus } from 'lucide-react';
+import { Plus, MoreHorizontal } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
 
 export default function VenueDetailPage() {
@@ -26,6 +26,8 @@ export default function VenueDetailPage() {
   const { currentVenue, isLoading, fetchVenue, reset } = useVenueStore();
   const [isInitializing, setIsInitializing] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [selectedPromoId, setSelectedPromoId] = useState<string | null>(null);
+  const [isPromoMenuOpen, setIsPromoMenuOpen] = useState(false);
 
   useEffect(() => {
     const loadVenue = async () => {
@@ -60,6 +62,46 @@ export default function VenueDetailPage() {
     // Placeholder for adding discount
     console.log('Add discount for venue:', venueId);
   };
+
+  const handlePromoMenuOpen = (promoId: string) => {
+    setSelectedPromoId(promoId);
+    setIsPromoMenuOpen(true);
+  };
+
+  const { deletePromotion } = useVenueStore();
+
+  const handleEditPromo = () => {
+    if (!selectedPromoId) return;
+    setIsPromoMenuOpen(false);
+    router.push(
+      PAGE_ROUTES.B2B.VENUES_DETAILS_PROMOTION_EDIT(venueId, selectedPromoId),
+    );
+  };
+
+  const handleDeletePromo = async () => {
+    if (!selectedPromoId) return;
+    setIsPromoMenuOpen(false);
+    try {
+      await deletePromotion(venueId, selectedPromoId);
+      toast.success('Promotion deleted');
+    } catch (error) {
+      // Error handled in store
+    }
+  };
+
+  const promoMenuOptions = [
+    {
+      icon: '/assets/b2b/edit-icon.svg',
+      label: t('menu.editPromotion'),
+      onClick: handleEditPromo,
+    },
+    {
+      icon: '/assets/b2b/delete-icon.svg',
+      label: t('menu.deletePromotion'),
+      onClick: handleDeletePromo,
+      isDestructive: true,
+    },
+  ];
 
   if (isInitializing || isLoading) {
     return (
@@ -265,8 +307,17 @@ export default function VenueDetailPage() {
               </div>
               <div className={styles.promoList}>
                 {currentVenue.promos.map((promo, idx) => (
-                  <div key={idx} className={styles.promoItem}>
-                    {promo.body}
+                  <div
+                    key={promo.id || idx}
+                    className={`${styles.promoItem} ${styles.promoItemActionable}`}
+                    onClick={() => handlePromoMenuOpen(promo.id)}
+                  >
+                    <div className={styles.promoItemHeader}>
+                      <div className={styles.promoBody}>{promo.body}</div>
+                      <div className="p-1">
+                        <MoreHorizontal size={20} className="text-secondary" />
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -296,7 +347,9 @@ export default function VenueDetailPage() {
                     </div>
                     {discount.days && discount.days.length > 0 && (
                       <div className={styles.discountDays}>
-                        {discount.days.map((day) => t(`days.${day}`)).join(', ')}
+                        {discount.days
+                          .map((day) => t(`days.${day}`))
+                          .join(', ')}
                       </div>
                     )}
                   </div>
@@ -311,6 +364,12 @@ export default function VenueDetailPage() {
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
         options={menuOptions}
+      />
+
+      <ModalMenu
+        isOpen={isPromoMenuOpen}
+        onClose={() => setIsPromoMenuOpen(false)}
+        options={promoMenuOptions}
       />
     </div>
   );

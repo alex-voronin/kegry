@@ -49,6 +49,8 @@ export const PAGE_ROUTES = {
     VENUES_DETAIL: (id: string) => `/venues/${id}`,
     VENUES_DETAILS_PROMOTION_CREATE: (venueId: string) =>
       `/venues/${venueId}/promotions/create`,
+    VENUES_DETAILS_PROMOTION_EDIT: (venueId: string, promoId: string) =>
+      `/venues/${venueId}/promotions/${promoId}/edit`,
   },
 } as const;
 
@@ -113,6 +115,8 @@ export const API_ENDPOINTS = {
   VENUES: '/api/v1/venues',
   VENUE: (id: string) => `/api/v1/venue/${id}`,
   VENUE_PROMOTIONS: (venueId: string) => `/api/v1/venue/${venueId}/promotions`,
+  VENUE_PROMOTION: (venueId: string, promoId: string) =>
+    `/api/v1/venue/${venueId}/promotions/${promoId}`,
   NPC: {
     GET: '/api/v1/npc',
     MET: '/api/v1/npc/met',
@@ -121,7 +125,8 @@ export const API_ENDPOINTS = {
   COMPANIES: {
     BASE: '/api/v1/companies',
     BY_ID: (id: string) => `/api/v1/company/${id}`,
-    AVATAR_UPLOAD_URL: (id: string) => `/api/v1/company/${id}/avatar/upload-url`,
+    AVATAR_UPLOAD_URL: (id: string) =>
+      `/api/v1/company/${id}/avatar/upload-url`,
   },
   LOYALTY_LEVELS: {
     BY_COMPANY_ID: (companyId: string) =>

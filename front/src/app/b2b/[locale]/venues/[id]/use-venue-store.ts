@@ -5,6 +5,7 @@ import { API_ENDPOINTS } from '@/lib/routes';
 import { ApiResult } from '@/lib/api-types';
 
 export interface PromoDto {
+  id: string;
   body: string;
 }
 
@@ -40,6 +41,12 @@ interface VenueState {
   isLoading: boolean;
   fetchVenue: (id: string) => Promise<void>;
   createPromotion: (venueId: string, body: string) => Promise<void>;
+  updatePromotion: (
+    venueId: string,
+    promoId: string,
+    body: string,
+  ) => Promise<void>;
+  deletePromotion: (venueId: string, promoId: string) => Promise<void>;
   reset: () => void;
 }
 
@@ -60,20 +67,74 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
     }
   },
   createPromotion: async (venueId: string, body: string) => {
-    const updatePromos = (venue: VenueDto): VenueDto => ({
+    const addNewPromoToStore = (
+      venue: VenueDto,
+      id: string,
+      body: string,
+    ): VenueDto => ({
       ...venue,
-      promos: [...venue.promos, { body }],
+      promos: [...venue.promos, { id, body }],
     });
 
     try {
-      await apiClient.post(API_ENDPOINTS.VENUE_PROMOTIONS(venueId), { body });
+      const response = await apiClient.post<ApiResult<{ id: string }>>(
+        API_ENDPOINTS.VENUE_PROMOTIONS(venueId),
+        { body },
+      );
+      const newId = response.data.result.id;
       set((state) => ({
         currentVenue: state.currentVenue
-          ? updatePromos(state.currentVenue)
+          ? addNewPromoToStore(state.currentVenue, newId, body)
           : state.currentVenue,
       }));
     } catch (error) {
       rethrowApiError(error, 'Failed to create promotion');
+    }
+  },
+  updatePromotion: async (venueId: string, promoId: string, body: string) => {
+    const updatePromoInStore = (
+      venue: VenueDto,
+      promoId: string,
+      newBody: string,
+    ): VenueDto => ({
+      ...venue,
+      promos: venue.promos.map((p) =>
+        p.id === promoId ? { ...p, body: newBody } : p,
+      ),
+    });
+
+    try {
+      await apiClient.put(
+        `${API_ENDPOINTS.VENUE_PROMOTIONS(venueId)}/${promoId}`,
+        { body },
+      );
+      set((state) => ({
+        currentVenue: state.currentVenue
+          ? updatePromoInStore(state.currentVenue, promoId, body)
+          : state.currentVenue,
+      }));
+    } catch (error) {
+      rethrowApiError(error, 'Failed to update promotion');
+    }
+  },
+  deletePromotion: async (venueId: string, promoId: string) => {
+    const filterPromosInStore = (
+      venue: VenueDto,
+      promoId: string,
+    ): VenueDto => ({
+      ...venue,
+      promos: venue.promos.filter((p) => p.id !== promoId),
+    });
+
+    try {
+      await apiClient.delete(API_ENDPOINTS.VENUE_PROMOTION(venueId, promoId));
+      set((state) => ({
+        currentVenue: state.currentVenue
+          ? filterPromosInStore(state.currentVenue, promoId)
+          : state.currentVenue,
+      }));
+    } catch (error) {
+      rethrowApiError(error, 'Failed to delete promotion');
     }
   },
   reset: () => set({ currentVenue: null, isLoading: false }),

@@ -178,7 +178,9 @@
       "menu": {
         "openInstagram": "Open Instagram",
         "openWebsite": "Open Website",
-        "openInMaps": "Open on Google Maps"
+        "openInMaps": "Open on Google Maps",
+        "editPromotion": "Edit Promotion",
+        "deletePromotion": "Delete Promotion"
       }
     },
     "createPromotion": {
@@ -191,6 +193,18 @@
       },
       "toast": {
         "createFailed": "Failed to create promotion"
+      }
+    },
+    "editPromotion": {
+      "title": "Edit Promotion",
+      "save": "Save",
+      "body": "Promotion Body",
+      "bodyPlaceholder": "Enter promotion description...",
+      "validation": {
+        "bodyRequired": "Promotion body is required"
+      },
+      "toast": {
+        "updateFailed": "Failed to update promotion"
       }
     }
   }
