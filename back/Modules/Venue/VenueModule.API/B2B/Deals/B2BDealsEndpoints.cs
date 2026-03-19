@@ -7,14 +7,14 @@ using SharedCore.Api;
 using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 using SharedCore.Policies;
-using VenueModule.API.B2B.Discount.Dto;
+using VenueModule.API.B2B.Deals.Dto;
 using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.Exceptions;
 using VenueModule.Domain.Repositories;
 
-namespace VenueModule.API.B2B.Discount;
+namespace VenueModule.API.B2B.Deals;
 
-public class B2BDiscountEndpoints : IEndpoints
+public class B2BDealsEndpoints : IEndpoints
 {
     public static void MapEndpoints(IEndpointRouteBuilder app)
     {
@@ -26,10 +26,15 @@ public class B2BDiscountEndpoints : IEndpoints
         group.MapGet("/api/v1/company/{companyId:guid}/loyalty-levels", GetLoyaltyLevels);
         group.MapPut("/api/v1/company/{companyId:guid}/loyalty-levels", UpdateLoyaltyLevels);
 
+        //Promo endpoints
+        group.MapPost("/api/v1/venue/{venueId:guid}/promotions", CreatePromotion);
+        group.MapPut("/api/v1/venue/{venueId:guid}/promotions/{id:guid}", UpdatePromotion);
+        group.MapDelete("/api/v1/venue/{venueId:guid}/promotion/{id:guid}", DeletePromotion);
+
         // Discount endpoints
         group.MapGet("/api/v1/venue/{venueId:guid}/discounts", GetDiscounts);
         group.MapPost("/api/v1/venue/{venueId:guid}/discounts", CreateDiscount);
-        group.MapPatch("/api/v1/venue/{venueId:guid}/discounts/{id:guid}", UpdateDiscount);
+        group.MapPut("/api/v1/venue/{venueId:guid}/discounts/{id:guid}", UpdateDiscount);
         group.MapDelete("/api/v1/venue/{venueId:guid}/discounts/{id:guid}", DeleteDiscount);
     }
 
@@ -81,6 +86,97 @@ public class B2BDiscountEndpoints : IEndpoints
 
     // ── Discount endpoints ────────────────────────────────────────────────────
 
+    private static async Task<ApiResult.EmptyResult> CreatePromotion(
+        [FromRoute] Guid venueId,
+        [FromBody] CreatePromotionRequest request,
+        ClaimsPrincipal user,
+        IVenueRepository venueRepository,
+        ICompanyRepository companyRepository,
+        IPromoRepository promoRepository,
+        CancellationToken ct)
+    {
+        await VenueOwnerGuard.RequireVenueOwnerAsync(
+            venueId: venueId,
+            user: user,
+            venueRepository: venueRepository,
+            companyRepository: companyRepository,
+            asNoTracking: true,
+            ct: ct);
+
+        var promo = new Promo()
+        {
+            Id = Guid.CreateVersion7(),
+            VenueId = venueId,
+            Body = request.Body
+        };
+
+        await promoRepository.AddAsync(promo, ct);
+        await promoRepository.SaveChangesAsync(ct);
+
+        return ApiResult.Empty;
+    }
+
+    private static async Task<ApiResult.EmptyResult> UpdatePromotion(
+        [FromRoute] Guid venueId,
+        [FromRoute] Guid id,
+        [FromBody] UpdatePromotionRequest request,
+        ClaimsPrincipal user,
+        IVenueRepository venueRepository,
+        ICompanyRepository companyRepository,
+        IPromoRepository promoRepository,
+        CancellationToken ct)
+    {
+        await VenueOwnerGuard.RequireVenueOwnerAsync(
+            venueId: venueId,
+            user: user,
+            venueRepository: venueRepository,
+            companyRepository: companyRepository,
+            asNoTracking: true,
+            ct: ct);
+
+        var promo = await promoRepository.GetByIdAsync(id, ct: ct);
+        if (promo == null || promo.VenueId != venueId)
+        {
+            throw VenueExceptions.PromoNotFound(id);
+        }
+        promo.Body = request.Body;
+
+        await promoRepository.SaveChangesAsync(ct);
+
+        return ApiResult.Empty;
+    }
+
+    private static async Task<ApiResult.EmptyResult> DeletePromotion(
+        [FromRoute] Guid venueId,
+        [FromRoute] Guid id,
+        ClaimsPrincipal user,
+        IVenueRepository venueRepository,
+        ICompanyRepository companyRepository,
+        IPromoRepository promoRepository,
+        CancellationToken ct)
+    {
+        await VenueOwnerGuard.RequireVenueOwnerAsync(
+            venueId: venueId,
+            user: user,
+            venueRepository: venueRepository,
+            companyRepository: companyRepository,
+            asNoTracking: true,
+            ct: ct);
+
+        var discount = await promoRepository.GetByIdAsync(id, ct: ct);
+        if (discount == null || discount.VenueId != venueId)
+        {
+            throw VenueExceptions.PromoNotFound(id);
+        }
+
+        promoRepository.Delete(discount);
+        await promoRepository.SaveChangesAsync(ct);
+
+        return ApiResult.Empty;
+    }
+
+    // ── Discount endpoints ────────────────────────────────────────────────────
+
     private static async Task<ApiResult<DiscountDto[]>> GetDiscounts(
         [FromRoute] Guid venueId,
         IDiscountRepository repository,
@@ -99,10 +195,16 @@ public class B2BDiscountEndpoints : IEndpoints
         IDiscountRepository discountRepository,
         CancellationToken ct)
     {
-        await VenueOwnerGuard.RequireVenueOwnerAsync(venueId, user, venueRepository, companyRepository, ct);
+        await VenueOwnerGuard.RequireVenueOwnerAsync(
+            venueId: venueId,
+            user: user,
+            venueRepository: venueRepository,
+            companyRepository: companyRepository,
+            asNoTracking: true,
+            ct: ct);
 
         var discountId = Guid.CreateVersion7();
-        var discount = new Domain.Aggregates.Discount
+        var discount = new Discount
         {
             Id = discountId,
             VenueId = venueId,
@@ -130,7 +232,13 @@ public class B2BDiscountEndpoints : IEndpoints
         IDiscountRepository discountRepository,
         CancellationToken ct)
     {
-        await VenueOwnerGuard.RequireVenueOwnerAsync(venueId, user, venueRepository, companyRepository, ct);
+        await VenueOwnerGuard.RequireVenueOwnerAsync(
+            venueId: venueId,
+            user: user,
+            venueRepository: venueRepository,
+            companyRepository: companyRepository,
+            asNoTracking: true,
+            ct: ct);
 
         var discount = await discountRepository.GetByIdAsync(id, ct: ct);
         if (discount == null || discount.VenueId != venueId)
@@ -164,7 +272,13 @@ public class B2BDiscountEndpoints : IEndpoints
         IDiscountRepository discountRepository,
         CancellationToken ct)
     {
-        await VenueOwnerGuard.RequireVenueOwnerAsync(venueId, user, venueRepository, companyRepository, ct);
+        await VenueOwnerGuard.RequireVenueOwnerAsync(
+            venueId: venueId,
+            user: user,
+            venueRepository: venueRepository,
+            companyRepository: companyRepository,
+            asNoTracking: true,
+            ct: ct);
 
         var discount = await discountRepository.GetByIdAsync(id, ct: ct);
         if (discount == null || discount.VenueId != venueId)
@@ -180,7 +294,7 @@ public class B2BDiscountEndpoints : IEndpoints
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 
-    internal static DiscountDto DomainDiscountToDto(Domain.Aggregates.Discount d) => new(
+    internal static DiscountDto DomainDiscountToDto(Discount d) => new(
         Id: d.Id.ToString(),
         VenueId: d.VenueId.ToString(),
         LoyaltyLevelId: d.LoyaltyLevelId,

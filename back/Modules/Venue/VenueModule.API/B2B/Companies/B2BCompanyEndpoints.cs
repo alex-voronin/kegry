@@ -9,7 +9,7 @@ using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 using SharedCore.Policies;
 using VenueModule.API.B2B.Companies.Dto;
-using VenueModule.API.B2B.Discount.Dto;
+using VenueModule.API.B2B.Deals.Dto;
 using VenueModule.API.B2B.Shared;
 using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.Exceptions;

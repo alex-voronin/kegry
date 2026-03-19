@@ -13,7 +13,7 @@ using VenueModule.Infrastructure.Persistence;
 namespace VenueModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(VenueContext))]
-    [Migration("20260318170556_AddVenue")]
+    [Migration("20260319145819_AddVenue")]
     partial class AddVenue
     {
         /// <inheritdoc />
@@ -160,6 +160,31 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         {
                             t.HasCheckConstraint("CK_loyalty_levels_id", "\"id\" IN (0, 1, 2, 3)");
                         });
+                });
+
+            modelBuilder.Entity("VenueModule.Domain.Aggregates.Promo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("body");
+
+                    b.Property<Guid>("VenueId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("venue_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_promo");
+
+                    b.HasIndex("VenueId")
+                        .HasDatabaseName("ix_promo_venue_id");
+
+                    b.ToTable("promo", "venue");
                 });
 
             modelBuilder.Entity("VenueModule.Domain.Aggregates.UserLoyalty", b =>
@@ -344,6 +369,18 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_loyalty_levels_companies_company_id");
                 });
 
+            modelBuilder.Entity("VenueModule.Domain.Aggregates.Promo", b =>
+                {
+                    b.HasOne("VenueModule.Domain.Aggregates.Venue", "Venue")
+                        .WithMany("Promos")
+                        .HasForeignKey("VenueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_promo_venues_venue_id");
+
+                    b.Navigation("Venue");
+                });
+
             modelBuilder.Entity("VenueModule.Domain.Aggregates.UserLoyalty", b =>
                 {
                     b.HasOne("VenueModule.Domain.Aggregates.Company", null)
@@ -370,38 +407,7 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_venues_companies_company_id");
 
-                    b.OwnsMany("VenueModule.Domain.ValueObjects.Promo", "Promos", b1 =>
-                        {
-                            b1.Property<Guid>("VenueId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("venue_id");
-
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("integer")
-                                .HasColumnName("id");
-
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
-
-                            b1.Property<string>("Body")
-                                .IsRequired()
-                                .HasMaxLength(1000)
-                                .HasColumnType("character varying(1000)")
-                                .HasColumnName("body");
-
-                            b1.HasKey("VenueId", "Id")
-                                .HasName("pk_venue_promos");
-
-                            b1.ToTable("venue_promos", "venue");
-
-                            b1.WithOwner()
-                                .HasForeignKey("VenueId")
-                                .HasConstraintName("fk_venue_promos_venues_venue_id");
-                        });
-
                     b.Navigation("Company");
-
-                    b.Navigation("Promos");
                 });
 
             modelBuilder.Entity("VenueModule.Domain.Aggregates.Visit", b =>
@@ -429,6 +435,8 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("VenueModule.Domain.Aggregates.Venue", b =>
                 {
                     b.Navigation("Discounts");
+
+                    b.Navigation("Promos");
                 });
 #pragma warning restore 612, 618
         }

@@ -2,7 +2,6 @@ using GeoTimeZone;
 using NetTopologySuite.Geometries;
 using SharedCore.Interfaces;
 using SharedCore.Validation;
-using VenueModule.Domain.ValueObjects;
 
 namespace VenueModule.Domain.Aggregates;
 

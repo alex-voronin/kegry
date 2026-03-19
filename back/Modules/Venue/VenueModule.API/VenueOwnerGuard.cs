@@ -17,9 +17,10 @@ internal static class VenueOwnerGuard
         ClaimsPrincipal user,
         IVenueRepository venueRepository,
         ICompanyRepository companyRepository,
-        CancellationToken ct)
+        bool asNoTracking = false,
+        CancellationToken ct = default)
     {
-        var venue = await venueRepository.GetByIdAsync(venueId, ct: ct);
+        var venue = await venueRepository.GetByIdAsync(venueId, asNoTracking: asNoTracking, ct: ct);
         if (venue == null)
             throw VenueExceptions.VenueNotFound(venueId);
 

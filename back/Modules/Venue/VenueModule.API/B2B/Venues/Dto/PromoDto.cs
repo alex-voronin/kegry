@@ -1,3 +1,3 @@
 namespace VenueModule.API.B2B.Venues.Dto;
 
-public record PromoDto(string Body);
+public record PromoDto(string Id, string Body);

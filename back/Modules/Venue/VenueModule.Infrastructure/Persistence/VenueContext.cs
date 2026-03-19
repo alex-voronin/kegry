@@ -9,6 +9,7 @@ public class VenueContext : DbContext
     public DbSet<Venue> Venues => Set<Venue>();
     public DbSet<Visit> Visits => Set<Visit>();
     public DbSet<LoyaltyLevel> LoyaltyLevels => Set<LoyaltyLevel>();
+    public DbSet<Promo> Promos => Set<Promo>();
     public DbSet<Discount> Discounts => Set<Discount>();
     public DbSet<DiscountDay> DiscountDays => Set<DiscountDay>();
     public DbSet<UserLoyalty> UserLoyalties => Set<UserLoyalty>();
@@ -28,6 +29,7 @@ public class VenueContext : DbContext
         ConfigureDiscount(modelBuilder);
         ConfigureDiscountDay(modelBuilder);
         ConfigureUserLoyalty(modelBuilder);
+        ConfigurePromo(modelBuilder);
     }
 
     private static void ConfigureCompany(ModelBuilder modelBuilder)
@@ -97,12 +99,10 @@ public class VenueContext : DbContext
                 .WithOne()
                 .HasForeignKey(d => d.VenueId)
                 .OnDelete(DeleteBehavior.NoAction);
-            entity.OwnsMany(v => v.Promos, promo =>
-            {
-                promo.ToTable("venue_promos");
-                promo.Property(p => p.Body)
-                    .HasMaxLength(1000);
-            });
+            entity.HasMany(v => v.Promos)
+                .WithOne()
+                .HasForeignKey(d => d.VenueId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasIndex(u => u.IsDeleted);
             entity.HasQueryFilter(c => !c.IsDeleted);
@@ -189,6 +189,19 @@ public class VenueContext : DbContext
                 .WithMany()
                 .HasForeignKey(u => new { u.LoyaltyLevelId, u.CompanyId })
                 .OnDelete(DeleteBehavior.NoAction);
+        });
+    }
+
+    private static void ConfigurePromo(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Promo>(entity =>
+        {
+            entity.ToTable("promo");
+            entity.HasKey(p => p.Id);
+            entity.HasOne(p => p.Venue)
+                .WithMany(v => v.Promos)
+                .HasForeignKey(d => d.VenueId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

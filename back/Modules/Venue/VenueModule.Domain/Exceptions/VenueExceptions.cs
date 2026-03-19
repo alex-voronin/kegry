@@ -38,6 +38,11 @@ public static class VenueExceptions
         return new HttpCodeException($"Discount with id {id} not found", HttpStatusCode.NotFound, ErrorCode.NotFound);
     }
 
+    public static HttpCodeException PromoNotFound(Guid id)
+    {
+        return new HttpCodeException($"Promotion with id {id} not found", HttpStatusCode.NotFound, ErrorCode.NotFound);
+    }
+
     public static HttpCodeException InvalidLoyaltyLevelCount()
     {
         return new HttpCodeException("LoyaltyLevels array must contain between 0 and 3 items",

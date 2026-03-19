@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using NetTopologySuite.Geometries;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -148,20 +147,19 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "venue_promos",
+                name: "promo",
                 schema: "venue",
                 columns: table => new
                 {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
                     venue_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    body = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false)
+                    body = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_venue_promos", x => new { x.venue_id, x.id });
+                    table.PrimaryKey("pk_promo", x => x.id);
                     table.ForeignKey(
-                        name: "fk_venue_promos_venues_venue_id",
+                        name: "fk_promo_venues_venue_id",
                         column: x => x.venue_id,
                         principalSchema: "venue",
                         principalTable: "venues",
@@ -243,6 +241,12 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                 column: "company_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_promo_venue_id",
+                schema: "venue",
+                table: "promo",
+                column: "venue_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_user_loyalties_company_id",
                 schema: "venue",
                 table: "user_loyalties",
@@ -288,11 +292,11 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                 schema: "venue");
 
             migrationBuilder.DropTable(
-                name: "user_loyalties",
+                name: "promo",
                 schema: "venue");
 
             migrationBuilder.DropTable(
-                name: "venue_promos",
+                name: "user_loyalties",
                 schema: "venue");
 
             migrationBuilder.DropTable(

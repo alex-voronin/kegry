@@ -1,5 +1,3 @@
-using VenueModule.API.Shared;
-
 namespace VenueModule.API.B2B.Venues.Dto;
 
 public record CreateVenueRequest(
@@ -11,5 +9,4 @@ public record CreateVenueRequest(
     string? InstagramUrl,
     string? PhoneNumber,
     string? WorkingHours,
-    string? CoverImageUrl,
-    PromoDto[]? Promos);
+    string? CoverImageUrl);

@@ -1,7 +1,4 @@
-using VenueModule.API.B2C.Dto;
-using VenueModule.API.Shared;
-
-namespace VenueModule.API.B2B.Dto;
+namespace VenueModule.API.B2B.Venues.Dto;
 
 public record PatchVenueRequest(
     double? Latitude,
@@ -12,5 +9,4 @@ public record PatchVenueRequest(
     string? InstagramUrl,
     string? PhoneNumber,
     string? WorkingHours,
-    string? CoverImageUrl,
-    PromoDto[]? Promos);
+    string? CoverImageUrl);

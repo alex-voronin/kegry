@@ -1,4 +1,4 @@
-using VenueModule.API.B2B.Discount.Dto;
+using VenueModule.API.B2B.Deals.Dto;
 
 namespace VenueModule.API.B2B.Venues.Dto;
 

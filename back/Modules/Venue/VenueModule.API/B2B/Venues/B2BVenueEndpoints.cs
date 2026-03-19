@@ -9,15 +9,13 @@ using SharedCore.Api;
 using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 using SharedCore.Policies;
-using VenueModule.API.B2B.Discount;
-using VenueModule.API.B2B.Dto;
+using VenueModule.API.B2B.Deals;
 using VenueModule.API.B2B.Shared;
 using VenueModule.API.B2B.Venues.Dto;
 using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.Exceptions;
 using VenueModule.Domain.Repositories;
 using VenueModule.Domain.Services;
-using VenueModule.Domain.ValueObjects;
 
 namespace VenueModule.API.B2B.Venues;
 
@@ -68,7 +66,6 @@ public class B2BVenueEndpoints : IEndpoints
             InstagramUrl = request.InstagramUrl,
             PhoneNumber = request.PhoneNumber,
             WorkingHours = request.WorkingHours,
-            Promos = request.Promos?.Select(p => new Promo { Body = p.Body }).ToList() ?? []
         };
 
         await venueRepository.AddAsync(venue, ct);
@@ -110,7 +107,12 @@ public class B2BVenueEndpoints : IEndpoints
         CancellationToken ct)
     {
         var venue = await VenueOwnerGuard.RequireVenueOwnerAsync(
-            id, user, venueRepository, companyRepository, ct);
+            venueId: id,
+            user: user,
+            venueRepository: venueRepository,
+            companyRepository: companyRepository,
+            asNoTracking: false,
+            ct: ct);
 
         if (request.CoverImageUrl != null)
         {
@@ -128,15 +130,6 @@ public class B2BVenueEndpoints : IEndpoints
         venue.InstagramUrl = request.InstagramUrl ?? venue.InstagramUrl;
         venue.PhoneNumber = request.PhoneNumber ?? venue.PhoneNumber;
         venue.WorkingHours = request.WorkingHours ?? venue.WorkingHours;
-
-        if (request.Promos != null)
-        {
-            venue.Promos = request.Promos.Select(p => new Promo
-            {
-                Body = p.Body
-            }).ToList();
-        }
-
         await venueRepository.SaveChangesAsync(ct);
 
         return ApiResult.Empty;
@@ -150,7 +143,12 @@ public class B2BVenueEndpoints : IEndpoints
         CancellationToken ct)
     {
         var venue = await VenueOwnerGuard.RequireVenueOwnerAsync(
-            id, user, venueRepository, companyRepository, ct);
+            venueId: id,
+            user: user,
+            venueRepository: venueRepository,
+            companyRepository: companyRepository,
+            asNoTracking: false,
+            ct: ct);
         venue.IsDeleted = true;
         await venueRepository.SaveChangesAsync(ct);
         return ApiResult.Empty;
@@ -168,7 +166,12 @@ public class B2BVenueEndpoints : IEndpoints
     {
         Validation.ThrowIfFileSizeExceed(request.ContentLength, Validation.MaxCoverSizeBytes);
         await VenueOwnerGuard.RequireVenueOwnerAsync(
-            id, user, venueRepository, companyRepository, ct);
+            venueId: id,
+            user: user,
+            venueRepository: venueRepository,
+            companyRepository: companyRepository,
+            asNoTracking: true,
+            ct: ct);
 
         var urls = await imageService.GetVenueCoverUploadUrlAsync(
             companyId: user.GetId(),
@@ -196,10 +199,11 @@ public class B2BVenueEndpoints : IEndpoints
                 ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.ChangedAt)
                 : null,
             Promos: venue.Promos
-                .Select(p => new PromoDto(Body: p.Body))
+                .OrderBy(p => p.Id)
+                .Select(p => new PromoDto(Id: p.Id.ToString(), Body: p.Body))
                 .ToArray(),
             Discounts: venue.Discounts
-                .Select(B2BDiscountEndpoints.DomainDiscountToDto)
+                .Select(B2BDealsEndpoints.DomainDiscountToDto)
                 .ToArray()
         );
     }
