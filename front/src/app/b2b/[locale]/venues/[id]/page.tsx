@@ -15,6 +15,7 @@ import { toast } from 'react-toastify';
 import styles from './venue-detail.module.css';
 import { InstagramIcon } from './_components/instagram-icon';
 import { Plus } from 'lucide-react';
+import { PAGE_ROUTES } from '@/lib/routes';
 
 export default function VenueDetailPage() {
   const router = useRouter();
@@ -52,8 +53,7 @@ export default function VenueDetailPage() {
   };
 
   const handleAddPromo = () => {
-    // Placeholder for adding promo
-    console.log('Add promo for venue:', venueId);
+    router.push(PAGE_ROUTES.B2B.VENUES_DETAILS_PROMOTION_CREATE(venueId));
   };
 
   const handleAddDiscount = () => {

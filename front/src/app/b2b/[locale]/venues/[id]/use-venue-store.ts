@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
 import { API_ENDPOINTS } from '@/lib/routes';
@@ -40,26 +39,42 @@ interface VenueState {
   currentVenue: VenueDto | null;
   isLoading: boolean;
   fetchVenue: (id: string) => Promise<void>;
+  createPromotion: (venueId: string, body: string) => Promise<void>;
   reset: () => void;
 }
 
-export const useVenueStore = create<VenueState>()(
-  devtools((set) => ({
-    currentVenue: null,
-    isLoading: false,
-    fetchVenue: async (id: string) => {
-      set({ isLoading: true });
-      try {
-        const response = await apiClient.get<ApiResult<GetVenueResponse>>(
-          API_ENDPOINTS.VENUE(id),
-        );
-        set({ currentVenue: response.data.result.venue });
-      } catch (error) {
-        rethrowApiError(error, 'Failed to fetch venue');
-      } finally {
-        set({ isLoading: false });
-      }
-    },
-    reset: () => set({ currentVenue: null, isLoading: false }),
-  })),
-);
+export const useVenueStore = create<VenueState>()((set, get) => ({
+  currentVenue: null,
+  isLoading: false,
+  fetchVenue: async (id: string) => {
+    set({ isLoading: true });
+    try {
+      const response = await apiClient.get<ApiResult<GetVenueResponse>>(
+        API_ENDPOINTS.VENUE(id),
+      );
+      set({ currentVenue: response.data.result.venue });
+    } catch (error) {
+      rethrowApiError(error, 'Failed to fetch venue');
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  createPromotion: async (venueId: string, body: string) => {
+    const updatePromos = (venue: VenueDto): VenueDto => ({
+      ...venue,
+      promos: [...venue.promos, { body }],
+    });
+
+    try {
+      await apiClient.post(API_ENDPOINTS.VENUE_PROMOTIONS(venueId), { body });
+      set((state) => ({
+        currentVenue: state.currentVenue
+          ? updatePromos(state.currentVenue)
+          : state.currentVenue,
+      }));
+    } catch (error) {
+      rethrowApiError(error, 'Failed to create promotion');
+    }
+  },
+  reset: () => set({ currentVenue: null, isLoading: false }),
+}));

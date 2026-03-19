@@ -180,6 +180,18 @@
         "openWebsite": "Open Website",
         "openInMaps": "Open on Google Maps"
       }
+    },
+    "createPromotion": {
+      "title": "Add Promotion",
+      "save": "Save",
+      "body": "Promotion Body",
+      "bodyPlaceholder": "Enter promotion description...",
+      "validation": {
+        "bodyRequired": "Promotion body is required"
+      },
+      "toast": {
+        "createFailed": "Failed to create promotion"
+      }
     }
   }
 }

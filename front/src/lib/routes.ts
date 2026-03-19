@@ -47,6 +47,8 @@ export const PAGE_ROUTES = {
       `/companies/${companyId}/loyalty-levels/${levelId}`,
     VENUES: '/venues',
     VENUES_DETAIL: (id: string) => `/venues/${id}`,
+    VENUES_DETAILS_PROMOTION_CREATE: (venueId: string) =>
+      `/venues/${venueId}/promotions/create`,
   },
 } as const;
 
@@ -110,6 +112,7 @@ export const API_ENDPOINTS = {
   },
   VENUES: '/api/v1/venues',
   VENUE: (id: string) => `/api/v1/venue/${id}`,
+  VENUE_PROMOTIONS: (venueId: string) => `/api/v1/venue/${venueId}/promotions`,
   NPC: {
     GET: '/api/v1/npc',
     MET: '/api/v1/npc/met',
