@@ -13,6 +13,7 @@ import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { ButtonVariant } from '@/components/ui/button';
+import { useSafeBack } from '@/hooks/use-safe-back';
 import stylesCommon from '@/components/ui/common.module.css';
 import { Input } from '@/components/ui/input';
 import { PAGE_ROUTES } from '@/lib/routes';
@@ -32,6 +33,8 @@ export default function CompanyProfilePage() {
   const [isLoyaltyExpanded, setIsLoyaltyExpanded] = useState(
     searchParams.get('expanded') === 'loyalty',
   );
+
+  const { safeBack } = useSafeBack();
 
   const { selectedCompany, isLoading, fetchCompany, deleteCompany } =
     useCompanyProfileStore();
@@ -59,7 +62,7 @@ export default function CompanyProfilePage() {
   }
 
   const handleBack = () => {
-    router.back();
+    safeBack(PAGE_ROUTES.B2B.COMPANIES);
   };
 
   const handleAddVenue = () => {

@@ -12,6 +12,7 @@ import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { ButtonVariant } from '@/components/ui/button';
+import { useSafeBack } from '@/hooks/use-safe-back';
 import { useVenueStore } from './use-venue-store';
 import { toast } from 'react-toastify';
 import styles from './venue-detail.module.css';
@@ -34,6 +35,8 @@ export default function VenueDetailPage() {
   const [selectedPromoId, setSelectedPromoId] = useState<string | null>(null);
   const [isPromoMenuOpen, setIsPromoMenuOpen] = useState(false);
 
+  const { safeBack } = useSafeBack();
+
   useEffect(() => {
     const loadVenue = async () => {
       setIsInitializing(true);
@@ -52,7 +55,7 @@ export default function VenueDetailPage() {
   }, [venueId, fetchVenue, t]);
 
   const handleBack = () => {
-    router.back();
+    safeBack(PAGE_ROUTES.B2B.COMPANIES);
   };
 
   const handleEditVenue = () => {

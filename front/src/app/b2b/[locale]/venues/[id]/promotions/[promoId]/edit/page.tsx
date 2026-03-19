@@ -14,7 +14,9 @@ import { Icon } from '@/components/ui/icon';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import stylesCommon from '@/components/ui/common.module.css';
 import { Textarea } from '@/components/ui/textarea';
+import { useSafeBack } from '@/hooks/use-safe-back';
 import { useVenueStore } from '../../../use-venue-store';
+import { PAGE_ROUTES } from '@/lib/routes';
 import styles from './edit-promotion.module.css';
 
 export default function EditPromotionPage() {
@@ -26,6 +28,8 @@ export default function EditPromotionPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { currentVenue, fetchVenue, updatePromotion } = useVenueStore();
+
+  const { safeBack } = useSafeBack();
 
   const schema = z.object({
     body: z.string().trim().min(1, t('validation.bodyRequired')),
@@ -60,7 +64,7 @@ export default function EditPromotionPage() {
     setIsSubmitting(true);
     try {
       await updatePromotion(venueId, promoId, values.body);
-      router.back();
+      safeBack(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId));
     } catch (err: any) {
       // Error handled in store
     } finally {
@@ -78,7 +82,7 @@ export default function EditPromotionPage() {
             alt="back"
             width={14}
             height={27}
-            onClick={() => router.back()}
+            onClick={() => safeBack(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId))}
           />
         }
       />
