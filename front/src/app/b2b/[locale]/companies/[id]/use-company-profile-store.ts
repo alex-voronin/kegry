@@ -1,5 +1,6 @@
 import { create } from '@/lib/zustand-reset';
 import apiClient from '@/lib/api-client';
+import { rethrowApiError } from '@/lib/api-error';
 import { API_ENDPOINTS } from '@/lib/routes';
 import { CompanyDto } from '../use-companies-store';
 
@@ -36,11 +37,15 @@ export const useCompanyProfileStore = create<CompanyProfileState>()((set) => ({
       });
     } catch (error) {
       set({ isLoading: false });
-      throw error;
+      rethrowApiError(error, 'Failed to fetch company');
     }
   },
   deleteCompany: async (id: string) => {
-    await apiClient.delete(API_ENDPOINTS.COMPANIES.BY_ID(id));
+    try {
+      await apiClient.delete(API_ENDPOINTS.COMPANIES.BY_ID(id));
+    } catch (error) {
+      rethrowApiError(error, 'Failed to delete company');
+    }
   },
   reset: () => set({ selectedCompany: null, isLoading: false }),
 }));

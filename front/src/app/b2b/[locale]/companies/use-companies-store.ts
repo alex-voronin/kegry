@@ -1,6 +1,7 @@
 import { create } from '@/lib/zustand-reset';
 import { persist } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
+import { rethrowApiError } from '@/lib/api-error';
 import { API_ENDPOINTS } from '@/lib/routes';
 
 export interface CompanyDto {
@@ -50,25 +51,37 @@ export const useCompaniesStore = create<CompaniesState>()(
           });
         } catch (error) {
           set({ isLoading: false });
-          throw error;
+          rethrowApiError(error, 'Failed to fetch companies');
         }
       },
       createCompany: async (name: string, email?: string) => {
-        const response = await apiClient.post(API_ENDPOINTS.COMPANIES.BASE, {
-          name,
-          email,
-        });
-        return response.data.result;
+        try {
+          const response = await apiClient.post(API_ENDPOINTS.COMPANIES.BASE, {
+            name,
+            email,
+          });
+          return response.data.result;
+        } catch (error) {
+          rethrowApiError(error, 'Failed to create company');
+        }
       },
       getAvatarUploadUrl: async (id: string, contentLength: number) => {
-        const response = await apiClient.post(
-          API_ENDPOINTS.COMPANIES.AVATAR_UPLOAD_URL(id),
-          { contentLength },
-        );
-        return response.data.result;
+        try {
+          const response = await apiClient.post(
+            API_ENDPOINTS.COMPANIES.AVATAR_UPLOAD_URL(id),
+            { contentLength },
+          );
+          return response.data.result;
+        } catch (error) {
+          rethrowApiError(error, 'Failed to get upload URL');
+        }
       },
       patchCompany: async (id, patch) => {
-        await apiClient.patch(API_ENDPOINTS.COMPANIES.BY_ID(id), patch);
+        try {
+          await apiClient.patch(API_ENDPOINTS.COMPANIES.BY_ID(id), patch);
+        } catch (error) {
+          rethrowApiError(error, 'Failed to update company');
+        }
       },
       reset: () => set({ companies: [], isLoading: false }),
     }),

@@ -68,8 +68,7 @@ export default function CompanyProfilePage() {
   };
 
   const handleVenueClick = (venueId: string) => {
-    // Placeholder for venue detail
-    console.log('Venue click:', venueId);
+    router.push(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId));
   };
 
   const handleLoyaltyLevelClick = (levelId: number) => {
