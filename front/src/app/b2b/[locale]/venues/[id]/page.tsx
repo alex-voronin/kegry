@@ -60,8 +60,7 @@ export default function VenueDetailPage() {
 
   const handleEditVenue = () => {
     setIsMenuOpen(false);
-    // Placeholder for editing venue
-    console.log('Edit venue:', venueId);
+    router.push(PAGE_ROUTES.B2B.VENUES_EDIT(venueId));
   };
 
   const handleDeleteVenue = () => {

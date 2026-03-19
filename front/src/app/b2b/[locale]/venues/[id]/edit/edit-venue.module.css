@@ -1,0 +1,53 @@
+@reference "../../../../../globals.css";
+
+.wrapper {
+  @apply overflow-hidden sm:rounded-[16px];
+}
+
+.form {
+  @apply flex flex-col gap-5;
+}
+
+.coverSection {
+  @apply w-full;
+}
+
+.coverContainer {
+  @apply relative h-[150px] w-full shrink-0 cursor-pointer;
+}
+
+.header {
+  @apply absolute! top-0! left-0! w-full! bg-transparent!;
+}
+
+.coverImage {
+  @apply h-full w-full object-cover;
+}
+
+.coverOverlay {
+  @apply absolute inset-0 bg-black/60;
+}
+
+.coverPlaceholder {
+  @apply flex h-full w-full items-center justify-center;
+}
+
+.coverPlaceholderIcon {
+  @apply flex flex-col items-center gap-2;
+}
+
+.cameraOverlay {
+  @apply absolute right-3 bottom-3 flex h-10 w-10 items-center justify-center rounded-full bg-black/60;
+}
+
+.form > div:not(.coverSection) {
+  @apply px-4;
+}
+
+.footer {
+  @apply mb-10 flex justify-center;
+}
+
+.submitButton {
+  @apply w-[280px];
+}

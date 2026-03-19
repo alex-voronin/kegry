@@ -154,7 +154,6 @@ public class B2BVenueEndpoints : IEndpoints
         return ApiResult.Empty;
     }
 
-
     private static async Task<ApiResult<GetPresignedUrlResponse>> GetCoverUploadUrl(
         [FromRoute] Guid id,
         [FromBody] GetPresignedUrlRequest request,

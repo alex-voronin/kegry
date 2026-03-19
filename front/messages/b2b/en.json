@@ -193,6 +193,30 @@
         "deleteFailed": "Failed to delete the object"
       }
     },
+    "editVenue": {
+      "title": "Edit Venue",
+      "submit": "Save",
+      "address": "Address",
+      "addressRequired": "Address is required",
+      "googleMapsUrl": "Google Maps URL",
+      "websiteUrl": "Website URL",
+      "instagramUrl": "Instagram URL",
+      "phoneNumber": "Phone Number",
+      "workingHours": "Working Hours",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "latitudeRequired": "Latitude is required",
+      "longitudeRequired": "Longitude is required",
+      "latitudeRange": "Latitude must be between -90 and 90",
+      "longitudeRange": "Longitude must be between -180 and 180",
+      "googleMapsUrlInvalid": "Invalid Google Maps URL",
+      "instagramUrlInvalid": "Invalid Instagram URL",
+      "websiteUrlInvalid": "Invalid Website URL",
+      "invalidUrl": "Invalid URL",
+      "toast": {
+        "updateFailed": "Failed to update venue"
+      }
+    },
     "createPromotion": {
       "title": "Add Promotion",
       "save": "Save",

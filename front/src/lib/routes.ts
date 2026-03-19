@@ -51,6 +51,7 @@ export const PAGE_ROUTES = {
       `/venues/${venueId}/promotions/create`,
     VENUES_DETAILS_PROMOTION_EDIT: (venueId: string, promoId: string) =>
       `/venues/${venueId}/promotions/${promoId}/edit`,
+    VENUES_EDIT: (id: string) => `/venues/${id}/edit`,
   },
 } as const;
 
@@ -117,6 +118,7 @@ export const API_ENDPOINTS = {
   VENUE_PROMOTIONS: (venueId: string) => `/api/v1/venue/${venueId}/promotions`,
   VENUE_PROMOTION: (venueId: string, promoId: string) =>
     `/api/v1/venue/${venueId}/promotions/${promoId}`,
+  VENUE_COVER_UPLOAD_URL: (id: string) => `/api/v1/venue/${id}/cover/upload-url`,
   NPC: {
     GET: '/api/v1/npc',
     MET: '/api/v1/npc/met',
