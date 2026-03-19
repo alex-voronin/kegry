@@ -29,7 +29,7 @@
 }
 
 .coverPlaceholder {
-  @apply flex h-full w-full items-center justify-center;
+  @apply bg-form-element flex h-full w-full items-center justify-center;
 }
 
 .coverPlaceholderIcon {

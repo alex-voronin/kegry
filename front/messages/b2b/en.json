@@ -217,6 +217,33 @@
         "updateFailed": "Failed to update venue"
       }
     },
+    "createVenue": {
+      "title": "Create Venue",
+      "submit": "Create",
+      "address": "Address",
+      "googleMapsUrl": "Google Maps URL",
+      "websiteUrl": "Website URL",
+      "instagramUrl": "Instagram URL",
+      "phoneNumber": "Phone Number",
+      "workingHours": "Working Hours",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "validation": {
+        "addressRequired": "Address is required",
+        "latitudeRequired": "Latitude is required",
+        "longitudeRequired": "Longitude is required",
+        "latitudeRange": "Latitude must be between -90 and 90",
+        "longitudeRange": "Longitude must be between -180 and 180",
+        "googleMapsUrlInvalid": "Invalid Google Maps URL",
+        "instagramUrlInvalid": "Invalid Instagram URL",
+        "websiteUrlInvalid": "Invalid Website URL",
+        "invalidUrl": "Invalid URL",
+        "coverRequired": "Cover image is required"
+      },
+      "toast": {
+        "createFailed": "Failed to create venue"
+      }
+    },
     "createPromotion": {
       "title": "Add Promotion",
       "save": "Save",

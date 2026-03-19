@@ -66,8 +66,7 @@ export default function CompanyProfilePage() {
   };
 
   const handleAddVenue = () => {
-    // Placeholder for adding venue
-    console.log('Add venue for company:', id);
+    router.push(PAGE_ROUTES.B2B.VENUES_CREATE(id));
   };
 
   const handleVenueClick = (venueId: string) => {

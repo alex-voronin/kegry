@@ -51,6 +51,7 @@ export const PAGE_ROUTES = {
       `/venues/${venueId}/promotions/create`,
     VENUES_DETAILS_PROMOTION_EDIT: (venueId: string, promoId: string) =>
       `/venues/${venueId}/promotions/${promoId}/edit`,
+    VENUES_CREATE: (companyId: string) => `/companies/${companyId}/venues/create`,
     VENUES_EDIT: (id: string) => `/venues/${id}/edit`,
   },
 } as const;
@@ -129,6 +130,7 @@ export const API_ENDPOINTS = {
     BY_ID: (id: string) => `/api/v1/company/${id}`,
     AVATAR_UPLOAD_URL: (id: string) =>
       `/api/v1/company/${id}/avatar/upload-url`,
+    VENUE: (id: string) => `/api/v1/company/${id}/venue`,
   },
   LOYALTY_LEVELS: {
     BY_COMPANY_ID: (companyId: string) =>

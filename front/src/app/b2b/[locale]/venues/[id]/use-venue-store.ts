@@ -49,7 +49,23 @@ interface VenueState {
   deletePromotion: (venueId: string, promoId: string) => Promise<void>;
   deleteVenue: (id: string) => Promise<void>;
   patchVenue: (id: string, request: PatchVenueRequest) => Promise<void>;
+  createVenue: (
+    companyId: string,
+    request: CreateVenueRequest,
+  ) => Promise<{ id: string }>;
   reset: () => void;
+}
+
+export interface CreateVenueRequest {
+  latitude: number;
+  longitude: number;
+  address: string;
+  websiteUrl?: string;
+  googleMapsUrl?: string;
+  instagramUrl?: string;
+  phoneNumber?: string;
+  workingHours?: string;
+  coverImageUrl?: string;
 }
 
 export interface PatchVenueRequest {
@@ -168,6 +184,17 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
       }));
     } catch (error) {
       rethrowApiError(error, 'Failed to update venue');
+    }
+  },
+  createVenue: async (companyId: string, request: CreateVenueRequest) => {
+    try {
+      const response = await apiClient.post<ApiResult<{ id: string }>>(
+        API_ENDPOINTS.COMPANIES.VENUE(companyId),
+        request,
+      );
+      return response.data.result;
+    } catch (error) {
+      rethrowApiError(error, 'Failed to create venue');
     }
   },
   reset: () => set({ currentVenue: null, isLoading: false }),
