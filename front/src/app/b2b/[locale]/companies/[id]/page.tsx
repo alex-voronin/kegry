@@ -169,16 +169,14 @@ export default function CompanyProfilePage() {
             />
           </div>
 
-          <div className={styles.venuesSection}>
-            <div className={styles.venuesHeader}>
+          <div className={styles.listSection}>
+            <div className={styles.listHeader}>
               <button
                 type="button"
                 className="flex w-full items-center justify-between"
                 onClick={() => setIsLoyaltyExpanded((v) => !v)}
               >
-                <h2 className={styles.venuesTitle}>
-                  {t('loyaltyLevelsTitle')}
-                </h2>
+                <h2 className={styles.listTitle}>{t('loyaltyLevelsTitle')}</h2>
                 <ChevronDown
                   size={24}
                   className={`text-secondary transition-transform ${
@@ -189,7 +187,7 @@ export default function CompanyProfilePage() {
             </div>
 
             {isLoyaltyExpanded && (
-              <div className={styles.venueList}>
+              <div className={styles.list}>
                 {selectedCompany.loyaltyLevels.map((level) => (
                   <ListItem
                     key={level.id}
@@ -218,9 +216,9 @@ export default function CompanyProfilePage() {
             )}
           </div>
 
-          <div className={styles.venuesSection}>
-            <div className={styles.venuesHeader}>
-              <h2 className={styles.venuesTitle}>{t('venuesTitle')}</h2>
+          <div className={styles.listSection}>
+            <div className={styles.listHeader}>
+              <h2 className={styles.listTitle}>{t('venuesTitle')}</h2>
               <div onClick={handleAddVenue} className="cursor-pointer">
                 <Plus size={24} className="text-primary" />
               </div>
@@ -231,7 +229,7 @@ export default function CompanyProfilePage() {
                 <span>{t('noVenues')}</span>
               </div>
             ) : (
-              <div className={styles.venueList}>
+              <div className={styles.list}>
                 {selectedCompany.venues.map((venue: any) => (
                   <ListItem
                     key={venue.id}

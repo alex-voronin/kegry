@@ -23,15 +23,15 @@
   @apply flex w-full flex-col gap-2;
 }
 
-.venuesSection {
+.listSection {
   @apply mt-8 flex w-full flex-col gap-2 pb-4;
 }
 
-.venuesHeader {
+.listHeader {
   @apply mb-2 flex items-center justify-between;
 }
 
-.venuesTitle {
+.listTitle {
   @apply text-lg font-bold;
 }
 
@@ -39,6 +39,6 @@
   @apply text-secondary flex justify-center py-10;
 }
 
-.venueList {
+.list {
   @apply flex flex-col gap-2;
 }
