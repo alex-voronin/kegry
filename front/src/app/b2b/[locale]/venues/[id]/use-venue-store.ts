@@ -47,6 +47,7 @@ interface VenueState {
     body: string,
   ) => Promise<void>;
   deletePromotion: (venueId: string, promoId: string) => Promise<void>;
+  deleteVenue: (id: string) => Promise<void>;
   reset: () => void;
 }
 
@@ -135,6 +136,13 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
       }));
     } catch (error) {
       rethrowApiError(error, 'Failed to delete promotion');
+    }
+  },
+  deleteVenue: async (id: string) => {
+    try {
+      await apiClient.delete(API_ENDPOINTS.VENUE(id));
+    } catch (error) {
+      rethrowApiError(error, 'Failed to delete venue');
     }
   },
   reset: () => set({ currentVenue: null, isLoading: false }),

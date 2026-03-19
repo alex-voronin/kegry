@@ -10,6 +10,8 @@ import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { ModalMenu } from '@/components/ui/modal-menu';
+import { ModalDialog } from '@/components/ui/modal-dialog';
+import { ButtonVariant } from '@/components/ui/button';
 import { useVenueStore } from './use-venue-store';
 import { toast } from 'react-toastify';
 import styles from './venue-detail.module.css';
@@ -23,9 +25,12 @@ export default function VenueDetailPage() {
   const venueId = params.id as string;
   const t = useTranslations('screens.venueDetail');
 
-  const { currentVenue, isLoading, fetchVenue, reset } = useVenueStore();
+  const { currentVenue, isLoading, fetchVenue, deleteVenue, reset } =
+    useVenueStore();
   const [isInitializing, setIsInitializing] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [selectedPromoId, setSelectedPromoId] = useState<string | null>(null);
   const [isPromoMenuOpen, setIsPromoMenuOpen] = useState(false);
 
@@ -34,8 +39,8 @@ export default function VenueDetailPage() {
       setIsInitializing(true);
       try {
         await fetchVenue(venueId);
-      } catch (error) {
-        toast.error(t('notFound'));
+      } catch (error: any) {
+        toast.error(error.message || t('notFound'));
       } finally {
         setIsInitializing(false);
       }
@@ -44,14 +49,34 @@ export default function VenueDetailPage() {
     if (venueId) {
       loadVenue();
     }
-
-    return () => {
-      reset();
-    };
-  }, [venueId, fetchVenue, reset, t]);
+  }, [venueId, fetchVenue, t]);
 
   const handleBack = () => {
     router.back();
+  };
+
+  const handleEditVenue = () => {
+    setIsMenuOpen(false);
+    // Placeholder for editing venue
+    console.log('Edit venue:', venueId);
+  };
+
+  const handleDeleteVenue = () => {
+    setIsMenuOpen(false);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteVenue(venueId);
+      router.back();
+    } catch (error: any) {
+      toast.error(error.message || t('toast.deleteFailed'));
+    } finally {
+      setIsDeleting(false);
+      setIsDeleteModalOpen(false);
+    }
   };
 
   const handleAddPromo = () => {
@@ -83,9 +108,8 @@ export default function VenueDetailPage() {
     setIsPromoMenuOpen(false);
     try {
       await deletePromotion(venueId, selectedPromoId);
-      toast.success('Promotion deleted');
-    } catch (error) {
-      // Error handled in store
+    } catch (error: any) {
+      toast.error(error.message || t('toast.deleteFailed'));
     }
   };
 
@@ -99,6 +123,20 @@ export default function VenueDetailPage() {
       icon: '/assets/b2b/delete-icon.svg',
       label: t('menu.deletePromotion'),
       onClick: handleDeletePromo,
+      isDestructive: true,
+    },
+  ];
+
+  const menuOptions = [
+    {
+      icon: '/assets/b2b/edit-icon.svg',
+      label: t('menu.editVenue'),
+      onClick: handleEditVenue,
+    },
+    {
+      icon: '/assets/b2b/delete-icon.svg',
+      label: t('menu.deleteVenue'),
+      onClick: handleDeleteVenue,
       isDestructive: true,
     },
   ];
@@ -132,38 +170,6 @@ export default function VenueDetailPage() {
       </div>
     );
   }
-
-  const menuOptions = [
-    {
-      label: t('menu.openInMaps'),
-      icon: '/assets/b2b/google-maps-icon.svg',
-      onClick: () => {
-        if (currentVenue.googleMapsUrl) {
-          window.open(currentVenue.googleMapsUrl, '_blank');
-        }
-      },
-    },
-    ...(currentVenue.instagramUrl
-      ? [
-          {
-            label: t('menu.openInstagram'),
-            icon: <InstagramIcon />,
-            onClick: () =>
-              window.open(currentVenue.instagramUrl as string, '_blank'),
-          },
-        ]
-      : []),
-    ...(currentVenue.websiteUrl
-      ? [
-          {
-            label: t('menu.openWebsite'),
-            icon: '/assets/b2b/website-icon.svg',
-            onClick: () =>
-              window.open(currentVenue.websiteUrl as string, '_blank'),
-          },
-        ]
-      : []),
-  ];
 
   return (
     <div className={styles.wrapper}>
@@ -370,6 +376,17 @@ export default function VenueDetailPage() {
         isOpen={isPromoMenuOpen}
         onClose={() => setIsPromoMenuOpen(false)}
         options={promoMenuOptions}
+      />
+
+      <ModalDialog
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        message={t('deleteDialog.title')}
+        primaryButtonText={t('deleteDialog.buttonNo')}
+        secondaryButtonText={t('deleteDialog.buttonYes')}
+        secondaryButtonVariant={ButtonVariant.Destructive}
+        onPrimaryAction={() => setIsDeleteModalOpen(false)}
+        onSecondaryAction={handleDeleteConfirm}
       />
     </div>
   );
