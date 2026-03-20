@@ -47,6 +47,20 @@ interface VenueState {
     body: string,
   ) => Promise<void>;
   deletePromotion: (venueId: string, promoId: string) => Promise<void>;
+  createDiscount: (
+    venueId: string,
+    percent: number,
+    days: string[],
+    loyaltyLevelId?: number | null,
+  ) => Promise<void>;
+  updateDiscount: (
+    venueId: string,
+    discountId: string,
+    percent: number,
+    days: string[],
+    loyaltyLevelId?: number | null,
+  ) => Promise<void>;
+  deleteDiscount: (venueId: string, discountId: string) => Promise<void>;
   deleteVenue: (id: string) => Promise<void>;
   patchVenue: (id: string, request: PatchVenueRequest) => Promise<void>;
   createVenue: (
@@ -165,6 +179,108 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
       }));
     } catch (error) {
       rethrowApiError(error, 'Failed to delete promotion');
+    }
+  },
+  createDiscount: async (
+    venueId: string,
+    percent: number,
+    days: string[],
+    loyaltyLevelId?: number | null,
+  ) => {
+    const addNewDiscountToStore = (
+      venue: VenueDto,
+      id: string,
+      percent: number,
+      days: string[],
+      loyaltyLevelId: number | null,
+    ): VenueDto => ({
+      ...venue,
+      discounts: [
+        ...venue.discounts,
+        { id, venueId, percent, days, loyaltyLevelId },
+      ],
+    });
+
+    try {
+      const response = await apiClient.post<ApiResult<{ id: string }>>(
+        API_ENDPOINTS.VENUE_DISCOUNTS(venueId),
+        { percent, days, loyaltyLevelId },
+      );
+      const newId = response.data.result.id;
+      set((state) => ({
+        currentVenue: state.currentVenue
+          ? addNewDiscountToStore(
+              state.currentVenue,
+              newId,
+              percent,
+              days,
+              loyaltyLevelId ?? null,
+            )
+          : state.currentVenue,
+      }));
+    } catch (error) {
+      rethrowApiError(error, 'Failed to create discount');
+    }
+  },
+  updateDiscount: async (
+    venueId: string,
+    discountId: string,
+    percent: number,
+    days: string[],
+    loyaltyLevelId?: number | null,
+  ) => {
+    const updateDiscountInStore = (
+      venue: VenueDto,
+      discountId: string,
+      percent: number,
+      days: string[],
+      loyaltyLevelId: number | null,
+    ): VenueDto => ({
+      ...venue,
+      discounts: venue.discounts.map((d) =>
+        d.id === discountId ? { ...d, percent, days, loyaltyLevelId } : d,
+      ),
+    });
+
+    try {
+      await apiClient.put(API_ENDPOINTS.VENUE_DISCOUNT(venueId, discountId), {
+        percent,
+        days,
+        loyaltyLevelId,
+      });
+      set((state) => ({
+        currentVenue: state.currentVenue
+          ? updateDiscountInStore(
+              state.currentVenue,
+              discountId,
+              percent,
+              days,
+              loyaltyLevelId ?? null,
+            )
+          : state.currentVenue,
+      }));
+    } catch (error) {
+      rethrowApiError(error, 'Failed to update discount');
+    }
+  },
+  deleteDiscount: async (venueId: string, discountId: string) => {
+    const filterDiscountsInStore = (
+      venue: VenueDto,
+      discountId: string,
+    ): VenueDto => ({
+      ...venue,
+      discounts: venue.discounts.filter((d) => d.id !== discountId),
+    });
+
+    try {
+      await apiClient.delete(API_ENDPOINTS.VENUE_DISCOUNT(venueId, discountId));
+      set((state) => ({
+        currentVenue: state.currentVenue
+          ? filterDiscountsInStore(state.currentVenue, discountId)
+          : state.currentVenue,
+      }));
+    } catch (error) {
+      rethrowApiError(error, 'Failed to delete discount');
     }
   },
   deleteVenue: async (id: string) => {

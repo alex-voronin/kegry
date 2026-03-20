@@ -25,6 +25,7 @@ export default function VenueDetailPage() {
   const params = useParams();
   const venueId = params.id as string;
   const t = useTranslations('screens.venueDetail');
+  const tCommon = useTranslations('common');
 
   const { currentVenue, isLoading, fetchVenue, deleteVenue, reset } =
     useVenueStore();
@@ -34,6 +35,13 @@ export default function VenueDetailPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [selectedPromoId, setSelectedPromoId] = useState<string | null>(null);
   const [isPromoMenuOpen, setIsPromoMenuOpen] = useState(false);
+  const [selectedDiscountId, setSelectedDiscountId] = useState<string | null>(
+    null,
+  );
+  const [isDiscountMenuOpen, setIsDiscountMenuOpen] = useState(false);
+  const [isPromoDeleteModalOpen, setIsPromoDeleteModalOpen] = useState(false);
+  const [isDiscountDeleteModalOpen, setIsDiscountDeleteModalOpen] =
+    useState(false);
 
   const { safeBack } = useSafeBack();
 
@@ -86,8 +94,7 @@ export default function VenueDetailPage() {
   };
 
   const handleAddDiscount = () => {
-    // Placeholder for adding discount
-    console.log('Add discount for venue:', venueId);
+    router.push(PAGE_ROUTES.B2B.VENUES_DETAILS_DISCOUNT_CREATE(venueId));
   };
 
   const handlePromoMenuOpen = (promoId: string) => {
@@ -95,7 +102,12 @@ export default function VenueDetailPage() {
     setIsPromoMenuOpen(true);
   };
 
-  const { deletePromotion } = useVenueStore();
+  const handleDiscountMenuOpen = (discountId: string) => {
+    setSelectedDiscountId(discountId);
+    setIsDiscountMenuOpen(true);
+  };
+
+  const { deletePromotion, deleteDiscount } = useVenueStore();
 
   const handleEditPromo = () => {
     if (!selectedPromoId) return;
@@ -105,15 +117,57 @@ export default function VenueDetailPage() {
     );
   };
 
-  const handleDeletePromo = async () => {
-    if (!selectedPromoId) return;
+  const handleDeletePromo = () => {
     setIsPromoMenuOpen(false);
+    setIsPromoDeleteModalOpen(true);
+  };
+
+  const handlePromoDeleteConfirm = async () => {
+    if (!selectedPromoId) return;
+    setIsPromoDeleteModalOpen(false);
     try {
       await deletePromotion(venueId, selectedPromoId);
     } catch (error: any) {
       toast.error(error.message || t('toast.deleteFailed'));
     }
   };
+
+  const handleEditDiscount = () => {
+    if (!selectedDiscountId) return;
+    setIsDiscountMenuOpen(false);
+    router.push(
+      PAGE_ROUTES.B2B.VENUES_DETAILS_DISCOUNT_EDIT(venueId, selectedDiscountId),
+    );
+  };
+
+  const handleDeleteDiscount = () => {
+    setIsDiscountMenuOpen(false);
+    setIsDiscountDeleteModalOpen(true);
+  };
+
+  const handleDiscountDeleteConfirm = async () => {
+    if (!selectedDiscountId) return;
+    setIsDiscountDeleteModalOpen(false);
+    try {
+      await deleteDiscount(venueId, selectedDiscountId);
+    } catch (error: any) {
+      toast.error(error.message || t('toast.deleteFailed'));
+    }
+  };
+
+  const discountMenuOptions = [
+    {
+      icon: '/assets/b2b/edit-icon.svg',
+      label: t('menu.editDiscount'),
+      onClick: handleEditDiscount,
+    },
+    {
+      icon: '/assets/b2b/delete-icon.svg',
+      label: t('menu.deleteDiscount'),
+      onClick: handleDeleteDiscount,
+      isDestructive: true,
+    },
+  ];
 
   const promoMenuOptions = [
     {
@@ -342,21 +396,30 @@ export default function VenueDetailPage() {
               </div>
               <div className={styles.discountList}>
                 {currentVenue.discounts.map((discount) => (
-                  <div key={discount.id} className={styles.discountItem}>
+                  <div
+                    key={discount.id}
+                    className={`${styles.discountItem} ${styles.promoItemActionable}`}
+                    onClick={() => handleDiscountMenuOpen(discount.id)}
+                  >
                     <div className={styles.discountHeader}>
-                      <span className={styles.discountPercent}>
-                        {discount.percent}%
-                      </span>
-                      {discount.loyaltyLevelId && (
-                        <span className="text-secondary text-sm">
-                          Level {discount.loyaltyLevelId}
+                      <div className="flex items-center gap-2">
+                        <span className={styles.discountPercent}>
+                          {discount.percent}%
                         </span>
-                      )}
+                        {discount.loyaltyLevelId && (
+                          <span className="text-secondary text-sm">
+                            Level {discount.loyaltyLevelId}
+                          </span>
+                        )}
+                      </div>
+                      <div className="p-1">
+                        <MoreHorizontal size={20} className="text-secondary" />
+                      </div>
                     </div>
                     {discount.days && discount.days.length > 0 && (
                       <div className={styles.discountDays}>
                         {discount.days
-                          .map((day) => t(`days.${day}`))
+                          .map((day) => tCommon(`days.${day}`))
                           .join(', ')}
                       </div>
                     )}
@@ -380,6 +443,12 @@ export default function VenueDetailPage() {
         options={promoMenuOptions}
       />
 
+      <ModalMenu
+        isOpen={isDiscountMenuOpen}
+        onClose={() => setIsDiscountMenuOpen(false)}
+        options={discountMenuOptions}
+      />
+
       <ModalDialog
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
@@ -389,6 +458,28 @@ export default function VenueDetailPage() {
         secondaryButtonVariant={ButtonVariant.Destructive}
         onPrimaryAction={() => setIsDeleteModalOpen(false)}
         onSecondaryAction={handleDeleteConfirm}
+      />
+
+      <ModalDialog
+        isOpen={isPromoDeleteModalOpen}
+        onClose={() => setIsPromoDeleteModalOpen(false)}
+        message={t('deletePromoDialog.title')}
+        primaryButtonText={t('deleteDialog.buttonNo')}
+        secondaryButtonText={t('deleteDialog.buttonYes')}
+        secondaryButtonVariant={ButtonVariant.Destructive}
+        onPrimaryAction={() => setIsPromoDeleteModalOpen(false)}
+        onSecondaryAction={handlePromoDeleteConfirm}
+      />
+
+      <ModalDialog
+        isOpen={isDiscountDeleteModalOpen}
+        onClose={() => setIsDiscountDeleteModalOpen(false)}
+        message={t('deleteDiscountDialog.title')}
+        primaryButtonText={t('deleteDialog.buttonNo')}
+        secondaryButtonText={t('deleteDialog.buttonYes')}
+        secondaryButtonVariant={ButtonVariant.Destructive}
+        onPrimaryAction={() => setIsDiscountDeleteModalOpen(false)}
+        onSecondaryAction={handleDiscountDeleteConfirm}
       />
     </div>
   );

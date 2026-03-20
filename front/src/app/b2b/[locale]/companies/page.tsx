@@ -41,8 +41,8 @@ export default function CompaniesPage() {
           <Icon
             src="/assets/b2b/plus-icon.svg"
             alt="add company"
-            width={24}
-            height={24}
+            width={22}
+            height={22}
             onClick={() => router.push(PAGE_ROUTES.B2B.COMPANIES_CREATE)}
             priority
           />

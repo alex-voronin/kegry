@@ -1,0 +1,41 @@
+@reference "../../../../../../globals.css";
+
+.form {
+  @apply flex w-full flex-col gap-6;
+}
+
+.section {
+  @apply flex flex-col gap-2;
+}
+
+.daysGrid {
+  @apply flex flex-col gap-0 overflow-hidden sm:rounded-xl;
+}
+
+.dayRow {
+  @apply bg-form-element flex items-center justify-between border-b border-white/5 px-4 py-3;
+}
+
+.dayRow:last-child {
+  @apply border-b-0;
+}
+
+.dayLabel {
+  @apply text-foreground text-base;
+}
+
+.masterToggles {
+  @apply mb-2 flex flex-col gap-0 overflow-hidden sm:rounded-xl;
+}
+
+.footer {
+  @apply mt-4 mb-4 flex w-full justify-center;
+}
+
+.submitButton {
+  @apply h-[40px] w-[298px];
+}
+
+.wrapper {
+  @apply flex min-h-screen flex-col items-center sm:p-4 sm:pt-0;
+}
