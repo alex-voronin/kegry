@@ -121,6 +121,40 @@ public class VenueTests
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 
+    [Fact]
+    public void InstagramUrl_WhenValid_ThenSet()
+    {
+        var instagramUrl = "https://www.instagram.com/acc";
+        var venue = CreateValidVenue();
+        venue.InstagramUrl = instagramUrl;
+        venue.InstagramUrl.ShouldBe(instagramUrl);
+    }
+
+    [Fact]
+    public void InstagramUrl_WhenInvalid_ThenThrows()
+    {
+        var venue = CreateValidVenue();
+        Should.Throw<HttpCodeException>(() => venue.InstagramUrl = "https://tiktok.com/@acc")
+            .ErrorCode.ShouldBe(ErrorCode.ValidationError);
+    }
+
+    [Fact]
+    public void GoogleMapsUrl_WhenValid_ThenSet()
+    {
+        var googleMapsUrl = "https://www.google.com/some-obj";
+        var venue = CreateValidVenue();
+        venue.GoogleMapsUrl = googleMapsUrl;
+        venue.GoogleMapsUrl.ShouldBe(googleMapsUrl);
+    }
+
+    [Fact]
+    public void GoogleMapsUrl_WhenInvalid_ThenThrows()
+    {
+        var venue = CreateValidVenue();
+        Should.Throw<HttpCodeException>(() => venue.GoogleMapsUrl = "https://non-google.com/some-obj")
+            .ErrorCode.ShouldBe(ErrorCode.ValidationError);
+    }
+
     private static Venue CreateValidVenue(Guid? id = null)
     {
         return new Venue

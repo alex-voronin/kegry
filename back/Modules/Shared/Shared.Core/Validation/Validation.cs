@@ -65,8 +65,15 @@ public static class Validation
 
         bool IsValidUrl(string url)
         {
-            return Uri.TryCreate(value, UriKind.Absolute, out var uriResult) &&
+            return Uri.TryCreate(url, UriKind.Absolute, out var uriResult) &&
                    (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         }
+    }
+
+    public static void ThrowIfNotInRange(string fieldName, int value, int min, int max)
+    {
+        ThrowIfInvalid(fieldName,
+            () => value >= min && value <= max,
+            $"'{fieldName}' must be in range [{min}-{max}]");
     }
 }

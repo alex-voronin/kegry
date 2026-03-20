@@ -57,7 +57,7 @@ public class Venue : ISoftDeletable<Guid>
         get;
         set => SetProperty(
             ref field,
-            ValidateUrl(nameof(GoogleMapsUrl), value)
+            ValidateGoogleMapsUrl(nameof(GoogleMapsUrl), value)
         );
     }
 
@@ -66,7 +66,7 @@ public class Venue : ISoftDeletable<Guid>
         get;
         set => SetProperty(
             ref field,
-            ValidateUrl(nameof(InstagramUrl), value)
+            ValidateInstagramUrl(nameof(InstagramUrl), value)
         );
     }
 
@@ -106,6 +106,7 @@ public class Venue : ISoftDeletable<Guid>
         ChangedAt = DateTimeOffset.UtcNow;
         return true;
     }
+
     public bool IsDeleted { get; set; }
 
     #region ================================= Validation =================================
@@ -145,6 +146,48 @@ public class Venue : ISoftDeletable<Guid>
         if (string.IsNullOrWhiteSpace(value)) return null;
         Validation.ThrowIfLengthExceeded(fieldName, value, ValidationParameters.WorkingHoursMaxLength);
         return value.Trim();
+    }
+
+    private static string? ValidateGoogleMapsUrl(string fieldName, string? value)
+    {
+        var url = ValidateUrl(fieldName, value);
+        if (url == null)
+        {
+            return null;
+        }
+
+        Validation.ThrowIfInvalid(fieldName,
+            () => IsValidDomain(url, ValidationParameters.ValidGoogleDomains),
+            "Is not a valid Google Maps URL");
+        return url;
+    }
+
+    private static string? ValidateInstagramUrl(string fieldName, string? value)
+    {
+        var url = ValidateUrl(fieldName, value);
+        if (url == null)
+        {
+            return null;
+        }
+
+        Validation.ThrowIfInvalid(fieldName,
+            () => IsValidDomain(url, ValidationParameters.ValidInstagramDomains),
+            "Is not a valid Instagram URL");
+        return url;
+    }
+
+    private static bool IsValidDomain(string url, string[] validDomains)
+    {
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+        {
+            return false;
+        }
+
+        var host = uri.Host.ToLowerInvariant();
+        var validDomain = validDomains
+            .Any(d => host == d || host.EndsWith("." + d));
+
+        return validDomain;
     }
 
     #endregion

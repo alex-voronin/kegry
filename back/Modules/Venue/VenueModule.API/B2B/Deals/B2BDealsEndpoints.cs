@@ -199,7 +199,7 @@ public class B2BDealsEndpoints : IEndpoints
         IDiscountRepository discountRepository,
         CancellationToken ct)
     {
-        await VenueOwnerGuard.RequireVenueOwnerAsync(
+        var venue = await VenueOwnerGuard.RequireVenueOwnerAsync(
             venueId: venueId,
             user: user,
             venueRepository: venueRepository,
@@ -212,6 +212,7 @@ public class B2BDealsEndpoints : IEndpoints
         {
             Id = discountId,
             VenueId = venueId,
+            CompanyId = venue.CompanyId,
             LoyaltyLevelId = request.LoyaltyLevelId,
             Percent = request.Percent,
             Days = request.Days
