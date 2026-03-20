@@ -10,6 +10,7 @@ using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 using SharedCore.Policies;
 using VenueModule.API.B2B.Deals;
+using VenueModule.API.B2B.Deals.Dto;
 using VenueModule.API.B2B.Shared;
 using VenueModule.API.B2B.Venues.Dto;
 using VenueModule.Domain.Aggregates;
@@ -86,10 +87,7 @@ public class B2BVenueEndpoints : IEndpoints
         IS3StorageService storageService,
         CancellationToken ct)
     {
-        var venue = await venueRepository.GetByIdAsync(id,
-            asNoTracking: true,
-            includes: [v => v.Discounts],
-            ct: ct);
+        var venue = await venueRepository.GetByIdWithLoyaltyLevelsAndDiscounts(id, ct);
         if (venue == null)
         {
             throw VenueExceptions.VenueNotFound(id);
@@ -209,7 +207,10 @@ public class B2BVenueEndpoints : IEndpoints
                 .ToArray(),
             Discounts: venue.Discounts
                 .Select(B2BDealsEndpoints.DomainDiscountToDto)
-                .ToArray()
+                .ToArray(),
+            LoyaltyLevels: venue.Company.LoyaltyLevels
+                .Select(l => new LoyaltyLevelDto(l.Id, l.VisitsUpperBound, l.IsActive))
+                .ToArray() ?? []
         );
     }
 }

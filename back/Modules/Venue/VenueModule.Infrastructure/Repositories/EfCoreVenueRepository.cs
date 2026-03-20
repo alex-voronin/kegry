@@ -48,7 +48,7 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
         return (venues, totalCount);
     }
 
-    public Task<Venue?> GetByIdWithLyaltylevelsAndDiscounts(Guid id, CancellationToken ct)
+    public Task<Venue?> GetByIdWithLoyaltyLevelsAndDiscounts(Guid id, CancellationToken ct)
     {
         return Context.Venues
             .Include(v => v.Company)

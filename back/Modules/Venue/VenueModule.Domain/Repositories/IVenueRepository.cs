@@ -14,7 +14,7 @@ public interface IVenueRepository : IRepository<Venue>
         int limit,
         CancellationToken ct);
 
-    Task<Venue?> GetByIdWithLyaltylevelsAndDiscounts(Guid id, CancellationToken ct);
+    Task<Venue?> GetByIdWithLoyaltyLevelsAndDiscounts(Guid id, CancellationToken ct);
 
     Task<(Venue? venue, Visit? lastVisit, UserLoyalty? userLoyalty)> GetVenueWithLastVisitsAndUserLoyalty(
         Guid venueId, Guid userId, CancellationToken ct);

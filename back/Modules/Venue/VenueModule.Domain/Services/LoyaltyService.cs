@@ -150,7 +150,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         Guid venueId,
         CancellationToken ct = default)
     {
-        var venue = await _venueRepository.GetByIdWithLyaltylevelsAndDiscounts(venueId, ct);
+        var venue = await _venueRepository.GetByIdWithLoyaltyLevelsAndDiscounts(venueId, ct);
         if (venue == null)
         {
             throw VenueExceptions.VenueNotFound(venueId);

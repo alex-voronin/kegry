@@ -16,4 +16,5 @@ public record VenueDto(
     string? CoverImageUrl,
     Guid QrCode,
     PromoDto[] Promos,
-    DiscountDto[] Discounts);
+    DiscountDto[] Discounts,
+    LoyaltyLevelDto[] LoyaltyLevels);
