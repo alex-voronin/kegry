@@ -169,9 +169,12 @@
     },
     "venueDetail": {
       "title": "Venue",
+      "status": "Status",
       "contacts": "Contacts",
       "address": "Address",
       "workingHours": "Working Hours",
+      "verified": "Verified",
+      "nonVerified": "Non-verified",
       "promotions": "Promotions",
       "discounts": "Discounts",
       "notFound": "Venue not found",

@@ -221,14 +221,17 @@ export default function NotificationsScreen() {
               return (
                 <ListItem
                   key={notif.id}
-                  expired={expired}
+                  dimmed={expired}
                   className={notif.fromUserId ? 'cursor-pointer' : ''}
                   onClick={() => {
                     if (notif.fromUserId) {
                       setSelectedNotification(notif);
                     }
                   }}
-                  avatarUrl={notif.avatarImageUrl || '/assets/common/avatar-placeholder.webp'}
+                  avatarUrl={
+                    notif.avatarImageUrl ||
+                    '/assets/common/avatar-placeholder.webp'
+                  }
                   avatarAlt="Profile"
                   title={notif.text}
                   subtitle={formatNotificationDate(notif.expiresAt, t)}

@@ -11,7 +11,7 @@ interface ListItemProps {
   rightEl?: React.ReactNode;
   onClick?: () => void;
   className?: string;
-  expired?: boolean;
+  dimmed?: boolean;
   leadingIcon?: React.ReactNode;
 }
 
@@ -23,12 +23,12 @@ export function ListItem({
   rightEl,
   onClick,
   className,
-  expired,
+  dimmed,
   leadingIcon,
 }: ListItemProps) {
   return (
     <div
-      className={cn(styles.item, expired && styles.expired, className)}
+      className={cn(styles.item, dimmed && styles.expired, className)}
       onClick={onClick}
     >
       <div className={styles.itemLeft}>

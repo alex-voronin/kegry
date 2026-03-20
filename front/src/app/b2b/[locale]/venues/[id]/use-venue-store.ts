@@ -28,6 +28,7 @@ export interface VenueDto {
   phoneNumber: string | null;
   workingHours: string | null;
   coverImageUrl: string | null;
+  isVerified: boolean;
   promos: PromoDto[];
   discounts: DiscountDto[];
 }

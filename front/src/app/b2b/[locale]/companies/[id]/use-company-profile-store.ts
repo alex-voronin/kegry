@@ -8,6 +8,7 @@ export interface VenueListItemDto {
   id: string;
   address: string;
   coverImageUrl: string | null;
+  isVerified: boolean;
 }
 
 export interface CompanyDetailDto extends CompanyDto {

@@ -15,9 +15,10 @@ import { ButtonVariant } from '@/components/ui/button';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { useVenueStore } from './use-venue-store';
 import { toast } from 'react-toastify';
+import { cn } from '@/lib/utils';
 import styles from './venue-detail.module.css';
 import { InstagramIcon } from './_components/instagram-icon';
-import { Plus, MoreHorizontal } from 'lucide-react';
+import { Plus, MoreHorizontal, BadgeCheck, BadgeAlert } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
 
 export default function VenueDetailPage() {
@@ -262,6 +263,23 @@ export default function VenueDetailPage() {
               priority
             />
             <div className={styles.coverOverlay} />
+            <div
+              className={cn(
+                styles.statusBadge,
+                currentVenue.isVerified
+                  ? styles.statusVerified
+                  : styles.statusNonVerified,
+              )}
+            >
+              {currentVenue.isVerified ? (
+                <BadgeCheck size={14} />
+              ) : (
+                <BadgeAlert size={14} />
+              )}
+              <span>
+                {currentVenue.isVerified ? t('verified') : t('nonVerified')}
+              </span>
+            </div>
           </>
         ) : (
           <div className="bg-surface-dark h-full w-full" />

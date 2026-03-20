@@ -17,7 +17,10 @@ import { useSafeBack } from '@/hooks/use-safe-back';
 import stylesCommon from '@/components/ui/common.module.css';
 import { Input } from '@/components/ui/input';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { useCompanyProfileStore } from './use-company-profile-store';
+import {
+  useCompanyProfileStore,
+  VenueListItemDto,
+} from './use-company-profile-store';
 import styles from './profile.module.css';
 
 export default function CompanyProfilePage() {
@@ -199,7 +202,7 @@ export default function CompanyProfilePage() {
                     subtitle={t('loyaltyLevelSubtitle', {
                       visitsUpperBound: level.visitsUpperBound,
                     })}
-                    expired={!level.isActive}
+                    dimmed={!level.isActive}
                     leadingIcon={
                       <Medal
                         size={24}
@@ -231,7 +234,7 @@ export default function CompanyProfilePage() {
               </div>
             ) : (
               <div className={styles.list}>
-                {selectedCompany.venues.map((venue: any) => (
+                {selectedCompany.venues.map((venue: VenueListItemDto) => (
                   <ListItem
                     key={venue.id}
                     className="cursor-pointer"
@@ -242,6 +245,7 @@ export default function CompanyProfilePage() {
                     avatarAlt={venue.address}
                     title={venue.address}
                     subtitle=""
+                    dimmed={!venue.isVerified}
                     rightEl={
                       <ChevronRight size={24} className="text-secondary" />
                     }
