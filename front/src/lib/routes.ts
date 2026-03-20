@@ -57,6 +57,7 @@ export const PAGE_ROUTES = {
       `/venues/${venueId}/discounts/${discountId}/edit`,
     VENUES_CREATE: (companyId: string) => `/companies/${companyId}/venues/create`,
     VENUES_EDIT: (id: string) => `/venues/${id}/edit`,
+    VENUES_DETAILS_ADVANCED: (venueId: string) => `/venues/${venueId}/advanced`,
   },
 } as const;
 

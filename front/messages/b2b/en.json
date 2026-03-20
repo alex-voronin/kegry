@@ -167,6 +167,15 @@
       "venues": "Venues",
       "logout": "Logout"
     },
+    "advancedSettings": {
+      "title": "Advanced Settings",
+      "qrCode": "QR Code",
+      "qrCodePlaceholder": "Enter QR Code ID",
+      "submit": "Save",
+      "toast": {
+        "updateFailed": "Failed to update QR Code"
+      }
+    },
     "venueDetail": {
       "title": "Venue",
       "status": "Status",
@@ -187,7 +196,8 @@
         "editDiscount": "Edit Discount",
         "deleteDiscount": "Delete Discount",
         "editVenue": "Edit",
-        "deleteVenue": "Delete Venue"
+        "deleteVenue": "Delete Venue",
+        "advanced": "Advanced"
       },
       "deleteDialog": {
         "title": "Are you sure you want to delete this venue?",

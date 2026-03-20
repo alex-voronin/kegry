@@ -18,7 +18,13 @@ import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
 import styles from './venue-detail.module.css';
 import { InstagramIcon } from './_components/instagram-icon';
-import { Plus, MoreHorizontal, BadgeCheck, BadgeAlert } from 'lucide-react';
+import {
+  Plus,
+  MoreHorizontal,
+  BadgeCheck,
+  BadgeAlert,
+  Settings,
+} from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
 
 export default function VenueDetailPage() {
@@ -184,11 +190,21 @@ export default function VenueDetailPage() {
     },
   ];
 
+  const handleAdvanced = () => {
+    setIsMenuOpen(false);
+    router.push(PAGE_ROUTES.B2B.VENUES_DETAILS_ADVANCED(venueId));
+  };
+
   const menuOptions = [
     {
       icon: '/assets/b2b/edit-icon.svg',
       label: t('menu.editVenue'),
       onClick: handleEditVenue,
+    },
+    {
+      icon: <Settings size={24} className="text-primary" />,
+      label: t('menu.advanced'),
+      onClick: handleAdvanced,
     },
     {
       icon: '/assets/b2b/delete-icon.svg',

@@ -29,6 +29,7 @@ export interface VenueDto {
   workingHours: string | null;
   coverImageUrl: string | null;
   isVerified: boolean;
+  qrCode: string;
   promos: PromoDto[];
   discounts: DiscountDto[];
 }
@@ -93,6 +94,7 @@ export interface PatchVenueRequest {
   phoneNumber?: string;
   workingHours?: string;
   coverImageUrl?: string;
+  qrCode?: string;
 }
 
 export const useVenueStore = create<VenueState>()((set, get) => ({
