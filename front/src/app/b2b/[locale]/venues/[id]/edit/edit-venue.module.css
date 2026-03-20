@@ -41,7 +41,7 @@
 }
 
 .form > div:not(.coverSection) {
-  @apply px-4;
+  @apply sm:px-4 px-0;
 }
 
 .footer {
