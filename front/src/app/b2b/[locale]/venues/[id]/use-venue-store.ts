@@ -32,6 +32,7 @@ export interface VenueDto {
   qrCode: string;
   promos: PromoDto[];
   discounts: DiscountDto[];
+  loyaltyLevels: { id: number; visitsUpperBound: number; isActive: boolean }[];
 }
 
 export interface GetVenueResponse {

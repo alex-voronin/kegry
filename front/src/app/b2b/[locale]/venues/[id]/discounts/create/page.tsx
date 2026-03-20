@@ -11,6 +11,7 @@ import { PAGE_ROUTES } from '@/lib/routes';
 import { DiscountForm } from '../_components/discount-form';
 import { toast } from 'react-toastify';
 import styles from '../_components/discount-form.module.css';
+import { Spinner } from '@/components/ui/spinner';
 
 export default function CreateDiscountPage() {
   const t = useTranslations('screens.createDiscount');
@@ -18,19 +19,23 @@ export default function CreateDiscountPage() {
   const venueId = params.id as string;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { fetchVenue, createDiscount } = useVenueStore();
+  const { currentVenue, fetchVenue, createDiscount, isLoading } = useVenueStore();
   const { safeBack } = useSafeBack();
 
   useEffect(() => {
-    if (venueId) {
+    if (venueId && currentVenue?.id !== venueId) {
       fetchVenue(venueId);
     }
-  }, [venueId, fetchVenue]);
+  }, [venueId, currentVenue?.id, fetchVenue]);
 
-  const onSubmit = async (values: { percent: number; days: string[] }) => {
+  const onSubmit = async (values: {
+    percent: number;
+    days: string[];
+    loyaltyLevelId: number | null;
+  }) => {
     setIsSubmitting(true);
     try {
-      await createDiscount(venueId, values.percent, values.days);
+      await createDiscount(venueId, values.percent, values.days, values.loyaltyLevelId);
       safeBack(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId));
     } catch (err: any) {
       toast.error(err.message || t('toast.createFailed'));
@@ -38,6 +43,14 @@ export default function CreateDiscountPage() {
       setIsSubmitting(false);
     }
   };
+
+  if (isLoading || !currentVenue) {
+    return (
+      <div className="flex flex-1 items-center justify-center h-screen bg-background">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -56,6 +69,7 @@ export default function CreateDiscountPage() {
       <div className={styles.wrapper}>
         <DiscountForm
           onSubmit={onSubmit}
+          loyaltyLevels={currentVenue.loyaltyLevels}
           isSubmitting={isSubmitting}
           submitLabel={t('save')}
           translationNamespace="createDiscount"

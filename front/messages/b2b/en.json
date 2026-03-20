@@ -16,6 +16,23 @@
   "components": {
     "logo": {
       "tagline": "For Business"
+    },
+    "forms": {
+      "discount": {
+        "loyaltyLevelOption": "Level {level} ({visits} visits)",
+        "loyaltyLevel": "Loyalty Level",
+        "loyaltyLevelPlaceholder": "Select loyalty level",
+        "percent": "Discount %",
+        "workDays": "Work days",
+        "weekend": "Weekend",
+        "when": "When",
+        "validation": {
+          "percentRequired": "Discount percentage is required",
+          "percentRange": "Percentage must be between 1 and 100",
+          "daysRequired": "Please select at least one day.",
+          "loyaltyLevelRequired": "Loyalty level is required"
+        }
+      }
     }
   },
   "screens": {
@@ -191,10 +208,10 @@
         "openInstagram": "Open Instagram",
         "openWebsite": "Open Website",
         "openInMaps": "Open on Google Maps",
-        "editPromotion": "Edit Promotion",
-        "deletePromotion": "Delete Promotion",
-        "editDiscount": "Edit Discount",
-        "deleteDiscount": "Delete Discount",
+        "editPromotion": "Edit",
+        "deletePromotion": "Delete",
+        "editDiscount": "Edit",
+        "deleteDiscount": "Delete",
         "editVenue": "Edit",
         "deleteVenue": "Delete Venue",
         "advanced": "Advanced"
@@ -291,16 +308,7 @@
     },
     "createDiscount": {
       "title": "Add Discount",
-      "save": "Save",
-      "percent": "Discount %",
-      "workDays": "Work days",
-      "weekend": "Weekend",
-      "when": "When",
-      "validation": {
-        "percentRequired": "Discount percentage is required",
-        "percentRange": "Percentage must be between 1 and 100",
-        "daysRequired": "Please select at least one day."
-      },
+      "save": "Create",
       "toast": {
         "createFailed": "Failed to create discount"
       }
@@ -308,15 +316,6 @@
     "editDiscount": {
       "title": "Edit Discount",
       "save": "Save",
-      "percent": "Discount %",
-      "workDays": "Work days",
-      "weekend": "Weekend",
-      "when": "When",
-      "validation": {
-        "percentRequired": "Discount percentage is required",
-        "percentRange": "Percentage must be between 1 and 100",
-        "daysRequired": "Please select at least one day."
-      },
       "toast": {
         "updateFailed": "Failed to update discount"
       }

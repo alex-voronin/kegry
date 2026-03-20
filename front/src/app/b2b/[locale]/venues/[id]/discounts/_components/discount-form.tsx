@@ -9,6 +9,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { Input } from '@/components/ui/input';
 import { Toggle } from '@/components/ui/toggle';
+import { Select } from '@/components/ui/select';
 import stylesCommon from '@/components/ui/common.module.css';
 import styles from './discount-form.module.css';
 
@@ -24,12 +25,23 @@ const daysOfWeek = [
 const workDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const weekendDays = ['Saturday', 'Sunday'];
 
+interface LoyaltyLevelOption {
+  value: number;
+  label: string;
+}
+
 interface DiscountFormProps {
   initialValues?: {
     percent: number;
     days: string[];
+    loyaltyLevelId: number | null;
   };
-  onSubmit: (values: { percent: number; days: string[] }) => Promise<void>;
+  loyaltyLevels: { id: number; visitsUpperBound: number }[];
+  onSubmit: (values: {
+    percent: number;
+    days: string[];
+    loyaltyLevelId: number | null;
+  }) => Promise<void>;
   isSubmitting: boolean;
   submitLabel: string;
   translationNamespace: 'createDiscount' | 'editDiscount';
@@ -37,6 +49,7 @@ interface DiscountFormProps {
 
 export function DiscountForm({
   initialValues,
+  loyaltyLevels,
   onSubmit,
   isSubmitting,
   submitLabel,
@@ -44,18 +57,23 @@ export function DiscountForm({
 }: DiscountFormProps) {
   const t = useTranslations(`screens.${translationNamespace}`);
   const tCommon = useTranslations('common');
+  const tDiscountForm = useTranslations('components.forms.discount');
 
   const schema = z.object({
     percent: z
       .number()
-      .min(1, t('validation.percentRange'))
-      .max(100, t('validation.percentRange')),
-    days: z.array(z.string()).min(1, t('validation.daysRequired')),
+      .min(1, tDiscountForm('validation.percentRange'))
+      .max(100, tDiscountForm('validation.percentRange')),
+    days: z.array(z.string()).min(1, tDiscountForm('validation.daysRequired')),
+    loyaltyLevelId: z.number().nullable().refine((val) => val !== null, {
+      message: tDiscountForm('validation.loyaltyLevelRequired'),
+    }),
   });
 
   type FormValues = {
     percent: number;
     days: string[];
+    loyaltyLevelId: number | null;
   };
 
   const {
@@ -65,10 +83,11 @@ export function DiscountForm({
     watch,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as any,
     defaultValues: {
       percent: initialValues?.percent ?? 0,
       days: initialValues?.days ?? [],
+      loyaltyLevelId: initialValues?.loyaltyLevelId ?? (loyaltyLevels[0]?.id || null),
     },
   });
 
@@ -116,7 +135,7 @@ export function DiscountForm({
   return (
     <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
       <div className={stylesCommon.sectionContainer}>
-        <FormSectionTitle required>{t('percent')}</FormSectionTitle>
+        <FormSectionTitle required>{tDiscountForm('percent')}</FormSectionTitle>
         <Input
           {...register('percent', { valueAsNumber: true })}
           type="number"
@@ -129,18 +148,52 @@ export function DiscountForm({
       </div>
 
       <div className={stylesCommon.sectionContainer}>
-        <FormSectionTitle>{t('when')}</FormSectionTitle>
+        <FormSectionTitle required>{tDiscountForm('loyaltyLevel')}</FormSectionTitle>
+        <Select
+          options={loyaltyLevels.map((l) => ({
+            value: l.id,
+            label: tDiscountForm('loyaltyLevelOption', {
+              level: l.id,
+              visits: l.visitsUpperBound,
+            }),
+          }))}
+          value={
+            watch('loyaltyLevelId')
+              ? {
+                  value: watch('loyaltyLevelId')!,
+                  label: tDiscountForm('loyaltyLevelOption', {
+                    level: watch('loyaltyLevelId')!,
+                    visits:
+                      loyaltyLevels.find((l) => l.id === watch('loyaltyLevelId'))
+                        ?.visitsUpperBound || 0,
+                  }),
+                }
+              : null
+          }
+          onChange={(option: any) => setValue('loyaltyLevelId', option?.value || null)}
+          placeholder={tDiscountForm('loyaltyLevelPlaceholder')}
+          isSearchable={false}
+        />
+        {errors.loyaltyLevelId?.message && (
+          <p className={stylesCommon.errorMessage}>
+            {errors.loyaltyLevelId.message}
+          </p>
+        )}
+      </div>
+
+      <div className={stylesCommon.sectionContainer}>
+        <FormSectionTitle>{tDiscountForm('when')}</FormSectionTitle>
 
         <div className={styles.masterToggles}>
           <div className={styles.dayRow}>
-            <span className={styles.dayLabel}>{t('workDays')}</span>
+            <span className={styles.dayLabel}>{tDiscountForm('workDays')}</span>
             <Toggle
               checked={isWorkDaysSelected}
               onChange={handleWorkDaysToggle}
             />
           </div>
           <div className={styles.dayRow}>
-            <span className={styles.dayLabel}>{t('weekend')}</span>
+            <span className={styles.dayLabel}>{tDiscountForm('weekend')}</span>
             <Toggle
               checked={isWeekendSelected}
               onChange={handleWeekendToggle}

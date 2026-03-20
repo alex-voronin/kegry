@@ -11,6 +11,7 @@ import { PAGE_ROUTES } from '@/lib/routes';
 import { DiscountForm } from '../../_components/discount-form';
 import { toast } from 'react-toastify';
 import styles from '../../_components/discount-form.module.css';
+import { Spinner } from '@/components/ui/spinner';
 
 export default function EditDiscountPage() {
   const t = useTranslations('screens.editDiscount');
@@ -19,18 +20,22 @@ export default function EditDiscountPage() {
   const discountId = params.discountId as string;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { currentVenue, fetchVenue, updateDiscount } = useVenueStore();
+  const { currentVenue, fetchVenue, updateDiscount, isLoading } = useVenueStore();
   const { safeBack } = useSafeBack();
 
   useEffect(() => {
-    if (!currentVenue || currentVenue.id !== venueId) {
+    if (venueId && currentVenue?.id !== venueId) {
       fetchVenue(venueId);
     }
-  }, [venueId, currentVenue, fetchVenue]);
+  }, [venueId, currentVenue?.id, fetchVenue]);
 
   const discount = currentVenue?.discounts.find((d) => d.id === discountId);
 
-  const onSubmit = async (values: { percent: number; days: string[] }) => {
+  const onSubmit = async (values: {
+    percent: number;
+    days: string[];
+    loyaltyLevelId: number | null;
+  }) => {
     setIsSubmitting(true);
     try {
       await updateDiscount(
@@ -38,7 +43,7 @@ export default function EditDiscountPage() {
         discountId,
         values.percent,
         values.days,
-        discount?.loyaltyLevelId,
+        values.loyaltyLevelId,
       );
       safeBack(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId));
     } catch (err: any) {
@@ -48,8 +53,12 @@ export default function EditDiscountPage() {
     }
   };
 
-  if (!discount && !currentVenue) {
-    return null; // Or a spinner
+  if (isLoading || !currentVenue || !discount) {
+    return (
+      <div className="flex flex-1 items-center justify-center h-screen bg-background">
+        <Spinner />
+      </div>
+    );
   }
 
   return (
@@ -67,18 +76,18 @@ export default function EditDiscountPage() {
         }
       />
       <div className={styles.wrapper}>
-        {discount && (
-          <DiscountForm
-            initialValues={{
-              percent: discount.percent,
-              days: discount.days,
-            }}
-            onSubmit={onSubmit}
-            isSubmitting={isSubmitting}
-            submitLabel={t('save')}
-            translationNamespace="editDiscount"
-          />
-        )}
+        <DiscountForm
+          initialValues={{
+            percent: discount.percent,
+            days: discount.days,
+            loyaltyLevelId: discount.loyaltyLevelId,
+          }}
+          loyaltyLevels={currentVenue.loyaltyLevels}
+          onSubmit={onSubmit}
+          isSubmitting={isSubmitting}
+          submitLabel={t('save')}
+          translationNamespace="editDiscount"
+        />
       </div>
     </>
   );
