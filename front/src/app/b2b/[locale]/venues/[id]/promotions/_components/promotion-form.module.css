@@ -1,0 +1,17 @@
+@reference "../../../../../../globals.css";
+
+.form {
+  @apply flex w-full flex-col gap-6;
+}
+
+.footer {
+  @apply mt-4 mb-4 flex w-full justify-center;
+}
+
+.submitButton {
+  @apply h-[40px] w-[298px];
+}
+
+.wrapper {
+  @apply flex min-h-screen flex-col items-center sm:p-4 sm:pt-0;
+}
