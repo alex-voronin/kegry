@@ -121,13 +121,14 @@ public class VenueTests
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 
-    [Fact]
-    public void InstagramUrl_WhenValid_ThenSet()
+    [Theory]
+    [InlineData("https://www.instagram.com/acc")]
+    [InlineData(null)]
+    public void InstagramUrl_WhenValid_ThenSet(string? url)
     {
-        var instagramUrl = "https://www.instagram.com/acc";
         var venue = CreateValidVenue();
-        venue.InstagramUrl = instagramUrl;
-        venue.InstagramUrl.ShouldBe(instagramUrl);
+        venue.InstagramUrl = url;
+        venue.InstagramUrl.ShouldBe(url);
     }
 
     [Fact]
@@ -138,13 +139,14 @@ public class VenueTests
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 
-    [Fact]
-    public void GoogleMapsUrl_WhenValid_ThenSet()
+    [Theory]
+    [InlineData("https://www.google.com/some-obj")]
+    [InlineData(null)]
+    public void GoogleMapsUrl_WhenValid_ThenSet(string? url)
     {
-        var googleMapsUrl = "https://www.google.com/some-obj";
         var venue = CreateValidVenue();
-        venue.GoogleMapsUrl = googleMapsUrl;
-        venue.GoogleMapsUrl.ShouldBe(googleMapsUrl);
+        venue.GoogleMapsUrl = url;
+        venue.GoogleMapsUrl.ShouldBe(url);
     }
 
     [Fact]
