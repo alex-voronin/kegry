@@ -5,8 +5,8 @@ namespace VenueModule.Domain.Aggregates;
 
 public class Company : ISoftDeletable<Guid>
 {
-    public Guid Id { get; init; }
-    public Guid OwnerId { get; init; }
+    public required Guid Id { get; init; }
+    public required Guid OwnerId { get; init; }
 
     public required string Name
     {

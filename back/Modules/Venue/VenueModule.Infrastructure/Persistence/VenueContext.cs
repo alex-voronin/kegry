@@ -92,9 +92,6 @@ public class VenueContext : DbContext
             entity.Property(v => v.TimeZoneId)
                 .IsRequired()
                 .HasMaxLength(100);
-            entity.HasIndex(v => v.CompanyId);
-            entity.HasIndex(v => v.Coordinates)
-                .HasMethod("gist");
             entity.HasMany(v => v.Discounts)
                 .WithOne()
                 .HasForeignKey(d => d.VenueId)
@@ -104,8 +101,16 @@ public class VenueContext : DbContext
                 .HasForeignKey(d => d.VenueId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            entity.HasIndex(v => v.CompanyId);
+            entity.HasIndex(v => v.Coordinates)
+                .HasMethod("gist");
+            entity.HasIndex(u => u.QrCode);
+            
+            entity.HasIndex(u => u.IsVerified);
+            entity.HasQueryFilter(NamedFilters.Venue.Verified, u => u.IsVerified);
+            
             entity.HasIndex(u => u.IsDeleted);
-            entity.HasQueryFilter(c => !c.IsDeleted);
+            entity.HasQueryFilter(NamedFilters.Venue.SoftDeleted, u => !u.IsDeleted);
         });
     }
 

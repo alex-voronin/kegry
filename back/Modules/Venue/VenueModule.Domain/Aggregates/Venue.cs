@@ -7,8 +7,9 @@ namespace VenueModule.Domain.Aggregates;
 
 public class Venue : ISoftDeletable<Guid>
 {
-    public Guid Id { get; init; }
-    public Guid CompanyId { get; init; }
+    public required Guid Id { get; init; }
+    public required Guid QrCode { get; set; }
+    public required Guid CompanyId { get; init; }
     public Company Company { get; init; } = null!;
 
     public string? CoverImageS3Key
@@ -107,6 +108,7 @@ public class Venue : ISoftDeletable<Guid>
         return true;
     }
 
+    public bool IsVerified { get; set; }
     public bool IsDeleted { get; set; }
 
     #region ================================= Validation =================================

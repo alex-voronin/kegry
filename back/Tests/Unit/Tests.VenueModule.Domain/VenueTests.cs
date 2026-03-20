@@ -162,6 +162,7 @@ public class VenueTests
         return new Venue
         {
             Id = id ?? Guid.NewGuid(),
+            QrCode = Guid.NewGuid(),
             CompanyId = Guid.NewGuid(),
             Coordinates = new Point(0, 0) { SRID = 4326 },
             Address = "123 Test St",

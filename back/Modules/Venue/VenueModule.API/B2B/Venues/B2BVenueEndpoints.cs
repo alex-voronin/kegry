@@ -52,9 +52,11 @@ public class B2BVenueEndpoints : IEndpoints
             throw VenueExceptions.CompanyNotFound();
         }
 
+        var venueId = Guid.CreateVersion7();
         var venue = new Venue
         {
             Id = Guid.CreateVersion7(),
+            QrCode = venueId,
             CompanyId = company.Id,
             CoverImageS3Key = request.CoverImageUrl != null
                 ? storageService.PublicFileUrlToS3Key(request.CoverImageUrl)
@@ -66,6 +68,7 @@ public class B2BVenueEndpoints : IEndpoints
             InstagramUrl = request.InstagramUrl,
             PhoneNumber = request.PhoneNumber,
             WorkingHours = request.WorkingHours,
+            IsVerified = false // venue can be verified only by the support team
         };
 
         await venueRepository.AddAsync(venue, ct);
@@ -130,6 +133,7 @@ public class B2BVenueEndpoints : IEndpoints
         venue.InstagramUrl = request.InstagramUrl ?? venue.InstagramUrl;
         venue.PhoneNumber = request.PhoneNumber ?? venue.PhoneNumber;
         venue.WorkingHours = request.WorkingHours ?? venue.WorkingHours;
+        venue.QrCode = request.QrCode ?? venue.QrCode;
         await venueRepository.SaveChangesAsync(ct);
 
         return ApiResult.Empty;
@@ -186,6 +190,7 @@ public class B2BVenueEndpoints : IEndpoints
     {
         return new VenueDto(
             Id: venue.Id.ToString(),
+            IsVerified: venue.IsVerified,
             Latitude: venue.Coordinates.Y,
             Longitude: venue.Coordinates.X,
             Address: venue.Address,
@@ -197,6 +202,7 @@ public class B2BVenueEndpoints : IEndpoints
             CoverImageUrl: venue.CoverImageS3Key != null
                 ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.ChangedAt)
                 : null,
+            QrCode: venue.QrCode,
             Promos: venue.Promos
                 .OrderBy(p => p.Id)
                 .Select(p => new PromoDto(Id: p.Id.ToString(), Body: p.Body))

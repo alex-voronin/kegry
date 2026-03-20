@@ -66,6 +66,7 @@ public class B2BDealsEndpoints : IEndpoints
             asNoTracking: false,
             includeVenues: false,
             includeLoyaltyLevels: true,
+            ignoreVerifiedFilter: true,
             ct: ct);
         if (company == null)
         {

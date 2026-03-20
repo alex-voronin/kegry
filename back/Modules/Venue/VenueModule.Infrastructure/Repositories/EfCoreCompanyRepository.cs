@@ -61,9 +61,16 @@ public class EfCoreCompanyRepository : Repository<VenueContext, Company>, ICompa
         bool asNoTracking = false,
         bool includeVenues = false,
         bool includeLoyaltyLevels = false,
+        bool ignoreVerifiedFilter = true,
         CancellationToken ct = default)
     {
         IQueryable<Company> query = Context.Companies;
+
+        if (ignoreVerifiedFilter)
+        {
+            query = query.IgnoreQueryFilters([NamedFilters.Venue.Verified]);
+        }
+        
         if (includeVenues)
         {
             query = query.Include(c => c.Venues);

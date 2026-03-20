@@ -92,6 +92,7 @@ public class B2BCompanyEndpoints : IEndpoints
             asNoTracking: true,
             includeVenues: true,
             includeLoyaltyLevels: true,
+            ignoreVerifiedFilter: true,
             ct: ct);
         if (company == null)
         {
@@ -122,6 +123,7 @@ public class B2BCompanyEndpoints : IEndpoints
             companyId: id,
             ownerId: user.GetId(),
             asNoTracking: true,
+            ignoreVerifiedFilter: true,
             ct: ct);
         if (company == null)
         {
@@ -152,6 +154,7 @@ public class B2BCompanyEndpoints : IEndpoints
             ownerId: user.GetId(),
             includeVenues: true,
             asNoTracking: true,
+            ignoreVerifiedFilter: true,
             ct: ct);
         if (company == null)
         {
@@ -181,6 +184,7 @@ public class B2BCompanyEndpoints : IEndpoints
             companyId: id,
             ownerId: user.GetId(),
             asNoTracking: true,
+            ignoreVerifiedFilter: true,
             ct: ct);
         if (company == null)
         {
@@ -200,6 +204,7 @@ public class B2BCompanyEndpoints : IEndpoints
     {
         return new VenueListItemDto(
             Id: venue.Id.ToString(),
+            IsVerified: venue.IsVerified,
             Address: venue.Address,
             CoverImageUrl: venue.CoverImageS3Key != null
                 ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.ChangedAt)

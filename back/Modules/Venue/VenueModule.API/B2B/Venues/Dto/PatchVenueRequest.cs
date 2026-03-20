@@ -9,4 +9,5 @@ public record PatchVenueRequest(
     string? InstagramUrl,
     string? PhoneNumber,
     string? WorkingHours,
-    string? CoverImageUrl);
+    string? CoverImageUrl,
+    Guid? QrCode);

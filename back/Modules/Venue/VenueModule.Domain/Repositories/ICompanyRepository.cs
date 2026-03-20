@@ -18,5 +18,6 @@ public interface ICompanyRepository : IRepository<Company>
         bool asNoTracking = false,
         bool includeVenues = false,
         bool includeLoyaltyLevels = false,
+        bool ignoreVerifiedFilter = false,
         CancellationToken ct = default);
 }

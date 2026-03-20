@@ -4,6 +4,7 @@ namespace VenueModule.API.B2B.Venues.Dto;
 
 public record VenueDto(
     string Id,
+    bool IsVerified,
     double Latitude,
     double Longitude,
     string Address,
@@ -13,5 +14,6 @@ public record VenueDto(
     string? PhoneNumber,
     string? WorkingHours,
     string? CoverImageUrl,
+    Guid QrCode,
     PromoDto[] Promos,
     DiscountDto[] Discounts);
