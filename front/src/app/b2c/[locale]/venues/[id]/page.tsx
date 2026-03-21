@@ -13,9 +13,10 @@ import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { ButtonVariant } from '@/components/ui/button';
 import { useVenueStore } from './use-venue-store';
+import { PAGE_ROUTES } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 import { toast } from 'react-toastify';
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle, ChevronRight } from 'lucide-react';
 import styles from './venue-detail.module.css';
 import { InstagramIcon } from './_components/instagram-icon';
 
@@ -37,7 +38,6 @@ export default function VenueDetailScreen() {
   const { currentVenue, isLoading, fetchVenue, reset } = useVenueStore();
   const [isInitializing, setIsInitializing] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
 
   useEffect(() => {
     const loadVenue = async () => {
@@ -66,8 +66,21 @@ export default function VenueDetailScreen() {
 
   if (isInitializing || isLoading) {
     return (
-      <div className="flex flex-1 items-center justify-center">
-        <Spinner />
+      <div className="flex h-screen flex-1 flex-col">
+        <Header
+          left={
+            <Icon
+              src="/assets/common/disclosure-left-icon.svg"
+              alt="back"
+              width={14}
+              height={27}
+              onClick={handleBack}
+            />
+          }
+        />
+        <div className="flex flex-1 items-center justify-center">
+          <Spinner />
+        </div>
       </div>
     );
   }
@@ -159,7 +172,9 @@ export default function VenueDetailScreen() {
               <FormSectionTitle>{t('myDiscount')}</FormSectionTitle>
               <div
                 className={cn(styles.field, styles.loyaltyCard)}
-                onClick={() => setIsInfoDialogOpen(true)}
+                onClick={() =>
+                  router.push(PAGE_ROUTES.VENUE_DISCOUNTS(venueId))
+                }
               >
                 <div className={styles.loyaltyHeader}>
                   <div className={styles.loyaltyLevelTitle}>
@@ -168,9 +183,12 @@ export default function VenueDetailScreen() {
                     </span>
                   </div>
 
-                  <span className={styles.loyaltyDiscount}>
-                    {t('discount', { percent: loyaltyLevel.discount })}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className={styles.loyaltyDiscount}>
+                      {t('discount', { percent: loyaltyLevel.discount })}
+                    </span>
+                    <ChevronRight size={24} className="text-primary" />
+                  </div>
                 </div>
                 {loyaltyLevel.visitsUpperBound !== null && (
                   <div className={styles.progressContainer}>
@@ -339,21 +357,6 @@ export default function VenueDetailScreen() {
               ]
             : []),
         ]}
-      />
-
-      <ModalDialog
-        isOpen={isInfoDialogOpen}
-        onClose={() => setIsInfoDialogOpen(false)}
-        message={
-          loyaltyLevel.nextLevelDiscount != null
-            ? t('nextDiscountLevelInfo', {
-                percent: loyaltyLevel.nextLevelDiscount,
-              })
-            : t('maxDiscountLevelReached')
-        }
-        primaryButtonText="OK"
-        primaryButtonVariant={ButtonVariant.Default}
-        onPrimaryAction={() => setIsInfoDialogOpen(false)}
       />
     </div>
   );

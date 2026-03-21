@@ -10,6 +10,7 @@ export const PAGE_ROUTES = {
   FEED_FILTERS: '/feed/filters',
   VENUES: '/venues',
   VENUE_DETAIL: (id: string) => `/venues/${id}`,
+  VENUE_DISCOUNTS: (id: string) => `/venues/${id}/discounts`,
   ONBOARDING: '/onboarding',
   ONBOARDING_COVER: '/onboarding/cover',
   HOW_IT_WORKS: '/how-it-works',
