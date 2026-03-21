@@ -7,6 +7,8 @@ using VenueModule.Domain.Repositories;
 
 namespace VenueModule.Domain.Services;
 
+public record CurrentAndNextLevelDiscount(int Discount, int? NextLevelDiscount);
+
 public record LoyaltyLevelWithDiscount(
     int UserLoyaltyLevel,
     int VisitsCount,
@@ -26,6 +28,11 @@ public interface ILoyaltyService
         CancellationToken ct);
 
     Task<LoyaltyLevelWithDiscount> GetLoyaltyLevelWithDiscountAsync(
+        Guid userId,
+        Guid venueId,
+        CancellationToken ct = default);
+
+    public Task<Dictionary<DayOfWeek, CurrentAndNextLevelDiscount>> GetDiscountByWeekdayAsync(
         Guid userId,
         Guid venueId,
         CancellationToken ct = default);
@@ -159,30 +166,70 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         var userLoyalty = await _userLoyaltyRepository.GetByUserAndCompanyId(userId, venue.CompanyId, ct);
         var visitsCount = userLoyalty?.VisitsCount ?? 0;
 
-        var (currentLoyaltyLevel, visitsLowerBound, visitsUpperBound) = GetCurrentLoyaltyLevel(
+        var (computedLoyaltyLevel, visitsLowerBound, visitsUpperBound) = GetCurrentLoyaltyLevel(
             venue.Company.LoyaltyLevels, visitsCount);
+        var currentLoyaltyLevel = userLoyalty?.LoyaltyLevelId ?? computedLoyaltyLevel;
 
         var timeZone = TimeZoneInfo.FindSystemTimeZoneById(venue.TimeZoneId);
         var venueLocalTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);
         var today = venueLocalTime.DayOfWeek;
 
-        var applicableDiscounts = venue.Discounts
-            .Where(d => d.Days.Any(day => day.DayOfWeek == today))
-            .Where(d => currentLoyaltyLevel >= d.LoyaltyLevelId)
-            .ToList();
+        var (currentLevelDiscount, nextLevelDiscount) = ComputeCurrentAndNextLevelDiscount(venue.Discounts,
+            today, currentLoyaltyLevel);
 
-        var nextLevelDiscount = venue.Discounts
-            .Where(d => d.Days.Any(day => day.DayOfWeek == today))
-            .Where(d => d.LoyaltyLevelId == currentLoyaltyLevel + 1)
-            .FirstOrDefault();
-        var maxAvailableDiscount = applicableDiscounts.Count > 0 ? applicableDiscounts.Max(d => d.Percent) : 0;
         return new LoyaltyLevelWithDiscount(
             UserLoyaltyLevel: currentLoyaltyLevel,
             VisitsCount: visitsCount,
             VisitsLowerBound: visitsLowerBound,
             VisitsUpperBound: visitsUpperBound,
-            Discount: maxAvailableDiscount,
-            NextLevelDiscount: nextLevelDiscount?.Percent);
+            Discount: currentLevelDiscount,
+            NextLevelDiscount: nextLevelDiscount);
+    }
+
+    public async Task<Dictionary<DayOfWeek, CurrentAndNextLevelDiscount>> GetDiscountByWeekdayAsync(
+        Guid userId,
+        Guid venueId,
+        CancellationToken ct = default)
+    {
+        var venue = await _venueRepository.GetByIdWithLoyaltyLevelsAndDiscounts(venueId, ct);
+        if (venue == null)
+        {
+            throw VenueExceptions.VenueNotFound(venueId);
+        }
+
+        var userLoyalty = await _userLoyaltyRepository.GetByUserAndCompanyId(userId, venue.CompanyId, ct);
+        var visitsCount = userLoyalty?.VisitsCount ?? 0;
+
+        var (computedLoyaltyLevel, _, _) = GetCurrentLoyaltyLevel(
+            venue.Company.LoyaltyLevels, visitsCount);
+        var currentLoyaltyLevel = userLoyalty?.LoyaltyLevelId ?? computedLoyaltyLevel;
+
+        var result = new Dictionary<DayOfWeek, CurrentAndNextLevelDiscount>();
+        foreach (var dayOfWeek in Enum.GetValues<DayOfWeek>())
+        {
+            var (currentLevelDiscount, nextLevelDiscount) = ComputeCurrentAndNextLevelDiscount(venue.Discounts,
+                dayOfWeek, currentLoyaltyLevel);
+
+            result[dayOfWeek] = new CurrentAndNextLevelDiscount(currentLevelDiscount, nextLevelDiscount);
+        }
+
+        return result;
+    }
+
+    private static (int currentLevelDiscount, int? nextLevelDiscount) ComputeCurrentAndNextLevelDiscount(
+        IReadOnlyCollection<Discount> discounts, DayOfWeek dayOfWeek, int currentLoyaltyLevel)
+    {
+        var applicableDiscounts = discounts
+            .Where(d => d.Days.Any(day => day.DayOfWeek == dayOfWeek))
+            .Where(d => currentLoyaltyLevel >= d.LoyaltyLevelId)
+            .ToList();
+
+        var nextLevelDiscount = discounts
+            .Where(d => d.Days.Any(day => day.DayOfWeek == dayOfWeek))
+            .Where(d => d.LoyaltyLevelId == currentLoyaltyLevel + 1)
+            .FirstOrDefault();
+        var currentDiscountPercent = applicableDiscounts.Count > 0 ? applicableDiscounts.Max(d => d.Percent) : 0;
+        return (currentDiscountPercent, nextLevelDiscount?.Percent);
     }
 
     internal static (int currentLoyaltyLevel, int visitsLowerBound, int? visitsUpperBound) GetCurrentLoyaltyLevel(
@@ -210,6 +257,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
                 visitsUpperBound = level.VisitsUpperBound;
                 break;
             }
+
             prevLevel = level;
         }
 

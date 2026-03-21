@@ -27,6 +27,7 @@ public class B2CVenueEndpoints : IEndpoints
             .RequireAuthorization();
         usersApiGroup.MapPost("/api/v1/venues", GetVenues);
         usersApiGroup.MapGet("/api/v1/venues/{id:guid}", GetVenue);
+        usersApiGroup.MapGet("/api/v1/venues/{id:guid}/discounts", GetDiscountsByWeekday);
         usersApiGroup.MapPost("/api/v1/venues/{id:guid}/check-in", CheckInToVenue);
     }
 
@@ -115,6 +116,38 @@ public class B2CVenueEndpoints : IEndpoints
                 Company: companyDto,
                 Venue: venueDto,
                 LoyaltyLevel: loyaltyLevelDto)
+        );
+    }
+
+    private static async Task<ApiResult<GetDiscountsByWeekdayResponse>> GetDiscountsByWeekday(
+        [FromRoute] Guid venueId,
+        ClaimsPrincipal user,
+        ILoyaltyService loyaltyService,
+        IS3StorageService storageService,
+        CancellationToken ct)
+    {
+        var discountToDto = (CurrentAndNextLevelDiscount? domainDiscount) =>
+            new CurrentAndNextLevelDiscountDto(
+                CurrentLevelDiscount: domainDiscount?.Discount ?? 0,
+                NextLevelDiscount: domainDiscount?.NextLevelDiscount
+            );
+
+        var userId = user.GetId();
+        var weekdayToDiscountDict = await loyaltyService.GetDiscountByWeekdayAsync(
+            userId: userId,
+            venueId: venueId,
+            ct: ct);
+
+        return ApiResult<GetDiscountsByWeekdayResponse>.Build(
+            new GetDiscountsByWeekdayResponse(
+                Sunday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Sunday)),
+                Monday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Monday)),
+                Tuesday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Tuesday)),
+                Wednesday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Wednesday)),
+                Thursday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Thursday)),
+                Friday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Friday)),
+                Saturday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Saturday))
+            )
         );
     }
 

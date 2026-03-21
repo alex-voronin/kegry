@@ -88,7 +88,7 @@ public class Venue : ISoftDeletable<Guid>
             ValidateWorkingHours(nameof(WorkingHours), value)
         );
     }
-    
+
     private readonly List<Promo> _promos = [];
     public IReadOnlyCollection<Promo> Promos => _promos;
 
@@ -116,19 +116,19 @@ public class Venue : ISoftDeletable<Guid>
     {
         _promos.Add(promo);
         Validation.ThrowIfInvalid(
-            nameof(Promos), 
-            () => 
-                _promos.Count <= ValidationParameters.MaxPromos, 
+            nameof(Promos),
+            () =>
+                _promos.Count <= ValidationParameters.MaxPromos,
             $"Up to {ValidationParameters.MaxPromos} promos are allowed");
     }
-    
+
     public void AddDiscount(Discount discount)
     {
         _discounts.Add(discount);
         Validation.ThrowIfInvalid(
-            nameof(Discounts), 
+            nameof(Discounts),
             () =>
-                _discounts.Count <= ValidationParameters.MaxDiscounts, 
+                _discounts.Count <= ValidationParameters.MaxDiscounts,
             $"Up to {ValidationParameters.MaxDiscounts} discounts are allowed");
     }
 

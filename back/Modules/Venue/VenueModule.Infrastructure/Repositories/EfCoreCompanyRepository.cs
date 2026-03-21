@@ -70,7 +70,7 @@ public class EfCoreCompanyRepository : Repository<VenueContext, Company>, ICompa
         {
             query = query.IgnoreQueryFilters([NamedFilters.Venue.Verified]);
         }
-        
+
         if (includeVenues)
         {
             query = query.Include(c => c.Venues);

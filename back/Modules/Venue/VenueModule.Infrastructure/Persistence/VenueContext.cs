@@ -105,10 +105,10 @@ public class VenueContext : DbContext
             entity.HasIndex(v => v.Coordinates)
                 .HasMethod("gist");
             entity.HasIndex(u => u.QrCode);
-            
+
             entity.HasIndex(u => u.IsVerified);
             entity.HasQueryFilter(NamedFilters.Venue.Verified, u => u.IsVerified);
-            
+
             entity.HasIndex(u => u.IsDeleted);
             entity.HasQueryFilter(NamedFilters.Venue.SoftDeleted, u => !u.IsDeleted);
         });

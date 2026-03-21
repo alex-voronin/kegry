@@ -173,7 +173,7 @@ public class VenueTests
     public void AddPromo_WhenExceedsMaxPromos_ThrowsValidationError()
     {
         var venue = CreateValidVenue();
-        
+
         for (var i = 0; i < ValidationParameters.MaxPromos; i++)
         {
             venue.AddPromo(new Promo { Id = Guid.NewGuid(), VenueId = venue.Id, Body = $"Promo {i}" });
@@ -201,7 +201,7 @@ public class VenueTests
     public void AddDiscount_WhenExceedsMaxDiscounts_ThrowsValidationError()
     {
         var venue = CreateValidVenue();
-        
+
         for (var i = 0; i < ValidationParameters.MaxDiscounts; i++)
         {
             venue.AddDiscount(new Discount { Id = Guid.NewGuid(), VenueId = venue.Id, CompanyId = venue.CompanyId, LoyaltyLevelId = 1, Percent = 10 });

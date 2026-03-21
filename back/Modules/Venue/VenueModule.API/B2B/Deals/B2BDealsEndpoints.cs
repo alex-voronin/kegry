@@ -104,14 +104,14 @@ public class B2BDealsEndpoints : IEndpoints
             asNoTracking: false,
             includes: [v => v.Promos],
             ct: ct);
-        
+
         var promo = new Promo()
         {
             Id = Guid.CreateVersion7(),
             VenueId = venueId,
             Body = request.Body
         };
-        
+
         venue.AddPromo(promo);
         await venueRepository.SaveChangesAsync(ct);
 
@@ -205,7 +205,7 @@ public class B2BDealsEndpoints : IEndpoints
             venueRepository: venueRepository,
             companyRepository: companyRepository,
             asNoTracking: true,
-            includes:[v => v.Discounts],
+            includes: [v => v.Discounts],
             ct: ct);
 
         var discountId = Guid.CreateVersion7();
