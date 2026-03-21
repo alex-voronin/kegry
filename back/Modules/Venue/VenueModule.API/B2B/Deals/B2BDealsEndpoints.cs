@@ -94,26 +94,26 @@ public class B2BDealsEndpoints : IEndpoints
         ClaimsPrincipal user,
         IVenueRepository venueRepository,
         ICompanyRepository companyRepository,
-        IPromoRepository promoRepository,
         CancellationToken ct)
     {
-        await VenueOwnerGuard.RequireVenueOwnerAsync(
+        var venue = await VenueOwnerGuard.RequireVenueOwnerAsync(
             venueId: venueId,
             user: user,
             venueRepository: venueRepository,
             companyRepository: companyRepository,
-            asNoTracking: true,
+            asNoTracking: false,
+            includes: [v => v.Promos],
             ct: ct);
-
+        
         var promo = new Promo()
         {
             Id = Guid.CreateVersion7(),
             VenueId = venueId,
             Body = request.Body
         };
-
-        await promoRepository.AddAsync(promo, ct);
-        await promoRepository.SaveChangesAsync(ct);
+        
+        venue.AddPromo(promo);
+        await venueRepository.SaveChangesAsync(ct);
 
         return ApiResult<CreatePromotionResponse>.Build(
             new CreatePromotionResponse(promo.Id)
@@ -197,7 +197,6 @@ public class B2BDealsEndpoints : IEndpoints
         ClaimsPrincipal user,
         IVenueRepository venueRepository,
         ICompanyRepository companyRepository,
-        IDiscountRepository discountRepository,
         CancellationToken ct)
     {
         var venue = await VenueOwnerGuard.RequireVenueOwnerAsync(
@@ -206,6 +205,7 @@ public class B2BDealsEndpoints : IEndpoints
             venueRepository: venueRepository,
             companyRepository: companyRepository,
             asNoTracking: true,
+            includes:[v => v.Discounts],
             ct: ct);
 
         var discountId = Guid.CreateVersion7();
@@ -222,8 +222,8 @@ public class B2BDealsEndpoints : IEndpoints
                 .ToList()
         };
 
-        await discountRepository.AddAsync(discount, ct);
-        await discountRepository.SaveChangesAsync(ct);
+        venue.AddDiscount(discount);
+        await venueRepository.SaveChangesAsync(ct);
 
         return ApiResult<CreateDiscountResponse>.Build(
             new CreateDiscountResponse(discount.Id)

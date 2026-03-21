@@ -8,7 +8,9 @@ public static class ValidationParameters
     public const int UrlMaxLength = 500;
     public const int PhoneNumberMaxLength = 20;
     public const int WorkingHoursMaxLength = 100;
-
+    public const int MaxPromos = 10;
+    public const int MaxDiscounts = 20;
+    
     public static readonly string[] ValidGoogleDomains =
     [
         "google.com",

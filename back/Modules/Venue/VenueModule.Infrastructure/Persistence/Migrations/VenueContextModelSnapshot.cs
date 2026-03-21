@@ -259,10 +259,18 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_verified");
+
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
                         .HasColumnName("phone_number");
+
+                    b.Property<Guid>("QrCode")
+                        .HasColumnType("uuid")
+                        .HasColumnName("qr_code");
 
                     b.Property<string>("TimeZoneId")
                         .IsRequired()
@@ -293,6 +301,12 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("IsDeleted")
                         .HasDatabaseName("ix_venues_is_deleted");
+
+                    b.HasIndex("IsVerified")
+                        .HasDatabaseName("ix_venues_is_verified");
+
+                    b.HasIndex("QrCode")
+                        .HasDatabaseName("ix_venues_qr_code");
 
                     b.ToTable("venues", "venue");
                 });

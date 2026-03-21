@@ -88,11 +88,12 @@ public class Venue : ISoftDeletable<Guid>
             ValidateWorkingHours(nameof(WorkingHours), value)
         );
     }
-
-    public ICollection<Promo> Promos { get; set; } = new List<Promo>();
+    
+    private readonly List<Promo> _promos = [];
+    public IReadOnlyCollection<Promo> Promos => _promos;
 
     private readonly List<Discount> _discounts = [];
-    public IReadOnlyCollection<Discount> Discounts => _discounts.AsReadOnly();
+    public IReadOnlyCollection<Discount> Discounts => _discounts;
 
     public DateTimeOffset ChangedAt { get; private set; }
 
@@ -110,6 +111,26 @@ public class Venue : ISoftDeletable<Guid>
 
     public bool IsVerified { get; set; }
     public bool IsDeleted { get; set; }
+
+    public void AddPromo(Promo promo)
+    {
+        _promos.Add(promo);
+        Validation.ThrowIfInvalid(
+            nameof(Promos), 
+            () => 
+                _promos.Count <= ValidationParameters.MaxPromos, 
+            $"Up to {ValidationParameters.MaxPromos} promos are allowed");
+    }
+    
+    public void AddDiscount(Discount discount)
+    {
+        _discounts.Add(discount);
+        Validation.ThrowIfInvalid(
+            nameof(Discounts), 
+            () =>
+                _discounts.Count <= ValidationParameters.MaxDiscounts, 
+            $"Up to {ValidationParameters.MaxDiscounts} discounts are allowed");
+    }
 
     #region ================================= Validation =================================
 

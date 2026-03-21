@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Security.Claims;
 using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.Exceptions;
@@ -18,9 +19,10 @@ internal static class VenueOwnerGuard
         IVenueRepository venueRepository,
         ICompanyRepository companyRepository,
         bool asNoTracking = false,
+        Expression<Func<Venue, object?>>[]? includes = null,
         CancellationToken ct = default)
     {
-        var venue = await venueRepository.GetByIdAsync(venueId, asNoTracking: asNoTracking, ct: ct);
+        var venue = await venueRepository.GetByIdAsync(venueId, asNoTracking: asNoTracking, includes: includes, ct: ct);
         if (venue == null)
             throw VenueExceptions.VenueNotFound(venueId);
 

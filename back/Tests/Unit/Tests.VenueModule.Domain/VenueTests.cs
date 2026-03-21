@@ -157,6 +157,62 @@ public class VenueTests
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
 
+    [Fact]
+    public void AddPromo_WhenValid_AddsPromo()
+    {
+        var venue = CreateValidVenue();
+        var promo = new Promo { Id = Guid.NewGuid(), VenueId = venue.Id, Body = "Test Promo" };
+
+        venue.AddPromo(promo);
+
+        venue.Promos.ShouldContain(promo);
+        venue.Promos.Count.ShouldBe(1);
+    }
+
+    [Fact]
+    public void AddPromo_WhenExceedsMaxPromos_ThrowsValidationError()
+    {
+        var venue = CreateValidVenue();
+        
+        for (var i = 0; i < ValidationParameters.MaxPromos; i++)
+        {
+            venue.AddPromo(new Promo { Id = Guid.NewGuid(), VenueId = venue.Id, Body = $"Promo {i}" });
+        }
+
+        var extraPromo = new Promo { Id = Guid.NewGuid(), VenueId = venue.Id, Body = "Extra Promo" };
+
+        Should.Throw<HttpCodeException>(() => venue.AddPromo(extraPromo))
+            .ErrorCode.ShouldBe(ErrorCode.ValidationError);
+    }
+
+    [Fact]
+    public void AddDiscount_WhenValid_AddsDiscount()
+    {
+        var venue = CreateValidVenue();
+        var discount = new Discount { Id = Guid.NewGuid(), VenueId = venue.Id, CompanyId = venue.CompanyId, LoyaltyLevelId = 1, Percent = 10 };
+
+        venue.AddDiscount(discount);
+
+        venue.Discounts.ShouldContain(discount);
+        venue.Discounts.Count.ShouldBe(1);
+    }
+
+    [Fact]
+    public void AddDiscount_WhenExceedsMaxDiscounts_ThrowsValidationError()
+    {
+        var venue = CreateValidVenue();
+        
+        for (var i = 0; i < ValidationParameters.MaxDiscounts; i++)
+        {
+            venue.AddDiscount(new Discount { Id = Guid.NewGuid(), VenueId = venue.Id, CompanyId = venue.CompanyId, LoyaltyLevelId = 1, Percent = 10 });
+        }
+
+        var extraDiscount = new Discount { Id = Guid.NewGuid(), VenueId = venue.Id, CompanyId = venue.CompanyId, LoyaltyLevelId = 1, Percent = 10 };
+
+        Should.Throw<HttpCodeException>(() => venue.AddDiscount(extraDiscount))
+            .ErrorCode.ShouldBe(ErrorCode.ValidationError);
+    }
+
     private static Venue CreateValidVenue(Guid? id = null)
     {
         return new Venue

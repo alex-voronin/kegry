@@ -65,6 +65,7 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    qr_code = table.Column<Guid>(type: "uuid", nullable: false),
                     company_id = table.Column<Guid>(type: "uuid", nullable: false),
                     cover_image_s3key = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     coordinates = table.Column<Point>(type: "geography(Point, 4326)", nullable: false),
@@ -76,6 +77,7 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     phone_number = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
                     working_hours = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     changed_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    is_verified = table.Column<bool>(type: "boolean", nullable: false),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -276,6 +278,18 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                 schema: "venue",
                 table: "venues",
                 column: "is_deleted");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_venues_is_verified",
+                schema: "venue",
+                table: "venues",
+                column: "is_verified");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_venues_qr_code",
+                schema: "venue",
+                table: "venues",
+                column: "qr_code");
 
             migrationBuilder.CreateIndex(
                 name: "ix_visits_venue_id",
