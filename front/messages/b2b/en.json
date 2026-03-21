@@ -19,7 +19,7 @@
     },
     "forms": {
       "discount": {
-        "loyaltyLevelOption": "Level {level} ({visits} visits)",
+        "loyaltyLevelOption": "Level {level} (under {visits} visits)",
         "loyaltyLevel": "Loyalty Level",
         "loyaltyLevelPlaceholder": "Select loyalty level",
         "percent": "Discount %",
@@ -285,7 +285,7 @@
     "createPromotion": {
       "title": "Add Promotion",
       "save": "Save",
-      "body": "Promotion Body",
+      "body": "Body",
       "bodyPlaceholder": "Enter promotion description...",
       "validation": {
         "bodyRequired": "Promotion body is required"
@@ -297,7 +297,7 @@
     "editPromotion": {
       "title": "Edit Promotion",
       "save": "Save",
-      "body": "Promotion Body",
+      "body": "Body",
       "bodyPlaceholder": "Enter promotion description...",
       "validation": {
         "bodyRequired": "Promotion body is required"
