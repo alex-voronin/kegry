@@ -2,6 +2,7 @@ using NetTopologySuite.Geometries;
 using SharedCore.Exceptions;
 using Shouldly;
 using VenueModule.Domain.Aggregates;
+using VenueModule.Domain.ValueObjects;
 
 namespace Tests.VenueModule.Domain;
 
@@ -161,7 +162,7 @@ public class VenueTests
     public void AddPromo_WhenValid_AddsPromo()
     {
         var venue = CreateValidVenue();
-        var promo = new Promo { Id = Guid.NewGuid(), VenueId = venue.Id, Body = "Test Promo" };
+        var promo = new Promo { Id = Guid.NewGuid(), Type = PromoType.General, VenueId = venue.Id, Body = "Test Promo" };
 
         venue.AddPromo(promo);
 
@@ -176,10 +177,10 @@ public class VenueTests
 
         for (var i = 0; i < ValidationParameters.MaxPromos; i++)
         {
-            venue.AddPromo(new Promo { Id = Guid.NewGuid(), VenueId = venue.Id, Body = $"Promo {i}" });
+            venue.AddPromo(new Promo { Id = Guid.NewGuid(), Type = PromoType.General, VenueId = venue.Id, Body = $"Promo {i}" });
         }
 
-        var extraPromo = new Promo { Id = Guid.NewGuid(), VenueId = venue.Id, Body = "Extra Promo" };
+        var extraPromo = new Promo { Id = Guid.NewGuid(), Type = PromoType.General, VenueId = venue.Id, Body = "Extra Promo" };
 
         Should.Throw<HttpCodeException>(() => venue.AddPromo(extraPromo))
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);

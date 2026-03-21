@@ -109,6 +109,7 @@ public class B2BDealsEndpoints : IEndpoints
         {
             Id = Guid.CreateVersion7(),
             VenueId = venueId,
+            Type = request.Type,
             Body = request.Body
         };
 

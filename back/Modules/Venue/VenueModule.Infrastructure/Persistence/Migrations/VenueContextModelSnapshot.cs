@@ -171,6 +171,10 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("body");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
+
                     b.Property<Guid>("VenueId")
                         .HasColumnType("uuid")
                         .HasColumnName("venue_id");

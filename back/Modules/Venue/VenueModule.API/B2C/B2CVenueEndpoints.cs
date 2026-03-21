@@ -167,7 +167,7 @@ public class B2CVenueEndpoints : IEndpoints
                 ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.ChangedAt)
                 : null,
             Promos: venue.Promos
-                .Select(p => new PromoDto(Body: p.Body))
+                .Select(p => new PromoDto(Type: p.Type, Body: p.Body))
                 .ToArray()
         );
     }

@@ -13,7 +13,7 @@ using VenueModule.Infrastructure.Persistence;
 namespace VenueModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(VenueContext))]
-    [Migration("20260320210026_AddVenue")]
+    [Migration("20260321222114_AddVenue")]
     partial class AddVenue
     {
         /// <inheritdoc />
@@ -173,6 +173,10 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("body");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
 
                     b.Property<Guid>("VenueId")
                         .HasColumnType("uuid")

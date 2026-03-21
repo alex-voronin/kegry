@@ -155,6 +155,7 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     venue_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    type = table.Column<int>(type: "integer", nullable: false),
                     body = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>

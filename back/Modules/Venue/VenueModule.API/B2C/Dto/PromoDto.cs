@@ -1,3 +1,5 @@
+using VenueModule.Domain.ValueObjects;
+
 namespace VenueModule.API.B2C.Dto;
 
-public record PromoDto(string Body);
+public record PromoDto(PromoType Type, string Body);

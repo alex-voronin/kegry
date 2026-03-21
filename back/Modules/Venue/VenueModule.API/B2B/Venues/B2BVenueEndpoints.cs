@@ -203,7 +203,11 @@ public class B2BVenueEndpoints : IEndpoints
             QrCode: venue.QrCode,
             Promos: venue.Promos
                 .OrderBy(p => p.Id)
-                .Select(p => new PromoDto(Id: p.Id.ToString(), Body: p.Body))
+                .Select(p => new PromoDto(
+                    Id: p.Id.ToString(),
+                    Type: p.Type,
+                    Body: p.Body)
+                )
                 .ToArray(),
             Discounts: venue.Discounts
                 .Select(B2BDealsEndpoints.DomainDiscountToDto)
