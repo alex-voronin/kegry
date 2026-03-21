@@ -3,6 +3,7 @@ import { devtools } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS } from '@/lib/routes';
 import { ApiResult } from '@/lib/api-types';
+import { PromoType } from '@/lib/promo-types';
 
 export interface CompanyDto {
   id: string;
@@ -12,6 +13,7 @@ export interface CompanyDto {
 }
 
 export interface PromoDto {
+  type: PromoType;
   body: string;
 }
 

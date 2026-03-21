@@ -34,12 +34,12 @@ const selectStyles = {
   }),
   option: (base: any, state: any) => ({
     ...base,
-    backgroundColor: state.isSelected 
-      ? '#ffffff' 
-      : state.isFocused 
-        ? 'rgba(255,255,255,0.1)' 
+    backgroundColor: state.isSelected
+      ? 'rgba(255,255,255,0.15)'
+      : state.isFocused
+        ? 'rgba(255,255,255,0.1)'
         : 'transparent',
-    color: state.isSelected ? '#000000' : '#ffffff',
+    color: '#ffffff',
     cursor: 'pointer',
     '&:active': {
       backgroundColor: 'rgba(255,255,255,0.2)',
@@ -48,7 +48,7 @@ const selectStyles = {
   singleValue: (base: any) => ({
     ...base,
     color: '#ffffff',
-    fontSize: '18px',
+    fontSize: '16px',
   }),
   input: (base: any) => ({
     ...base,
@@ -57,7 +57,7 @@ const selectStyles = {
   placeholder: (base: any) => ({
     ...base,
     color: '#A0A0A0',
-    fontSize: '18px',
+    fontSize: '16px',
   }),
   indicatorSeparator: () => ({
     display: 'none',
@@ -87,11 +87,8 @@ export function Select<
 >({ className, error, ...props }: CustomSelectProps<Option, IsMulti, Group>) {
   return (
     <div className={cn('flex w-full flex-col gap-1', className)}>
-      <ReactSelect
-        styles={selectStyles}
-        {...props}
-      />
-      {error && <p className="text-destructive text-sm mt-1">{error}</p>}
+      <ReactSelect styles={selectStyles} {...props} />
+      {error && <p className="text-destructive mt-1 text-sm">{error}</p>}
     </div>
   );
 }

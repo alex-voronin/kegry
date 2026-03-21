@@ -3,6 +3,13 @@
     "errors": {
       "network": "Network error. Please try again."
     },
+    "promoTypes": {
+      "happyHours": "Happy Hours",
+      "twoPlusOne": "2+1",
+      "event": "Event",
+      "discount": "Discount",
+      "general": "General"
+    },
     "days": {
       "Monday": "Mon",
       "Tuesday": "Tue",
@@ -31,6 +38,16 @@
           "percentRange": "Percentage must be between 1 and 100",
           "daysRequired": "Please select at least one day.",
           "loyaltyLevelRequired": "Loyalty level is required"
+        }
+      },
+      "promotion": {
+        "type": "Type",
+        "typePlaceholder": "Select a type...",
+        "body": "Body",
+        "bodyPlaceholder": "Enter promotion description...",
+        "validation": {
+          "typeRequired": "Type is required",
+          "bodyRequired": "Promotion body is required"
         }
       }
     }
@@ -284,12 +301,7 @@
     },
     "createPromotion": {
       "title": "Add Promotion",
-      "save": "Save",
-      "body": "Body",
-      "bodyPlaceholder": "Enter promotion description...",
-      "validation": {
-        "bodyRequired": "Promotion body is required"
-      },
+      "save": "Create",
       "toast": {
         "createFailed": "Failed to create promotion"
       }
@@ -297,11 +309,6 @@
     "editPromotion": {
       "title": "Edit Promotion",
       "save": "Save",
-      "body": "Body",
-      "bodyPlaceholder": "Enter promotion description...",
-      "validation": {
-        "bodyRequired": "Promotion body is required"
-      },
       "toast": {
         "updateFailed": "Failed to update promotion"
       }

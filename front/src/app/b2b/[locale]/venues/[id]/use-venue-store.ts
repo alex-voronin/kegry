@@ -3,9 +3,11 @@ import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
 import { API_ENDPOINTS } from '@/lib/routes';
 import { ApiResult } from '@/lib/api-types';
+import { PromoType } from '@/lib/promo-types';
 
 export interface PromoDto {
   id: string;
+  type: PromoType;
   body: string;
 }
 
@@ -43,10 +45,11 @@ interface VenueState {
   currentVenue: VenueDto | null;
   isLoading: boolean;
   fetchVenue: (id: string) => Promise<void>;
-  createPromotion: (venueId: string, body: string) => Promise<void>;
+  createPromotion: (venueId: string, type: PromoType, body: string) => Promise<void>;
   updatePromotion: (
     venueId: string,
     promoId: string,
+    type: PromoType,
     body: string,
   ) => Promise<void>;
   deletePromotion: (venueId: string, promoId: string) => Promise<void>;
@@ -114,51 +117,53 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
       set({ isLoading: false });
     }
   },
-  createPromotion: async (venueId: string, body: string) => {
+  createPromotion: async (venueId: string, type: PromoType, body: string) => {
     const addNewPromoToStore = (
       venue: VenueDto,
       id: string,
+      type: PromoType,
       body: string,
     ): VenueDto => ({
       ...venue,
-      promos: [...venue.promos, { id, body }],
+      promos: [...venue.promos, { id, type, body }],
     });
 
     try {
       const response = await apiClient.post<ApiResult<{ id: string }>>(
         API_ENDPOINTS.VENUE_PROMOTIONS(venueId),
-        { body },
+        { type, body },
       );
       const newId = response.data.result.id;
       set((state) => ({
         currentVenue: state.currentVenue
-          ? addNewPromoToStore(state.currentVenue, newId, body)
+          ? addNewPromoToStore(state.currentVenue, newId, type, body)
           : state.currentVenue,
       }));
     } catch (error) {
       rethrowApiError(error, 'Failed to create promotion');
     }
   },
-  updatePromotion: async (venueId: string, promoId: string, body: string) => {
+  updatePromotion: async (venueId: string, promoId: string, type: PromoType, body: string) => {
     const updatePromoInStore = (
       venue: VenueDto,
       promoId: string,
+      newType: PromoType,
       newBody: string,
     ): VenueDto => ({
       ...venue,
       promos: venue.promos.map((p) =>
-        p.id === promoId ? { ...p, body: newBody } : p,
+        p.id === promoId ? { ...p, type: newType, body: newBody } : p,
       ),
     });
 
     try {
       await apiClient.put(
         `${API_ENDPOINTS.VENUE_PROMOTIONS(venueId)}/${promoId}`,
-        { body },
+        { type, body },
       );
       set((state) => ({
         currentVenue: state.currentVenue
-          ? updatePromoInStore(state.currentVenue, promoId, body)
+          ? updatePromoInStore(state.currentVenue, promoId, type, body)
           : state.currentVenue,
       }));
     } catch (error) {

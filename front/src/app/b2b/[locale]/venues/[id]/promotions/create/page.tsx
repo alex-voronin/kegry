@@ -11,6 +11,7 @@ import { PAGE_ROUTES } from '@/lib/routes';
 import { PromotionForm } from '../_components/promotion-form';
 import { toast } from 'react-toastify';
 import styles from '../_components/promotion-form.module.css';
+import { PromoType } from '@/lib/promo-types';
 
 export default function AddPromotionPage() {
   const t = useTranslations('screens.createPromotion');
@@ -21,10 +22,10 @@ export default function AddPromotionPage() {
   const { createPromotion } = useVenueStore();
   const { safeBack } = useSafeBack();
 
-  const onSubmit = async (values: { body: string }) => {
+  const onSubmit = async (values: { type: PromoType; body: string }) => {
     setIsSubmitting(true);
     try {
-      await createPromotion(venueId, values.body);
+      await createPromotion(venueId, values.type, values.body);
       safeBack(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId));
     } catch (err: any) {
       toast.error(err.message || t('toast.createFailed'));
@@ -52,7 +53,6 @@ export default function AddPromotionPage() {
           onSubmit={onSubmit}
           isSubmitting={isSubmitting}
           submitLabel={t('save')}
-          translationNamespace="createPromotion"
         />
       </div>
     </>

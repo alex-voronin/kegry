@@ -1,17 +1,20 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectOption } from '@/components/ui/select';
+import { PromoIcon, PromoType } from '@/lib/promo-types';
 import stylesCommon from '@/components/ui/common.module.css';
 import styles from './promotion-form.module.css';
 
 interface PromotionFormValues {
+  type: PromoType;
   body: string;
 }
 
@@ -20,7 +23,6 @@ interface PromotionFormProps {
   onSubmit: (values: PromotionFormValues) => Promise<void>;
   isSubmitting: boolean;
   submitLabel: string;
-  translationNamespace: string;
 }
 
 export function PromotionForm({
@@ -28,32 +30,67 @@ export function PromotionForm({
   onSubmit,
   isSubmitting,
   submitLabel,
-  translationNamespace,
 }: PromotionFormProps) {
-  const t = useTranslations(`screens.${translationNamespace}`);
+  const tForm = useTranslations('components.forms.promotion');
+  const tCommon = useTranslations('common');
 
   const schema = z.object({
-    body: z.string().trim().min(1, t('validation.bodyRequired')),
+    type: z.enum(PromoType, {
+      error: tForm('validation.typeRequired'),
+    }),
+    body: z.string().trim().min(1, tForm('validation.bodyRequired')),
   });
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<PromotionFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
+      type: initialValues?.type ?? PromoType.General,
       body: initialValues?.body ?? '',
     },
   });
 
+  const typeOptions: SelectOption[] = Object.values(PromoType).map((type) => ({
+    value: type,
+    label: tCommon(`promoTypes.${type}`, { defaultValue: type }),
+  }));
+
+  const formatOptionLabel = ({ value, label }: SelectOption) => (
+    <div className="flex items-center gap-2">
+      <PromoIcon type={value as PromoType} size={20} className="text-primary" />
+      <span>{label}</span>
+    </div>
+  );
+
   return (
     <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
       <div className={stylesCommon.sectionContainer}>
-        <FormSectionTitle required>{t('body')}</FormSectionTitle>
+        <FormSectionTitle required>{tForm('type')}</FormSectionTitle>
+        <Controller
+          name="type"
+          control={control}
+          render={({ field }) => (
+            <Select
+              options={typeOptions}
+              formatOptionLabel={formatOptionLabel}
+              value={typeOptions.find((opt) => opt.value === field.value)}
+              onChange={(option: any) => field.onChange(option?.value)}
+              error={errors.type?.message}
+              placeholder={tForm('typePlaceholder')}
+            />
+          )}
+        />
+      </div>
+
+      <div className={stylesCommon.sectionContainer}>
+        <FormSectionTitle required>{tForm('body')}</FormSectionTitle>
         <Textarea
           {...register('body')}
-          placeholder={t('bodyPlaceholder')}
+          placeholder={tForm('bodyPlaceholder')}
           className={stylesCommon.inputDark}
         />
         {errors.body?.message && (

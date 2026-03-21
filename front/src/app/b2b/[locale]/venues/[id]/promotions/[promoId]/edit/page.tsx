@@ -11,6 +11,7 @@ import { PAGE_ROUTES } from '@/lib/routes';
 import { PromotionForm } from '../../_components/promotion-form';
 import { toast } from 'react-toastify';
 import styles from '../../_components/promotion-form.module.css';
+import { PromoType } from '@/lib/promo-types';
 
 export default function EditPromotionPage() {
   const t = useTranslations('screens.editPromotion');
@@ -30,10 +31,10 @@ export default function EditPromotionPage() {
 
   const promo = currentVenue?.promos.find((p) => p.id === promoId);
 
-  const onSubmit = async (values: { body: string }) => {
+  const onSubmit = async (values: { type: PromoType; body: string }) => {
     setIsSubmitting(true);
     try {
-      await updatePromotion(venueId, promoId, values.body);
+      await updatePromotion(venueId, promoId, values.type, values.body);
       safeBack(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId));
     } catch (err: any) {
       toast.error(err.message || t('toast.updateFailed'));
@@ -63,11 +64,10 @@ export default function EditPromotionPage() {
       <div className={styles.wrapper}>
         {promo && (
           <PromotionForm
-            initialValues={{ body: promo.body }}
+            initialValues={{ type: promo.type, body: promo.body }}
             onSubmit={onSubmit}
             isSubmitting={isSubmitting}
             submitLabel={t('save')}
-            translationNamespace="editPromotion"
           />
         )}
       </div>

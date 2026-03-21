@@ -19,6 +19,7 @@ import { toast } from 'react-toastify';
 import { HelpCircle, ChevronRight } from 'lucide-react';
 import styles from './venue-detail.module.css';
 import { InstagramIcon } from './_components/instagram-icon';
+import { PromoIcon } from '@/lib/promo-types';
 
 function calculateProgressPercentage(
   count: number,
@@ -318,7 +319,14 @@ export default function VenueDetailScreen() {
               <div className={styles.promoList}>
                 {venue.promos.map((promo, idx) => (
                   <div key={idx} className={styles.promoItem}>
-                    {promo.body}
+                    <div className="flex items-center gap-3">
+                      <PromoIcon
+                        type={promo.type}
+                        className="text-primary shrink-0"
+                        size={24}
+                      />
+                      <div className={styles.promoBody}>{promo.body}</div>
+                    </div>
                   </div>
                 ))}
               </div>

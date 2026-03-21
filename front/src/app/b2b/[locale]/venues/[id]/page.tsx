@@ -26,6 +26,7 @@ import {
   Settings,
 } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { PromoIcon } from '@/lib/promo-types';
 
 export default function VenueDetailPage() {
   const router = useRouter();
@@ -409,8 +410,15 @@ export default function VenueDetailPage() {
                     onClick={() => handlePromoMenuOpen(promo.id)}
                   >
                     <div className={styles.promoItemHeader}>
-                      <div className={styles.promoBody}>{promo.body}</div>
-                      <div className="p-1">
+                      <div className="flex items-center gap-3">
+                        <PromoIcon
+                          type={promo.type}
+                          className="text-primary shrink-0"
+                          size={24}
+                        />
+                        <div className={styles.promoBody}>{promo.body}</div>
+                      </div>
+                      <div className="shrink-0 p-1">
                         <MoreHorizontal size={20} className="text-secondary" />
                       </div>
                     </div>
