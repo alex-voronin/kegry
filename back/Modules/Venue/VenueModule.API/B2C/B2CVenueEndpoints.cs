@@ -28,7 +28,7 @@ public class B2CVenueEndpoints : IEndpoints
         usersApiGroup.MapPost("/api/v1/venues", GetVenues);
         usersApiGroup.MapGet("/api/v1/venues/{id:guid}", GetVenue);
         usersApiGroup.MapGet("/api/v1/venues/{id:guid}/discounts", GetDiscountsByWeekday);
-        usersApiGroup.MapPost("/api/v1/venues/{id:guid}/check-in", CheckInToVenue);
+        usersApiGroup.MapPost("/api/v1/venues/{id:guid}/qr-check-in", CheckInToVenue);
     }
 
     private static async Task<ApiResult<EmptyResponse>> CheckInToVenue(
@@ -120,7 +120,7 @@ public class B2CVenueEndpoints : IEndpoints
     }
 
     private static async Task<ApiResult<GetDiscountsByWeekdayResponse>> GetDiscountsByWeekday(
-        [FromRoute] Guid venueId,
+        [FromRoute] Guid id,
         ClaimsPrincipal user,
         ILoyaltyService loyaltyService,
         IS3StorageService storageService,
@@ -135,7 +135,7 @@ public class B2CVenueEndpoints : IEndpoints
         var userId = user.GetId();
         var weekdayToDiscountDict = await loyaltyService.GetDiscountByWeekdayAsync(
             userId: userId,
-            venueId: venueId,
+            venueId: id,
             ct: ct);
 
         return ApiResult<GetDiscountsByWeekdayResponse>.Build(
