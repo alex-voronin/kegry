@@ -3,12 +3,17 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS } from '@/lib/routes';
+import { ApiResult } from '@/lib/api-types';
 
 import { isOurDomain } from '@/lib/qr-utils';
 
 interface UseQrCheckInOptions {
   /** Called after a successful check-in, e.g. to reload venue data. */
-  onSuccess?: () => Promise<void> | void;
+  onSuccess?: (venueId: string) => Promise<void> | void;
+}
+
+interface CheckInResponse {
+  venueId: string;
 }
 
 export function useQrCheckIn({ onSuccess }: UseQrCheckInOptions = {}) {
@@ -38,13 +43,18 @@ export function useQrCheckIn({ onSuccess }: UseQrCheckInOptions = {}) {
             },
           );
 
-          await apiClient.post(API_ENDPOINTS.VENUE_QR_CHECK_IN(qrCode), {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
+          const response = await apiClient.post<ApiResult<CheckInResponse>>(
+            API_ENDPOINTS.VENUE_QR_CHECK_IN(qrCode),
+            {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            },
+          );
+
+          const { venueId } = response.data.result;
 
           setShowCheckIn(true);
-          await onSuccess?.();
+          await onSuccess?.(venueId);
         } catch {
           toast.error(t('toast.checkInFailed'));
         }

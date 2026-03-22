@@ -34,13 +34,16 @@ export default function VenuesScreen() {
     null,
   );
   const [isLocationDenied, setIsLocationDenied] = useState(false);
+  const [checkInVenueId, setCheckInVenueId] = useState<string | null>(null);
   const {
     isScannerOpen,
     setIsScannerOpen,
     showCheckIn,
     setShowCheckIn,
     handleQrCode,
-  } = useQrCheckIn();
+  } = useQrCheckIn({
+    onSuccess: (id) => setCheckInVenueId(id),
+  });
   const distanceUnits = useSettingsStore((state) => state.distanceUnits);
 
   const { ref: pageBottomRef, inView } = useInView({
@@ -242,7 +245,12 @@ export default function VenuesScreen() {
 
       <CheckInAnimation
         visible={showCheckIn}
-        onDone={() => setShowCheckIn(false)}
+        onDone={() => {
+          setShowCheckIn(false);
+          if (checkInVenueId) {
+            router.push(PAGE_ROUTES.VENUE_DETAIL(checkInVenueId));
+          }
+        }}
       />
     </div>
   );

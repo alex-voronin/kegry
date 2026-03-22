@@ -145,7 +145,10 @@ export default function FeedScreen() {
   const { npc, monolog, fetchNpc, inviteNpc, dismissNpc } = useNpcStore();
   const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
-  const { handleQrCode, showCheckIn, setShowCheckIn } = useQrCheckIn();
+  const [checkInVenueId, setCheckInVenueId] = useState<string | null>(null);
+  const { handleQrCode, showCheckIn, setShowCheckIn } = useQrCheckIn({
+    onSuccess: (id) => setCheckInVenueId(id),
+  });
   const [when, setWhen] = useState<InviteExpiration>(InviteExpiration.Today);
   const [expirationPopup, setExpirationPopup] = useState<{
     isOpen: boolean;
@@ -542,7 +545,12 @@ export default function FeedScreen() {
         />
         <CheckInAnimation
           visible={showCheckIn}
-          onDone={() => setShowCheckIn(false)}
+          onDone={() => {
+            setShowCheckIn(false);
+            if (checkInVenueId) {
+              router.push(PAGE_ROUTES.VENUE_DETAIL(checkInVenueId));
+            }
+          }}
         />
       </div>
     </div>
