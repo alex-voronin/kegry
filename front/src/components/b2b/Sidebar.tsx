@@ -57,7 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const navItems = [
     {
       label: t('profile'),
-      href: PAGE_ROUTES.B2B.HOME,
+      href: PAGE_ROUTES.B2B.PROFILE,
       icon: <User size={24} />,
     },
     {
