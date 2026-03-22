@@ -8,9 +8,10 @@ import { toast } from 'react-toastify';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
-import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { useVenueDiscountsStore } from './use-venue-discounts-store';
 import styles from './venue-discounts.module.css';
+import { useSafeBack } from '@/hooks/use-safe-back';
+import { PAGE_ROUTES } from '@/lib/routes';
 
 const daysOfWeek = [
   'Monday',
@@ -30,8 +31,9 @@ export default function VenueDiscountsPage() {
   const tCommon = useTranslations('common');
   const t = useTranslations('screens.venueDetail');
 
-  const { discounts, isLoading, fetchDiscounts, reset } =
-    useVenueDiscountsStore();
+  const { discounts, isLoading, fetchDiscounts } = useVenueDiscountsStore();
+
+  const { safeBack } = useSafeBack();
 
   useEffect(() => {
     if (venueId) {
@@ -39,81 +41,81 @@ export default function VenueDiscountsPage() {
         toast.error('Failed to load discounts');
       });
     }
-    return () => {
-      reset();
-    };
-  }, [venueId, fetchDiscounts, reset]);
+  }, [venueId, fetchDiscounts]);
 
   const handleBack = () => {
-    router.back();
+    safeBack(PAGE_ROUTES.VENUE_DETAIL(venueId));
   };
 
   if (isLoading || !discounts) {
     return (
-      <div className="flex h-screen flex-1 flex-col">
+      <>
         <Header
           title={t('myDiscount')}
           left={
             <Icon
               src="/assets/common/disclosure-left-icon.svg"
               alt="back"
-              width={14}
-              height={27}
+              width={20}
+              height={26}
               onClick={handleBack}
             />
           }
         />
-        <div className="flex flex-1 items-center justify-center">
-          <Spinner />
+        <div className="flex h-screen flex-1 flex-col">
+          <div className="flex flex-1 items-center justify-center">
+            <Spinner />
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className={styles.wrapper}>
+    <>
       <Header
         title={t('myDiscount')}
         left={
           <Icon
             src="/assets/common/disclosure-left-icon.svg"
             alt="back"
-            width={14}
-            height={27}
+            width={20}
+            height={26}
             onClick={handleBack}
           />
         }
       />
+      <div className={styles.wrapper}>
+        <div className={styles.content}>
+          <div className={styles.section}>
+            {daysOfWeek.map((day) => {
+              const dayKey = day.toLowerCase() as keyof typeof discounts;
+              const discountData = discounts[dayKey];
+              const currentDiscount = discountData?.currentLevelDiscount ?? 0;
+              const nextDiscount = discountData?.nextLevelDiscount;
 
-      <div className={styles.content}>
-        <div className={styles.section}>
-          {daysOfWeek.map((day) => {
-            const dayKey = day.toLowerCase() as keyof typeof discounts;
-            const discountData = discounts[dayKey];
-            const currentDiscount = discountData?.currentLevelDiscount ?? 0;
-            const nextDiscount = discountData?.nextLevelDiscount;
+              return (
+                <div key={day} className={styles.field}>
+                  <div className={styles.loyaltyHeader}>
+                    <span className={styles.dayTitle}>
+                      {tCommon(`days.${day}`)}
+                    </span>
+                    <span className={styles.loyaltyDiscount}>
+                      {t('discount', { percent: currentDiscount })}
+                    </span>
+                  </div>
 
-            return (
-              <div key={day} className={styles.field}>
-                <div className={styles.loyaltyHeader}>
-                  <span className={styles.dayTitle}>
-                    {tCommon(`days.${day}`)}
-                  </span>
-                  <span className={styles.loyaltyDiscount}>
-                    {t('discount', { percent: currentDiscount })}
-                  </span>
+                  <div className={styles.progressText}>
+                    {nextDiscount != null
+                      ? t('nextDiscountLevelInfo', { percent: nextDiscount })
+                      : t('maxDiscountLevelReached')}
+                  </div>
                 </div>
-
-                <div className={styles.progressText}>
-                  {nextDiscount != null
-                    ? t('nextDiscountLevelInfo', { percent: nextDiscount })
-                    : t('maxDiscountLevelReached')}
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

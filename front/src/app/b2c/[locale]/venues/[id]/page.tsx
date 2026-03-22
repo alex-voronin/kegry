@@ -10,8 +10,6 @@ import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { ModalMenu } from '@/components/ui/modal-menu';
-import { ModalDialog } from '@/components/ui/modal-dialog';
-import { ButtonVariant } from '@/components/ui/button';
 import { useVenueStore } from './use-venue-store';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { cn } from '@/lib/utils';
@@ -20,6 +18,7 @@ import { HelpCircle, ChevronRight } from 'lucide-react';
 import styles from './venue-detail.module.css';
 import { InstagramIcon } from './_components/instagram-icon';
 import { PromoIcon } from '@/lib/promo-types';
+import { useSafeBack } from '@/hooks/use-safe-back';
 
 function calculateProgressPercentage(
   count: number,
@@ -36,13 +35,20 @@ export default function VenueDetailScreen() {
   const venueId = params.id as string;
   const t = useTranslations('screens.venueDetail');
 
-  const { currentVenue, isLoading, fetchVenue, reset } = useVenueStore();
-  const [isInitializing, setIsInitializing] = useState(true);
+  const { currentVenue, isLoading, fetchVenue } = useVenueStore();
+  const [isInitializing, setIsInitializing] = useState(
+    () => currentVenue?.venue.id !== venueId,
+  );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const { safeBack } = useSafeBack();
 
   useEffect(() => {
     const loadVenue = async () => {
-      setIsInitializing(true);
+      // If we don't have the correct venue, show initializing loader
+      if (useVenueStore.getState().currentVenue?.venue.id !== venueId) {
+        setIsInitializing(true);
+      }
       try {
         await fetchVenue(venueId);
       } catch (error) {
@@ -55,17 +61,13 @@ export default function VenueDetailScreen() {
     if (venueId) {
       loadVenue();
     }
-
-    return () => {
-      reset();
-    };
-  }, [venueId, fetchVenue, reset, t]);
+  }, [venueId, fetchVenue, t]);
 
   const handleBack = () => {
-    router.back();
+    safeBack(PAGE_ROUTES.VENUES);
   };
 
-  if (isInitializing || isLoading) {
+  if ((isInitializing || isLoading) && currentVenue?.venue.id !== venueId) {
     return (
       <div className="flex h-screen flex-1 flex-col">
         <Header
@@ -73,8 +75,8 @@ export default function VenueDetailScreen() {
             <Icon
               src="/assets/common/disclosure-left-icon.svg"
               alt="back"
-              width={14}
-              height={27}
+              width={20}
+              height={26}
               onClick={handleBack}
             />
           }
@@ -94,8 +96,8 @@ export default function VenueDetailScreen() {
             <Icon
               src="/assets/common/disclosure-left-icon.svg"
               alt="back"
-              width={14}
-              height={27}
+              width={20}
+              height={26}
               onClick={handleBack}
             />
           }

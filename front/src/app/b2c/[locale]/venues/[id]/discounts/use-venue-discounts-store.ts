@@ -27,24 +27,22 @@ interface VenueDiscountsState {
   reset: () => void;
 }
 
-export const useVenueDiscountsStore = create<VenueDiscountsState>()(
-  devtools((set) => ({
-    discounts: null,
-    isLoading: false,
-    fetchDiscounts: async (venueId: string) => {
-      set({ isLoading: true });
+export const useVenueDiscountsStore = create<VenueDiscountsState>()((set) => ({
+  discounts: null,
+  isLoading: false,
+  fetchDiscounts: async (venueId: string) => {
+    set({ discounts: null, isLoading: true });
 
-      try {
-        const response = await apiClient.get<
-          ApiResult<GetDiscountsByWeekdayResponse>
-        >(API_ENDPOINTS.VENUE_DISCOUNTS(venueId));
-        set({ discounts: response.data.result });
-      } catch (error) {
-        rethrowApiError(error, 'Failed to fetch discounts');
-      } finally {
-        set({ isLoading: false });
-      }
-    },
-    reset: () => set({ discounts: null, isLoading: false }),
-  })),
-);
+    try {
+      const response = await apiClient.get<
+        ApiResult<GetDiscountsByWeekdayResponse>
+      >(API_ENDPOINTS.VENUE_DISCOUNTS(venueId));
+      set({ discounts: response.data.result });
+    } catch (error) {
+      rethrowApiError(error, 'Failed to fetch discounts');
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  reset: () => set({ discounts: null, isLoading: false }),
+}));
