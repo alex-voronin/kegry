@@ -121,6 +121,7 @@ export const API_ENDPOINTS = {
   DISCOUNTS: '/api/v1/discounts',
   PROMOTIONS: '/api/v1/promotions',
   VENUES: '/api/v1/venues',
+  VENUES_LIST: '/api/v1/venue',
   VENUE: (id: string) => `/api/v1/venue/${id}`,
   VENUE_PROMOTIONS: (venueId: string) => `/api/v1/venue/${venueId}/promotions`,
   VENUE_PROMOTION: (venueId: string, promoId: string) =>

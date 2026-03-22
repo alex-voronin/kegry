@@ -42,28 +42,6 @@ export default function CompanyProfilePage() {
   const { selectedCompany, isLoading, fetchCompany, deleteCompany } =
     useCompanyProfileStore();
 
-  useEffect(() => {
-    if (searchParams.get('expanded')) {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('expanded');
-      window.history.replaceState({}, '', url.toString());
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
-    if (id) {
-      fetchCompany(id);
-    }
-  }, [id, fetchCompany]);
-
-  if (isLoading || !selectedCompany) {
-    return (
-      <div className="flex flex-1 items-center justify-center">
-        <Spinner />
-      </div>
-    );
-  }
-
   const handleBack = () => {
     safeBack(PAGE_ROUTES.B2B.COMPANIES);
   };
@@ -112,6 +90,43 @@ export default function CompanyProfilePage() {
       setIsDeleteModalOpen(false);
     }
   };
+
+  useEffect(() => {
+    if (searchParams.get('expanded')) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('expanded');
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (id) {
+      fetchCompany(id);
+    }
+  }, [id, fetchCompany]);
+
+  if (isLoading || !selectedCompany) {
+    return (
+      <>
+        <Header
+          title={t('title')}
+          left={
+            <Icon
+              src="/assets/b2b/disclosure-left-icon.svg"
+              alt="back"
+              width={14}
+              height={27}
+              onClick={handleBack}
+            />
+          }
+        />
+
+        <div className="flex flex-1 items-center justify-center">
+          <Spinner />
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

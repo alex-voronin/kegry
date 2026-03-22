@@ -144,6 +144,13 @@
         "viewCompany": "View Company"
       }
     },
+    "b2bVenues": {
+      "title": "Venues",
+      "noVenues": "No venues found. Please create a company first, then add a venue.",
+      "toast": {
+        "loadFailed": "Failed to load venues"
+      }
+    },
     "createCompany": {
       "title": "Create Company",
       "name": "Company Name",
