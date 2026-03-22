@@ -18,4 +18,12 @@ public interface IVenueRepository : IRepository<Venue>
 
     Task<(Venue? venue, Visit? lastVisit, UserLoyalty? userLoyalty)> GetVenueWithLastVisitsAndUserLoyalty(
         Guid venueId, Guid userId, CancellationToken ct);
+
+    Task<(IReadOnlyList<Venue> venues, int TotalCount)> GetWithPromosInRadius(
+        double latitude,
+        double longitude,
+        int offset,
+        int limit,
+        int radiusMeters = 25_000,
+        CancellationToken ct = default);
 }

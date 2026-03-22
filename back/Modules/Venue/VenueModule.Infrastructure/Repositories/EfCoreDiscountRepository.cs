@@ -37,7 +37,7 @@ public class EfCoreDiscountRepository : Repository<VenueContext, Discount>, IDis
         var userLocation = new Point(longitude, latitude) { SRID = 4326 };
 
         var baseQuery = Context.Discounts
-            // 1. Venue must be within 100 km of user
+            // 1. Venue must be within fixed radius of user
             .Where(d => EF.Functions.IsWithinDistance(
                 d.Venue.Coordinates, userLocation, RadiusMeters, useSpheroid: false))
             // 2. Must be active on the given day of week
@@ -49,10 +49,17 @@ public class EfCoreDiscountRepository : Repository<VenueContext, Discount>, IDis
                     .Any(l => l.UserId == userId &&
                               l.CompanyId == d.CompanyId &&
                               l.LoyaltyLevelId >= d.LoyaltyLevelId));
+        
+        var highestPerVenueQuery = baseQuery
+            .GroupBy(d => d.VenueId)
+            .Select(g => g
+                    .OrderByDescending(d => d.Percent)
+                    .FirstOrDefault()!
+            );
 
-        var totalCount = await baseQuery.CountAsync(ct);
+        var totalCount = await highestPerVenueQuery.CountAsync(ct);
 
-        var items = await baseQuery
+        var items = await highestPerVenueQuery
             .AsNoTracking()
             .Include(d => d.Days)
             .Include(d => d.Venue)

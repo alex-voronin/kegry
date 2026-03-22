@@ -81,4 +81,33 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
             .FirstOrDefaultAsync(ct);
         return res == null ? (null, null, null) : (res.Venue, res.LastVisit, res.VisitCount);
     }
+
+    public async Task<(IReadOnlyList<Venue> venues, int TotalCount)> GetWithPromosInRadius(
+        double latitude,
+        double longitude,
+        int offset,
+        int limit,
+        int radiusMeters = 25_000,
+        CancellationToken ct = default)
+    {
+        var userLocation = new Point(longitude, latitude) { SRID = 4326 };
+
+        var baseQuery = Context.Venues
+            .Where(v => EF.Functions.IsWithinDistance(
+                v.Coordinates, userLocation, radiusMeters, useSpheroid: false));
+
+        var totalCount = await baseQuery.CountAsync(ct);
+
+        var items = await baseQuery
+            .AsNoTracking()
+            .Include(v => v.Promos)
+            .Include(v => v.Company)
+            .OrderByDescending(v => v.Promos.Count)
+            .ThenBy(v => v.Company.Name)
+            .Skip(offset)
+            .Take(limit)
+            .ToListAsync(ct);
+
+        return (items, totalCount);
+    }
 }
