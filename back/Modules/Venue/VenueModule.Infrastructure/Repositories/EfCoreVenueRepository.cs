@@ -60,19 +60,18 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
     }
 
     public async Task<(Venue? venue, Visit? lastVisit, UserLoyalty? userLoyalty)>
-        GetVenueWithLastVisitsAndUserLoyaltyAsync(
-            Guid venueId, Guid userId, CancellationToken ct)
+        GetVenueWithLastVisitsAndUserLoyaltyAsync(Guid qrCode, Guid userId, CancellationToken ct)
     {
         var res = await Context.Venues
             .Include(v => v.Company)
             .ThenInclude(c => c.LoyaltyLevels)
             .AsNoTracking()
-            .Where(v => v.Id == venueId)
+            .Where(v => v.QrCode == qrCode)
             .Select(v => new
             {
                 Venue = v,
                 LastVisit = Context.Visits
-                    .Where(vis => vis.UserId == userId && vis.VenueId == venueId)
+                    .Where(vis => vis.UserId == userId && vis.VenueId == v.Id)
                     .OrderByDescending(vis => vis.CheckedInAt)
                     .FirstOrDefault(),
                 VisitCount = Context.UserLoyalties

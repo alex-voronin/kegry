@@ -28,25 +28,27 @@ public class B2CVenueEndpoints : IEndpoints
         usersApiGroup.MapPost("/api/v1/venues", GetVenues);
         usersApiGroup.MapGet("/api/v1/venues/{id:guid}", GetVenue);
         usersApiGroup.MapGet("/api/v1/venues/{id:guid}/discounts", GetDiscountsByWeekday);
-        usersApiGroup.MapPost("/api/v1/venues/{id:guid}/qr-check-in", CheckInToVenue);
+        usersApiGroup.MapPost("/api/v1/venues/{qrCode:guid}/qr-check-in", CheckInToVenue);
     }
 
-    private static async Task<ApiResult<EmptyResponse>> CheckInToVenue(
-        [FromRoute] Guid id,
+    private static async Task<ApiResult<CheckInResponse>> CheckInToVenue(
+        [FromRoute] Guid qrCode,
         [FromBody] CheckInRequest request,
         ClaimsPrincipal user,
         ILoyaltyService loyaltyService,
         CancellationToken ct)
     {
         var userId = user.GetId();
-        await loyaltyService.CheckInToVenue(
+        var venueId = await loyaltyService.CheckInToVenue(
             userId: userId,
-            venueId: id,
+            qrCode: qrCode,
             userLatitude: request.Latitude,
             userLongitude: request.Longitude,
             ct: ct);
 
-        return ApiResult<EmptyResponse>.Build(EmptyResponse.Empty);
+        return ApiResult<CheckInResponse>.Build(
+            new CheckInResponse(venueId)
+        );
     }
 
     private static async Task<ApiResult<PaginatedResponse<VenueListItemDto>>> GetVenues(

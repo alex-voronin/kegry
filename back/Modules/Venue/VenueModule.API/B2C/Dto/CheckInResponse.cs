@@ -1,6 +1,3 @@
 namespace VenueModule.API.B2C.Dto;
 
-public class CheckInResponse
-{
-    
-}
+public record CheckInResponse(Guid VenueId);

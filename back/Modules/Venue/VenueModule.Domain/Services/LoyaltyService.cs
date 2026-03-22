@@ -37,8 +37,8 @@ public interface ILoyaltyService
         Guid venueId,
         CancellationToken ct = default);
 
-    Task CheckInToVenue(
-        Guid userId, Guid venueId,
+    Task<Guid> CheckInToVenue(
+        Guid userId, Guid qrCode,
         double userLatitude, double userLongitude,
         CancellationToken ct = default);
 }
@@ -87,8 +87,8 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             ct: ct);
     }
 
-    public async Task CheckInToVenue(
-        Guid userId, Guid venueId,
+    public async Task<Guid> CheckInToVenue(
+        Guid userId, Guid qrCode,
         double userLatitude, double userLongitude,
         CancellationToken ct = default)
     {
@@ -97,13 +97,13 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             .StartTransactionAsync(ct);
 
         var (venue, lastVisit, userLoyalty) = await _venueRepository.GetVenueWithLastVisitsAndUserLoyaltyAsync(
-            venueId: venueId,
+            qrCode: qrCode,
             userId: userId,
             ct: ct);
 
         if (venue == null)
         {
-            throw VenueExceptions.VenueNotFound(venueId);
+            throw VenueExceptions.VenueNotFound(qrCode);
         }
 
         if (userLoyalty == null)
@@ -136,7 +136,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         {
             Id = Guid.CreateVersion7(),
             UserId = userId,
-            VenueId = venueId,
+            VenueId = venue.Id,
             CheckedInAt = DateTimeOffset.UtcNow
         };
         await _visitRepository.AddAsync(visit, ct);
@@ -150,6 +150,8 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         await _visitRepository.SaveChangesAsync(ct);
         await _userLoyaltyRepository.SaveChangesAsync(ct);
         await transaction.SaveChangesAsync(ct);
+
+        return venue.Id;
     }
 
     public async Task<LoyaltyLevelWithDiscount> GetLoyaltyLevelWithDiscountAsync(
