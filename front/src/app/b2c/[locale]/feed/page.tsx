@@ -28,6 +28,8 @@ import {
   WhenSelector,
 } from './_components/user-feed-card';
 import { NpcFeedBody, NpcFeedFooter } from './_components/npc-feed-card';
+import { useQrCheckIn } from '@/app/b2c/[locale]/venues/use-qr-check-in';
+import { CheckInAnimation } from '@/app/b2c/[locale]/venues/_components/check-in-animation';
 
 // --- Discriminated union for feed items ---
 
@@ -143,6 +145,7 @@ export default function FeedScreen() {
   const { npc, monolog, fetchNpc, inviteNpc, dismissNpc } = useNpcStore();
   const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
+  const { handleQrCode, showCheckIn, setShowCheckIn } = useQrCheckIn();
   const [when, setWhen] = useState<InviteExpiration>(InviteExpiration.Today);
   const [expirationPopup, setExpirationPopup] = useState<{
     isOpen: boolean;
@@ -165,6 +168,16 @@ export default function FeedScreen() {
     window.addEventListener('focus', checkPermissions);
     return () => window.removeEventListener('focus', checkPermissions);
   }, []);
+
+  useEffect(() => {
+    const v = searchParams.get('v');
+    if (v) {
+      // handle qr code in query parameter first
+      handleQrCode(window.location.href);
+      // then clear query parameters
+      router.replace(PAGE_ROUTES.FEED);
+    }
+  }, [searchParams, handleQrCode]);
 
   const distanceUnits = useSettingsStore((state) => state.distanceUnits);
 
@@ -526,6 +539,10 @@ export default function FeedScreen() {
           onPrimaryAction={handleCloseInvitePrompt}
           secondaryButtonText={tFeed('invitePrompt.letsGo')}
           onSecondaryAction={handleGoToInvite}
+        />
+        <CheckInAnimation
+          visible={showCheckIn}
+          onDone={() => setShowCheckIn(false)}
         />
       </div>
     </div>

@@ -4,6 +4,7 @@ import MobileLayout from './_components/mobile-layout';
 import styles from './layout.module.css';
 import { AgeVerification } from './_components/AgeVerification';
 import { ReferrerTracker } from './_components/ReferrerTracker';
+import { QrRedirect } from './_components/qr-redirect';
 import { Suspense } from 'react';
 import { BRAND_NAME } from '@/lib/constants';
 
@@ -72,6 +73,7 @@ export default function LandingPage() {
     <>
       <Suspense>
         <ReferrerTracker />
+        <QrRedirect />
       </Suspense>
       <AgeVerification />
       <div className={styles.desktopOnly}>

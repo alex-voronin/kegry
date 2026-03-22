@@ -34,8 +34,13 @@ export default function VenuesScreen() {
     null,
   );
   const [isLocationDenied, setIsLocationDenied] = useState(false);
-  const { isScannerOpen, setIsScannerOpen, showCheckIn, setShowCheckIn, handleScan } =
-    useQrCheckIn({ translationNs: 'screens.venues' });
+  const {
+    isScannerOpen,
+    setIsScannerOpen,
+    showCheckIn,
+    setShowCheckIn,
+    handleQrCode,
+  } = useQrCheckIn();
   const distanceUnits = useSettingsStore((state) => state.distanceUnits);
 
   const { ref: pageBottomRef, inView } = useInView({
@@ -232,7 +237,7 @@ export default function VenuesScreen() {
       <QrScannerPopup
         isOpen={isScannerOpen}
         onClose={() => setIsScannerOpen(false)}
-        onScan={handleScan}
+        onScan={handleQrCode}
       />
 
       <CheckInAnimation

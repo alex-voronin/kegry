@@ -43,11 +43,15 @@ export default function VenueDetailScreen() {
     () => currentVenue?.venue.id !== venueId,
   );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isScannerOpen, setIsScannerOpen, showCheckIn, setShowCheckIn, handleScan } =
-    useQrCheckIn({
-      translationNs: 'screens.venueDetail',
-      onSuccess: () => fetchVenue(venueId),
-    });
+  const {
+    isScannerOpen,
+    setIsScannerOpen,
+    showCheckIn,
+    setShowCheckIn,
+    handleQrCode,
+  } = useQrCheckIn({
+    onSuccess: () => fetchVenue(venueId),
+  });
 
   const { safeBack } = useSafeBack();
 
@@ -385,7 +389,7 @@ export default function VenueDetailScreen() {
       <QrScannerPopup
         isOpen={isScannerOpen}
         onClose={() => setIsScannerOpen(false)}
-        onScan={handleScan}
+        onScan={handleQrCode}
       />
 
       <CheckInAnimation
