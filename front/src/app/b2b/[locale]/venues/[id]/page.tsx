@@ -18,12 +18,14 @@ import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
 import styles from './venue-detail.module.css';
 import { InstagramIcon } from './_components/instagram-icon';
+import { QrPopup } from './_components/qr-popup';
 import {
   Plus,
   MoreHorizontal,
   BadgeCheck,
   BadgeAlert,
   Settings,
+  QrCode,
 } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { PromoIcon } from '@/lib/promo-types';
@@ -50,6 +52,7 @@ export default function VenueDetailPage() {
   const [isPromoDeleteModalOpen, setIsPromoDeleteModalOpen] = useState(false);
   const [isDiscountDeleteModalOpen, setIsDiscountDeleteModalOpen] =
     useState(false);
+  const [isQrPopupOpen, setIsQrPopupOpen] = useState(false);
 
   const { safeBack } = useSafeBack();
 
@@ -198,6 +201,14 @@ export default function VenueDetailPage() {
 
   const menuOptions = [
     {
+      icon: <QrCode size={24} className="text-primary" />,
+      label: t('menu.qrCode'),
+      onClick: () => {
+        setIsMenuOpen(false);
+        setIsQrPopupOpen(true);
+      },
+    },
+    {
       icon: '/assets/b2b/edit-icon.svg',
       label: t('menu.editVenue'),
       onClick: handleEditVenue,
@@ -214,6 +225,22 @@ export default function VenueDetailPage() {
       isDestructive: true,
     },
   ];
+
+  const buildQrUrl = (qrCode: string = '') => {
+    if (typeof window === 'undefined' || !qrCode) return '';
+    const { protocol, hostname, port } = window.location;
+    let rootDomain = hostname;
+    const parts = hostname.split('.');
+
+    // Strip subdomain
+    if (parts.length > 2 || (parts.length === 2 && parts[1] === 'localhost')) {
+      parts.shift();
+      rootDomain = parts.join('.');
+    }
+
+    const portStr = port ? `:${port}` : '';
+    return `${protocol}//${rootDomain}${portStr}?v=${qrCode}`;
+  };
 
   if (isInitializing || isLoading) {
     return (
@@ -261,13 +288,21 @@ export default function VenueDetailPage() {
           }
           title={t('title')}
           right={
-            <Icon
-              src="/assets/b2b/more-icon.svg"
-              alt="more"
-              width={24}
-              height={24}
-              onClick={() => setIsMenuOpen(true)}
-            />
+            <div className={styles.headerRight}>
+              <button
+                className={styles.qrButton}
+                onClick={() => setIsQrPopupOpen(true)}
+              >
+                <QrCode size={22} />
+              </button>
+              <Icon
+                src="/assets/b2b/more-icon.svg"
+                alt="more"
+                width={24}
+                height={24}
+                onClick={() => setIsMenuOpen(true)}
+              />
+            </div>
           }
         />
         {currentVenue.coverImageUrl ? (
@@ -522,6 +557,11 @@ export default function VenueDetailPage() {
         secondaryButtonVariant={ButtonVariant.Destructive}
         onPrimaryAction={() => setIsDiscountDeleteModalOpen(false)}
         onSecondaryAction={handleDiscountDeleteConfirm}
+      />
+      <QrPopup
+        isOpen={isQrPopupOpen}
+        onClose={() => setIsQrPopupOpen(false)}
+        url={buildQrUrl(currentVenue.qrCode)}
       />
     </div>
   );

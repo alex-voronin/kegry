@@ -244,6 +244,7 @@
         "editDiscount": "Edit",
         "deleteDiscount": "Delete",
         "editVenue": "Edit",
+        "qrCode": "QR Code",
         "deleteVenue": "Delete Venue",
         "advanced": "Advanced"
       },

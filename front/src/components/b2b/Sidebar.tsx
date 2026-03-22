@@ -80,7 +80,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const handleLogout = async () => {
     onClose();
     await logout();
-    router.push(PAGE_ROUTES.B2B.LOGIN());
+    router.push(PAGE_ROUTES.B2B.HOME);
   };
 
   return (
