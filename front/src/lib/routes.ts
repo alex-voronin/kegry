@@ -18,7 +18,7 @@ export const PAGE_ROUTES = {
   USER_PROFILE: (userId: string) => `/profile/${userId}`,
   PROFILE_EDIT: '/profile/edit',
   PROFILE_COVER: '/profile/cover-image',
-  OFFERS_AND_DEALS: '/profile/offers-and-deals',
+  DISCOUNTS_AND_PROMOTIONS: '/profile/discounts-and-promotions',
   EDIT_PROFILE: '/edit-profile',
   NOTIFICATIONS: '/notifications',
   CHAT: '/chat',

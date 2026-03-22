@@ -30,7 +30,7 @@ interface OffersState {
 
 const DEFAULT_LIMIT = 20;
 
-export const useOffersStore = create<OffersState>()(
+export const useDiscountsStore = create<OffersState>()(
   devtools((set) => ({
     offers: [],
     totalCount: 0,

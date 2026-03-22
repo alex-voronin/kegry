@@ -325,9 +325,9 @@ export default function ProfilePage() {
           <div className={styles.actionsSection}>
             <div
               className={cn(styles.field, styles.actionField)}
-              onClick={() => router.push(PAGE_ROUTES.OFFERS_AND_DEALS)}
+              onClick={() => router.push(PAGE_ROUTES.DISCOUNTS_AND_PROMOTIONS)}
             >
-              <span>{t('offersAndDeals')}</span>
+              <span>{t('discountsAndPromotions')}</span>
               <Icon
                 src="/assets/common/disclosure-right-icon.svg"
                 alt="chevron"

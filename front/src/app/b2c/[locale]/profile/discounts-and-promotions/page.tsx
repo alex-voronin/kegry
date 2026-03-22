@@ -6,7 +6,7 @@ import { useRouter } from '@/i18n/routing';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { SegmentedControl } from '@/components/ui/segmented-control';
-import { useOffersStore } from './use-offers-store';
+import { useDiscountsStore } from './use-discounts-store';
 import { usePromotionsStore } from './use-promotions-store';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { DiscountsTab } from './_components/discounts-tab';
@@ -15,9 +15,9 @@ import styles from './page.module.css';
 
 type Tab = 'discounts' | 'promotions';
 
-export default function OffersAndDealsScreen() {
+export default function DiscountsAndPromotionsScreen() {
   const router = useRouter();
-  const t = useTranslations('screens.offersAndDeals');
+  const t = useTranslations('screens.discountsAndPromotions');
 
   const TAB_OPTIONS = [
     { value: 'discounts', label: t('tabs.discounts'), width: '50%' },
@@ -28,7 +28,7 @@ export default function OffersAndDealsScreen() {
 
   useEffect(() => {
     return () => {
-      useOffersStore.getState().reset();
+      useDiscountsStore.getState().reset();
       usePromotionsStore.getState().reset();
     };
   }, []);

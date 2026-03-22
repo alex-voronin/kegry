@@ -11,12 +11,12 @@ import { useViewportItemCount } from '@/hooks/use-viewport-item-count';
 import { toast } from 'react-toastify';
 import { checkPermissionStatus } from '@/lib/permissions';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { useOffersStore, AvailableDiscountDto } from '../use-offers-store';
+import { useDiscountsStore, AvailableDiscountDto } from '../use-discounts-store';
 import styles from '../page.module.css';
 
 export function DiscountsTab() {
   const router = useRouter();
-  const t = useTranslations('screens.offersAndDeals');
+  const t = useTranslations('screens.discountsAndPromotions');
   const [selectedOffer, setSelectedOffer] =
     useState<AvailableDiscountDto | null>(null);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
@@ -32,7 +32,7 @@ export function DiscountsTab() {
     buffer: 4,
   });
 
-  const { offers, isLoading, hasMore, fetchOffers } = useOffersStore();
+  const { offers, isLoading, hasMore, fetchOffers } = useDiscountsStore();
 
   const loadData = async (offset: number) => {
     try {
