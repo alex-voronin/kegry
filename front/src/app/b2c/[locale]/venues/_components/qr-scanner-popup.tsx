@@ -1,0 +1,94 @@
+'use client';
+
+import { useCallback, useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
+import { X } from 'lucide-react';
+import { Scanner } from '@yudiel/react-qr-scanner';
+import type { IDetectedBarcode } from '@yudiel/react-qr-scanner';
+import { checkPermissionStatus } from '@/lib/permissions';
+import styles from './qr-scanner-popup.module.css';
+
+interface QrScannerPopupProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onScan: (url: string) => void;
+}
+
+export function QrScannerPopup({
+  isOpen,
+  onClose,
+  onScan,
+}: QrScannerPopupProps) {
+  const t = useTranslations('screens.venues');
+  const [cameraError, setCameraError] = useState(false);
+  const [isLocationAllowed, setIsLocationAllowed] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      checkPermissionStatus().then(({ locationAllowed }) => {
+        setIsLocationAllowed(locationAllowed);
+      });
+    }
+  }, [isOpen]);
+
+  const handleScan = useCallback(
+    (detectedCodes: IDetectedBarcode[]) => {
+      const raw = detectedCodes[0]?.rawValue;
+      if (raw) {
+        onScan(raw);
+      }
+    },
+    [onScan],
+  );
+
+  if (!isOpen) return null;
+
+  if (cameraError || !isLocationAllowed) {
+    return (
+      <div className={styles.overlay} onClick={onClose}>
+        <div
+          className={`${styles.popup} ${styles.deniedPopup}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button className={styles.closeButton} onClick={onClose}>
+            <X size={20} />
+          </button>
+          <div className={styles.deniedMessage}>
+            {cameraError ? t('cameraDenied') : t('locationDenied')}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.overlay} onClick={onClose}>
+      <div className={styles.popup} onClick={(e) => e.stopPropagation()}>
+        <button className={styles.closeButton} onClick={onClose}>
+          <X size={20} />
+        </button>
+        <div className={styles.scannerWrapper}>
+          <Scanner
+            components={{
+              torch: true,
+              finder: false,
+            }}
+            onScan={handleScan}
+            onError={(err) => {
+              const name = (err as Error)?.name ?? '';
+              if (
+                name === 'NotAllowedError' ||
+                name === 'PermissionDeniedError'
+              ) {
+                setCameraError(true);
+              }
+            }}
+            constraints={{ facingMode: 'environment' }}
+            scanDelay={400}
+            sound={false}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}

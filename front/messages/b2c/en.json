@@ -456,8 +456,12 @@
         "openInMaps": "Open on Google Maps"
       },
       "toast": {
-        "loadFailed": "Failed to load venues"
-      }
+        "loadFailed": "Failed to load venues",
+        "invalidQr": "Invalid QR code",
+        "checkInFailed": "Check-in failed. Please try again."
+      },
+      "cameraDenied": "Camera permission denied. Allow access in browser settings or scan with your system QR reader.",
+      "locationDenied": "Location access is required to check in. Please enable location in your browser settings."
     },
     "venueDetail": {
       "contacts": "Contacts",
@@ -475,6 +479,10 @@
         "openInstagram": "Open Instagram",
         "openWebsite": "Open Website",
         "openInMaps": "Open on Google Maps"
+      },
+      "toast": {
+        "invalidQr": "Invalid QR code",
+        "checkInFailed": "Check-in failed. Please try again."
       }
     }
   },

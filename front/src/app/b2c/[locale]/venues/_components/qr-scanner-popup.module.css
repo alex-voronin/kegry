@@ -1,0 +1,37 @@
+@reference "../../../../globals.css";
+
+.overlay {
+  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm;
+}
+
+.popup {
+  @apply bg-surface relative flex flex-col items-center overflow-hidden rounded-2xl shadow-2xl;
+  width: min(88vw, 360px);
+}
+
+.deniedPopup {
+  aspect-ratio: 1;
+  justify-content: center;
+}
+
+.closeButton {
+  @apply text-primary hover:text-foreground absolute top-3 right-3 z-10 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full transition-colors;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.scannerWrapper {
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+
+.scannerWrapper > * {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.deniedMessage {
+  @apply text-secondary px-10 py-8 text-center text-sm leading-relaxed;
+}

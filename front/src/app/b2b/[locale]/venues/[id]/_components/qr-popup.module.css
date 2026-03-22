@@ -9,7 +9,7 @@
 }
 
 .closeButton {
-  @apply text-secondary hover:text-foreground absolute top-3 right-3 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full transition-colors;
+  @apply text-primary hover:text-foreground absolute top-3 right-3 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full transition-colors;
   background: none;
   border: none;
   padding: 0;

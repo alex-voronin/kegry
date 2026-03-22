@@ -15,8 +15,15 @@ import { useVenuesStore, VenueListItemDto } from './use-venues-store';
 import { toast } from 'react-toastify';
 import { checkPermissionStatus } from '@/lib/permissions';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { useSettingsStore, DistanceUnits } from '@/app/b2c/[locale]/settings/use-settings-store';
+import {
+  useSettingsStore,
+  DistanceUnits,
+} from '@/app/b2c/[locale]/settings/use-settings-store';
 import { metersToKilometers, metersToMiles } from '@/lib/distance-utils';
+import { QrScannerPopup } from './_components/qr-scanner-popup';
+import { CheckInAnimation } from './_components/check-in-animation';
+import { useQrCheckIn } from './use-qr-check-in';
+import { ScanQrCode } from 'lucide-react';
 import styles from './venues.module.css';
 
 export default function VenuesScreen() {
@@ -27,6 +34,8 @@ export default function VenuesScreen() {
     null,
   );
   const [isLocationDenied, setIsLocationDenied] = useState(false);
+  const { isScannerOpen, setIsScannerOpen, showCheckIn, setShowCheckIn, handleScan } =
+    useQrCheckIn({ translationNs: 'screens.venues' });
   const distanceUnits = useSettingsStore((state) => state.distanceUnits);
 
   const { ref: pageBottomRef, inView } = useInView({
@@ -127,6 +136,19 @@ export default function VenuesScreen() {
           />
         }
         title={t('title')}
+        right={
+          <button
+            onClick={() => setIsScannerOpen(true)}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              cursor: 'pointer',
+            }}
+          >
+            <ScanQrCode size={24} className="text-foreground" />
+          </button>
+        }
       />
 
       <div className={styles.content}>
@@ -155,7 +177,10 @@ export default function VenuesScreen() {
                 key={venue.id}
                 className="cursor-pointer"
                 onClick={() => setSelectedVenue(venue)}
-                avatarUrl={venue.companyAvatarImageUrl || '/assets/common/venues-icon.svg'}
+                avatarUrl={
+                  venue.companyAvatarImageUrl ||
+                  '/assets/common/venues-icon.svg'
+                }
                 avatarAlt={venue.companyName}
                 title={venue.companyName}
                 subtitle={
@@ -202,6 +227,17 @@ export default function VenuesScreen() {
         isOpen={!!selectedVenue}
         onClose={() => setSelectedVenue(null)}
         options={selectedVenue ? getMenuOptions(selectedVenue) : []}
+      />
+
+      <QrScannerPopup
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onScan={handleScan}
+      />
+
+      <CheckInAnimation
+        visible={showCheckIn}
+        onDone={() => setShowCheckIn(false)}
       />
     </div>
   );

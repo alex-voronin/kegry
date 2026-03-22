@@ -14,11 +14,14 @@ import { useVenueStore } from './use-venue-store';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 import { toast } from 'react-toastify';
-import { HelpCircle, ChevronRight } from 'lucide-react';
+import { HelpCircle, ChevronRight, ScanQrCode } from 'lucide-react';
 import styles from './venue-detail.module.css';
 import { InstagramIcon } from './_components/instagram-icon';
 import { PromoIcon } from '@/lib/promo-types';
 import { useSafeBack } from '@/hooks/use-safe-back';
+import { QrScannerPopup } from '../_components/qr-scanner-popup';
+import { CheckInAnimation } from '../_components/check-in-animation';
+import { useQrCheckIn } from '../use-qr-check-in';
 
 function calculateProgressPercentage(
   count: number,
@@ -40,6 +43,11 @@ export default function VenueDetailScreen() {
     () => currentVenue?.venue.id !== venueId,
   );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isScannerOpen, setIsScannerOpen, showCheckIn, setShowCheckIn, handleScan } =
+    useQrCheckIn({
+      translationNs: 'screens.venueDetail',
+      onSuccess: () => fetchVenue(venueId),
+    });
 
   const { safeBack } = useSafeBack();
 
@@ -128,13 +136,18 @@ export default function VenueDetailScreen() {
           }
           title={<h1 className={styles.companyName}>{company.name}</h1>}
           right={
-            <Icon
-              src="/assets/common/more-icon.svg"
-              alt="more"
-              width={24}
-              height={24}
-              onClick={() => setIsMenuOpen(true)}
-            />
+            <div className="flex items-center gap-3">
+              <Icon onClick={() => setIsScannerOpen(true)}>
+                <ScanQrCode size={24} className="text-white" />
+              </Icon>
+              <Icon
+                src="/assets/common/more-icon.svg"
+                alt="more"
+                width={24}
+                height={24}
+                onClick={() => setIsMenuOpen(true)}
+              />
+            </div>
           }
         />
         {venue.coverImageUrl ? (
@@ -367,6 +380,17 @@ export default function VenueDetailScreen() {
               ]
             : []),
         ]}
+      />
+
+      <QrScannerPopup
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onScan={handleScan}
+      />
+
+      <CheckInAnimation
+        visible={showCheckIn}
+        onDone={() => setShowCheckIn(false)}
       />
     </div>
   );
