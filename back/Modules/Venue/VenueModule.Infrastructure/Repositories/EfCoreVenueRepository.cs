@@ -48,7 +48,7 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
         return (venues, totalCount);
     }
 
-    public Task<Venue?> GetByIdWithLoyaltyLevelsAndDiscounts(Guid id, CancellationToken ct)
+    public Task<Venue?> GetByIdWithLoyaltyLevelsAndDiscountsAysnc(Guid id, CancellationToken ct)
     {
         return Context.Venues
             .Include(v => v.Company)
@@ -59,8 +59,9 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
             .FirstOrDefaultAsync(ct);
     }
 
-    public async Task<(Venue? venue, Visit? lastVisit, UserLoyalty? userLoyalty)> GetVenueWithLastVisitsAndUserLoyalty(
-        Guid venueId, Guid userId, CancellationToken ct)
+    public async Task<(Venue? venue, Visit? lastVisit, UserLoyalty? userLoyalty)>
+        GetVenueWithLastVisitsAndUserLoyaltyAsync(
+            Guid venueId, Guid userId, CancellationToken ct)
     {
         var res = await Context.Venues
             .Include(v => v.Company)
@@ -82,7 +83,7 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
         return res == null ? (null, null, null) : (res.Venue, res.LastVisit, res.VisitCount);
     }
 
-    public async Task<(IReadOnlyList<Venue> venues, int TotalCount)> GetWithPromosInRadius(
+    public async Task<(IReadOnlyList<Venue> venues, int TotalCount)> GetWithPromosInRadiusAsync(
         double latitude,
         double longitude,
         int offset,
@@ -109,5 +110,13 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
             .ToListAsync(ct);
 
         return (items, totalCount);
+    }
+
+    public Task<Venue[]> GetByUserIdAsync(Guid userId, CancellationToken ct)
+    {
+        return Context.Venues
+            .Where(v => v.Company.OwnerId == userId)
+            .OrderBy(v => v.Id)
+            .ToArrayAsync(ct);
     }
 }

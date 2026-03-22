@@ -187,7 +187,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         // Required for a frontend deduplication logic 
         if (!data.ContainsKey(Keys.MessageId))
         {
-            data[Keys.MessageId] = Guid.NewGuid().ToString();
+            data[Keys.MessageId] = Guid.CreateVersion7().ToString();
         }
 
         return fcmTokens.Length > 1

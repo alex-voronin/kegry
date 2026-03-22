@@ -203,7 +203,7 @@ public class B2BCompanyEndpoints : IEndpoints
     private static VenueListItemDto DomainVenueToListItemDto(IS3StorageService storageService, Venue venue)
     {
         return new VenueListItemDto(
-            Id: venue.Id.ToString(),
+            Id: venue.Id,
             IsVerified: venue.IsVerified,
             Address: venue.Address,
             CoverImageUrl: venue.CoverImageS3Key != null

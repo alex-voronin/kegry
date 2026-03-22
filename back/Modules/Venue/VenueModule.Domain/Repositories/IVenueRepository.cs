@@ -14,16 +14,18 @@ public interface IVenueRepository : IRepository<Venue>
         int limit,
         CancellationToken ct);
 
-    Task<Venue?> GetByIdWithLoyaltyLevelsAndDiscounts(Guid id, CancellationToken ct);
+    Task<Venue?> GetByIdWithLoyaltyLevelsAndDiscountsAysnc(Guid id, CancellationToken ct);
 
-    Task<(Venue? venue, Visit? lastVisit, UserLoyalty? userLoyalty)> GetVenueWithLastVisitsAndUserLoyalty(
+    Task<(Venue? venue, Visit? lastVisit, UserLoyalty? userLoyalty)> GetVenueWithLastVisitsAndUserLoyaltyAsync(
         Guid venueId, Guid userId, CancellationToken ct);
 
-    Task<(IReadOnlyList<Venue> venues, int TotalCount)> GetWithPromosInRadius(
+    Task<(IReadOnlyList<Venue> venues, int TotalCount)> GetWithPromosInRadiusAsync(
         double latitude,
         double longitude,
         int offset,
         int limit,
         int radiusMeters = 25_000,
         CancellationToken ct = default);
+
+    Task<Venue[]> GetByUserIdAsync(Guid userId, CancellationToken ct);
 }

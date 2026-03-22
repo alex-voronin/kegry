@@ -9,6 +9,7 @@ using SharedCore.Api;
 using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 using SharedCore.Policies;
+using VenueModule.API.B2B.Companies.Dto;
 using VenueModule.API.B2B.Deals;
 using VenueModule.API.B2B.Deals.Dto;
 using VenueModule.API.B2B.Shared;
@@ -28,6 +29,7 @@ public class B2BVenueEndpoints : IEndpoints
             .WithTags("Venue Management API")
             .RequireAuthorization(AuthPolicies.B2BAdmin);
         managementApiGroup.MapPost("/api/v1/company{companyId:guid}/venue", CreateVenue);
+        managementApiGroup.MapGet("/api/v1/venue", GetVenues);
         managementApiGroup.MapGet("/api/v1/venue/{id:guid}", GetVenue);
         managementApiGroup.MapPatch("/api/v1/venue/{id:guid}", PatchVenue);
         managementApiGroup.MapDelete("/api/v1/venue/{id:guid}", DeleteVenue);
@@ -80,6 +82,28 @@ public class B2BVenueEndpoints : IEndpoints
         );
     }
 
+    private static async Task<ApiResult<GetVenuesResponse>> GetVenues(
+        ClaimsPrincipal user,
+        IVenueRepository venueRepository,
+        IS3StorageService storageService,
+        CancellationToken ct)
+    {
+        var venues = await venueRepository.GetByUserIdAsync(user.GetId(), ct);
+        var dtos = venues
+            .Select(v => new VenueListItemDto(
+                Id: v.Id,
+                IsVerified: v.IsVerified,
+                CoverImageUrl: v.CoverImageS3Key != null
+                    ? storageService.S3KeyToPublicFileUrl(v.CoverImageS3Key, v.ChangedAt)
+                    : null,
+                Address: v.Address
+                ))
+            .ToArray();
+        return ApiResult<GetVenuesResponse>.Build(
+            new GetVenuesResponse(dtos)
+        );
+    }
+
     private static async Task<ApiResult<GetVenueResponse>> GetVenue(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
@@ -87,7 +111,7 @@ public class B2BVenueEndpoints : IEndpoints
         IS3StorageService storageService,
         CancellationToken ct)
     {
-        var venue = await venueRepository.GetByIdWithLoyaltyLevelsAndDiscounts(id, ct);
+        var venue = await venueRepository.GetByIdWithLoyaltyLevelsAndDiscountsAysnc(id, ct);
         if (venue == null)
         {
             throw VenueExceptions.VenueNotFound(id);

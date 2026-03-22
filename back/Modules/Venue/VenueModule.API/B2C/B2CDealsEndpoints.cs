@@ -65,7 +65,7 @@ public class B2CDealsEndpoints : IEndpoints
         IS3StorageService storageService,
         CancellationToken ct)
     {
-        var (venues, totalCount) = await venueRepository.GetWithPromosInRadius(
+        var (venues, totalCount) = await venueRepository.GetWithPromosInRadiusAsync(
             latitude: request.Latitude,
             longitude: request.Longitude,
             offset: request.Offset,

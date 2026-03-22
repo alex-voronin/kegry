@@ -96,7 +96,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             .And(_userLoyaltyRepository)
             .StartTransactionAsync(ct);
 
-        var (venue, lastVisit, userLoyalty) = await _venueRepository.GetVenueWithLastVisitsAndUserLoyalty(
+        var (venue, lastVisit, userLoyalty) = await _venueRepository.GetVenueWithLastVisitsAndUserLoyaltyAsync(
             venueId: venueId,
             userId: userId,
             ct: ct);
@@ -157,7 +157,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         Guid venueId,
         CancellationToken ct = default)
     {
-        var venue = await _venueRepository.GetByIdWithLoyaltyLevelsAndDiscounts(venueId, ct);
+        var venue = await _venueRepository.GetByIdWithLoyaltyLevelsAndDiscountsAysnc(venueId, ct);
         if (venue == null)
         {
             throw VenueExceptions.VenueNotFound(venueId);
@@ -191,7 +191,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         Guid venueId,
         CancellationToken ct = default)
     {
-        var venue = await _venueRepository.GetByIdWithLoyaltyLevelsAndDiscounts(venueId, ct);
+        var venue = await _venueRepository.GetByIdWithLoyaltyLevelsAndDiscountsAysnc(venueId, ct);
         if (venue == null)
         {
             throw VenueExceptions.VenueNotFound(venueId);

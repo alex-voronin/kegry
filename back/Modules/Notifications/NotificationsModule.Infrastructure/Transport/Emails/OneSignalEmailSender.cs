@@ -52,7 +52,7 @@ internal class OneSignalEmailSender : IEmailSender, ISingleton
 
     public async Task SendEmailAsync(Email email, CancellationToken ct)
     {
-        var idempotencyKey = Guid.NewGuid().ToString();
+        var idempotencyKey = Guid.CreateVersion7().ToString();
 
         var emailNotification = new Notification(appId: _emailConfig.AppId, idempotencyKey: idempotencyKey)
         {

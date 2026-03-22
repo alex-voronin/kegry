@@ -9,6 +9,8 @@ using Microsoft.Extensions.Options;
 using SecurityModule.Application.Services;
 using SecurityModule.API.Dto;
 using SecurityModule.Application.Configs;
+using SecurityModule.Domain.Exceptions;
+using SecurityModule.Domain.Repositories;
 using SecurityModule.Infrastructure.Service;
 using SharedCore.Api;
 using SharedCore.Api.Dto;
@@ -35,6 +37,7 @@ public class AuthEndpoints : IEndpoints
             .WithTags("Auth API")
             .RequireAuthorization();
         authGroup.MapPost("/api/v1/auth/logout", Logout);
+        authGroup.MapGet("/api/v1/auth/account", GetAccount);
         authGroup.MapDelete("/api/v1/auth/account", DeleteAccount);
     }
 
@@ -128,6 +131,26 @@ public class AuthEndpoints : IEndpoints
         var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.EncodedToken));
         await service.ConfirmPasswordResetAsync(decodedEmail, decodedToken, request.NewPassword);
         return ApiResult.Empty;
+    }
+
+    private static async Task<ApiResult<GetAccountResponse>> GetAccount(
+        ClaimsPrincipal user,
+        IUserRepository userRepository,
+        CancellationToken ct)
+    {
+        var userId = user.GetId();
+        var userEntity = await userRepository.GetByIdAsync(userId, ct: ct);
+        if (userEntity == null)
+        {
+            throw SecurityExceptions.UserNotFound(userId);
+        }
+
+        return ApiResult<GetAccountResponse>.Build(
+            new GetAccountResponse(
+                Id: userEntity.Id,
+                Type: userEntity.Type,
+                Email: userEntity.Email!)
+        );
     }
 
     private static async Task<ApiResult.EmptyResult> DeleteAccount(

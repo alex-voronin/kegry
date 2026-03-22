@@ -91,7 +91,7 @@ public abstract class DebouncedEventHandlerBase<TEvent> : IDebouncedEventHandler
         await HandleDebouncedEventAsync(message.Event, ct);
     }
 
-    private EventContext BuildContext() => new EventContext(Guid.NewGuid(), TimeProvider.GetUtcNow());
+    private EventContext BuildContext() => new EventContext(Guid.CreateVersion7(), TimeProvider.GetUtcNow());
 
     internal static string BuildCacheKey(Guid userId) => $"event:context:{typeof(TEvent)}:{userId}";
 
