@@ -56,7 +56,8 @@ export const PAGE_ROUTES = {
       `/venues/${venueId}/discounts/create`,
     VENUES_DETAILS_DISCOUNT_EDIT: (venueId: string, discountId: string) =>
       `/venues/${venueId}/discounts/${discountId}/edit`,
-    VENUES_CREATE: (companyId: string) => `/companies/${companyId}/venues/create`,
+    VENUES_CREATE: (companyId: string) =>
+      `/companies/${companyId}/venues/create`,
     VENUES_EDIT: (id: string) => `/venues/${id}/edit`,
     VENUES_DETAILS_ADVANCED: (venueId: string) => `/venues/${venueId}/advanced`,
   },
@@ -117,9 +118,8 @@ export const API_ENDPOINTS = {
   LOCATION: {
     UPDATE: '/api/v1/location',
   },
-  DISCOUNTS: {
-    AVAILABLE: '/api/v1/discounts/available',
-  },
+  DISCOUNTS: '/api/v1/discounts',
+  PROMOTIONS: '/api/v1/promotions',
   VENUES: '/api/v1/venues',
   VENUE: (id: string) => `/api/v1/venue/${id}`,
   VENUE_PROMOTIONS: (venueId: string) => `/api/v1/venue/${venueId}/promotions`,
@@ -128,7 +128,8 @@ export const API_ENDPOINTS = {
   VENUE_DISCOUNTS: (venueId: string) => `/api/v1/venue/${venueId}/discounts`,
   VENUE_DISCOUNT: (venueId: string, discountId: string) =>
     `/api/v1/venue/${venueId}/discounts/${discountId}`,
-  VENUE_COVER_UPLOAD_URL: (id: string) => `/api/v1/venue/${id}/cover/upload-url`,
+  VENUE_COVER_UPLOAD_URL: (id: string) =>
+    `/api/v1/venue/${id}/cover/upload-url`,
   NPC: {
     GET: '/api/v1/npc',
     MET: '/api/v1/npc/met',

@@ -3,6 +3,7 @@ import { devtools } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
 import { ApiResult, PaginatedResponse } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
+import { rethrowApiError } from '@/lib/api-error';
 
 export interface AvailableDiscountDto {
   companyName: string;
@@ -47,7 +48,7 @@ export const useOffersStore = create<OffersState>()(
         const response = await apiClient.get<
           ApiResult<PaginatedResponse<AvailableDiscountDto>>
         >(
-          `${API_ENDPOINTS.DISCOUNTS.AVAILABLE}?latitude=${latitude}&longitude=${longitude}&offset=${offset}&limit=${limit}`,
+          `${API_ENDPOINTS.DISCOUNTS}?latitude=${latitude}&longitude=${longitude}&offset=${offset}&limit=${limit}`,
         );
 
         const { data, totalCount } = response.data.result;
@@ -68,8 +69,9 @@ export const useOffersStore = create<OffersState>()(
           }));
         }
       } catch (error) {
+        rethrowApiError(error);
+      } finally {
         set({ isLoading: false });
-        throw error;
       }
     },
 

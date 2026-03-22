@@ -1,5 +1,9 @@
 @reference "../../../../../app/globals.css";
 
+.tabBar {
+  @apply py-3 sm:px-4;
+}
+
 .content {
   @apply flex flex-1 flex-col sm:p-4 sm:pt-0;
 }

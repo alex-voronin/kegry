@@ -431,7 +431,12 @@
     },
     "offersAndDeals": {
       "title": "Offers & Deals",
+      "tabs": {
+        "discounts": "Discounts",
+        "promotions": "Promotions"
+      },
       "noOffers": "You have no available offers right now. Visit venues to unlock discounts!",
+      "noPromotions": "No promotions available nearby.",
       "locationRequired": "Location access is required to show your closest offers. Please enable location in your browser settings.",
       "menu": {
         "viewVenue": "View Venue",
