@@ -46,7 +46,7 @@ public class B2CDealsEndpoints : IEndpoints
                 CompanyName: d.Venue.Company.Name,
                 CompanyAvatarImageUrl: d.Venue.Company.AvatarImageS3Key != null
                     ? storageService.S3KeyToPublicFileUrl(
-                        d.Venue.Company.AvatarImageS3Key, d.Venue.Company.ChangedAt)
+                        d.Venue.Company.AvatarImageS3Key, d.Venue.Company.UpdatedAt)
                     : null,
                 VenueId: d.VenueId.ToString(),
                 VenueAddress: d.Venue.Address,
@@ -77,7 +77,7 @@ public class B2CDealsEndpoints : IEndpoints
                 CompanyName: v.Company.Name,
                 CompanyAvatarImageUrl: v.Company.AvatarImageS3Key != null
                     ? storageService.S3KeyToPublicFileUrl(
-                       v.Company.AvatarImageS3Key, v.Company.ChangedAt)
+                       v.Company.AvatarImageS3Key, v.Company.UpdatedAt)
                     : null,
                 VenueId: v.Id.ToString(),
                 VenueAddress: v.Address,

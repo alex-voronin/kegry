@@ -7,7 +7,7 @@ public class User
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
     public required string AvatarImageS3Key { get; set; }
-    public required DateTimeOffset ChangedAt { get; set; }
+    public required DateTimeOffset UpdatedAt { get; set; }
 
     public ICollection<Notification> Notifications { get; init; } = new List<Notification>();
     public NotificationsSettings? NotificationsSettings { get; init; }

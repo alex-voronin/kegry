@@ -14,7 +14,7 @@ public class User
     public DateOnly Birthday { get; init; }
     public Gender Gender { get; init; }
     public bool IsDeleted { get; init; }
-    public DateTimeOffset ChangedAt { get; init; }
+    public DateTimeOffset UpdatedAt { get; init; }
 
     public IReadOnlyList<Hobby> Hobbies { get; init; } = new List<Hobby>();
 

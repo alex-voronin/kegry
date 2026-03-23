@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Shared.Infrastructure.Persistence.Audit;
 using UserProfileModule.Infrastructure.Persistence;
 using Shared.Setup;
 using Wolverine.EntityFrameworkCore;
@@ -21,5 +22,14 @@ public class UserProfileModuleStartup : AppModuleStartupBase<UserProfileContext>
             ]
         )
     {
+    }
+
+    protected override void RegisterEfCoreContexts(IServiceCollection services, string dbConnectionString)
+    {
+        services.AddDbContext<UserProfileContext>(options =>
+            options.UseNpgsql(dbConnectionString)
+                .AddInterceptors(new AuditableInterceptor())
+                .UseSnakeCaseNamingConvention()
+        );
     }
 }

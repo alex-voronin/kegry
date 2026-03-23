@@ -12,7 +12,7 @@ using UserProfileModule.Infrastructure.Persistence;
 namespace UserProfileModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(UserProfileContext))]
-    [Migration("20260318142244_AddUserProfiles")]
+    [Migration("20260323203238_AddUserProfiles")]
     partial class AddUserProfiles
     {
         /// <inheritdoc />
@@ -702,15 +702,15 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("date")
                         .HasColumnName("birthday");
 
-                    b.Property<DateTimeOffset>("ChangedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("changed_at");
-
                     b.Property<string>("CoverImageS3Key")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)")
                         .HasColumnName("cover_image_s3key");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -735,6 +735,10 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("last_name");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id")
                         .HasName("pk_users");

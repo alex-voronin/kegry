@@ -44,7 +44,8 @@ namespace UserProfileModule.Infrastructure.Persistence.Migrations
                     birthday = table.Column<DateOnly>(type: "date", nullable: false),
                     gender = table.Column<int>(type: "integer", nullable: false),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: false),
-                    changed_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {

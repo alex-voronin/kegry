@@ -31,7 +31,7 @@ public class AuthEndpoints : IEndpoints
         "localtest.me",
         "business.localtest.me"
     ];
-    
+
     public static void MapEndpoints(IEndpointRouteBuilder app)
     {
         var anonymousGroup = app.MapGroup("")

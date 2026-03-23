@@ -94,7 +94,7 @@ public class B2BVenueEndpoints : IEndpoints
                 Id: v.Id,
                 IsVerified: v.IsVerified,
                 CoverImageUrl: v.CoverImageS3Key != null
-                    ? storageService.S3KeyToPublicFileUrl(v.CoverImageS3Key, v.ChangedAt)
+                    ? storageService.S3KeyToPublicFileUrl(v.CoverImageS3Key, v.UpdatedAt)
                     : null,
                 Address: v.Address
                 ))
@@ -222,7 +222,7 @@ public class B2BVenueEndpoints : IEndpoints
             PhoneNumber: venue.PhoneNumber,
             WorkingHours: venue.WorkingHours,
             CoverImageUrl: venue.CoverImageS3Key != null
-                ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.ChangedAt)
+                ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.UpdatedAt)
                 : null,
             QrCode: venue.QrCode,
             Promos: venue.Promos

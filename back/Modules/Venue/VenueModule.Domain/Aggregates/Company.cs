@@ -3,7 +3,7 @@ using SharedCore.Validation;
 
 namespace VenueModule.Domain.Aggregates;
 
-public class Company : ISoftDeletable<Guid>
+public class Company : ISoftDeletable<Guid>, IAuditable
 {
     public required Guid Id { get; init; }
     public required Guid OwnerId { get; init; }
@@ -11,36 +11,28 @@ public class Company : ISoftDeletable<Guid>
     public required string Name
     {
         get;
-        set => SetProperty(
-            ref field,
-            ValidateName(nameof(Name), value)
-        );
+        set => field = ValidateName(nameof(Name), value);
     } = null!;
 
     public string? AvatarImageS3Key
     {
         get;
-        set => SetProperty(
-            ref field,
-            ValidateS3Key(nameof(AvatarImageS3Key), value)
-        );
+        set => field = ValidateS3Key(nameof(AvatarImageS3Key), value);
     }
 
     public string? Email
     {
         get;
-        set => SetProperty(
-            ref field,
-            ValidateEmail(nameof(Email), value)
-        );
+        set => field = ValidateEmail(nameof(Email), value);
     }
 
-    public required DateTimeOffset CreatedAt { get; init; }
-    public DateTimeOffset ChangedAt { get; private set; }
     private readonly List<LoyaltyLevel> _loyaltyLevels = [];
     public IReadOnlyCollection<LoyaltyLevel> LoyaltyLevels => _loyaltyLevels.AsReadOnly();
     public IReadOnlyCollection<Venue> Venues { get; init; } = new List<Venue>();
     public bool IsDeleted { get; set; }
+
+    public required DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; }
 
     public void SetDefaultLoyaltyLevels()
     {
@@ -58,12 +50,6 @@ public class Company : ISoftDeletable<Guid>
     }
 
     #region ================================= Validation =================================
-
-    private void SetProperty<T>(ref T field, T value)
-    {
-        field = value;
-        ChangedAt = DateTimeOffset.UtcNow;
-    }
 
     private static string ValidateName(string fieldName, string value)
     {

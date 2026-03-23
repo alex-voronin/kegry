@@ -220,10 +220,6 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("date")
                         .HasColumnName("birthday");
 
-                    b.Property<DateTimeOffset>("ChangedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("changed_at");
-
                     b.Property<string>("CoverImageS3Key")
                         .IsRequired()
                         .HasColumnType("text")
@@ -250,6 +246,10 @@ namespace FeedModule.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("last_name");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id")
                         .HasName("pk_users");

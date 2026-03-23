@@ -1,8 +1,9 @@
+using SharedCore.Interfaces;
 using SharedCore.Validation;
 
 namespace VenueModule.Domain.Aggregates;
 
-public class Discount
+public class Discount : IAuditable
 {
     public required Guid Id { get; init; }
     public required Guid VenueId { get; init; }
@@ -17,7 +18,9 @@ public class Discount
         set => field = ValidatePercent(nameof(Percent), value);
     }
 
-    public ICollection<DiscountDay> Days { get; set; } = [];
+    public ICollection<DiscountDay> Days { get; init; } = [];
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; }
 
     private static int ValidatePercent(string fieldName, int value)
     {

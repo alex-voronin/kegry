@@ -4,7 +4,7 @@ using SharedCore.ValueObjects;
 
 namespace UserProfileModule.Domain.Aggregates;
 
-public class User : ISoftDeletable<Guid>
+public class User : ISoftDeletable<Guid>, IAuditable
 {
     public Guid Id { get; init; }
 
@@ -92,13 +92,14 @@ public class User : ISoftDeletable<Guid>
         );
     }
 
-    public DateTimeOffset ChangedAt { get; private set; }
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; }
 
     // ReSharper disable once RedundantAssignment
     private void SetProperty<T>(ref T field, T value)
     {
         field = value;
-        ChangedAt = DateTimeOffset.UtcNow;
+        UpdatedAt = DateTimeOffset.UtcNow;
     }
 
     #region ================================= Validation =================================

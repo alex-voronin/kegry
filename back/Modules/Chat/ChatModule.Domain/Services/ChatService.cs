@@ -101,7 +101,7 @@ internal class ChatService : DomainService<IChatRepository>, IChatService, IScop
             ToUserId = toUser.Id,
             FromUserId = fromUser.Id,
             FromUserName = fromUser.FirstName,
-            FromUserAvatarUrl = _storageService.S3KeyToPublicFileUrl(fromUser.AvatarImageS3Key, fromUser.ChangedAt),
+            FromUserAvatarUrl = _storageService.S3KeyToPublicFileUrl(fromUser.AvatarImageS3Key, fromUser.UpdatedAt),
             MessageText = message.Text,
             CreatedAt = message.CreatedAt
         };

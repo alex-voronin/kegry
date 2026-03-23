@@ -95,7 +95,7 @@ public class ChatEndpoints : IEndpoints
             Id: user.Id,
             FirstName: user.FirstName,
             LastName: user.LastName,
-            AvatarUrl: storageService.S3KeyToPublicFileUrl(user.AvatarImageS3Key, user.ChangedAt)
+            AvatarUrl: storageService.S3KeyToPublicFileUrl(user.AvatarImageS3Key, user.UpdatedAt)
         );
     }
 

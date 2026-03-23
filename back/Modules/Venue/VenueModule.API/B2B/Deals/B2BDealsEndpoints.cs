@@ -145,6 +145,7 @@ public class B2BDealsEndpoints : IEndpoints
             throw VenueExceptions.PromoNotFound(id);
         }
 
+        promo.Type = request.Type;
         promo.Body = request.Body;
 
         await promoRepository.SaveChangesAsync(ct);

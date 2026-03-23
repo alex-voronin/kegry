@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Infrastructure.Persistence.Audit;
 using Shared.Setup;
 using VenueModule.Infrastructure.Persistence;
 using Wolverine.EntityFrameworkCore;
@@ -25,6 +26,7 @@ public class VenueModuleStartup : AppModuleStartupBase<VenueContext>
     {
         services.AddDbContextWithWolverineIntegration<VenueContext>(options =>
             options
+                .AddInterceptors(new AuditableInterceptor())
                 .UseNpgsql(dbConnectionString, npgsqlOptions => npgsqlOptions.UseNetTopologySuite())
                 .UseSnakeCaseNamingConvention()
         );

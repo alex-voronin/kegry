@@ -5,7 +5,7 @@ using SharedCore.Validation;
 
 namespace VenueModule.Domain.Aggregates;
 
-public class Venue : ISoftDeletable<Guid>
+public class Venue : ISoftDeletable<Guid>, IAuditable
 {
     public required Guid Id { get; init; }
     public required Guid QrCode { get; set; }
@@ -15,10 +15,7 @@ public class Venue : ISoftDeletable<Guid>
     public string? CoverImageS3Key
     {
         get;
-        set => SetProperty(
-            ref field,
-            ValidateS3Key(nameof(CoverImageS3Key), value)
-        );
+        set => field = ValidateS3Key(nameof(CoverImageS3Key), value);
     }
 
     public required Point Coordinates
@@ -26,10 +23,8 @@ public class Venue : ISoftDeletable<Guid>
         get;
         set
         {
-            if (SetProperty(ref field, value))
-            {
-                TimeZoneId = TimeZoneLookup.GetTimeZone(value.Y, value.X).Result;
-            }
+            field = value;
+            TimeZoneId = TimeZoneLookup.GetTimeZone(value.Y, value.X).Result;
         }
     }
 
@@ -38,55 +33,37 @@ public class Venue : ISoftDeletable<Guid>
     public required string Address
     {
         get;
-        set => SetProperty(
-            ref field,
-            ValidateAddress(nameof(Address), value)
-        );
+        set => field = ValidateAddress(nameof(Address), value);
     } = null!;
 
     public string? WebsiteUrl
     {
         get;
-        set => SetProperty(
-            ref field,
-            ValidateUrl(nameof(WebsiteUrl), value)
-        );
+        set => field = ValidateUrl(nameof(WebsiteUrl), value);
     }
 
     public string? GoogleMapsUrl
     {
         get;
-        set => SetProperty(
-            ref field,
-            ValidateGoogleMapsUrl(nameof(GoogleMapsUrl), value)
-        );
+        set => field = ValidateGoogleMapsUrl(nameof(GoogleMapsUrl), value);
     }
 
     public string? InstagramUrl
     {
         get;
-        set => SetProperty(
-            ref field,
-            ValidateInstagramUrl(nameof(InstagramUrl), value)
-        );
+        set => field = ValidateInstagramUrl(nameof(InstagramUrl), value);
     }
 
     public string? PhoneNumber
     {
         get;
-        set => SetProperty(
-            ref field,
-            ValidatePhoneNumber(nameof(PhoneNumber), value)
-        );
+        set => field = ValidatePhoneNumber(nameof(PhoneNumber), value);
     }
 
     public string? WorkingHours
     {
         get;
-        set => SetProperty(
-            ref field,
-            ValidateWorkingHours(nameof(WorkingHours), value)
-        );
+        set => field = ValidateWorkingHours(nameof(WorkingHours), value);
     }
 
     private readonly List<Promo> _promos = [];
@@ -95,22 +72,11 @@ public class Venue : ISoftDeletable<Guid>
     private readonly List<Discount> _discounts = [];
     public IReadOnlyCollection<Discount> Discounts => _discounts;
 
-    public DateTimeOffset ChangedAt { get; private set; }
-
-    private bool SetProperty<T>(ref T field, T value)
-    {
-        if (EqualityComparer<T>.Default.Equals(field, value))
-        {
-            return false;
-        }
-
-        field = value;
-        ChangedAt = DateTimeOffset.UtcNow;
-        return true;
-    }
-
     public bool IsVerified { get; set; }
     public bool IsDeleted { get; set; }
+
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; }
 
     public void AddPromo(Promo promo)
     {

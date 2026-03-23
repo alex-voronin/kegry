@@ -207,7 +207,7 @@ public class B2BCompanyEndpoints : IEndpoints
             IsVerified: venue.IsVerified,
             Address: venue.Address,
             CoverImageUrl: venue.CoverImageS3Key != null
-                ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.ChangedAt)
+                ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.UpdatedAt)
                 : null
         );
     }
@@ -219,7 +219,7 @@ public class B2BCompanyEndpoints : IEndpoints
             Name: company.Name,
             Email: company.Email,
             AvatarImageUrl: company.AvatarImageS3Key != null
-                ? storageService.S3KeyToPublicFileUrl(company.AvatarImageS3Key, company.ChangedAt)
+                ? storageService.S3KeyToPublicFileUrl(company.AvatarImageS3Key, company.UpdatedAt)
                 : null,
             LoyaltyLevels: company.LoyaltyLevels
                 .Select(l => new LoyaltyLevelDto(l.Id, l.VisitsUpperBound, l.IsActive))

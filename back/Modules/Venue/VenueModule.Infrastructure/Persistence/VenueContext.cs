@@ -203,6 +203,8 @@ public class VenueContext : DbContext
         {
             entity.ToTable("promo");
             entity.HasKey(p => p.Id);
+            entity.Property(p => p.Body)
+                .HasMaxLength(1000);
             entity.HasOne(p => p.Venue)
                 .WithMany(v => v.Promos)
                 .HasForeignKey(d => d.VenueId)

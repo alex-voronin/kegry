@@ -70,7 +70,7 @@ public class B2CVenueEndpoints : IEndpoints
                     CompanyName: v.Venue.Company.Name,
                     CompanyAvatarImageUrl: v.Venue.Company.AvatarImageS3Key != null
                         ? storageService
-                            .S3KeyToPublicFileUrl(v.Venue.Company.AvatarImageS3Key, v.Venue.Company.ChangedAt)
+                            .S3KeyToPublicFileUrl(v.Venue.Company.AvatarImageS3Key, v.Venue.Company.UpdatedAt)
                         : null,
                     Address: v.Venue.Address,
                     DistanceMeters: (int)v.DistanceMeters,
@@ -166,7 +166,7 @@ public class B2CVenueEndpoints : IEndpoints
             PhoneNumber: venue.PhoneNumber,
             WorkingHours: venue.WorkingHours,
             CoverImageUrl: venue.CoverImageS3Key != null
-                ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.ChangedAt)
+                ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.UpdatedAt)
                 : null,
             Promos: venue.Promos
                 .Select(p => new PromoDto(Type: p.Type, Body: p.Body))
@@ -181,7 +181,7 @@ public class B2CVenueEndpoints : IEndpoints
             Name: company.Name,
             Email: company.Email,
             AvatarImageUrl: company.AvatarImageS3Key != null
-                ? storageService.S3KeyToPublicFileUrl(company.AvatarImageS3Key, company.ChangedAt)
+                ? storageService.S3KeyToPublicFileUrl(company.AvatarImageS3Key, company.UpdatedAt)
                 : null
         );
     }

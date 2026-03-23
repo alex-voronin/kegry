@@ -28,7 +28,7 @@ public class UserProfileAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             FirstName = "John",
             LastName = "Doe",
             AvatarImageS3Key = "avatar.png",
-            ChangedAt = DateTimeOffset.Now
+            UpdatedAt = DateTimeOffset.Now
         };
 
         await Factory.Host
@@ -58,7 +58,7 @@ public class UserProfileAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             FirstName = "John",
             LastName = "Doe",
             AvatarImageS3Key = "avatar.png",
-            ChangedAt = DateTimeOffset.Now
+            UpdatedAt = DateTimeOffset.Now
         };
 
         await Factory.Host

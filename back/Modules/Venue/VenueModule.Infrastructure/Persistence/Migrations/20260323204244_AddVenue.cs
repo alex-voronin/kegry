@@ -28,9 +28,9 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     avatar_image_s3key = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     email = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    changed_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -76,9 +76,10 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     instagram_url = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     phone_number = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
                     working_hours = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    changed_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     is_verified = table.Column<bool>(type: "boolean", nullable: false),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -128,7 +129,9 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     venue_id = table.Column<Guid>(type: "uuid", nullable: false),
                     company_id = table.Column<Guid>(type: "uuid", nullable: false),
                     loyalty_level_id = table.Column<int>(type: "integer", nullable: false),
-                    percent = table.Column<int>(type: "integer", nullable: false)
+                    percent = table.Column<int>(type: "integer", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -156,7 +159,9 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     venue_id = table.Column<Guid>(type: "uuid", nullable: false),
                     type = table.Column<int>(type: "integer", nullable: false),
-                    body = table.Column<string>(type: "text", nullable: false)
+                    body = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {

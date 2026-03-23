@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NotificationsModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NotificationsContext))]
-    [Migration("20260224163803_AddNotifications")]
+    [Migration("20260323204146_AddNotifications")]
     partial class AddNotifications
     {
         /// <inheritdoc />
@@ -135,10 +135,6 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(128)")
                         .HasColumnName("avatar_image_s3key");
 
-                    b.Property<DateTimeOffset>("ChangedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("changed_at");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -156,6 +152,10 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("last_name");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id")
                         .HasName("pk_users");

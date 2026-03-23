@@ -153,8 +153,8 @@ public class UserProfileEndpoints : IEndpoints
             FirstName: profile.FirstName,
             LastName: profile.LastName,
             Bio: profile.Bio,
-            AvatarImageUrl: storageService.S3KeyToPublicFileUrl(profile.AvatarImageS3Key, profile.ChangedAt),
-            CoverImageUrl: storageService.S3KeyToPublicFileUrl(profile.CoverImageS3Key, profile.ChangedAt),
+            AvatarImageUrl: storageService.S3KeyToPublicFileUrl(profile.AvatarImageS3Key, profile.UpdatedAt),
+            CoverImageUrl: storageService.S3KeyToPublicFileUrl(profile.CoverImageS3Key, profile.UpdatedAt),
             Birthday: profile.Birthday,
             Gender: profile.Gender,
             Hobbies: profile.Hobbies
@@ -227,7 +227,7 @@ public class UserProfileEndpoints : IEndpoints
             FirstName = profile.FirstName,
             LastName = profile.LastName,
             AvatarImageS3Key = profile.AvatarImageS3Key,
-            ChangedAt = profile.ChangedAt,
+            UpdatedAt = profile.UpdatedAt,
         };
     }
 }
