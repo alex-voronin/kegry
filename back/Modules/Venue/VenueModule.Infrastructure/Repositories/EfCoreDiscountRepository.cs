@@ -49,7 +49,7 @@ public class EfCoreDiscountRepository : Repository<VenueContext, Discount>, IDis
                     .Any(l => l.UserId == userId &&
                               l.CompanyId == d.CompanyId &&
                               l.LoyaltyLevelId >= d.LoyaltyLevelId));
-        
+
         var highestPerVenueQuery = baseQuery
             .GroupBy(d => d.VenueId)
             .Select(g => g

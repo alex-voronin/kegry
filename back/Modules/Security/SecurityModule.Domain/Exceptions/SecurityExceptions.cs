@@ -5,6 +5,11 @@ namespace SecurityModule.Domain.Exceptions;
 
 public static class SecurityExceptions
 {
+    public static HttpCodeException UntrustedHostException()
+    {
+        return new HttpCodeException("Untrusted host", HttpStatusCode.BadRequest, ErrorCode.ValidationError);
+    }
+
     public static HttpCodeException UnauthorizedAccess(string? message = null)
     {
         var exMessage = message ?? "Unauthorized access";
@@ -23,22 +28,26 @@ public static class SecurityExceptions
 
     public static HttpCodeException UserAlreadyExists(string email)
     {
-        return new HttpCodeException($"User with email {email} already exists", HttpStatusCode.UnprocessableEntity, ErrorCode.AlreadyExists);
+        return new HttpCodeException($"User with email {email} already exists", HttpStatusCode.UnprocessableEntity,
+            ErrorCode.AlreadyExists);
     }
 
     public static HttpCodeException AccessTokenAlreadyExists(string email)
     {
-        return new HttpCodeException($"Access token already exists for {email}", HttpStatusCode.UnprocessableEntity, ErrorCode.AlreadyExists);
+        return new HttpCodeException($"Access token already exists for {email}", HttpStatusCode.UnprocessableEntity,
+            ErrorCode.AlreadyExists);
     }
 
     public static HttpCodeException AccessTokensLimitPerUserIsReached(string email)
     {
-        return new HttpCodeException($"Access tokens limit is reached for {email}", HttpStatusCode.UnprocessableEntity, ErrorCode.TooManyEntities);
+        return new HttpCodeException($"Access tokens limit is reached for {email}", HttpStatusCode.UnprocessableEntity,
+            ErrorCode.TooManyEntities);
     }
 
     public static HttpCodeException EmailDoesNotExist(string email)
     {
-        return new HttpCodeException($"The email address {email} does not exist", HttpStatusCode.UnprocessableEntity, ErrorCode.DoesNotExist);
+        return new HttpCodeException($"The email address {email} does not exist", HttpStatusCode.UnprocessableEntity,
+            ErrorCode.DoesNotExist);
     }
 
     public static HttpCodeException InternalError(string description)

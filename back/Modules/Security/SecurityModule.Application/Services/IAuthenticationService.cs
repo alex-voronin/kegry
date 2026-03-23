@@ -23,7 +23,7 @@ public interface IAuthenticationService
     public Task<AuthResult> RenewTokensAsync(string refreshToken);
     public Task LogoutAsync();
 
-    public Task RequestPasswordResetAsync(string email);
+    public Task RequestPasswordResetAsync(string email, string baseUrl);
     public Task ConfirmPasswordResetAsync(string email, string token, string newPassword);
     public Task DeleteAccountAsync(string userId);
 }

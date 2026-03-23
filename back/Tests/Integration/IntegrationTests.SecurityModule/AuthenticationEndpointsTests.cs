@@ -135,7 +135,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .SendEmailAsync(Arg.Do<Email>(e =>
             {
                 var match = Regex.Match(e.Body,
-                    @"<a href=""https:\/\/kegry\.com\/password-reset\?email=.+&token=(.+)"">");
+                    @"<a href=""http:\/\/localhost\/password-reset\?email=.+&token=(.+)"">");
                 capturedToken = match.Groups[1].Value;
             }), Arg.Any<CancellationToken>());
 

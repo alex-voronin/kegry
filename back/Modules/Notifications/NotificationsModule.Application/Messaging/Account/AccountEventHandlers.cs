@@ -28,6 +28,9 @@ public static class AccountEventHandlers
     {
         Log.Information("{HandlerClass} Handling event {@Event}",
             typeof(AccountEventHandlers).FullName, @event);
-        await emailNotificationStrategy.SendPasswordReset(@event.Email, @event.ResetToken);
+        await emailNotificationStrategy.SendPasswordReset(
+            toEmail: @event.Email,
+            baseUrl: @event.BaseUrl,
+            resetToken: @event.ResetToken);
     }
 }

@@ -106,7 +106,7 @@
     <data name="Email.PasswordReset.Body" xml:space="preserve">
         <value>
             You requested a password reset.&lt;br /&gt;&lt;br /&gt;
-            Follow the link to reset your password: &lt;a href=&quot;https://kegry.com/password-reset?email={0}&amp;token={1}&quot;&gt;https://kegry.com/password-reset?email={0}&amp;token={1}&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;
+            Follow the link to reset your password: &lt;a href=&quot;{0}/password-reset?email={1}&amp;token={2}&quot;&gt;{0}/password-reset?email={1}&amp;token={2}&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;
             Best regards,&lt;br /&gt;
             The Kegrycorn Team
         </value>

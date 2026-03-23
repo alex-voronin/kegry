@@ -292,7 +292,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         }
     }
 
-    public async Task RequestPasswordResetAsync(string email)
+    public async Task RequestPasswordResetAsync(string email, string baseUrl)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
@@ -308,6 +308,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
             {
                 UserId = user.Id,
                 Email = email,
+                BaseUrl = baseUrl,
                 ResetToken = resetToken
             }
         );

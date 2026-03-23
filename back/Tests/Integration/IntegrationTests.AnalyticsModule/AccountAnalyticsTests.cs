@@ -71,6 +71,7 @@ public class AccountAnalyticsTests : IntegrationTestBase, IAsyncLifetime
         {
             UserId = Guid.NewGuid(),
             Email = "reset@example.com",
+            BaseUrl = "https://example.com",
             ResetToken = "token"
         };
 

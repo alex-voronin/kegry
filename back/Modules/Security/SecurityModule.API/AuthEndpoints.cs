@@ -20,6 +20,18 @@ namespace SecurityModule.API;
 
 public class AuthEndpoints : IEndpoints
 {
+    private static readonly string[] HostWhitelist = [
+        "kegrycorn.com",
+        "kegry.com",
+        "business.kegry.com",
+        "kegry.rs",
+        "business.kegry.rs",
+        "localhost",
+        "localhost:3000",
+        "localtest.me",
+        "business.localtest.me"
+    ];
+    
     public static void MapEndpoints(IEndpointRouteBuilder app)
     {
         var anonymousGroup = app.MapGroup("")
@@ -117,9 +129,15 @@ public class AuthEndpoints : IEndpoints
 
     private static async Task<ApiResult.EmptyResult> RequestPasswordReset(
         [FromBody] RequestPasswordResetRequest request,
+        HttpRequest httpRequest,
         IAuthenticationService service)
     {
-        await service.RequestPasswordResetAsync(request.Email);
+        if (!HostWhitelist.Contains(httpRequest.Host.ToString()))
+        {
+            throw SecurityExceptions.UntrustedHostException();
+        }
+        var baseUrl = httpRequest.Scheme + "://" + httpRequest.Host;
+        await service.RequestPasswordResetAsync(request.Email, baseUrl);
         return ApiResult.Empty;
     }
 

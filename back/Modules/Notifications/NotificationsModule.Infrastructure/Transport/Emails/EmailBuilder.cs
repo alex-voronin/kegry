@@ -15,7 +15,7 @@ public interface IEmailBuilder
     public Email BuildMeetingArrangedEmail(string toEmail, string otherUserFullName);
     public Email BuildUserInvitedEmail(string toEmail);
     public Email BuildChatMessageReceivedEmail(string toEmail, ChatMessageSentEvent @event);
-    public Email BuildPasswordResetEmail(string toEmail, string resetToken);
+    public Email BuildPasswordResetEmail(string toEmail, string baseUrl, string resetToken);
     public Email BuildReferrerRewardReceived(string toEmail);
 }
 
@@ -57,12 +57,12 @@ internal class EmailBuilder : IEmailBuilder, ISingleton
         return new Email(ToEmail: toEmail, Subject: title, Body: body, IsImportant: false);
     }
 
-    public Email BuildPasswordResetEmail(string toEmail, string resetToken)
+    public Email BuildPasswordResetEmail(string toEmail, string baseUrl, string resetToken)
     {
         var encodedEmail = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(toEmail));
         var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(resetToken));
         var title = _localizer.GetString("Email.PasswordReset.Subject");
-        var body = _localizer.GetString("Email.PasswordReset.Body", encodedEmail, encodedToken);
+        var body = _localizer.GetString("Email.PasswordReset.Body", baseUrl, encodedEmail, encodedToken);
         return new Email(ToEmail: toEmail, Subject: title, Body: body, IsImportant: true);
     }
 
