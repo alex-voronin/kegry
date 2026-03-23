@@ -160,10 +160,12 @@ function BackgroundServices() {
 
 export function Providers({
   children,
+  runPushesAndLocationHandling,
   locale,
   messages,
 }: {
   children: ReactNode;
+  runPushesAndLocationHandling: boolean;
   locale: string;
   messages: Record<string, any>;
 }) {
@@ -176,8 +178,12 @@ export function Providers({
   return (
     <NextIntlClientProvider messages={messages} locale={locale} timeZone="UTC">
       <TawkMessenger />
-      {canMountGlobalHandlers && <FcmGlobalHandler />}
-      <BackgroundServices />
+      {runPushesAndLocationHandling && (
+        <>
+          {canMountGlobalHandlers && <FcmGlobalHandler />}
+          <BackgroundServices />
+        </>
+      )}
       {children}
     </NextIntlClientProvider>
   );

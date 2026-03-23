@@ -63,7 +63,11 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${fundamento.variable} antialiased`}
       >
-        <Providers locale={locale} messages={messages}>
+        <Providers
+          runPushesAndLocationHandling={false}
+          locale={locale}
+          messages={messages}
+        >
           <div className="flex min-h-screen w-full justify-center">
             <main className="bg-surface text-foreground relative flex w-full max-w-[500px] flex-col sm:rounded-[16px]">
               <ToastContainer
