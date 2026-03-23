@@ -60,7 +60,7 @@ export default function VerifyEmailPage() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <Logo />
+        <Logo b2b={true} />
         <div className="mt-8 flex flex-col items-center gap-2">
           <p className="text-secondary text-center text-sm">
             {t('description')}

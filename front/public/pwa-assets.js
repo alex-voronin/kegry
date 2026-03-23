@@ -6,6 +6,7 @@ const STATIC_ASSETS = [
   "/assets/b2b/disclosure-right-icon.svg",
   "/assets/b2b/edit-icon.svg",
   "/assets/b2b/google-maps-icon.svg",
+  "/assets/b2b/logo.webp",
   "/assets/b2b/more-icon.svg",
   "/assets/b2b/phone-icon.svg",
   "/assets/b2b/plus-icon.svg",

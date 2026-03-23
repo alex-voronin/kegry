@@ -81,7 +81,7 @@ export default function RegisterPage() {
     <>
       <div className={styles.page}>
         <div className={styles.container}>
-          <Logo />
+          <Logo b2b={true} />
 
           <form
             onSubmit={handleSubmit(onSubmit)}

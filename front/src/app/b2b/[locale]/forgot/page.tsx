@@ -58,7 +58,7 @@ export default function ForgotPasswordPage() {
     return (
       <div className={styles.page}>
         <div className={styles.container}>
-          <Logo />
+          <Logo b2b={true} />
           <div className="mt-4 text-center">
             <p className="text-base">{t('successDescription')}</p>
           </div>
@@ -77,7 +77,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <Logo />
+        <Logo b2b={true} />
 
         <form onSubmit={handleSubmit(onSubmit)} className={styles.formSection}>
           <div className="text-center">

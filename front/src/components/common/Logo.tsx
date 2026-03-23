@@ -3,10 +3,11 @@ import Image from 'next/image';
 import styles from './Logo.module.css';
 
 interface LogoProps {
+  b2b?: boolean;
   tagline?: string;
 }
 
-export function Logo({ tagline }: LogoProps) {
+export function Logo({ b2b, tagline }: LogoProps) {
   const t = useTranslations('components.logo');
   const finalTagline = tagline || t('tagline');
 
@@ -14,7 +15,7 @@ export function Logo({ tagline }: LogoProps) {
     <div className="flex w-full justify-center">
       <div className={styles.header}>
         <Image
-          src="/assets/common/logo.webp"
+          src={b2b ? '/assets/b2b/logo.webp' : '/assets/common/logo.webp'}
           alt="Kegrycorn"
           width={180}
           height={254}
