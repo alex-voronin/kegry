@@ -40,10 +40,8 @@ export default function LoginPage() {
     if (isRedirecting) {
       if (requiredAction === RequiredAction.EmailVerification) {
         router.replace(PAGE_ROUTES.B2B.VERIFY_EMAIL);
-      } else if (requiredAction === RequiredAction.OnboardingCompletion) {
-        router.replace(PAGE_ROUTES.B2B.HOME); // Adjust if B2B has its own onboarding
       } else {
-        router.replace(PAGE_ROUTES.B2B.HOME);
+        router.replace(PAGE_ROUTES.B2B.VENUES);
       }
     } else if (hasHydrated && shouldRedirect) {
       // Clean up the URL if we are not redirecting
@@ -75,7 +73,7 @@ export default function LoginPage() {
       if (result.requiredAction === RequiredAction.EmailVerification) {
         router.push(PAGE_ROUTES.B2B.VERIFY_EMAIL);
       } else {
-        router.push(PAGE_ROUTES.B2B.COMPANIES);
+        router.push(PAGE_ROUTES.B2B.VENUES);
       }
     } catch (err: any) {
       if (err.code === 'ValidationError') {
@@ -92,7 +90,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const result = await signinWithGoogle(credential, UserType.B2B);
-      router.push(PAGE_ROUTES.B2B.COMPANIES);
+      router.push(PAGE_ROUTES.B2B.VENUES);
     } catch (err: any) {
       toast.error(err.message || tCommonErrors('network'));
     } finally {

@@ -19,6 +19,7 @@ import { useCompaniesStore } from '../use-companies-store';
 import { API_ENDPOINTS, PAGE_ROUTES } from '@/lib/routes';
 import { uploadImage, compressImageToBlob } from '@/lib/image-utils';
 import styles from './create.module.css';
+import { useSafeBack } from '@/hooks/use-safe-back';
 
 export default function CompanyCreatePage() {
   const t = useTranslations('screens.createCompany');
@@ -29,6 +30,7 @@ export default function CompanyCreatePage() {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [avatarBlob, setAvatarBlob] = useState<Blob | null>(null);
 
+  const { safeBack } = useSafeBack();
   const { createCompany, patchCompany } = useCompaniesStore();
 
   const schema = z.object({
@@ -120,7 +122,7 @@ export default function CompanyCreatePage() {
             alt="back"
             width={14}
             height={27}
-            onClick={() => router.back()}
+            onClick={() => safeBack(PAGE_ROUTES.B2B.COMPANIES)}
           />
         }
       />
