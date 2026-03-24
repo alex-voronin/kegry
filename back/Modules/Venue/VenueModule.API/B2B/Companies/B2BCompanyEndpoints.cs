@@ -122,7 +122,7 @@ public class B2BCompanyEndpoints : IEndpoints
         var company = await repository.GetByIdAsync(
             companyId: id,
             ownerId: user.GetId(),
-            asNoTracking: true,
+            asNoTracking: false,
             ignoreVerifiedFilter: true,
             ct: ct);
         if (company == null)
@@ -153,7 +153,7 @@ public class B2BCompanyEndpoints : IEndpoints
             companyId: id,
             ownerId: user.GetId(),
             includeVenues: true,
-            asNoTracking: true,
+            asNoTracking: false,
             ignoreVerifiedFilter: true,
             ct: ct);
         if (company == null)

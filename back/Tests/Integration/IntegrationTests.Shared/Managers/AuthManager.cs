@@ -28,10 +28,10 @@ public class AuthManager
         _host = host;
     }
 
-    public async Task<AuthResponse> CreateAndLoginUserAsync(string email, string password)
+    public async Task<AuthResponse> CreateAndLoginUserAsync(string email, string password, UserType userType = UserType.B2C)
     {
         // 1. Sign up
-        var signupRequest = new SignUpRequest(email, password, UserType.B2C);
+        var signupRequest = new SignUpRequest(email, password, userType);
         var signupResponse = await _apiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
             ApiRoutes.Auth.Signup, signupRequest);
 

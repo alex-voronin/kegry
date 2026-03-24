@@ -70,4 +70,12 @@ public static class ApiRoutes
         public const string MetNpcs = "/api/v1/npc/met";
         public static string Invite(string id) => $"/api/v1/npc/{id}/invite";
     }
+    public static class B2B
+    {
+        public static class Company
+        {
+            public const string Root = "/api/v1/companies";
+            public static string Single(Guid id) => $"/api/v1/company/{id}";
+        }
+    }
 }
