@@ -19,6 +19,7 @@ public class EfCoreCompanyRepository : Repository<VenueContext, Company>, ICompa
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
         bool asNoTracking = false,
         Expression<Func<Company, object?>>[]? includes = null,
+        string[]? ignoreFilters = null,
         CancellationToken ct = default)
     {
         throw new NotImplementedException("""

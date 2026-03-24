@@ -4,6 +4,7 @@ using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.Exceptions;
 using VenueModule.Domain.Repositories;
 using SharedCore.Extensions;
+using VenueModule.Infrastructure.Persistence;
 
 namespace VenueModule.API;
 
@@ -22,16 +23,26 @@ internal static class VenueOwnerGuard
         Expression<Func<Venue, object?>>[]? includes = null,
         CancellationToken ct = default)
     {
-        var venue = await venueRepository.GetByIdAsync(venueId, asNoTracking: asNoTracking, includes: includes, ct: ct);
+        var venue = await venueRepository.GetByIdAsync(venueId,
+            asNoTracking: asNoTracking,
+            includes: includes,
+            ignoreFilters: [NamedFilters.Venue.Verified],
+            ct: ct);
         if (venue == null)
+        {
             throw VenueExceptions.VenueNotFound(venueId);
+        }
 
-        var company = await companyRepository.GetByIdAsync(venue.CompanyId, ct: ct);
+        var company = await companyRepository.GetByIdAsync(venue.CompanyId, ownerId: user.GetId(), ct: ct);
         if (company == null)
+        {
             throw VenueExceptions.CompanyNotFound();
+        }
 
         if (company.OwnerId != user.GetId())
+        {
             throw VenueExceptions.SomeoneElseCompany(company.Id);
+        }
 
         return venue;
     }

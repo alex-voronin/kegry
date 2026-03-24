@@ -76,6 +76,13 @@ public static class ApiRoutes
         {
             public const string Root = "/api/v1/companies";
             public static string Single(Guid id) => $"/api/v1/company/{id}";
+            public static string Venues(Guid companyId) => $"/api/v1/company/{companyId}/venue";
+        }
+
+        public static class Venue
+        {
+            public const string Root = "/api/v1/venue";
+            public static string Single(Guid id) => $"/api/v1/venue/{id}";
         }
     }
 }

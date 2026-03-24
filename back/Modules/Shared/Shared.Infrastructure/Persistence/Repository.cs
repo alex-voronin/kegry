@@ -24,10 +24,15 @@ public class Repository<TContext, TEntity> : RepositoryBase, IRepository<TEntity
         TId id,
         bool asNoTracking = false,
         Expression<Func<TEntity, object?>>[]? includes = null,
+        string[]? ignoreFilters = null,
         CancellationToken ct = default) where TId : IEquatable<TId>
     {
         IQueryable<TEntity> query = Context.Set<TEntity>();
 
+        if (ignoreFilters != null)
+        {
+            query = query.IgnoreQueryFilters(ignoreFilters);
+        }
         if (asNoTracking)
         {
             query = query.AsNoTracking();

@@ -22,6 +22,7 @@ namespace IntegrationTests.Shared;
 public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     public IntegrationApiClient ApiClient { get; private set; } = null!;
+    public HttpClient HttpClient { get; private set; } = null!;
     public S3Client S3Client { get; init; } = new S3Client();
     public AuthManager AuthManager { get; private set; } = null!;
     public NotificationManager NotificationManager { get; private set; } = null!;
@@ -104,6 +105,7 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
 
         var httpClient = CreateClient();
         ApiClient = new IntegrationApiClient(httpClient);
+        HttpClient = httpClient;
         AuthManager = new AuthManager(ApiClient, Services, Host);
 
         await ContainerManager.CreateTestBucketAsync();

@@ -1,6 +1,6 @@
 namespace VenueModule.Infrastructure.Persistence;
 
-internal static class NamedFilters
+public static class NamedFilters
 {
     public static class Venue
     {

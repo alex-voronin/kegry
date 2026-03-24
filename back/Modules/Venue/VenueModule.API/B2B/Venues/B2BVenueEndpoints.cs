@@ -28,7 +28,7 @@ public class B2BVenueEndpoints : IEndpoints
         var managementApiGroup = app.MapGroup("")
             .WithTags("Venue Management API")
             .RequireAuthorization(AuthPolicies.B2BAdmin);
-        managementApiGroup.MapPost("/api/v1/company{companyId:guid}/venue", CreateVenue);
+        managementApiGroup.MapPost("/api/v1/company/{companyId:guid}/venue", CreateVenue);
         managementApiGroup.MapGet("/api/v1/venue", GetVenues);
         managementApiGroup.MapGet("/api/v1/venue/{id:guid}", GetVenue);
         managementApiGroup.MapPatch("/api/v1/venue/{id:guid}", PatchVenue);
@@ -58,7 +58,7 @@ public class B2BVenueEndpoints : IEndpoints
         var venueId = Guid.CreateVersion7();
         var venue = new Venue
         {
-            Id = Guid.CreateVersion7(),
+            Id = venueId,
             QrCode = venueId,
             CompanyId = company.Id,
             CoverImageS3Key = request.CoverImageUrl != null

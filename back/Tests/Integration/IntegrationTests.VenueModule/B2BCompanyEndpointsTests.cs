@@ -1,3 +1,4 @@
+using System.Net.Http.Json;
 using IntegrationTests.Shared;
 using IntegrationTests.Shared.Extensions;
 using SecurityModule.Domain.ValueObjects;
@@ -22,7 +23,8 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
     public async Task GivenAuthenticatedB2BUser_WhenUserCreatesCompany_ThenCompanyCreated()
     {
         // 1. Sign in as B2B user
-        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("b2b_create@example.com", "Password123!", UserType.B2B);
+        var authResponse =
+            await Factory.AuthManager.CreateAndLoginUserAsync("b2b_create@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Create company
@@ -49,7 +51,8 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
     public async Task GivenExistingCompany_WhenUserUpdatesCompany_ThenCompanyUpdated()
     {
         // 1. Sign in as B2B user and create company
-        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("b2b_update@example.com", "Password123!", UserType.B2B);
+        var authResponse =
+            await Factory.AuthManager.CreateAndLoginUserAsync("b2b_update@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(authResponse);
 
         var createRequest = new CreateCompanyRequest(Name: "Original Company", Email: "original@test.com");
@@ -75,7 +78,7 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
         getResponse.Result.Company.ShouldSatisfyAllConditions(
             c => c.Name.ShouldBe(patchRequest.Name),
             c => c.Email.ShouldBe(patchRequest.Email),
-            c => c.AvatarImageUrl.ShouldBeNewerOrTheSameS3Url(patchRequest.AvatarImageUrl!)
+            c => c.AvatarImageUrl!.ShouldBeNewerOrTheSameS3Url(patchRequest.AvatarImageUrl!)
         );
     }
 
@@ -83,7 +86,8 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
     public async Task GivenExistingCompany_WhenUserDeletesCompany_ThenCompanyDeleted()
     {
         // 1. Sign in as B2B user and create company
-        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("b2b_delete@example.com", "Password123!", UserType.B2B);
+        var authResponse =
+            await Factory.AuthManager.CreateAndLoginUserAsync("b2b_delete@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(authResponse);
 
         var createRequest = new CreateCompanyRequest(Name: "To Delete", Email: "delete@test.com");
@@ -99,7 +103,7 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 3. Verify company is not found
         var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetCompanyResponse>>(
             ApiRoutes.B2B.Company.Single(companyId));
-        
+
         getResponse.Success.ShouldBeFalse();
         getResponse.Errors.ShouldContain(e => e.Code == nameof(ErrorCode.NotFound));
     }
@@ -108,7 +112,8 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
     public async Task GivenAuthenticatedB2BUser_WhenUserCreatesMultipleCompanies_ThenCompaniesReturnedInList()
     {
         // 1. Sign in as B2B user
-        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("b2b_list@example.com", "Password123!", UserType.B2B);
+        var authResponse =
+            await Factory.AuthManager.CreateAndLoginUserAsync("b2b_list@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Create 2 companies
@@ -128,5 +133,21 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
         listResponse.Result.Companies.Length.ShouldBeGreaterThanOrEqualTo(2);
         listResponse.Result.Companies.ShouldContain(c => c.Name == firstRequest.Name);
         listResponse.Result.Companies.ShouldContain(c => c.Name == secondRequest.Name);
+    }
+
+    [Fact]
+    public async Task GivenAuthenticatedB2CUser_WhenUserCreatesCompany_ThenReturnsForbidden()
+    {
+        // 1. Sign in as B2C user
+        var authResponse =
+            await Factory.AuthManager.CreateAndLoginUserAsync("b2c_intruder@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authResponse);
+
+        // 2. Try to create company
+        var createRequest = new CreateCompanyRequest(Name: "I am B2C", Email: "b2c@test.com");
+        var response = await Factory.HttpClient.PostAsJsonAsync(ApiRoutes.B2B.Company.Root, createRequest);
+
+        // 3. Verify forbidden
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Forbidden);
     }
 }

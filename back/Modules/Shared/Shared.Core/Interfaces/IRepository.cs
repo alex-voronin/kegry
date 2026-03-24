@@ -19,6 +19,7 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
         TId id,
         bool asNoTracking = false,
         Expression<Func<TEntity, object?>>[]? includes = null,
+        string[]? ignoreFilters = null,
         CancellationToken ct = default) where TId : IEquatable<TId>;
     public void Attach(TEntity entity);
     public void Add(TEntity entity);
