@@ -20,7 +20,7 @@ import styles from '../page.module.css';
 
 export function PromotionsTab() {
   const router = useRouter();
-  const t = useTranslations('screens.offersAndDeals');
+  const t = useTranslations('screens.discountsAndPromotions');
   const [selectedPromotion, setSelectedPromotion] =
     useState<AvailablePromotionDto | null>(null);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
@@ -145,8 +145,7 @@ export function PromotionsTab() {
             className="cursor-pointer"
             onClick={() => setSelectedPromotion(promo)}
             avatarUrl={
-              promo.companyAvatarImageUrl ||
-              '/assets/common/venues-icon.svg'
+              promo.companyAvatarImageUrl || '/assets/common/venues-icon.svg'
             }
             avatarAlt={promo.companyName}
             title={promo.companyName}
@@ -155,10 +154,7 @@ export function PromotionsTab() {
               <div className="flex items-center gap-2">
                 <div className="text-primary flex items-center gap-1">
                   {promo.promos.length % 2 !== 0 && (
-                    <PromoIcon
-                      type={promo.promos[0].type}
-                      size={16}
-                    />
+                    <PromoIcon type={promo.promos[0].type} size={16} />
                   )}
                   {promo.promos.length > 1 && (
                     <div className="grid grid-flow-col grid-rows-2 gap-1">
@@ -193,9 +189,7 @@ export function PromotionsTab() {
       <ModalMenu
         isOpen={!!selectedPromotion}
         onClose={() => setSelectedPromotion(null)}
-        options={
-          selectedPromotion ? getMenuOptions(selectedPromotion) : []
-        }
+        options={selectedPromotion ? getMenuOptions(selectedPromotion) : []}
       />
     </>
   );
