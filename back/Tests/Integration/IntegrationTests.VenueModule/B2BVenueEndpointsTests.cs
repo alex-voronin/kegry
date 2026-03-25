@@ -189,6 +189,41 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
     }
 
     [Fact]
+    public async Task GivenAuthenticatedB2BUser_WhenDeletesCompany_ThenNoVenuesReturned()
+    {
+        // 1. Sign in as B2B user and create company
+        var authResponse =
+            await Factory.AuthManager.CreateAndLoginUserAsync("b2b_venue_list@example.com", "Password123!",
+                UserType.B2B);
+        Factory.ApiClient.SetAuth(authResponse);
+
+        var createCompanyResponse =
+            await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+                ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("List Co", "list@test.com"));
+        var companyId = createCompanyResponse.Result.Id;
+
+        // 2. Create 2 venues
+        await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+            ApiRoutes.B2B.Company.Venues(companyId),
+            new CreateVenueRequest(1, 1, "Venue 1", null, null, null, null, null, null));
+        await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+            ApiRoutes.B2B.Company.Venues(companyId),
+            new CreateVenueRequest(2, 2, "Venue 2", null, null, null, null, null, null));
+
+        // 3. Delete company
+        var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
+            ApiRoutes.B2B.Company.Single(companyId));
+        deleteResponse.Success.ShouldBeTrue();
+
+        // 4. Get venues list and verify
+        var listResponse = await Factory.ApiClient.GetAsync<ApiResult<GetVenuesResponse>>(
+            ApiRoutes.B2B.Venue.Root);
+
+        listResponse.Success.ShouldBeTrue();
+        listResponse.Result.Venues.Length.ShouldBe(0);
+    }
+
+    [Fact]
     public async Task GivenAuthenticatedB2CUser_WhenUserCreatesVenue_ThenReturnsForbidden()
     {
         // 1. Sign in as B2C user
