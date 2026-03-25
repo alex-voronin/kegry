@@ -7,7 +7,7 @@ import { rethrowApiError } from '@/lib/api-error';
 
 export interface AvailableDiscountDto {
   companyName: string;
-  companyAvatarImageUrl: string;
+  companyAvatarImageUrl: string | null;
   venueId: string;
   venueAddress: string;
   googleMapsUrl: string | null;

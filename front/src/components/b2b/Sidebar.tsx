@@ -3,9 +3,10 @@
 import React, { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
-import { X, User, Building2, MapPin, LogOut, Menu } from 'lucide-react';
+import { X, User, Building2, MapPin, LogOut, Menu, MessageCircle } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useAuthStore } from '@/lib/auth/use-auth-store';
+import { openTawkChat } from '@/components/tawk-messenger';
 import styles from './Sidebar.module.css';
 
 // --- Hook ---
@@ -70,11 +71,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       href: PAGE_ROUTES.B2B.VENUES,
       icon: <MapPin size={24} />,
     },
+    {
+      label: t('contactUs'),
+      onClick: () => {
+        onClose();
+        openTawkChat();
+      },
+      icon: <MessageCircle size={24} />,
+    },
   ];
 
-  const handleNavClick = (href: string) => {
-    onClose();
-    router.push(href);
+  const handleNavClick = (item: (typeof navItems)[0]) => {
+    if (item.onClick) {
+      item.onClick();
+    } else if (item.href) {
+      onClose();
+      router.push(item.href);
+    }
   };
 
   const handleLogout = async () => {
@@ -99,19 +112,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         </button>
 
         <nav className={styles.drawerNav}>
-          {navItems.map((item) => {
-            const isActive = pathname.endsWith(item.href);
-            return (
-              <div
-                key={item.href}
-                className={`${styles.drawerNavLink} ${isActive ? styles.drawerNavLinkActive : ''}`}
-                onClick={() => handleNavClick(item.href)}
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </div>
-            );
-          })}
+            {navItems.map((item, index) => {
+              const isActive = item.href ? pathname.endsWith(item.href) : false;
+              return (
+                <div
+                  key={item.href || index}
+                  className={`${styles.drawerNavLink} ${isActive ? styles.drawerNavLinkActive : ''}`}
+                  onClick={() => handleNavClick(item)}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </div>
+              );
+            })}
 
           <div className={styles.drawerNavBottom}>
             <div className={styles.drawerNavLink} onClick={handleLogout}>

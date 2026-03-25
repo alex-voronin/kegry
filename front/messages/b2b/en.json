@@ -213,7 +213,8 @@
       "profile": "Profile",
       "companies": "Companies",
       "venues": "Venues",
-      "logout": "Logout"
+      "logout": "Logout",
+      "contactUs": "Contact us"
     },
     "advancedSettings": {
       "title": "Advanced Settings",
