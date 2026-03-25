@@ -38,7 +38,8 @@ public class VenueContext : DbContext
         {
             entity.ToTable("companies");
             entity.HasKey(c => c.Id);
-            entity.Property(h => h.Id).ValueGeneratedNever();
+            entity.Property(h => h.Id)
+                .ValueGeneratedNever();
             entity.Property(c => c.Name)
                 .IsRequired()
                 .HasMaxLength(200);
@@ -140,8 +141,6 @@ public class VenueContext : DbContext
             entity.ToTable("loyalty_levels");
             entity.HasKey(l => new { l.Id, l.CompanyId });
             entity.ToTable(t => t.HasCheckConstraint("CK_loyalty_levels_id", "\"id\" IN (0, 1, 2, 3)"));
-
-            entity.HasQueryFilter(c => !c.IsActive);
         });
     }
 
@@ -151,6 +150,8 @@ public class VenueContext : DbContext
         {
             entity.ToTable("discounts");
             entity.HasKey(d => d.Id);
+            entity.Property(p => p.Id)
+                .ValueGeneratedNever();
             entity.HasOne(d => d.LoyaltyLevel)
                 .WithMany()
                 .HasForeignKey(d => new { d.LoyaltyLevelId, d.CompanyId })
@@ -202,6 +203,8 @@ public class VenueContext : DbContext
         modelBuilder.Entity<Promo>(entity =>
         {
             entity.ToTable("promo");
+            entity.Property(p => p.Id)
+                .ValueGeneratedNever();
             entity.HasKey(p => p.Id);
             entity.Property(p => p.Body)
                 .HasMaxLength(1000);

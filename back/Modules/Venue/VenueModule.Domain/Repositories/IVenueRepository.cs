@@ -14,7 +14,7 @@ public interface IVenueRepository : IRepository<Venue>
         int limit,
         CancellationToken ct);
 
-    Task<Venue?> GetByIdWithLoyaltyLevelsAndDiscountsAysnc(Guid id, CancellationToken ct);
+    Task<Venue?> GetByIdWithAllRelationsAsync(Guid id, CancellationToken ct);
 
     Task<(Venue? venue, Visit? lastVisit, UserLoyalty? userLoyalty)> GetVenueWithLastVisitsAndUserLoyaltyAsync(
         Guid qrCode, Guid userId, CancellationToken ct);

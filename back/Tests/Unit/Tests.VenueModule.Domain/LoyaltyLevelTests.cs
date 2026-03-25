@@ -72,6 +72,33 @@ public class LoyaltyLevelTests
     }
 
     [Fact]
+    public void ValidateCollection_WhenVisitsAscendForActiveLevels_ThenDoesNotThrow()
+    {
+        var levels = new[]
+        {
+            MakeLevel(0, 15),
+            MakeLevel(1, 20),
+            MakeLevel(2, 10, isActive: false),
+            MakeLevel(3, 15, isActive: false),
+        };
+        Should.NotThrow(() => LoyaltyLevel.ValidateLevelsCountAndOrder(levels));
+    }
+
+    [Fact]
+    public void ValidateCollection_WhenVisitsDescendForActiveLevels_ThenThrow()
+    {
+        var levels = new[]
+        {
+            MakeLevel(0, 15),
+            MakeLevel(1, 20),
+            MakeLevel(2, 10),
+            MakeLevel(3, 15, isActive: false),
+        };
+        Should.Throw<HttpCodeException>(() => LoyaltyLevel.ValidateLevelsCountAndOrder(levels))
+            .ErrorCode.ShouldBe(ErrorCode.ValidationError);
+    }
+
+    [Fact]
     public void ValidateCollection_WhenMoreThanThreeLevels_ThenThrows()
     {
         var levels = new[]

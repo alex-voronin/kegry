@@ -111,7 +111,7 @@ public class B2BVenueEndpoints : IEndpoints
         IS3StorageService storageService,
         CancellationToken ct)
     {
-        var venue = await venueRepository.GetByIdWithLoyaltyLevelsAndDiscountsAysnc(id, ct);
+        var venue = await venueRepository.GetByIdWithAllRelationsAsync(id, ct);
         if (venue == null)
         {
             throw VenueExceptions.VenueNotFound(id);
@@ -226,7 +226,7 @@ public class B2BVenueEndpoints : IEndpoints
                 : null,
             QrCode: venue.QrCode,
             Promos: venue.Promos
-                .OrderBy(p => p.Id)
+                .OrderBy(p => p.CreatedAt)
                 .Select(p => new PromoDto(
                     Id: p.Id.ToString(),
                     Type: p.Type,
@@ -234,9 +234,12 @@ public class B2BVenueEndpoints : IEndpoints
                 )
                 .ToArray(),
             Discounts: venue.Discounts
+                .OrderBy(d => d.LoyaltyLevelId)
+                .ThenByDescending(d => d.Percent)
                 .Select(B2BDealsEndpoints.DomainDiscountToDto)
                 .ToArray(),
             LoyaltyLevels: venue.Company.LoyaltyLevels
+                .OrderBy(l => l.Id)
                 .Select(l => new LoyaltyLevelDto(l.Id, l.VisitsUpperBound, l.IsActive))
                 .ToArray() ?? []
         );

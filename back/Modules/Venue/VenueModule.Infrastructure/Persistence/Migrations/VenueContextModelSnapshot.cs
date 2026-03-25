@@ -78,7 +78,6 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("VenueModule.Domain.Aggregates.Discount", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -170,7 +169,6 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("VenueModule.Domain.Aggregates.Promo", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 

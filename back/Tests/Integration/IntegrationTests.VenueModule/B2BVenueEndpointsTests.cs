@@ -60,7 +60,13 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             v => v.Id.ShouldBe(venueId.ToString()),
             v => v.Address.ShouldBe(createVenueRequest.Address),
             v => v.Latitude.ShouldBe(createVenueRequest.Latitude),
-            v => v.Longitude.ShouldBe(createVenueRequest.Longitude)
+            v => v.Longitude.ShouldBe(createVenueRequest.Longitude),
+            v => v.WebsiteUrl.ShouldBe(createVenueRequest.WebsiteUrl),
+            v => v.GoogleMapsUrl.ShouldBe(createVenueRequest.GoogleMapsUrl),
+            v => v.InstagramUrl.ShouldBe(createVenueRequest.InstagramUrl),
+            v => v.PhoneNumber.ShouldBe(createVenueRequest.PhoneNumber),
+            v => v.WorkingHours.ShouldBe(createVenueRequest.WorkingHours),
+            v => v.CoverImageUrl!.ShouldBeNewerOrTheSameS3Url(createVenueRequest.CoverImageUrl!)
         );
     }
 
@@ -89,12 +95,12 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             Longitude: -71.0,
             Address: "New Address",
             WebsiteUrl: "https://new.com",
-            GoogleMapsUrl: null,
-            InstagramUrl: null,
-            PhoneNumber: null,
-            WorkingHours: null,
+            GoogleMapsUrl: "https://maps.google.com/new",
+            InstagramUrl: "https://instagram.com/new",
+            PhoneNumber: "987654321",
+            WorkingHours: "10:00 - 20:00",
             CoverImageUrl: TestConfig.S3.PublicUrl + "/new_cover.jpg",
-            QrCode: null);
+            QrCode: Guid.NewGuid());
 
         var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
             ApiRoutes.B2B.Venue.Single(venueId), patchRequest);
@@ -110,7 +116,12 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             v => v.Latitude.ShouldBe(patchRequest.Latitude!.Value),
             v => v.Longitude.ShouldBe(patchRequest.Longitude!.Value),
             v => v.WebsiteUrl.ShouldBe(patchRequest.WebsiteUrl),
-            v => v.CoverImageUrl!.ShouldBeNewerOrTheSameS3Url(patchRequest.CoverImageUrl!)
+            v => v.GoogleMapsUrl.ShouldBe(patchRequest.GoogleMapsUrl),
+            v => v.InstagramUrl.ShouldBe(patchRequest.InstagramUrl),
+            v => v.PhoneNumber.ShouldBe(patchRequest.PhoneNumber),
+            v => v.WorkingHours.ShouldBe(patchRequest.WorkingHours),
+            v => v.CoverImageUrl!.ShouldBeNewerOrTheSameS3Url(patchRequest.CoverImageUrl!),
+            v => v.QrCode.ShouldBe(patchRequest.QrCode!.Value)
         );
     }
 

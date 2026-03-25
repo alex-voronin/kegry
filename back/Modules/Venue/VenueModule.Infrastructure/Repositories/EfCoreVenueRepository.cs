@@ -15,13 +15,15 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
     {
     }
 
-    public Task<Venue?> GetByIdWithLoyaltyLevelsAndDiscountsAysnc(Guid id, CancellationToken ct)
+    public Task<Venue?> GetByIdWithAllRelationsAsync(Guid id, CancellationToken ct)
     {
         return Context.Venues
             .IgnoreQueryFilters([NamedFilters.Venue.Verified])
             .Include(v => v.Company)
             .ThenInclude(c => c.LoyaltyLevels)
             .Include(v => v.Discounts)
+            .ThenInclude(d => d.Days)
+            .Include(v => v.Promos)
             .AsNoTracking()
             .Where(v => v.Id == id)
             .FirstOrDefaultAsync(ct);

@@ -18,9 +18,30 @@ public class Discount : IAuditable
         set => field = ValidatePercent(nameof(Percent), value);
     }
 
-    public ICollection<DiscountDay> Days { get; init; } = [];
+    private readonly List<DiscountDay> _days = [];
+
+    public IReadOnlyCollection<DiscountDay> Days
+    {
+        get => _days;
+        set => UpdateDays(value);
+    }
+
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset UpdatedAt { get; set; }
+
+    private void UpdateDays(IReadOnlyCollection<DiscountDay> days)
+    {
+        var uniqueDaysCount = days.Select(d => d.DayOfWeek).Distinct().Count();
+        Validation.ThrowIfInvalid(nameof(Days),
+            isValid: () => uniqueDaysCount == days.Count,
+            validationError: "Days cannot be repeated");
+
+        _days.Clear();
+        foreach (var day in days)
+        {
+            _days.Add(day);
+        }
+    }
 
     private static int ValidatePercent(string fieldName, int value)
     {

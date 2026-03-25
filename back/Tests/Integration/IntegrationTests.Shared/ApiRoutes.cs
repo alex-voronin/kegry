@@ -77,12 +77,17 @@ public static class ApiRoutes
             public const string Root = "/api/v1/companies";
             public static string Single(Guid id) => $"/api/v1/company/{id}";
             public static string Venues(Guid companyId) => $"/api/v1/company/{companyId}/venue";
+            public static string LoyaltyLevels(Guid companyId) => $"/api/v1/company/{companyId}/loyalty-levels";
         }
 
         public static class Venue
         {
             public const string Root = "/api/v1/venue";
             public static string Single(Guid id) => $"/api/v1/venue/{id}";
+            public static string Promotions(Guid venueId) => $"/api/v1/venue/{venueId}/promotions";
+            public static string Promotion(Guid venueId, Guid id) => $"/api/v1/venue/{venueId}/promotions/{id}";
+            public static string Discounts(Guid venueId) => $"/api/v1/venue/{venueId}/discounts";
+            public static string Discount(Guid venueId, Guid id) => $"/api/v1/venue/{venueId}/discounts/{id}";
         }
     }
 }

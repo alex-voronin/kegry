@@ -33,7 +33,8 @@ public class LoyaltyLevel
         var sorted = levels.OrderBy(l => l.Id).ToArray();
         for (var i = 1; i < sorted.Length; i++)
         {
-            if (sorted[i].VisitsUpperBound <= sorted[i - 1].VisitsUpperBound)
+            if (sorted[i].VisitsUpperBound <= sorted[i - 1].VisitsUpperBound &&
+                sorted[i].IsActive && sorted[i - 1].IsActive)
             {
                 throw VenueExceptions.InvalidLoyaltyLevelOrder();
             }

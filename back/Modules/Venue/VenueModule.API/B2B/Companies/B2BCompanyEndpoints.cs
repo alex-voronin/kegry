@@ -222,6 +222,7 @@ public class B2BCompanyEndpoints : IEndpoints
                 ? storageService.S3KeyToPublicFileUrl(company.AvatarImageS3Key, company.UpdatedAt)
                 : null,
             LoyaltyLevels: company.LoyaltyLevels
+                .OrderBy(l => l.Id)
                 .Select(l => new LoyaltyLevelDto(l.Id, l.VisitsUpperBound, l.IsActive))
                 .ToArray()
         );

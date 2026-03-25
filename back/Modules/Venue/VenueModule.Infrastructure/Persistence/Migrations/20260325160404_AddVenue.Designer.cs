@@ -13,7 +13,7 @@ using VenueModule.Infrastructure.Persistence;
 namespace VenueModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(VenueContext))]
-    [Migration("20260323204244_AddVenue")]
+    [Migration("20260325160404_AddVenue")]
     partial class AddVenue
     {
         /// <inheritdoc />
@@ -81,7 +81,6 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("VenueModule.Domain.Aggregates.Discount", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -173,7 +172,6 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("VenueModule.Domain.Aggregates.Promo", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 

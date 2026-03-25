@@ -206,7 +206,7 @@ public class B2BDealsEndpoints : IEndpoints
             user: user,
             venueRepository: venueRepository,
             companyRepository: companyRepository,
-            asNoTracking: true,
+            asNoTracking: false,
             includes: [v => v.Discounts],
             ct: ct);
 
@@ -261,11 +261,10 @@ public class B2BDealsEndpoints : IEndpoints
 
         if (request.Days != null)
         {
-            discount.Days.Clear();
-            foreach (var day in request.Days.Distinct())
-            {
-                discount.Days.Add(new DiscountDay { DiscountId = id, DayOfWeek = day });
-            }
+            discount.Days = request.Days
+                .Distinct()
+                .Select(d => new DiscountDay { DiscountId = id, DayOfWeek = d })
+                .ToArray();
         }
 
         await discountRepository.SaveChangesAsync(ct);
