@@ -161,9 +161,22 @@ export default function ProfileEditPage() {
 
   if (serverProfile === null) {
     return (
-      <div className="flex flex-1 items-center justify-center">
-        <Spinner />
-      </div>
+      <>
+        <Header
+          left={
+            <Icon
+              src="/assets/common/disclosure-left-icon.svg"
+              alt="back"
+              width={14}
+              height={27}
+              onClick={handleBack}
+            />
+          }
+        />
+        <div className="flex flex-1 items-center justify-center">
+          <Spinner />
+        </div>
+      </>
     );
   }
 
