@@ -154,7 +154,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
 
         await _visitRepository.SaveChangesAsync(ct);
         await _userLoyaltyRepository.SaveChangesAsync(ct);
-        await transaction.SaveChangesAsync(ct);
+        await transaction.CommitAsync(ct);
 
         return venue.Id;
     }
@@ -177,7 +177,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             venue.Company.LoyaltyLevels, visitsCount);
         var currentLoyaltyLevel = userLoyalty?.LoyaltyLevelId ?? computedLoyaltyLevel;
 
-        var now =  _timeProvider.GetUtcNow();
+        var now = _timeProvider.GetUtcNow();
         var timeZone = TimeZoneInfo.FindSystemTimeZoneById(venue.TimeZoneId);
         var venueLocalTime = TimeZoneInfo.ConvertTimeFromUtc(now.DateTime, timeZone);
         var today = venueLocalTime.DayOfWeek;

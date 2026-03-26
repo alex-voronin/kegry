@@ -36,7 +36,6 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
             .IgnoreQueryFilters([NamedFilters.Venue.Verified])
             .Include(v => v.Company)
             .ThenInclude(c => c.LoyaltyLevels)
-            .AsNoTracking()
             .Where(v => v.QrCode == qrCode)
             .Select(v => new
             {

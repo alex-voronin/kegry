@@ -1,7 +1,6 @@
 using Shared.Infrastructure.Storage;
 using VenueModule.API.B2C.Dto;
 using VenueModule.API.Shared;
-using VenueModule.Infrastructure.Persistence;
 using GetVenueResponse = VenueModule.API.B2C.Dto.GetVenueResponse;
 
 namespace VenueModule.API.B2C;

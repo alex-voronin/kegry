@@ -25,13 +25,13 @@ public class IntegrationApiClient
         var response = await _apiHttpClient.GetAsync(url);
         return (await response.Content.ReadFromJsonAsync<TResp>(_options))!;
     }
-    
+
     public async Task<TResp> GetAsync<TReq, TResp>(string url, TReq data)
     {
         var queryString = BuildQueryString(data);
-        var fullUrl = string.IsNullOrEmpty(queryString) 
-            ? url 
-            : $"{url.TrimEnd('?')}{ (url.Contains('?') ? "&" : "?") }{queryString}";
+        var fullUrl = string.IsNullOrEmpty(queryString)
+            ? url
+            : $"{url.TrimEnd('?')}{(url.Contains('?') ? "&" : "?")}{queryString}";
 
         var response = await _apiHttpClient.GetAsync(fullUrl);
         return (await response.Content.ReadFromJsonAsync<TResp>(_options))!;
@@ -65,7 +65,7 @@ public class IntegrationApiClient
     {
         _apiHttpClient.SetAuth(authResponse);
     }
-    
+
     private static string BuildQueryString<T>(T obj)
     {
         if (obj == null) return string.Empty;
