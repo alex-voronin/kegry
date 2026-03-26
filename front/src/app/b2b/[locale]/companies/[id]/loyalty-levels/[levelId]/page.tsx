@@ -19,6 +19,7 @@ import { Toggle } from '@/components/ui/toggle';
 import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS, PAGE_ROUTES } from '@/lib/routes';
 import { useCompanyProfileStore } from '../../use-company-profile-store';
+import { useSafeBack } from '@/hooks/use-safe-back';
 
 type FormValues = {
   isActive: boolean;
@@ -37,6 +38,8 @@ export default function LoyaltyLevelEditPage() {
 
   const { selectedCompany, isLoading, fetchCompany } = useCompanyProfileStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { safeBack } = useSafeBack();
 
   useEffect(() => {
     if (companyId) fetchCompany(companyId);
@@ -91,7 +94,7 @@ export default function LoyaltyLevelEditPage() {
         },
       );
 
-      router.replace(
+      safeBack(
         PAGE_ROUTES.B2B.COMPANIES_DETAIL(companyId) + '?expanded=loyalty',
       );
     } catch {
@@ -122,7 +125,7 @@ export default function LoyaltyLevelEditPage() {
             width={14}
             height={27}
             onClick={() =>
-              router.replace(
+              safeBack(
                 PAGE_ROUTES.B2B.COMPANIES_DETAIL(companyId) +
                   '?expanded=loyalty',
               )
