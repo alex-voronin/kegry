@@ -1,6 +1,7 @@
 using Shared.Infrastructure.Storage;
 using VenueModule.API.B2C.Dto;
 using VenueModule.API.Shared;
+using VenueModule.Infrastructure.Persistence;
 using GetVenueResponse = VenueModule.API.B2C.Dto.GetVenueResponse;
 
 namespace VenueModule.API.B2C;
@@ -25,7 +26,7 @@ public class B2CVenueEndpoints : IEndpoints
         var usersApiGroup = app.MapGroup("")
             .WithTags("Venue User API")
             .RequireAuthorization();
-        usersApiGroup.MapPost("/api/v1/venues", GetVenues);
+        usersApiGroup.MapGet("/api/v1/venues", GetVenues);
         usersApiGroup.MapGet("/api/v1/venues/{id:guid}", GetVenue);
         usersApiGroup.MapGet("/api/v1/venues/{id:guid}/discounts", GetDiscountsByWeekday);
         usersApiGroup.MapPost("/api/v1/venues/{qrCode:guid}/qr-check-in", CheckInToVenue);
@@ -91,7 +92,7 @@ public class B2CVenueEndpoints : IEndpoints
         IS3StorageService storageService,
         CancellationToken ct)
     {
-        var venue = await repository.GetByIdAsync(id, includes: [v => v.Company], ct: ct);
+        var venue = await repository.GetByIdWithAllRelationsAsync(id, ct: ct);
         if (venue == null)
         {
             throw VenueExceptions.VenueNotFound(id);

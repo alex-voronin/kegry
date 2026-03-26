@@ -241,7 +241,7 @@ public class B2BVenueEndpoints : IEndpoints
             LoyaltyLevels: venue.Company.LoyaltyLevels
                 .OrderBy(l => l.Id)
                 .Select(l => new LoyaltyLevelDto(l.Id, l.VisitsUpperBound, l.IsActive))
-                .ToArray() ?? []
+                .ToArray()
         );
     }
 }

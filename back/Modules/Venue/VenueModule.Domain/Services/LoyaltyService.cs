@@ -52,17 +52,20 @@ internal class LoyaltyService : ILoyaltyService, IScoped
     private readonly IVisitRepository _visitRepository;
     private readonly IUserLoyaltyRepository _userLoyaltyRepository;
     private readonly IDiscountRepository _discountRepository;
+    private readonly TimeProvider _timeProvider;
 
     public LoyaltyService(
         IVenueRepository venueRepository,
         IVisitRepository visitRepository,
         IUserLoyaltyRepository userLoyaltyRepository,
-        IDiscountRepository discountRepository)
+        IDiscountRepository discountRepository,
+        TimeProvider timeProvider)
     {
         _venueRepository = venueRepository;
         _visitRepository = visitRepository;
         _userLoyaltyRepository = userLoyaltyRepository;
         _discountRepository = discountRepository;
+        _timeProvider = timeProvider;
     }
 
     public async Task<(List<Discount> Discounts, int TotalCount)> GetAvailableDiscountsAsync(
@@ -73,9 +76,10 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         int limit,
         CancellationToken ct)
     {
+        var now = _timeProvider.GetUtcNow();
         var timezoneId = TimeZoneLookup.GetTimeZone(latitude, longitude).Result;
         var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timezoneId);
-        var userLocalTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);
+        var userLocalTime = TimeZoneInfo.ConvertTimeFromUtc(now.DateTime, timeZone);
         var dayOfWeek = userLocalTime.DayOfWeek;
         return await _discountRepository.GetAvailableForUserAsync(
             userId: userId,
@@ -127,7 +131,8 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             throw VenueExceptions.TooFarFromVenue();
         }
 
-        if (lastVisit != null && lastVisit.CheckedInAt > DateTime.UtcNow - TimeSpan.FromHours(CheckInCooldownHours))
+        var now = _timeProvider.GetUtcNow();
+        if (lastVisit != null && lastVisit.CheckedInAt > now - TimeSpan.FromHours(CheckInCooldownHours))
         {
             throw VenueExceptions.AlreadyCheckedInRecently();
         }
@@ -137,7 +142,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             Id = Guid.CreateVersion7(),
             UserId = userId,
             VenueId = venue.Id,
-            CheckedInAt = DateTimeOffset.UtcNow
+            CheckedInAt = now
         };
         await _visitRepository.AddAsync(visit, ct);
 
@@ -172,8 +177,9 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             venue.Company.LoyaltyLevels, visitsCount);
         var currentLoyaltyLevel = userLoyalty?.LoyaltyLevelId ?? computedLoyaltyLevel;
 
+        var now =  _timeProvider.GetUtcNow();
         var timeZone = TimeZoneInfo.FindSystemTimeZoneById(venue.TimeZoneId);
-        var venueLocalTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);
+        var venueLocalTime = TimeZoneInfo.ConvertTimeFromUtc(now.DateTime, timeZone);
         var today = venueLocalTime.DayOfWeek;
 
         var (currentLevelDiscount, nextLevelDiscount) = ComputeCurrentAndNextLevelDiscount(venue.Discounts,

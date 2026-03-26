@@ -93,34 +93,41 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
         return (items, totalCount);
     }
 
-    public async Task<(VenueWithDistance[], int TotalCount)> GetVenuesPaginatedAsync(double latitude, double longitude,
-        int offset, int limit, CancellationToken ct)
+    public async Task<(VenueWithDistance[], int TotalCount)> GetVenuesPaginatedAsync(
+        double latitude,
+        double longitude,
+        int offset,
+        int limit,
+        CancellationToken ct)
     {
         var userCoordinates = new Point(longitude, latitude) { SRID = 4326 };
 
-        var query = Context.Venues
+        var baseQuery = Context.Venues
             .Include(v => v.Company)
             .AsNoTracking()
             .Where(v => EF.Functions.IsWithinDistance(
-                geometry: v.Coordinates,
-                anotherGeometry: userCoordinates,
-                distance: SearchRadiusMeters,
-                useSpheroid: false)
-            );
+                v.Coordinates,
+                userCoordinates,
+                SearchRadiusMeters,
+                useSpheroid: false));
 
-        var totalCount = await query.CountAsync(ct);
+        var totalCount = await baseQuery.CountAsync(ct);
 
-        var venues = await query
-            .Select(v =>
-                new VenueWithDistance(
-                    Venue: v,
-                    DistanceMeters: EF.Functions
-                        .Distance(v.Coordinates, userCoordinates, useSpheroid: false)
-                )
-            )
-            .OrderBy(v => v.DistanceMeters)
+        var venues = await baseQuery
+            .Select(v => new
+            {
+                Venue = v,
+                DistanceMeters = EF.Functions.Distance(
+                    v.Coordinates,
+                    userCoordinates,
+                    useSpheroid: false)
+            })
+            .OrderBy(x => x.DistanceMeters)
             .Skip(offset)
             .Take(limit)
+            .Select(x => new VenueWithDistance(
+                Venue: x.Venue,
+                DistanceMeters: x.DistanceMeters))
             .ToArrayAsync(ct);
 
         return (venues, totalCount);

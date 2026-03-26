@@ -90,4 +90,15 @@ public static class ApiRoutes
             public static string Discount(Guid venueId, Guid id) => $"/api/v1/venue/{venueId}/discounts/{id}";
         }
     }
+
+    public static class B2C
+    {
+        public static class Venue
+        {
+            public const string Root = "/api/v1/venues";
+            public static string Single(Guid id) => $"/api/v1/venues/{id}";
+            public static string Discounts(Guid id) => $"/api/v1/venues/{id}/discounts";
+            public static string QrCheckIn(Guid qrCode) => $"/api/v1/venues/{qrCode}/qr-check-in";
+        }
+    }
 }

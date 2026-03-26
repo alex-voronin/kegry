@@ -1,7 +1,10 @@
+using System.Globalization;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.WebUtilities;
 using SecurityModule.API.Dto;
 
 namespace IntegrationTests.Shared.HttpClients;
@@ -20,6 +23,17 @@ public class IntegrationApiClient
     public async Task<TResp> GetAsync<TResp>(string url)
     {
         var response = await _apiHttpClient.GetAsync(url);
+        return (await response.Content.ReadFromJsonAsync<TResp>(_options))!;
+    }
+    
+    public async Task<TResp> GetAsync<TReq, TResp>(string url, TReq data)
+    {
+        var queryString = BuildQueryString(data);
+        var fullUrl = string.IsNullOrEmpty(queryString) 
+            ? url 
+            : $"{url.TrimEnd('?')}{ (url.Contains('?') ? "&" : "?") }{queryString}";
+
+        var response = await _apiHttpClient.GetAsync(fullUrl);
         return (await response.Content.ReadFromJsonAsync<TResp>(_options))!;
     }
 
@@ -50,6 +64,31 @@ public class IntegrationApiClient
     public void SetAuth(AuthResponse authResponse)
     {
         _apiHttpClient.SetAuth(authResponse);
+    }
+    
+    private static string BuildQueryString<T>(T obj)
+    {
+        if (obj == null) return string.Empty;
+
+        var dict = new Dictionary<string, string?>();
+
+        foreach (var prop in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        {
+            var value = prop.GetValue(obj);
+            if (value == null) continue;
+
+            var strValue = value switch
+            {
+                float f => f.ToString("F6", CultureInfo.InvariantCulture),
+                double d => d.ToString("F6", CultureInfo.InvariantCulture),
+                decimal m => m.ToString("F6", CultureInfo.InvariantCulture),
+                _ => value.ToString()
+            };
+
+            dict[prop.Name] = strValue;
+        }
+
+        return QueryHelpers.AddQueryString("", dict).TrimStart('?');
     }
 }
 
