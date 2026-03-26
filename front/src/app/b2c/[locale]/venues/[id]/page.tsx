@@ -263,7 +263,7 @@ export default function VenueDetailScreen() {
             </div>
           </div>
 
-          {(venue.phoneNumber || venue.websiteUrl) && (
+          {(venue.phoneNumber || venue.websiteUrl || venue.instagramUrl) && (
             <div className={styles.section}>
               <FormSectionTitle>{t('contacts')}</FormSectionTitle>
 
