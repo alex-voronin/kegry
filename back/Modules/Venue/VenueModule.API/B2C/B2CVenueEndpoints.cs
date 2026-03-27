@@ -26,9 +26,9 @@ public class B2CVenueEndpoints : IEndpoints
             .WithTags("Venue User API")
             .RequireAuthorization();
         usersApiGroup.MapGet("/api/v1/venues", GetVenues);
-        usersApiGroup.MapGet("/api/v1/venues/{id:guid}", GetVenue);
-        usersApiGroup.MapGet("/api/v1/venues/{id:guid}/discounts", GetDiscountsByWeekday);
-        usersApiGroup.MapPost("/api/v1/venues/{qrCode:guid}/qr-check-in", CheckInToVenue);
+        usersApiGroup.MapGet("/api/v1/venue/{id:guid}", GetVenue);
+        usersApiGroup.MapGet("/api/v1/venue/{id:guid}/discounts", GetDiscountsByWeekday);
+        usersApiGroup.MapPost("/api/v1/venue/{qrCode:guid}/qr-check-in", CheckInToVenue);
     }
 
     private static async Task<ApiResult<CheckInResponse>> CheckInToVenue(

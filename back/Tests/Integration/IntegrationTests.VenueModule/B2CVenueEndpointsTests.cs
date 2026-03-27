@@ -10,6 +10,7 @@ using VenueModule.API.B2B.Deals.Dto;
 using VenueModule.API.B2B.Venues.Dto;
 using VenueModule.API.B2C.Dto;
 using VenueModule.Domain.Repositories;
+using VenueModule.Domain.ValueObjects;
 using VenueModule.Infrastructure.Persistence;
 using GetVenueResponse = VenueModule.API.B2C.Dto.GetVenueResponse;
 using VenueListItemDto = VenueModule.API.B2C.Dto.VenueListItemDto;
@@ -360,8 +361,6 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 new CreateVenueRequest(0, 0, "Qr Venue", null, null, null, null, null, null));
         var venueId = createVenueResponse.Result.Id;
 
-        // await VerifyVenueByIdAsync(venueId);
-
         // 3. Update QR Code
         var newQr = Guid.CreateVersion7();
         var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
@@ -400,6 +399,50 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             );
         newResponse.Success.ShouldBeTrue();
         newResponse.Result.VenueId.ShouldBe(venueId);
+    }
+
+    [Fact]
+    public async Task GivenVenueWithPromotions_WhenB2CUserGetsDetail_ThenReturnsPromotions()
+    {
+        // 1. Create B2B user
+        var b2BAuth = await Factory.AuthManager
+            .CreateAndLoginUserAsync("b2b_promos@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        // 2. Create company and venue
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Promos Co", "promos@example.com"))).Result.Id;
+
+        var venueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+            ApiRoutes.B2B.Company.Venues(companyId),
+            new CreateVenueRequest(0, 0, "Promos Venue", null, null, null, null, null, null));
+        var venueId = venueResponse.Result.Id;
+
+        // 3. Add promotions
+        var promo1 = new CreatePromotionRequest(PromoType.General, "Test Promotion 1");
+        var promo2 = new CreatePromotionRequest(PromoType.HappyHours, "Test Promotion 2");
+
+        var p1Response = await Factory.ApiClient.PostAsync<CreatePromotionRequest, ApiResult<CreatePromotionResponse>>(
+            ApiRoutes.B2B.Venue.Promotions(venueId), promo1);
+        p1Response.Success.ShouldBeTrue();
+
+        var p2Response = await Factory.ApiClient.PostAsync<CreatePromotionRequest, ApiResult<CreatePromotionResponse>>(
+            ApiRoutes.B2B.Venue.Promotions(venueId), promo2);
+        p2Response.Success.ShouldBeTrue();
+
+        // 4. Create B2C user
+        var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_promos@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(b2CAuth);
+
+        // 5. Get venue detail and check promotions
+        var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
+            ApiRoutes.B2C.Venue.Single(venueId));
+
+        response.Success.ShouldBeTrue();
+        var promos = response.Result.Venue.Promos;
+        promos.Length.ShouldBe(2);
+        promos.ShouldContain(p => p.Type == promo1.Type && p.Body == promo1.Body);
+        promos.ShouldContain(p => p.Type == promo2.Type && p.Body == promo2.Body);
     }
 
     private async Task CreateVerifiedVenueAsync(Guid companyId, double lat, double lon, string name)

@@ -28,12 +28,12 @@ public class B2BVenueEndpoints : IEndpoints
         var managementApiGroup = app.MapGroup("")
             .WithTags("Venue Management API")
             .RequireAuthorization(AuthPolicies.B2BAdmin);
-        managementApiGroup.MapPost("/api/v1/company/{companyId:guid}/venue", CreateVenue);
-        managementApiGroup.MapGet("/api/v1/venue", GetVenues);
-        managementApiGroup.MapGet("/api/v1/venue/{id:guid}", GetVenue);
-        managementApiGroup.MapPatch("/api/v1/venue/{id:guid}", PatchVenue);
-        managementApiGroup.MapDelete("/api/v1/venue/{id:guid}", DeleteVenue);
-        managementApiGroup.MapPost("/api/v1/venue/{id:guid}/cover/upload-url", GetCoverUploadUrl);
+        managementApiGroup.MapPost("/api/v1/b2b/company/{companyId:guid}/venue", CreateVenue);
+        managementApiGroup.MapGet("/api/v1/b2b/venue", GetVenues);
+        managementApiGroup.MapGet("/api/v1/b2b/venue/{id:guid}", GetVenue);
+        managementApiGroup.MapPatch("/api/v1/b2b/venue/{id:guid}", PatchVenue);
+        managementApiGroup.MapDelete("/api/v1/b2b/venue/{id:guid}", DeleteVenue);
+        managementApiGroup.MapPost("/api/v1/b2b/venue/{id:guid}/cover/upload-url", GetCoverUploadUrl);
     }
 
     private static async Task<ApiResult<CreateVenueResponse>> CreateVenue(

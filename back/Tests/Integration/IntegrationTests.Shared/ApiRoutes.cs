@@ -74,20 +74,20 @@ public static class ApiRoutes
     {
         public static class Company
         {
-            public const string Root = "/api/v1/companies";
-            public static string Single(Guid id) => $"/api/v1/company/{id}";
-            public static string Venues(Guid companyId) => $"/api/v1/company/{companyId}/venue";
-            public static string LoyaltyLevels(Guid companyId) => $"/api/v1/company/{companyId}/loyalty-levels";
+            public const string Root = "/api/v1/b2b/companies";
+            public static string Single(Guid id) => $"/api/v1/b2b/company/{id}";
+            public static string Venues(Guid companyId) => $"/api/v1/b2b/company/{companyId}/venue";
+            public static string LoyaltyLevels(Guid companyId) => $"/api/v1/b2b/company/{companyId}/loyalty-levels";
         }
 
         public static class Venue
         {
-            public const string Root = "/api/v1/venue";
-            public static string Single(Guid id) => $"/api/v1/venue/{id}";
-            public static string Promotions(Guid venueId) => $"/api/v1/venue/{venueId}/promotions";
-            public static string Promotion(Guid venueId, Guid id) => $"/api/v1/venue/{venueId}/promotions/{id}";
-            public static string Discounts(Guid venueId) => $"/api/v1/venue/{venueId}/discounts";
-            public static string Discount(Guid venueId, Guid id) => $"/api/v1/venue/{venueId}/discounts/{id}";
+            public const string Root = "/api/v1/b2b/venue";
+            public static string Single(Guid id) => $"/api/v1/b2b/venue/{id}";
+            public static string Promotions(Guid venueId) => $"/api/v1/b2b/venue/{venueId}/promotions";
+            public static string Promotion(Guid venueId, Guid id) => $"/api/v1/b2b/venue/{venueId}/promotions/{id}";
+            public static string Discounts(Guid venueId) => $"/api/v1/b2b/venue/{venueId}/discounts";
+            public static string Discount(Guid venueId, Guid id) => $"/api/v1/b2b/venue/{venueId}/discounts/{id}";
         }
     }
 
@@ -96,9 +96,9 @@ public static class ApiRoutes
         public static class Venue
         {
             public const string Root = "/api/v1/venues";
-            public static string Single(Guid id) => $"/api/v1/venues/{id}";
-            public static string Discounts(Guid id) => $"/api/v1/venues/{id}/discounts";
-            public static string QrCheckIn(Guid qrCode) => $"/api/v1/venues/{qrCode}/qr-check-in";
+            public static string Single(Guid id) => $"/api/v1/venue/{id}";
+            public static string Discounts(Guid id) => $"/api/v1/venue/{id}/discounts";
+            public static string QrCheckIn(Guid qrCode) => $"/api/v1/venue/{qrCode}/qr-check-in";
         }
     }
 }

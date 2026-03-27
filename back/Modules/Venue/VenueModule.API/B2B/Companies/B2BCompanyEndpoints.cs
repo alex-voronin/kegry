@@ -26,12 +26,12 @@ public class B2BCompanyEndpoints : IEndpoints
         var managementApiGroup = app.MapGroup("")
             .WithTags("Company Management API")
             .RequireAuthorization(AuthPolicies.B2BAdmin);
-        managementApiGroup.MapPost("/api/v1/companies", CreateCompany);
-        managementApiGroup.MapGet("/api/v1/companies", GetCompanies);
-        managementApiGroup.MapGet("/api/v1/company/{id:guid}", GetCompany);
-        managementApiGroup.MapDelete("/api/v1/company/{id:guid}", DeleteCompany);
-        managementApiGroup.MapPatch("/api/v1/company/{id:guid}", PatchCompany);
-        managementApiGroup.MapPost("/api/v1/company/{id:guid}/avatar/upload-url", GetAvatarUploadUrl);
+        managementApiGroup.MapPost("/api/v1/b2b/companies", CreateCompany);
+        managementApiGroup.MapGet("/api/v1/b2b/companies", GetCompanies);
+        managementApiGroup.MapGet("/api/v1/b2b/company/{id:guid}", GetCompany);
+        managementApiGroup.MapDelete("/api/v1/b2b/company/{id:guid}", DeleteCompany);
+        managementApiGroup.MapPatch("/api/v1/b2b/company/{id:guid}", PatchCompany);
+        managementApiGroup.MapPost("/api/v1/b2b/company/{id:guid}/avatar/upload-url", GetAvatarUploadUrl);
     }
 
     private static async Task<ApiResult<CreateCompanyResponse>> CreateCompany(

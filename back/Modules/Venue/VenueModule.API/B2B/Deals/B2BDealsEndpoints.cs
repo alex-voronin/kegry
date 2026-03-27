@@ -23,19 +23,19 @@ public class B2BDealsEndpoints : IEndpoints
             .RequireAuthorization(AuthPolicies.B2BAdmin);
 
         // LoyaltyLevel endpoints
-        group.MapGet("/api/v1/company/{companyId:guid}/loyalty-levels", GetLoyaltyLevels);
-        group.MapPut("/api/v1/company/{companyId:guid}/loyalty-levels", UpdateLoyaltyLevels);
+        group.MapGet("/api/v1/b2b/company/{companyId:guid}/loyalty-levels", GetLoyaltyLevels);
+        group.MapPut("/api/v1/b2b/company/{companyId:guid}/loyalty-levels", UpdateLoyaltyLevels);
 
         //Promo endpoints
-        group.MapPost("/api/v1/venue/{venueId:guid}/promotions", CreatePromotion);
-        group.MapPut("/api/v1/venue/{venueId:guid}/promotions/{id:guid}", UpdatePromotion);
-        group.MapDelete("/api/v1/venue/{venueId:guid}/promotions/{id:guid}", DeletePromotion);
+        group.MapPost("/api/v1/b2b/venue/{venueId:guid}/promotions", CreatePromotion);
+        group.MapPut("/api/v1/b2b/venue/{venueId:guid}/promotions/{id:guid}", UpdatePromotion);
+        group.MapDelete("/api/v1/b2b/venue/{venueId:guid}/promotions/{id:guid}", DeletePromotion);
 
         // Discount endpoints
-        group.MapGet("/api/v1/venue/{venueId:guid}/discounts", GetDiscounts);
-        group.MapPost("/api/v1/venue/{venueId:guid}/discounts", CreateDiscount);
-        group.MapPut("/api/v1/venue/{venueId:guid}/discounts/{id:guid}", UpdateDiscount);
-        group.MapDelete("/api/v1/venue/{venueId:guid}/discounts/{id:guid}", DeleteDiscount);
+        group.MapGet("/api/v1/b2b/venue/{venueId:guid}/discounts", GetDiscounts);
+        group.MapPost("/api/v1/b2b/venue/{venueId:guid}/discounts", CreateDiscount);
+        group.MapPut("/api/v1/b2b/venue/{venueId:guid}/discounts/{id:guid}", UpdateDiscount);
+        group.MapDelete("/api/v1/b2b/venue/{venueId:guid}/discounts/{id:guid}", DeleteDiscount);
     }
 
     // ── LoyaltyLevel endpoints ────────────────────────────────────────────────
