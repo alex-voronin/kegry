@@ -30,6 +30,7 @@ export function QrPopup({ isOpen, onClose, url }: QrPopupProps) {
         height: 240,
         type: 'svg',
         data: url,
+        image: '/assets/b2b/qr-logo.webp',
         dotsOptions: {
           color: 'white',
           type: 'square',
@@ -46,7 +47,10 @@ export function QrPopup({ isOpen, onClose, url }: QrPopupProps) {
           color: 'transparent',
         },
         qrOptions: {
-          errorCorrectionLevel: 'M',
+          errorCorrectionLevel: 'Q',
+        },
+        imageOptions: {
+          imageSize: 0.45,
         },
       });
 

@@ -10,6 +10,7 @@ const STATIC_ASSETS = [
   "/assets/b2b/more-icon.svg",
   "/assets/b2b/phone-icon.svg",
   "/assets/b2b/plus-icon.svg",
+  "/assets/b2b/qr-logo.webp",
   "/assets/b2b/venue-icon.svg",
   "/assets/b2b/website-icon.svg",
   "/assets/chat/cancel-icon.svg",
