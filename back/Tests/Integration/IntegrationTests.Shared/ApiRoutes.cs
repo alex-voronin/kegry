@@ -18,10 +18,16 @@ public static class ApiRoutes
     public static class Notifications
     {
         public const string GetNotifications = "/api/v1/notifications";
-        public static string GetNotificationsPaginated(int offset, int limit) => $"/api/v1/notifications?offset={offset}&limit={limit}";
+
+        public static string GetNotificationsPaginated(int offset, int limit) =>
+            $"/api/v1/notifications?offset={offset}&limit={limit}";
+
         public const string GetUnseenCount = "/api/v1/notifications/unseen/count";
         public const string UpdateDeviceToken = "/api/v1/notifications/device/token";
-        public static string DeleteDeviceToken(string deviceId) => $"/api/v1/notifications/device/token?deviceId={deviceId}";
+
+        public static string DeleteDeviceToken(string deviceId) =>
+            $"/api/v1/notifications/device/token?deviceId={deviceId}";
+
         public const string Settings = "/api/v1/notifications/settings";
         public static string DeleteNotification(Guid id) => $"/api/v1/notifications/{id}";
     }
@@ -70,6 +76,21 @@ public static class ApiRoutes
         public const string MetNpcs = "/api/v1/npc/met";
         public static string Invite(string id) => $"/api/v1/npc/{id}/invite";
     }
+
+    public static class Venue
+    {
+        public const string Root = "/api/v1/venues";
+        public static string Single(Guid id) => $"/api/v1/venue/{id}";
+        public static string Discounts(Guid id) => $"/api/v1/venue/{id}/discounts";
+        public static string QrCheckIn(Guid qrCode) => $"/api/v1/venue/{qrCode}/qr-check-in";
+    }
+
+    public static class Deals
+    {
+        public const string Discounts = "/api/v1/discounts";
+        public const string Promotions = "/api/v1/promotions";
+    }
+
     public static class B2B
     {
         public static class Company
@@ -80,6 +101,7 @@ public static class ApiRoutes
             public static string LoyaltyLevels(Guid companyId) => $"/api/v1/b2b/company/{companyId}/loyalty-levels";
         }
 
+        // ReSharper disable once MemberHidesStaticFromOuterClass
         public static class Venue
         {
             public const string Root = "/api/v1/b2b/venue";
@@ -88,17 +110,6 @@ public static class ApiRoutes
             public static string Promotion(Guid venueId, Guid id) => $"/api/v1/b2b/venue/{venueId}/promotions/{id}";
             public static string Discounts(Guid venueId) => $"/api/v1/b2b/venue/{venueId}/discounts";
             public static string Discount(Guid venueId, Guid id) => $"/api/v1/b2b/venue/{venueId}/discounts/{id}";
-        }
-    }
-
-    public static class B2C
-    {
-        public static class Venue
-        {
-            public const string Root = "/api/v1/venues";
-            public static string Single(Guid id) => $"/api/v1/venue/{id}";
-            public static string Discounts(Guid id) => $"/api/v1/venue/{id}/discounts";
-            public static string QrCheckIn(Guid qrCode) => $"/api/v1/venue/{qrCode}/qr-check-in";
         }
     }
 }

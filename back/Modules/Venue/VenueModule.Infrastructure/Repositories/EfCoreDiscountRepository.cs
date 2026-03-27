@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
 using Shared.Infrastructure.Persistence;
@@ -9,9 +10,6 @@ namespace VenueModule.Infrastructure.Repositories;
 
 public class EfCoreDiscountRepository : Repository<VenueContext, Discount>, IDiscountRepository
 {
-    // GetAvailableForUserAsync is a quite heavy query so only 25 km radius
-    private const double RadiusMeters = 25_000.0;
-
     public EfCoreDiscountRepository(VenueContext context) : base(context)
     {
     }
@@ -25,50 +23,86 @@ public class EfCoreDiscountRepository : Repository<VenueContext, Discount>, IDis
             .ToListAsync(ct);
     }
 
-    public async Task<(List<Discount> Discounts, int TotalCount)> GetAvailableForUserAsync(
+    public async Task<(List<DiscountWithDistance> Discounts, int TotalCount)> GetAvailableDiscountsInRadiusAsync(
         Guid userId,
         double latitude,
         double longitude,
         DayOfWeek dayOfWeek,
         int offset,
         int limit,
+        int radiusMeters = 25_000,
         CancellationToken ct = default)
     {
         var userLocation = new Point(longitude, latitude) { SRID = 4326 };
 
-        var baseQuery = Context.Discounts
-            // 1. Venue must be within fixed radius of user
-            .Where(d => EF.Functions.IsWithinDistance(
-                d.Venue.Coordinates, userLocation, RadiusMeters, useSpheroid: false))
-            // 2. Must be active on the given day of week
-            .Where(d => d.Days.Any(day => day.DayOfWeek == dayOfWeek))
-            // 3. Loyalty level check - user's cached loyalty level for this venue is >= the discount's required level.
-            .Where(d =>
-                d.LoyaltyLevelId == 0 ||
-                Context.UserLoyalties
-                    .Any(l => l.UserId == userId &&
-                              l.CompanyId == d.CompanyId &&
-                              l.LoyaltyLevelId >= d.LoyaltyLevelId));
+        // Filter for all queries
+        Expression<Func<Discount, bool>> baseFilter = d =>
+            d.Venue.IsVerified &&
+            !d.Venue.IsDeleted &&
+            d.LoyaltyLevel.IsActive &&
+            EF.Functions.IsWithinDistance(d.Venue.Coordinates, userLocation, radiusMeters, useSpheroid: false) &&
+            d.Days.Any(day => day.DayOfWeek == dayOfWeek) &&
+            (d.LoyaltyLevelId == 0 ||
+             Context.UserLoyalties.Any(l =>
+                 l.UserId == userId &&
+                 l.CompanyId == d.CompanyId &&
+                 l.LoyaltyLevelId >= d.LoyaltyLevelId));
 
-        var highestPerVenueQuery = baseQuery
+        // 2. Get total count
+        var totalCount = await Context.Discounts
+            .Where(baseFilter)
+            .GroupBy(d => d.VenueId)
+            .CountAsync(ct);
+
+        if (totalCount == 0)
+        {
+            return ([], 0);
+        }
+
+        // 3. Get ids of the best applicable discounts.
+        // (We have to split it to 2 queries as EF Core can't translate GroupBy() +
+        // OrderByDescending() + FirstOrDefault() + Includes())
+        var bestDiscountIds = await Context.Discounts
+            .Where(baseFilter)
             .GroupBy(d => d.VenueId)
             .Select(g => g
-                    .OrderByDescending(d => d.Percent)
-                    .FirstOrDefault()!
-            );
+                .OrderByDescending(x => x.Percent)
+                .ThenBy(x => x.Id) // tie-breaker for stable sorting
+                .Select(x => x.Id)
+                .FirstOrDefault())
+            .Skip(offset)
+            .Take(limit)
+            .ToListAsync(ct);
 
-        var totalCount = await highestPerVenueQuery.CountAsync(ct);
+        if (bestDiscountIds.Count == 0)
+        {
+            return ([], totalCount);
+        }
 
-        var items = await highestPerVenueQuery
+        // 4. Load actual data
+        var rawData = await Context.Discounts
             .AsNoTracking()
             .Include(d => d.Days)
             .Include(d => d.Venue)
             .ThenInclude(v => v.Company)
-            .OrderByDescending(d => d.Percent)
-            .ThenBy(d => d.Venue.Company.Name)
-            .Skip(offset)
-            .Take(limit)
+            .Where(d => bestDiscountIds.Contains(d.Id))
+            .Select(d => new
+            {
+                Discount = d,
+                DistanceMeters = EF.Functions.Distance(
+                    d.Venue.Coordinates,
+                    userLocation,
+                    useSpheroid: false)
+            })
             .ToListAsync(ct);
+
+        // 5. Sort them in memory
+        var items = rawData
+            .OrderByDescending(x => x.Discount.Percent)
+            .ThenBy(x => x.DistanceMeters)
+            .ThenBy(x => x.Discount.Venue.Company.Name)
+            .Select(x => new DiscountWithDistance(x.Discount, x.DistanceMeters))
+            .ToList();
 
         return (items, totalCount);
     }

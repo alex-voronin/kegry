@@ -1,6 +1,5 @@
 using IntegrationTests.Shared;
 using IntegrationTests.Shared.Extensions;
-using Microsoft.Extensions.DependencyInjection;
 using SecurityModule.Domain.ValueObjects;
 using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
@@ -9,9 +8,7 @@ using VenueModule.API.B2B.Companies.Dto;
 using VenueModule.API.B2B.Deals.Dto;
 using VenueModule.API.B2B.Venues.Dto;
 using VenueModule.API.B2C.Dto;
-using VenueModule.Domain.Repositories;
 using VenueModule.Domain.ValueObjects;
-using VenueModule.Infrastructure.Persistence;
 using GetVenueResponse = VenueModule.API.B2C.Dto.GetVenueResponse;
 using VenueListItemDto = VenueModule.API.B2C.Dto.VenueListItemDto;
 
@@ -20,8 +17,11 @@ namespace IntegrationTests.VenueModule;
 [Collection("IntegrationTests")]
 public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 {
+    private readonly TestUtils _testUtils;
+
     public B2CVenueEndpointsTests(IntegrationWebApplicationFactory factory) : base(factory)
     {
+        _testUtils = new TestUtils(factory);
     }
 
     public Task InitializeAsync() => Task.CompletedTask;
@@ -39,12 +39,9 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Sorting Co", "sort@example.com"))).Result.Id;
 
         // 2. Create venues
-        // Venue 1: (5, 5)
-        await CreateVerifiedVenueAsync(companyId, 0.5, 0.5, "Middle");
-        // Venue 2: (1, 1) - closest to (0,0)
-        await CreateVerifiedVenueAsync(companyId, 0.2, 0.2, "Closest");
-        // Venue 3: (10, 10) - farthest
-        await CreateVerifiedVenueAsync(companyId, 1.0, 1.0, "Farthest");
+        await _testUtils.CreateVerifiedVenueAsync(companyId, 0.5, 0.5, "Middle");
+        await _testUtils.CreateVerifiedVenueAsync(companyId, 0.2, 0.2, "Closest");
+        await _testUtils.CreateVerifiedVenueAsync(companyId, 0.6, 0.6, "Farthest");
 
         // 3. Create B2C user with (0,0) location
         var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_list@example.com", "Password123!");
@@ -54,7 +51,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var listRequest = new GetVenuesRequest(0, 0, 0, 10);
         var response =
             await Factory.ApiClient.GetAsync<GetVenuesRequest, ApiResult<PaginatedResponse<VenueListItemDto>>>(
-                ApiRoutes.B2C.Venue.Root, listRequest);
+                ApiRoutes.Venue.Root, listRequest);
 
         response.Success.ShouldBeTrue();
         response.Result.TotalCount.ShouldBeGreaterThanOrEqualTo(3);
@@ -79,7 +76,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Visibility Co", "vis@example.com"))).Result.Id;
 
         // 2. Create verified and non-verified venue
-        await CreateVerifiedVenueAsync(companyId, 0.2, 0.2, "Verified Venue");
+        await _testUtils.CreateVerifiedVenueAsync(companyId, 0.2, 0.2, "Verified Venue");
         // Non-verified venue
         await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyId),
@@ -92,7 +89,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 4. Get venues list and ensure only verified venues are present.
         var response =
             await Factory.ApiClient.GetAsync<GetVenuesRequest, ApiResult<PaginatedResponse<VenueListItemDto>>>(
-                ApiRoutes.B2C.Venue.Root, new GetVenuesRequest(0, 0, 0, 10));
+                ApiRoutes.Venue.Root, new GetVenuesRequest(0, 0, 0, 10));
 
         response.Result.Data.ShouldContain(v => v.Address == "Verified Venue");
         response.Result.Data.ShouldNotContain(v => v.Address == "Non-Verified Venue");
@@ -123,7 +120,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 4. Get venues and check data
         var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
-            ApiRoutes.B2C.Venue.Single(venueId));
+            ApiRoutes.Venue.Single(venueId));
 
         response.Success.ShouldBeTrue();
         var venue = response.Result.Venue;
@@ -154,6 +151,11 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.B2B.Company.Venues(companyId), createVenueRequest);
         createVenueResponse.Success.ShouldBeTrue();
         var venueId = createVenueResponse.Result.Id;
+        
+        // 3. Enable 0 loyalty level
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelRequest, ApiResult.EmptyResult>(
+            ApiRoutes.B2B.Company.LoyaltyLevels(companyId),
+            new UpdateLoyaltyLevelRequest(new LoyaltyLevelDto(0, 1, true)));
 
         // 3. Create discounts
         var loyaltyLevelsResponse = await Factory.ApiClient.GetAsync<ApiResult<LoyaltyLevelDto[]>>(
@@ -175,7 +177,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(b2CAuth);
 
         var response = await Factory.ApiClient.GetAsync<ApiResult<GetDiscountsByWeekdayResponse>>(
-            ApiRoutes.B2C.Venue.Discounts(venueId));
+            ApiRoutes.Venue.Discounts(venueId));
 
         response.Result.Monday.CurrentLevelDiscount.ShouldBe(10);
         response.Result.Friday.CurrentLevelDiscount.ShouldBe(20);
@@ -249,7 +251,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
             // Verify current discount
             var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
-                ApiRoutes.B2C.Venue.Single(venueId));
+                ApiRoutes.Venue.Single(venueId));
             response.Success.ShouldBeTrue();
 
             var expectedDiscount = 0;
@@ -267,7 +269,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
             // Perform Check-in
             var checkInResponse = await Factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
-                ApiRoutes.B2C.Venue.QrCheckIn(venueId), new CheckInRequest(0, 0));
+                ApiRoutes.Venue.QrCheckIn(venueId), new CheckInRequest(0, 0));
             checkInResponse.Success.ShouldBeTrue();
 
             // Advance time by 1 day
@@ -293,7 +295,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .Result
             .Id;
 
-        await VerifyVenueByIdAsync(venueId);
+        await _testUtils.VerifyVenueByIdAsync(venueId);
 
         // 2. Create B2C user
         var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_checkin@example.com", "Password123!");
@@ -302,7 +304,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 3. Check in as B2C user
         var checkInRequest = new CheckInRequest(50.00001, 50.00001);
         var response = await Factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
-            ApiRoutes.B2C.Venue.QrCheckIn(venueId), checkInRequest);
+            ApiRoutes.Venue.QrCheckIn(venueId), checkInRequest);
 
         response.Success.ShouldBeTrue();
         response.Result.VenueId.ShouldBe(venueId);
@@ -325,7 +327,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .Result
             .Id;
 
-        await VerifyVenueByIdAsync(venueId);
+        await _testUtils.VerifyVenueByIdAsync(venueId);
 
         // 2. Create B2C user
         var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_checkin@example.com", "Password123!");
@@ -334,7 +336,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 3. Check in as B2C user
         var checkInRequest = new CheckInRequest(51, 51);
         var response = await Factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
-            ApiRoutes.B2C.Venue.QrCheckIn(venueId), checkInRequest);
+            ApiRoutes.Venue.QrCheckIn(venueId), checkInRequest);
 
         response.Success.ShouldBeFalse();
         response.Errors[0].Code.ShouldBe(nameof(ErrorCode.ValidationError));
@@ -386,7 +388,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         var oldResponse = await Factory.ApiClient
             .PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
-                ApiRoutes.B2C.Venue.QrCheckIn(venueId),
+                ApiRoutes.Venue.QrCheckIn(venueId),
                 new CheckInRequest(0, 0)
             );
         oldResponse.Success.ShouldBeFalse();
@@ -394,7 +396,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 5. Check in with the new QR
         var newResponse = await Factory.ApiClient
             .PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
-                ApiRoutes.B2C.Venue.QrCheckIn(newQr),
+                ApiRoutes.Venue.QrCheckIn(newQr),
                 new CheckInRequest(0, 0)
             );
         newResponse.Success.ShouldBeTrue();
@@ -436,7 +438,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 5. Get venue detail and check promotions
         var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
-            ApiRoutes.B2C.Venue.Single(venueId));
+            ApiRoutes.Venue.Single(venueId));
 
         response.Success.ShouldBeTrue();
         var promos = response.Result.Venue.Promos;
@@ -444,24 +446,49 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         promos.ShouldContain(p => p.Type == promo1.Type && p.Body == promo1.Body);
         promos.ShouldContain(p => p.Type == promo2.Type && p.Body == promo2.Body);
     }
-
-    private async Task CreateVerifiedVenueAsync(Guid companyId, double lat, double lon, string name)
+    
+    [Fact]
+    public async Task GivenUserWithMaxLoyaltyLevel_WhenDisablesLoyaltyLevel_ThenUserGetsNextAvailableDiscount()
     {
-        var createVenueResponse = await Factory.ApiClient
-            .PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
-                ApiRoutes.B2B.Company.Venues(companyId),
-                new CreateVenueRequest(lat, lon, name, null, null, null, null, null, null));
-
-        var venueId = createVenueResponse.Result.Id;
-        await VerifyVenueByIdAsync(venueId);
-    }
-
-    private async Task VerifyVenueByIdAsync(Guid venueId)
-    {
-        using var scope = Factory.Services.CreateScope();
-        var venueRepository = scope.ServiceProvider.GetService<IVenueRepository>()!;
-        var v = await venueRepository.GetByIdAsync(venueId, ignoreFilters: [NamedFilters.Venue.Verified]);
-        v!.IsVerified = true;
-        await venueRepository.SaveChangesAsync();
+        // 1. Create B2B user
+        var b2BAuth = await Factory.AuthManager
+            .CreateAndLoginUserAsync("b2b_discounts@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+        
+        // 2. Create all required entities
+        var levels = new[]
+        {
+            new LoyaltyLevelDto(0, 1, true),
+            new LoyaltyLevelDto(1, 2, true),
+            new LoyaltyLevelDto(2, 3, true),
+            new LoyaltyLevelDto(3, 4, true)
+        };
+    
+        var today = Factory.FakeTimeProvider.GetUtcNow().DayOfWeek;
+        var discounts = new[]
+        {
+            new CreateDiscountRequest(0, 5, [today]),
+            new CreateDiscountRequest(1, 10, [today]),
+            new CreateDiscountRequest(2, 15, [today]),
+            new CreateDiscountRequest(3, 20, [today]),
+        };
+        
+        var (companyId, venueId) = await _testUtils.SetupLoyaltyLevelsAndCreateDiscounts(levels, discounts);
+        var b2CAuth = await _testUtils.CreateB2CUserAndReachLoyaltyLevel(
+            "b2c@example.com", "Password123!", 
+            levels, 3, venueId);
+        
+        // 2. Disable 3rd loyalty level
+        Factory.ApiClient.SetAuth(b2BAuth);
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelRequest, ApiResult.EmptyResult>(
+            ApiRoutes.B2B.Company.LoyaltyLevels(companyId),
+            new UpdateLoyaltyLevelRequest(new LoyaltyLevelDto(3, 4, false)));
+        
+        // 3. Ensure Level 2 discount is applied
+        Factory.ApiClient.SetAuth(b2CAuth);
+        var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
+            ApiRoutes.Venue.Single(venueId));
+        response.Success.ShouldBeTrue();
+        response.Result.LoyaltyLevel.Discount.ShouldBe(15);
     }
 }

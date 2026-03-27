@@ -19,7 +19,7 @@ public record LoyaltyLevelWithDiscount(
 
 public interface ILoyaltyService
 {
-    Task<(List<Discount> Discounts, int TotalCount)> GetAvailableDiscountsAsync(
+    Task<(List<DiscountWithDistance> Discounts, int TotalCount)> GetAvailableDiscountsAsync(
         Guid userId,
         double latitude,
         double longitude,
@@ -68,7 +68,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         _timeProvider = timeProvider;
     }
 
-    public async Task<(List<Discount> Discounts, int TotalCount)> GetAvailableDiscountsAsync(
+    public async Task<(List<DiscountWithDistance> Discounts, int TotalCount)> GetAvailableDiscountsAsync(
         Guid userId,
         double latitude,
         double longitude,
@@ -81,7 +81,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timezoneId);
         var userLocalTime = TimeZoneInfo.ConvertTimeFromUtc(now.DateTime, timeZone);
         var dayOfWeek = userLocalTime.DayOfWeek;
-        return await _discountRepository.GetAvailableForUserAsync(
+        return await _discountRepository.GetAvailableDiscountsInRadiusAsync(
             userId: userId,
             latitude: latitude,
             longitude: longitude,
@@ -230,11 +230,13 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         var applicableDiscounts = discounts
             .Where(d => d.Days.Any(day => day.DayOfWeek == dayOfWeek))
             .Where(d => currentLoyaltyLevel >= d.LoyaltyLevelId)
+            .Where(d => d.LoyaltyLevel.IsActive)
             .ToList();
 
         var nextLevelDiscount = discounts
             .Where(d => d.Days.Any(day => day.DayOfWeek == dayOfWeek))
             .Where(d => d.LoyaltyLevelId == currentLoyaltyLevel + 1)
+            .Where(d => d.LoyaltyLevel.IsActive)
             .FirstOrDefault();
         var currentDiscountPercent = applicableDiscounts.Count > 0 ? applicableDiscounts.Max(d => d.Percent) : 0;
         return (currentDiscountPercent, nextLevelDiscount?.Percent);

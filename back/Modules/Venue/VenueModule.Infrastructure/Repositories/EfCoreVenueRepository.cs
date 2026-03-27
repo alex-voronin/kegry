@@ -9,7 +9,7 @@ namespace VenueModule.Infrastructure.Repositories;
 
 public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepository
 {
-    private const double SearchRadiusMeters = 200_000;
+    private const double SearchRadiusMeters = 100_000;
 
     public EfCoreVenueRepository(VenueContext context) : base(context)
     {
@@ -23,6 +23,8 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
             .ThenInclude(c => c.LoyaltyLevels)
             .Include(v => v.Discounts)
             .ThenInclude(d => d.Days)
+            .Include(v => v.Discounts)
+            .ThenInclude(d => d.LoyaltyLevel)
             .Include(v => v.Promos)
             .AsNoTracking()
             .Where(v => v.Id == id)
@@ -63,7 +65,7 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
 
     // B2C venues listings must respect NamedFilters.Venue.Verified query filter
 
-    public async Task<(IReadOnlyList<Venue> venues, int TotalCount)> GetWithPromosInRadiusAsync(
+    public async Task<(IReadOnlyList<VenueWithDistance> venues, int TotalCount)> GetVenuesWithPromosInRadiusAsync(
         double latitude,
         double longitude,
         int offset,
@@ -83,10 +85,22 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
             .AsNoTracking()
             .Include(v => v.Promos)
             .Include(v => v.Company)
-            .OrderByDescending(v => v.Promos.Count)
-            .ThenBy(v => v.Company.Name)
+            .Select(v => new
+            {
+                Venue = v,
+                DistanceMeters = EF.Functions.Distance(
+                    v.Coordinates,
+                    userLocation,
+                    useSpheroid: false)
+            })
+            .OrderByDescending(t => t.Venue.Promos.Count)
+            .ThenBy(t => t.DistanceMeters)
+            .ThenBy(t => t.Venue.Company.Name)
             .Skip(offset)
             .Take(limit)
+            .Select(x => new VenueWithDistance(
+                Venue: x.Venue,
+                DistanceMeters: x.DistanceMeters))
             .ToListAsync(ct);
 
         return (items, totalCount);

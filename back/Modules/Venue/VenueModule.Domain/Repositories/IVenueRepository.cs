@@ -19,7 +19,7 @@ public interface IVenueRepository : IRepository<Venue>
     Task<(Venue? venue, Visit? lastVisit, UserLoyalty? userLoyalty)> GetVenueWithLastVisitsAndUserLoyaltyAsync(
         Guid qrCode, Guid userId, CancellationToken ct);
 
-    Task<(IReadOnlyList<Venue> venues, int TotalCount)> GetWithPromosInRadiusAsync(
+    Task<(IReadOnlyList<VenueWithDistance> venues, int TotalCount)> GetVenuesWithPromosInRadiusAsync(
         double latitude,
         double longitude,
         int offset,

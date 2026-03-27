@@ -104,7 +104,8 @@ public class ContainerManager : IAsyncLifetime
         _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
         {
             DbAdapter = DbAdapter.Postgres,
-            SchemasToInclude = ["feed", "security", "user_profile", "location", "notifications", "wolverine"],
+            SchemasToInclude = ["feed", "security", "user_profile", "location", "notifications", "wolverine",
+                "engagement", "venue"],
             TablesToIgnore =
             [
                 new Table(schema: "user_profile", name: "hobby_categories"),

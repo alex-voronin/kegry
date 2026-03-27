@@ -6,5 +6,6 @@ public record AvailablePromotionDto(
     string VenueId,
     string VenueAddress,
     string? GoogleMapsUrl,
-    PromoDto[] Promos
+    PromoDto[] Promos,
+    int DistanceMeters
 );

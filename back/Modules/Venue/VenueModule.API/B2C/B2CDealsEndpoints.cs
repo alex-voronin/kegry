@@ -42,15 +42,16 @@ public class B2CDealsEndpoints : IEndpoints
 
         var dtos = discounts
             .Select(d => new AvailableDiscountDto(
-                CompanyName: d.Venue.Company.Name,
-                CompanyAvatarImageUrl: d.Venue.Company.AvatarImageS3Key != null
+                CompanyName: d.Discount.Venue.Company.Name,
+                CompanyAvatarImageUrl: d.Discount.Venue.Company.AvatarImageS3Key != null
                     ? storageService.S3KeyToPublicFileUrl(
-                        d.Venue.Company.AvatarImageS3Key, d.Venue.Company.UpdatedAt)
+                        d.Discount.Venue.Company.AvatarImageS3Key, d.Discount.Venue.Company.UpdatedAt)
                     : null,
-                VenueId: d.VenueId.ToString(),
-                VenueAddress: d.Venue.Address,
-                GoogleMapsUrl: d.Venue.GoogleMapsUrl,
-                Percent: d.Percent
+                VenueId: d.Discount.VenueId,
+                VenueAddress: d.Discount.Venue.Address,
+                GoogleMapsUrl: d.Discount.Venue.GoogleMapsUrl,
+                Percent: d.Discount.Percent,
+                DistanceMeters: (int)d.DistanceMeters
             ))
             .ToArray();
 
@@ -64,7 +65,7 @@ public class B2CDealsEndpoints : IEndpoints
         IS3StorageService storageService,
         CancellationToken ct)
     {
-        var (venues, totalCount) = await venueRepository.GetWithPromosInRadiusAsync(
+        var (venues, totalCount) = await venueRepository.GetVenuesWithPromosInRadiusAsync(
             latitude: request.Latitude,
             longitude: request.Longitude,
             offset: request.Offset,
@@ -73,17 +74,18 @@ public class B2CDealsEndpoints : IEndpoints
 
         var dtos = venues
             .Select(v => new AvailablePromotionDto(
-                CompanyName: v.Company.Name,
-                CompanyAvatarImageUrl: v.Company.AvatarImageS3Key != null
+                CompanyName: v.Venue.Company.Name,
+                CompanyAvatarImageUrl: v.Venue.Company.AvatarImageS3Key != null
                     ? storageService.S3KeyToPublicFileUrl(
-                       v.Company.AvatarImageS3Key, v.Company.UpdatedAt)
+                       v.Venue.Company.AvatarImageS3Key, v.Venue.Company.UpdatedAt)
                     : null,
-                VenueId: v.Id.ToString(),
-                VenueAddress: v.Address,
-                GoogleMapsUrl: v.GoogleMapsUrl,
-                Promos: v.Promos
+                VenueId: v.Venue.Id.ToString(),
+                VenueAddress: v.Venue.Address,
+                GoogleMapsUrl: v.Venue.GoogleMapsUrl,
+                Promos: v.Venue.Promos
                     .Select(p => new PromoDto(Type: p.Type, Body: p.Body))
-                    .ToArray()
+                    .ToArray(),
+                DistanceMeters: (int)v.DistanceMeters
             ))
             .ToArray();
 
