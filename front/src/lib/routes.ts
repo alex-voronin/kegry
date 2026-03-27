@@ -122,22 +122,24 @@ export const API_ENDPOINTS = {
   },
   B2B: {
     COMPANIES: {
-      BASE: '/api/v1/companies',
-      BY_ID: (id: string) => `/api/v1/company/${id}`,
+      BASE: '/api/v1/b2b/companies',
+      BY_ID: (id: string) => `/api/v1/b2b/company/${id}`,
       AVATAR_UPLOAD_URL: (id: string) =>
-        `/api/v1/company/${id}/avatar/upload-url`,
-      VENUE: (id: string) => `/api/v1/company/${id}/venue`,
+        `/api/v1/b2b/company/${id}/avatar/upload-url`,
+      VENUE: (id: string) => `/api/v1/b2b/company/${id}/venue`,
     },
     VENUES: {
-      BASE: '/api/v1/venues',
-      DETAILS: (id: string) => `/api/v1/venue/${id}`,
-      COVER_UPLOAD_URL: (id: string) => `/api/v1/venue/${id}/cover/upload-url`,
-      PROMOTIONS: (venueId: string) => `/api/v1/venue/${venueId}/promotions`,
+      BASE: '/api/v1/b2b/venues',
+      DETAILS: (id: string) => `/api/v1/b2b/venue/${id}`,
+      COVER_UPLOAD_URL: (id: string) =>
+        `/api/v1/b2b/venue/${id}/cover/upload-url`,
+      PROMOTIONS: (venueId: string) =>
+        `/api/v1/b2b/venue/${venueId}/promotions`,
       PROMOTION: (venueId: string, promoId: string) =>
-        `/api/v1/venue/${venueId}/promotions/${promoId}`,
-      DISCOUNTS: (venueId: string) => `/api/v1/venue/${venueId}/discounts`,
+        `/api/v1/b2b/venue/${venueId}/promotions/${promoId}`,
+      DISCOUNTS: (venueId: string) => `/api/v1/b2b/venue/${venueId}/discounts`,
       DISCOUNT: (venueId: string, discountId: string) =>
-        `/api/v1/venue/${venueId}/discounts/${discountId}`,
+        `/api/v1/b2b/venue/${venueId}/discounts/${discountId}`,
     },
   },
   VENUES: {
