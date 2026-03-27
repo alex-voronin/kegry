@@ -45,9 +45,18 @@ export default function VenueEditPage() {
 
   const schema = z.object({
     address: z.string().trim().min(1, t('addressRequired')),
-    googleMapsUrl: z.url({ error: t('googleMapsUrlInvalid') }).optional().or(z.literal('')),
-    websiteUrl: z.url({ error: t('websiteUrlInvalid') }).optional().or(z.literal('')),
-    instagramUrl: z.url({ error: t('instagramUrlInvalid') }).optional().or(z.literal('')),
+    googleMapsUrl: z
+      .url({ error: t('googleMapsUrlInvalid') })
+      .optional()
+      .or(z.literal('')),
+    websiteUrl: z
+      .url({ error: t('websiteUrlInvalid') })
+      .optional()
+      .or(z.literal('')),
+    instagramUrl: z
+      .url({ error: t('instagramUrlInvalid') })
+      .optional()
+      .or(z.literal('')),
     phoneNumber: z.string().trim().optional().or(z.literal('')),
     workingHours: z.string().trim().optional().or(z.literal('')),
     latitude: z.preprocess(
@@ -146,7 +155,7 @@ export default function VenueEditPage() {
       if (coverBlob) {
         coverImageUrl = await uploadImage(
           coverBlob,
-          API_ENDPOINTS.VENUE_COVER_UPLOAD_URL(venueId),
+          API_ENDPOINTS.B2B.VENUES.COVER_UPLOAD_URL(venueId),
         );
       }
 

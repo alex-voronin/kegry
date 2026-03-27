@@ -103,7 +103,7 @@ export default function CompanyEditPage() {
       if (avatarBlob) {
         avatarImageUrl = await uploadImage(
           avatarBlob,
-          API_ENDPOINTS.COMPANIES.AVATAR_UPLOAD_URL(id),
+          API_ENDPOINTS.B2B.COMPANIES.AVATAR_UPLOAD_URL(id),
         );
       }
 

@@ -108,7 +108,7 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
     set({ isLoading: true });
     try {
       const response = await apiClient.get<ApiResult<GetVenueResponse>>(
-        API_ENDPOINTS.VENUE(id),
+        API_ENDPOINTS.B2B.VENUES.DETAILS(id),
       );
       set({ currentVenue: response.data.result.venue });
     } catch (error) {
@@ -130,7 +130,7 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
 
     try {
       const response = await apiClient.post<ApiResult<{ id: string }>>(
-        API_ENDPOINTS.VENUE_PROMOTIONS(venueId),
+        API_ENDPOINTS.B2B.VENUES.PROMOTIONS(venueId),
         { type, body },
       );
       const newId = response.data.result.id;
@@ -158,7 +158,7 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
 
     try {
       await apiClient.put(
-        `${API_ENDPOINTS.VENUE_PROMOTIONS(venueId)}/${promoId}`,
+        API_ENDPOINTS.B2B.VENUES.PROMOTION(venueId, promoId),
         { type, body },
       );
       set((state) => ({
@@ -180,7 +180,9 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
     });
 
     try {
-      await apiClient.delete(API_ENDPOINTS.VENUE_PROMOTION(venueId, promoId));
+      await apiClient.delete(
+        API_ENDPOINTS.B2B.VENUES.PROMOTION(venueId, promoId),
+      );
       set((state) => ({
         currentVenue: state.currentVenue
           ? filterPromosInStore(state.currentVenue, promoId)
@@ -212,7 +214,7 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
 
     try {
       const response = await apiClient.post<ApiResult<{ id: string }>>(
-        API_ENDPOINTS.VENUE_DISCOUNTS(venueId),
+        API_ENDPOINTS.B2B.VENUES.DISCOUNTS(venueId),
         { percent, days, loyaltyLevelId },
       );
       const newId = response.data.result.id;
@@ -252,11 +254,14 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
     });
 
     try {
-      await apiClient.put(API_ENDPOINTS.VENUE_DISCOUNT(venueId, discountId), {
-        percent,
-        days,
-        loyaltyLevelId,
-      });
+      await apiClient.put(
+        API_ENDPOINTS.B2B.VENUES.DISCOUNT(venueId, discountId),
+        {
+          percent,
+          days,
+          loyaltyLevelId,
+        },
+      );
       set((state) => ({
         currentVenue: state.currentVenue
           ? updateDiscountInStore(
@@ -282,7 +287,9 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
     });
 
     try {
-      await apiClient.delete(API_ENDPOINTS.VENUE_DISCOUNT(venueId, discountId));
+      await apiClient.delete(
+        API_ENDPOINTS.B2B.VENUES.DISCOUNT(venueId, discountId),
+      );
       set((state) => ({
         currentVenue: state.currentVenue
           ? filterDiscountsInStore(state.currentVenue, discountId)
@@ -294,14 +301,14 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
   },
   deleteVenue: async (id: string) => {
     try {
-      await apiClient.delete(API_ENDPOINTS.VENUE(id));
+      await apiClient.delete(API_ENDPOINTS.B2B.VENUES.DETAILS(id));
     } catch (error) {
       rethrowApiError(error, 'Failed to delete venue');
     }
   },
   patchVenue: async (id: string, request: PatchVenueRequest) => {
     try {
-      await apiClient.patch(API_ENDPOINTS.VENUE(id), request);
+      await apiClient.patch(API_ENDPOINTS.B2B.VENUES.DETAILS(id), request);
       set((state) => ({
         currentVenue: state.currentVenue
           ? { ...state.currentVenue, ...request }
@@ -314,7 +321,7 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
   createVenue: async (companyId: string, request: CreateVenueRequest) => {
     try {
       const response = await apiClient.post<ApiResult<{ id: string }>>(
-        API_ENDPOINTS.COMPANIES.VENUE(companyId),
+        API_ENDPOINTS.B2B.COMPANIES.VENUE(companyId),
         request,
       );
       return response.data.result;

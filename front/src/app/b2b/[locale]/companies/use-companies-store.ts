@@ -42,7 +42,9 @@ export const useCompaniesStore = create<CompaniesState>()(
       fetchCompanies: async () => {
         set({ isLoading: true });
         try {
-          const response = await apiClient.get(API_ENDPOINTS.COMPANIES.BASE);
+          const response = await apiClient.get(
+            API_ENDPOINTS.B2B.COMPANIES.BASE,
+          );
           const { companies } = response.data.result;
 
           set({
@@ -56,10 +58,13 @@ export const useCompaniesStore = create<CompaniesState>()(
       },
       createCompany: async (name: string, email?: string) => {
         try {
-          const response = await apiClient.post(API_ENDPOINTS.COMPANIES.BASE, {
-            name,
-            email,
-          });
+          const response = await apiClient.post(
+            API_ENDPOINTS.B2B.COMPANIES.BASE,
+            {
+              name,
+              email,
+            },
+          );
           return response.data.result;
         } catch (error) {
           rethrowApiError(error, 'Failed to create company');
@@ -68,7 +73,7 @@ export const useCompaniesStore = create<CompaniesState>()(
       getAvatarUploadUrl: async (id: string, contentLength: number) => {
         try {
           const response = await apiClient.post(
-            API_ENDPOINTS.COMPANIES.AVATAR_UPLOAD_URL(id),
+            API_ENDPOINTS.B2B.COMPANIES.AVATAR_UPLOAD_URL(id),
             { contentLength },
           );
           return response.data.result;
@@ -78,7 +83,7 @@ export const useCompaniesStore = create<CompaniesState>()(
       },
       patchCompany: async (id, patch) => {
         try {
-          await apiClient.patch(API_ENDPOINTS.COMPANIES.BY_ID(id), patch);
+          await apiClient.patch(API_ENDPOINTS.B2B.COMPANIES.BY_ID(id), patch);
         } catch (error) {
           rethrowApiError(error, 'Failed to update company');
         }

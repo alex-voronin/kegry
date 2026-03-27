@@ -36,7 +36,7 @@ export const useVenueDiscountsStore = create<VenueDiscountsState>()((set) => ({
     try {
       const response = await apiClient.get<
         ApiResult<GetDiscountsByWeekdayResponse>
-      >(API_ENDPOINTS.VENUE_DISCOUNTS(venueId));
+      >(API_ENDPOINTS.VENUES.DISCOUNTS(venueId));
       set({ discounts: response.data.result });
     } catch (error) {
       rethrowApiError(error, 'Failed to fetch discounts');

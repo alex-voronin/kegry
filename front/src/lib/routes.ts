@@ -120,31 +120,40 @@ export const API_ENDPOINTS = {
   LOCATION: {
     UPDATE: '/api/v1/location',
   },
-  DISCOUNTS: '/api/v1/discounts',
-  PROMOTIONS: '/api/v1/promotions',
-  VENUES: '/api/v1/venues',
-  VENUE_QR_CHECK_IN: (id: string) => `/api/v1/venues/${id}/qr-check-in`,
-  VENUES_LIST: '/api/v1/venue',
-  VENUE: (id: string) => `/api/v1/venue/${id}`,
-  VENUE_PROMOTIONS: (venueId: string) => `/api/v1/venue/${venueId}/promotions`,
-  VENUE_PROMOTION: (venueId: string, promoId: string) =>
-    `/api/v1/venue/${venueId}/promotions/${promoId}`,
-  VENUE_DISCOUNTS: (venueId: string) => `/api/v1/venue/${venueId}/discounts`,
-  VENUE_DISCOUNT: (venueId: string, discountId: string) =>
-    `/api/v1/venue/${venueId}/discounts/${discountId}`,
-  VENUE_COVER_UPLOAD_URL: (id: string) =>
-    `/api/v1/venue/${id}/cover/upload-url`,
+  B2B: {
+    COMPANIES: {
+      BASE: '/api/v1/companies',
+      BY_ID: (id: string) => `/api/v1/company/${id}`,
+      AVATAR_UPLOAD_URL: (id: string) =>
+        `/api/v1/company/${id}/avatar/upload-url`,
+      VENUE: (id: string) => `/api/v1/company/${id}/venue`,
+    },
+    VENUES: {
+      BASE: '/api/v1/venues',
+      DETAILS: (id: string) => `/api/v1/venue/${id}`,
+      COVER_UPLOAD_URL: (id: string) => `/api/v1/venue/${id}/cover/upload-url`,
+      PROMOTIONS: (venueId: string) => `/api/v1/venue/${venueId}/promotions`,
+      PROMOTION: (venueId: string, promoId: string) =>
+        `/api/v1/venue/${venueId}/promotions/${promoId}`,
+      DISCOUNTS: (venueId: string) => `/api/v1/venue/${venueId}/discounts`,
+      DISCOUNT: (venueId: string, discountId: string) =>
+        `/api/v1/venue/${venueId}/discounts/${discountId}`,
+    },
+  },
+  VENUES: {
+    LIST: '/api/v1/venues',
+    QR_CHECK_IN: (qrCode: string) => `/api/v1/venues/${qrCode}/qr-check-in`,
+    DETAILS: (id: string) => `/api/v1/venue/${id}`,
+    DISCOUNTS: (venueId: string) => `/api/v1/venue/${venueId}/discounts`,
+  },
+  DEALS: {
+    DISCOUNTS: '/api/v1/discounts',
+    PROMOTIONS: '/api/v1/promotions',
+  },
   NPC: {
     GET: '/api/v1/npc',
     MET: '/api/v1/npc/met',
     INVITE: (id: string) => `/api/v1/npc/${id}/invite`,
-  },
-  COMPANIES: {
-    BASE: '/api/v1/companies',
-    BY_ID: (id: string) => `/api/v1/company/${id}`,
-    AVATAR_UPLOAD_URL: (id: string) =>
-      `/api/v1/company/${id}/avatar/upload-url`,
-    VENUE: (id: string) => `/api/v1/company/${id}/venue`,
   },
   LOYALTY_LEVELS: {
     BY_COMPANY_ID: (companyId: string) =>

@@ -4,6 +4,7 @@ import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS } from '@/lib/routes';
 import { ApiResult } from '@/lib/api-types';
 import { PromoType } from '@/lib/promo-types';
+import { rethrowApiError } from '@/lib/api-error';
 
 export interface CompanyDto {
   id: string;
@@ -61,7 +62,7 @@ export const useVenueStore = create<VenueState>()(
       set({ isLoading: true });
       try {
         const response = await apiClient.get<ApiResult<GetVenueResponse>>(
-          API_ENDPOINTS.VENUE(id),
+          API_ENDPOINTS.VENUES.DETAILS(id),
         );
 
         if (response.data.success) {
@@ -70,7 +71,7 @@ export const useVenueStore = create<VenueState>()(
           throw new Error('Failed to fetch venue');
         }
       } catch (error) {
-        throw error;
+        rethrowApiError(error, 'Failed to delete company');
       } finally {
         set({ isLoading: false });
       }

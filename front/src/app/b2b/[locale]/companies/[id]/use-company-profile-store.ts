@@ -29,7 +29,9 @@ export const useCompanyProfileStore = create<CompanyProfileState>()((set) => ({
   fetchCompany: async (id: string) => {
     set({ isLoading: true });
     try {
-      const response = await apiClient.get(API_ENDPOINTS.COMPANIES.BY_ID(id));
+      const response = await apiClient.get(
+        API_ENDPOINTS.B2B.COMPANIES.BY_ID(id),
+      );
       const { company, venues } = response.data.result;
 
       set({
@@ -43,7 +45,7 @@ export const useCompanyProfileStore = create<CompanyProfileState>()((set) => ({
   },
   deleteCompany: async (id: string) => {
     try {
-      await apiClient.delete(API_ENDPOINTS.COMPANIES.BY_ID(id));
+      await apiClient.delete(API_ENDPOINTS.B2B.COMPANIES.BY_ID(id));
     } catch (error) {
       rethrowApiError(error, 'Failed to delete company');
     }

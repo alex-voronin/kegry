@@ -18,7 +18,7 @@ export const useVenuesStore = create<VenuesState>()((set) => ({
     set({ isLoading: true });
     try {
       const response = await apiClient.get<{ result: VenueListItemDto[] }>(
-        API_ENDPOINTS.VENUES_LIST,
+        API_ENDPOINTS.B2B.VENUES.BASE,
       );
       set({ venues: response.data.result, isLoading: false });
     } catch (error) {

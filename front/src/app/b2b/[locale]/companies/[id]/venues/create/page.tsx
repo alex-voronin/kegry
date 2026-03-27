@@ -122,7 +122,6 @@ export default function VenueCreatePage() {
     }
   };
 
-
   const onSubmit = async (values: FormValues) => {
     if (!coverBlob) {
       toast.error(t('validation.coverRequired'));
@@ -141,7 +140,7 @@ export default function VenueCreatePage() {
       // 2. Upload cover
       const publicUrl = await uploadImage(
         coverBlob,
-        API_ENDPOINTS.VENUE_COVER_UPLOAD_URL(venueId),
+        API_ENDPOINTS.B2B.VENUES.COVER_UPLOAD_URL(venueId),
       );
 
       // 3. Patch venue with cover URL

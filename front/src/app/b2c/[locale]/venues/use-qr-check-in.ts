@@ -44,7 +44,7 @@ export function useQrCheckIn({ onSuccess }: UseQrCheckInOptions = {}) {
           );
 
           const response = await apiClient.post<ApiResult<CheckInResponse>>(
-            API_ENDPOINTS.VENUE_QR_CHECK_IN(qrCode),
+            API_ENDPOINTS.VENUES.QR_CHECK_IN(qrCode),
             {
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,

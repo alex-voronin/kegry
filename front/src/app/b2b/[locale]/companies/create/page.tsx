@@ -98,7 +98,7 @@ export default function CompanyCreatePage() {
       // 2. Upload avatar
       const publicUrl = await uploadImage(
         avatarBlob,
-        API_ENDPOINTS.COMPANIES.AVATAR_UPLOAD_URL(id),
+        API_ENDPOINTS.B2B.COMPANIES.AVATAR_UPLOAD_URL(id),
       );
 
       // 3. Patch company with avatar URL
