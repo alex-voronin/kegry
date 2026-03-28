@@ -86,15 +86,26 @@ export default function MobileLayout() {
         <nav className={mobileStyles.drawerNav}>
           <span
             className={mobileStyles.drawerNavLink}
-            onClick={() => scrollToSection('polls-news')}
+            onClick={() =>
+              window.open(
+                'https://business.' + window.location.hostname,
+                '_blank',
+              )
+            }
           >
-            {t('header.nav.pollsNews')}
+            {t('header.nav.forBusiness')}
           </span>
           <span
             className={mobileStyles.drawerNavLink}
             onClick={() => scrollToSection('how-it-works')}
           >
             {t('header.nav.howItWorks')}
+          </span>
+          <span
+            className={mobileStyles.drawerNavLink}
+            onClick={() => scrollToSection('loyalty')}
+          >
+            {t('header.nav.loyaltyProgram')}
           </span>
           <span
             className={mobileStyles.drawerNavLink}
@@ -156,6 +167,18 @@ export default function MobileLayout() {
             {t.rich('cheers.description', {
               br: () => <br />,
             })}{' '}
+          </p>
+          <p className={mobileStyles.mobileCardDescription}>
+            {t.rich('cheers.loyaltyProgram', {
+              link: (chunks) => (
+                <span
+                  className={styles.actionLink}
+                  onClick={() => scrollToSection('loyalty')}
+                >
+                  {chunks}
+                </span>
+              ),
+            })}
           </p>
           <div className={mobileStyles.mobileLoginButtonWrapper}>
             <Link href={PAGE_ROUTES.LOGIN(true)} className={styles.loginButton}>
@@ -238,8 +261,8 @@ export default function MobileLayout() {
               <Image
                 src="/assets/landing/step-1.webp"
                 alt="Step 1"
-                width={200}
-                height={100}
+                width={195}
+                height={145}
                 className={mobileStyles.mobileStepImage}
               />
             </div>
@@ -250,8 +273,8 @@ export default function MobileLayout() {
               <Image
                 src="/assets/landing/step-2.webp"
                 alt="Step 2"
-                width={200}
-                height={90}
+                width={180}
+                height={162}
                 className={mobileStyles.mobileStepImage}
               />
             </div>
@@ -263,7 +286,19 @@ export default function MobileLayout() {
                 src="/assets/landing/step-3.webp"
                 alt="Step 3"
                 width={160}
-                height={80}
+                height={165}
+                className={mobileStyles.mobileStepImage}
+              />
+            </div>
+            <div className={mobileStyles.mobileStep}>
+              <p className={mobileStyles.mobileStepTitle}>
+                {t('howItWorks.step4')}
+              </p>
+              <Image
+                src="/assets/landing/step-4.webp"
+                alt="Step 4"
+                width={160}
+                height={130}
                 className={mobileStyles.mobileStepImage}
               />
             </div>

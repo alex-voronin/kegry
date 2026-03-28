@@ -41,7 +41,12 @@ export default function DesktopLayout() {
           />
           <div className={styles.logoTextWrapper}>
             <div className={styles.logoTitleRow}>
-              <span className={styles.logoText}>Kegrycorn & Friends</span>
+              <span className={`${styles.logoText} ${styles.logoTextFull}`}>
+                Kegrycorn & Friends
+              </span>
+              <span className={`${styles.logoText} ${styles.logoTextShort}`}>
+                Kegrycorn
+              </span>
             </div>
             <span className={styles.logoSubtitle}>{t('header.subtitle')}</span>
           </div>
@@ -49,9 +54,14 @@ export default function DesktopLayout() {
         <nav className={styles.nav}>
           <span
             className={styles.navLink}
-            onClick={() => scrollToSection('polls-news')}
+            onClick={() =>
+              window.open(
+                'https://business.' + window.location.hostname,
+                '_blank',
+              )
+            }
           >
-            {t('header.nav.pollsNews')}
+            {t('header.nav.forBusiness')}
           </span>
           <span
             className={styles.navLink}
@@ -61,14 +71,22 @@ export default function DesktopLayout() {
           </span>
           <span
             className={styles.navLink}
+            onClick={() => scrollToSection('loyalty')}
+          >
+            {t('header.nav.loyaltyProgram')}
+          </span>
+          <span
+            className={styles.navLink}
             onClick={() => scrollToSection('contact-us')}
           >
             {t('header.nav.contactUs')}
           </span>
-          <LanguageSelector />
-          <Link href={PAGE_ROUTES.LOGIN(true)} className={styles.loginButton}>
-            {t('header.nav.login')}
-          </Link>
+          <div className={styles.navActions}>
+            <LanguageSelector />
+            <Link href={PAGE_ROUTES.LOGIN(true)} className={styles.loginButton}>
+              {t('header.nav.login')}
+            </Link>
+          </div>
         </nav>
       </header>
       {/* Cheers Section */}
@@ -82,6 +100,18 @@ export default function DesktopLayout() {
             <Link href={PAGE_ROUTES.LOGIN(true)} className={styles.actionLink}>
               {t('cheers.cta')}
             </Link>
+          </p>
+          <p className={styles.cardDescription}>
+            {t.rich('cheers.loyaltyProgram', {
+              link: (chunks) => (
+                <span
+                  className={styles.actionLink}
+                  onClick={() => scrollToSection('loyalty')}
+                >
+                  {chunks}
+                </span>
+              ),
+            })}
           </p>
         </div>
 
@@ -172,6 +202,16 @@ export default function DesktopLayout() {
               <Image
                 src="/assets/landing/step-3.webp"
                 alt="Step 3"
+                width={160}
+                height={100}
+                className={styles.stepImage}
+              />
+            </div>
+            <div className={styles.step}>
+              <p className={styles.stepTitle}>{t('howItWorks.step4')}</p>
+              <Image
+                src="/assets/landing/step-4.webp"
+                alt="Step 4"
                 width={160}
                 height={100}
                 className={styles.stepImage}

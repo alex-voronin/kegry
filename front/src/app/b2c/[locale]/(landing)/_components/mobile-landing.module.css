@@ -153,7 +153,7 @@
 }
 
 .mobileCardDescription {
-  @apply text-base leading-relaxed;
+  @apply mt-2 text-base leading-relaxed;
   color: var(--color-landing-text);
 }
 
