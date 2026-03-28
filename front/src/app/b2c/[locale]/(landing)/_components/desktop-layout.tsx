@@ -10,6 +10,7 @@ import Script from 'next/script';
 import SocialLinks from './social-links';
 import { LanguageSelector } from './language-selector';
 import styles from './desktop-landing.module.css';
+import { cn } from '@/lib/utils';
 
 export default function DesktopLayout() {
   const t = useTranslations('screens.landing');
@@ -73,7 +74,7 @@ export default function DesktopLayout() {
             className={styles.navLink}
             onClick={() => scrollToSection('loyalty')}
           >
-            {t('header.nav.loyaltyProgram')}
+            {t('header.nav.loyaltyPrograms')}
           </span>
           <span
             className={styles.navLink}
@@ -102,7 +103,7 @@ export default function DesktopLayout() {
             </Link>
           </p>
           <p className={styles.cardDescription}>
-            {t.rich('cheers.loyaltyProgram', {
+            {t.rich('cheers.loyaltyPrograms', {
               link: (chunks) => (
                 <span
                   className={styles.actionLink}
@@ -231,17 +232,25 @@ export default function DesktopLayout() {
         </div>
       </section>
 
-      {/* Contact Us Section */}
-      <section id="contact-us" className={styles.contactSection}>
+      {/* Loyalty Program Section */}
+      <section id="loyalty" className={styles.loyaltySection}>
         <div className={styles.sideImage}>
           <Image
-            src="/assets/landing/section-contact-us.webp"
-            alt="Goblin Artist"
-            width={300}
-            height={400}
+            src="/assets/landing/section-loyalty.webp"
+            alt="Cheers"
+            width={400}
+            height={370}
           />
         </div>
 
+        <div className={styles.card}>
+          <h1 className={styles.cardTitle}>{t('loyalty.title')}</h1>
+          <p className={styles.cardDescription}>{t('loyalty.description')}</p>
+        </div>
+      </section>
+
+      {/* Contact Us Section */}
+      <section id="contact-us" className={styles.contactSection}>
         <div className={`${styles.card} ${styles.contactCard}`}>
           <h2 className={styles.cardTitle}>{t('contactUs.title')}</h2>
           <p className={styles.cardDescription}>
@@ -272,6 +281,14 @@ export default function DesktopLayout() {
               ),
             })}
           </p>
+        </div>
+        <div className={cn(styles.sideImage, '-mt-16 mb-4')}>
+          <Image
+            src="/assets/landing/section-contact-us.webp"
+            alt="Goblin Artist"
+            width={300}
+            height={400}
+          />
         </div>
       </section>
 

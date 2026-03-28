@@ -22,14 +22,15 @@ export default function MobileLayout() {
     fetchNews();
   }, [fetchNews]);
 
-  const scrollToSection = (sectionId: string) => {
+  const scrollToSection = (sectionId: string, waitDrawer: boolean = true) => {
     setIsMenuOpen(false);
+    const scrollDelay = waitDrawer ? 300 : 0;
     setTimeout(() => {
       const element = document.getElementById(`mobile-${sectionId}`);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
-    }, 300); // Wait for drawer to close
+    }, scrollDelay); // Wait for drawer to close
   };
 
   return (
@@ -105,7 +106,7 @@ export default function MobileLayout() {
             className={mobileStyles.drawerNavLink}
             onClick={() => scrollToSection('loyalty')}
           >
-            {t('header.nav.loyaltyProgram')}
+            {t('header.nav.loyaltyPrograms')}
           </span>
           <span
             className={mobileStyles.drawerNavLink}
@@ -169,11 +170,11 @@ export default function MobileLayout() {
             })}{' '}
           </p>
           <p className={mobileStyles.mobileCardDescription}>
-            {t.rich('cheers.loyaltyProgram', {
+            {t.rich('cheers.loyaltyPrograms', {
               link: (chunks) => (
                 <span
                   className={styles.actionLink}
-                  onClick={() => scrollToSection('loyalty')}
+                  onClick={() => scrollToSection('loyalty', false)}
                 >
                   {chunks}
                 </span>
@@ -305,6 +306,25 @@ export default function MobileLayout() {
           </div>
           <p className={mobileStyles.mobileCardDescription}>
             {t('howItWorks.note')}
+          </p>
+        </div>
+      </section>
+
+      {/* Loyalty Programs Section */}
+      <section id="mobile-loyalty" className={mobileStyles.mobileSection}>
+        <div className={mobileStyles.mobileSectionImage}>
+          <Image
+            src="/assets/landing/section-loyalty.webp"
+            alt="Loyalty Programs"
+            width={280}
+            height={280}
+            className={mobileStyles.sectionImg}
+          />
+        </div>
+        <div className={`${styles.card} ${mobileStyles.mobileSectionCard}`}>
+          <h1 className={mobileStyles.mobileCardTitle}>{t('loyalty.title')}</h1>
+          <p className={mobileStyles.mobileCardDescription}>
+            {t.rich('loyalty.description')}
           </p>
         </div>
       </section>

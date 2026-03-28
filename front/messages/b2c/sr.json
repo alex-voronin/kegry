@@ -25,8 +25,9 @@
       "header": {
         "subtitle": "The best stories start off-screen",
         "nav": {
-          "pollsNews": "News & Polls",
+          "forBusiness": "For Business",
           "howItWorks": "How It Works",
+          "loyaltyPrograms": "Loyalty Programs",
           "contactUs": "Contact Us",
           "login": "Sign In/Sign Up"
         }
@@ -34,7 +35,7 @@
       "cheers": {
         "title": "Find your bar buddy right now!",
         "description": "Up for a drink and good company? No dating. No endless chats. Check a profile, send an invite, arrange a meetup, and there you go, you're at the bar! Talk about life, laugh, vent and keep your head up. If any hobgoblins appear, maybe it's time to slow down a bit 🥴",
-        "loyaltyProgram": "And one more thing: don't forget about our <link>loyalty program</link>.",
+        "loyaltyPrograms": "And one more thing: don't forget about our <link>loyalty programs</link>.",
         "cta": "Ready?"
       },
       "pollsNews": {
@@ -50,6 +51,10 @@
         "step3": "3. Meet & Enjoy",
         "step4": "4. Save with Loyalty",
         "note": "Hey adventurer! Just a heads-up: invites expire, you can have only one chat at a time, and there is a limited number of messages per chat, so choose wisely. Invite buddies only if you're really ready for a bar adventure and hurry before the hobgoblins drink all the beer!"
+      },
+      "loyalty": {
+        "title": "Loyalty Programs",
+        "description": "Our partner venues can offer loyalty programs with discounts through our service. The more often you visit, the more you save! 😊\nYou can always check the currently available discounts in your profile."
       },
       "contactUs": {
         "title": "Contact Us",

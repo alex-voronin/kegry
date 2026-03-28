@@ -68,8 +68,6 @@
   @apply hidden;
 }
 
-
-
 .logoSubtitle {
   @apply ml-4 translate-y-[-2px] text-sm;
   color: var(--color-landing-subheading);
@@ -89,18 +87,6 @@
 
 .navLink {
   @apply cursor-pointer text-base font-medium transition-colors hover:opacity-80;
-}
-
-@media (max-width: 1200px) {
-  .logoTextFull {
-    display: none;
-  }
-  .logoTextShort {
-    display: block;
-  }
-  .nav {
-    @apply gap-4;
-  }
 }
 
 .loginButton {
@@ -154,7 +140,7 @@
 
 /* ===== How It Works Section ===== */
 .howItWorksSection {
-  @apply flex scroll-mt-[100px] items-center gap-0 px-16 py-[20px];
+  @apply flex scroll-mt-[100px] items-center gap-0 px-16 pt-[32px] pb-[12px];
 }
 
 .howItWorksSteps {
@@ -183,6 +169,11 @@
 
 .decorativeImage {
   @apply rounded-lg object-contain;
+}
+
+/* ===== Loyalty Program Section ===== */
+.loyaltySection {
+  @apply flex scroll-mt-[100px] items-center justify-between gap-5 px-16 pb-[20px];
 }
 
 /* ===== Contact Us Section ===== */
@@ -218,4 +209,24 @@
 .socialLink {
   @apply opacity-60 transition-opacity hover:opacity-100;
   color: var(--color-landing-text);
+}
+
+@media (max-width: 1200px) {
+  .logoTextFull {
+    display: none;
+  }
+  .logoTextShort {
+    display: block;
+  }
+  .nav {
+    @apply gap-4;
+  }
+
+  .footer {
+    @apply px-8;
+  }
+
+  .footerLinks {
+    @apply gap-4;
+  }
 }
