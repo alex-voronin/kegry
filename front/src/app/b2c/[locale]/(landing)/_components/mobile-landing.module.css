@@ -72,8 +72,12 @@
   transform: translateX(0);
 }
 
+.drawerHeader {
+  @apply mb-8 flex items-center justify-between;
+}
+
 .drawerCloseButton {
-  @apply mb-8 self-end p-2;
+  @apply p-2;
   color: var(--color-landing-text);
   background: transparent;
   border: none;

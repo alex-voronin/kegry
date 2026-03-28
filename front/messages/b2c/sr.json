@@ -1,0 +1,638 @@
+{
+  "common": {
+    "errors": {
+      "network": "Network error. Please try again."
+    },
+    "toast": {
+      "linkCopied": "Link copied to clipboard"
+    },
+    "units": {
+      "kilometers": "km",
+      "miles": "mi"
+    },
+    "days": {
+      "Monday": "Monday",
+      "Tuesday": "Tuesday",
+      "Wednesday": "Wednesday",
+      "Thursday": "Thursday",
+      "Friday": "Friday",
+      "Saturday": "Saturday",
+      "Sunday": "Sunday"
+    }
+  },
+  "screens": {
+    "landing": {
+      "header": {
+        "subtitle": "The best stories start off-screen",
+        "nav": {
+          "pollsNews": "News & Polls",
+          "howItWorks": "How It Works",
+          "contactUs": "Contact Us",
+          "login": "Sign In/Sign Up"
+        }
+      },
+      "cheers": {
+        "title": "Find your bar buddy right now!",
+        "description": "Up for a drink and good company? No dating. No endless chats. Check a profile, send an invite, arrange a meetup, and there you go, you're at the bar! Talk about life, laugh, vent and keep your head up. If any hobgoblins appear, maybe it's time to slow down a bit 🥴",
+        "cta": "Ready?"
+      },
+      "pollsNews": {
+        "newsTitle": "News",
+        "pollTitle": "Next Feature Poll",
+        "pollDescription": "We value every member of our community! If you have ideas or want to help us make things even better, please vote for the feature you'd most like to see next.",
+        "pollButton": "Take the poll"
+      },
+      "howItWorks": {
+        "title": "How It Works",
+        "step1": "1. Browse & Invite",
+        "step2": "2. Chat & Plan",
+        "step3": "3. Meet & Enjoy",
+        "note": "Hey adventurer! Just a heads-up: invites expire, you can have only one chat at a time, and there is a limited number of messages per chat, so choose wisely. Invite buddies only if you're really ready for a bar adventure and hurry before the hobgoblins drink all the beer!"
+      },
+      "contactUs": {
+        "title": "Contact Us",
+        "description": "You might be wondering the same thing we are: are these hobgoblins the same or different? Honestly, we're not sure yet... We still haven't figured out how to tell them apart. If you happen to know how to, or if you have any questions or suggestions about the service, we'd be happy to hear from you via email at <email>contacts@kegry.com</email> or through our <chat>chat</chat>."
+      },
+      "footer": {
+        "copyright": "© 2026 Kegrycorn™. All rights reserved.",
+        "privacy": "Privacy Policy",
+        "consent": "Consent to Communication",
+        "terms": "Terms of Service",
+        "community": "Community Guidelines",
+        "mobilePrivacy": "Privacy",
+        "mobileTerms": "Terms",
+        "mobileConsent": "Consent",
+        "mobileCommunity": "Guidelines"
+      }
+    },
+    "notFound": {
+      "description": "The page you are looking for does not exist.",
+      "home": "Go Home"
+    },
+    "login": {
+      "email": "Email",
+      "password": "Password",
+      "forgot": "Forgot?",
+      "signIn": "Sign In",
+      "switchToRegister": "New here? Sign Up",
+      "orContinueWith": "Or continue with",
+      "google": "Google",
+      "errors": {
+        "emailRequired": "Email is required",
+        "emailInvalid": "Invalid email address",
+        "passwordRequired": "Password is required",
+        "passwordShort": "Password must be at least 10 characters",
+        "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+        "wrongCredentials": "Invalid email or password"
+      }
+    },
+    "register": {
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "signUp": "Sign Up",
+      "switchToLogin": "Have an account? Sign In",
+      "orContinueWith": "Or continue with",
+      "google": "Google",
+      "errors": {
+        "emailRequired": "Email is required",
+        "emailInvalid": "Invalid email address",
+        "passwordRequired": "Password is required",
+        "passwordShort": "Password must be at least 10 characters",
+        "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+        "passwordMismatch": "Passwords do not match"
+      },
+      "legal": {
+        "text": "By signing up to Kegrycorn, you confirm that you are <age>18 or older</age> and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+      }
+    },
+    "forgot": {
+      "title": "Forgot Password?",
+      "description": "Enter your email address and we'll send you a link to reset your password.",
+      "email": "Email",
+      "submit": "Send Reset Link",
+      "successTitle": "Check your email",
+      "successDescription": "We have sent a password reset link to your email address.",
+      "backToLogin": "Back to login",
+      "errors": {
+        "emailRequired": "Email is required",
+        "emailInvalid": "Invalid email address"
+      }
+    },
+    "passwordReset": {
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "Change Password",
+      "success": "Password changed successfully. Please log in with your new password.",
+      "backToLogin": "Back to login",
+      "errors": {
+        "passwordRequired": "Password is required",
+        "passwordShort": "Password must be at least 10 characters",
+        "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+        "match": "Passwords do not match",
+        "invalidLink": "Invalid link"
+      }
+    },
+    "verifyEmail": {
+      "description": "Please enter the 6-digit code sent to your email address.",
+      "submit": "Verify Email",
+      "verifying": "Verifying...",
+      "successDescription": "Your email has been successfully verified.",
+      "errorTitle": "Verification failed",
+      "backToLogin": "Back to login",
+      "resend": "Resend Code",
+      "errors": {
+        "userNotFound": "User session not found. Please login again.",
+        "invalidCode": "Invalid verification code"
+      }
+    },
+    "howItWorks": {
+      "greeting": "Hey, adventurer!",
+      "slideFeed": {
+        "textDontGoAlone": "Pick a companion and start your journey together! But keep in mind:",
+        "textInvites": "• You have a limited number of invites per day. Don't worry, they refresh tomorrow.",
+        "textNewChat": "• Once you've both sent invites and match, a chat will open so you can start planning your meetup! 🍺"
+      },
+      "slidePermissions": {
+        "location": "📍 Geolocation is absolutely necessary for the feed to work. Please allow it when we ask for permission.",
+        "notifications": "🔔 We also need notification permissions to let you know about new invites and chat messages!"
+      },
+      "slidePWA": {
+        "textIphone": "🍎 On iPhone, push notifications work only after you add the app to your Home Screen.",
+        "instructionIphone": "Tap Share → Add to Home Screen",
+        "textAndroid": "🤖 On Android, we recommend installing the app for the best experience.",
+        "instructionAndroid": "Open the browser menu (⋮) → Add to Home Screen"
+      },
+      "continue": "Let's go!",
+      "next": "Next"
+    },
+    "onboarding": {
+      "title": "Tell us about yourself",
+      "continue": "Continue",
+      "createProfile": "Create profile",
+      "uploadCoverTitle": "Choose your cover",
+      "selectCover": "Tap to select cover image",
+      "creating": "Creating profile...",
+      "back": "Back",
+      "legal": {
+        "text": "By creating a profile on Kegrycorn, you confirm that you are <age>18 or older</age> and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+      },
+      "validation": {
+        "avatarRequired": "Please select your avatar",
+        "firstNameRequired": "First name is required",
+        "lastNameRequired": "Last name is required",
+        "birthdayRequired": "Birthday is required",
+        "minAge": "You must be at least 18 years old",
+        "genderRequired": "Gender is required",
+        "minHobbies": "Please select at least 1 hobby",
+        "maxHobbies": "You can select up to 10 hobbies"
+      }
+    },
+    "feed": {
+      "distance": "Distance: {distance} {units}",
+      "noProfiles": "No profiles found. Try changing the filters.",
+      "locationRequired": "Location access is required to show profiles nearby. Please enable location in your browser settings.",
+      "inMeeting": "Can't invite anyone while you're planning a meetup, finish it first 😊 Tap anywhere to open the chat.",
+      "inviteExpirationDialog": {
+        "message": "This person invited you for {when}. Would you like to match their time?",
+        "accept": "Yes, {when}",
+        "decline": "No, maybe next time"
+      },
+      "when": "When",
+      "now": "Now",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "toast": {
+        "noInvites": "No invites left. They'll reset tomorrow."
+      },
+      "invitePrompt": {
+        "message": "Let's grow Kegrycorn together! 😊\nInvite your friends with a referral link: more people = way more adventures and fun. Bring a friend and get a special reward: special imaginary friend as a thank you! 🎉",
+        "later": "Later",
+        "letsGo": "Let's Go"
+      }
+    },
+    "chat": {
+      "messagePlaceholder": "Message {remaining}/{total}",
+      "timer": "{minutes}:{seconds}",
+      "noActiveChat": "No active chat",
+      "timerInfoDialog": {
+        "title": "The timer is counting down until the chat ends. Once the time's up (or if someone ends it early), you'll be able to invite people to meetups again 😊",
+        "okButton": "OK"
+      },
+      "menu": {
+        "cancel": "End meetup",
+        "venues": "Explore venues"
+      },
+      "toast": {
+        "sendFailed": "Failed to send message",
+        "cancelFailed": "Failed to end meetup"
+      },
+      "endMeetingDialog": {
+        "message": "Seems like you've met! Is the meetup over?",
+        "yes": "Yes",
+        "no": "No"
+      },
+      "lowMessageWarning": {
+        "message": "Heads up! You have {count} messages left in this chat.",
+        "okButton": "Got it"
+      },
+      "firstTimePopup": {
+        "message": "You've both sent invites! A chat is ready for you to plan your meetup. You have {count} messages per chat, and it will end automatically once you meet or you can end it anytime from the menu.",
+        "okButton": "Let's Chat"
+      }
+    },
+    "filters": {
+      "title": "Filters",
+      "distance": "Search distance",
+      "age": "Age",
+      "from": "From",
+      "to": "To",
+      "any": "any",
+      "gender": "Gender",
+      "genderAny": "Any",
+      "male": "Male",
+      "female": "Female",
+      "hobbies": "Hobbies",
+      "hobbiesPlaceholder": "Select hobbies…",
+      "hobbyName": "Hobby name",
+      "apply": "Apply",
+      "applyDialog": {
+        "title": "Apply filters?",
+        "buttonYes": "Yes",
+        "buttonNo": "No"
+      },
+      "validation": {
+        "distance": "Distance must be between 0 and {max} {units}",
+        "minAge": "Age cannot be less than {min}",
+        "ageRange": "'From' age cannot be greater than 'To' age",
+        "maxHobbies": "Cannot select more than {max} hobbies"
+      }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "noNotifications": "No notifications yet",
+      "drinkInvitation": "Let's get a drink {time}!",
+      "today": "today",
+      "rightNow": "right now",
+      "tomorrow": "tomorrow",
+      "todayUntil": "today until {h}:{m}",
+      "tomorrowUntil": "tomorrow until {h}:{m}",
+      "ago": "{time} ago",
+      "menu": {
+        "viewProfile": "View Profile",
+        "accept": "Accept",
+        "delete": "Delete",
+        "blockAndReport": "Block & Report"
+      },
+      "toast": {
+        "expired": "This invitation has expired",
+        "accepted": "Invitation accepted",
+        "acceptFailed": "Failed to accept invitation",
+        "ignoreFailed": "Failed to ignore invitation",
+        "blocked": "User blocked",
+        "blockFailed": "Failed to block user",
+        "deleteFailed": "Failed to delete notification"
+      }
+    },
+    "rateUser": {
+      "howWasIt": "How did your meetup go?",
+      "submit": "Submit",
+      "skip": "Skip",
+      "toast": {
+        "ratingRequired": "Please select a rating",
+        "submitFailed": "Failed to submit rating"
+      }
+    },
+    "profile": {
+      "title": "My Profile",
+      "blockedUsers": "Blocked Users",
+      "friendsAndFoes": "Friends & Foes",
+      "discountsAndPromotions": "Discounts & Promotions",
+      "coverImage": "Cover Image",
+      "settings": "Settings",
+      "permissions": "Permissions",
+      "contactUs": "Contact Us",
+      "menu": {
+        "edit": "Edit Profile",
+        "setAvatar": "Set Avatar",
+        "setCover": "Set Cover",
+        "logOut": "Log Out",
+        "delete": "Delete Account",
+        "makePrivate": "Make private",
+        "makePublic": "Make public",
+        "madePrivate": "Profile is now private",
+        "madePublic": "Profile is now public",
+        "privacyError": "Failed to update privacy settings"
+      },
+      "theirProfile": {
+        "menu": {
+          "blockAndReport": "Block & Report"
+        },
+        "toast": {
+          "blocked": "User blocked",
+          "blockFailed": "Failed to block user",
+          "loadFailed": "Failed to load user profile"
+        },
+        "notFound": "User not found"
+      },
+      "deleteAccountDialog": {
+        "title": "Are you sure you want to delete your account? This action cannot be undone.",
+        "buttonYes": "Yes",
+        "buttonNo": "No"
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "publicAccount": "Public account",
+      "publicAccountDesc": "When disabled, your profile will not be shown to others in the feed",
+      "distanceUnits": "Distance units",
+      "notifications": "Notifications",
+      "push": "Push",
+      "pushDesc": "Real-time notifications for account activity",
+      "email": "Email",
+      "emailDesc": "Account and service-related emails",
+      "km": "km",
+      "mi": "mi",
+      "kmFull": "km (kilometers)",
+      "miFull": "mi (miles)",
+      "save": "Save",
+      "saveFailed": "Failed to save settings",
+      "fetchFailed": "Failed to fetch settings"
+    },
+    "editProfile": {
+      "title": "Edit Profile",
+      "save": "Save"
+    },
+    "coverImage": {
+      "instruction": "Tap anywhere to upload a new cover image",
+      "save": "Save",
+      "toast": {
+        "coverNotSelected": "Please select a cover image",
+        "uploaded": "Cover image uploaded successfully"
+      }
+    },
+    "blockedUsers": {
+      "title": "Blocked Users",
+      "noBlockedUsers": "No blocked users yet",
+      "menu": {
+        "viewProfile": "View Profile",
+        "unblock": "Unblock",
+        "close": "Close"
+      },
+      "toast": {
+        "fetchFailed": "Failed to fetch blocked users",
+        "unblocked": "{name} was unblocked",
+        "unblockFailed": "Failed to unblock user"
+      }
+    },
+    "friendsAndFoes": {
+      "title": "Friends & Foes",
+      "comingSoon": "Coming soon",
+      "noFriends": "No friends yet",
+      "noImaginary": "No imaginary friends yet",
+      "imaginaryMenu": {
+        "show": "Show"
+      },
+      "tabs": {
+        "friends": "Friends",
+        "imaginary": "Imaginary",
+        "blocked": "Blocked"
+      },
+      "menu": {
+        "viewProfile": "View Profile",
+        "invite": "Invite",
+        "removeFriend": "Remove Friend",
+        "blockAndReport": "Block & Report",
+        "shareLink": "Share a link"
+      },
+      "toast": {
+        "fetchFailed": "Failed to fetch friends",
+        "fetchImaginaryFailed": "Failed to fetch imaginary friends",
+        "removed": "{name} was removed from friends",
+        "blocked": "{name} was blocked",
+        "removeFailed": "Failed to remove friend",
+        "invited": "{name} was invited",
+        "inviteFailed": "Failed to invite friend"
+      },
+      "shareFallback": {
+        "title": "Share a link",
+        "instruction": "Automatic copy failed. Please copy the link manually:",
+        "close": "Close"
+      }
+    },
+    "permissions": {
+      "title": "Permissions",
+      "description": "To provide you with the best experience, we need access to your location and notifications.",
+      "locationTitle": "Location",
+      "locationDesc": "Absolutely necessary to discover people around you. Without it, the feed won't work",
+      "notificationsTitle": "Notifications",
+      "notificationsDesc": "The app will work without notifications enabled, but you won't receive invitations or new message notifications. The user experience of some features will also be degraded.",
+      "instructions": "To enable permissions:\n1. Tap the lock icon 🔒 or settings icon in your browser address bar.\n2. Tap 'Permissions' or 'Site Settings'.\n3. Allow 'Location' and 'Notifications'.\n4. Refresh this page."
+    },
+    "discountsAndPromotions": {
+      "title": "Discounts & Promotions",
+      "tabs": {
+        "discounts": "Discounts",
+        "promotions": "Promotions"
+      },
+      "noOffers": "You have no available offers right now. Visit venues to unlock discounts!",
+      "noPromotions": "No promotions available nearby.",
+      "locationRequired": "Location access is required to show your closest offers. Please enable location in your browser settings.",
+      "menu": {
+        "viewVenue": "View Venue",
+        "openInMaps": "Open on Google Maps"
+      },
+      "toast": {
+        "loadFailed": "Failed to load your offers"
+      }
+    },
+    "venues": {
+      "title": "Venues",
+      "noVenues": "No venues found nearby.",
+      "locationRequired": "Location access is required to show venues nearby. Please enable location in your browser settings.",
+      "distance": "{distance} {units}",
+      "menu": {
+        "viewVenue": "View Venue",
+        "openInMaps": "Open on Google Maps"
+      },
+      "toast": {
+        "loadFailed": "Failed to load venues"
+      },
+      "cameraDenied": "Camera permission denied. Allow access in browser settings or scan with your system QR reader.",
+      "locationDenied": "Location access is required to check in. Please enable location in your browser settings."
+    },
+    "venueDetail": {
+      "contacts": "Contacts",
+      "address": "Address",
+      "workingHours": "Working Hours",
+      "promotions": "Promotions 🎉",
+      "notFound": "Venue not found",
+      "myDiscount": "My Discount",
+      "level": "Level",
+      "discount": "Discount: {percent}%",
+      "nextDiscountLevelInfo": "Next discount level is: {percent}%",
+      "maxDiscountLevelReached": "The maximum discount has been reached.",
+      "visits": "{current}/{total} visits to next level",
+      "menu": {
+        "openInstagram": "Open Instagram",
+        "openWebsite": "Open Website",
+        "openInMaps": "Open on Google Maps"
+      }
+    }
+  },
+  "components": {
+    "qr-code-reader": {
+      "toast": {
+        "invalidQr": "Invalid QR code",
+        "checkInFailed": "Check-in failed. Please try again."
+      }
+    },
+    "logo": {
+      "tagline": "The best stories start off-screen"
+    },
+    "ageVerification": {
+      "message": "This service is intended for users aged 18 and over. I confirm that I am at least 18 years old.",
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy",
+      "confirm": "I am 18+"
+    },
+    "reportDialog": {
+      "title": "Why are you blocking this user?",
+      "placeholder": "Tell us more...",
+      "cancel": "Cancel",
+      "confirm": "Block & Report"
+    },
+    "inviteDialog": {
+      "title": "Invite {name}",
+      "now": "Now",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "cancel": "Cancel",
+      "ok": "OK"
+    },
+    "avatar-cropper": {
+      "save": "Save"
+    },
+    "profile-sections": {
+      "name": {
+        "title": "Name",
+        "firstName": "First Name",
+        "lastName": "Last Name"
+      },
+      "avatar": {
+        "selectAvatar": "Select your avatar"
+      },
+      "birthday": {
+        "title": "Birthday",
+        "placeholder": "Birthday"
+      },
+      "age": {
+        "title": "Age"
+      },
+      "gender": {
+        "title": "Gender",
+        "male": "Male",
+        "female": "Female"
+      },
+      "bio": {
+        "title": "Bio",
+        "placeholder": "Write about yourself... (optional)",
+        "maxLength": 200
+      },
+      "hobbies": {
+        "title": "Hobbies",
+        "placeholder": "Select your hobbies...",
+        "gym": "🏋️ Gym",
+        "running": "🏃 Running",
+        "swimming": "🏊 Swimming",
+        "cycling": "🚴 Cycling",
+        "yoga": "🧘 Yoga",
+        "boxing": "🥊 Boxing",
+        "football": "⚽ Football",
+        "basketball": "🏀 Basketball",
+        "volleyball": "🏐 Volleyball",
+        "tennis": "🎾 Tennis",
+        "crossfit": "💪 Crossfit",
+        "pilates": "🧘 Pilates",
+        "skating": "⛸️ Skating",
+        "surfing": "🏄 Surfing",
+        "martialarts": "🥋 Martial Arts",
+        "pickleball": "🏓 Pickleball",
+        "meditation": "🧘 Meditation",
+        "stretching": "🤸 Stretching",
+        "powerlifting": "🏋️ Powerlifting",
+        "bodybuilding": "💪 Bodybuilding",
+        "tabletennis": "🏓 Table Tennis",
+        "golf": "⛳ Golf",
+        "triathlon": "🏃 Triathlon",
+        "camping": "⛺ Camping",
+        "hiking": "🥾 Hiking",
+        "fishing": "🎣 Fishing",
+        "hunting": "🦌 Hunting",
+        "skiing": "⛷️ Skiing",
+        "snowboarding": "🏂 Snowboarding",
+        "traveling": "✈️ Traveling",
+        "climbing": "🧗 Climbing",
+        "sailing": "⛵ Sailing",
+        "roadtrips": "🚗 Road Trips",
+        "picnics": "🧺 Picnics",
+        "kayaking": "🛶 Kayaking",
+        "paddleboarding": "🏄 Paddleboarding",
+        "backpacking": "🥾 Backpacking",
+        "scubadiving": "🤿 Scuba Diving",
+        "cooking": "👨‍🍳 Cooking",
+        "baking": "🧁 Baking",
+        "restaurants": "🍽️ Restaurants",
+        "vegetarianism": "🥦 Vegetarianism",
+        "streetfood": "🌭 Street Food",
+        "pastry": "🥐 Pastry",
+        "bbq": "🍖 BBQ",
+        "seafood": "🦞 Seafood",
+        "desserts": "🍰 Desserts",
+        "socialdrinking": "🥂 Social Drinking",
+        "coffee": "☕ Coffee",
+        "tea": "🍵 Tea",
+        "reading": "📚 Reading",
+        "drawing": "🎨 Drawing",
+        "photography": "📷 Photography",
+        "dancing": "💃 Dancing",
+        "painting": "🎨 Painting",
+        "singing": "🎤 Singing",
+        "musicalinstruments": "🎸 Musical Instruments",
+        "music": "🎵 Music",
+        "writing": "✍️ Writing",
+        "design": "🎨 Design",
+        "fashion": "👗 Fashion",
+        "tattoos": "💉 Tattoos",
+        "movies": "🎬 Movies",
+        "animation": "🎬 Animation",
+        "podcasts": "🎧 Podcasts",
+        "theatre": "🎭 Theatre",
+        "blogging": "📝 Blogging",
+        "gaming": "🎮 Gaming",
+        "boardgames": "🎲 Board Games",
+        "chess": "♟️ Chess",
+        "itandcomputerscience": "💻 IT & Computer Science",
+        "anime": "🇯🇵 Anime",
+        "business": "💼 Business",
+        "puzzles": "🧩 Puzzles",
+        "languagelearning": "🗣️ Language Learning",
+        "collecting": "📦 Collecting",
+        "astronomy": "🔭 Astronomy",
+        "comics": "🦸 Comics",
+        "cars": "🚗 Cars",
+        "motorcycles": "🏍️ Motorcycles",
+        "dogs": "🐶 Dogs",
+        "cats": "🐱 Cats",
+        "reptiles": "🦎 Reptiles",
+        "birds": "🐦 Birds",
+        "aquariums": "🐠 Aquariums",
+        "gardening": "🌱 Gardening",
+        "knitting": "🧶 Knitting",
+        "sewing": "🪡 Sewing",
+        "threedprinting": "🖨️ 3D Printing",
+        "diy": "🛠️ DIY"
+      }
+    }
+  }
+}

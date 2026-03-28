@@ -8,6 +8,7 @@ import { PAGE_ROUTES } from '@/lib/routes';
 import { useNewsStore } from '../store/use-news-store';
 import Script from 'next/script';
 import SocialLinks from './social-links';
+import { LanguageSelector } from './language-selector';
 import styles from './desktop-landing.module.css';
 
 export default function DesktopLayout() {
@@ -64,6 +65,7 @@ export default function DesktopLayout() {
           >
             {t('header.nav.contactUs')}
           </span>
+          <LanguageSelector />
           <Link href={PAGE_ROUTES.LOGIN(true)} className={styles.loginButton}>
             {t('header.nav.login')}
           </Link>

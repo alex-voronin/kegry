@@ -9,6 +9,7 @@ import { PAGE_ROUTES } from '@/lib/routes';
 import { useNewsStore } from '../store/use-news-store';
 import Script from 'next/script';
 import SocialLinks from './social-links';
+import { LanguageSelector } from './language-selector';
 import styles from './desktop-landing.module.css';
 import mobileStyles from './mobile-landing.module.css';
 
@@ -72,14 +73,16 @@ export default function MobileLayout() {
       <aside
         className={`${mobileStyles.drawer} ${isMenuOpen ? mobileStyles.drawerOpen : ''}`}
       >
-        <button
-          className={mobileStyles.drawerCloseButton}
-          onClick={() => setIsMenuOpen(false)}
-          aria-label="Close menu"
-        >
-          <X size={28} />
-        </button>
-
+        <div className={mobileStyles.drawerHeader}>
+          <LanguageSelector />
+          <button
+            className={mobileStyles.drawerCloseButton}
+            onClick={() => setIsMenuOpen(false)}
+            aria-label="Close menu"
+          >
+            <X size={28} />
+          </button>
+        </div>
         <nav className={mobileStyles.drawerNav}>
           <span
             className={mobileStyles.drawerNavLink}
