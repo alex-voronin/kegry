@@ -48,7 +48,7 @@ export const useDiscountsStore = create<OffersState>()(
         const response = await apiClient.get<
           ApiResult<PaginatedResponse<AvailableDiscountDto>>
         >(
-          `${API_ENDPOINTS.DISCOUNTS}?latitude=${latitude}&longitude=${longitude}&offset=${offset}&limit=${limit}`,
+          `${API_ENDPOINTS.DEALS.DISCOUNTS}?latitude=${latitude}&longitude=${longitude}&offset=${offset}&limit=${limit}`,
         );
 
         const { data, totalCount } = response.data.result;

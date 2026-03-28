@@ -34,7 +34,7 @@ export const useVenuesStore = create<VenuesState>()((set) => ({
   fetchVenues: async (lat, lon, offset, limit) => {
     set({ isLoading: true });
     try {
-      const response = await apiClient.post(API_ENDPOINTS.VENUES, {
+      const response = await apiClient.post(API_ENDPOINTS.VENUES.LIST, {
         latitude: lat,
         longitude: lon,
         offset,

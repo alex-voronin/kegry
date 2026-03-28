@@ -54,7 +54,7 @@ export const usePromotionsStore = create<PromotionsState>()(
         const response = await apiClient.get<
           ApiResult<PaginatedResponse<AvailablePromotionDto>>
         >(
-          `${API_ENDPOINTS.PROMOTIONS}?latitude=${latitude}&longitude=${longitude}&offset=${offset}&limit=${limit}`,
+          `${API_ENDPOINTS.DEALS.PROMOTIONS}?latitude=${latitude}&longitude=${longitude}&offset=${offset}&limit=${limit}`,
         );
 
         const { data, totalCount } = response.data.result;
