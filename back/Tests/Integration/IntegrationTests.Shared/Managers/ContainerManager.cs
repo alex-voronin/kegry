@@ -109,7 +109,8 @@ public class ContainerManager : IAsyncLifetime
             TablesToIgnore =
             [
                 new Table(schema: "user_profile", name: "hobby_categories"),
-                new Table(schema: "user_profile", name: "hobbies")
+                new Table(schema: "user_profile", name: "hobbies"),
+                new Table(schema: "engagement", name: "npcs")
             ]
         });
     }
