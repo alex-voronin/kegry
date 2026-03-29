@@ -53,6 +53,49 @@
     }
   },
   "screens": {
+    "landing": {
+      "header": {
+        "subtitle": "For Business",
+        "nav": {
+          "features": "Features",
+          "contactUs": "Contact Us"
+        },
+        "login": "Sign In/Sign Up"
+      },
+      "footer": {
+        "copyright": "© 2026 Kegrycorn™. All rights reserved.",
+        "privacy": "Privacy Policy",
+        "consent": "Consent to Communication",
+        "terms": "Terms of Service",
+        "community": "Community Guidelines",
+        "mobilePrivacy": "Privacy",
+        "mobileTerms": "Terms",
+        "mobileConsent": "Consent",
+        "mobileCommunity": "Guidelines"
+      },
+      "hero": {
+        "title": "All-in-One Growth Platform for bars",
+        "description": "We help bar owners attract new guests, turn them into loyal regulars, and grow their business with loyalty programs, promotions and easy discovery. All in one easy-to-use platform built for growth. Essential loyalty tools are available today and will remain completely free forever."
+      },
+      "contactUs": {
+        "title": "Contact Us",
+        "description": "Interested in increasing guest loyalty and visibility for your bar? We'd love to hear from you. Whether you want to register your venue, start using our free loyalty tools, or learn about upcoming features: our team is ready to help. Reach out to us at <email>contacts@kegry.com</email> or through our <chat>chat</chat>."
+      },
+      "features": {
+        "one": {
+          "title": "Boost Your Visibility",
+          "text": "Register your venue to join our social platform. Only verified venues are displayed to users, keeping the platform free from scams."
+        },
+        "two": {
+          "title": "Build Customer Loyalty",
+          "text": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident."
+        },
+        "three": {
+          "title": "Increase Revenue",
+          "text": "Sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit."
+        }
+      }
+    },
     "home": {
       "title": "Kegrycorn for Business",
       "description": "Welcome to the Business Portal. Manage your venues, track visits, and create offers."

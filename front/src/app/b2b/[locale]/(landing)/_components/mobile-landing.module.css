@@ -1,0 +1,177 @@
+@reference "../../../../globals.css";
+@import './landing-theme.css';
+
+/* ===== Global Wrapper Overrides ===== */
+
+.mobileHeader {
+  @apply fixed top-0 right-0 left-0 z-50 flex items-center justify-between px-5 py-3;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mobileLogoContainer {
+  @apply relative flex items-center pl-[44px];
+}
+
+.mobileLogoTextWrapper {
+  @apply ml-2 flex translate-y-[2px] flex-col items-start;
+}
+
+.mobileLogoTitleRow {
+  @apply flex items-center;
+}
+
+.mobileLogoText {
+  @apply text-xl leading-tight font-bold;
+  color: var(--color-landing-heading);
+  font-family: var(--font-landing-title);
+}
+
+.mobileLogoSubtitle {
+  @apply self-end text-[11px] font-medium tracking-wide opacity-80;
+  color: var(--color-landing-subheading);
+}
+
+.mobileLogoImage {
+  @apply left-0;
+}
+
+/* Base Drawer styles */
+.drawer {
+  @apply fixed top-0 right-0 bottom-0 z-60 flex w-[280px] flex-col bg-[#2A2A2A] px-6 py-8 shadow-2xl transition-transform duration-300 ease-in-out;
+  transform: translateX(100%);
+}
+
+.drawerOpen {
+  transform: translateX(0);
+}
+
+.drawerOverlay {
+  @apply pointer-events-none fixed inset-0 z-55 bg-black/60 opacity-0 transition-opacity duration-300;
+}
+
+.drawerOverlayOpen {
+  @apply pointer-events-auto opacity-100;
+}
+
+.drawerHeader {
+  @apply mb-8 flex items-center justify-between;
+}
+
+.drawerCloseButton {
+  @apply -mr-2 p-2 text-white/70 transition-colors hover:text-white;
+}
+
+/* Sections */
+
+.mobileSection {
+  @apply flex scroll-mt-[100px] flex-col items-center gap-0 px-4 py-4;
+}
+
+.mobileHeroSection {
+  @apply mt-16;
+}
+
+.mobileCardTitle {
+  @apply mb-4 text-center text-2xl font-bold;
+  color: var(--color-landing-heading);
+  font-family: var(--font-landing-title);
+}
+
+.mobileCardDescription {
+  @apply mt-2 text-center text-base leading-relaxed opacity-90;
+}
+
+.mobileSectionCard {
+  @apply z-10 flex w-full flex-col items-center p-6;
+  background-color: var(--color-landing-card-bg);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.mobileSectionImage {
+  @apply mb-1 flex w-full shrink-0 justify-center;
+}
+
+.sectionImg {
+  @apply h-auto max-w-full object-contain;
+}
+
+.mobileLoginButtonWrapper {
+  @apply mt-6 flex w-full justify-center;
+}
+
+.burgerButton {
+  @apply p-2 opacity-80 transition-opacity hover:opacity-100;
+  color: var(--color-landing-text);
+}
+
+.drawerNav {
+  @apply flex flex-col gap-6;
+}
+
+.drawerNavLink {
+  @apply cursor-pointer text-lg font-medium tracking-wide transition-colors hover:text-white/80;
+  color: var(--color-landing-text);
+}
+
+.drawerSignUpButton {
+  @apply mt-8 rounded-lg px-6 py-3 text-center text-[15px] font-bold tracking-wide transition-colors;
+  background-color: var(--color-landing-button);
+  color: #000;
+}
+
+/* ===== Features Grid Section for Mobile ===== */
+.mobileFeaturesSection {
+  @apply scroll-mt-[100px] px-4 py-4;
+}
+
+.mobileFeaturesGrid {
+  @apply flex w-full flex-col gap-6;
+}
+
+.mobileFeatureCard {
+  @apply flex w-full flex-col rounded-xl p-6 text-center;
+  background-color: var(--color-landing-card-bg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.mobileFeatureTitle {
+  @apply mb-3 text-center text-xl font-bold;
+  color: var(--color-landing-heading);
+  font-family: var(--font-landing-title);
+}
+
+.mobileFeatureText {
+  @apply mb-5 grow text-center text-sm leading-relaxed opacity-90;
+}
+
+.mobileFeatureImagePlaceholder {
+  @apply mt-auto aspect-2/1 w-full rounded-lg;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ===== Footer ===== */
+
+.mobileFooter {
+  @apply mt-4 flex flex-col items-center gap-6 border-t border-white/10 px-6 py-8;
+  background-color: var(--color-landing-card-bg);
+}
+
+.mobileFooterLinks {
+  @apply flex flex-wrap justify-center gap-x-6 gap-y-4;
+}
+
+.mobileFooterLink {
+  @apply text-[13px] font-medium opacity-60 transition-opacity hover:opacity-100;
+}
+
+.drawerLegalLinks {
+  @apply mt-auto flex flex-col gap-4 border-t border-white/10 pt-6;
+}
+
+.drawerLegalLink {
+  @apply text-sm font-medium opacity-60 transition-opacity hover:opacity-100;
+  color: var(--color-landing-text);
+}
