@@ -37,7 +37,7 @@
 }
 
 .eyeButton {
-  @apply absolute top-1/2 right-[60px] -translate-y-1/2 cursor-pointer bg-transparent p-1;
+  @apply cursor-pointer bg-transparent p-1;
   color: var(--color-secondary);
 }
 
@@ -55,7 +55,7 @@
 }
 
 .forgotLink {
-  @apply text-primary pointer-events-auto absolute top-1/2 right-0 z-10 -translate-y-1/2 text-sm font-semibold hover:underline;
+  @apply text-primary pointer-events-auto z-10 text-sm font-semibold hover:underline;
 }
 
 .signInButton {

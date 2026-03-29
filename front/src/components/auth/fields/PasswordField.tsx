@@ -44,15 +44,31 @@ export function PasswordField({
         disabled={disabled}
         {...inputProps}
       />
-      <button
-        type="button"
-        className={eyeButtonClassName}
-        onClick={toggle}
-        aria-label={showPassword ? ariaLabels.hide : ariaLabels.show}
-      >
-        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-      </button>
-      {extra}
+      {extra ? (
+        <div className="absolute top-1/2 right-0 -translate-y-1/2 flex items-center justify-end gap-2 pr-2">
+          <button
+            type="button"
+            className={eyeButtonClassName}
+            onClick={toggle}
+            aria-label={showPassword ? ariaLabels.hide : ariaLabels.show}
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+          {extra}
+        </div>
+      ) : (
+        <>
+          <button
+            type="button"
+            className={eyeButtonClassName}
+            onClick={toggle}
+            aria-label={showPassword ? ariaLabels.hide : ariaLabels.show}
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+          {extra}
+        </>
+      )}
     </>
   );
 }
