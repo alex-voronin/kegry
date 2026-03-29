@@ -1,646 +1,646 @@
 {
   "common": {
     "errors": {
-      "network": "Network error. Please try again."
+      "network": "Greška mreže. Molimo pokušajte ponovo."
     },
     "toast": {
-      "linkCopied": "Link copied to clipboard"
+      "linkCopied": "Link kopiran u clipboard"
     },
     "units": {
       "kilometers": "km",
       "miles": "mi"
     },
     "days": {
-      "Monday": "Monday",
-      "Tuesday": "Tuesday",
-      "Wednesday": "Wednesday",
-      "Thursday": "Thursday",
-      "Friday": "Friday",
-      "Saturday": "Saturday",
-      "Sunday": "Sunday"
+      "Monday": "Ponedeljak",
+      "Tuesday": "Utorak",
+      "Wednesday": "Sreda",
+      "Thursday": "Četvrtak",
+      "Friday": "Petak",
+      "Saturday": "Subota",
+      "Sunday": "Nedelja"
     }
   },
   "screens": {
     "landing": {
       "header": {
-        "subtitle": "The best stories start off-screen",
+        "subtitle": "Najbolje priče počinju van ekrana",
         "nav": {
-          "forBusiness": "For Business",
-          "howItWorks": "How It Works",
-          "loyaltyPrograms": "Loyalty Programs",
-          "contactUs": "Contact Us",
-          "login": "Sign In/Sign Up"
+          "forBusiness": "Za biznise",
+          "howItWorks": "Kako funkcioniše",
+          "loyaltyPrograms": "Programi lojalnosti",
+          "contactUs": "Kontaktirajte nas",
+          "login": "Prijava/Registracija"
         }
       },
       "cheers": {
-        "title": "Find your bar buddy right now!",
-        "description": "Up for a drink and good company? No dating. No endless chats. Check a profile, send an invite, arrange a meetup, and there you go, you're at the bar! Talk about life, laugh, vent and keep your head up. If any hobgoblins appear, maybe it's time to slow down a bit 🥴",
-        "loyaltyPrograms": "And one more thing: don't forget about our <link>loyalty programs</link>.",
-        "cta": "Ready?"
+        "title": "Pronađi svog barskog druga odmah!",
+        "description": "Spreman za piće i dobro društvo? Bez đetinga. Bez beskrajnih razgovora. Pogledaj profil, pošalji poziv, dogovori susret — i eto te u baru! Priča o životu, smej se, ispucaj se i drži glavu gore. Ako se pojave goblini, možda je vreme da malo usporiš 🥴",
+        "loyaltyPrograms": "I još nešto: ne zaboravi na naše <link>programe lojalnosti</link>.",
+        "cta": "Spreman?"
       },
       "pollsNews": {
-        "newsTitle": "News",
-        "pollTitle": "Next Feature Poll",
-        "pollDescription": "We value every member of our community! If you have ideas or want to help us make things even better, please vote for the feature you'd most like to see next.",
-        "pollButton": "Take the poll"
+        "newsTitle": "Vesti",
+        "pollTitle": "Anketa za sledeću funkciju",
+        "pollDescription": "Cenimo svakog člana naše zajednice! Ako imaš ideje ili želiš da nam pomogneš da unapredimo servis, glasaj za funkciju koju bi najviše voleo da vidiš sledeće.",
+        "pollButton": "Učestvuj u anketi"
       },
       "howItWorks": {
-        "title": "How It Works",
-        "step1": "1. Browse & Invite",
-        "step2": "2. Chat & Plan",
-        "step3": "3. Meet & Enjoy",
-        "step4": "4. Save with Loyalty",
-        "note": "Hey adventurer! Just a heads-up: invites expire, you can have only one chat at a time, and there is a limited number of messages per chat, so choose wisely. Invite buddies only if you're really ready for a bar adventure and hurry before the hobgoblins drink all the beer!"
+        "title": "Kako funkcioniše",
+        "step1": "1. Pretraži i pozovi",
+        "step2": "2. Ćaskaj i planiraj",
+        "step3": "3. Sretni se i uživaj",
+        "step4": "4. Štedi uz lojalnost",
+        "note": "Hej avanturisto! Samo da napomenem: pozivi ističu, možeš imati samo jedan razgovor odjednom i postoji ograničen broj poruka po razgovoru, pa biraj mudro. Pozivaj prijatelje samo ako si zaista spreman za barsku avanturu — i požuri pre nego goblini popiju svo pivo!"
       },
       "loyalty": {
-        "title": "Loyalty Programs",
-        "description": "Our partner venues can offer loyalty programs with discounts through our service. The more often you visit, the more you save! 😊\nYou can always check the currently available discounts in your profile."
+        "title": "Programi lojalnosti",
+        "description": "Naši partnerski lokali mogu nuditi programe lojalnosti s popustima kroz naš servis. Što češće posećuješ, više štediš! 😊\nUvek možeš proveriti trenutno dostupne popuste u svom profilu."
       },
       "contactUs": {
-        "title": "Contact Us",
-        "description": "You might be wondering the same thing we are: are these hobgoblins the same or different? Honestly, we're not sure yet... We still haven't figured out how to tell them apart. If you happen to know how to, or if you have any questions or suggestions about the service, we'd be happy to hear from you via email at <email>contacts@kegry.com</email> or through our <chat>chat</chat>."
+        "title": "Kontaktirajte nas",
+        "description": "Možda se pitate isto što i mi: jesu li ovi goblini isti ili različiti? Iskreno, još nismo sigurni... Još nismo shvatili kako da ih razlikujemo. Ako slučajno znaš kako, ili imaš pitanja ili predloge o servisu, rado ćemo čuti od tebe putem email-a na <email>contacts@kegry.com</email> ili kroz naš <chat>chat</chat>."
       },
       "footer": {
         "copyright": "© 2026 Kegrycorn™. All rights reserved.",
-        "privacy": "Privacy Policy",
-        "consent": "Consent to Communication",
-        "terms": "Terms of Service",
-        "community": "Community Guidelines",
-        "mobilePrivacy": "Privacy",
-        "mobileTerms": "Terms",
-        "mobileConsent": "Consent",
-        "mobileCommunity": "Guidelines"
+        "privacy": "Politika privatnosti",
+        "consent": "Saglasnost za komunikaciju",
+        "terms": "Uslovi korišćenja",
+        "community": "Smernice zajednice",
+        "mobilePrivacy": "Privatnost",
+        "mobileTerms": "Uslovi",
+        "mobileConsent": "Saglasnost",
+        "mobileCommunity": "Smernice"
       }
     },
     "notFound": {
-      "description": "The page you are looking for does not exist.",
-      "home": "Go Home"
+      "description": "Stranica koju tražiš ne postoji.",
+      "home": "Idi na početnu"
     },
     "login": {
       "email": "Email",
-      "password": "Password",
-      "forgot": "Forgot?",
-      "signIn": "Sign In",
-      "switchToRegister": "New here? Sign Up",
-      "orContinueWith": "Or continue with",
+      "password": "Lozinka",
+      "forgot": "Zaboravili?",
+      "signIn": "Prijavi se",
+      "switchToRegister": "Novi si ovde? Registruj se",
+      "orContinueWith": "Ili nastavi sa",
       "google": "Google",
       "errors": {
-        "emailRequired": "Email is required",
-        "emailInvalid": "Invalid email address",
-        "passwordRequired": "Password is required",
-        "passwordShort": "Password must be at least 10 characters",
-        "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
-        "wrongCredentials": "Invalid email or password"
+        "emailRequired": "Email je obavezan",
+        "emailInvalid": "Neispravna email adresa",
+        "passwordRequired": "Lozinka je obavezna",
+        "passwordShort": "Lozinka mora imati najmanje 10 karaktera",
+        "passwordComplexity": "Lozinka mora sadržati bar jedno veliko slovo, jedno malo slovo i jedan broj",
+        "wrongCredentials": "Neispravna email adresa ili lozinka"
       }
     },
     "register": {
       "email": "Email",
-      "password": "Password",
-      "confirmPassword": "Confirm Password",
-      "signUp": "Sign Up",
-      "switchToLogin": "Have an account? Sign In",
-      "orContinueWith": "Or continue with",
+      "password": "Lozinka",
+      "confirmPassword": "Potvrdi lozinku",
+      "signUp": "Registruj se",
+      "switchToLogin": "Imaš nalog? Prijavi se",
+      "orContinueWith": "Ili nastavi sa",
       "google": "Google",
       "errors": {
-        "emailRequired": "Email is required",
-        "emailInvalid": "Invalid email address",
-        "passwordRequired": "Password is required",
-        "passwordShort": "Password must be at least 10 characters",
-        "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
-        "passwordMismatch": "Passwords do not match"
+        "emailRequired": "Email je obavezan",
+        "emailInvalid": "Neispravna email adresa",
+        "passwordRequired": "Lozinka je obavezna",
+        "passwordShort": "Lozinka mora imati najmanje 10 karaktera",
+        "passwordComplexity": "Lozinka mora sadržati bar jedno veliko slovo, jedno malo slovo i jedan broj",
+        "passwordMismatch": "Lozinke se ne poklapaju"
       },
       "legal": {
-        "text": "By signing up to Kegrycorn, you confirm that you are <age>18 or older</age> and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+        "text": "Registracijom na Kegrycorn potvrđuješ da imaš <age>18 ili više godina</age> i da se slažeš sa našim <terms>Uslovima korišćenja</terms> i <privacy>Politikom privatnosti</privacy>."
       }
     },
     "forgot": {
-      "title": "Forgot Password?",
-      "description": "Enter your email address and we'll send you a link to reset your password.",
+      "title": "Zaboravili ste lozinku?",
+      "description": "Unesite svoju email adresu i poslaćemo vam link za resetovanje lozinke.",
       "email": "Email",
-      "submit": "Send Reset Link",
-      "successTitle": "Check your email",
-      "successDescription": "We have sent a password reset link to your email address.",
-      "backToLogin": "Back to login",
+      "submit": "Pošalji link za resetovanje",
+      "successTitle": "Proverite email",
+      "successDescription": "Poslali smo link za resetovanje lozinke na vašu email adresu.",
+      "backToLogin": "Nazad na prijavu",
       "errors": {
-        "emailRequired": "Email is required",
-        "emailInvalid": "Invalid email address"
+        "emailRequired": "Email je obavezan",
+        "emailInvalid": "Neispravna email adresa"
       }
     },
     "passwordReset": {
-      "newPassword": "New Password",
-      "confirmPassword": "Confirm Password",
-      "submit": "Change Password",
-      "success": "Password changed successfully. Please log in with your new password.",
-      "backToLogin": "Back to login",
+      "newPassword": "Nova lozinka",
+      "confirmPassword": "Potvrdi lozinku",
+      "submit": "Promeni lozinku",
+      "success": "Lozinka je uspešno promenjena. Molimo prijavite se sa novom lozinkom.",
+      "backToLogin": "Nazad na prijavu",
       "errors": {
-        "passwordRequired": "Password is required",
-        "passwordShort": "Password must be at least 10 characters",
-        "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
-        "match": "Passwords do not match",
-        "invalidLink": "Invalid link"
+        "passwordRequired": "Lozinka je obavezna",
+        "passwordShort": "Lozinka mora imati najmanje 10 karaktera",
+        "passwordComplexity": "Lozinka mora sadržati bar jedno veliko slovo, jedno malo slovo i jedan broj",
+        "match": "Lozinke se ne poklapaju",
+        "invalidLink": "Nevažeći link"
       }
     },
     "verifyEmail": {
-      "description": "Please enter the 6-digit code sent to your email address.",
-      "submit": "Verify Email",
-      "verifying": "Verifying...",
-      "successDescription": "Your email has been successfully verified.",
-      "errorTitle": "Verification failed",
-      "backToLogin": "Back to login",
-      "resend": "Resend Code",
+      "description": "Molimo unesite 6-cifreni kod poslat na vašu email adresu.",
+      "submit": "Verifikuj email",
+      "verifying": "Verifikacija...",
+      "successDescription": "Vaš email je uspešno verifikovan.",
+      "errorTitle": "Verifikacija nije uspela",
+      "backToLogin": "Nazad na prijavu",
+      "resend": "Ponovo pošalji kod",
       "errors": {
-        "userNotFound": "User session not found. Please login again.",
-        "invalidCode": "Invalid verification code"
+        "userNotFound": "Korisnička sesija nije pronađena. Molimo prijavite se ponovo.",
+        "invalidCode": "Nevažeći verifikacioni kod"
       }
     },
     "howItWorks": {
-      "greeting": "Hey, adventurer!",
+      "greeting": "Hej, avanturisto!",
       "slideFeed": {
-        "textDontGoAlone": "Pick a companion and start your journey together! But keep in mind:",
-        "textInvites": "• You have a limited number of invites per day. Don't worry, they refresh tomorrow.",
-        "textNewChat": "• Once you've both sent invites and match, a chat will open so you can start planning your meetup! 🍺"
+        "textDontGoAlone": "Odaberi pratioca i kreni na put zajedno! Ali imaj na umu:",
+        "textInvites": "• Imaš ograničen broj pozivnica dnevno. Ne brini, obnavljaju se sutra.",
+        "textNewChat": "• Kada oboje pošaljete pozivnice i match-ujete, chat će se otvoriti da možete planirati susret! 🍺"
       },
       "slidePermissions": {
-        "location": "📍 Geolocation is absolutely necessary for the feed to work. Please allow it when we ask for permission.",
-        "notifications": "🔔 We also need notification permissions to let you know about new invites and chat messages!"
+        "location": "📍 Geolokacija je apsolutno neophodna da bi feed funkcionisao. Molimo dozvoli je kada tražimo pristup.",
+        "notifications": "🔔 Takođe nam trebaju dozvole za notifikacije da bismo te obavestili o novim pozivnicama i porukama!"
       },
       "slidePWA": {
-        "textIphone": "🍎 On iPhone, push notifications work only after you add the app to your Home Screen.",
-        "instructionIphone": "Tap Share → Add to Home Screen",
-        "textAndroid": "🤖 On Android, we recommend installing the app for the best experience.",
-        "instructionAndroid": "Open the browser menu (⋮) → Add to Home Screen"
+        "textIphone": "🍎 Na iPhone-u, push notifikacije rade samo nakon što dodaš aplikaciju na početni ekran.",
+        "instructionIphone": "Tapni Deli → Dodaj na početni ekran",
+        "textAndroid": "🤖 Na Android-u, preporučujemo instalaciju aplikacije za najbolje iskustvo.",
+        "instructionAndroid": "Otvori meni pregledača (⋮) → Dodaj na početni ekran"
       },
-      "continue": "Let's go!",
-      "next": "Next"
+      "continue": "Hajde!",
+      "next": "Dalje"
     },
     "onboarding": {
-      "title": "Tell us about yourself",
-      "continue": "Continue",
-      "createProfile": "Create profile",
-      "uploadCoverTitle": "Choose your cover",
-      "selectCover": "Tap to select cover image",
-      "creating": "Creating profile...",
-      "back": "Back",
+      "title": "Reci nam o sebi",
+      "continue": "Nastavi",
+      "createProfile": "Kreiraj profil",
+      "uploadCoverTitle": "Izaberi naslovnu sliku",
+      "selectCover": "Tapni da izabereš naslovnu sliku",
+      "creating": "Kreiranje profila...",
+      "back": "Nazad",
       "legal": {
-        "text": "By creating a profile on Kegrycorn, you confirm that you are <age>18 or older</age> and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+        "text": "Kreiranjem profila na Kegrycorn potvrđuješ da imaš <age>18 ili više godina</age> i da se slažeš sa našim <terms>Uslovima korišćenja</terms> i <privacy>Politikom privatnosti</privacy>."
       },
       "validation": {
-        "avatarRequired": "Please select your avatar",
-        "firstNameRequired": "First name is required",
-        "lastNameRequired": "Last name is required",
-        "birthdayRequired": "Birthday is required",
-        "minAge": "You must be at least 18 years old",
-        "genderRequired": "Gender is required",
-        "minHobbies": "Please select at least 1 hobby",
-        "maxHobbies": "You can select up to 10 hobbies"
+        "avatarRequired": "Molimo izaberi avatar",
+        "firstNameRequired": "Ime je obavezno",
+        "lastNameRequired": "Prezime je obavezno",
+        "birthdayRequired": "Datum rođenja je obavezan",
+        "minAge": "Morate imati najmanje 18 godina",
+        "genderRequired": "Pol je obavezan",
+        "minHobbies": "Molimo izaberi bar 1 hobi",
+        "maxHobbies": "Možeš izabrati do 10 hobija"
       }
     },
     "feed": {
-      "distance": "Distance: {distance} {units}",
-      "noProfiles": "No profiles found. Try changing the filters.",
-      "locationRequired": "Location access is required to show profiles nearby. Please enable location in your browser settings.",
-      "inMeeting": "Can't invite anyone while you're planning a meetup, finish it first 😊 Tap anywhere to open the chat.",
+      "distance": "Udaljenost: {distance} {units}",
+      "noProfiles": "Nije pronađen nijedan profil. Pokušaj da promeniš filtere.",
+      "locationRequired": "Pristup lokaciji je neophodan za prikaz profila u blizini. Molimo omogući lokaciju u podešavanjima pregledača.",
+      "inMeeting": "Ne možeš pozivati dok planiraš susret, prvo završi ga 😊 Tapni bilo gde da otvoriš chat.",
       "inviteExpirationDialog": {
-        "message": "This person invited you for {when}. Would you like to match their time?",
-        "accept": "Yes, {when}",
-        "decline": "No, maybe next time"
+        "message": "Ova osoba te je pozvala za {when}. Želiš li da prihvatiš njihovo vreme?",
+        "accept": "Da, {when}",
+        "decline": "Ne, možda sledeći put"
       },
-      "when": "When",
-      "now": "Now",
-      "today": "Today",
-      "tomorrow": "Tomorrow",
+      "when": "Kada",
+      "now": "Sada",
+      "today": "Danas",
+      "tomorrow": "Sutra",
       "toast": {
-        "noInvites": "No invites left. They'll reset tomorrow."
+        "noInvites": "Nema više pozivnica. Obnavljaju se sutra."
       },
       "invitePrompt": {
-        "message": "Let's grow Kegrycorn together! 😊\nInvite your friends with a referral link: more people = way more adventures and fun. Bring a friend and get a special reward: special imaginary friend as a thank you! 🎉",
-        "later": "Later",
-        "letsGo": "Let's Go"
+        "message": "Hajde da zajedno gradimo Kegrycorn! 😊\nPozovi prijatelje referalnim linkom: više ljudi = mnogo više avantura i zabave. Dovedi prijatelja i dobij posebnu nagradu: posebnog imaginarnog prijatelja kao zahvalnost! 🎉",
+        "later": "Kasnije",
+        "letsGo": "Hajde"
       }
     },
     "chat": {
-      "messagePlaceholder": "Message {remaining}/{total}",
+      "messagePlaceholder": "Poruka {remaining}/{total}",
       "timer": "{minutes}:{seconds}",
-      "noActiveChat": "No active chat",
+      "noActiveChat": "Nema aktivnog chata",
       "timerInfoDialog": {
-        "title": "The timer is counting down until the chat ends. Once the time's up (or if someone ends it early), you'll be able to invite people to meetups again 😊",
+        "title": "Tajmer odbrojava do kraja chata. Kada vreme istekne (ili ako neko završi pre), moći ćete ponovo da pozivate ljude na susrete 😊",
         "okButton": "OK"
       },
       "menu": {
-        "cancel": "End meetup",
-        "venues": "Explore venues"
+        "cancel": "Završi susret",
+        "venues": "Istraži lokale"
       },
       "toast": {
-        "sendFailed": "Failed to send message",
-        "cancelFailed": "Failed to end meetup"
+        "sendFailed": "Slanje poruke nije uspelo",
+        "cancelFailed": "Završavanje susreta nije uspelo"
       },
       "endMeetingDialog": {
-        "message": "Seems like you've met! Is the meetup over?",
-        "yes": "Yes",
-        "no": "No"
+        "message": "Izgleda da ste se sreli! Da li je susret gotov?",
+        "yes": "Da",
+        "no": "Ne"
       },
       "lowMessageWarning": {
-        "message": "Heads up! You have {count} messages left in this chat.",
-        "okButton": "Got it"
+        "message": "Pažnja! Imaš još {count} poruka u ovom chatu.",
+        "okButton": "Razumem"
       },
       "firstTimePopup": {
-        "message": "You've both sent invites! A chat is ready for you to plan your meetup. You have {count} messages per chat, and it will end automatically once you meet or you can end it anytime from the menu.",
-        "okButton": "Let's Chat"
+        "message": "Oboje ste poslali pozivnice! Chat je spreman za planiranje susreta. Imate {count} poruka po chatu, i on će se automatski završiti kada se sretnete ili ga možete završiti u bilo kom trenutku iz menija.",
+        "okButton": "Hajde da pričamo"
       }
     },
     "filters": {
-      "title": "Filters",
-      "distance": "Search distance",
-      "age": "Age",
-      "from": "From",
-      "to": "To",
-      "any": "any",
-      "gender": "Gender",
-      "genderAny": "Any",
-      "male": "Male",
-      "female": "Female",
-      "hobbies": "Hobbies",
-      "hobbiesPlaceholder": "Select hobbies…",
-      "hobbyName": "Hobby name",
-      "apply": "Apply",
+      "title": "Filteri",
+      "distance": "Rastojanje pretrage",
+      "age": "Starost",
+      "from": "Od",
+      "to": "Do",
+      "any": "bilo koji",
+      "gender": "Pol",
+      "genderAny": "Bilo koji",
+      "male": "Muški",
+      "female": "Ženski",
+      "hobbies": "Hobiji",
+      "hobbiesPlaceholder": "Izaberi hobije…",
+      "hobbyName": "Naziv hobija",
+      "apply": "Primeni",
       "applyDialog": {
-        "title": "Apply filters?",
-        "buttonYes": "Yes",
-        "buttonNo": "No"
+        "title": "Primeni filtere?",
+        "buttonYes": "Da",
+        "buttonNo": "Ne"
       },
       "validation": {
-        "distance": "Distance must be between 0 and {max} {units}",
-        "minAge": "Age cannot be less than {min}",
-        "ageRange": "'From' age cannot be greater than 'To' age",
-        "maxHobbies": "Cannot select more than {max} hobbies"
+        "distance": "Rastojanje mora biti između 0 i {max} {units}",
+        "minAge": "Starost ne može biti manja od {min}",
+        "ageRange": "Starost 'Od' ne može biti veća od starosti 'Do'",
+        "maxHobbies": "Ne možeš izabrati više od {max} hobija"
       }
     },
     "notifications": {
-      "title": "Notifications",
-      "noNotifications": "No notifications yet",
-      "drinkInvitation": "Let's get a drink {time}!",
-      "today": "today",
-      "rightNow": "right now",
-      "tomorrow": "tomorrow",
-      "todayUntil": "today until {h}:{m}",
-      "tomorrowUntil": "tomorrow until {h}:{m}",
-      "ago": "{time} ago",
+      "title": "Obaveštenja",
+      "noNotifications": "Još nema obaveštenja",
+      "drinkInvitation": "Hajde da popijemo piće {time}!",
+      "today": "danas",
+      "rightNow": "odmah",
+      "tomorrow": "sutra",
+      "todayUntil": "danas do {h}:{m}",
+      "tomorrowUntil": "sutra do {h}:{m}",
+      "ago": "pre {time}",
       "menu": {
-        "viewProfile": "View Profile",
-        "accept": "Accept",
-        "delete": "Delete",
-        "blockAndReport": "Block & Report"
+        "viewProfile": "Pogledaj profil",
+        "accept": "Prihvati",
+        "delete": "Obriši",
+        "blockAndReport": "Blokiraj i prijavi"
       },
       "toast": {
-        "expired": "This invitation has expired",
-        "accepted": "Invitation accepted",
-        "acceptFailed": "Failed to accept invitation",
-        "ignoreFailed": "Failed to ignore invitation",
-        "blocked": "User blocked",
-        "blockFailed": "Failed to block user",
-        "deleteFailed": "Failed to delete notification"
+        "expired": "Ova pozivnica je istekla",
+        "accepted": "Pozivnica prihvaćena",
+        "acceptFailed": "Prihvatanje pozivnice nije uspelo",
+        "ignoreFailed": "Ignorisanje pozivnice nije uspelo",
+        "blocked": "Korisnik blokiran",
+        "blockFailed": "Blokiranje korisnika nije uspelo",
+        "deleteFailed": "Brisanje obaveštenja nije uspelo"
       }
     },
     "rateUser": {
-      "howWasIt": "How did your meetup go?",
-      "submit": "Submit",
-      "skip": "Skip",
+      "howWasIt": "Kako je prošao vaš susret?",
+      "submit": "Pošalji",
+      "skip": "Preskoči",
       "toast": {
-        "ratingRequired": "Please select a rating",
-        "submitFailed": "Failed to submit rating"
+        "ratingRequired": "Molimo izaberi ocenu",
+        "submitFailed": "Slanje ocene nije uspelo"
       }
     },
     "profile": {
-      "title": "My Profile",
-      "blockedUsers": "Blocked Users",
-      "friendsAndFoes": "Friends & Foes",
-      "discountsAndPromotions": "Discounts & Promotions",
-      "coverImage": "Cover Image",
-      "settings": "Settings",
-      "permissions": "Permissions",
-      "contactUs": "Contact Us",
+      "title": "Moj profil",
+      "blockedUsers": "Blokirani korisnici",
+      "friendsAndFoes": "Prijatelji i neprijatelji",
+      "discountsAndPromotions": "Popusti i promocije",
+      "coverImage": "Naslovna slika",
+      "settings": "Podešavanja",
+      "permissions": "Dozvole",
+      "contactUs": "Kontaktirajte nas",
       "menu": {
-        "edit": "Edit Profile",
-        "setAvatar": "Set Avatar",
-        "setCover": "Set Cover",
-        "logOut": "Log Out",
-        "delete": "Delete Account",
-        "makePrivate": "Make private",
-        "makePublic": "Make public",
-        "madePrivate": "Profile is now private",
-        "madePublic": "Profile is now public",
-        "privacyError": "Failed to update privacy settings"
+        "edit": "Uredi profil",
+        "setAvatar": "Postavi avatar",
+        "setCover": "Postavi naslovnu",
+        "logOut": "Odjavi se",
+        "delete": "Obriši nalog",
+        "makePrivate": "Učini privatnim",
+        "makePublic": "Učini javnim",
+        "madePrivate": "Profil je sada privatan",
+        "madePublic": "Profil je sada javan",
+        "privacyError": "Ažuriranje podešavanja privatnosti nije uspelo"
       },
       "theirProfile": {
         "menu": {
-          "blockAndReport": "Block & Report"
+          "blockAndReport": "Blokiraj i prijavi"
         },
         "toast": {
-          "blocked": "User blocked",
-          "blockFailed": "Failed to block user",
-          "loadFailed": "Failed to load user profile"
+          "blocked": "Korisnik blokiran",
+          "blockFailed": "Blokiranje korisnika nije uspelo",
+          "loadFailed": "Učitavanje profila korisnika nije uspelo"
         },
-        "notFound": "User not found"
+        "notFound": "Korisnik nije pronađen"
       },
       "deleteAccountDialog": {
-        "title": "Are you sure you want to delete your account? This action cannot be undone.",
-        "buttonYes": "Yes",
-        "buttonNo": "No"
+        "title": "Da li si siguran da želiš da obrišeš nalog? Ova akcija se ne može poništiti.",
+        "buttonYes": "Da",
+        "buttonNo": "Ne"
       }
     },
     "settings": {
-      "title": "Settings",
+      "title": "Podešavanja",
       "language": "Jezik",
-      "publicAccount": "Public account",
-      "publicAccountDesc": "When disabled, your profile will not be shown to others in the feed",
-      "distanceUnits": "Distance units",
-      "notifications": "Notifications",
+      "publicAccount": "Javni nalog",
+      "publicAccountDesc": "Kada je isključeno, tvoj profil neće biti prikazan drugima u feedu",
+      "distanceUnits": "Jedinice rastojanja",
+      "notifications": "Obaveštenja",
       "push": "Push",
-      "pushDesc": "Real-time notifications for account activity",
+      "pushDesc": "Obaveštenja u realnom vremenu za aktivnosti naloga",
       "email": "Email",
-      "emailDesc": "Account and service-related emails",
+      "emailDesc": "Emailovi vezani za nalog i servis",
       "km": "km",
       "mi": "mi",
-      "kmFull": "km (kilometers)",
-      "miFull": "mi (miles)",
-      "save": "Save",
-      "saveFailed": "Failed to save settings",
-      "fetchFailed": "Failed to fetch settings",
+      "kmFull": "km (kilometri)",
+      "miFull": "mi (milje)",
+      "save": "Sačuvaj",
+      "saveFailed": "Čuvanje podešavanja nije uspelo",
+      "fetchFailed": "Preuzimanje podešavanja nije uspelo",
       "languageSaved": "Postavke jezika su sačuvane"
     },
     "editProfile": {
-      "title": "Edit Profile",
-      "save": "Save"
+      "title": "Uredi profil",
+      "save": "Sačuvaj"
     },
     "coverImage": {
-      "instruction": "Tap anywhere to upload a new cover image",
-      "save": "Save",
+      "instruction": "Tapni bilo gde da otpremis novu naslovnu sliku",
+      "save": "Sačuvaj",
       "toast": {
-        "coverNotSelected": "Please select a cover image",
-        "uploaded": "Cover image uploaded successfully"
+        "coverNotSelected": "Molimo izaberi naslovnu sliku",
+        "uploaded": "Naslovna slika je uspešno otpremljena"
       }
     },
     "blockedUsers": {
-      "title": "Blocked Users",
-      "noBlockedUsers": "No blocked users yet",
+      "title": "Blokirani korisnici",
+      "noBlockedUsers": "Još nema blokiranih korisnika",
       "menu": {
-        "viewProfile": "View Profile",
-        "unblock": "Unblock",
-        "close": "Close"
+        "viewProfile": "Pogledaj profil",
+        "unblock": "Deblokiraj",
+        "close": "Zatvori"
       },
       "toast": {
-        "fetchFailed": "Failed to fetch blocked users",
-        "unblocked": "{name} was unblocked",
-        "unblockFailed": "Failed to unblock user"
+        "fetchFailed": "Preuzimanje blokiranih korisnika nije uspelo",
+        "unblocked": "{name} je deblokiran",
+        "unblockFailed": "Deblokiranje korisnika nije uspelo"
       }
     },
     "friendsAndFoes": {
-      "title": "Friends & Foes",
-      "comingSoon": "Coming soon",
-      "noFriends": "No friends yet",
-      "noImaginary": "No imaginary friends yet",
+      "title": "Prijatelji i neprijatelji",
+      "comingSoon": "Uskoro",
+      "noFriends": "Još nema prijatelja",
+      "noImaginary": "Još nema imaginarnih prijatelja",
       "imaginaryMenu": {
-        "show": "Show"
+        "show": "Prikaži"
       },
       "tabs": {
-        "friends": "Friends",
-        "imaginary": "Imaginary",
-        "blocked": "Blocked"
+        "friends": "Prijatelji",
+        "imaginary": "Imaginarni",
+        "blocked": "Blokirani"
       },
       "menu": {
-        "viewProfile": "View Profile",
-        "invite": "Invite",
-        "removeFriend": "Remove Friend",
-        "blockAndReport": "Block & Report",
-        "shareLink": "Share a link"
+        "viewProfile": "Pogledaj profil",
+        "invite": "Pozovi",
+        "removeFriend": "Ukloni prijatelja",
+        "blockAndReport": "Blokiraj i prijavi",
+        "shareLink": "Podeli link"
       },
       "toast": {
-        "fetchFailed": "Failed to fetch friends",
-        "fetchImaginaryFailed": "Failed to fetch imaginary friends",
-        "removed": "{name} was removed from friends",
-        "blocked": "{name} was blocked",
-        "removeFailed": "Failed to remove friend",
-        "invited": "{name} was invited",
-        "inviteFailed": "Failed to invite friend"
+        "fetchFailed": "Preuzimanje prijatelja nije uspelo",
+        "fetchImaginaryFailed": "Preuzimanje imaginarnih prijatelja nije uspelo",
+        "removed": "{name} je uklonjen iz prijatelja",
+        "blocked": "{name} je blokiran",
+        "removeFailed": "Uklanjanje prijatelja nije uspelo",
+        "invited": "{name} je pozvan",
+        "inviteFailed": "Pozivanje prijatelja nije uspelo"
       },
       "shareFallback": {
-        "title": "Share a link",
-        "instruction": "Automatic copy failed. Please copy the link manually:",
-        "close": "Close"
+        "title": "Podeli link",
+        "instruction": "Automatsko kopiranje nije uspelo. Molimo kopirajte link ručno:",
+        "close": "Zatvori"
       }
     },
     "permissions": {
-      "title": "Permissions",
-      "description": "To provide you with the best experience, we need access to your location and notifications.",
-      "locationTitle": "Location",
-      "locationDesc": "Absolutely necessary to discover people around you. Without it, the feed won't work",
-      "notificationsTitle": "Notifications",
-      "notificationsDesc": "The app will work without notifications enabled, but you won't receive invitations or new message notifications. The user experience of some features will also be degraded.",
-      "instructions": "To enable permissions:\n1. Tap the lock icon 🔒 or settings icon in your browser address bar.\n2. Tap 'Permissions' or 'Site Settings'.\n3. Allow 'Location' and 'Notifications'.\n4. Refresh this page."
+      "title": "Dozvole",
+      "description": "Da bismo vam pružili najbolje iskustvo, potreban nam je pristup vašoj lokaciji i obaveštenjima.",
+      "locationTitle": "Lokacija",
+      "locationDesc": "Apsolutno neophodno za otkrivanje ljudi u blizini. Bez toga feed neće raditi",
+      "notificationsTitle": "Obaveštenja",
+      "notificationsDesc": "Aplikacija će raditi bez omogućenih obaveštenja, ali nećete primati pozivnice ni obaveštenja o novim porukama. Korisničko iskustvo nekih funkcija će biti narušeno.",
+      "instructions": "Za omogućavanje dozvola:\n1. Tapni ikonu katanca 🔒 ili ikonu podešavanja u adresnoj traci pregledača.\n2. Tapni 'Dozvole' ili 'Podešavanja sajta'.\n3. Dozvoli 'Lokaciju' i 'Obaveštenja'.\n4. Osveži ovu stranicu."
     },
     "discountsAndPromotions": {
-      "title": "Discounts & Promotions",
+      "title": "Popusti i promocije",
       "tabs": {
-        "discounts": "Discounts",
-        "promotions": "Promotions"
+        "discounts": "Popusti",
+        "promotions": "Promocije"
       },
-      "noOffers": "You have no available offers right now. Visit venues to unlock discounts!",
-      "noPromotions": "No promotions available nearby.",
-      "locationRequired": "Location access is required to show your closest offers. Please enable location in your browser settings.",
+      "noOffers": "Trenutno nemaš dostupnih ponuda. Poseti lokale da otključaš popuste!",
+      "noPromotions": "Nema dostupnih promocija u blizini.",
+      "locationRequired": "Pristup lokaciji je neophodan za prikaz najbližih ponuda. Molimo omogući lokaciju u podešavanjima pregledača.",
       "menu": {
-        "viewVenue": "View Venue",
-        "openInMaps": "Open on Google Maps"
+        "viewVenue": "Pogledaj lokal",
+        "openInMaps": "Otvori na Google Maps"
       },
       "toast": {
-        "loadFailed": "Failed to load your offers"
+        "loadFailed": "Učitavanje ponuda nije uspelo"
       }
     },
     "venues": {
-      "title": "Venues",
-      "noVenues": "No venues found nearby.",
-      "locationRequired": "Location access is required to show venues nearby. Please enable location in your browser settings.",
+      "title": "Lokali",
+      "noVenues": "Nisu pronađeni lokali u blizini.",
+      "locationRequired": "Pristup lokaciji je neophodan za prikaz lokala u blizini. Molimo omogući lokaciju u podešavanjima pregledača.",
       "distance": "{distance} {units}",
       "menu": {
-        "viewVenue": "View Venue",
-        "openInMaps": "Open on Google Maps"
+        "viewVenue": "Pogledaj lokal",
+        "openInMaps": "Otvori na Google Maps"
       },
       "toast": {
-        "loadFailed": "Failed to load venues"
+        "loadFailed": "Učitavanje lokala nije uspelo"
       },
-      "cameraDenied": "Camera permission denied. Allow access in browser settings or scan with your system QR reader.",
-      "locationDenied": "Location access is required to check in. Please enable location in your browser settings."
+      "cameraDenied": "Dozvola za kameru odbijena. Dozvoli pristup u podešavanjima pregledača ili skeniraj QR kod sistemskim čitačem.",
+      "locationDenied": "Pristup lokaciji je neophodan za prijavu. Molimo omogući lokaciju u podešavanjima pregledača."
     },
     "venueDetail": {
-      "contacts": "Contacts",
-      "address": "Address",
-      "workingHours": "Working Hours",
-      "promotions": "Promotions 🎉",
-      "notFound": "Venue not found",
-      "myDiscount": "My Discount",
-      "level": "Level",
-      "discount": "Discount: {percent}%",
-      "nextDiscountLevelInfo": "Next discount level is: {percent}%",
-      "maxDiscountLevelReached": "The maximum discount has been reached.",
-      "visits": "{current}/{total} visits to next level",
+      "contacts": "Kontakti",
+      "address": "Adresa",
+      "workingHours": "Radno vreme",
+      "promotions": "Promocije 🎉",
+      "notFound": "Lokal nije pronađen",
+      "myDiscount": "Moj popust",
+      "level": "Nivo",
+      "discount": "Popust: {percent}%",
+      "nextDiscountLevelInfo": "Sledeći nivo popusta je: {percent}%",
+      "maxDiscountLevelReached": "Dostignuta je maksimalna vrednost popusta.",
+      "visits": "{current}/{total} poseta do sledećeg nivoa",
       "menu": {
-        "openInstagram": "Open Instagram",
-        "openWebsite": "Open Website",
-        "openInMaps": "Open on Google Maps"
+        "openInstagram": "Otvori Instagram",
+        "openWebsite": "Otvori sajt",
+        "openInMaps": "Otvori na Google Maps"
       }
     }
   },
   "components": {
     "qr-code-reader": {
       "toast": {
-        "invalidQr": "Invalid QR code",
-        "checkInFailed": "Check-in failed. Please try again."
+        "invalidQr": "Neispravan QR kod",
+        "checkInFailed": "Prijava nije uspela. Molimo pokušajte ponovo."
       }
     },
     "logo": {
-      "tagline": "The best stories start off-screen"
+      "tagline": "Najbolje priče počinju van ekrana"
     },
     "ageVerification": {
-      "message": "This service is intended for users aged 18 and over. I confirm that I am at least 18 years old.",
-      "termsOfService": "Terms of Service",
-      "privacyPolicy": "Privacy Policy",
-      "confirm": "I am 18+"
+      "message": "Ovaj servis je namenjen korisnicima starijim od 18 godina. Potvrđujem da imam najmanje 18 godina.",
+      "termsOfService": "Uslovi korišćenja",
+      "privacyPolicy": "Politika privatnosti",
+      "confirm": "Imam 18+"
     },
     "reportDialog": {
-      "title": "Why are you blocking this user?",
-      "placeholder": "Tell us more...",
-      "cancel": "Cancel",
-      "confirm": "Block & Report"
+      "title": "Zašto blokirate ovog korisnika?",
+      "placeholder": "Recite nam više...",
+      "cancel": "Otkaži",
+      "confirm": "Blokiraj i prijavi"
     },
     "inviteDialog": {
-      "title": "Invite {name}",
-      "now": "Now",
-      "today": "Today",
-      "tomorrow": "Tomorrow",
-      "cancel": "Cancel",
+      "title": "Pozovi {name}",
+      "now": "Sada",
+      "today": "Danas",
+      "tomorrow": "Sutra",
+      "cancel": "Otkaži",
       "ok": "OK"
     },
     "avatar-cropper": {
-      "save": "Save"
+      "save": "Sačuvaj"
     },
     "profile-sections": {
       "name": {
-        "title": "Name",
-        "firstName": "First Name",
-        "lastName": "Last Name"
+        "title": "Ime",
+        "firstName": "Ime",
+        "lastName": "Prezime"
       },
       "avatar": {
-        "selectAvatar": "Select your avatar"
+        "selectAvatar": "Izaberi avatar"
       },
       "birthday": {
-        "title": "Birthday",
-        "placeholder": "Birthday"
+        "title": "Datum rođenja",
+        "placeholder": "Datum rođenja"
       },
       "age": {
-        "title": "Age"
+        "title": "Starost"
       },
       "gender": {
-        "title": "Gender",
-        "male": "Male",
-        "female": "Female"
+        "title": "Pol",
+        "male": "Muški",
+        "female": "Ženski"
       },
       "bio": {
         "title": "Bio",
-        "placeholder": "Write about yourself... (optional)",
+        "placeholder": "Napiši nešto o sebi... (opciono)",
         "maxLength": 200
       },
       "hobbies": {
-        "title": "Hobbies",
-        "placeholder": "Select your hobbies...",
-        "gym": "🏋️ Gym",
-        "running": "🏃 Running",
-        "swimming": "🏊 Swimming",
-        "cycling": "🚴 Cycling",
-        "yoga": "🧘 Yoga",
-        "boxing": "🥊 Boxing",
-        "football": "⚽ Football",
-        "basketball": "🏀 Basketball",
-        "volleyball": "🏐 Volleyball",
-        "tennis": "🎾 Tennis",
+        "title": "Hobiji",
+        "placeholder": "Izaberi hobije...",
+        "gym": "🏋️ Teretana",
+        "running": "🏃 Trčanje",
+        "swimming": "🏊 Plivanje",
+        "cycling": "🚴 Biciklizam",
+        "yoga": "🧘 Joga",
+        "boxing": "🥊 Boks",
+        "football": "⚽ Fudbal",
+        "basketball": "🏀 Košarka",
+        "volleyball": "🏐 Odbojka",
+        "tennis": "🎾 Tenis",
         "crossfit": "💪 Crossfit",
         "pilates": "🧘 Pilates",
-        "skating": "⛸️ Skating",
-        "surfing": "🏄 Surfing",
-        "martialarts": "🥋 Martial Arts",
+        "skating": "⛸️ Klizanje",
+        "surfing": "🏄 Surfovanje",
+        "martialarts": "🥋 Borilačke veštine",
         "pickleball": "🏓 Pickleball",
-        "meditation": "🧘 Meditation",
-        "stretching": "🤸 Stretching",
+        "meditation": "🧘 Meditacija",
+        "stretching": "🤸 Istezanje",
         "powerlifting": "🏋️ Powerlifting",
         "bodybuilding": "💪 Bodybuilding",
-        "tabletennis": "🏓 Table Tennis",
+        "tabletennis": "🏓 Stoni tenis",
         "golf": "⛳ Golf",
-        "triathlon": "🏃 Triathlon",
-        "camping": "⛺ Camping",
-        "hiking": "🥾 Hiking",
-        "fishing": "🎣 Fishing",
-        "hunting": "🦌 Hunting",
-        "skiing": "⛷️ Skiing",
+        "triathlon": "🏃 Triatlon",
+        "camping": "⛺ Kampovanje",
+        "hiking": "🥾 Planinarenje",
+        "fishing": "🎣 Ribolov",
+        "hunting": "🦌 Lov",
+        "skiing": "⛷️ Skijanje",
         "snowboarding": "🏂 Snowboarding",
-        "traveling": "✈️ Traveling",
-        "climbing": "🧗 Climbing",
-        "sailing": "⛵ Sailing",
-        "roadtrips": "🚗 Road Trips",
-        "picnics": "🧺 Picnics",
-        "kayaking": "🛶 Kayaking",
+        "traveling": "✈️ Putovanje",
+        "climbing": "🧗 Penjanje",
+        "sailing": "⛵ Jedrenje",
+        "roadtrips": "🚗 Putovanja autom",
+        "picnics": "🧺 Piknik",
+        "kayaking": "🛶 Kajakarenje",
         "paddleboarding": "🏄 Paddleboarding",
         "backpacking": "🥾 Backpacking",
-        "scubadiving": "🤿 Scuba Diving",
-        "cooking": "👨‍🍳 Cooking",
-        "baking": "🧁 Baking",
-        "restaurants": "🍽️ Restaurants",
-        "vegetarianism": "🥦 Vegetarianism",
-        "streetfood": "🌭 Street Food",
-        "pastry": "🥐 Pastry",
+        "scubadiving": "🤿 Ronjenje",
+        "cooking": "👨‍🍳 Kuvanje",
+        "baking": "🧁 Pečenje",
+        "restaurants": "🍽️ Restorani",
+        "vegetarianism": "🥦 Vegetarijanstvo",
+        "streetfood": "🌭 Ulična hrana",
+        "pastry": "🥐 Poslastičarstvo",
         "bbq": "🍖 BBQ",
-        "seafood": "🦞 Seafood",
-        "desserts": "🍰 Desserts",
-        "socialdrinking": "🥂 Social Drinking",
-        "coffee": "☕ Coffee",
-        "tea": "🍵 Tea",
-        "reading": "📚 Reading",
-        "drawing": "🎨 Drawing",
-        "photography": "📷 Photography",
-        "dancing": "💃 Dancing",
-        "painting": "🎨 Painting",
-        "singing": "🎤 Singing",
-        "musicalinstruments": "🎸 Musical Instruments",
-        "music": "🎵 Music",
-        "writing": "✍️ Writing",
-        "design": "🎨 Design",
-        "fashion": "👗 Fashion",
-        "tattoos": "💉 Tattoos",
-        "movies": "🎬 Movies",
-        "animation": "🎬 Animation",
-        "podcasts": "🎧 Podcasts",
-        "theatre": "🎭 Theatre",
-        "blogging": "📝 Blogging",
+        "seafood": "🦞 Morski plodovi",
+        "desserts": "🍰 Deserti",
+        "socialdrinking": "🥂 Druženje uz piće",
+        "coffee": "☕ Kafa",
+        "tea": "🍵 Čaj",
+        "reading": "📚 Čitanje",
+        "drawing": "🎨 Crtanje",
+        "photography": "📷 Fotografija",
+        "dancing": "💃 Ples",
+        "painting": "🎨 Slikanje",
+        "singing": "🎤 Pevanje",
+        "musicalinstruments": "🎸 Muzički instrumenti",
+        "music": "🎵 Muzika",
+        "writing": "✍️ Pisanje",
+        "design": "🎨 Dizajn",
+        "fashion": "👗 Moda",
+        "tattoos": "💉 Tetovaže",
+        "movies": "🎬 Filmovi",
+        "animation": "🎬 Animacija",
+        "podcasts": "🎧 Podkasti",
+        "theatre": "🎭 Pozorište",
+        "blogging": "📝 Blogovanje",
         "gaming": "🎮 Gaming",
-        "boardgames": "🎲 Board Games",
-        "chess": "♟️ Chess",
-        "itandcomputerscience": "💻 IT & Computer Science",
+        "boardgames": "🎲 Društvene igre",
+        "chess": "♟️ Šah",
+        "itandcomputerscience": "💻 IT i računarstvo",
         "anime": "🇯🇵 Anime",
-        "business": "💼 Business",
-        "puzzles": "🧩 Puzzles",
-        "languagelearning": "🗣️ Language Learning",
-        "collecting": "📦 Collecting",
-        "astronomy": "🔭 Astronomy",
-        "comics": "🦸 Comics",
-        "cars": "🚗 Cars",
-        "motorcycles": "🏍️ Motorcycles",
-        "dogs": "🐶 Dogs",
-        "cats": "🐱 Cats",
-        "reptiles": "🦎 Reptiles",
-        "birds": "🐦 Birds",
-        "aquariums": "🐠 Aquariums",
-        "gardening": "🌱 Gardening",
-        "knitting": "🧶 Knitting",
-        "sewing": "🪡 Sewing",
-        "threedprinting": "🖨️ 3D Printing",
-        "diy": "🛠️ DIY"
+        "business": "💼 Biznis",
+        "puzzles": "🧩 Slagalice",
+        "languagelearning": "🗣️ Učenje jezika",
+        "collecting": "📦 Kolekcionarstvo",
+        "astronomy": "🔭 Astronomija",
+        "comics": "🦸 Stripovi",
+        "cars": "🚗 Automobili",
+        "motorcycles": "🏍️ Motocikli",
+        "dogs": "🐶 Psi",
+        "cats": "🐱 Mačke",
+        "reptiles": "🦎 Reptili",
+        "birds": "🐦 Ptice",
+        "aquariums": "🐠 Akvarijumi",
+        "gardening": "🌱 Vrtlarstvo",
+        "knitting": "🧶 Pletenje",
+        "sewing": "🪡 Šivenje",
+        "threedprinting": "🖨️ 3D štampa",
+        "diy": "🛠️ Uradi sam"
       }
     }
   }
