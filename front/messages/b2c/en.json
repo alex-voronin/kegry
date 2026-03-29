@@ -350,6 +350,7 @@
     },
     "settings": {
       "title": "Settings",
+      "language": "Language",
       "publicAccount": "Public account",
       "publicAccountDesc": "When disabled, your profile will not be shown to others in the feed",
       "distanceUnits": "Distance units",
@@ -364,7 +365,8 @@
       "miFull": "mi (miles)",
       "save": "Save",
       "saveFailed": "Failed to save settings",
-      "fetchFailed": "Failed to fetch settings"
+      "fetchFailed": "Failed to fetch settings",
+      "languageSaved": "Language settings have been saved"
     },
     "editProfile": {
       "title": "Edit Profile",

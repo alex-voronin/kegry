@@ -13,7 +13,7 @@ export function Toggle({ checked, onChange, srTitle }: ToggleProps) {
       onChange={onChange}
       className={`${
         checked ? 'bg-white' : 'bg-white/40'
-      } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none`}
+      } relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none`}
     >
       <span className="sr-only">{srTitle || 'Enable setting'}</span>
       <span

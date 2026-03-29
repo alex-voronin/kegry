@@ -1,15 +1,15 @@
 @reference "../../../globals.css";
 
 .container {
-  @apply text-primary min-h-dvh px-4;
+  @apply text-primary min-h-dvh sm:px-4;
 }
 
 .sectionTitle {
-  @apply text-secondary mb-2 ml-1 text-sm;
+  @apply text-secondary mb-2 ml-4 text-sm sm:ml-1;
 }
 
 .item {
-  @apply bg-form-element text-primary mb-6 flex h-12 w-full items-center justify-between rounded-xl px-4 text-base font-medium;
+  @apply bg-form-element text-primary mb-6 flex h-12 w-full items-center justify-between px-4 text-base font-medium sm:rounded-xl;
 }
 
 .itemClickable {
@@ -21,11 +21,11 @@
 }
 
 .group {
-  @apply bg-form-element mb-6 overflow-hidden rounded-xl;
+  @apply bg-form-element mb-6 overflow-hidden sm:rounded-xl;
 }
 
 .groupItem {
-  @apply border-surface flex w-full items-center justify-between border-b px-4 py-3 last:border-0;
+  @apply border-surface flex w-full items-center justify-between gap-2 border-b px-4 py-3 last:border-0;
 }
 
 .itemContent {

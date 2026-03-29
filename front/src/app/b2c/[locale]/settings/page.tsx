@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from '@/i18n/routing';
-import { useTranslations } from 'next-intl';
+import { useEffect, useState, useRef } from 'react';
+import { useRouter, usePathname } from '@/i18n/routing';
+import { useTranslations, useLocale } from 'next-intl';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Button, ButtonVariant } from '@/components/ui/button';
@@ -12,9 +12,28 @@ import { useSettingsStore, DistanceUnits } from './use-settings-store';
 import { useUserProfileStore } from '@/store/use-user-profile-store';
 import { toast } from 'react-toastify';
 import styles from './settings.module.css';
+import { useSearchParams } from 'next/navigation';
+import { PAGE_ROUTES } from '@/lib/routes';
+
+const locales = [
+  {
+    code: 'en',
+    label: 'English',
+    shortLabel: 'EN',
+    flag: '🇬🇧',
+  },
+  {
+    code: 'sr',
+    label: 'Srpski',
+    shortLabel: 'SR',
+    flag: '🇷🇸',
+  },
+] as const;
 
 export default function SettingsPage() {
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = useLocale();
   const t = useTranslations('screens.settings');
 
   const {
@@ -40,6 +59,23 @@ export default function SettingsPage() {
   } = useUserProfileStore();
 
   const [isDistanceMenuOpen, setIsDistanceMenuOpen] = useState(false);
+  const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
+
+  const currentLocale = locales.find((l) => l.code === locale) || locales[0];
+
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    if (searchParams.get('localeChanged')) {
+      toast.success(t('languageSaved'));
+      router.replace(PAGE_ROUTES.SETTINGS);
+    }
+  }, []);
+
+  const handleLocaleChange = (newLocale: 'en' | 'sr') => {
+    // We have to show the toast after component remounts, so we add a query param.
+    // It's the easiest way to do it.
+    router.replace(`${pathname}?localeChanged=1`, { locale: newLocale });
+  };
 
   const loadData = async () => {
     try {
@@ -83,6 +119,16 @@ export default function SettingsPage() {
       onClick: () => updateDistanceUnits(DistanceUnits.Miles),
     },
   ];
+
+  const languageOptions = locales.map((item) => ({
+    icon: (
+      <span className="flex w-6 items-center justify-center text-[20px] leading-none">
+        {item.flag}
+      </span>
+    ),
+    label: `${item.label} (${item.shortLabel})`,
+    onClick: () => handleLocaleChange(item.code as 'en' | 'sr'),
+  }));
 
   const hasSettingsChanges =
     serverSettings != null &&
@@ -130,6 +176,14 @@ export default function SettingsPage() {
             </div>
           </div>
 
+          <h3 className={styles.sectionTitle}>{t('language')}</h3>
+          <div
+            className={`${styles.item} ${styles.itemClickable}`}
+            onClick={() => setIsLanguageMenuOpen(true)}
+          >
+            <span className={styles.value}>{currentLocale.label}</span>
+          </div>
+
           <h3 className={styles.sectionTitle}>{t('distanceUnits')}</h3>
           <div
             className={`${styles.item} ${styles.itemClickable}`}
@@ -174,6 +228,11 @@ export default function SettingsPage() {
           isOpen={isDistanceMenuOpen}
           onClose={() => setIsDistanceMenuOpen(false)}
           options={distanceOptions}
+        />
+        <ModalMenu
+          isOpen={isLanguageMenuOpen}
+          onClose={() => setIsLanguageMenuOpen(false)}
+          options={languageOptions}
         />
       </div>
     </div>
