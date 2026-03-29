@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { LanguageSelector } from './language-selector';
+import { LanguageSelector } from '@/components/common/LanguageSelector';
 import SocialLinks from './social-links';
 import { cn } from '@/lib/utils';
 import styles from './desktop-landing.module.css';

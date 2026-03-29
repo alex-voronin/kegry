@@ -7,6 +7,7 @@ import { X, User, Building2, MapPin, LogOut, Menu, MessageCircle } from 'lucide-
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useAuthStore } from '@/lib/auth/use-auth-store';
 import { openTawkChat } from '@/components/tawk-messenger';
+import { LanguageSelector } from '@/components/common/LanguageSelector';
 import styles from './Sidebar.module.css';
 
 // --- Hook ---
@@ -103,13 +104,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         onClick={onClose}
       />
       <aside className={`${styles.drawer} ${isOpen ? styles.drawerOpen : ''}`}>
-        <button
-          className={styles.drawerCloseButton}
-          onClick={onClose}
-          aria-label="Close menu"
-        >
-          <X size={28} />
-        </button>
+        <div className={styles.drawerHeader}>
+          <LanguageSelector />
+          <button
+            className={styles.drawerCloseButton}
+            onClick={onClose}
+            aria-label="Close menu"
+          >
+            <X size={28} />
+          </button>
+        </div>
 
         <nav className={styles.drawerNav}>
             {navItems.map((item, index) => {

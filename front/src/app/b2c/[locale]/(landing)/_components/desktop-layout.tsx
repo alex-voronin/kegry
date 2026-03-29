@@ -8,7 +8,7 @@ import { PAGE_ROUTES } from '@/lib/routes';
 import { useNewsStore } from '../store/use-news-store';
 import Script from 'next/script';
 import SocialLinks from './social-links';
-import { LanguageSelector } from './language-selector';
+import { LanguageSelector } from '@/components/common/LanguageSelector';
 import styles from './desktop-landing.module.css';
 import { cn } from '@/lib/utils';
 

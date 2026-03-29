@@ -5,7 +5,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { ChevronDown } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/routing';
-import styles from './language-selector.module.css';
+import styles from './LanguageSelector.module.css';
 
 const locales = [
   {

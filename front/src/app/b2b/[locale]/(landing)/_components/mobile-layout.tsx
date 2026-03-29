@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Menu, X } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { LanguageSelector } from './language-selector';
+import { LanguageSelector } from '@/components/common/LanguageSelector';
 import SocialLinks from './social-links';
 import styles from './desktop-landing.module.css';
 import mobileStyles from './mobile-landing.module.css';
