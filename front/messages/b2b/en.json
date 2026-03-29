@@ -84,15 +84,15 @@
       "features": {
         "one": {
           "title": "Boost Your Visibility",
-          "text": "Register your venue to join our social platform. Only verified venues are displayed to users, keeping the platform free from scams."
+          "text": "After creating your account, you'll immediately gain access to manage you venue, discounts and promotions. Once your venue is verified, it will become visible to users on our social platform."
         },
         "two": {
           "title": "Build Customer Loyalty",
-          "text": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident."
+          "text": "Create up to 4 loyalty levels based on how many times your guests visit. Set a different discount for each level, and vary the discount depending on the day of the week. Simple to set up, fully automatic, and perfect for bringing customers back."
         },
         "three": {
-          "title": "Increase Revenue",
-          "text": "Sunt in culpa qui officia deserunt mollit anim id est laborum. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit."
+          "title": "Easy QR Check-In",
+          "text": "Place QR codes on the tables for guests to scan themselves, or have your team open the QR code on their phone via the business portal and let the guest scan it. Either way, every visit is counted automatically and your regulars move up the loyalty levels with zero extra effort."
         }
       }
     },

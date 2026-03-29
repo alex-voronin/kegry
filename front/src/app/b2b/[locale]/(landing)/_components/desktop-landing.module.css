@@ -19,7 +19,7 @@
 }
 
 .cardTitle {
-  @apply mb-4 text-center text-4xl font-bold;
+  @apply mb-4 text-center text-3xl font-bold;
   color: var(--color-landing-heading);
   font-family: var(--font-landing-title);
 }
@@ -111,7 +111,7 @@
 }
 
 .featureTitle {
-  @apply mb-4 text-3xl font-bold;
+  @apply mb-4 text-2xl font-bold;
   color: var(--color-landing-heading);
   font-family: var(--font-landing-title);
 }
@@ -121,7 +121,7 @@
 }
 
 .featureImagePlaceholder {
-  @apply mt-auto aspect-2/1 w-full rounded-lg;
+  @apply mt-auto flex w-full items-center justify-center rounded-lg px-4 py-4;
   background-color: rgba(255, 255, 255, 0.1);
 }
 

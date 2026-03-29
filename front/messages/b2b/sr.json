@@ -1,0 +1,390 @@
+{
+  "common": {
+    "errors": {
+      "network": "Greška mreže. Molimo pokušajte ponovo."
+    },
+    "promoTypes": {
+      "happyHours": "Happy Hours",
+      "twoPlusOne": "2+1",
+      "event": "Događaj",
+      "discount": "Popust",
+      "general": "Opšte"
+    },
+    "days": {
+      "Monday": "Pon",
+      "Tuesday": "Uto",
+      "Wednesday": "Sre",
+      "Thursday": "Čet",
+      "Friday": "Pet",
+      "Saturday": "Sub",
+      "Sunday": "Ned"
+    }
+  },
+  "components": {
+    "logo": {
+      "tagline": "Za biznise"
+    },
+    "forms": {
+      "discount": {
+        "loyaltyLevelOption": "Nivo {level} (ispod {visits} poseta)",
+        "loyaltyLevel": "Nivo lojalnosti",
+        "loyaltyLevelPlaceholder": "Izaberi nivo lojalnosti",
+        "percent": "Popust %",
+        "workDays": "Radni dani",
+        "weekend": "Vikend",
+        "when": "Kada",
+        "validation": {
+          "percentRequired": "Procenat popusta je obavezan",
+          "percentRange": "Procenat mora biti između 1 i 100",
+          "daysRequired": "Molimo izaberi bar jedan dan.",
+          "loyaltyLevelRequired": "Nivo lojalnosti je obavezan"
+        }
+      },
+      "promotion": {
+        "type": "Tip",
+        "typePlaceholder": "Izaberi tip...",
+        "body": "Opis",
+        "bodyPlaceholder": "Unesite opis promocije...",
+        "validation": {
+          "typeRequired": "Tip je obavezan",
+          "bodyRequired": "Opis promocije je obavezan"
+        }
+      }
+    }
+  },
+  "screens": {
+    "landing": {
+      "header": {
+        "subtitle": "Za biznise",
+        "nav": {
+          "features": "Funkcije",
+          "contactUs": "Kontaktirajte nas"
+        },
+        "login": "Prijava/Registracija"
+      },
+      "footer": {
+        "copyright": "© 2026 Kegrycorn™. All rights reserved.",
+        "privacy": "Politika privatnosti",
+        "consent": "Saglasnost za komunikaciju",
+        "terms": "Uslovi korišćenja",
+        "community": "Smernice zajednice",
+        "mobilePrivacy": "Privatnost",
+        "mobileTerms": "Uslovi",
+        "mobileConsent": "Saglasnost",
+        "mobileCommunity": "Smernice"
+      },
+      "hero": {
+        "title": "Sveobuhvatna platforma za rast barova",
+        "description": "Pomažemo vlasnicima barova da privuku nove goste, pretvore ih u stalne posetioce i razviju poslovanje uz programe lojalnosti, promocije i laku vidljivost. Sve na jednoj jednostavnoj platformi stvorenoj za rast. Osnovna loyalty alat su dostupna danas i zauvek ostaju potpuno besplatna."
+      },
+      "contactUs": {
+        "title": "Kontaktirajte nas",
+        "description": "Zainteresovani za povećanje lojalnosti gostiju i vidljivosti vašeg bara? Rado ćemo čuti od vas. Bez obzira da li želite da registrujete lokał, počnete da koristite naše besplatne loyalty alate ili saznate o nadolazećim funkcijama — naš tim je spreman da pomogne. Obratite nam se putem <email>contacts@kegry.com</email> ili kroz naš <chat>chat</chat>."
+      },
+      "features": {
+        "one": {
+          "title": "Povećajte svoju vidljivost",
+          "text": "Nakon kreiranja naloga, odmah dobijate pristup upravljanju lokalem, popustima i promocijama. Kada se vaš lokal verifikuje, postaće vidljiv korisnicima na našoj društvenoj platformi."
+        },
+        "two": {
+          "title": "Izgradite lojalnost klijenata",
+          "text": "Kreirajte do 4 nivoa lojalnosti na osnovu broja poseta vaših gostiju. Postavite različiti popust za svaki nivo i varirajte popust u zavisnosti od dana u nedelji. Jednostavno za podešavanje, potpuno automatski i savršeno za vraćanje klijenata."
+        },
+        "three": {
+          "title": "Jednostavna QR prijava",
+          "text": "Postavite QR kodove na stolove kako bi ih gosti sami skenirali, ili neka vaš tim otvori QR kod na telefonu putem poslovnog portala i gost ga skenira. Svakako, svaka poseta se automatski broji i vaši stalni gosti napreduju kroz nivoe lojalnosti bez ikakvog dodatnog truda."
+        }
+      }
+    },
+    "home": {
+      "title": "Kegrycorn za biznise",
+      "description": "Dobrodošli u poslovni portal. Upravljajte lokalima, pratite posete i kreirajte ponude."
+    },
+    "profile": {
+      "title": "Profil",
+      "email": "Email",
+      "toast": {
+        "loadFailed": "Učitavanje podataka naloga nije uspelo"
+      }
+    },
+    "login": {
+      "email": "Email",
+      "password": "Lozinka",
+      "forgot": "Zaboravili?",
+      "signIn": "Prijavi se",
+      "switchToRegister": "Novi si ovde? Registruj se",
+      "orContinueWith": "Ili nastavi sa",
+      "google": "Google",
+      "errors": {
+        "emailRequired": "Email je obavezan",
+        "emailInvalid": "Neispravna email adresa",
+        "passwordRequired": "Lozinka je obavezna",
+        "passwordShort": "Lozinka mora imati najmanje 10 karaktera",
+        "passwordComplexity": "Lozinka mora sadržati bar jedno veliko slovo, jedno malo slovo i jedan broj",
+        "wrongCredentials": "Neispravna email adresa ili lozinka"
+      }
+    },
+    "register": {
+      "email": "Email",
+      "password": "Lozinka",
+      "confirmPassword": "Potvrdi lozinku",
+      "signUp": "Registruj se",
+      "switchToLogin": "Imaš nalog? Prijavi se",
+      "orContinueWith": "Ili nastavi sa",
+      "google": "Google",
+      "errors": {
+        "emailRequired": "Email je obavezan",
+        "emailInvalid": "Neispravna email adresa",
+        "passwordRequired": "Lozinka je obavezna",
+        "passwordShort": "Lozinka mora imati najmanje 10 karaktera",
+        "passwordComplexity": "Lozinka mora sadržati bar jedno veliko slovo, jedno malo slovo i jedan broj",
+        "passwordMismatch": "Lozinke se ne poklapaju"
+      },
+      "legal": {
+        "text": "Registracijom na Kegrycorn za biznise slažete se sa našim <terms>Uslovima korišćenja</terms> i <privacy>Politikom privatnosti</privacy>."
+      }
+    },
+    "forgot": {
+      "title": "Zaboravili ste lozinku?",
+      "description": "Unesite svoju email adresu i poslaćemo vam link za resetovanje lozinke.",
+      "email": "Email",
+      "submit": "Pošalji link za resetovanje",
+      "successTitle": "Proverite email",
+      "successDescription": "Poslali smo link za resetovanje lozinke na vašu email adresu.",
+      "backToLogin": "Nazad na prijavu",
+      "errors": {
+        "emailRequired": "Email je obavezan",
+        "emailInvalid": "Neispravna email adresa"
+      }
+    },
+    "passwordReset": {
+      "newPassword": "Nova lozinka",
+      "confirmPassword": "Potvrdi lozinku",
+      "submit": "Promeni lozinku",
+      "success": "Lozinka je uspešno promenjena. Molimo prijavite se sa novom lozinkom.",
+      "backToLogin": "Nazad na prijavu",
+      "errors": {
+        "passwordRequired": "Lozinka je obavezna",
+        "passwordShort": "Lozinka mora imati najmanje 10 karaktera",
+        "passwordComplexity": "Lozinka mora sadržati bar jedno veliko slovo, jedno malo slovo i jedan broj",
+        "match": "Lozinke se ne poklapaju",
+        "invalidLink": "Nevažeći link"
+      }
+    },
+    "verifyEmail": {
+      "description": "Molimo unesite 6-cifreni kod poslat na vašu email adresu.",
+      "submit": "Verifikuj email",
+      "verifying": "Verifikacija...",
+      "successDescription": "Vaš email je uspešno verifikovan.",
+      "errorTitle": "Verifikacija nije uspela",
+      "backToLogin": "Nazad na prijavu",
+      "resend": "Ponovo pošalji kod",
+      "errors": {
+        "userNotFound": "Korisnička sesija nije pronađena. Molimo prijavite se ponovo.",
+        "invalidCode": "Nevažeći verifikacioni kod"
+      }
+    },
+    "companies": {
+      "title": "Kompanije",
+      "noCompanies": "Nema pronađenih kompanija.",
+      "toast": {
+        "loadFailed": "Učitavanje kompanija nije uspelo"
+      },
+      "menu": {
+        "viewCompany": "Pogledaj kompaniju"
+      }
+    },
+    "b2bVenues": {
+      "title": "Lokali",
+      "noVenues": "Nema pronađenih lokala.\nNajpre kreirajte kompaniju da biste dodali lokale.\n\nTapnite bilo gde za upravljanje kompanijama.",
+      "toast": {
+        "loadFailed": "Učitavanje lokala nije uspelo"
+      }
+    },
+    "createCompany": {
+      "title": "Kreiraj kompaniju",
+      "name": "Naziv kompanije",
+      "email": "Email",
+      "emailPlaceholder": "Email kompanije (opciono)",
+      "submit": "Kreiraj",
+      "validation": {
+        "nameRequired": "Naziv kompanije je obavezan",
+        "emailInvalid": "Neispravna email adresa",
+        "avatarRequired": "Avatar kompanije je obavezan"
+      },
+      "toast": {
+        "createFailed": "Kreiranje kompanije nije uspelo"
+      }
+    },
+    "editCompany": {
+      "title": "Uredi kompaniju",
+      "submit": "Sačuvaj",
+      "toast": {
+        "updateFailed": "Ažuriranje kompanije nije uspelo"
+      }
+    },
+    "companyProfile": {
+      "title": "Kompanija",
+      "loyaltyLevelsTitle": "Nivoi lojalnosti",
+      "loyaltyLevelSubtitle": "Posete ispod: {visitsUpperBound}",
+      "venuesTitle": "Lokali",
+      "noVenues": "Nema pronađenih lokala.",
+      "addVenue": "Dodaj lokal",
+      "menu": {
+        "edit": "Uredi",
+        "delete": "Obriši kompaniju"
+      },
+      "deleteDialog": {
+        "title": "Da li ste sigurni da želite da obrišete ovu kompaniju?",
+        "buttonNo": "Ne",
+        "buttonYes": "Obriši"
+      }
+    },
+    "editLoyaltyLevel": {
+      "title": "Uredi nivo lojalnosti",
+      "isActive": "Aktivan",
+      "visitsUpperBound": "Posete ispod",
+      "submit": "Sačuvaj",
+      "validation": {
+        "visitsUpperBoundMin": "Mora biti najmanje 1"
+      },
+      "toast": {
+        "updateFailed": "Ažuriranje nivoa lojalnosti nije uspelo"
+      }
+    },
+    "sidebar": {
+      "profile": "Profil",
+      "companies": "Kompanije",
+      "venues": "Lokali",
+      "logout": "Odjavi se",
+      "contactUs": "Kontaktirajte nas"
+    },
+    "advancedSettings": {
+      "title": "Napredna podešavanja",
+      "qrCode": "QR kod",
+      "qrCodePlaceholder": "Unesite ID QR koda",
+      "submit": "Sačuvaj",
+      "toast": {
+        "updateFailed": "Ažuriranje QR koda nije uspelo"
+      }
+    },
+    "venueDetail": {
+      "title": "Lokal",
+      "status": "Status",
+      "contacts": "Kontakti",
+      "address": "Adresa",
+      "workingHours": "Radno vreme",
+      "verified": "Verifikovan",
+      "nonVerified": "Nije verifikovan",
+      "promotions": "Promocije",
+      "discounts": "Popusti",
+      "notFound": "Lokal nije pronađen",
+      "menu": {
+        "openInstagram": "Otvori Instagram",
+        "openWebsite": "Otvori sajt",
+        "openInMaps": "Otvori na Google Maps",
+        "editPromotion": "Uredi",
+        "deletePromotion": "Obriši",
+        "editDiscount": "Uredi",
+        "deleteDiscount": "Obriši",
+        "editVenue": "Uredi",
+        "qrCode": "QR kod",
+        "deleteVenue": "Obriši lokal",
+        "advanced": "Napredno"
+      },
+      "deleteDialog": {
+        "title": "Da li ste sigurni da želite da obrišete ovaj lokal?",
+        "buttonNo": "Ne",
+        "buttonYes": "Obriši"
+      },
+      "deletePromoDialog": {
+        "title": "Da li ste sigurni da želite da obrišete ovu promociju?"
+      },
+      "deleteDiscountDialog": {
+        "title": "Da li ste sigurni da želite da obrišete ovaj popust?"
+      },
+      "toast": {
+        "deleteFailed": "Brisanje objekta nije uspelo"
+      }
+    },
+    "editVenue": {
+      "title": "Uredi lokal",
+      "submit": "Sačuvaj",
+      "address": "Adresa",
+      "addressRequired": "Adresa je obavezna",
+      "googleMapsUrl": "Google Maps URL",
+      "websiteUrl": "URL sajta",
+      "instagramUrl": "Instagram URL",
+      "phoneNumber": "Broj telefona",
+      "workingHours": "Radno vreme",
+      "latitude": "Geografska širina",
+      "longitude": "Geografska dužina",
+      "latitudeRequired": "Geografska širina je obavezna",
+      "longitudeRequired": "Geografska dužina je obavezna",
+      "latitudeRange": "Geografska širina mora biti između -90 i 90",
+      "longitudeRange": "Geografska dužina mora biti između -180 i 180",
+      "googleMapsUrlInvalid": "Nevažeći Google Maps URL",
+      "instagramUrlInvalid": "Nevažeći Instagram URL",
+      "websiteUrlInvalid": "Nevažeći URL sajta",
+      "invalidUrl": "Nevažeći URL",
+      "toast": {
+        "updateFailed": "Ažuriranje lokala nije uspelo"
+      }
+    },
+    "createVenue": {
+      "title": "Kreiraj lokal",
+      "submit": "Kreiraj",
+      "address": "Adresa",
+      "googleMapsUrl": "Google Maps URL",
+      "websiteUrl": "URL sajta",
+      "instagramUrl": "Instagram URL",
+      "phoneNumber": "Broj telefona",
+      "workingHours": "Radno vreme",
+      "latitude": "Geografska širina",
+      "longitude": "Geografska dužina",
+      "validation": {
+        "addressRequired": "Adresa je obavezna",
+        "latitudeRequired": "Geografska širina je obavezna",
+        "longitudeRequired": "Geografska dužina je obavezna",
+        "latitudeRange": "Geografska širina mora biti između -90 i 90",
+        "longitudeRange": "Geografska dužina mora biti između -180 i 180",
+        "googleMapsUrlInvalid": "Nevažeći Google Maps URL",
+        "instagramUrlInvalid": "Nevažeći Instagram URL",
+        "websiteUrlInvalid": "Nevažeći URL sajta",
+        "invalidUrl": "Nevažeći URL",
+        "coverRequired": "Naslovna slika je obavezna"
+      },
+      "toast": {
+        "createFailed": "Kreiranje lokala nije uspelo"
+      }
+    },
+    "createPromotion": {
+      "title": "Dodaj promociju",
+      "save": "Kreiraj",
+      "toast": {
+        "createFailed": "Kreiranje promocije nije uspelo"
+      }
+    },
+    "editPromotion": {
+      "title": "Uredi promociju",
+      "save": "Sačuvaj",
+      "toast": {
+        "updateFailed": "Ažuriranje promocije nije uspelo"
+      }
+    },
+    "createDiscount": {
+      "title": "Dodaj popust",
+      "save": "Kreiraj",
+      "toast": {
+        "createFailed": "Kreiranje popusta nije uspelo"
+      }
+    },
+    "editDiscount": {
+      "title": "Uredi popust",
+      "save": "Sačuvaj",
+      "toast": {
+        "updateFailed": "Ažuriranje popusta nije uspelo"
+      }
+    }
+  }
+}

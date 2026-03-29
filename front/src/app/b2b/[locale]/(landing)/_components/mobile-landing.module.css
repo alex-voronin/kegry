@@ -74,13 +74,13 @@
 }
 
 .mobileCardTitle {
-  @apply mb-4 text-center text-2xl font-bold;
+  @apply mb-2 text-center text-xl font-bold;
   color: var(--color-landing-heading);
   font-family: var(--font-landing-title);
 }
 
 .mobileCardDescription {
-  @apply mt-2 text-center text-base leading-relaxed opacity-90;
+  @apply text-base leading-relaxed opacity-90;
 }
 
 .mobileSectionCard {
@@ -132,7 +132,7 @@
 }
 
 .mobileFeatureCard {
-  @apply flex w-full flex-col rounded-xl p-6 text-center;
+  @apply flex w-full flex-col rounded-xl p-6;
   background-color: var(--color-landing-card-bg);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -144,11 +144,11 @@
 }
 
 .mobileFeatureText {
-  @apply mb-5 grow text-center text-sm leading-relaxed opacity-90;
+  @apply mb-5 grow text-base leading-relaxed opacity-90;
 }
 
 .mobileFeatureImagePlaceholder {
-  @apply mt-auto aspect-2/1 w-full rounded-lg;
+  @apply mt-auto flex w-full items-center justify-center rounded-lg px-4 py-4;
   background-color: rgba(255, 255, 255, 0.1);
 }
 

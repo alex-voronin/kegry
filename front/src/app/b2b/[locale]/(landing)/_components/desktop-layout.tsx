@@ -87,24 +87,40 @@ export default function DesktopLayout() {
           <div className={styles.featureCard}>
             <h2 className={styles.featureTitle}>{t('features.one.title')}</h2>
             <p className={styles.featureText}>{t('features.one.text')}</p>
-            <Image
-              src="/assets/b2b/landing/venue-listing.png"
-              alt="Feature 1"
-              width={500}
-              height={500}
-            />
+            <div className={styles.featureImagePlaceholder}>
+              <Image
+                src="/assets/b2b/landing/feature-venues.webp"
+                alt="Feature 1"
+                width={500}
+                height={500}
+              />
+            </div>
           </div>
           {/* Feature 2 */}
           <div className={styles.featureCard}>
             <h2 className={styles.featureTitle}>{t('features.two.title')}</h2>
             <p className={styles.featureText}>{t('features.two.text')}</p>
-            <div className={styles.featureImagePlaceholder}></div>
+            <div className={styles.featureImagePlaceholder}>
+              <Image
+                src="/assets/b2b/landing/feature-discounts.webp"
+                alt="Feature 1"
+                width={500}
+                height={500}
+              />
+            </div>
           </div>
           {/* Feature 3 */}
           <div className={styles.featureCard}>
             <h2 className={styles.featureTitle}>{t('features.three.title')}</h2>
             <p className={styles.featureText}>{t('features.three.text')}</p>
-            <div className={styles.featureImagePlaceholder}></div>
+            <div className={styles.featureImagePlaceholder}>
+              <Image
+                src="/assets/b2b/landing/feature-loyalty.webp"
+                alt="Feature 1"
+                width={500}
+                height={500}
+              />
+            </div>
           </div>
         </div>
       </section>

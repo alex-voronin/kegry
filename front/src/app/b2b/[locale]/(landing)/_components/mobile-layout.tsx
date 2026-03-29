@@ -167,7 +167,14 @@ export default function MobileLayout() {
             <p className={mobileStyles.mobileFeatureText}>
               {t('features.one.text')}
             </p>
-            <div className={mobileStyles.mobileFeatureImagePlaceholder}></div>
+            <div className={mobileStyles.mobileFeatureImagePlaceholder}>
+              <Image
+                src="/assets/b2b/landing/feature-venues.webp"
+                alt="Feature 1"
+                width={500}
+                height={500}
+              />
+            </div>
           </div>
           {/* Feature 2 */}
           <div className={mobileStyles.mobileFeatureCard}>
@@ -177,7 +184,14 @@ export default function MobileLayout() {
             <p className={mobileStyles.mobileFeatureText}>
               {t('features.two.text')}
             </p>
-            <div className={mobileStyles.mobileFeatureImagePlaceholder}></div>
+            <div className={mobileStyles.mobileFeatureImagePlaceholder}>
+              <Image
+                src="/assets/b2b/landing/feature-discounts.webp"
+                alt="Feature 2"
+                width={500}
+                height={500}
+              />
+            </div>
           </div>
           {/* Feature 3 */}
           <div className={mobileStyles.mobileFeatureCard}>
@@ -187,7 +201,14 @@ export default function MobileLayout() {
             <p className={mobileStyles.mobileFeatureText}>
               {t('features.three.text')}
             </p>
-            <div className={mobileStyles.mobileFeatureImagePlaceholder}></div>
+            <div className={mobileStyles.mobileFeatureImagePlaceholder}>
+              <Image
+                src="/assets/b2b/landing/feature-loyalty.webp"
+                alt="Feature 3"
+                width={500}
+                height={500}
+              />
+            </div>
           </div>
         </div>
       </section>
