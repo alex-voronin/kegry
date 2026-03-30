@@ -58,6 +58,7 @@ public class NotificationsContext : DbContext
             builder.ToTable("notification_settings");
             builder.HasKey(x => x.UserId);
             builder.Property(x => x.UserId).ValueGeneratedNever();
+            builder.Property(x => x.Locale).HasMaxLength(20);
         });
 
         modelBuilder.Entity<Notification>(builder =>

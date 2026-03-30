@@ -1,3 +1,4 @@
+using System.Globalization;
 using ChatModule.Contracts.Events;
 using NotificationModule.Domain.Repositories;
 using NotificationsModule.Infrastructure.Transport.Push;
@@ -8,8 +9,12 @@ namespace NotificationsModule.Application.Services;
 
 public interface IPushNotificationStrategy : INotificationStrategy
 {
-    public Task SendOpenRateUserScreen(Guid userId, Guid rateeUserId, CancellationToken ct = default);
-    public Task SendEndMeetingSuggestion(Guid userId, CancellationToken ct = default);
+    // It's a workaround to pass userCulture into these methods. Since they're used in batch operations,
+    // we can't set CurrentCulture outside of them: it would apply to the entire batch, while each user
+    // needs their own locale.
+    public Task SendOpenRateUserScreen(Guid userId, Guid rateeUserId,
+        CultureInfo userCulture, CancellationToken ct = default);
+    public Task SendEndMeetingSuggestion(Guid userId, CultureInfo userCulture, CancellationToken ct = default);
 }
 
 internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
@@ -52,16 +57,21 @@ internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
             ct: ct);
     }
 
-    public Task SendOpenRateUserScreen(Guid userId, Guid rateeUserId, CancellationToken ct = default)
+    public Task SendOpenRateUserScreen(Guid userId, Guid rateeUserId, CultureInfo userCulture,
+        CancellationToken ct = default)
     {
+        CultureInfo.CurrentCulture = userCulture;
+        CultureInfo.CurrentUICulture = userCulture;
         return SendPush(
             userId: userId,
             factory: fcmTokens => _pushBuilder.BuildOpenRateUserScreenPush(fcmTokens, rateeUserId),
             ct: ct);
     }
 
-    public Task SendEndMeetingSuggestion(Guid userId, CancellationToken ct = default)
+    public Task SendEndMeetingSuggestion(Guid userId, CultureInfo userCulture, CancellationToken ct = default)
     {
+        CultureInfo.CurrentCulture = userCulture;
+        CultureInfo.CurrentUICulture = userCulture;
         return SendPush(
             userId: userId,
             factory: fcmTokens => _pushBuilder.BuildEndMeetingSuggestionPush(fcmTokens),

@@ -12,13 +12,15 @@ public static class UserProfileEventHandlers
     public static async Task HandleAsync(
         UserProfileChangedEvent @event,
         IUserRepository userRepository,
+        INotificationsSettingsRepository settingsRepository,
         CancellationToken ct)
     {
         Log.Information("{HandlerClass} Handling event {@Event}",
             typeof(UserProfileEventHandlers).FullName, @event);
 
-        var user = await userRepository.GetByIdAsync(@event.UserId, ct: ct);
+        var transaction = await userRepository.And(settingsRepository).StartTransactionAsync(ct);
 
+        var user = await userRepository.GetByIdAsync(@event.UserId, ct: ct);
         if (user == null)
         {
             user = new User
@@ -40,5 +42,15 @@ public static class UserProfileEventHandlers
         }
 
         await userRepository.SaveAsync(user, ct);
+
+        if (@event.IsNewProfile && @event.Locale != null)
+        {
+            var settings = await settingsRepository.GetByIdOrDefaultAsync(@event.UserId, ct: ct);
+            settings.Locale = @event.Locale;
+            await settingsRepository.SaveAsync(settings, ct);
+        }
+
+        await transaction.SaveChangesAsync(ct);
+        await transaction.CommitAsync(ct);
     }
 }

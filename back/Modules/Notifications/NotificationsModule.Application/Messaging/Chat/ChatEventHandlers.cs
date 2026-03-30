@@ -53,16 +53,20 @@ public static class ChatEventHandlers
                                         $"were provided: {string.Join(", ", @event.ParticipantIds.Length)}");
         }
 
-        var userIdToPushesEnabledDict = await notificationsSettingsRepository
-            .GetPushesEnabledByIds(@event.ParticipantIds, ct);
+        var userIdToSettingsDict = await notificationsSettingsRepository
+            .GetSettingsByIds(@event.ParticipantIds, ct);
 
         foreach (var participantId in @event.ParticipantIds)
         {
             try
             {
-                if (userIdToPushesEnabledDict.GetValueOrDefault(participantId, false))
+                var settings = userIdToSettingsDict.GetValueOrDefault(participantId);
+                if (settings != null && settings.PushesEnabled)
                 {
-                    await pushNotificationStrategy.SendEndMeetingSuggestion(participantId, ct);
+                    await pushNotificationStrategy.SendEndMeetingSuggestion(
+                        userId: participantId, 
+                        userCulture: settings.GetCultureInfo(),
+                        ct: ct);
                 }
             }
             catch (Exception e)

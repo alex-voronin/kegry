@@ -1,3 +1,3 @@
 namespace NotificationsModule.API.Dto;
 
-public record GetNotificationSettingsResponse(bool PushesEnabled, bool EmailsEnabled);
+public record GetNotificationSettingsResponse(string Locale, bool PushesEnabled, bool EmailsEnabled);

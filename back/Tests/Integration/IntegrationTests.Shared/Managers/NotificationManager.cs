@@ -19,6 +19,7 @@ public class NotificationManager
         Func<Task> codeToRun,
         int expectedCount,
         string? expectedType = null,
+        string? containedTextInTitle = null,
         int timeoutSeconds = 5)
     {
         return AwaitPushNotifications(
@@ -27,6 +28,10 @@ public class NotificationManager
                                 (
                                     expectedType == null ||
                                     p.UnicastMessage!.Data[FcmPushBuilder.Keys.Type] == expectedType
+                                ) &&
+                                (
+                                    containedTextInTitle == null ||
+                                    p.UnicastMessage!.Data[FcmPushBuilder.Keys.Title].Contains(containedTextInTitle)
                                 ),
             expectedCount: expectedCount,
             timeoutSeconds: timeoutSeconds);

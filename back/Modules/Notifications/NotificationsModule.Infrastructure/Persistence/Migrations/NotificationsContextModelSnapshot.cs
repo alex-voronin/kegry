@@ -110,6 +110,12 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("emails_enabled");
 
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("locale");
+
                     b.Property<bool>("PushesEnabled")
                         .HasColumnType("boolean")
                         .HasColumnName("pushes_enabled");

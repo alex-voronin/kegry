@@ -1,3 +1,4 @@
+using System.Globalization;
 using FeedModule.Contracts.Events;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Localization;
@@ -17,24 +18,24 @@ namespace NotificationsModule.Application.Messaging.Feed;
 [WolverineHandler]
 public class UserInvitedEventHandler : DebouncedEventHandlerBase<UserInvitedEvent>, IScoped
 {
-    private readonly IDateTimeHumanizer _dateTimeHumanizer;
     private readonly IStringLocalizer<NotificationsLocalization> _localizer;
     private readonly INotificationRepository _notificationRepository;
     private readonly INotificationManager _notificationManager;
+    private readonly INotificationsSettingsRepository _notificationsSettingsRepository;
 
     public UserInvitedEventHandler(
         TimeProvider timeProvider,
         HybridCache cache,
         IMessageBus messageBus,
-        IDateTimeHumanizer dateTimeHumanizer,
         IStringLocalizer<NotificationsLocalization> localizer,
         INotificationRepository notificationRepository,
+        INotificationsSettingsRepository notificationsSettingsRepository,
         INotificationManager notificationManager) : base(timeProvider, cache, messageBus)
     {
-        _dateTimeHumanizer = dateTimeHumanizer;
         _localizer = localizer;
         _notificationRepository = notificationRepository;
         _notificationManager = notificationManager;
+        _notificationsSettingsRepository = notificationsSettingsRepository;
     }
 
     [Transactional]
@@ -42,7 +43,14 @@ public class UserInvitedEventHandler : DebouncedEventHandlerBase<UserInvitedEven
     {
         Log.Information("{HandlerClass} Handling event {@Event}",
             typeof(UserInvitedEventHandler).FullName, @event);
-        var notification = new Notification
+
+        var settings = await _notificationsSettingsRepository.GetByIdOrDefaultAsync(
+            id: @event.UserId, 
+            asNoTracking: true,
+            ct:ct);
+       settings.ApplyCurrentLocale();
+        
+        var notification = new Notification()
         {
             Id = Guid.CreateVersion7(),
             Type = NotificationType.Invite,

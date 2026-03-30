@@ -2,6 +2,7 @@ using IntegrationTests.Shared;
 using PostHog;
 using NSubstitute;
 using AnalyticsModule.Application;
+using NotificationModule.Domain.ValueObjects;
 using UserProfileModule.Contracts.Events;
 using Wolverine.Tracking;
 
@@ -28,6 +29,7 @@ public class UserProfileAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             FirstName = "John",
             LastName = "Doe",
             AvatarImageS3Key = "avatar.png",
+            Locale = SupportedLocales.English,
             UpdatedAt = DateTimeOffset.Now
         };
 
@@ -58,6 +60,7 @@ public class UserProfileAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             FirstName = "John",
             LastName = "Doe",
             AvatarImageS3Key = "avatar.png",
+            Locale = SupportedLocales.English,
             UpdatedAt = DateTimeOffset.Now
         };
 

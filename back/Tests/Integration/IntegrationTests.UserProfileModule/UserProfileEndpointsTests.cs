@@ -1,5 +1,7 @@
 using IntegrationTests.Shared;
 using IntegrationTests.Shared.Extensions;
+using NotificationModule.Domain.ValueObjects;
+using NotificationsModule.API.Dto;
 using Serilog;
 using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
@@ -8,6 +10,7 @@ using SharedCore.ValueObjects;
 using Shouldly;
 using UserProfileModule.API;
 using UserProfileModule.API.Dto;
+using Wolverine.Tracking;
 
 namespace IntegrationTests.UserProfileModule;
 
@@ -42,33 +45,44 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
             [
                 "camping".ToDeterministicGuid(),
                 "boxing".ToDeterministicGuid()
-            ]
+            ],
+            Locale: SupportedLocales.English
         );
 
         var response = await Factory.ApiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(
             ApiRoutes.UserProfile.Profile, request);
-
         if (!response.Success)
         {
             Log.Error(response.Errors.First().Error);
         }
+        response.Success.ShouldBeTrue();
 
         // 3. Check response
-        response.Success.ShouldBeTrue();
-        var getResponse =
-            await Factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
-        getResponse.Success.ShouldBeTrue();
-        getResponse.Result.UserProfile.ShouldSatisfyAllConditions(
-            p => p.Id.ShouldBe(authResponse.UserId),
-            p => p.FirstName.ShouldBe(request.FirstName),
-            p => p.LastName.ShouldBe(request.LastName),
-            p => p.Bio.ShouldBe(request.Bio),
-            p => p.AvatarImageUrl.ShouldBeNewerOrTheSameS3Url(request.AvatarImageUrl),
-            p => p.CoverImageUrl.ShouldBeNewerOrTheSameS3Url(request.CoverImageUrl),
-            p => p.Birthday.ShouldBe(request.Birthday),
-            p => p.Gender.ShouldBe(request.Gender),
-            p => p.Hobbies.Select(h => h.Id).ShouldBe(request.HobbyIds, ignoreOrder: true)
-        );
+        await Factory.Host.ExecuteAndWaitAsync(async () =>
+        {
+            var getResponse = await Factory.ApiClient
+                .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
+            getResponse.Success.ShouldBeTrue();
+            getResponse.Result.UserProfile.ShouldSatisfyAllConditions(
+                p => p.Id.ShouldBe(authResponse.UserId),
+                p => p.FirstName.ShouldBe(request.FirstName),
+                p => p.LastName.ShouldBe(request.LastName),
+                p => p.Bio.ShouldBe(request.Bio),
+                p => p.AvatarImageUrl.ShouldBeNewerOrTheSameS3Url(request.AvatarImageUrl),
+                p => p.CoverImageUrl.ShouldBeNewerOrTheSameS3Url(request.CoverImageUrl),
+                p => p.Birthday.ShouldBe(request.Birthday),
+                p => p.Gender.ShouldBe(request.Gender),
+                p => p.Hobbies.Select(h => h.Id).ShouldBe(request.HobbyIds, ignoreOrder: true)
+            );
+        });
+        
+        // 4. Check that notification settings have appropriate local
+        var notificationSettingsResponse = await Factory.ApiClient
+            .GetAsync<ApiResult<GetNotificationSettingsResponse>>(ApiRoutes.Notifications.Settings);
+        notificationSettingsResponse.Success.ShouldBeTrue();
+        notificationSettingsResponse.Result.Locale.ShouldBe(request.Locale);
+        notificationSettingsResponse.Result.PushesEnabled.ShouldBeTrue();
+        notificationSettingsResponse.Result.EmailsEnabled.ShouldBeFalse();
     }
 
     [Fact]

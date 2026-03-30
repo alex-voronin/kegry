@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -98,7 +99,8 @@ internal class AuthenticationService : IAuthenticationService, IScoped
             {
                 UserId = user.Id,
                 Email = email,
-                ConfirmationCode = confirmationCode
+                ConfirmationCode = confirmationCode,
+                Locale = CultureInfo.CurrentCulture.TwoLetterISOLanguageName
             }
         );
 
@@ -184,7 +186,8 @@ internal class AuthenticationService : IAuthenticationService, IScoped
                 {
                     UserId = user.Id,
                     Email = email,
-                    ConfirmationCode = null
+                    ConfirmationCode = null,
+                    Locale =  CultureInfo.CurrentCulture.TwoLetterISOLanguageName
                 }
             );
         }
@@ -309,7 +312,8 @@ internal class AuthenticationService : IAuthenticationService, IScoped
                 UserId = user.Id,
                 Email = email,
                 BaseUrl = baseUrl,
-                ResetToken = resetToken
+                ResetToken = resetToken,
+                Locale = CultureInfo.CurrentCulture.TwoLetterISOLanguageName
             }
         );
     }
@@ -376,7 +380,8 @@ internal class AuthenticationService : IAuthenticationService, IScoped
             new Claim(JwtRegisteredClaimNames.Jti, jti.ToString()),
             new Claim(AuthClaims.UserType, user.Type.ToString()),
             new Claim(ClaimTypes.Role, AuthRoles.Admin),
-            // it must be used on load balancer to choose the proper user's data center
+            // It must be used on load balancer to choose the proper user's data center.
+            // But currently we have only one region
             new Claim(AuthClaims.Region, "eu")  
         };
 

@@ -59,6 +59,7 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    locale = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     pushes_enabled = table.Column<bool>(type: "boolean", nullable: false),
                     emails_enabled = table.Column<bool>(type: "boolean", nullable: false)
                 },

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="InApp.UserInvitedNotification.PrimaryText" xml:space="preserve">
+        <value>Hi! Let's get a drink!</value>
+    </data>
+    <data name="Push.MeetingArranged.Title" xml:space="preserve">
+        <value>Invitation accepted! 🤝</value>
+    </data>
+    <data name="Push.MeetingArranged.Body" xml:space="preserve">
+        <value>Tap to open chat with {0}</value>
+    </data>
+    <data name="Push.UserInvited.Title" xml:space="preserve">
+        <value>New invitation! 🎉</value>
+    </data>
+    <data name="Push.UserInvited.Body" xml:space="preserve">
+        <value>Tap to view details</value>
+    </data>
+    <data name="Email.UserInvited.Title" xml:space="preserve">
+        <value>New invitation!</value>
+    </data>
+    <data name="Email.UserInvited.Body" xml:space="preserve">
+        <value>
+            You have received an invitation from another user!&lt;br /&gt;&lt;br /&gt;
+            Open &lt;a href=&quot;https://kegry.com/notifications&quot;&gt;Notifications&lt;/a&gt; to view details.&lt;br /&gt;&lt;br /&gt;
+            Best regards,&lt;br /&gt;
+            The Kegrycorn Team
+        </value>
+    </data>
+    <data name="Email.ConfirmEmail.Subject" xml:space="preserve">
+        <value>Verify your email</value>
+    </data>
+    <data name="Email.ConfirmEmail.Body" xml:space="preserve">
+        <value>
+            Your verification code is {0}&lt;br /&gt;&lt;br /&gt;
+            Please note that the code is valid for 10 minutes.&lt;br /&gt;&lt;br /&gt;
+            Best regards,&lt;br /&gt;
+            The Kegrycorn Team
+        </value>
+    </data>
+    <data name="Email.Common.UnsubscribeText" xml:space="preserve">
+        <value>You are receiving this email because you are subscribed to email notifications.</value>
+    </data>
+    <data name="Email.Common.UnsubscribeLink" xml:space="preserve">
+        <value>Unsubscribe</value>
+    </data>
+    <data name="Push.ChatMessageReceived.Title" xml:space="preserve">
+        <value>You have received a new message from {0}</value>
+    </data>
+    <data name="Push.ChatMessageReceived.Body" xml:space="preserve">
+        <value>Tap to read</value>
+    </data>
+    <data name="Push.OpenRateUserScreen.Title" xml:space="preserve">
+        <value>How did it go? 🤔</value>
+    </data>
+    <data name="Push.OpenRateUserScreen.Body" xml:space="preserve">
+        <value>Tap to rate your buddy</value>
+    </data>
+    <data name="Push.EndMeetingSuggestion.Title" xml:space="preserve">
+        <value>All set? 👍</value>
+    </data>
+    <data name="Push.EndMeetingSuggestion.Body" xml:space="preserve">
+        <value>Tap to end the meeting</value>
+    </data>
+    <data name="Push.ReferrerRewardReceived.Title" xml:space="preserve">
+        <value>Your friend just joined! 👋</value>
+    </data>
+    <data name="Push.ReferrerRewardReceived.Body" xml:space="preserve">
+        <value>New imaginary friend unlocked! Tap to see</value>
+    </data>
+    <data name="Email.ChatMessageReceived.Title" xml:space="preserve">
+        <value>New message!</value>
+    </data>
+    <data name="Email.ChatMessageReceived.Body" xml:space="preserve">
+        <value>
+            You have received a new message from {}!&lt;br /&gt;&lt;br /&gt;
+            Open &lt;a href=&quot;https://kegry.com/chat&quot;&gt;Chat&lt;/a&gt; to view details.&lt;br /&gt;&lt;br /&gt;
+            Best regards,&lt;br /&gt;
+            The Kegrycorn Team
+        </value>
+    </data>
+    <data name="Email.PasswordReset.Subject" xml:space="preserve">
+        <value>Reset your password</value>
+    </data>
+    <data name="Email.PasswordReset.Body" xml:space="preserve">
+        <value>
+            You requested a password reset.&lt;br /&gt;&lt;br /&gt;
+            Follow the link to reset your password: &lt;a href=&quot;{0}/password-reset?email={1}&amp;token={2}&quot;&gt;{0}/password-reset?email={1}&amp;token={2}&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;
+            Best regards,&lt;br /&gt;
+            The Kegrycorn Team
+        </value>
+    </data>
+    <data name="Email.ReferrerRewardReceived.Title" xml:space="preserve">
+        <value>You earned a reward!</value>
+    </data>
+    <data name="Email.ReferrerRewardReceived.Body" xml:space="preserve">
+        <value>
+            Your friend just joined. Thank you for helping us grow!&lt;br /&gt;
+            Open &lt;a href=&quot;https://kegry.com/friends-and-foes?tab=imaginary&quot;&gt;Imaginary Friends List&lt;/a&gt; to view a new friend.&lt;br /&gt;&lt;br /&gt;
+            Best regards,&lt;br /&gt;
+            The Kegrycorn Team
+        </value>
+    </data>
+</root>

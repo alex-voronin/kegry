@@ -35,16 +35,26 @@ public static class FeedEventHandlers
                 var secondUserId = participantIds[1];
 
                 var userIdToPushesEnabledDict = await notificationsSettingsRepository
-                    .GetPushesEnabledByIds([firstUserId, secondUserId], ct);
+                    .GetSettingsByIds([firstUserId, secondUserId], ct);
 
-                if (userIdToPushesEnabledDict.GetValueOrDefault(firstUserId, false))
+                var firstUserSettings = userIdToPushesEnabledDict.GetValueOrDefault(firstUserId);
+                if (firstUserSettings != null && firstUserSettings.PushesEnabled)
                 {
-                    await pushNotificationStrategy.SendOpenRateUserScreen(firstUserId, secondUserId, ct);
+                    await pushNotificationStrategy.SendOpenRateUserScreen(
+                        userId: firstUserId,
+                        rateeUserId: secondUserId,
+                        userCulture: firstUserSettings.GetCultureInfo(),
+                        ct: ct);
                 }
 
-                if (userIdToPushesEnabledDict.GetValueOrDefault(secondUserId, false))
+                var secondUserSettings = userIdToPushesEnabledDict.GetValueOrDefault(secondUserId);
+                if (secondUserSettings != null && secondUserSettings.PushesEnabled)
                 {
-                    await pushNotificationStrategy.SendOpenRateUserScreen(secondUserId, firstUserId, ct);
+                    await pushNotificationStrategy.SendOpenRateUserScreen(
+                        userId: secondUserId,
+                        rateeUserId: firstUserId,
+                        userCulture: secondUserSettings.GetCultureInfo(),
+                        ct: ct);
                 }
             }
             catch (Exception e)

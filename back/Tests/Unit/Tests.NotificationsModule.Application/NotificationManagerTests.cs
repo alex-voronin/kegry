@@ -1,6 +1,7 @@
 using AutoFixture.Xunit2;
 using NotificationModule.Domain.Aggregates;
 using NotificationModule.Domain.Repositories;
+using NotificationModule.Domain.ValueObjects;
 using NotificationsModule.Application.Services;
 using NSubstitute;
 using Tests.Shared.AutoFixture;
@@ -18,8 +19,16 @@ public class NotificationManagerTests
         Guid userId,
         string otherUserName)
     {
-        settingsRepository.GetNotificationsEnabledById(userId, ct: Arg.Any<CancellationToken>())
-            .Returns((pushesEnabled: true, emailsEnabled: false));
+        settingsRepository.GetByIdOrDefaultAsync(userId,
+                asNoTracking: Arg.Any<bool>(), ct: Arg.Any<CancellationToken>())
+            .Returns(new NotificationsSettings()
+                {
+                    UserId = userId,
+                    Locale = SupportedLocales.English,
+                    PushesEnabled = true,
+                    EmailsEnabled = false
+                }
+            );
 
         await manager.SendMeetingArranged(userId, otherUserName);
 
@@ -37,9 +46,16 @@ public class NotificationManagerTests
         Guid userId,
         string otherUserName)
     {
-        var settings = new NotificationsSettings { UserId = userId, PushesEnabled = false, EmailsEnabled = false };
-        settingsRepository.GetByIdAsync(userId, asNoTracking: true, ct: Arg.Any<CancellationToken>())
-            .Returns(settings);
+        settingsRepository.GetByIdOrDefaultAsync(userId,
+                asNoTracking: Arg.Any<bool>(), ct: Arg.Any<CancellationToken>())
+            .Returns(new NotificationsSettings()
+                {
+                    UserId = userId,
+                    Locale = SupportedLocales.English,
+                    PushesEnabled = false,
+                    EmailsEnabled = false
+                }
+            );
 
         await manager.SendMeetingArranged(userId, otherUserName);
 
@@ -58,8 +74,16 @@ public class NotificationManagerTests
         Guid userId,
         string otherUserName)
     {
-        settingsRepository.GetNotificationsEnabledById(userId, ct: Arg.Any<CancellationToken>())
-            .Returns((pushesEnabled: true, emailsEnabled: true));
+        settingsRepository.GetByIdOrDefaultAsync(userId,
+                asNoTracking: Arg.Any<bool>(), ct: Arg.Any<CancellationToken>())
+            .Returns(new NotificationsSettings()
+                {
+                    UserId = userId,
+                    Locale = SupportedLocales.English,
+                    PushesEnabled = true,
+                    EmailsEnabled = true
+                }
+            );
 
         await manager.SendMeetingArranged(userId, otherUserName);
 
@@ -75,8 +99,16 @@ public class NotificationManagerTests
         NotificationManager manager,
         Guid userId)
     {
-        settingsRepository.GetNotificationsEnabledById(userId, ct: Arg.Any<CancellationToken>())
-            .Returns((pushesEnabled: false, emailsEnabled: true));
+        settingsRepository.GetByIdOrDefaultAsync(userId,
+                asNoTracking: Arg.Any<bool>(), ct: Arg.Any<CancellationToken>())
+            .Returns(new NotificationsSettings()
+                {
+                    UserId = userId,
+                    Locale = SupportedLocales.English,
+                    PushesEnabled = false,
+                    EmailsEnabled = true
+                }
+            );
 
         await manager.SendUserInvited(userId);
 

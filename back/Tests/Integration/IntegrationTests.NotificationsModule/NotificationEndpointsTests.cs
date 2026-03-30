@@ -185,7 +185,10 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         initialResponse.Result.EmailsEnabled.ShouldBeFalse();
 
         // 3. Update settings to true
-        var enableAllRequest = new PutNotificationSettingsRequest(PushesEnabled: true, EmailsEnabled: true);
+        var enableAllRequest = new PutNotificationSettingsRequest(
+            Locale: SupportedLocales.Serbian,
+            PushesEnabled: true,
+            EmailsEnabled: true);
         var enableAllResponse =
             await Factory.ApiClient.PutAsync<PutNotificationSettingsRequest, ApiResult.EmptyResult>(
                 ApiRoutes.Notifications.Settings, enableAllRequest);
@@ -194,16 +197,19 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var allEnabledResponse = await Factory.ApiClient
             .GetAsync<ApiResult<GetNotificationSettingsResponse>>(ApiRoutes.Notifications.Settings);
         allEnabledResponse.Success.ShouldBeTrue();
+        allEnabledResponse.Result.Locale.ShouldBe(enableAllRequest.Locale);
         allEnabledResponse.Result.PushesEnabled.ShouldBeTrue();
         allEnabledResponse.Result.EmailsEnabled.ShouldBeTrue();
 
         // 4. Update again to false
-        var disableAllRequest = new PutNotificationSettingsRequest(PushesEnabled: false, EmailsEnabled: false);
+        var disableAllRequest = new PutNotificationSettingsRequest(
+            Locale: SupportedLocales.English, PushesEnabled: false, EmailsEnabled: false);
         await Factory.ApiClient.PutAsync<PutNotificationSettingsRequest, ApiResult.EmptyResult>(
             ApiRoutes.Notifications.Settings, disableAllRequest);
 
         var allDisabledResponse = await Factory.ApiClient
             .GetAsync<ApiResult<GetNotificationSettingsResponse>>(ApiRoutes.Notifications.Settings);
+        allDisabledResponse.Result.Locale.ShouldBe(disableAllRequest.Locale);
         allDisabledResponse.Result.PushesEnabled.ShouldBeFalse();
         allDisabledResponse.Result.EmailsEnabled.ShouldBeFalse();
     }

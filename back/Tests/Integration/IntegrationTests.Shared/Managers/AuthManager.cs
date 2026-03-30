@@ -2,6 +2,7 @@ using IntegrationTests.Shared.HttpClients;
 using LocationModule.API.Dto;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NotificationModule.Domain.ValueObjects;
 using SecurityModule.API.Dto;
 using SecurityModule.Domain.Aggregates;
 using SecurityModule.Domain.ValueObjects;
@@ -62,11 +63,11 @@ public class AuthManager
         return signinResponse.Result.Auth;
     }
 
-    public async Task CreateDefaultProfileAndSubmitLocation(Guid? referrerId = null)
+    public async Task CreateDefaultProfileAndSubmitLocation(Guid? referrerId = null, string? locale = null)
     {
         await _host.ExecuteAndWaitAsync(async () =>
         {
-            await CreateProfile(referrerId: referrerId);
+            await CreateProfile(referrerId: referrerId, locale: locale);
             await SubmitLocation();
         });
     }
@@ -77,7 +78,8 @@ public class AuthManager
         string lastName = "MainLastName",
         Gender gender = Gender.Male,
         DateOnly? birthday = null,
-        Guid[]? hobbyIds = null)
+        Guid[]? hobbyIds = null,
+        string? locale = null)
     {
         hobbyIds ??= ["boxing".ToDeterministicGuid()];
         var response = await _apiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(ApiRoutes.UserProfile.Profile,
@@ -90,7 +92,8 @@ public class AuthManager
                 CoverImageUrl: TestConfig.S3.PublicUrl + "/cover-image.jpg",
                 Birthday: birthday ?? new DateOnly(1980, 1, 1),
                 Gender: gender,
-                HobbyIds: hobbyIds ?? []
+                HobbyIds: hobbyIds,
+                Locale: locale ?? SupportedLocales.English
             )
         );
         response.Success.ShouldBeTrue();

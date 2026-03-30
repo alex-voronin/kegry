@@ -6,4 +6,5 @@ public record PasswordResetRequestedEvent
     public required string Email { get; init; }
     public required string BaseUrl { get; init; }
     public required string ResetToken { get; init; }
+    public required string Locale { get; init; }
 }

@@ -2,6 +2,7 @@ using IntegrationTests.Shared;
 using PostHog;
 using NSubstitute;
 using AnalyticsModule.Application;
+using NotificationModule.Domain.ValueObjects;
 using SecurityModule.Contracts.Events;
 using Wolverine.Tracking;
 
@@ -24,7 +25,8 @@ public class AccountAnalyticsTests : IntegrationTestBase, IAsyncLifetime
         {
             UserId = Guid.NewGuid(),
             Email = "test@example.com",
-            ConfirmationCode = "123456"
+            ConfirmationCode = "123456",
+            Locale = SupportedLocales.English
         };
 
         await Factory.Host
@@ -72,7 +74,8 @@ public class AccountAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             UserId = Guid.NewGuid(),
             Email = "reset@example.com",
             BaseUrl = "https://example.com",
-            ResetToken = "token"
+            ResetToken = "token",
+            Locale = SupportedLocales.English
         };
 
         await Factory.Host

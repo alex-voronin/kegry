@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.WebUtilities;
+using NotificationModule.Domain.ValueObjects;
 using SecurityModule.API.Dto;
 
 namespace IntegrationTests.Shared.HttpClients;
@@ -64,6 +65,12 @@ public class IntegrationApiClient
     public void SetAuth(AuthResponse authResponse)
     {
         _apiHttpClient.SetAuth(authResponse);
+    }
+
+    public void SetLocale(string locale)
+    {
+        _apiHttpClient.DefaultRequestHeaders.AcceptLanguage.Clear();
+        _apiHttpClient.DefaultRequestHeaders.AcceptLanguage.ParseAdd(locale);
     }
 
     private static string BuildQueryString<T>(T obj)

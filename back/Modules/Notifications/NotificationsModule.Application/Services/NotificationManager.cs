@@ -1,3 +1,4 @@
+using System.Globalization;
 using ChatModule.Contracts.Events;
 using NotificationModule.Domain.Repositories;
 using SharedCore.Services.LifeTimes;
@@ -59,16 +60,17 @@ internal class NotificationManager : INotificationManager, IScoped
         Func<INotificationStrategy, Task> sendFunc,
         CancellationToken ct = default)
     {
-        var (pushesEnabled, emailsEnabled) = await _notificationsSettingsRepository
-            .GetNotificationsEnabledById(userId, ct);
-
+        var settings = await _notificationsSettingsRepository
+            .GetByIdOrDefaultAsync(userId, ct:ct);
+        settings.ApplyCurrentLocale();
+        
         var strategies = new List<INotificationStrategy>();
-        if (pushesEnabled)
+        if (settings.PushesEnabled)
         {
             strategies.Add(_pushNotificationStrategy);
         }
 
-        if (emailsEnabled)
+        if (settings.EmailsEnabled)
         {
             strategies.Add(_emailNotificationStrategy);
         }

@@ -3,6 +3,7 @@ using EngagementModule.Domain.Repositories;
 using EngagementModule.Domain.Services;
 using IntegrationTests.Shared;
 using Microsoft.Extensions.DependencyInjection;
+using NotificationModule.Domain.ValueObjects;
 using SharedCore.Api.Dto;
 using Shouldly;
 
@@ -164,5 +165,47 @@ public class NpcEndpointsTests : IntegrationTestBase, IAsyncLifetime
         metResponse.Result.MetNpcs.ShouldNotBeEmpty();
         metResponse.Result.MetNpcs.Any(n => n.Id == npcId).ShouldBeTrue();
         metResponse.Result.MetNpcs.First(n => n.Id == npcId).Name.ShouldBe(npcName);
+    }
+    
+    [Fact]
+    public async Task GivenUserWithEnglishLocale_WhenInviteNpc_ThenReturnsMonologInEnglish()
+    {
+        // 1. Create user
+        var auth = await Factory.AuthManager.CreateAndLoginUserAsync("npc_inviter@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(auth);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Get Npc to get ID
+        var npcResponse = await Factory.ApiClient.GetAsync<ApiResult<GetNpcResponse>>(ApiRoutes.Npc.Root);
+        npcResponse.Success.ShouldBeTrue();
+        npcResponse.Result.Npc.ShouldNotBeNull();
+        var npcId = npcResponse.Result.Npc.Id;
+
+        // 3. Set en locale and invite Npc
+        Factory.ApiClient.SetLocale(SupportedLocales.English);
+        var inviteResponse = await Factory.ApiClient.GetAsync<ApiResult<InviteNpcResponse>>(ApiRoutes.Npc.Invite(npcId));
+        inviteResponse.Success.ShouldBeTrue();
+        inviteResponse.Result.Monolog.ShouldContain("beer");
+    }
+    
+    [Fact]
+    public async Task GivenUserWithSerbianLocale_WhenInviteNpc_ThenReturnsMonologInSerbian()
+    {
+        // 1. Create user
+        var auth = await Factory.AuthManager.CreateAndLoginUserAsync("npc_inviter@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(auth);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Get Npc to get ID
+        var npcResponse = await Factory.ApiClient.GetAsync<ApiResult<GetNpcResponse>>(ApiRoutes.Npc.Root);
+        npcResponse.Success.ShouldBeTrue();
+        npcResponse.Result.Npc.ShouldNotBeNull();
+        var npcId = npcResponse.Result.Npc.Id;
+
+        // 3. Set en locale and invite Npc
+        Factory.ApiClient.SetLocale(SupportedLocales.Serbian);
+        var inviteResponse = await Factory.ApiClient.GetAsync<ApiResult<InviteNpcResponse>>(ApiRoutes.Npc.Invite(npcId));
+        inviteResponse.Success.ShouldBeTrue();
+        inviteResponse.Result.Monolog.ShouldContain("pivo");
     }
 }

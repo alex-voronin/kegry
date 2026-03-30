@@ -124,8 +124,11 @@ public class NotificationEndpoints : IEndpoints
         CancellationToken ct)
     {
         var userId = user.GetId();
-        var (pushes, emails) = await settingsRepository.GetNotificationsEnabledById(userId, ct);
-        return ApiResult<GetNotificationSettingsResponse>.Build(new GetNotificationSettingsResponse(pushes, emails));
+        var settings = await settingsRepository.GetByIdOrDefaultAsync(userId, ct: ct);
+        return ApiResult<GetNotificationSettingsResponse>.Build(new GetNotificationSettingsResponse(
+            Locale: settings.Locale,
+            PushesEnabled: settings.PushesEnabled,
+            EmailsEnabled: settings.EmailsEnabled));
     }
 
     private static async Task<ApiResult.EmptyResult> UpdateSettings(
@@ -142,6 +145,7 @@ public class NotificationEndpoints : IEndpoints
             settings = new NotificationsSettings
             {
                 UserId = userId,
+                Locale = request.Locale,
                 PushesEnabled = request.PushesEnabled,
                 EmailsEnabled = request.EmailsEnabled
             };
@@ -149,6 +153,7 @@ public class NotificationEndpoints : IEndpoints
         }
         else
         {
+            settings.Locale = request.Locale;
             settings.PushesEnabled = request.PushesEnabled;
             settings.EmailsEnabled = request.EmailsEnabled;
         }

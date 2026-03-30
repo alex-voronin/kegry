@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="InApp.UserInvitedNotification.PrimaryText" xml:space="preserve">
+        <value>Zdravo! Idemo na piće!</value>
+    </data>
+    <data name="Push.MeetingArranged.Title" xml:space="preserve">
+        <value>Pozivnica prihvaćena! 🤝</value>
+    </data>
+    <data name="Push.MeetingArranged.Body" xml:space="preserve">
+        <value>Dodirni da otvoriš razgovor sa {0}</value>
+    </data>
+    <data name="Push.UserInvited.Title" xml:space="preserve">
+        <value>Nova pozivnica! 🎉</value>
+    </data>
+    <data name="Push.UserInvited.Body" xml:space="preserve">
+        <value>Dodirni da vidiš detalje</value>
+    </data>
+    <data name="Email.UserInvited.Title" xml:space="preserve">
+        <value>Nova pozivnica!</value>
+    </data>
+    <data name="Email.UserInvited.Body" xml:space="preserve">
+        <value>
+            Primili ste pozivnicu od drugog korisnika!&lt;br /&gt;&lt;br /&gt;
+            Otvorite &lt;a href=&quot;https://kegry.com/notifications&quot;&gt;Obaveštenja&lt;/a&gt; da biste videli detalje.&lt;br /&gt;&lt;br /&gt;
+            Srdačan pozdrav,&lt;br /&gt;
+            Tim Kegrycorn
+        </value>
+    </data>
+    <data name="Email.ConfirmEmail.Subject" xml:space="preserve">
+        <value>Potvrdite svoju email adresu</value>
+    </data>
+    <data name="Email.ConfirmEmail.Body" xml:space="preserve">
+        <value>
+            Vaš verifikacioni kod je {0}&lt;br /&gt;&lt;br /&gt;
+            Napomena: kod važi 10 minuta.&lt;br /&gt;&lt;br /&gt;
+            Srdačan pozdrav,&lt;br /&gt;
+            Tim Kegrycorn
+        </value>
+    </data>
+    <data name="Email.Common.UnsubscribeText" xml:space="preserve">
+        <value>Primate ovaj email jer ste pretplaćeni na email obaveštenja.</value>
+    </data>
+    <data name="Email.Common.UnsubscribeLink" xml:space="preserve">
+        <value>Odjavi se</value>
+    </data>
+    <data name="Push.ChatMessageReceived.Title" xml:space="preserve">
+        <value>Primili ste novu poruku od {0}</value>
+    </data>
+    <data name="Push.ChatMessageReceived.Body" xml:space="preserve">
+        <value>Dodirni da pročitaš</value>
+    </data>
+    <data name="Push.OpenRateUserScreen.Title" xml:space="preserve">
+        <value>Kako je prošlo? 🤔</value>
+    </data>
+    <data name="Push.OpenRateUserScreen.Body" xml:space="preserve">
+        <value>Dodirni da oceniš svog društva</value>
+    </data>
+    <data name="Push.EndMeetingSuggestion.Title" xml:space="preserve">
+        <value>Gotovo? 👍</value>
+    </data>
+    <data name="Push.EndMeetingSuggestion.Body" xml:space="preserve">
+        <value>Dodirni da završiš susret</value>
+    </data>
+    <data name="Push.ReferrerRewardReceived.Title" xml:space="preserve">
+        <value>Tvoj prijatelj se upravo pridružio! 👋</value>
+    </data>
+    <data name="Push.ReferrerRewardReceived.Body" xml:space="preserve">
+        <value>Novi imaginarni prijatelj otključan! Dodirni da vidiš</value>
+    </data>
+    <data name="Email.ChatMessageReceived.Title" xml:space="preserve">
+        <value>Nova poruka!</value>
+    </data>
+    <data name="Email.ChatMessageReceived.Body" xml:space="preserve">
+        <value>
+            Primili ste novu poruku od {}!&lt;br /&gt;&lt;br /&gt;
+            Otvorite &lt;a href=&quot;https://kegry.com/chat&quot;&gt;Razgovor&lt;/a&gt; da biste videli detalje.&lt;br /&gt;&lt;br /&gt;
+            Srdačan pozdrav,&lt;br /&gt;
+            Tim Kegrycorn
+        </value>
+    </data>
+    <data name="Email.PasswordReset.Subject" xml:space="preserve">
+        <value>Resetujte svoju lozinku</value>
+    </data>
+    <data name="Email.PasswordReset.Body" xml:space="preserve">
+        <value>
+            Zatražili ste resetovanje lozinke.&lt;br /&gt;&lt;br /&gt;
+            Pratite link da biste resetovali lozinku: &lt;a href=&quot;{0}/password-reset?email={1}&amp;token={2}&quot;&gt;{0}/password-reset?email={1}&amp;token={2}&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;
+            Srdačan pozdrav,&lt;br /&gt;
+            Tim Kegrycorn
+        </value>
+    </data>
+    <data name="Email.ReferrerRewardReceived.Title" xml:space="preserve">
+        <value>Zaradili ste nagradu!</value>
+    </data>
+    <data name="Email.ReferrerRewardReceived.Body" xml:space="preserve">
+        <value>
+            Vaš prijatelj se upravo pridružio. Hvala što nam pomažete da rastemo!&lt;br /&gt;
+            Otvorite &lt;a href=&quot;https://kegry.com/friends-and-foes?tab=imaginary&quot;&gt;Listu imaginarnih prijatelja&lt;/a&gt; da vidite novog prijatelja.&lt;br /&gt;&lt;br /&gt;
+            Srdačan pozdrav,&lt;br /&gt;
+            Tim Kegrycorn
+        </value>
+    </data>
+</root>

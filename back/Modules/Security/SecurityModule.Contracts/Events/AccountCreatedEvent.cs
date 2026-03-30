@@ -6,4 +6,5 @@ public record AccountCreatedEvent : UserEvent
 {
     public required string Email { get; init; }
     public required string? ConfirmationCode { get; init; }
+    public required string Locale { get; init; }
 }
