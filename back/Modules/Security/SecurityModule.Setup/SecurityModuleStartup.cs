@@ -58,7 +58,7 @@ public class SecurityModuleStartup : AppModuleStartupBase<SecurityContext>
                 .Build();
 
             options.AddPolicy(AuthPolicies.B2BAdmin, policy =>
-                policy.RequireClaim("UserType", nameof(UserType.B2B))
+                policy.RequireClaim(AuthClaims.UserType, nameof(UserType.B2B))
                     .RequireRole(AuthRoles.Admin)
             );
         });
