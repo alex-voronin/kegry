@@ -12,7 +12,7 @@ internal class EfCoreNotificationsSettingsRepository :
 {
     private const bool DefaultPushesEnabled = true;
     private const bool DefaultEmailsEnabled = false;
-    private const string DefaultLocale = SupportedLocales.Serbian;
+    private const string DefaultLocale = SupportedLocales.English;
 
     public EfCoreNotificationsSettingsRepository(NotificationsContext context) : base(context)
     {
