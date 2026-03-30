@@ -147,7 +147,7 @@
 }
 
 .mobileCardTitle {
-  @apply mb-4 text-center text-3xl font-bold;
+  @apply mb-4 text-center text-2xl font-bold;
   color: var(--color-landing-heading);
   font-family: var(--font-landing-title);
 }

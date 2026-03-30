@@ -23,13 +23,13 @@
 }
 
 .mobileLogoText {
-  @apply text-xl leading-tight font-bold;
+  @apply text-2xl leading-tight font-bold;
   color: var(--color-landing-heading);
   font-family: var(--font-landing-title);
 }
 
 .mobileLogoSubtitle {
-  @apply self-end text-[11px] font-medium tracking-wide opacity-80;
+  @apply self-end text-[12px] font-medium tracking-wide opacity-80;
   color: var(--color-landing-subheading);
 }
 
@@ -74,7 +74,7 @@
 }
 
 .mobileCardTitle {
-  @apply mb-2 text-center text-xl font-bold;
+  @apply mb-2 text-center text-2xl font-bold;
   color: var(--color-landing-heading);
   font-family: var(--font-landing-title);
 }
@@ -138,7 +138,7 @@
 }
 
 .mobileFeatureTitle {
-  @apply mb-3 text-center text-xl font-bold;
+  @apply mb-3 text-center text-2xl font-bold;
   color: var(--color-landing-heading);
   font-family: var(--font-landing-title);
 }
