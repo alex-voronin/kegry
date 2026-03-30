@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Globalization;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -64,7 +65,7 @@ public class UserProfileEndpoints : IEndpoints
             profile: profile,
             isNewProfile: true,
             referrerId: request.ReferrerId,
-            locale: request.Locale);
+            locale: CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
         await repository.PublishEventAsync(@event);
         await repository.SaveChangesAndFlushMessagesAsync(ct);
 

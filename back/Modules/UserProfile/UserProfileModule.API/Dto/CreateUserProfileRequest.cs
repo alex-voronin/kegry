@@ -11,5 +11,4 @@ public record CreateUserProfileRequest(
     string CoverImageUrl,
     DateOnly Birthday,
     Gender Gender,
-    Guid[] HobbyIds,
-    string Locale);
+    Guid[] HobbyIds);

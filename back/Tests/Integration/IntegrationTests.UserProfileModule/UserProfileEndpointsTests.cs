@@ -45,10 +45,10 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
             [
                 "camping".ToDeterministicGuid(),
                 "boxing".ToDeterministicGuid()
-            ],
-            Locale: SupportedLocales.English
+            ]
         );
 
+        Factory.ApiClient.SetLocale(SupportedLocales.Serbian);
         var response = await Factory.ApiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(
             ApiRoutes.UserProfile.Profile, request);
         if (!response.Success)
@@ -80,7 +80,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var notificationSettingsResponse = await Factory.ApiClient
             .GetAsync<ApiResult<GetNotificationSettingsResponse>>(ApiRoutes.Notifications.Settings);
         notificationSettingsResponse.Success.ShouldBeTrue();
-        notificationSettingsResponse.Result.Locale.ShouldBe(request.Locale);
+        notificationSettingsResponse.Result.Locale.ShouldBe(SupportedLocales.Serbian);
         notificationSettingsResponse.Result.PushesEnabled.ShouldBeTrue();
         notificationSettingsResponse.Result.EmailsEnabled.ShouldBeFalse();
     }

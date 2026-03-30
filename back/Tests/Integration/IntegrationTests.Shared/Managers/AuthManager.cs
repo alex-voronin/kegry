@@ -67,7 +67,9 @@ public class AuthManager
     {
         await _host.ExecuteAndWaitAsync(async () =>
         {
-            await CreateProfile(referrerId: referrerId, locale: locale);
+            locale ??= SupportedLocales.English;
+            _apiClient.SetLocale(locale);
+            await CreateProfile(referrerId: referrerId);
             await SubmitLocation();
         });
     }
@@ -78,8 +80,7 @@ public class AuthManager
         string lastName = "MainLastName",
         Gender gender = Gender.Male,
         DateOnly? birthday = null,
-        Guid[]? hobbyIds = null,
-        string? locale = null)
+        Guid[]? hobbyIds = null)
     {
         hobbyIds ??= ["boxing".ToDeterministicGuid()];
         var response = await _apiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(ApiRoutes.UserProfile.Profile,
@@ -92,8 +93,7 @@ public class AuthManager
                 CoverImageUrl: TestConfig.S3.PublicUrl + "/cover-image.jpg",
                 Birthday: birthday ?? new DateOnly(1980, 1, 1),
                 Gender: gender,
-                HobbyIds: hobbyIds,
-                Locale: locale ?? SupportedLocales.English
+                HobbyIds: hobbyIds
             )
         );
         response.Success.ShouldBeTrue();
