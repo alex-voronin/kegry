@@ -75,7 +75,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 p => p.Hobbies.Select(h => h.Id).ShouldBe(request.HobbyIds, ignoreOrder: true)
             );
         });
-        
+
         // 4. Check that notification settings have appropriate local
         var notificationSettingsResponse = await Factory.ApiClient
             .GetAsync<ApiResult<GetNotificationSettingsResponse>>(ApiRoutes.Notifications.Settings);

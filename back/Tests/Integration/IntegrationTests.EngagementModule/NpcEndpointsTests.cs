@@ -166,7 +166,7 @@ public class NpcEndpointsTests : IntegrationTestBase, IAsyncLifetime
         metResponse.Result.MetNpcs.Any(n => n.Id == npcId).ShouldBeTrue();
         metResponse.Result.MetNpcs.First(n => n.Id == npcId).Name.ShouldBe(npcName);
     }
-    
+
     [Fact]
     public async Task GivenUserWithEnglishLocale_WhenInviteNpc_ThenReturnsMonologInEnglish()
     {
@@ -187,7 +187,7 @@ public class NpcEndpointsTests : IntegrationTestBase, IAsyncLifetime
         inviteResponse.Success.ShouldBeTrue();
         inviteResponse.Result.Monolog.ShouldContain("beer");
     }
-    
+
     [Fact]
     public async Task GivenUserWithSerbianLocale_WhenInviteNpc_ThenReturnsMonologInSerbian()
     {

@@ -12,7 +12,7 @@ public class LocalizationStartup : IFeatureStartup
     {
         appBuilder.Services.AddSingleton<IDateTimeHumanizer, DateTimeHumanizer>();
         appBuilder.Services.AddLocalization();
-        
+
         appBuilder.Services.Configure<RequestLocalizationOptions>(options =>
         {
             var supportedCultures = new[]
@@ -21,7 +21,7 @@ public class LocalizationStartup : IFeatureStartup
                 }
                 .Select(c => new CultureInfo(c))
                 .ToList();
-            
+
             options.SupportedCultures = supportedCultures;
             options.SupportedUICultures = supportedCultures;
             // If we can't determine a user's culture, fallback to English

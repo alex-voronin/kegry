@@ -18,7 +18,7 @@ internal class EfCoreNotificationsSettingsRepository :
     {
     }
 
-    public async Task<NotificationsSettings> GetByIdOrDefaultAsync(Guid id, 
+    public async Task<NotificationsSettings> GetByIdOrDefaultAsync(Guid id,
         bool asNoTracking = false, CancellationToken ct = default)
     {
         var settings = await base.GetByIdAsync(id, asNoTracking: asNoTracking, ct: ct);
@@ -26,7 +26,7 @@ internal class EfCoreNotificationsSettingsRepository :
         {
             settings = BuildDefaultSettings(id);
         }
-        
+
         return settings;
     }
 

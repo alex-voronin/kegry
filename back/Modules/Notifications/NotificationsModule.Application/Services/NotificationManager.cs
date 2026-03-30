@@ -61,9 +61,9 @@ internal class NotificationManager : INotificationManager, IScoped
         CancellationToken ct = default)
     {
         var settings = await _notificationsSettingsRepository
-            .GetByIdOrDefaultAsync(userId, ct:ct);
+            .GetByIdOrDefaultAsync(userId, ct: ct);
         settings.ApplyCurrentLocale();
-        
+
         var strategies = new List<INotificationStrategy>();
         if (settings.PushesEnabled)
         {

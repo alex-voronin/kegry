@@ -65,16 +65,16 @@ public class PushesLocalizationTests : IntegrationTestBase, IAsyncLifetime
             expectedCount: 1,
             containedTextInTitle: "invitation", // en as A(sr) invites B(en)
             expectedType: FcmPushBuilder.PushType.UserInvited);
-        
+
         // 4. Check that stored notification has a correct locale
         Factory.ApiClient.SetAuth(authResponseB);
         var notificationsResponseB = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
             ApiRoutes.Notifications.GetNotificationsPaginated(0, 10));
         notificationsResponseB.Result.Data.Count.ShouldBe(1);
         notificationsResponseB.Result.Data.First().Text.ShouldContain("drink");
-        
+
         // 5. Send invite from B(en) to A(sr) 
-        Factory.FakeTimeProvider.Advance(TimeSpan.FromHours(inviteExpirationHours + 1)); 
+        Factory.FakeTimeProvider.Advance(TimeSpan.FromHours(inviteExpirationHours + 1));
         await Factory.NotificationManager.AwaitPushNotifications(
             codeToRun: async () =>
             {
@@ -89,7 +89,7 @@ public class PushesLocalizationTests : IntegrationTestBase, IAsyncLifetime
             expectedCount: 1,
             containedTextInTitle: "pozivnica", // sr as B(en) invites A(sr) 
             expectedType: FcmPushBuilder.PushType.UserInvited);
-        
+
         // 6. Check that stored notification has a correct locale
         Factory.ApiClient.SetAuth(authResponseA);
         var notificationsResponseA = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(

@@ -187,7 +187,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
                     UserId = user.Id,
                     Email = email,
                     ConfirmationCode = null,
-                    Locale =  CultureInfo.CurrentCulture.TwoLetterISOLanguageName
+                    Locale = CultureInfo.CurrentCulture.TwoLetterISOLanguageName
                 }
             );
         }
@@ -382,7 +382,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
             new Claim(ClaimTypes.Role, AuthRoles.Admin),
             // It must be used on load balancer to choose the proper user's data center.
             // But currently we have only one region
-            new Claim(AuthClaims.Region, "eu")  
+            new Claim(AuthClaims.Region, "eu")
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authTokenConfig.Secret));

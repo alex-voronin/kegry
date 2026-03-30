@@ -45,11 +45,11 @@ public class UserInvitedEventHandler : DebouncedEventHandlerBase<UserInvitedEven
             typeof(UserInvitedEventHandler).FullName, @event);
 
         var settings = await _notificationsSettingsRepository.GetByIdOrDefaultAsync(
-            id: @event.UserId, 
+            id: @event.UserId,
             asNoTracking: true,
-            ct:ct);
-       settings.ApplyCurrentLocale();
-        
+            ct: ct);
+        settings.ApplyCurrentLocale();
+
         var notification = new Notification()
         {
             Id = Guid.CreateVersion7(),

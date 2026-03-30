@@ -64,7 +64,7 @@ public static class ChatEventHandlers
                 if (settings != null && settings.PushesEnabled)
                 {
                     await pushNotificationStrategy.SendEndMeetingSuggestion(
-                        userId: participantId, 
+                        userId: participantId,
                         userCulture: settings.GetCultureInfo(),
                         ct: ct);
                 }
