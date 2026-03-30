@@ -13,17 +13,20 @@ export interface SettingsDto {
   distanceUnits: DistanceUnits;
   pushesEnabled: boolean;
   emailsEnabled: boolean;
+  locale: string;
 }
 
 interface SettingsState {
   distanceUnits: DistanceUnits;
   pushesEnabled: boolean;
   emailsEnabled: boolean;
+  locale: string;
   serverSettings: SettingsDto | null;
   isLoading: boolean;
 
   fetchSettings: () => Promise<void>;
   updateDistanceUnits: (units: DistanceUnits) => void;
+  updateLocale: (locale: string) => void;
   togglePushes: (enabled: boolean) => void;
   toggleEmails: (enabled: boolean) => void;
   saveSettings: () => Promise<void>;
@@ -34,6 +37,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   distanceUnits: DistanceUnits.Kilometers,
   pushesEnabled: false,
   emailsEnabled: false,
+  locale: '',
   serverSettings: null,
   isLoading: false,
 
@@ -42,7 +46,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     try {
       const [feedSettingsRes, notifSettingsRes] = await Promise.all([
         apiClient.get<
-          ApiResult<{ settings: { distanceUnits: DistanceUnits } }>
+          ApiResult<{ settings: { distanceUnits: DistanceUnits; locale: string } }>
         >(API_ENDPOINTS.FEED.SETTINGS),
         apiClient.get<
           ApiResult<{ pushesEnabled: boolean; emailsEnabled: boolean }>
@@ -50,18 +54,20 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       ]);
 
       if (feedSettingsRes.data.success && notifSettingsRes.data.success) {
-        const distanceUnits =
-          feedSettingsRes.data.result.settings.distanceUnits;
+        const distanceUnits = feedSettingsRes.data.result.settings.distanceUnits;
+        const locale = feedSettingsRes.data.result.settings.locale || 'en';
         const { pushesEnabled, emailsEnabled } = notifSettingsRes.data.result;
 
         set({
           distanceUnits,
           pushesEnabled,
           emailsEnabled,
+          locale,
           serverSettings: {
             distanceUnits,
             pushesEnabled,
             emailsEnabled,
+            locale,
           },
         });
       }
@@ -76,6 +82,10 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     set({ distanceUnits: units });
   },
 
+  updateLocale: (locale: string) => {
+    set({ locale });
+  },
+
   togglePushes: (enabled: boolean) => {
     set({ pushesEnabled: enabled });
   },
@@ -87,12 +97,12 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   saveSettings: async () => {
     set({ isLoading: true });
     try {
-      const { distanceUnits, pushesEnabled, emailsEnabled } = get();
+      const { distanceUnits, pushesEnabled, emailsEnabled, locale } = get();
 
       const promises = [];
 
       promises.push(
-        apiClient.put(API_ENDPOINTS.FEED.SETTINGS, { distanceUnits }),
+        apiClient.put(API_ENDPOINTS.FEED.SETTINGS, { distanceUnits, locale }),
       );
 
       promises.push(
@@ -109,6 +119,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
           distanceUnits,
           pushesEnabled,
           emailsEnabled,
+          locale,
         },
       });
     } catch (error) {
@@ -123,6 +134,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       distanceUnits: DistanceUnits.Kilometers,
       pushesEnabled: false,
       emailsEnabled: false,
+      locale: '',
       serverSettings: null,
       isLoading: false,
     }),

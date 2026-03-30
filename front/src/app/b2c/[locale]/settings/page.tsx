@@ -12,7 +12,6 @@ import { useSettingsStore, DistanceUnits } from './use-settings-store';
 import { useUserProfileStore } from '@/store/use-user-profile-store';
 import { toast } from 'react-toastify';
 import styles from './settings.module.css';
-import { useSearchParams } from 'next/navigation';
 import { PAGE_ROUTES } from '@/lib/routes';
 
 const locales = [
@@ -40,9 +39,11 @@ export default function SettingsPage() {
     distanceUnits,
     pushesEnabled,
     emailsEnabled,
+    locale: storeLocale,
     isLoading: isSettingsLoading,
     fetchSettings,
     updateDistanceUnits,
+    updateLocale,
     togglePushes,
     toggleEmails,
     saveSettings,
@@ -61,20 +62,11 @@ export default function SettingsPage() {
   const [isDistanceMenuOpen, setIsDistanceMenuOpen] = useState(false);
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
 
-  const currentLocale = locales.find((l) => l.code === locale) || locales[0];
-
-  const searchParams = useSearchParams();
-  useEffect(() => {
-    if (searchParams.get('localeChanged')) {
-      toast.success(t('languageSaved'));
-      router.replace(PAGE_ROUTES.SETTINGS);
-    }
-  }, []);
+  const currentLocale =
+    locales.find((l) => l.code === (storeLocale || locale)) || locales[0];
 
   const handleLocaleChange = (newLocale: 'en' | 'sr') => {
-    // We have to show the toast after component remounts, so we add a query param.
-    // It's the easiest way to do it.
-    router.replace(`${pathname}?localeChanged=1`, { locale: newLocale });
+    updateLocale(newLocale);
   };
 
   const loadData = async () => {
@@ -103,7 +95,11 @@ export default function SettingsPage() {
       if (hasPrivacyChanges) promises.push(updatePrivacy(isPublic));
 
       await Promise.all(promises);
-      router.back();
+      if (storeLocale && storeLocale !== locale) {
+        router.replace(PAGE_ROUTES.PROFILE, { locale: storeLocale });
+      } else {
+        router.back();
+      }
     } catch (error) {
       toast.error(t('saveFailed'));
     }
@@ -133,6 +129,7 @@ export default function SettingsPage() {
   const hasSettingsChanges =
     serverSettings != null &&
     (distanceUnits !== serverSettings?.distanceUnits ||
+      storeLocale !== serverSettings?.locale ||
       pushesEnabled !== serverSettings?.pushesEnabled ||
       emailsEnabled !== serverSettings?.emailsEnabled);
 

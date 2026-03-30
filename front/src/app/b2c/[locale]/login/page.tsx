@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from '@/i18n/routing';
 import { useSearchParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Button, ButtonVariant } from '@/components/ui/button';
 import {
   useAuthStore,
@@ -12,6 +12,7 @@ import {
 } from '@/lib/auth/use-auth-store';
 import { Link } from '@/i18n/routing';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { useSettingsStore } from '../settings/use-settings-store';
 import styles from './login.module.css';
 import { Logo } from '@/components/common/Logo';
 import { toast } from 'react-toastify';
@@ -27,10 +28,12 @@ export default function LoginPage() {
   const t = useTranslations('screens.login');
   const tCommonErrors = useTranslations('common.errors');
   const router = useRouter();
+  const locale = useLocale();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const signin = useAuthStore((state) => state.signin);
   const signinWithGoogle = useAuthStore((state) => state.signinWithGoogle);
+  const { fetchSettings } = useSettingsStore();
   const { accessToken, hasHydrated, requiredAction } = useAuthStore();
 
   const shouldRedirect = searchParams.get('auto-signin');
@@ -67,6 +70,12 @@ export default function LoginPage() {
     },
   });
 
+  const handleSuccessRedirect = async () => {
+    await fetchSettings();
+    const serverLocale = useSettingsStore.getState().locale;
+    router.push(PAGE_ROUTES.FEED, { locale: (serverLocale as 'en' | 'sr') || locale });
+  };
+
   const onSubmit = async (data: FormData) => {
     setLoading(true);
 
@@ -80,7 +89,7 @@ export default function LoginPage() {
       ) {
         router.push(PAGE_ROUTES.ONBOARDING);
       } else {
-        router.push(PAGE_ROUTES.FEED);
+        await handleSuccessRedirect();
       }
     } catch (err: any) {
       if (err.code === 'ValidationError') {
@@ -101,7 +110,7 @@ export default function LoginPage() {
       if (result.requiredAction === RequiredAction.OnboardingCompletion) {
         router.push(PAGE_ROUTES.ONBOARDING);
       } else {
-        router.push(PAGE_ROUTES.FEED);
+        await handleSuccessRedirect();
       }
     } catch (err: any) {
       toast.error(err.message || tCommonErrors('network'));

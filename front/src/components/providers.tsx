@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode, useEffect, useCallback } from 'react';
-import { NextIntlClientProvider } from 'next-intl';
+import { NextIntlClientProvider, useLocale } from 'next-intl';
 import apiClient from '@/lib/api-client';
 import { useRouter } from '@/i18n/routing';
 import { useBackgroundLocation } from '@/lib/use-background-location';
@@ -158,6 +158,19 @@ function BackgroundServices() {
   return null;
 }
 
+function LocaleHeaderSync() {
+  const locale = useLocale();
+
+  useEffect(() => {
+    if (apiClient.defaults.headers.common['Accept-Language'] !== locale) {
+      apiClient.defaults.headers.common['Accept-Language'] = locale;
+      console.log(`Accept-Language updated to: ${locale}`);
+    }
+  }, [locale]);
+
+  return null;
+}
+
 export function Providers({
   children,
   runPushesAndLocationHandling,
@@ -177,6 +190,7 @@ export function Providers({
 
   return (
     <NextIntlClientProvider messages={messages} locale={locale} timeZone="UTC">
+      <LocaleHeaderSync />
       <TawkMessenger />
       {runPushesAndLocationHandling && (
         <>
