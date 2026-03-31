@@ -483,6 +483,8 @@
       "nextDiscountLevelInfo": "Sledeći nivo popusta je: {percent}%",
       "maxDiscountLevelReached": "Dostignuta je maksimalna vrednost popusta.",
       "visits": "{current}/{total} poseta do sledećeg nivoa",
+      "helpDialog": "Ovaj popust važi samo za ovaj lokal i danas. Tapni na karticu da pogledaš dnevne popuste.",
+      "ok": "U redu",
       "menu": {
         "openInstagram": "Otvori Instagram",
         "openWebsite": "Otvori sajt",

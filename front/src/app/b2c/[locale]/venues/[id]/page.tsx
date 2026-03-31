@@ -10,6 +10,7 @@ import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { ModalMenu } from '@/components/ui/modal-menu';
+import { ModalDialog } from '@/components/ui/modal-dialog';
 import { useVenueStore } from './use-venue-store';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { cn } from '@/lib/utils';
@@ -43,6 +44,7 @@ export default function VenueDetailScreen() {
     () => currentVenue?.venue.id !== venueId,
   );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isHelpDialogOpen, setIsHelpDialogOpen] = useState(false);
   const {
     isScannerOpen,
     setIsScannerOpen,
@@ -235,7 +237,13 @@ export default function VenueDetailScreen() {
                             loyaltyLevel.visitsLowerBound,
                         })}
                       </div>
-                      <div className="text-secondary">
+                      <div
+                        className="cursor-pointer text-secondary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsHelpDialogOpen(true);
+                        }}
+                      >
                         <HelpCircle size={14} />
                       </div>
                     </div>
@@ -390,6 +398,14 @@ export default function VenueDetailScreen() {
         isOpen={isScannerOpen}
         onClose={() => setIsScannerOpen(false)}
         onScan={handleQrCode}
+      />
+
+      <ModalDialog
+        isOpen={isHelpDialogOpen}
+        onClose={() => setIsHelpDialogOpen(false)}
+        message={t('helpDialog')}
+        primaryButtonText={t('ok')}
+        onPrimaryAction={() => setIsHelpDialogOpen(false)}
       />
 
       <CheckInAnimation

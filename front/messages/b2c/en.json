@@ -483,6 +483,8 @@
       "nextDiscountLevelInfo": "Next discount level is: {percent}%",
       "maxDiscountLevelReached": "The maximum discount has been reached.",
       "visits": "{current}/{total} visits to next level",
+      "helpDialog": "This discount applies only to this venue and today. Tap the card to view daily discounts.",
+      "ok": "OK",
       "menu": {
         "openInstagram": "Open Instagram",
         "openWebsite": "Open Website",
