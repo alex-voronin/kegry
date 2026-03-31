@@ -9,25 +9,28 @@ interface NewsStore {
   data: NewsData[] | null;
   isLoading: boolean;
   error: string | null;
-  fetchNews: () => Promise<void>;
+  loadedLocale: string | null;
+  fetchNews: (locale: string) => Promise<void>;
 }
 
 export const useNewsStore = create<NewsStore>((set, get) => ({
   data: null,
   isLoading: false,
   error: null,
-  fetchNews: async () => {
-    // Prevent re-fetching if data is already loaded or loading
-    if (get().data || get().isLoading) return;
+  loadedLocale: null,
+  fetchNews: async (locale: string) => {
+    // Prevent re-fetching if data is already loaded for THIS locale or loading
+    if (get().isLoading || get().loadedLocale === locale) return;
 
     set({ isLoading: true, error: null });
     try {
-      const res = await fetch('/news.json');
+      const res = await fetch(`/news/${locale}.json`);
       const data = await res.json();
 
       if (Array.isArray(data)) {
         set({
           data: data,
+          loadedLocale: locale,
           isLoading: false,
         });
       } else {

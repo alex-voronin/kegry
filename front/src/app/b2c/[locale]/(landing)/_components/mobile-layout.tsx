@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Menu, X } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { useParams } from 'next/navigation';
 import { useNewsStore } from '../store/use-news-store';
 import Script from 'next/script';
 import SocialLinks from './social-links';
@@ -15,12 +16,13 @@ import mobileStyles from './mobile-landing.module.css';
 
 export default function MobileLayout() {
   const t = useTranslations('screens.landing');
+  const { locale } = useParams() as { locale: string };
   const { data: newsData, fetchNews } = useNewsStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    fetchNews();
-  }, [fetchNews]);
+    fetchNews(locale);
+  }, [fetchNews, locale]);
 
   const scrollToSection = (sectionId: string, waitDrawer: boolean = true) => {
     setIsMenuOpen(false);

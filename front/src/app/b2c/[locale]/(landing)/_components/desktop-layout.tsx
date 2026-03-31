@@ -11,6 +11,7 @@ import SocialLinks from './social-links';
 import { LanguageSelector } from '@/components/common/LanguageSelector';
 import styles from './desktop-landing.module.css';
 import { cn } from '@/lib/utils';
+import { useParams } from 'next/navigation';
 
 export default function DesktopLayout() {
   const t = useTranslations('screens.landing');
@@ -21,11 +22,12 @@ export default function DesktopLayout() {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
+  const { locale } = useParams() as { locale: string };
   const { data: newsData, fetchNews } = useNewsStore();
 
   useEffect(() => {
-    fetchNews();
-  }, [fetchNews]);
+    fetchNews(locale);
+  }, [fetchNews, locale]);
 
   return (
     <div className={styles.wrapper}>
