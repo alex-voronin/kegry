@@ -17,6 +17,13 @@
 
 .qrContainer {
   @apply flex items-center justify-center;
-  width: 240px;
-  height: 240px;
+  width: 256px;
+  height: 256px;
+}
+
+.saveButton {
+  @apply text-primary hover:text-foreground absolute top-3 left-3 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full transition-colors;
+  background: none;
+  border: none;
+  padding: 0;
 }
