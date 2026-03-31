@@ -36,6 +36,12 @@
       <ProjectReference Include="..\Modules\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
       <ProjectReference Include="..\Modules\Shared\Shared.Setup\Shared.Setup.csproj" />
       <ProjectReference Include="..\Modules\Venue\VenueModule.Setup\VenueModule.Setup.csproj" />
+      <ProjectReference Include="..\Modules\AdminPanel\AdminPanelModule.Setup\AdminPanelModule.Setup.csproj" />
     </ItemGroup>
+
+    <!-- Expose static web assets from Razor Pages projects -->
+    <PropertyGroup>
+        <StaticWebAssetsEnabled>true</StaticWebAssetsEnabled>
+    </PropertyGroup>
 
 </Project>

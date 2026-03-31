@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Security\SecurityModule.Infrastructure\SecurityModule.Infrastructure.csproj" />
+        <ProjectReference Include="..\..\Venue\VenueModule.Infrastructure\VenueModule.Infrastructure.csproj" />
+        <ProjectReference Include="..\..\Feed\FeedModule.Infrastructure\FeedModule.Infrastructure.csproj" />
+        <ProjectReference Include="..\..\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+</Project>

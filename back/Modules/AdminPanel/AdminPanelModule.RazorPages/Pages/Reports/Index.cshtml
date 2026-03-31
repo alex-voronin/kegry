@@ -1,0 +1,63 @@
+@page
+@model AdminPanelModule.RazorPages.Pages.Reports.IndexModel
+@{
+    ViewData["Title"] = "User Reports";
+}
+
+<div class="card">
+    <div class="card-header">
+        Reported Users
+    </div>
+
+    @if (!Model.ReportedUsers.Any())
+    {
+        <div class="card-body text-muted">No reports found. Everyone is behaving well!</div>
+    }
+    else
+    {
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Reported User</th>
+                        <th>B2B / B2C</th>
+                        <th>Total Reports</th>
+                        <th>Latest Report</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.ReportedUsers)
+                    {
+                        <tr>
+                            <td>
+                                <div style="font-weight:500">@user.FullName</div>
+                                <div class="text-muted text-sm">ID: @user.UserId.ToString().Substring(0, 8)...</div>
+                            </td>
+                            <td><span class="badge @(user.IsPublic ? "badge-green" : "badge-gray")">@(user.IsPublic ? "B2C" : "Private")</span></td>
+                            <td><span class="badge badge-red">@user.ReportCount Reports</span></td>
+                            <td class="text-muted text-sm">@user.LatestReportDate.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>
+                                <a asp-page="/Reports/Detail" asp-route-id="@user.UserId" class="btn btn-sm btn-outline">View Reports</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="card-body" style="padding-top:12px; padding-bottom:12px;">
+            <div class="pagination">
+                @if (Model.PageNumber > 1)
+                {
+                    <a asp-page="/Reports/Index" asp-route-page="@(Model.PageNumber - 1)" class="page-link">← Prev</a>
+                }
+                <span class="page-link active">@Model.PageNumber</span>
+                @if (Model.HasNextPage)
+                {
+                    <a asp-page="/Reports/Index" asp-route-page="@(Model.PageNumber + 1)" class="page-link">Next →</a>
+                }
+            </div>
+        </div>
+    }
+</div>

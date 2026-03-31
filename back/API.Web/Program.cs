@@ -9,6 +9,7 @@ using SecurityModule.Setup;
 using UserProfileModule.Setup;
 using ChatModule.Setup;
 using EngagementModule.Setup;
+using AdminPanelModule.Setup;
 using Serilog;
 using Shared.Infrastructure.Interfaces;
 using Shared.Setup;
@@ -35,6 +36,7 @@ IFeatureStartup[] startups =
     new ChatModuleStartup(configuration),
     new EngagementModuleStartup(configuration),
     new VenueModuleStartup(configuration),
+    new AdminPanelModuleStartup(configuration),
     new AnalyticsModuleStartup(),
     new HttpSerializationStartup(),
     new HttpClientsResilienceStartup(),

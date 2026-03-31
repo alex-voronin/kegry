@@ -1,0 +1,78 @@
+@page
+@model AdminPanelModule.RazorPages.Pages.Venues.IndexModel
+@{
+    ViewData["Title"] = "Verify Venues";
+}
+
+@if (TempData["Success"] is string msg)
+{
+    <div class="alert alert-success">@msg</div>
+}
+
+<div class="card">
+    <div class="card-header">
+        Venues Pending Verification
+        <span class="text-muted text-sm">@Model.Venues.Count unverified</span>
+    </div>
+
+    @if (!Model.Venues.Any())
+    {
+        <div class="card-body text-muted">All venues are verified. Nothing to do here!</div>
+    }
+    else
+    {
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Address</th>
+                        <th>Company</th>
+                        <th>Phone</th>
+                        <th>Website</th>
+                        <th>Created</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var v in Model.Venues)
+                    {
+                        <tr>
+                            <td>
+                                <div style="font-weight:500">@v.Address</div>
+                                @if (!string.IsNullOrEmpty(v.GoogleMapsUrl))
+                                {
+                                    <a href="@v.GoogleMapsUrl" target="_blank" class="text-muted text-sm">Maps ↗</a>
+                                }
+                            </td>
+                            <td>
+                                <div>@v.CompanyName</div>
+                                @if (!string.IsNullOrEmpty(v.CompanyEmail))
+                                {
+                                    <div class="text-muted text-sm">@v.CompanyEmail</div>
+                                }
+                            </td>
+                            <td class="text-muted">@(v.PhoneNumber ?? "—")</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(v.WebsiteUrl))
+                                {
+                                    <a href="@v.WebsiteUrl" target="_blank" class="btn btn-link" style="padding:0">↗ Website</a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
+                            <td class="text-muted text-sm">@v.CreatedAt.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                <form method="post" asp-page-handler="Verify">
+                                    <input type="hidden" name="venueId" value="@v.Id" />
+                                    <button type="submit" class="btn btn-primary btn-sm">✓ Verify</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
