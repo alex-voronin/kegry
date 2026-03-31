@@ -46,19 +46,48 @@ export default function LoyaltyLevelEditPage() {
   }, [companyId, fetchCompany]);
 
   const level = useMemo(() => {
-    return (
-      selectedCompany?.loyaltyLevels?.find((l) => l.id === numericLevelId) ||
-      null
-    );
+    return selectedCompany?.loyaltyLevels?.[numericLevelId] || null;
   }, [selectedCompany, numericLevelId]);
 
-  const schema = z.object({
-    isActive: z.boolean(),
-    visitsUpperBound: z
-      .number()
+  const { prevLevelVisits, nextLevelVisits } = useMemo(() => {
+    const levels = selectedCompany?.loyaltyLevels;
+    if (!levels) return { prevLevelVisits: 0, nextLevelVisits: Infinity };
+
+    // Find the nearest active level before the current index
+    const prevActive = levels
+      .slice(0, numericLevelId)
+      .reverse()
+      .find((l) => l.isActive);
+
+    // Find the nearest active level after the current index
+    const nextActive = levels.slice(numericLevelId + 1).find((l) => l.isActive);
+
+    return {
+      prevLevelVisits: prevActive?.visitsUpperBound ?? 0,
+      nextLevelVisits: nextActive?.visitsUpperBound ?? Infinity,
+    };
+  }, [selectedCompany, numericLevelId]);
+
+  const schema = useMemo(() => {
+    const minVal = prevLevelVisits + 1;
+    const maxVal = nextLevelVisits - 1;
+
+    let s = z
+      .number({
+        message: t('validation.visitsUpperBoundMin'),
+      })
       .int()
-      .min(1, t('validation.visitsUpperBoundMin')),
-  });
+      .min(minVal, t('validation.tooLow', { min: prevLevelVisits }));
+
+    if (nextLevelVisits !== Infinity) {
+      s = s.max(maxVal, t('validation.tooHigh', { max: nextLevelVisits }));
+    }
+
+    return z.object({
+      isActive: z.boolean(),
+      visitsUpperBound: s,
+    });
+  }, [prevLevelVisits, nextLevelVisits, t]);
 
   const {
     setValue,
@@ -81,13 +110,15 @@ export default function LoyaltyLevelEditPage() {
   }, [level, reset]);
 
   const onSubmit = async (values: FormValues) => {
+    if (!level) return;
+
     setIsSubmitting(true);
     try {
       await apiClient.put(
         API_ENDPOINTS.LOYALTY_LEVELS.BY_COMPANY_ID(companyId),
         {
           loyaltyLevel: {
-            id: numericLevelId,
+            id: level.id,
             isActive: values.isActive,
             visitsUpperBound: values.visitsUpperBound,
           },

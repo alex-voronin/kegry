@@ -246,7 +246,9 @@
       "visitsUpperBound": "Visits under",
       "submit": "Save",
       "validation": {
-        "visitsUpperBoundMin": "Must be at least 1"
+        "visitsUpperBoundMin": "Must be at least 1",
+        "tooLow": "Value must be greater than {min} (previous level)",
+        "tooHigh": "Value must be less than {max} (next level)"
       },
       "toast": {
         "updateFailed": "Failed to update loyalty level"

@@ -246,7 +246,9 @@
       "visitsUpperBound": "Posete ispod",
       "submit": "Sačuvaj",
       "validation": {
-        "visitsUpperBoundMin": "Mora biti najmanje 1"
+        "visitsUpperBoundMin": "Mora biti bar 1",
+        "tooLow": "Vrednost mora biti veća od {min} (prethodni nivo)",
+        "tooHigh": "Vrednost mora biti manja od {max} (sledeći nivo)"
       },
       "toast": {
         "updateFailed": "Ažuriranje nivoa lojalnosti nije uspelo"
