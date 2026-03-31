@@ -50,9 +50,12 @@ export function QrScannerPopup({
           className={`${styles.popup} ${styles.deniedPopup}`}
           onClick={(e) => e.stopPropagation()}
         >
-          <button className={styles.closeButton} onClick={onClose}>
-            <X size={20} />
-          </button>
+          <div className={styles.header}>
+            <h2 className={styles.title}>{t('scanQrTitle')}</h2>
+            <button className={styles.closeButton} onClick={onClose}>
+              <X size={20} />
+            </button>
+          </div>
           <div className={styles.deniedMessage}>
             {cameraError ? t('cameraDenied') : t('locationDenied')}
           </div>
@@ -64,9 +67,12 @@ export function QrScannerPopup({
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.popup} onClick={(e) => e.stopPropagation()}>
-        <button className={styles.closeButton} onClick={onClose}>
-          <X size={20} />
-        </button>
+        <div className={styles.header}>
+          <h2 className={styles.title}>{t('scanQrTitle')}</h2>
+          <button className={styles.closeButton} onClick={onClose}>
+            <X size={20} />
+          </button>
+        </div>
         <div className={styles.scannerWrapper}>
           <Scanner
             components={{
