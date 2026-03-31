@@ -29,7 +29,6 @@ public class UserProfileAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             FirstName = "John",
             LastName = "Doe",
             AvatarImageS3Key = "avatar.png",
-            Locale = SupportedLocales.English,
             UpdatedAt = DateTimeOffset.Now
         };
 
@@ -60,7 +59,6 @@ public class UserProfileAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             FirstName = "John",
             LastName = "Doe",
             AvatarImageS3Key = "avatar.png",
-            Locale = SupportedLocales.English,
             UpdatedAt = DateTimeOffset.Now
         };
 

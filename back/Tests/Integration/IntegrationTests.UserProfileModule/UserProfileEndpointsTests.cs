@@ -28,7 +28,8 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
     public async Task GivenAuthenticatedUser_WhenUserCreatesProfile_ThenProfileCreated()
     {
         // 1. Sign in
-        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
+        var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync(
+            email: "test@example.com", password: "Password123!", locale: SupportedLocales.Serbian);
         Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Create profile
@@ -48,7 +49,6 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ]
         );
 
-        Factory.ApiClient.SetLocale(SupportedLocales.Serbian);
         var response = await Factory.ApiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(
             ApiRoutes.UserProfile.Profile, request);
         if (!response.Success)

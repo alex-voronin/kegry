@@ -64,8 +64,7 @@ public class UserProfileEndpoints : IEndpoints
             user: user,
             profile: profile,
             isNewProfile: true,
-            referrerId: request.ReferrerId,
-            locale: CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+            referrerId: request.ReferrerId);
         await repository.PublishEventAsync(@event);
         await repository.SaveChangesAndFlushMessagesAsync(ct);
 
@@ -218,8 +217,7 @@ public class UserProfileEndpoints : IEndpoints
     private static UserProfileChangedEvent BuildUserChangedEvent(ClaimsPrincipal user,
         User profile,
         bool isNewProfile,
-        Guid? referrerId,
-        string? locale = null)
+        Guid? referrerId)
 
     {
         return new UserProfileChangedEvent
@@ -231,7 +229,6 @@ public class UserProfileEndpoints : IEndpoints
             FirstName = profile.FirstName,
             LastName = profile.LastName,
             AvatarImageS3Key = profile.AvatarImageS3Key,
-            Locale = locale,
             UpdatedAt = profile.UpdatedAt,
         };
     }

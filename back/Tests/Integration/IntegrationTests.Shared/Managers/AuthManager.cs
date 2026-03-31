@@ -12,6 +12,7 @@ using SharedCore.Extensions;
 using SharedCore.ValueObjects;
 using Shouldly;
 using UserProfileModule.API.Dto;
+using Wolverine;
 using Wolverine.Tracking;
 
 namespace IntegrationTests.Shared.Managers;
@@ -29,32 +30,43 @@ public class AuthManager
         _host = host;
     }
 
-    public async Task<AuthResponse> CreateAndLoginUserAsync(string email, string password, UserType userType = UserType.B2C)
+    public async Task<AuthResponse> CreateAndLoginUserAsync(string email, string password,
+        UserType userType = UserType.B2C, string? locale = null)
     {
-        // 1. Sign up
-        var signupRequest = new SignUpRequest(email, password, userType);
-        var signupResponse = await _apiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
-            ApiRoutes.Auth.Signup, signupRequest);
-
-        signupResponse.Success.ShouldBeTrue();
-        var userId = Guid.Parse(signupResponse.Result.UserId);
-
-        // 2. Manually verify user in DB
-        using (var scope = _serviceProvider.CreateScope())
+        ApiResult<SigninResponse>? signinResponse = null;
+        Func<IMessageContext, Task> signupFunc = async (ctx) =>
         {
-            var context = scope.ServiceProvider.GetRequiredService<SecurityContext>();
-            var user = await context.Users.FindAsync(userId);
-            user.ShouldNotBeNull();
-            user.RequiredAction = RequiredAction.None;
-            user.EmailConfirmed = true;
-            await context.SaveChangesAsync();
-        }
+            // 1. Sign up
+            locale ??= SupportedLocales.English;
+            _apiClient.SetLocale(locale);
+            var signupRequest = new SignUpRequest(email, password, userType);
+            var signupResponse = await _apiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
+                ApiRoutes.Auth.Signup, signupRequest);
 
-        // 3. Sign in again to get access token
-        var signinRequest = new SignInRequest(email, password);
-        var signinResponse = await _apiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
-            ApiRoutes.Auth.Signin, signinRequest);
+            signupResponse.Success.ShouldBeTrue();
+            var userId = Guid.Parse(signupResponse.Result.UserId);
 
+            // 2. Manually verify user in DB
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<SecurityContext>();
+                var user = await context.Users.FindAsync(userId);
+                user.ShouldNotBeNull();
+                user.RequiredAction = RequiredAction.None;
+                user.EmailConfirmed = true;
+                await context.SaveChangesAsync();
+            }
+
+            // 3. Sign in again to get access token
+            var signinRequest = new SignInRequest(email, password);
+            signinResponse = await _apiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
+                ApiRoutes.Auth.Signin, signinRequest);
+        };
+        await _host.TrackActivity()
+            .DoNotAssertOnExceptionsDetected()
+            .ExecuteAndWaitAsync(signupFunc);
+
+        signinResponse.ShouldNotBeNull();
         signinResponse.Success.ShouldBeTrue(
             $"Login failed with errors: {string.Join(", ", signinResponse.Errors.Select(e => e.Error))}");
         signinResponse.Result.Auth.ShouldNotBeNull();
@@ -63,12 +75,10 @@ public class AuthManager
         return signinResponse.Result.Auth;
     }
 
-    public async Task CreateDefaultProfileAndSubmitLocation(Guid? referrerId = null, string? locale = null)
+    public async Task CreateDefaultProfileAndSubmitLocation(Guid? referrerId = null)
     {
         await _host.ExecuteAndWaitAsync(async () =>
         {
-            locale ??= SupportedLocales.English;
-            _apiClient.SetLocale(locale);
             await CreateProfile(referrerId: referrerId);
             await SubmitLocation();
         });

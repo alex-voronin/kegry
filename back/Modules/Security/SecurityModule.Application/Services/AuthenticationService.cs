@@ -313,7 +313,6 @@ internal class AuthenticationService : IAuthenticationService, IScoped
                 Email = email,
                 BaseUrl = baseUrl,
                 ResetToken = resetToken,
-                Locale = CultureInfo.CurrentCulture.TwoLetterISOLanguageName
             }
         );
     }

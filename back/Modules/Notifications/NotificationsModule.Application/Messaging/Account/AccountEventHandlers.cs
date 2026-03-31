@@ -1,4 +1,5 @@
 using System.Globalization;
+using NotificationModule.Domain.Aggregates;
 using NotificationModule.Domain.Repositories;
 using NotificationsModule.Application.Services;
 using SecurityModule.Contracts.Events;
@@ -13,8 +14,34 @@ public static class AccountEventHandlers
     public static async Task HandleAsync(
         AccountCreatedEvent @event,
         IEmailNotificationStrategy emailNotificationStrategy,
+        INotificationsSettingsRepository settingsRepository,
+        IUserRepository userRepository,
         CancellationToken ct = default)
     {
+        var transaction = await userRepository.And(settingsRepository).StartTransactionAsync(ct);
+
+        var user = await userRepository.GetByIdAsync(@event.UserId, ct: ct);
+        if (user == null)
+        {
+            user = new User
+            {
+                Id = @event.UserId,
+                Email = @event.Email,
+                FirstName = "",
+                LastName = "",
+                AvatarImageS3Key = "",
+                UpdatedAt = DateTimeOffset.UtcNow
+            };
+            await userRepository.AddAsync(user, ct);
+        }
+
+        var settings = await settingsRepository.GetByIdOrDefaultAsync(@event.UserId, ct: ct);
+        settings.Locale = @event.Locale;
+        await settingsRepository.SaveAsync(settings, ct);
+
+        await transaction.SaveChangesAsync(ct);
+        await transaction.CommitAsync(ct);
+
         if (@event.ConfirmationCode == null)
         {
             return;
@@ -24,7 +51,7 @@ public static class AccountEventHandlers
             typeof(AccountEventHandlers).FullName, @event);
 
         // In fact, the user and settings have not been created yet, so we pass a locale string in the event
-        SetCurrentCulture(@event.Locale);
+        settings.ApplyCurrentLocale();
         await emailNotificationStrategy.SendConfirmEmail(
             toEmail: @event.Email,
             confirmationCode: @event.ConfirmationCode,
@@ -34,24 +61,18 @@ public static class AccountEventHandlers
     public static async Task HandleAsync(
         PasswordResetRequestedEvent @event,
         IEmailNotificationStrategy emailNotificationStrategy,
+        INotificationsSettingsRepository settingsRepository,
         CancellationToken ct = default)
     {
         Log.Information("{HandlerClass} Handling event {@Event}",
             typeof(AccountEventHandlers).FullName, @event);
 
-        // The user and settings might not have been created yet, so we pass a locale string in the event
-        SetCurrentCulture(@event.Locale);
+        var settings = await settingsRepository.GetByIdOrDefaultAsync(@event.UserId, asNoTracking: true, ct: ct);
+        settings.ApplyCurrentLocale();
         await emailNotificationStrategy.SendPasswordReset(
             toEmail: @event.Email,
             baseUrl: @event.BaseUrl,
             resetToken: @event.ResetToken,
             ct: ct);
-    }
-
-    private static void SetCurrentCulture(string locale)
-    {
-        var cultureInfo = CultureInfo.GetCultureInfo(locale);
-        CultureInfo.CurrentCulture = cultureInfo;
-        CultureInfo.CurrentUICulture = cultureInfo;
     }
 }

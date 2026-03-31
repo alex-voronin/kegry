@@ -20,18 +20,20 @@ public class PushesLocalizationTests : IntegrationTestBase, IAsyncLifetime
     public Task DisposeAsync() => ContainerManager.ResetDatabaseAsync();
 
     [Fact]
-    public async Task GivenTwoUsers_WhenTheyCreateChat_ThenTheyBothReceiveNotification()
+    public async Task GivenTwoUsers_WhenTheyInviteEachOther_ThenTheyReceiveNotificationsOnCorrectLanguage()
     {
         // 1. Create users
-        var authResponseA = await Factory.AuthManager.CreateAndLoginUserAsync("sr@example.com", "Password123!");
+        var authResponseA = await Factory.AuthManager.CreateAndLoginUserAsync(
+            email: "sr@example.com", password: "Password123!", locale: SupportedLocales.Serbian);
         var userAId = authResponseA.UserId;
         Factory.ApiClient.SetAuth(authResponseA);
-        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation(locale: SupportedLocales.Serbian);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
-        var authResponseB = await Factory.AuthManager.CreateAndLoginUserAsync("enB@example.com", "Password123!");
+        var authResponseB = await Factory.AuthManager.CreateAndLoginUserAsync(
+            email: "enB@example.com", password: "Password123!", locale: SupportedLocales.English);
         var userBId = authResponseB.UserId;
         Factory.ApiClient.SetAuth(authResponseB);
-        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation(locale: SupportedLocales.English);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Create users' device tokens. They are required to send pushes
         var requestA = new UpdateFcmTokenRequest("devA", "tokenA");

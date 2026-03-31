@@ -75,7 +75,6 @@ public class AccountAnalyticsTests : IntegrationTestBase, IAsyncLifetime
             Email = "reset@example.com",
             BaseUrl = "https://example.com",
             ResetToken = "token",
-            Locale = SupportedLocales.English
         };
 
         await Factory.Host

@@ -15,6 +15,7 @@ using SecurityModule.Domain.ValueObjects;
 using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
 using Shouldly;
+using Wolverine.Tracking;
 
 namespace IntegrationTests.SecurityModule;
 
@@ -42,14 +43,19 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 }
             }), Arg.Any<CancellationToken>());
 
-        // 1. Signup
-        var email = "asd@gmail.com";
-        var request = new SignUpRequest(Email: email, Password: "123456789Qwe", UserType: UserType.B2C);
+        ApiResult<AuthResponse>? signinResponse = null;
+        await Factory.Host.ExecuteAndWaitAsync(async () =>
+        {
+            // 1. Signup
+            var email = "asd@gmail.com";
+            var request = new SignUpRequest(Email: email, Password: "123456789Qwe", UserType: UserType.B2C);
 
-        var signinResponse = await Factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
-            ApiRoutes.Auth.Signup, request);
+            signinResponse = await Factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
+                ApiRoutes.Auth.Signup, request);
+        });
 
         // 2. Check signup response
+        signinResponse.ShouldNotBeNull();
         signinResponse.Success.ShouldBeTrue();
         signinResponse.Result.RequiredAction.ShouldBe(RequiredAction.EmailVerification);
         signinResponse.Result.AccessToken.ShouldBeNull();
