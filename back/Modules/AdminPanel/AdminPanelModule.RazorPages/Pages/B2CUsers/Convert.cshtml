@@ -1,0 +1,62 @@
+@page
+@model AdminPanelModule.RazorPages.Pages.B2CUsers.ConvertModel
+@{
+    ViewData["Title"] = "Convert B2C User to B2B";
+}
+
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <div class="card-header">Search B2C User</div>
+    <div class="card-body">
+        <form method="get" class="flex gap-8">
+            <input type="text" name="SearchEmail" value="@Model.SearchEmail" placeholder="Enter user email..." class="form-control" style="flex: 1;" />
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        @if (!string.IsNullOrEmpty(Model.Message))
+        {
+            <div class="alert @(Model.IsError ? "alert-danger" : "alert-success") mt-16">
+                @Model.Message
+            </div>
+        }
+
+        @if (Model.FoundUser != null)
+        {
+            <div class="mt-16 pt-16" style="border-top: 1px solid var(--border);">
+                <div class="detail-grid">
+                    <div class="detail-row">
+                        <div class="detail-label">Email</div>
+                        <div class="detail-value">@Model.FoundUser.Email</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Current Type</div>
+                        <div class="detail-value">
+                            <span class="badge @(Model.FoundUser.Type == SecurityModule.Domain.ValueObjects.UserType.B2C ? "badge-blue" : "badge-green")">
+                                @Model.FoundUser.Type
+                            </span>
+                        </div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">User ID</div>
+                        <div class="detail-value text-sm">@Model.FoundUser.Id</div>
+                    </div>
+                </div>
+
+                @if (Model.FoundUser.Type == SecurityModule.Domain.ValueObjects.UserType.B2C)
+                {
+                    <form method="post" asp-page-handler="Convert" class="mt-16">
+                        <input type="hidden" name="userId" value="@Model.FoundUser.Id" />
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to convert this user to B2B? This action cannot be easily undone via UI.')">
+                            Convert to B2B Account
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <div class="alert alert-success mt-16 mb-0">
+                        This user is already a B2B account.
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

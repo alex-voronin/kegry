@@ -13,7 +13,7 @@ public enum RequiredAction
 
 public sealed class User : IdentityUser<Guid>, IAuditable
 {
-    public required UserType Type { get; init; }
+    public required UserType Type { get; set; }
     public required RequiredAction RequiredAction { get; set; }
     public bool HasGoogleAuth { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
