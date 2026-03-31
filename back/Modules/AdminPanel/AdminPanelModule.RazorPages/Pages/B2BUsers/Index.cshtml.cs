@@ -24,7 +24,7 @@ public class IndexModel : PageModel
     public int PageNumber { get; set; } = 1;
     public bool HasNextPage { get; set; }
     public int TotalCount { get; set; }
-    
+
     [TempData]
     public string ErrorMessage { get; set; } = "";
 
@@ -45,7 +45,7 @@ public class IndexModel : PageModel
                 UserName = u.UserName ?? "",
                 EmailConfirmed = u.EmailConfirmed,
                 IsLocked = u.LockoutEnd.HasValue && u.LockoutEnd > DateTimeOffset.UtcNow,
-                CreatedAt = DateTimeOffset.UtcNow //TODO: use real createdAt
+                CreatedAt = u.CreatedAt
             })
             .ToListAsync();
 
@@ -62,7 +62,7 @@ public class IndexModel : PageModel
             UserName = string.IsNullOrWhiteSpace(userName) ? email : userName,
             Type = UserType.B2B,
             RequiredAction = RequiredAction.None,
-            EmailConfirmed = true 
+            EmailConfirmed = true
         };
 
         var result = await _userManager.CreateAsync(user, password);

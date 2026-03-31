@@ -38,7 +38,7 @@ public class IndexModel : PageModel
         if (HasNextPage) reportedGroups = reportedGroups.Take(PageSize).ToList();
 
         var userIds = reportedGroups.Select(g => g.UserId).ToList();
-        
+
         // Fetch users info
         var users = await _feed.Users
             .Where(u => userIds.Contains(u.Id))

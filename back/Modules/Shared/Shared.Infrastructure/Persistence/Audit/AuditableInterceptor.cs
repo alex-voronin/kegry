@@ -11,7 +11,10 @@ public class AuditableInterceptor : SaveChangesInterceptor
         InterceptionResult<int> result,
         CancellationToken cancellationToken = default)
     {
-        if (eventData.Context is null) return base.SavingChangesAsync(eventData, result, cancellationToken);
+        if (eventData.Context is null)
+        {
+            return base.SavingChangesAsync(eventData, result, cancellationToken);
+        }
 
         var now = DateTimeOffset.UtcNow;
 
@@ -31,6 +34,7 @@ public class AuditableInterceptor : SaveChangesInterceptor
                 {
                     entry.Entity.UpdatedAt = now;
                 }
+
                 entry.Property(x => x.CreatedAt).IsModified = false; // just to ignore updates of CreatedAt
             }
         }

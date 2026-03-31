@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text.RegularExpressions;
 using IntegrationTests.Shared.Fakes;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NotificationsModule.Infrastructure.Transport.Emails;
 using NSubstitute;
@@ -12,6 +13,7 @@ using NSubstitute.ClearExtensions;
 using SecurityModule.API.Dto;
 using SecurityModule.Domain.Aggregates;
 using SecurityModule.Domain.ValueObjects;
+using SecurityModule.Infrastructure.Persistence;
 using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
 using Shouldly;
@@ -43,32 +45,42 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 }
             }), Arg.Any<CancellationToken>());
 
-        ApiResult<AuthResponse>? signinResponse = null;
+        ApiResult<AuthResponse>? signupResponse = null;
         await Factory.Host.ExecuteAndWaitAsync(async () =>
         {
             // 1. Signup
             var email = "asd@gmail.com";
             var request = new SignUpRequest(Email: email, Password: "123456789Qwe", UserType: UserType.B2C);
 
-            signinResponse = await Factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
+            signupResponse = await Factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
                 ApiRoutes.Auth.Signup, request);
         });
 
         // 2. Check signup response
-        signinResponse.ShouldNotBeNull();
-        signinResponse.Success.ShouldBeTrue();
-        signinResponse.Result.RequiredAction.ShouldBe(RequiredAction.EmailVerification);
-        signinResponse.Result.AccessToken.ShouldBeNull();
-        signinResponse.Result.RefreshToken.ShouldBeNull();
+        signupResponse.ShouldNotBeNull();
+        signupResponse.Success.ShouldBeTrue();
+        signupResponse.Result.RequiredAction.ShouldBe(RequiredAction.EmailVerification);
+        signupResponse.Result.AccessToken.ShouldBeNull();
+        signupResponse.Result.RefreshToken.ShouldBeNull();
 
         capturedCode.ShouldNotBeNullOrEmpty();
 
-        // 3. Confirm Email
-        var confirmRequest = new ConfirmEmailRequest(signinResponse.Result.UserId, capturedCode);
+        // 3. Verify CreateAt and UpdateAt are set
+        var userId = Guid.Parse(signupResponse.Result.UserId);
+        using var scope = Factory.Services.CreateScope();
+
+        var context = scope.ServiceProvider.GetRequiredService<SecurityContext>();
+        var user = await context.Users.FirstOrDefaultAsync(c => c.Id == userId);
+        user.ShouldNotBeNull();
+        user.CreatedAt.Date.ShouldBe(DateTime.UtcNow.Date);
+        user.UpdatedAt.Date.ShouldBe(DateTime.UtcNow.Date);
+
+        // 4. Confirm Email
+        var confirmRequest = new ConfirmEmailRequest(signupResponse.Result.UserId, capturedCode);
         var confirmResponse = await Factory.ApiClient.PostAsync<ConfirmEmailRequest, ApiResult<AuthResponse>>(
             ApiRoutes.Auth.ConfirmEmail, confirmRequest);
 
-        // 4. Check confirmation response
+        // 5. Check confirmation response
         confirmResponse.Success.ShouldBeTrue();
         confirmResponse.Result.AccessToken.ShouldNotBeNullOrEmpty();
         confirmResponse.Result.RequiredAction.ShouldBe(RequiredAction.OnboardingCompletion);

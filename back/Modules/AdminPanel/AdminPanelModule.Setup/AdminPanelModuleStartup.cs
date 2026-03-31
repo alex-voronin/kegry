@@ -30,8 +30,8 @@ public class AdminPanelModuleStartup : IFeatureStartup
                     if (selector.AttributeRouteModel != null)
                     {
                         var template = selector.AttributeRouteModel.Template;
-                        selector.AttributeRouteModel.Template = string.IsNullOrEmpty(template) 
-                            ? "admin" 
+                        selector.AttributeRouteModel.Template = string.IsNullOrEmpty(template)
+                            ? "admin"
                             : $"admin/{template}";
                     }
                 }

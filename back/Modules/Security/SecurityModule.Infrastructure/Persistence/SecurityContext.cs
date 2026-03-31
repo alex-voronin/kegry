@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SecurityModule.Domain.Aggregates;
+using Shared.Infrastructure.Persistence.Audit;
 
 namespace SecurityModule.Infrastructure.Persistence;
 
@@ -11,6 +12,11 @@ public class SecurityContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 
     public SecurityContext(DbContextOptions<SecurityContext> options) : base(options)
     {
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.AddInterceptors(new AuditableInterceptor());
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

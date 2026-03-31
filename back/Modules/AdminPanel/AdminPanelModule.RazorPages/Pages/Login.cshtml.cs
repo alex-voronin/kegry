@@ -36,7 +36,7 @@ public class LoginModel : PageModel
         var hasher = new PasswordHasher<string>();
 
         var verificationResult = hasher.VerifyHashedPassword(
-            _credentials.Username,  _credentials.PasswordHash, password);
+            _credentials.Username, _credentials.PasswordHash, password);
         if (Username != _credentials.Username || verificationResult == PasswordVerificationResult.Failed)
         {
             ErrorMessage = "Invalid username or password.";
