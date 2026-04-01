@@ -161,8 +161,8 @@ export default function MobileLayout() {
           <Image
             src="/assets/landing/section-cheers.webp"
             alt="Cheers"
-            width={280}
-            height={280}
+            width={364}
+            height={249}
             className={mobileStyles.sectionImg}
           />
         </div>
@@ -321,7 +321,7 @@ export default function MobileLayout() {
             src="/assets/landing/section-loyalty.webp"
             alt="Loyalty Programs"
             width={280}
-            height={280}
+            height={258}
             className={mobileStyles.sectionImg}
           />
         </div>
@@ -340,7 +340,7 @@ export default function MobileLayout() {
             src="/assets/landing/section-contact-us.webp"
             alt="Contact Us"
             width={220}
-            height={300}
+            height={248}
             className={mobileStyles.sectionImg}
           />
         </div>

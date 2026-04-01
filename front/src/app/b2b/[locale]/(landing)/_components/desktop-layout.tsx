@@ -93,7 +93,7 @@ export default function DesktopLayout() {
             src="/assets/b2b/landing/section-hero.webp"
             alt="Corn Graph"
             width={250}
-            height={250}
+            height={248}
           />
         </div>
       </section>
@@ -109,8 +109,8 @@ export default function DesktopLayout() {
               <Image
                 src="/assets/b2b/landing/feature-venues.webp"
                 alt="Feature 1"
-                width={500}
-                height={500}
+                width={330}
+                height={103}
               />
             </div>
           </div>
@@ -122,8 +122,8 @@ export default function DesktopLayout() {
               <Image
                 src="/assets/b2b/landing/feature-discounts.webp"
                 alt="Feature 1"
-                width={500}
-                height={500}
+                width={330}
+                height={106}
               />
             </div>
           </div>
@@ -135,8 +135,8 @@ export default function DesktopLayout() {
               <Image
                 src="/assets/b2b/landing/feature-loyalty.webp"
                 alt="Feature 1"
-                width={500}
-                height={500}
+                width={330}
+                height={75}
               />
             </div>
           </div>
@@ -181,7 +181,7 @@ export default function DesktopLayout() {
             src="/assets/landing/section-contact-us.webp"
             alt="Goblin Teacher"
             width={230}
-            height={230}
+            height={259}
           />
         </div>
       </section>

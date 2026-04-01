@@ -39,7 +39,7 @@ export default function DesktopLayout() {
             src="/assets/landing/header-logo.webp"
             alt="W"
             width={60}
-            height={83}
+            height={79}
             className={styles.logoIconImage}
           />
           <div className={styles.logoTextWrapper}>
@@ -125,7 +125,7 @@ export default function DesktopLayout() {
             src="/assets/landing/section-cheers.webp"
             alt="Cheers"
             width={400}
-            height={400}
+            height={274}
           />
         </div>
       </section>
@@ -137,7 +137,7 @@ export default function DesktopLayout() {
             src="/assets/landing/section-news.webp"
             alt="News"
             width={360}
-            height={360}
+            height={295}
           />
         </div>
 
@@ -187,8 +187,8 @@ export default function DesktopLayout() {
               <Image
                 src="/assets/landing/step-1.webp"
                 alt="Step 1"
-                width={230}
-                height={150}
+                width={450}
+                height={450}
                 className={styles.stepImage}
               />
             </div>
@@ -289,9 +289,9 @@ export default function DesktopLayout() {
         <div className={cn(styles.sideImage, '-mt-16 mb-4')}>
           <Image
             src="/assets/landing/section-contact-us.webp"
-            alt="Goblin Artist"
+            alt="Goblin Teacher"
             width={300}
-            height={400}
+            height={338}
           />
         </div>
       </section>

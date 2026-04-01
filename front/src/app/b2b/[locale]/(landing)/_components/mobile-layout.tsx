@@ -151,7 +151,7 @@ export default function MobileLayout() {
             src="/assets/b2b/landing/section-hero.webp"
             alt="Corn Graph"
             width={280}
-            height={280}
+            height={278}
             className={mobileStyles.sectionImg}
           />
         </div>
@@ -190,7 +190,7 @@ export default function MobileLayout() {
                 src="/assets/b2b/landing/feature-venues.webp"
                 alt="Feature 1"
                 width={500}
-                height={500}
+                height={156}
               />
             </div>
           </div>
@@ -207,7 +207,7 @@ export default function MobileLayout() {
                 src="/assets/b2b/landing/feature-discounts.webp"
                 alt="Feature 2"
                 width={500}
-                height={500}
+                height={160}
               />
             </div>
           </div>
@@ -224,7 +224,7 @@ export default function MobileLayout() {
                 src="/assets/b2b/landing/feature-loyalty.webp"
                 alt="Feature 3"
                 width={500}
-                height={500}
+                height={114}
               />
             </div>
           </div>
@@ -238,7 +238,7 @@ export default function MobileLayout() {
             src="/assets/landing/section-contact-us.webp"
             alt="Contact Us"
             width={220}
-            height={300}
+            height={248}
             className={mobileStyles.sectionImg}
           />
         </div>
