@@ -77,6 +77,24 @@ export default function MobileLayout() {
         <nav className={mobileStyles.drawerNav}>
           <span
             className={mobileStyles.drawerNavLink}
+            onClick={() => {
+              const hostname = window.location.hostname;
+              const newHostname = hostname.startsWith('business.')
+                ? hostname.replace('business.', '')
+                : hostname;
+              window.open(
+                window.location.protocol +
+                  '//' +
+                  newHostname +
+                  window.location.pathname,
+                '_blank',
+              );
+            }}
+          >
+            {t('header.nav.forCustomers')}
+          </span>
+          <span
+            className={mobileStyles.drawerNavLink}
             onClick={() => scrollToSection('features')}
           >
             {t('header.nav.features')}

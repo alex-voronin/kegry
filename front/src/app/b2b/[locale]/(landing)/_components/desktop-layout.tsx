@@ -42,6 +42,24 @@ export default function DesktopLayout() {
         <nav className={styles.nav}>
           <span
             className={styles.navLink}
+            onClick={() => {
+              const hostname = window.location.hostname;
+              const newHostname = hostname.startsWith('business.')
+                ? hostname.replace('business.', '')
+                : hostname;
+              window.open(
+                window.location.protocol +
+                  '//' +
+                  newHostname +
+                  window.location.pathname,
+                '_blank',
+              );
+            }}
+          >
+            {t('header.nav.forCustomers')}
+          </span>
+          <span
+            className={styles.navLink}
             onClick={() => scrollToSection('features')}
           >
             {t('header.nav.features')}

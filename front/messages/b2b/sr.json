@@ -57,6 +57,7 @@
       "header": {
         "subtitle": "Za biznise",
         "nav": {
+          "forCustomers": "Za posetioce",
           "features": "Funkcije",
           "contactUs": "Kontaktirajte nas"
         },

@@ -91,7 +91,9 @@ export default function MobileLayout() {
             className={mobileStyles.drawerNavLink}
             onClick={() =>
               window.open(
-                'https://business.' + window.location.hostname,
+                'https://business.' +
+                  window.location.hostname +
+                  window.location.pathname,
                 '_blank',
               )
             }

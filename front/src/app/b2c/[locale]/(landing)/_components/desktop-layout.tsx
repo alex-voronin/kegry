@@ -59,7 +59,9 @@ export default function DesktopLayout() {
             className={styles.navLink}
             onClick={() =>
               window.open(
-                'https://business.' + window.location.hostname,
+                'https://business.' +
+                  window.location.hostname +
+                  window.location.pathname,
                 '_blank',
               )
             }

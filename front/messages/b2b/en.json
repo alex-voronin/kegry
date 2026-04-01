@@ -57,6 +57,7 @@
       "header": {
         "subtitle": "For Business",
         "nav": {
+          "forCustomers": "For Customers",
           "features": "Features",
           "contactUs": "Contact Us"
         },
