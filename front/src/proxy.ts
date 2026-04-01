@@ -14,7 +14,20 @@ function SetSrLocaleCookie(response: NextResponse) {
 }
 
 export default function middleware(req: NextRequest) {
-  // 1. Detect referer-based locale preference (.rs -> sr)
+  // 1. Determine the platform based on the requested host
+  const hostname = req.headers.get('host') || '';
+  const isB2B = hostname.startsWith(B2B_SUBDOMAIN);
+  const platform = isB2B ? 'b2b' : 'b2c';
+  const pathname = req.nextUrl.pathname;
+
+  // 2. Handle sitemap and robots.txt explicitly before other logic
+  if (pathname === '/sitemap.xml' || pathname === '/robots.txt') {
+    const sitemapUrl = req.nextUrl.clone();
+    sitemapUrl.pathname = `/${platform}${pathname}`;
+    return NextResponse.rewrite(sitemapUrl);
+  }
+
+  // 3. Detect referer-based locale preference (.rs -> sr)
   let forceSrLocale = false;
   const referer = req.headers.get('referer');
   if (referer && !req.cookies.has('NEXT_LOCALE')) {
@@ -35,7 +48,7 @@ export default function middleware(req: NextRequest) {
     req.cookies.set('NEXT_LOCALE', 'sr');
   }
 
-  // 2. Run next-intl middleware to handle locales and redirects
+  // 4. Run next-intl middleware to handle locales and redirects
   const response = intlMiddleware(req);
 
   // If next-intl issued a redirect (e.g., to add a default locale), return it immediately
@@ -46,17 +59,9 @@ export default function middleware(req: NextRequest) {
     return response;
   }
 
-  // 3. Determine the platform based on the requested host
-  const hostname = req.headers.get('host') || '';
-  const isB2B = hostname.startsWith(B2B_SUBDOMAIN);
-  const platform = isB2B ? 'b2b' : 'b2c';
-
   // Set pathname header for layout detection
-  // We use the original nextUrl.pathname here, before any rewrites.
-  const pathname = req.nextUrl.pathname;
   response.headers.set('x-pathname', pathname);
-
-  // 4. Apply the platform routing via Server Rewrites
+  // 5. Apply the platform routing via Server Rewrites
   const rewriteUrlStr = response.headers.get('x-middleware-rewrite');
 
   if (rewriteUrlStr) {
@@ -87,5 +92,10 @@ export default function middleware(req: NextRequest) {
 
 export const config = {
   // Match all paths except api routes, _next, static files, etc.
-  matcher: ['/((?!api|_next|_vercel|assets|.*\\..*).*)'],
+  // Add sitemap.xml and robots.txt explicitly
+  matcher: [
+    '/((?!api|_next|_vercel|assets|.*\\..*).*)',
+    '/sitemap.xml',
+    '/robots.txt',
+  ],
 };
