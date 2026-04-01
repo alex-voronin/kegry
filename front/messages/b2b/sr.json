@@ -54,6 +54,11 @@
   },
   "screens": {
     "landing": {
+      "metadata": {
+        "title": "Kegrycorn za biznise",
+        "description": "Kegrycorn za biznise je sveobuhvatna platforma za rast barova. Pomažemo vam da privučete više gostiju, izgradite lojalnost i povećate prihode.",
+        "keywords": "bar buddy, barski drugar, druženje u baru, kegrycorn, kegry, upravljanje lokalima, upravljanje barovima, program lojalnosti, popusti u baru, barske promocije"
+      },
       "header": {
         "subtitle": "Za biznise",
         "nav": {
@@ -76,11 +81,11 @@
       },
       "hero": {
         "title": "Sveobuhvatna platforma za rast barova",
-        "description": "Pomažemo vlasnicima barova da privuku nove goste, pretvore ih u stalne posetioce i razviju poslovanje uz programe lojalnosti, promocije i laku vidljivost. Sve na jednoj jednostavnoj platformi stvorenoj za rast. Osnovna loyalty alat su dostupna danas i zauvek ostaju potpuno besplatna."
+        "description": "Pomažemo vlasnicima barova da privuku nove goste, pretvore ih u stalne posetioce i razviju poslovanje uz programe lojalnosti, promocije i laku vidljivost. Sve na jednoj jednostavnoj platformi stvorenoj za rast. Osnovni alati za lojalnost su dostupni danas i zauvek ostaju potpuno besplatni."
       },
       "contactUs": {
         "title": "Kontaktirajte nas",
-        "description": "Zainteresovani za povećanje lojalnosti gostiju i vidljivosti vašeg bara? Rado ćemo čuti od vas. Bez obzira da li želite da registrujete lokał, počnete da koristite naše besplatne loyalty alate ili saznate o nadolazećim funkcijama — naš tim je spreman da pomogne. Obratite nam se putem <email>contacts@kegry.com</email> ili kroz naš <chat>chat</chat>."
+        "description": "Zainteresovani za povećanje lojalnosti gostiju i vidljivosti vašeg bara? Rado ćemo čuti od vas. Bez obzira da li želite da registrujete lokał, počnete da koristite naše besplatne alate za lojalnost ili saznate o nadolazećim funkcijama — naš tim je spreman da pomogne. Obratite nam se putem <email>contacts@kegry.com</email> ili kroz naš <chat>chat</chat>."
       },
       "features": {
         "one": {

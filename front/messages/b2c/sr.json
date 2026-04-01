@@ -22,6 +22,11 @@
   },
   "screens": {
     "landing": {
+      "metadata": {
+        "title": "Kegrycorn. Pronađi barskog druga!",
+        "description": "Kegrycorn ti pomaže da pronađeš barske drugare. Bez dejtinga, bez beskonačnog dopisivanja — samo spontani susreti uživo u baru. Najbolje priče počinju van ekrana!",
+        "keywords": "bar buddy, barski drugar, sretni ljude uživo, IRL druženje, barski susreti, oflajn prijatelji, kegrycorn, kegry, program lojalnosti, priče van ekrana"
+      },
       "header": {
         "subtitle": "Najbolje priče počinju van ekrana",
         "nav": {
@@ -484,7 +489,7 @@
       "maxDiscountLevelReached": "Dostignuta je maksimalna vrednost popusta.",
       "visits": "{current}/{total} poseta do sledećeg nivoa",
       "helpDialog": "Ovaj popust važi samo za ovaj lokal i danas. Tapni na karticu da pogledaš dnevne popuste.",
-      "ok": "U redu",
+      "ok": "OK",
       "menu": {
         "openInstagram": "Otvori Instagram",
         "openWebsite": "Otvori sajt",

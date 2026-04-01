@@ -54,6 +54,11 @@
   },
   "screens": {
     "landing": {
+      "metadata": {
+        "title": "Kegrycorn for Business",
+        "description": "Kegrycorn for Business is an all-in-one growth platform for bars. We help you attract more customers, build loyalty, and increase revenue.",
+        "keywords": "bar buddy, bar meetups, kegrycorn, kegry, manage venues, venue management, loyalty program, manage discounts, bar promotions"
+      },
       "header": {
         "subtitle": "For Business",
         "nav": {

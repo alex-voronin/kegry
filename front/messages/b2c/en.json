@@ -22,6 +22,11 @@
   },
   "screens": {
     "landing": {
+      "metadata": {
+        "title": "Kegrycorn. Find Your Bar Buddy!",
+        "description": "Kegrycorn helps you find bar buddies. No dating, no endless texting - just spontaneous real-life meetups at the bar. The best stories start off-screen!",
+        "keywords": "bar buddy, drinking buddy, meet people IRL, real life social, bar meetups, offline friends, kegrycorn, kegry, loyalty programs, off-screen stories"
+      },
       "header": {
         "subtitle": "The best stories start off-screen",
         "nav": {
