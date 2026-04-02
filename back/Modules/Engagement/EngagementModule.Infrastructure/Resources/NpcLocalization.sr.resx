@@ -19,13 +19,13 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="Corn.Name" xml:space="preserve">
-        <value>Wibbly Toby</value>
+        <value>Vibli Tobi</value>
     </data>
     <data name="Corn.Monolog" xml:space="preserve">
-        <value>Hej! Šta?! Ko je popio pivo iz tvoje šolje? Ono tamno, gusto, sa tom svežom penom kojoj niko ne može da odoli? Ne mogu ni da zamislim! Sigurno nisam bio ja. Ali evo, evo ti mali poklon. *[Donosi ti snop slame]* Tako, za svaki slučaj. I definitivno ne zato što pokušavam da nadoknadim nešto što apsolutno nisam uradio.</value>
+        <value>Hej! Šta?! Ko je popio pivo iz tvoje krigle? Ono tamno, gusto, sa tom svežom penom kojoj niko ne može da odoli? Ne mogu ni da zamislim! Sigurno nisam bio ja. Ali evo, evo ti mali poklon. *[Donosi ti snop slame]* Tako, za svaki slučaj. I definitivno ne zato što pokušavam da nadoknadim nešto što apsolutno nisam uradio.</value>
     </data>
     <data name="Cockatrice.Name" xml:space="preserve">
-        <value>Clumsy Benny</value>
+        <value>Klamzi Beni</value>
     </data>
    
 </root>

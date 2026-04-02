@@ -25,7 +25,7 @@
       "metadata": {
         "title": "Kegrycorn. Pronađi barskog druga!",
         "description": "Kegrycorn ti pomaže da pronađeš barske drugare. Bez dejtinga, bez beskonačnog dopisivanja — samo spontani susreti uživo u baru. Najbolje priče počinju van ekrana!",
-        "keywords": "bar buddy, barski drugar, sretni ljude uživo, IRL druženje, barski susreti, oflajn prijatelji, kegrycorn, kegry, program lojalnosti, priče van ekrana"
+        "keywords": "bar buddy, barski drugar, upoznavanje ljudi uživo, IRL druženje, barski susreti, oflajn prijatelji, kegrycorn, kegry, program lojalnosti, priče van ekrana"
       },
       "header": {
         "subtitle": "Najbolje priče počinju van ekrana",
@@ -39,7 +39,7 @@
       },
       "cheers": {
         "title": "Pronađi svog barskog druga odmah!",
-        "description": "Spreman za piće i dobro društvo? Bez đetinga. Bez beskrajnih razgovora. Pogledaj profil, pošalji poziv, dogovori susret — i eto te u baru! Priča o životu, smej se, ispucaj se i drži glavu gore. Ako se pojave goblini, možda je vreme da malo usporiš 🥴",
+        "description": "Spreman za piće i dobro društvo? Bez dejtinga. Bez beskrajnih razgovora. Pogledaj profil, pošalji poziv, dogovori susret — i eto te u baru! Priča o životu, smej se, ispucaj se i drži glavu gore. Ako se pojave goblini, možda je vreme da malo usporiš 🥴",
         "loyaltyPrograms": "I još nešto: ne zaboravi na naše <link>programe lojalnosti</link>.",
         "cta": "Spreman?"
       },
@@ -55,7 +55,7 @@
         "step2": "2. Ćaskaj i planiraj",
         "step3": "3. Sretni se i uživaj",
         "step4": "4. Štedi uz lojalnost",
-        "note": "Hej avanturisto! Samo da napomenem: pozivi ističu, možeš imati samo jedan razgovor odjednom i postoji ograničen broj poruka po razgovoru, pa biraj mudro. Pozivaj prijatelje samo ako si zaista spreman za barsku avanturu — i požuri pre nego goblini popiju svo pivo!"
+        "note": "Hej avanturisto! Samo da napomenem: pozivi ističu, možeš imati samo jedan razgovor odjednom i postoji ograničen broj poruka po razgovoru, pa biraj mudro. Pozivaj prijatelje samo ako si zaista spreman za barsku avanturu — i požuri pre nego što goblini popiju svo pivo!"
       },
       "loyalty": {
         "title": "Programi lojalnosti",
@@ -204,7 +204,7 @@
       "distance": "Udaljenost: {distance} {units}",
       "noProfiles": "Nije pronađen nijedan profil. Pokušaj da promeniš filtere.",
       "locationRequired": "Pristup lokaciji je neophodan za prikaz profila u blizini. Molimo omogući lokaciju u podešavanjima pregledača.",
-      "inMeeting": "Ne možeš pozivati dok planiraš susret, prvo završi ga 😊 Tapni bilo gde da otvoriš chat.",
+      "inMeeting": "Ne možeš pozivati dok planiraš susret, prvo ga završi 😊 Tapni bilo gde da otvoriš chat.",
       "inviteExpirationDialog": {
         "message": "Ova osoba te je pozvala za {when}. Želiš li da prihvatiš njihovo vreme?",
         "accept": "Da, {when}",
@@ -218,7 +218,7 @@
         "noInvites": "Nema više pozivnica. Obnavljaju se sutra."
       },
       "invitePrompt": {
-        "message": "Hajde da zajedno gradimo Kegrycorn! 😊\nPozovi prijatelje referalnim linkom: više ljudi = mnogo više avantura i zabave. Dovedi prijatelja i dobij posebnu nagradu: posebnog imaginarnog prijatelja kao zahvalnost! 🎉",
+        "message": "Hajde da zajedno gradimo Kegrycorn! 😊\nPozovi prijatelje preko referalnog linka: više ljudi = mnogo više avantura i zabave. Dovedi prijatelja i dobij posebnu nagradu: posebnog imaginarnog prijatelja u znak zahvalnosti! 🎉",
         "later": "Kasnije",
         "letsGo": "Hajde"
       }
@@ -378,7 +378,7 @@
       "save": "Sačuvaj"
     },
     "coverImage": {
-      "instruction": "Tapni bilo gde da otpremis novu naslovnu sliku",
+      "instruction": "Tapni bilo gde da otpremiš novu naslovnu sliku",
       "save": "Sačuvaj",
       "toast": {
         "coverNotSelected": "Molimo izaberi naslovnu sliku",

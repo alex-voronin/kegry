@@ -94,7 +94,7 @@
     </data>
     <data name="Email.ChatMessageReceived.Body" xml:space="preserve">
         <value>
-            You have received a new message from {}!&lt;br /&gt;&lt;br /&gt;
+            You have received a new message from {0}!&lt;br /&gt;&lt;br /&gt;
             Open &lt;a href=&quot;https://kegry.com/chat&quot;&gt;Chat&lt;/a&gt; to view details.&lt;br /&gt;&lt;br /&gt;
             Best regards,&lt;br /&gt;
             The Kegrycorn Team
