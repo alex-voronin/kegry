@@ -114,6 +114,9 @@ export default function MobileLayout() {
         >
           {t('header.login')}
         </Link>
+        <div className={mobileStyles.drawerSocialLinks}>
+          <SocialLinks />
+        </div>
         <div className={mobileStyles.drawerLegalLinks}>
           <Link
             href={PAGE_ROUTES.LEGAL.PRIVACY}

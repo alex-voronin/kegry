@@ -175,3 +175,7 @@
   @apply text-sm font-medium opacity-60 transition-opacity hover:opacity-100;
   color: var(--color-landing-text);
 }
+
+.drawerSocialLinks {
+  @apply mt-8 flex justify-center;
+}
