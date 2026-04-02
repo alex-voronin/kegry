@@ -15,6 +15,7 @@ interface BlockedUsersState {
   blockedUsers: BlockedUserDto[];
   isLoading: boolean;
   hasMore: boolean;
+  hasError: boolean;
 
   fetchBlockedUsers: (offset?: number, limit?: number) => Promise<void>;
   unblockUser: (userId: string) => Promise<void>;
@@ -27,13 +28,14 @@ const initialState = {
   blockedUsers: [] as BlockedUserDto[],
   isLoading: false,
   hasMore: true,
+  hasError: false,
 };
 
 export const useBlockedUsersStore = create<BlockedUsersState>()((set, get) => ({
   ...initialState,
 
   fetchBlockedUsers: async (offset = 0, limit = DEFAULT_LIMIT) => {
-    set({ isLoading: true });
+    set({ isLoading: true, hasError: false });
     try {
       const response = await apiClient.get<
         ApiResult<PaginatedResponse<BlockedUserDto>>
@@ -55,7 +57,7 @@ export const useBlockedUsersStore = create<BlockedUsersState>()((set, get) => ({
         }));
       }
     } catch (error) {
-      set({ isLoading: false });
+      set({ isLoading: false, hasError: true });
       rethrowApiError(error, 'Failed to fetch blocked users');
     }
   },

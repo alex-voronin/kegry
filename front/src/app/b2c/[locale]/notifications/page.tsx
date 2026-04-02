@@ -51,6 +51,7 @@ export default function NotificationsScreen() {
     deleteNotification,
     blockUser,
     reset,
+    hasError,
   } = useNotificationsStore();
 
   useEffect(() => {
@@ -62,7 +63,7 @@ export default function NotificationsScreen() {
 
   useEffect(() => {
     // Initial load
-    if (notifications.length === 0 && !isLoading && hasMore) {
+    if (notifications.length === 0 && !isLoading && hasMore && !hasError) {
       const loadNotifications = async () => {
         try {
           await fetchNotifications(0, limit);
@@ -76,7 +77,13 @@ export default function NotificationsScreen() {
 
   useEffect(() => {
     // Load more when scrolled to the bottom
-    if (inView && hasMore && !isLoading && notifications.length > 0) {
+    if (
+      inView &&
+      hasMore &&
+      !isLoading &&
+      !hasError &&
+      notifications.length > 0
+    ) {
       const loadNextPage = async () => {
         try {
           // The current length is the offset for the next page

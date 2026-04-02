@@ -57,7 +57,8 @@ export default function VenuesScreen() {
     buffer: 4,
   });
 
-  const { venues, isLoading, hasMore, fetchVenues, reset } = useVenuesStore();
+  const { venues, isLoading, hasMore, hasError, fetchVenues, reset } =
+    useVenuesStore();
 
   useEffect(() => {
     return () => {
@@ -93,7 +94,7 @@ export default function VenuesScreen() {
       } else {
         setIsLocationDenied(false);
         // Only load if we don't have venues yet or if it was previously denied
-        if (venues.length === 0 && !isLoading) {
+        if (venues.length === 0 && !isLoading && !hasError) {
           await loadData(0);
         }
       }
@@ -106,10 +107,10 @@ export default function VenuesScreen() {
   }, [limit, venues.length]); // Fetch when limit is calculated or returned from background
 
   useEffect(() => {
-    if (inView && hasMore && !isLoading && venues.length > 0) {
+    if (inView && hasMore && !isLoading && !hasError && venues.length > 0) {
       loadData(venues.length);
     }
-  }, [inView, hasMore, isLoading, venues.length]);
+  }, [inView, hasMore, isLoading, hasError, venues.length]);
 
   const getMenuOptions = (venue: VenueListItemDto) => [
     {

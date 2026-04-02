@@ -17,7 +17,8 @@ interface FriendsTabProps {
 
 export function FriendsTab({ onSelectUser, onViewProfile }: FriendsTabProps) {
   const t = useTranslations('screens.friendsAndFoes');
-  const { friends, isLoading, hasMore, fetchFriends } = useFriendsStore();
+  const { friends, isLoading, hasMore, hasError, fetchFriends } =
+    useFriendsStore();
 
   const { ref: pageBottomRef, inView } = useInView({
     threshold: 0,
@@ -31,7 +32,7 @@ export function FriendsTab({ onSelectUser, onViewProfile }: FriendsTabProps) {
   });
 
   useEffect(() => {
-    if (friends.length === 0 && !isLoading && hasMore) {
+    if (friends.length === 0 && !isLoading && hasMore && !hasError) {
       const loadFriends = async () => {
         try {
           await fetchFriends(0, limit);
@@ -44,7 +45,7 @@ export function FriendsTab({ onSelectUser, onViewProfile }: FriendsTabProps) {
   }, [fetchFriends, t, friends.length, limit, isLoading, hasMore]);
 
   useEffect(() => {
-    if (inView && hasMore && !isLoading && friends.length > 0) {
+    if (inView && hasMore && !isLoading && !hasError && friends.length > 0) {
       const loadNextPage = async () => {
         try {
           await fetchFriends(friends.length, limit);

@@ -21,6 +21,7 @@ interface NotificationsState {
   totalCount: number;
   isLoading: boolean;
   hasMore: boolean;
+  hasError: boolean;
 
   fetchNotifications: (offset?: number, limit?: number) => Promise<void>;
   acceptInvite: (userId: string, notificationId: string) => Promise<void>;
@@ -37,6 +38,7 @@ const initialState = {
   totalCount: 0,
   isLoading: false,
   hasMore: true,
+  hasError: false,
 };
 
 export const useNotificationsStore = create<NotificationsState>()(
@@ -44,7 +46,7 @@ export const useNotificationsStore = create<NotificationsState>()(
     ...initialState,
 
     fetchNotifications: async (offset = 0, limit = DEFAULT_LIMIT) => {
-      set({ isLoading: true });
+      set({ isLoading: true, hasError: false });
       try {
         const response = await apiClient.get<
           ApiResult<PaginatedResponse<NotificationDto>>
@@ -70,7 +72,7 @@ export const useNotificationsStore = create<NotificationsState>()(
           }));
         }
       } catch (error) {
-        set({ isLoading: false });
+        set({ isLoading: false, hasError: true });
         rethrowApiError(error, 'Failed to fetch notifications');
       }
     },

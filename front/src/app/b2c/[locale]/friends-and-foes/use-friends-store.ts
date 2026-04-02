@@ -16,6 +16,7 @@ interface FriendsState {
   friends: FriendUserDto[];
   isLoading: boolean;
   hasMore: boolean;
+  hasError: boolean;
 
   fetchFriends: (offset?: number, limit?: number) => Promise<void>;
   removeFriend: (userId: string) => Promise<void>;
@@ -30,13 +31,14 @@ const initialState = {
   friends: [] as FriendUserDto[],
   isLoading: false,
   hasMore: true,
+  hasError: false,
 };
 
 export const useFriendsStore = create<FriendsState>()((set, get) => ({
   ...initialState,
 
   fetchFriends: async (offset = 0, limit = DEFAULT_LIMIT) => {
-    set({ isLoading: true });
+    set({ isLoading: true, hasError: false });
 
     try {
       const response = await apiClient.get<
@@ -59,7 +61,7 @@ export const useFriendsStore = create<FriendsState>()((set, get) => ({
         }));
       }
     } catch (error) {
-      set({ isLoading: false });
+      set({ isLoading: false, hasError: true });
       rethrowApiError(error, 'Failed to fetch friends');
     }
   },

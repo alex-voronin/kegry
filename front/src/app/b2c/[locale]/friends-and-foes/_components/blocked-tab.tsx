@@ -16,7 +16,7 @@ interface BlockedTabProps {
 
 export function BlockedTab({ onSelectUser }: BlockedTabProps) {
   const tBlocked = useTranslations('screens.blockedUsers');
-  const { blockedUsers, isLoading, hasMore, fetchBlockedUsers } =
+  const { blockedUsers, isLoading, hasMore, hasError, fetchBlockedUsers } =
     useBlockedUsersStore();
 
   const { ref: pageBottomRef, inView } = useInView({
@@ -31,7 +31,7 @@ export function BlockedTab({ onSelectUser }: BlockedTabProps) {
   });
 
   useEffect(() => {
-    if (blockedUsers.length === 0 && !isLoading && hasMore) {
+    if (blockedUsers.length === 0 && !isLoading && hasMore && !hasError) {
       const loadBlockedUsers = async () => {
         try {
           await fetchBlockedUsers(0, limit);
@@ -51,7 +51,7 @@ export function BlockedTab({ onSelectUser }: BlockedTabProps) {
   ]);
 
   useEffect(() => {
-    if (inView && hasMore && !isLoading && blockedUsers.length > 0) {
+    if (inView && hasMore && !isLoading && !hasError && blockedUsers.length > 0) {
       const loadNextPage = async () => {
         try {
           await fetchBlockedUsers(blockedUsers.length, limit);
