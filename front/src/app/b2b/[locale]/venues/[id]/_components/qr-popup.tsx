@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { X, Download } from 'lucide-react';
+import { downloadQrCode } from '@/lib/qr-utils';
 import styles from './qr-popup.module.css';
 
 interface QrPopupProps {
@@ -15,12 +16,7 @@ export function QrPopup({ isOpen, onClose, url }: QrPopupProps) {
   const qrInstanceRef = useRef<any>(null);
 
   const handleSave = () => {
-    if (qrInstanceRef.current) {
-      qrInstanceRef.current.download({
-        name: 'qr_check-in',
-        extension: 'png',
-      });
-    }
+    downloadQrCode(url, 'default');
   };
 
   useEffect(() => {

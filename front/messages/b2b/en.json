@@ -272,6 +272,7 @@
       "qrCode": "QR Code",
       "qrCodePlaceholder": "Enter QR Code ID",
       "downloadHighContrastQr": "Download high contrast QR",
+      "downloadDefaultQr": "Download default QR",
       "submit": "Save",
       "toast": {
         "updateFailed": "Failed to update QR Code"

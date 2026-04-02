@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { buildQrUrl } from '@/lib/qr-utils';
+import { buildQrUrl, downloadQrCode } from '@/lib/qr-utils';
 import { useVenueStore } from '../use-venue-store';
 import { Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -60,42 +60,8 @@ export default function AdvancedSettingsPage() {
     }
   };
 
-  const handleDownloadHighContrastQr = async () => {
-    const { default: QRCodeStyling } = await import('qr-code-styling');
-    const qr = new QRCodeStyling({
-      width: 590,
-      height: 590,
-      type: 'svg',
-      data: buildQrUrl(qrCode),
-      image: '/assets/b2b/qr-logo.webp',
-      backgroundOptions: {
-        color: '#ffffff',
-      },
-      dotsOptions: {
-        color: '#000000',
-        type: 'square',
-      },
-      cornersSquareOptions: {
-        type: 'extra-rounded',
-        color: '#000000',
-      },
-      cornersDotOptions: {
-        type: 'dot',
-        color: '#000000',
-      },
-      qrOptions: {
-        errorCorrectionLevel: 'Q',
-      },
-      imageOptions: {
-        imageSize: 0.45,
-        margin: 2,
-      },
-    });
-
-    qr.download({
-      name: `qr_${qrCode}_high_contrast`,
-      extension: 'png',
-    });
+  const handleDownloadHighContrastQr = () => {
+    downloadQrCode(buildQrUrl(qrCode), 'bw');
   };
 
   if (isLoading || !currentVenue) {
@@ -110,6 +76,14 @@ export default function AdvancedSettingsPage() {
     qrCode === currentVenue.qrCode && qrCode.trim().length > 0;
 
   const downloadOptions = [
+    {
+      icon: <Download size={24} className="text-primary" />,
+      label: t('downloadDefaultQr'),
+      onClick: () => {
+        setIsDownloadMenuOpen(false);
+        downloadQrCode(buildQrUrl(qrCode), 'default');
+      },
+    },
     {
       icon: <Download size={24} className="text-primary" />,
       label: t('downloadHighContrastQr'),
@@ -151,7 +125,7 @@ export default function AdvancedSettingsPage() {
                   'flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-all',
                   isDownloadEnabled
                     ? 'bg-surface-lighter text-primary hover:bg-surface-light active:scale-95'
-                    : 'bg-surface-dark text-secondary opacity-40 cursor-not-allowed',
+                    : 'bg-surface-dark text-secondary cursor-not-allowed opacity-40',
                 )}
                 onClick={() => setIsDownloadMenuOpen(true)}
                 disabled={!isDownloadEnabled}
