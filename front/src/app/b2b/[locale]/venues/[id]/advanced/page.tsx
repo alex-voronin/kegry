@@ -10,9 +10,13 @@ import { Spinner } from '@/components/ui/spinner';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { ModalMenu } from '@/components/ui/modal-menu';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { buildQrUrl } from '@/lib/qr-utils';
 import { useVenueStore } from '../use-venue-store';
+import { Download } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import stylesCommon from '@/components/ui/common.module.css';
 import styles from '../promotions/_components/promotion-form.module.css'; // Reusing Promotion Form styles for consistency
 
@@ -24,6 +28,7 @@ export default function AdvancedSettingsPage() {
 
   const [qrCode, setQrCode] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
 
   useEffect(() => {
     if (venueId) {
@@ -55,6 +60,44 @@ export default function AdvancedSettingsPage() {
     }
   };
 
+  const handleDownloadHighContrastQr = async () => {
+    const { default: QRCodeStyling } = await import('qr-code-styling');
+    const qr = new QRCodeStyling({
+      width: 590,
+      height: 590,
+      type: 'svg',
+      data: buildQrUrl(qrCode),
+      image: '/assets/b2b/qr-logo.webp',
+      backgroundOptions: {
+        color: '#ffffff',
+      },
+      dotsOptions: {
+        color: '#000000',
+        type: 'square',
+      },
+      cornersSquareOptions: {
+        type: 'extra-rounded',
+        color: '#000000',
+      },
+      cornersDotOptions: {
+        type: 'dot',
+        color: '#000000',
+      },
+      qrOptions: {
+        errorCorrectionLevel: 'Q',
+      },
+      imageOptions: {
+        imageSize: 0.45,
+        margin: 2,
+      },
+    });
+
+    qr.download({
+      name: `qr_${qrCode}_high_contrast`,
+      extension: 'png',
+    });
+  };
+
   if (isLoading || !currentVenue) {
     return (
       <div className="flex flex-1 items-center justify-center">
@@ -62,6 +105,20 @@ export default function AdvancedSettingsPage() {
       </div>
     );
   }
+
+  const isDownloadEnabled =
+    qrCode === currentVenue.qrCode && qrCode.trim().length > 0;
+
+  const downloadOptions = [
+    {
+      icon: <Download size={24} className="text-primary" />,
+      label: t('downloadHighContrastQr'),
+      onClick: () => {
+        setIsDownloadMenuOpen(false);
+        handleDownloadHighContrastQr();
+      },
+    },
+  ];
 
   return (
     <>
@@ -81,12 +138,28 @@ export default function AdvancedSettingsPage() {
         <div className={styles.form}>
           <div className={stylesCommon.sectionContainer}>
             <FormSectionTitle>{t('qrCode')}</FormSectionTitle>
-            <Input
-              value={qrCode}
-              onChange={(e) => setQrCode(e.target.value)}
-              placeholder={t('qrCodePlaceholder')}
-              className={stylesCommon.inputDark}
-            />
+            <div className="flex items-center gap-2">
+              <Input
+                value={qrCode}
+                onChange={(e) => setQrCode(e.target.value)}
+                placeholder={t('qrCodePlaceholder')}
+                className={cn(stylesCommon.inputDark, 'flex-1')}
+              />
+              <button
+                type="button"
+                className={cn(
+                  'flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-all',
+                  isDownloadEnabled
+                    ? 'bg-surface-lighter text-primary hover:bg-surface-light active:scale-95'
+                    : 'bg-surface-dark text-secondary opacity-40 cursor-not-allowed',
+                )}
+                onClick={() => setIsDownloadMenuOpen(true)}
+                disabled={!isDownloadEnabled}
+                title={t('downloadHighContrastQr')}
+              >
+                <Download size={24} />
+              </button>
+            </div>
           </div>
 
           <div className={styles.footer}>
@@ -101,6 +174,12 @@ export default function AdvancedSettingsPage() {
           </div>
         </div>
       </div>
+
+      <ModalMenu
+        isOpen={isDownloadMenuOpen}
+        onClose={() => setIsDownloadMenuOpen(false)}
+        options={downloadOptions}
+      />
     </>
   );
 }

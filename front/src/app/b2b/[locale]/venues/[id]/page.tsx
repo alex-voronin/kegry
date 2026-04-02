@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils';
 import styles from './venue-detail.module.css';
 import { InstagramIcon } from './_components/instagram-icon';
 import { QrPopup } from './_components/qr-popup';
+import { buildQrUrl } from '@/lib/qr-utils';
 import {
   Plus,
   MoreHorizontal,
@@ -226,21 +227,6 @@ export default function VenueDetailPage() {
     },
   ];
 
-  const buildQrUrl = (qrCode: string = '') => {
-    if (typeof window === 'undefined' || !qrCode) return '';
-    const { protocol, hostname, port } = window.location;
-    let rootDomain = hostname;
-    const parts = hostname.split('.');
-
-    // Strip subdomain
-    if (parts.length > 2 || (parts.length === 2 && parts[1] === 'localhost')) {
-      parts.shift();
-      rootDomain = parts.join('.');
-    }
-
-    const portStr = port ? `:${port}` : '';
-    return `${protocol}//${rootDomain}${portStr}?v=${qrCode}`;
-  };
 
   if (isInitializing || isLoading) {
     return (

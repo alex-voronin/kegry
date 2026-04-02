@@ -271,6 +271,7 @@
       "title": "Advanced Settings",
       "qrCode": "QR Code",
       "qrCodePlaceholder": "Enter QR Code ID",
+      "downloadHighContrastQr": "Download high contrast QR",
       "submit": "Save",
       "toast": {
         "updateFailed": "Failed to update QR Code"

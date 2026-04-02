@@ -271,6 +271,7 @@
       "title": "Napredna podešavanja",
       "qrCode": "QR kod",
       "qrCodePlaceholder": "Unesite ID QR koda",
+      "downloadHighContrastQr": "Preuzmi kontrastni QR kod",
       "submit": "Sačuvaj",
       "toast": {
         "updateFailed": "Ažuriranje QR koda nije uspelo"
