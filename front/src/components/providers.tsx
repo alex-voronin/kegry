@@ -17,6 +17,7 @@ import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { FcmPayload, NotificationType } from '@/lib/fcm/types';
 import { TawkMessenger } from './tawk-messenger';
 import { BRAND_NAME } from '@/lib/constants';
+import { NavigationTracker } from './common/NavigationTracker';
 
 function FcmGlobalHandler() {
   const router = useRouter();
@@ -190,6 +191,7 @@ export function Providers({
 
   return (
     <NextIntlClientProvider messages={messages} locale={locale} timeZone="UTC">
+      <NavigationTracker />
       <LocaleHeaderSync />
       <TawkMessenger />
       {runPushesAndLocationHandling && (

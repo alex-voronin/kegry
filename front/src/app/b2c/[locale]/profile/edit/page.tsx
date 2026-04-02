@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
+import { useSafeBack } from '@/hooks/use-safe-back';
 import { toast } from 'react-toastify';
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { HobbiesSection } from '@/components/ui/profile-sections/hobbies-section';
@@ -20,6 +21,7 @@ import {
 } from '@/store/use-user-profile-store';
 import { useHobbiesStore } from '@/store/use-hobbies-store';
 import { HobbyOption } from '@/components/ui/profile-sections/hobbies-section';
+import { PAGE_ROUTES } from '@/lib/routes';
 import styles from './edit.module.css';
 
 import { z } from 'zod';
@@ -31,6 +33,7 @@ export default function ProfileEditPage() {
   const t = useTranslations('screens.editProfile');
   const tValidation = useTranslations('screens.onboarding.validation');
   const router = useRouter();
+  const { safeBack } = useSafeBack();
   const tHobbies = useTranslations('components.profile-sections.hobbies');
   const tGender = useTranslations('components.profile-sections.gender');
 
@@ -146,7 +149,7 @@ export default function ProfileEditPage() {
       };
 
       await patchProfile(patchData);
-      router.back();
+      safeBack(PAGE_ROUTES.PROFILE);
     } catch (err: any) {
       toast.error(err.message || 'Failed to save profile');
     } finally {
@@ -156,7 +159,7 @@ export default function ProfileEditPage() {
 
   const handleBack = () => {
     discardLocalProfileChanges(serverProfile);
-    router.back();
+    safeBack(PAGE_ROUTES.PROFILE);
   };
 
   if (serverProfile === null) {

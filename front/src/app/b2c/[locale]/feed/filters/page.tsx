@@ -3,6 +3,8 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
+import { useSafeBack } from '@/hooks/use-safe-back';
+import { PAGE_ROUTES } from '@/lib/routes';
 import { Header } from '@/components/ui/header';
 import { Spinner } from '@/components/ui/spinner';
 import { Icon } from '@/components/ui/icon';
@@ -39,6 +41,7 @@ export default function FiltersScreen() {
   const tCommon = useTranslations('common');
   const tHobbies = useTranslations('components.profile-sections.hobbies');
   const router = useRouter();
+  const { safeBack } = useSafeBack();
   const {
     filters: serverFilters,
     fetchFilters,
@@ -158,7 +161,7 @@ export default function FiltersScreen() {
     if (isDirty) {
       setIsModalOpen(true);
     } else {
-      router.back();
+      safeBack(PAGE_ROUTES.FEED);
     }
   };
 
@@ -178,14 +181,14 @@ export default function FiltersScreen() {
     try {
       await updateFilters(dto);
       useFeedStore.getState().reset();
-      router.back();
+      safeBack(PAGE_ROUTES.FEED);
     } catch (err: any) {
       toast.error(err.message || 'Failed to update filters');
     }
   };
 
   const handleDiscard = () => {
-    router.back();
+    safeBack(PAGE_ROUTES.FEED);
   };
 
   const genderOptions = [

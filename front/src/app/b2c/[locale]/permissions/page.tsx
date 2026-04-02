@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
+import { useSafeBack } from '@/hooks/use-safe-back';
+import { PAGE_ROUTES } from '@/lib/routes';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { checkPermissionStatus } from '@/lib/permissions';
@@ -11,6 +13,7 @@ import styles from './permissions.module.css';
 export default function PermissionsPage() {
   const t = useTranslations('screens.permissions');
   const router = useRouter();
+  const { safeBack } = useSafeBack();
   const [permissions, setPermissions] = useState({
     locationAllowed: false,
     notificationAllowed: false,
@@ -39,7 +42,7 @@ export default function PermissionsPage() {
             alt="back"
             width={14}
             height={27}
-            onClick={() => router.back()}
+            onClick={() => safeBack(PAGE_ROUTES.PROFILE)}
           />
         }
       />

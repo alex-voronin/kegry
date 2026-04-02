@@ -1,15 +1,16 @@
 'use client';
 
-import { useRouter } from '@/i18n/routing';
 import { ArrowLeft } from 'lucide-react';
 import React from 'react';
+import { useSafeBack } from '@/hooks/use-safe-back';
+import { PAGE_ROUTES } from '@/lib/routes';
 
 export default function LegalLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
+  const { safeBack } = useSafeBack();
 
   return (
     <div className="bg-background text-foreground flex min-h-screen w-full flex-col">
@@ -18,7 +19,7 @@ export default function LegalLayout({
           <button
             onClick={() => {
               if (window.history.length > 1) {
-                router.back();
+                safeBack(PAGE_ROUTES.B2B.HOME);
               } else {
                 window.close();
               }

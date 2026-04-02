@@ -91,7 +91,7 @@ export default function VenueDetailPage() {
     setIsDeleting(true);
     try {
       await deleteVenue(venueId);
-      router.back();
+      safeBack(PAGE_ROUTES.B2B.COMPANIES);
     } catch (error: any) {
       toast.error(error.message || t('toast.deleteFailed'));
     } finally {

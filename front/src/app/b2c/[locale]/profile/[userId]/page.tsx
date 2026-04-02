@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
+import { useSafeBack } from '@/hooks/use-safe-back';
 import { useParams } from 'next/navigation';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
@@ -25,6 +26,7 @@ export default function UserProfilePage() {
   const params = useParams();
   const userId = params.userId as string;
   const router = useRouter();
+  const { safeBack } = useSafeBack();
 
   const tGender = useTranslations('components.profile-sections.gender');
   const tBio = useTranslations('components.profile-sections.bio');
@@ -55,7 +57,7 @@ export default function UserProfilePage() {
   }, [userId, fetchUserProfile]);
 
   const handleBack = () => {
-    router.back();
+    safeBack(PAGE_ROUTES.FEED);
   };
 
   const handleBlockConfirm = async (message: string) => {

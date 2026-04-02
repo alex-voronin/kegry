@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
+import { useSafeBack } from '@/hooks/use-safe-back';
 import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,6 +27,7 @@ import styles from './create-venue.module.css';
 export default function VenueCreatePage() {
   const t = useTranslations('screens.createVenue');
   const router = useRouter();
+  const { safeBack } = useSafeBack();
   const params = useParams();
   const companyId = params.id as string;
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -165,7 +167,7 @@ export default function VenueCreatePage() {
               alt="back"
               width={14}
               height={27}
-              onClick={() => router.back()}
+              onClick={() => safeBack(PAGE_ROUTES.B2B.COMPANIES_DETAIL(companyId))}
             />
           }
         />

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useRouter } from '@/i18n/routing';
+import { useSafeBack } from '@/hooks/use-safe-back';
 import { useSearchParams } from 'next/navigation';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
@@ -29,6 +30,7 @@ type Tab = 'friends' | 'imaginary' | 'blocked';
 
 export default function FriendsAndFoesPage() {
   const router = useRouter();
+  const { safeBack } = useSafeBack();
   const searchParams = useSearchParams();
   const t = useTranslations('screens.friendsAndFoes');
   const tCommon = useTranslations('common');
@@ -275,7 +277,7 @@ export default function FriendsAndFoesPage() {
             alt="back"
             width={20}
             height={26}
-            onClick={() => router.back()}
+            onClick={() => safeBack(PAGE_ROUTES.PROFILE)}
             priority
           />
         }

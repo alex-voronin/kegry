@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
+import { useSafeBack } from '@/hooks/use-safe-back';
 import { toast } from 'react-toastify';
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { Header } from '@/components/ui/header';
@@ -17,6 +18,7 @@ import styles from './cover-image.module.css';
 export default function ProfileCoverImagePage() {
   const t = useTranslations('screens.coverImage');
   const router = useRouter();
+  const { safeBack } = useSafeBack();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [coverBlob, setCoverBlob] = useState<Blob | null>(null);
 
@@ -59,7 +61,7 @@ export default function ProfileCoverImagePage() {
   };
 
   const handleBack = () => {
-    router.back();
+    safeBack(PAGE_ROUTES.PROFILE);
   };
 
   return (

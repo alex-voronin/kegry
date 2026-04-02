@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
+import { useSafeBack } from '@/hooks/use-safe-back';
 import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,6 +28,7 @@ export default function VenueEditPage() {
   const t = useTranslations('screens.editVenue');
   const tDetail = useTranslations('screens.venueDetail');
   const router = useRouter();
+  const { safeBack } = useSafeBack();
   const params = useParams();
   const venueId = params.id as string;
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -199,7 +201,7 @@ export default function VenueEditPage() {
                   width={14}
                   height={27}
                   stopPropagation
-                  onClick={() => router.back()}
+                  onClick={() => safeBack(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId))}
                 />
               }
             />

@@ -6,10 +6,12 @@ export const useSafeBack = () => {
   const router = useRouter();
 
   const safeBack = (fallbackUrl: string) => {
-    // Check if there's history beyond the current page.
-    // window.history.length > 1 works for pages reached via internal routing.
-    // For a more robust check, we check the length.
-    if (typeof window !== 'undefined' && window.history.length > 1) {
+    const canGoBack =
+      typeof window !== 'undefined' &&
+      window.history.length > 1 &&
+      sessionStorage.getItem('previousPath') !== null;
+
+    if (canGoBack) {
       router.back();
     } else {
       router.push(fallbackUrl);

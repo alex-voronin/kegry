@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter, usePathname } from '@/i18n/routing';
+import { useSafeBack } from '@/hooks/use-safe-back';
 import { useTranslations, useLocale } from 'next-intl';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
@@ -31,6 +32,7 @@ const locales = [
 
 export default function SettingsPage() {
   const router = useRouter();
+  const { safeBack } = useSafeBack();
   const pathname = usePathname();
   const locale = useLocale();
   const t = useTranslations('screens.settings');
@@ -85,7 +87,7 @@ export default function SettingsPage() {
   }, [fetchSettings, fetchMyProfile, serverProfile, t]);
 
   const handleBack = () => {
-    router.back();
+    safeBack(PAGE_ROUTES.PROFILE);
   };
 
   const handleSave = async () => {
@@ -98,7 +100,7 @@ export default function SettingsPage() {
       if (storeLocale && storeLocale !== locale) {
         router.replace(PAGE_ROUTES.PROFILE, { locale: storeLocale });
       } else {
-        router.back();
+        safeBack(PAGE_ROUTES.PROFILE);
       }
     } catch (error) {
       toast.error(t('saveFailed'));
