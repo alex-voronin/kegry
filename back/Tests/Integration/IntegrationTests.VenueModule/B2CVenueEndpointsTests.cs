@@ -276,6 +276,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             currentTime = currentTime.AddDays(1);
             Factory.FakeTimeProvider.SetUtcNow(currentTime);
         }
+        Factory.FakeTimeProvider.Reset(DateTimeOffset.UtcNow);
     }
 
     [Fact]

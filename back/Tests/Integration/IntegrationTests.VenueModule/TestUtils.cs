@@ -84,16 +84,18 @@ public class TestUtils
         // 2. Configure Loyalty Levels
         foreach (var level in levels)
         {
-            await _factory.ApiClient.PutAsync<UpdateLoyaltyLevelRequest, ApiResult.EmptyResult>(
+            var response = await _factory.ApiClient.PutAsync<UpdateLoyaltyLevelRequest, ApiResult.EmptyResult>(
                 ApiRoutes.B2B.Company.LoyaltyLevels(companyId),
                 new UpdateLoyaltyLevelRequest(level));
+            response.Success.ShouldBeTrue();
         }
 
         // 3. Create discounts
         foreach (var discount in discounts)
         {
-            await _factory.ApiClient.PostAsync<CreateDiscountRequest, ApiResult<CreateDiscountResponse>>(
+            var response = await _factory.ApiClient.PostAsync<CreateDiscountRequest, ApiResult<CreateDiscountResponse>>(
                 ApiRoutes.B2B.Venue.Discounts(venueId), discount);
+            response.Success.ShouldBeTrue();
         }
 
         return (companyId, venueId);
@@ -105,7 +107,7 @@ public class TestUtils
         Guid venueId)
     {
         // 1. Create B2C User
-        var b2CAuth = await _factory.AuthManager.CreateAndLoginUserAsync("b2c_tiered_b2c@example.com", "Password123!");
+        var b2CAuth = await _factory.AuthManager.CreateAndLoginUserAsync(email, password);
         _factory.ApiClient.SetAuth(b2CAuth);
 
         // 2. Perform 2 check-ins to reach Level 2 (starts at 2 visits)
