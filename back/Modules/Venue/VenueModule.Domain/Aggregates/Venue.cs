@@ -15,7 +15,13 @@ public class Venue : ISoftDeletable<Guid>, IAuditable
     public string? CoverImageS3Key
     {
         get;
-        set => field = ValidateS3Key(nameof(CoverImageS3Key), value);
+        set
+        {
+            field = ValidateS3Key(nameof(CoverImageS3Key), value);
+            // It's kind of a hack, since AvatarImageS3Key typically doesn't change even when we upload a new image,
+            // but we should still update UpdatedAt to revalidate the Cloudflare cache.
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
     }
 
     public required Point Coordinates

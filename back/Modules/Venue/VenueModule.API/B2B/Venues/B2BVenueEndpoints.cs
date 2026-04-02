@@ -29,7 +29,7 @@ public class B2BVenueEndpoints : IEndpoints
             .WithTags("Venue Management API")
             .RequireAuthorization(AuthPolicies.B2BAdmin);
         managementApiGroup.MapPost("/api/v1/b2b/company/{companyId:guid}/venue", CreateVenue);
-        managementApiGroup.MapGet("/api/v1/b2b/venue", GetVenues);
+        managementApiGroup.MapGet("/api/v1/b2b/venues", GetVenues);
         managementApiGroup.MapGet("/api/v1/b2b/venue/{id:guid}", GetVenue);
         managementApiGroup.MapPatch("/api/v1/b2b/venue/{id:guid}", PatchVenue);
         managementApiGroup.MapDelete("/api/v1/b2b/venue/{id:guid}", DeleteVenue);

@@ -53,15 +53,15 @@ public class IndexModel : PageModel
         if (HasNextPage) Users = Users.Take(PageSize).ToList();
     }
 
-    public async Task<IActionResult> OnPostCreateAsync(string email, string? userName, string password)
+    public async Task<IActionResult> OnPostCreateAsync(string email, string password)
     {
         var user = new User
         {
             Id = Guid.NewGuid(),
             Email = email,
-            UserName = string.IsNullOrWhiteSpace(userName) ? email : userName,
+            UserName = email,
             Type = UserType.B2B,
-            RequiredAction = RequiredAction.None,
+            RequiredAction = RequiredAction.OnboardingCompletion,
             EmailConfirmed = true
         };
 

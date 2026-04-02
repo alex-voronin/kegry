@@ -17,7 +17,13 @@ public class Company : ISoftDeletable<Guid>, IAuditable
     public string? AvatarImageS3Key
     {
         get;
-        set => field = ValidateS3Key(nameof(AvatarImageS3Key), value);
+        set
+        {
+            field = ValidateS3Key(nameof(AvatarImageS3Key), value);
+            // It's kind of a hack, since AvatarImageS3Key typically doesn't change even when we upload a new image,
+            // but we should still update UpdatedAt to revalidate the Cloudflare cache.
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
     }
 
     public string? Email
@@ -42,10 +48,10 @@ public class Company : ISoftDeletable<Guid>, IAuditable
         }
 
         _loyaltyLevels.AddRange([
-            new LoyaltyLevel { Id = 0, CompanyId = Id, VisitsUpperBound = 3, IsActive = false},
-            new LoyaltyLevel { Id = 1, CompanyId = Id, VisitsUpperBound = 10, IsActive = false},
-            new LoyaltyLevel { Id = 2, CompanyId = Id, VisitsUpperBound = 15, IsActive = false},
-            new LoyaltyLevel { Id = 3, CompanyId = Id, VisitsUpperBound = 20, IsActive = false}
+            new LoyaltyLevel { Id = 0, CompanyId = Id, VisitsUpperBound = 3, IsActive = false },
+            new LoyaltyLevel { Id = 1, CompanyId = Id, VisitsUpperBound = 10, IsActive = false },
+            new LoyaltyLevel { Id = 2, CompanyId = Id, VisitsUpperBound = 15, IsActive = false },
+            new LoyaltyLevel { Id = 3, CompanyId = Id, VisitsUpperBound = 20, IsActive = false }
         ]);
     }
 
