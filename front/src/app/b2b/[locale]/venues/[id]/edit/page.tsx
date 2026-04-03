@@ -166,8 +166,7 @@ export default function VenueEditPage() {
         ...(coverImageUrl ? { coverImageUrl } : {}),
       });
 
-      toast.success('Venue updated successfully');
-      router.push(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId));
+      safeBack(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId));
     } catch (error: any) {
       toast.error(error.message || t('toast.updateFailed'));
     } finally {
@@ -201,7 +200,9 @@ export default function VenueEditPage() {
                   width={14}
                   height={27}
                   stopPropagation
-                  onClick={() => safeBack(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId))}
+                  onClick={() =>
+                    safeBack(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId))
+                  }
                 />
               }
             />

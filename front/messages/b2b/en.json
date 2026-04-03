@@ -4,11 +4,11 @@
       "network": "Network error. Please try again."
     },
     "promoTypes": {
-      "happyHours": "Happy Hours",
-      "twoPlusOne": "2+1",
-      "event": "Event",
-      "discount": "Discount",
-      "general": "General"
+      "HappyHours": "Happy Hours",
+      "TwoPlusOne": "2+1",
+      "Event": "Event",
+      "Discount": "Discount",
+      "General": "General"
     },
     "days": {
       "Monday": "Mon",
@@ -232,6 +232,7 @@
     "companyProfile": {
       "title": "Company",
       "loyaltyLevelsTitle": "Loyalty levels",
+      "loyaltyLevelItemTitle": "Level {level}",
       "loyaltyLevelSubtitle": "Visits under: {visitsUpperBound}",
       "venuesTitle": "Venues",
       "noVenues": "No venues found.",
@@ -248,6 +249,7 @@
     },
     "editLoyaltyLevel": {
       "title": "Edit loyalty level",
+      "loyaltyLevelItemTitle": "Level {level}",
       "isActive": "Active",
       "visitsUpperBound": "Visits under",
       "submit": "Save",
@@ -281,6 +283,7 @@
     "venueDetail": {
       "title": "Venue",
       "status": "Status",
+      "loyaltyLevelTitle": "Level {level}",
       "contacts": "Contacts",
       "address": "Address",
       "workingHours": "Working Hours",

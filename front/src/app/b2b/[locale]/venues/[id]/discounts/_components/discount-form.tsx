@@ -36,7 +36,7 @@ interface DiscountFormProps {
     days: string[];
     loyaltyLevelId: number | null;
   };
-  loyaltyLevels: { id: number; visitsUpperBound: number }[];
+  loyaltyLevels: { id: number; visitsUpperBound: number; isActive: boolean }[];
   onSubmit: (values: {
     percent: number;
     days: string[];
@@ -87,7 +87,7 @@ export function DiscountForm({
     defaultValues: {
       percent: initialValues?.percent ?? 0,
       days: initialValues?.days ?? [],
-      loyaltyLevelId: initialValues?.loyaltyLevelId ?? (loyaltyLevels[0]?.id || null),
+      loyaltyLevelId: initialValues?.loyaltyLevelId ?? (loyaltyLevels.find(l => l.isActive)?.id ?? null),
     },
   });
 
@@ -150,15 +150,17 @@ export function DiscountForm({
       <div className={stylesCommon.sectionContainer}>
         <FormSectionTitle required>{tDiscountForm('loyaltyLevel')}</FormSectionTitle>
         <Select
-          options={loyaltyLevels.map((l) => ({
-            value: l.id,
-            label: tDiscountForm('loyaltyLevelOption', {
-              level: l.id,
-              visits: l.visitsUpperBound,
-            }),
-          }))}
+          options={loyaltyLevels
+            .filter((l) => l.isActive)
+            .map((l) => ({
+              value: l.id,
+              label: tDiscountForm('loyaltyLevelOption', {
+                level: l.id,
+                visits: l.visitsUpperBound,
+              }),
+            }))}
           value={
-            watch('loyaltyLevelId')
+            watch('loyaltyLevelId') !== null
               ? {
                   value: watch('loyaltyLevelId')!,
                   label: tDiscountForm('loyaltyLevelOption', {
@@ -170,7 +172,9 @@ export function DiscountForm({
                 }
               : null
           }
-          onChange={(option: any) => setValue('loyaltyLevelId', option?.value || null)}
+          onChange={(option: any) =>
+            setValue('loyaltyLevelId', option?.value ?? null)
+          }
           placeholder={tDiscountForm('loyaltyLevelPlaceholder')}
           isSearchable={false}
         />

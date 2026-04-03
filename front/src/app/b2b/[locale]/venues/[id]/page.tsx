@@ -27,6 +27,8 @@ import {
   BadgeAlert,
   Settings,
   QrCode,
+  SquarePen,
+  Trash2,
 } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { PromoIcon } from '@/lib/promo-types';
@@ -169,12 +171,12 @@ export default function VenueDetailPage() {
 
   const discountMenuOptions = [
     {
-      icon: '/assets/b2b/edit-icon.svg',
+      icon: <SquarePen size={24} className="text-primary" />,
       label: t('menu.editDiscount'),
       onClick: handleEditDiscount,
     },
     {
-      icon: '/assets/b2b/delete-icon.svg',
+      icon: <Trash2 size={24} className="text-error" />,
       label: t('menu.deleteDiscount'),
       onClick: handleDeleteDiscount,
       isDestructive: true,
@@ -183,12 +185,12 @@ export default function VenueDetailPage() {
 
   const promoMenuOptions = [
     {
-      icon: '/assets/b2b/edit-icon.svg',
+      icon: <SquarePen size={24} className="text-primary" />,
       label: t('menu.editPromotion'),
       onClick: handleEditPromo,
     },
     {
-      icon: '/assets/b2b/delete-icon.svg',
+      icon: <Trash2 size={24} className="text-error" />,
       label: t('menu.deletePromotion'),
       onClick: handleDeletePromo,
       isDestructive: true,
@@ -210,7 +212,7 @@ export default function VenueDetailPage() {
       },
     },
     {
-      icon: '/assets/b2b/edit-icon.svg',
+      icon: <SquarePen size={24} className="text-primary" />,
       label: t('menu.editVenue'),
       onClick: handleEditVenue,
     },
@@ -220,13 +222,12 @@ export default function VenueDetailPage() {
       onClick: handleAdvanced,
     },
     {
-      icon: '/assets/b2b/delete-icon.svg',
+      icon: <Trash2 size={24} className="text-error" />,
       label: t('menu.deleteVenue'),
       onClick: handleDeleteVenue,
       isDestructive: true,
     },
   ];
-
 
   if (isInitializing || isLoading) {
     return (
@@ -281,6 +282,11 @@ export default function VenueDetailPage() {
               >
                 <QrCode size={22} />
               </button>
+              <SquarePen
+                size={24}
+                className="cursor-pointer"
+                onClick={handleEditVenue}
+              />
               <Icon
                 src="/assets/b2b/more-icon.svg"
                 alt="more"
@@ -415,7 +421,7 @@ export default function VenueDetailPage() {
             </div>
           )}
 
-          {currentVenue.promos && currentVenue.promos.length > 0 && (
+          {currentVenue.promos && (
             <div className={styles.section}>
               <div className={styles.listHeader}>
                 <h2 className={styles.listTitle}>{t('promotions')}</h2>
@@ -449,7 +455,7 @@ export default function VenueDetailPage() {
             </div>
           )}
 
-          {currentVenue.discounts && currentVenue.discounts.length > 0 && (
+          {currentVenue.discounts && (
             <div className={styles.section}>
               <div className={styles.listHeader}>
                 <h2 className={styles.listTitle}>{t('discounts')}</h2>
@@ -469,9 +475,11 @@ export default function VenueDetailPage() {
                         <span className={styles.discountPercent}>
                           {discount.percent}%
                         </span>
-                        {discount.loyaltyLevelId && (
+                        {discount.loyaltyLevelId != null && (
                           <span className="text-secondary text-sm">
-                            Level {discount.loyaltyLevelId}
+                            {t('loyaltyLevelTitle', {
+                              level: discount.loyaltyLevelId,
+                            })}
                           </span>
                         )}
                       </div>

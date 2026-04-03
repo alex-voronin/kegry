@@ -4,11 +4,11 @@
       "network": "Greška mreže. Molimo pokušajte ponovo."
     },
     "promoTypes": {
-      "happyHours": "Happy Hours",
-      "twoPlusOne": "2+1",
-      "event": "Događaj",
-      "discount": "Popust",
-      "general": "Opšte"
+      "HappyHours": "Happy Hours",
+      "TwoPlusOne": "2+1",
+      "Event": "Događaj",
+      "Discount": "Popust",
+      "General": "Opšte"
     },
     "days": {
       "Monday": "Pon",
@@ -232,6 +232,7 @@
     "companyProfile": {
       "title": "Kompanija",
       "loyaltyLevelsTitle": "Nivoi lojalnosti",
+      "loyaltyLevelItemTitle": "Nivo {level}",
       "loyaltyLevelSubtitle": "Posete ispod: {visitsUpperBound}",
       "venuesTitle": "Lokali",
       "noVenues": "Nema pronađenih lokala.",
@@ -248,6 +249,7 @@
     },
     "editLoyaltyLevel": {
       "title": "Uredi nivo lojalnosti",
+      "loyaltyLevelItemTitle": "Nivo {level}",
       "isActive": "Aktivan",
       "visitsUpperBound": "Posete ispod",
       "submit": "Sačuvaj",
@@ -281,6 +283,7 @@
     "venueDetail": {
       "title": "Lokal",
       "status": "Status",
+      "loyaltyLevelTitle": "Nivo {level}",
       "contacts": "Kontakti",
       "address": "Adresa",
       "workingHours": "Radno vreme",

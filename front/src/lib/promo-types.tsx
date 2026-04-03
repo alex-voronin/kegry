@@ -7,11 +7,11 @@ import {
 } from 'lucide-react';
 
 export enum PromoType {
-  General = 'general',
-  HappyHours = 'happyHours',
-  TwoPlusOne = 'twoPlusOne',
-  Event = 'event',
-  Discount = 'discount',
+  General = 'General',
+  HappyHours = 'HappyHours',
+  TwoPlusOne = 'TwoPlusOne',
+  Event = 'Event',
+  Discount = 'Discount',
 }
 
 export const PromoIcon = ({

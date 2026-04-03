@@ -20,6 +20,7 @@ import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS, PAGE_ROUTES } from '@/lib/routes';
 import { useCompanyProfileStore } from '../../use-company-profile-store';
 import { useSafeBack } from '@/hooks/use-safe-back';
+import { extractApiError } from '@/lib/api-error';
 
 type FormValues = {
   isActive: boolean;
@@ -128,8 +129,9 @@ export default function LoyaltyLevelEditPage() {
       safeBack(
         PAGE_ROUTES.B2B.COMPANIES_DETAIL(companyId) + '?expanded=loyalty',
       );
-    } catch {
-      toast.error(t('toast.updateFailed'));
+    } catch (err: any) {
+      const errorMessage = extractApiError(err)[0];
+      toast.error(errorMessage || t('toast.updateFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -172,7 +174,9 @@ export default function LoyaltyLevelEditPage() {
         <div className={stylesCommon.sectionContainer}>
           <FormSectionTitle>{t('isActive')}</FormSectionTitle>
           <div className="bg-form-element flex h-[44px] items-center justify-between px-4 sm:rounded-xl">
-            <span className="text-secondary text-sm">{`Level ${level.id}`}</span>
+            <span className="text-secondary text-sm">
+              {t('loyaltyLevelItemTitle', { level: level.id })}
+            </span>
             <Toggle
               checked={isActive}
               onChange={(checked) => {

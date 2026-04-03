@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter, useParams } from 'next/navigation';
-import { ChevronDown, ChevronRight, Plus, Medal } from 'lucide-react';
+import { ChevronDown, ChevronRight, Plus, Medal, SquarePen, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
@@ -58,7 +58,7 @@ export default function CompanyProfilePage() {
 
   const menuOptions = [
     {
-      icon: '/assets/b2b/edit-icon.svg',
+      icon: <SquarePen size={24} className="text-primary" />,
       label: t('menu.edit'),
       onClick: () => {
         setIsMenuOpen(false);
@@ -66,7 +66,7 @@ export default function CompanyProfilePage() {
       },
     },
     {
-      icon: '/assets/b2b/delete-icon.svg',
+      icon: <Trash2 size={24} className="text-error" />,
       label: t('menu.delete'),
       onClick: () => {
         setIsMenuOpen(false);
@@ -139,13 +139,20 @@ export default function CompanyProfilePage() {
           />
         }
         right={
-          <Icon
-            src="/assets/b2b/more-icon.svg"
-            alt="more"
-            width={24}
-            height={24}
-            onClick={() => setIsMenuOpen(true)}
-          />
+          <div className="flex items-center gap-4">
+            <SquarePen
+              size={24}
+              className="cursor-pointer"
+              onClick={() => router.push(PAGE_ROUTES.B2B.COMPANIES_EDIT(id))}
+            />
+            <Icon
+              src="/assets/b2b/more-icon.svg"
+              alt="more"
+              width={24}
+              height={24}
+              onClick={() => setIsMenuOpen(true)}
+            />
+          </div>
         }
       />
 
@@ -216,8 +223,8 @@ export default function CompanyProfilePage() {
                     key={level.id}
                     className="cursor-pointer"
                     onClick={() => handleLoyaltyLevelClick(level.id)}
-                    avatarAlt={`level ${level.id}`}
-                    title={`Level ${level.id}`}
+                    avatarAlt={t('loyaltyLevelItemTitle', { level: level.id })}
+                    title={t('loyaltyLevelItemTitle', { level: level.id })}
                     subtitle={t('loyaltyLevelSubtitle', {
                       visitsUpperBound: level.visitsUpperBound,
                     })}

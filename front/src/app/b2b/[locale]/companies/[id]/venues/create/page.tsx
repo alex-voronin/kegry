@@ -148,7 +148,7 @@ export default function VenueCreatePage() {
       // 3. Patch venue with cover URL
       await patchVenue(venueId, { coverImageUrl: publicUrl });
 
-      router.push(PAGE_ROUTES.B2B.COMPANIES_DETAIL(companyId));
+      safeBack(PAGE_ROUTES.B2B.COMPANIES_DETAIL(companyId));
     } catch (err: any) {
       toast.error(t('toast.createFailed'));
     } finally {
@@ -167,7 +167,9 @@ export default function VenueCreatePage() {
               alt="back"
               width={14}
               height={27}
-              onClick={() => safeBack(PAGE_ROUTES.B2B.COMPANIES_DETAIL(companyId))}
+              onClick={() =>
+                safeBack(PAGE_ROUTES.B2B.COMPANIES_DETAIL(companyId))
+              }
             />
           }
         />
