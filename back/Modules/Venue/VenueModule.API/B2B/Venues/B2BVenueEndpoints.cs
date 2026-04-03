@@ -190,7 +190,7 @@ public class B2BVenueEndpoints : IEndpoints
         CancellationToken ct)
     {
         Validation.ThrowIfFileSizeExceed(request.ContentLength, Validation.MaxCoverSizeBytes);
-        await VenueOwnerGuard.RequireVenueOwnerAsync(
+        var venue = await VenueOwnerGuard.RequireVenueOwnerAsync(
             venueId: id,
             user: user,
             venueRepository: venueRepository,
@@ -199,7 +199,7 @@ public class B2BVenueEndpoints : IEndpoints
             ct: ct);
 
         var urls = await imageService.GetVenueCoverUploadUrlAsync(
-            companyId: user.GetId(),
+            companyId: venue.CompanyId,
             venueId: id,
             contentLength: request.ContentLength,
             ct: ct);
