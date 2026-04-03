@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { ChevronDown, ChevronRight, Plus, Medal } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Header } from '@/components/ui/header';
@@ -28,14 +28,12 @@ export default function CompanyProfilePage() {
   const tCreate = useTranslations('screens.createCompany');
   const router = useRouter();
   const { id } = useParams() as { id: string };
-  const searchParams = useSearchParams();
+  const EXPANDED_SESSION_STORAGE_KEY = `loyalty_expanded_${id}`;
+  const [isLoyaltyExpanded, setIsLoyaltyExpanded] = useState(false);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isLoyaltyExpanded, setIsLoyaltyExpanded] = useState(
-    searchParams.get('expanded') === 'loyalty',
-  );
 
   const { safeBack } = useSafeBack();
 
@@ -92,12 +90,11 @@ export default function CompanyProfilePage() {
   };
 
   useEffect(() => {
-    if (searchParams.get('expanded')) {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('expanded');
-      window.history.replaceState({}, '', url.toString());
+    const expanded = sessionStorage.getItem(EXPANDED_SESSION_STORAGE_KEY);
+    if (expanded !== null) {
+      setIsLoyaltyExpanded(expanded === 'true');
     }
-  }, [searchParams]);
+  }, [EXPANDED_SESSION_STORAGE_KEY]);
 
   useEffect(() => {
     if (id) {
@@ -193,7 +190,14 @@ export default function CompanyProfilePage() {
               <button
                 type="button"
                 className="flex w-full items-center justify-between"
-                onClick={() => setIsLoyaltyExpanded((v) => !v)}
+                onClick={() => {
+                  const nextValue = !isLoyaltyExpanded;
+                  setIsLoyaltyExpanded(nextValue);
+                  sessionStorage.setItem(
+                    EXPANDED_SESSION_STORAGE_KEY,
+                    String(nextValue),
+                  );
+                }}
               >
                 <h2 className={styles.listTitle}>{t('loyaltyLevelsTitle')}</h2>
                 <ChevronDown

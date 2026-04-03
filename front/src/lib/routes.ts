@@ -141,6 +141,10 @@ export const API_ENDPOINTS = {
       DISCOUNT: (venueId: string, discountId: string) =>
         `/api/v1/b2b/venue/${venueId}/discounts/${discountId}`,
     },
+    LOYALTY_LEVELS: {
+      BY_COMPANY_ID: (companyId: string) =>
+        `/api/v1/b2b/company/${companyId}/loyalty-levels`,
+    },
   },
   VENUES: {
     LIST: '/api/v1/venues',
@@ -156,9 +160,5 @@ export const API_ENDPOINTS = {
     GET: '/api/v1/npc',
     MET: '/api/v1/npc/met',
     INVITE: (id: string) => `/api/v1/npc/${id}/invite`,
-  },
-  LOYALTY_LEVELS: {
-    BY_COMPANY_ID: (companyId: string) =>
-      `/api/v1/company/${companyId}/loyalty-levels`,
   },
 } as const;

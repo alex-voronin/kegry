@@ -115,7 +115,7 @@ export default function CompanyEditPage() {
         ...(avatarImageUrl ? { avatarImageUrl } : {}),
       });
 
-      router.push(PAGE_ROUTES.B2B.COMPANIES_DETAIL(id));
+      safeBack(PAGE_ROUTES.B2B.COMPANIES_DETAIL(id));
     } catch {
       toast.error(t('toast.updateFailed'));
     } finally {

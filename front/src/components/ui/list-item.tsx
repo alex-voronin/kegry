@@ -44,7 +44,7 @@ export function ListItem({
                 alt={avatarAlt}
                 width={48}
                 height={48}
-                className="object-cover"
+                className="h-full w-full object-cover"
               />
             )
           )}

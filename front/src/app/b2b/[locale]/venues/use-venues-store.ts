@@ -17,10 +17,10 @@ export const useVenuesStore = create<VenuesState>()((set) => ({
   fetchVenues: async () => {
     set({ isLoading: true });
     try {
-      const response = await apiClient.get<{ result: VenueListItemDto[] }>(
+      const response = await apiClient.get<{ result: { venues: VenueListItemDto[] } }>(
         API_ENDPOINTS.B2B.VENUES.BASE,
       );
-      set({ venues: response.data.result, isLoading: false });
+      set({ venues: response.data.result.venues, isLoading: false });
     } catch (error) {
       set({ isLoading: false });
       rethrowApiError(error, 'Failed to fetch venues');

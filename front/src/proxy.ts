@@ -5,14 +5,6 @@ import { B2B_SUBDOMAIN } from './lib/constants';
 
 const intlMiddleware = createMiddleware(routing);
 
-function SetSrLocaleCookie(response: NextResponse) {
-  response.cookies.set('NEXT_LOCALE', 'sr', {
-    maxAge: 60 * 60 * 24 * 365, // 1 year
-    path: '/',
-    sameSite: 'lax',
-  });
-}
-
 export default function middleware(req: NextRequest) {
   // 1. Determine the platform based on the requested host
   const hostname = req.headers.get('host') || '';
@@ -27,41 +19,17 @@ export default function middleware(req: NextRequest) {
     return NextResponse.rewrite(sitemapUrl);
   }
 
-  // 3. Detect referer-based locale preference (.rs -> sr)
-  let forceSrLocale = false;
-  const referer = req.headers.get('referer');
-  if (referer && !req.cookies.has('NEXT_LOCALE')) {
-    try {
-      const refererUrl = new URL(referer);
-      if (
-        refererUrl.hostname === 'kegry.rs' ||
-        refererUrl.hostname.endsWith('.kegry.rs')
-      ) {
-        forceSrLocale = true;
-      }
-    } catch (e) {
-      // Ignore invalid referer URLs
-    }
-  }
-
-  if (forceSrLocale) {
-    req.cookies.set('NEXT_LOCALE', 'sr');
-  }
-
-  // 4. Run next-intl middleware to handle locales and redirects
+  // 3. Run next-intl middleware to handle locales and redirects
   const response = intlMiddleware(req);
 
   // If next-intl issued a redirect (e.g., to add a default locale), return it immediately
   if (response.status >= 300 && response.status < 400) {
-    if (forceSrLocale) {
-      SetSrLocaleCookie(response);
-    }
     return response;
   }
 
   // Set pathname header for layout detection
   response.headers.set('x-pathname', pathname);
-  // 5. Apply the platform routing via Server Rewrites
+  // 4. Apply the platform routing via Server Rewrites
   const rewriteUrlStr = response.headers.get('x-middleware-rewrite');
 
   if (rewriteUrlStr) {
@@ -69,9 +37,6 @@ export default function middleware(req: NextRequest) {
     const rewriteUrl = new URL(rewriteUrlStr);
     rewriteUrl.pathname = `/${platform}${rewriteUrl.pathname}`;
     response.headers.set('x-middleware-rewrite', rewriteUrl.toString());
-    if (forceSrLocale) {
-      SetSrLocaleCookie(response);
-    }
     return response;
   }
 
@@ -80,14 +45,9 @@ export default function middleware(req: NextRequest) {
   clonedUrl.pathname = `/${platform}${clonedUrl.pathname}`;
 
   // Return a new rewrite, but preserve headers set by next-intl (like x-next-intl-locale)
-  const platformResponse = NextResponse.rewrite(clonedUrl, {
+  return NextResponse.rewrite(clonedUrl, {
     headers: response.headers,
   });
-
-  if (forceSrLocale) {
-    SetSrLocaleCookie(platformResponse);
-  }
-  return platformResponse;
 }
 
 export const config = {

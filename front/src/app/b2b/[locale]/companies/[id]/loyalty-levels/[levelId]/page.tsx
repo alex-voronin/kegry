@@ -115,7 +115,7 @@ export default function LoyaltyLevelEditPage() {
     setIsSubmitting(true);
     try {
       await apiClient.put(
-        API_ENDPOINTS.LOYALTY_LEVELS.BY_COMPANY_ID(companyId),
+        API_ENDPOINTS.B2B.LOYALTY_LEVELS.BY_COMPANY_ID(companyId),
         {
           loyaltyLevel: {
             id: level.id,
