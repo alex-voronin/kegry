@@ -39,6 +39,7 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
                     type = table.Column<int>(type: "integer", nullable: false),
                     required_action = table.Column<int>(type: "integer", nullable: false),
                     has_google_auth = table.Column<bool>(type: "boolean", nullable: false),
+                    is_banned = table.Column<bool>(type: "boolean", nullable: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),

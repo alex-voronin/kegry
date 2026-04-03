@@ -104,7 +104,7 @@ public static class ApiRoutes
         // ReSharper disable once MemberHidesStaticFromOuterClass
         public static class Venue
         {
-            public const string Root = "/api/v1/b2b/venue";
+            public const string Root = "/api/v1/b2b/venues";
             public static string Single(Guid id) => $"/api/v1/b2b/venue/{id}";
             public static string Promotions(Guid venueId) => $"/api/v1/b2b/venue/{venueId}/promotions";
             public static string Promotion(Guid venueId, Guid id) => $"/api/v1/b2b/venue/{venueId}/promotions/{id}";

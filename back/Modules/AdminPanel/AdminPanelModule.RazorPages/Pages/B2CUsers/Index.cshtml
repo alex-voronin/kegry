@@ -1,7 +1,7 @@
 @page
-@model AdminPanelModule.RazorPages.Pages.B2CUsers.ConvertModel
+@model AdminPanelModule.RazorPages.Pages.B2CUsers.IndexModel
 @{
-    ViewData["Title"] = "Convert B2C User to B2B";
+    ViewData["Title"] = "B2C Users";
 }
 
 <div class="card" style="max-width: 600px; margin: 0 auto;">
@@ -36,26 +36,43 @@
                         </div>
                     </div>
                     <div class="detail-row">
+                        <div class="detail-label">Status</div>
+                        <div class="detail-value text-sm">
+                            <span class="badge @(Model.FoundUser.IsBanned ? "badge-red" : "badge-green")">
+                                @(Model.FoundUser.IsBanned ? "Banned" : "Active")
+                            </span>
+                        </div>
+                    </div>
+                    <div class="detail-row">
                         <div class="detail-label">User ID</div>
                         <div class="detail-value text-sm">@Model.FoundUser.Id</div>
                     </div>
                 </div>
 
-                @if (Model.FoundUser.Type == SecurityModule.Domain.ValueObjects.UserType.B2C)
-                {
-                    <form method="post" asp-page-handler="Convert" class="mt-16">
+                <div class="mt-16 pt-16 flex flex-col gap-8" style="border-top: 1px solid var(--border);">
+                    <form method="post" asp-page-handler="@(Model.FoundUser.IsBanned ? "Unban" : "Ban")">
                         <input type="hidden" name="userId" value="@Model.FoundUser.Id" />
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to convert this user to B2B? This action cannot be easily undone via UI.')">
-                            Convert to B2B Account
+                        <button type="submit" class="btn @(Model.FoundUser.IsBanned ? "btn-success" : "btn-danger") w-full">
+                            @(Model.FoundUser.IsBanned ? "Unban User" : "Ban User")
                         </button>
                     </form>
-                }
-                else
-                {
-                    <div class="alert alert-success mt-16 mb-0">
-                        This user is already a B2B account.
-                    </div>
-                }
+
+                    @if (Model.FoundUser.Type == SecurityModule.Domain.ValueObjects.UserType.B2C)
+                    {
+                        <form method="post" asp-page-handler="Convert">
+                            <input type="hidden" name="userId" value="@Model.FoundUser.Id" />
+                            <button type="submit" class="btn btn-secondary w-full" onclick="return confirm('Are you sure you want to convert this user to B2B? This action cannot be easily undone via UI.')">
+                                Convert to B2B Account
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="alert alert-success m-0">
+                            This user is already a B2B account.
+                        </div>
+                    }
+                </div>
             </div>
         }
     </div>

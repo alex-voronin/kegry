@@ -293,9 +293,9 @@ select.form-control { cursor: pointer; }
                 <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                 User Reports
             </a>
-            <a asp-page="/B2CUsers/Convert" class="@(ViewContext.RouteData.Values["page"]?.ToString()?.StartsWith("/B2CUsers/Convert") == true ? "active" : "")">
+            <a asp-page="/B2CUsers/Index" class="@(ViewContext.RouteData.Values["page"]?.ToString()?.StartsWith("/B2CUsers") == true ? "active" : "")">
                 <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
-                Convert B2C → B2B
+                B2C Users
             </a>
         </div>
         <div class="sidebar-footer">

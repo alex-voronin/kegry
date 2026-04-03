@@ -10,6 +10,8 @@ namespace VenueModule.Infrastructure.Storage;
 
 internal class VenueImageService : IVenueImageService, ISingleton
 {
+    private const int HashKeyLength = 20;
+    
     private readonly IS3StorageService _storageService;
     private readonly S3Config _config;
 
@@ -48,14 +50,17 @@ internal class VenueImageService : IVenueImageService, ISingleton
     private string GenerateAvatarKey(Guid companyId, string fileName)
     {
         var hash = Hash(companyId.ToString() + _config.KeySalt);
-        return $"company_{hash}/{fileName}.jpg";
+        var hashPrefix = hash[..HashKeyLength];
+        return $"company_{hashPrefix}/{fileName}.jpg";
     }
 
     private string GenerateCoverKey(Guid companyId, Guid venuId, string fileName)
     {
         var companyHash = Hash(companyId.ToString() + _config.KeySalt);
         var venueHash = Hash(venuId.ToString() + _config.KeySalt);
-        return $"company_{companyHash}/venue_{venueHash}/{fileName}.jpg";
+        var companyPrefix = companyHash[..HashKeyLength];
+        var venuePrefix   = venueHash[..HashKeyLength];
+        return $"company_{companyPrefix}/venue_{venuePrefix}/{fileName}.jpg";
     }
 
     private static string Hash(string input)

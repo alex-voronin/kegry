@@ -25,6 +25,12 @@ public static class SecurityExceptions
     {
         return new HttpCodeException($"User with email {email} not found", HttpStatusCode.NotFound, ErrorCode.NotFound);
     }
+    
+    public static HttpCodeException UserIsBanned(string email)
+    {
+        return new HttpCodeException($"User with email {email} has been banned. Please contact technical support.", 
+            HttpStatusCode.Forbidden, ErrorCode.GeneralError);
+    }
 
     public static HttpCodeException UserAlreadyExists(string email)
     {

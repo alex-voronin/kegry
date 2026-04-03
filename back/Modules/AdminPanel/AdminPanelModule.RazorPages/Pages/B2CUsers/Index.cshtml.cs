@@ -7,11 +7,11 @@ using SecurityModule.Domain.ValueObjects;
 
 namespace AdminPanelModule.RazorPages.Pages.B2CUsers;
 
-public class ConvertModel : PageModel
+public class IndexModel : PageModel
 {
     private readonly SecurityContext _security;
 
-    public ConvertModel(SecurityContext security)
+    public IndexModel(SecurityContext security)
     {
         _security = security;
     }
@@ -39,6 +39,48 @@ public class ConvertModel : PageModel
             Message = $"User with email '{SearchEmail}' not found.";
             IsError = true;
         }
+    }
+
+    public async Task<IActionResult> OnPostBanAsync(Guid userId)
+    {
+        var user = await _security.Users.FindAsync(userId);
+        if (user == null)
+        {
+            Message = "User not found.";
+            IsError = true;
+            return Page();
+        }
+
+        user.IsBanned = true;
+        await _security.SaveChangesAsync();
+
+        Message = $"User {user.Email} has been banned.";
+        IsError = false;
+        FoundUser = user;
+        SearchEmail = user.Email;
+
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostUnbanAsync(Guid userId)
+    {
+        var user = await _security.Users.FindAsync(userId);
+        if (user == null)
+        {
+            Message = "User not found.";
+            IsError = true;
+            return Page();
+        }
+
+        user.IsBanned = false;
+        await _security.SaveChangesAsync();
+
+        Message = $"User {user.Email} has been un-banned.";
+        IsError = false;
+        FoundUser = user;
+        SearchEmail = user.Email;
+
+        return Page();
     }
 
     public async Task<IActionResult> OnPostConvertAsync(Guid userId)

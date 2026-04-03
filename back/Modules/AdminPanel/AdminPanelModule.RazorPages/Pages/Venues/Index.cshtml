@@ -28,7 +28,7 @@
                         <th>Address</th>
                         <th>Company</th>
                         <th>Phone</th>
-                        <th>Website</th>
+                        <th>Instagram</th>
                         <th>Created</th>
                         <th>Action</th>
                     </tr>
@@ -46,16 +46,13 @@
                             </td>
                             <td>
                                 <div>@v.CompanyName</div>
-                                @if (!string.IsNullOrEmpty(v.CompanyEmail))
-                                {
-                                    <div class="text-muted text-sm">@v.CompanyEmail</div>
-                                }
+                                <div class="text-muted text-sm">@v.OwnerEmail</div>
                             </td>
                             <td class="text-muted">@(v.PhoneNumber ?? "—")</td>
                             <td>
-                                @if (!string.IsNullOrEmpty(v.WebsiteUrl))
+                                @if (!string.IsNullOrEmpty(v.InstagramUrl))
                                 {
-                                    <a href="@v.WebsiteUrl" target="_blank" class="btn btn-link" style="padding:0">↗ Website</a>
+                                    <a href="@v.InstagramUrl" target="_blank" class="btn btn-link" style="padding:0">↗ Instagram</a>
                                 }
                                 else
                                 {

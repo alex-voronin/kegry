@@ -10,6 +10,7 @@ namespace UserProfileModule.Infrastructure.Storage;
 
 internal class ProfileImageService : IProfileImageService, ISingleton
 {
+    private const int HashKeyLength = 20;
     private readonly IS3StorageService _storageService;
     private readonly S3Config _config;
 
@@ -48,7 +49,8 @@ internal class ProfileImageService : IProfileImageService, ISingleton
     private string GenerateKey(Guid userId, string fileName)
     {
         var hash = Hash(userId.ToString() + _config.KeySalt);
-        return $"user_{hash}/{fileName}.jpg";
+        var hashPrefix = hash[..HashKeyLength];
+        return $"user_{hashPrefix}/{fileName}.jpg";
     }
 
     private static string Hash(string input)

@@ -12,7 +12,7 @@ using SecurityModule.Infrastructure.Persistence;
 namespace SecurityModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SecurityContext))]
-    [Migration("20260331160758_AddSecurity")]
+    [Migration("20260403123718_AddSecurity")]
     partial class AddSecurity
     {
         /// <inheritdoc />
@@ -21,7 +21,7 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("security")
-                .HasAnnotation("ProductVersion", "10.0.1")
+                .HasAnnotation("ProductVersion", "10.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -268,6 +268,10 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
                     b.Property<bool>("HasGoogleAuth")
                         .HasColumnType("boolean")
                         .HasColumnName("has_google_auth");
+
+                    b.Property<bool>("IsBanned")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_banned");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean")

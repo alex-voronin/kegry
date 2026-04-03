@@ -112,16 +112,15 @@ internal class AuthenticationService : IAuthenticationService, IScoped
 
     public async Task<AuthResult> SigninAsync(string email, string password)
     {
-        var existingUser = await _userManager.FindByEmailAsync(email);
-        if (existingUser == null)
-        {
-            throw SecurityExceptions.UserNotFound(email);
-        }
-
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
         {
             throw SecurityExceptions.UserNotFound(email);
+        }
+
+        if (user.IsBanned)
+        {
+            throw SecurityExceptions.UserIsBanned(email);
         }
 
         if (!user.EmailConfirmed)
@@ -143,6 +142,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
                 throw SecurityExceptions.LockedOut(
                     "Your account has been locked for 5 minutes. Please try again later.");
             }
+
             throw SecurityExceptions.WrongCredentials("Invalid email or password");
         }
 
@@ -193,6 +193,11 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         }
         else
         {
+            if (user.IsBanned)
+            {
+                throw SecurityExceptions.UserIsBanned(email);
+            }
+
             var shouldSave = !user.HasGoogleAuth || !user.EmailConfirmed;
 
             if (!user.HasGoogleAuth)
@@ -270,6 +275,11 @@ internal class AuthenticationService : IAuthenticationService, IScoped
             throw SecurityExceptions.UserNotFound(storedToken.UserId.ToString());
         }
 
+        if (user.IsBanned)
+        {
+            throw SecurityExceptions.UserIsBanned(user.Email!);
+        }
+        
         _refreshTokenRepository.Delete(storedToken);
 
         var (newAccessToken, newRefreshToken) = await GenerateTokensAsync(user);
