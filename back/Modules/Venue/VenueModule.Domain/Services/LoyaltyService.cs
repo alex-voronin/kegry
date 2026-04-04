@@ -243,12 +243,12 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             .Where(l => l.IsActive)
             .OrderBy(l => l.VisitsUpperBound)
             .ToArray();
-        
+
         if (sortedLevels.Length == 0)
         {
             return (0, 0, null);
         }
-        
+
         var maxLevel = sortedLevels[^1];
 
         var currentLoyaltyLevel = maxLevel.Id;
@@ -273,7 +273,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         {
             visitsUpperBound = null; // as we can't grow anymore
         }
-        
+
         return (currentLoyaltyLevel, visitsLowerBound, visitsUpperBound);
     }
 }

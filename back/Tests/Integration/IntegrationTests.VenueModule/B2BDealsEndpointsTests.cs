@@ -218,14 +218,12 @@ public class B2BDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(0, 0, "DU Venue", null, null, null, null, null, null))).Result.Id;
-        var levelId =
-            (await Factory.ApiClient.GetAsync<ApiResult<LoyaltyLevelDto[]>>(
-                ApiRoutes.B2B.Company.LoyaltyLevels(companyId))).Result[0].Id;
+        var levelId = (await Factory.ApiClient.GetAsync<ApiResult<LoyaltyLevelDto[]>>(
+            ApiRoutes.B2B.Company.LoyaltyLevels(companyId))).Result[0].Id;
 
         var discountId = (await Factory.ApiClient.PostAsync<CreateDiscountRequest, ApiResult<CreateDiscountResponse>>(
                 ApiRoutes.B2B.Venue.Discounts(venueId), new CreateDiscountRequest(levelId, 5, [DayOfWeek.Monday])))
-            .Result
-            .Id;
+            .Result.Id;
 
         // 2. Update discount
         var updateRequest = new UpdateDiscountRequest(levelId, 15, [DayOfWeek.Saturday, DayOfWeek.Sunday]);
@@ -236,8 +234,11 @@ public class B2BDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 3. Verify update
         var getVenueResponse = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
             ApiRoutes.B2B.Venue.Single(venueId));
-        getVenueResponse.Result.Venue.Discounts.ShouldContain(d =>
-            d.Id == discountId.ToString() && d.Percent == 15 && d.Days.Contains(DayOfWeek.Saturday));
+        getVenueResponse.Result.Venue.Discounts.Length.ShouldBe(1);
+        var discount = getVenueResponse.Result.Venue.Discounts.First();
+        discount.Id.ShouldBe(discountId.ToString());
+        discount.Percent.ShouldBe(updateRequest.Percent!.Value);
+        discount.Days.ShouldBe(updateRequest.Days, ignoreOrder: true);
     }
 
     [Fact]
@@ -253,14 +254,12 @@ public class B2BDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(0, 0, "DD Venue", null, null, null, null, null, null))).Result.Id;
-        var levelId =
-            (await Factory.ApiClient.GetAsync<ApiResult<LoyaltyLevelDto[]>>(
-                ApiRoutes.B2B.Company.LoyaltyLevels(companyId))).Result[0].Id;
+        var levelId = (await Factory.ApiClient.GetAsync<ApiResult<LoyaltyLevelDto[]>>(
+            ApiRoutes.B2B.Company.LoyaltyLevels(companyId))).Result[0].Id;
 
         var discountId = (await Factory.ApiClient.PostAsync<CreateDiscountRequest, ApiResult<CreateDiscountResponse>>(
                 ApiRoutes.B2B.Venue.Discounts(venueId), new CreateDiscountRequest(levelId, 5, [DayOfWeek.Monday])))
-            .Result
-            .Id;
+            .Result.Id;
 
         // 2. Delete discount
         var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(

@@ -276,6 +276,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             currentTime = currentTime.AddDays(1);
             Factory.FakeTimeProvider.SetUtcNow(currentTime);
         }
+
         Factory.FakeTimeProvider.Reset(DateTimeOffset.UtcNow);
     }
 
@@ -479,17 +480,83 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             "b2c@example.com", "Password123!",
             levels, 3, venueId);
 
-        // 2. Disable 3rd loyalty level
+        // 3. Disable 3rd loyalty level
         Factory.ApiClient.SetAuth(b2BAuth);
         await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelRequest, ApiResult.EmptyResult>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyId),
             new UpdateLoyaltyLevelRequest(new LoyaltyLevelDto(3, 4, false)));
+
+        // 4. Ensure Level 2 discount is applied
+        Factory.ApiClient.SetAuth(b2CAuth);
+        var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
+            ApiRoutes.Venue.Single(venueId));
+        response.Success.ShouldBeTrue();
+        response.Result.LoyaltyLevel.Discount.ShouldBe(15);
+    }
+
+    [Fact]
+    public async Task GivenUserWithMaxLoyaltyLevel_WhenGetLoyaltyLevelFromVenue_ThenUpperBoundIsNull()
+    {
+        // 1. Create B2B user
+        var b2BAuth = await Factory.AuthManager
+            .CreateAndLoginUserAsync("b2b_discounts@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        // 2. Create all required entities
+        var levels = new[]
+        {
+            new LoyaltyLevelDto(0, 1, true),
+            new LoyaltyLevelDto(1, 2, true),
+            new LoyaltyLevelDto(2, 3, false),
+            new LoyaltyLevelDto(3, 4, false)
+        };
+
+        var targetLevel = 1;
+        var (_, venueId) = await _testUtils.SetupLoyaltyLevelsAndCreateDiscounts(levels, []);
+        var b2CAuth = await _testUtils.CreateB2CUserAndReachLoyaltyLevel(
+            "b2c@example.com", "Password123!",
+            levels, targetLevel, venueId);
 
         // 3. Ensure Level 2 discount is applied
         Factory.ApiClient.SetAuth(b2CAuth);
         var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
             ApiRoutes.Venue.Single(venueId));
         response.Success.ShouldBeTrue();
-        response.Result.LoyaltyLevel.Discount.ShouldBe(15);
+        response.Result.LoyaltyLevel.VisitsUpperBound.ShouldBeNull();
+        response.Result.LoyaltyLevel.UserLoyaltyLevel.ShouldBe(targetLevel);
+        response.Result.LoyaltyLevel.Discount.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task GivenUserWithoutLoyaltyLevel_WhenGetLoyaltyLevelFromVenue_ThenItZeroWithNullUpperBound()
+    {
+        // 1. Create B2B user
+        var b2BAuth = await Factory.AuthManager
+            .CreateAndLoginUserAsync("b2b_discounts@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        // 2. Create all required entities
+        var levels = new[]
+        {
+            new LoyaltyLevelDto(0, 1, false),
+            new LoyaltyLevelDto(1, 2, false),
+            new LoyaltyLevelDto(2, 3, false),
+            new LoyaltyLevelDto(3, 4, false)
+        };
+
+        var targetLevel = 2;
+        var (_, venueId) = await _testUtils.SetupLoyaltyLevelsAndCreateDiscounts(levels, []);
+        var b2CAuth = await _testUtils.CreateB2CUserAndReachLoyaltyLevel(
+            "b2c@example.com", "Password123!",
+            levels, targetLevel, venueId);
+
+        // 3. Ensure Level 2 discount is applied
+        Factory.ApiClient.SetAuth(b2CAuth);
+        var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
+            ApiRoutes.Venue.Single(venueId));
+        response.Success.ShouldBeTrue();
+        response.Result.LoyaltyLevel.VisitsUpperBound.ShouldBeNull();
+        response.Result.LoyaltyLevel.UserLoyaltyLevel.ShouldBe(0);
+        response.Result.LoyaltyLevel.Discount.ShouldBe(0);
     }
 }

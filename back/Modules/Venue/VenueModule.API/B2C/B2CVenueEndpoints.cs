@@ -1,4 +1,5 @@
 using Shared.Infrastructure.Storage;
+using SharedCore.Exceptions;
 using VenueModule.API.B2C.Dto;
 using VenueModule.API.Shared;
 using GetVenueResponse = VenueModule.API.B2C.Dto.GetVenueResponse;
@@ -48,7 +49,16 @@ public class B2CVenueEndpoints : IEndpoints
 
         return ApiResult<CheckInResponse>.Build(
             result: new CheckInResponse(venueId),
-            errors: error != null ? [new ApiError { Error = error }] : null
+            errors: error != null
+                ?
+                [
+                    new ApiError
+                    {
+                        Error = error,
+                        Code = nameof(ErrorCode.ValidationError)
+                    }
+                ]
+                : null
         );
     }
 
