@@ -43,6 +43,11 @@ export default function VenuesScreen() {
     handleQrCode,
   } = useQrCheckIn({
     onSuccess: (id) => setCheckInVenueId(id),
+    onError: (venueId) => {
+      if (venueId) {
+        router.push(PAGE_ROUTES.VENUE_DETAIL(venueId));
+      }
+    },
   });
   const distanceUnits = useSettingsStore((state) => state.distanceUnits);
 

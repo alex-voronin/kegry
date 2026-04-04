@@ -206,39 +206,48 @@ export default function VenueDetailScreen() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className={styles.loyaltyDiscount}>
-                      {t('discount', { percent: loyaltyLevel.discount })}
-                    </span>
+                    {loyaltyLevel.discount > 0 && (
+                      <span className={styles.loyaltyDiscount}>
+                        {t('discount', { percent: loyaltyLevel.discount })}
+                      </span>
+                    )}
                     <ChevronRight size={24} className="text-primary" />
                   </div>
                 </div>
-                {loyaltyLevel.visitsUpperBound !== null && (
+                {(loyaltyLevel.visitsUpperBound !== null ||
+                  loyaltyLevel.userLoyaltyLevel > 0) && (
                   <div className={styles.progressContainer}>
                     <div className={styles.progressBarBg}>
                       <div
                         className={styles.progressBarFill}
                         style={{
-                          width: `${calculateProgressPercentage(
-                            loyaltyLevel.visitsCount,
-                            loyaltyLevel.visitsLowerBound,
-                            loyaltyLevel.visitsUpperBound,
-                          )}%`,
+                          width: `${
+                            loyaltyLevel.visitsUpperBound === null
+                              ? 100
+                              : calculateProgressPercentage(
+                                  loyaltyLevel.visitsCount,
+                                  loyaltyLevel.visitsLowerBound,
+                                  loyaltyLevel.visitsUpperBound,
+                                )
+                          }%`,
                         }}
                       />
                     </div>
                     <div className="flex items-center gap-1.5 self-end">
                       <div className={styles.progressText}>
-                        {t('visits', {
-                          current:
-                            loyaltyLevel.visitsCount -
-                            loyaltyLevel.visitsLowerBound,
-                          total:
-                            loyaltyLevel.visitsUpperBound -
-                            loyaltyLevel.visitsLowerBound,
-                        })}
+                        {loyaltyLevel.visitsUpperBound === null
+                          ? t('maxLoyaltyLevelReached')
+                          : t('visits', {
+                              current:
+                                loyaltyLevel.visitsCount -
+                                loyaltyLevel.visitsLowerBound,
+                              total:
+                                loyaltyLevel.visitsUpperBound -
+                                loyaltyLevel.visitsLowerBound,
+                            })}
                       </div>
                       <div
-                        className="cursor-pointer text-secondary"
+                        className="text-secondary cursor-pointer"
                         onClick={(e) => {
                           e.stopPropagation();
                           setIsHelpDialogOpen(true);

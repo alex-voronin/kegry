@@ -47,7 +47,6 @@ const urls = allFiles.map((file) => {
 
 // urls.push('/');
 urls.push('/manifest.json');
-urls.push('/favicon.ico');
 
 // Sort for determinism
 urls.sort();

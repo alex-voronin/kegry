@@ -27,9 +27,9 @@ public interface ILoyaltyService
         int limit,
         CancellationToken ct);
 
-    Task<LoyaltyLevelWithDiscount> GetLoyaltyLevelWithDiscountAsync(
+    public Task<LoyaltyLevelWithDiscount> GetLoyaltyLevelWithDiscountAsync(
         Guid userId,
-        Guid venueId,
+        Venue venue,
         CancellationToken ct = default);
 
     public Task<Dictionary<DayOfWeek, CurrentAndNextLevelDiscount>> GetDiscountByWeekdayAsync(
@@ -161,15 +161,9 @@ internal class LoyaltyService : ILoyaltyService, IScoped
 
     public async Task<LoyaltyLevelWithDiscount> GetLoyaltyLevelWithDiscountAsync(
         Guid userId,
-        Guid venueId,
+        Venue venue,
         CancellationToken ct = default)
     {
-        var venue = await _venueRepository.GetByIdWithAllRelationsAsync(venueId, ct);
-        if (venue == null)
-        {
-            throw VenueExceptions.VenueNotFound(venueId);
-        }
-
         var userLoyalty = await _userLoyaltyRepository.GetByUserAndCompanyId(userId, venue.CompanyId, ct);
         var visitsCount = userLoyalty?.VisitsCount ?? 0;
 
@@ -245,17 +239,21 @@ internal class LoyaltyService : ILoyaltyService, IScoped
     internal static (int currentLoyaltyLevel, int visitsLowerBound, int? visitsUpperBound) GetCurrentLoyaltyLevel(
         IReadOnlyCollection<LoyaltyLevel> levels, int visitsCount)
     {
-        if (levels.Count == 0)
+        var sortedLevels = levels
+            .Where(l => l.IsActive)
+            .OrderBy(l => l.VisitsUpperBound)
+            .ToArray();
+        
+        if (sortedLevels.Length == 0)
         {
             return (0, 0, null);
         }
-
-        var sortedLevels = levels.OrderBy(l => l.VisitsUpperBound).ToArray();
+        
         var maxLevel = sortedLevels[^1];
 
         var currentLoyaltyLevel = maxLevel.Id;
         var visitsLowerBound = maxLevel.VisitsUpperBound;
-        var visitsUpperBound = -1;
+        int? visitsUpperBound = null;
 
         LoyaltyLevel? prevLevel = null;
         foreach (var level in sortedLevels)
@@ -271,6 +269,11 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             prevLevel = level;
         }
 
+        if (currentLoyaltyLevel == maxLevel.Id)
+        {
+            visitsUpperBound = null; // as we can't grow anymore
+        }
+        
         return (currentLoyaltyLevel, visitsLowerBound, visitsUpperBound);
     }
 }

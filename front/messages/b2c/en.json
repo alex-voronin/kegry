@@ -487,6 +487,7 @@
       "discount": "Discount: {percent}%",
       "nextDiscountLevelInfo": "Next discount level is: {percent}%",
       "maxDiscountLevelReached": "The maximum discount has been reached.",
+      "maxLoyaltyLevelReached": "The maximum loyalty level has been reached.",
       "visits": "{current}/{total} visits to next level",
       "helpDialog": "This discount applies only to this venue and today. Tap the card to view daily discounts.",
       "ok": "OK",

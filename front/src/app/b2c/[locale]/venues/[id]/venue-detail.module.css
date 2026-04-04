@@ -34,7 +34,7 @@
 }
 
 .avatarImage {
-  @apply object-contain;
+  @apply h-full w-full object-cover;
 }
 
 .companyName {
@@ -90,7 +90,7 @@
 }
 
 .loyaltyCard {
-  @apply cursor-pointer flex-col items-stretch gap-3 py-4 transition-colors hover:bg-hover active:bg-active;
+  @apply hover:bg-hover active:bg-active cursor-pointer flex-col items-stretch gap-3 py-4 transition-colors;
 }
 
 .loyaltyHeader {

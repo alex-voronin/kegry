@@ -102,7 +102,7 @@ public class B2CVenueEndpoints : IEndpoints
         var venueDto = DomainVenueToDto(storageService, venue);
         var loyaltyLevel = await loyaltyService.GetLoyaltyLevelWithDiscountAsync(
             userId: user.GetId(),
-            venueId: id,
+            venue: venue,
             ct: ct);
 
         var loyaltyLevelDto = new LoyaltyLevelWithDiscountDto(

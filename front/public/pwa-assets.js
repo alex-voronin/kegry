@@ -67,7 +67,6 @@ const STATIC_ASSETS = [
   "/assets/venue/phone-icon.svg",
   "/assets/venue/venue-icon.svg",
   "/assets/venue/website-icon.svg",
-  "/favicon.ico",
   "/icons/favicon-16.png",
   "/icons/favicon-192.png",
   "/icons/favicon-32.png",

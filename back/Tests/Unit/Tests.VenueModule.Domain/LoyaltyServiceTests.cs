@@ -1,4 +1,3 @@
-using System.Reflection;
 using Shouldly;
 using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.Services;
@@ -24,10 +23,10 @@ public class LoyaltyServiceTests
     [InlineData(5, 1, 5, 10)]
     [InlineData(10, 2, 10, 15)]
     [InlineData(14, 2, 10, 15)]
-    [InlineData(20, 3, 20, -1)]
-    [InlineData(25, 3, 20, -1)]
+    [InlineData(20, 3, 20, null)]
+    [InlineData(25, 3, 20, null)]
     public void GetCurrentLoyaltyLevel_WithVariousVisits_ReturnsExpectedResult(
-        int visitsCount, int expectedLevelId, int expectedLowerBound, int expectedUpperBound)
+        int visitsCount, int expectedLevelId, int expectedLowerBound, int? expectedUpperBound)
     {
         var companyId = Guid.NewGuid();
         var levels = new List<LoyaltyLevel>
