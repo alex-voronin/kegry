@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 export const useSafeBack = () => {
   const router = useRouter();
 
-  const safeBack = (fallbackUrl: string) => {
+  const safeBack = (fallbackUrl?: string) => {
     const canGoBack =
       typeof window !== 'undefined' &&
       window.history.length > 1 &&
@@ -14,7 +14,11 @@ export const useSafeBack = () => {
     if (canGoBack) {
       router.back();
     } else {
-      router.push(fallbackUrl);
+      if (fallbackUrl) {
+        router.push(fallbackUrl);
+      } else {
+        window.close();
+      }
     }
   };
 

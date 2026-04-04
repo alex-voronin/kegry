@@ -17,7 +17,7 @@ public static class VenueExceptions
 
     public static HttpCodeException TooFarFromVenue()
     {
-        return new HttpCodeException("You must be within 100 meters of the venue to check in",
+        return new HttpCodeException("You must be in the venue to check in.",
             HttpStatusCode.BadRequest, ErrorCode.ValidationError);
     }
 
@@ -29,7 +29,7 @@ public static class VenueExceptions
 
     public static HttpCodeException AlreadyCheckedInRecently()
     {
-        return new HttpCodeException("You've already checked in",
+        return new HttpCodeException("You've already checked in recently",
             HttpStatusCode.UnprocessableEntity, ErrorCode.TooManyRequests);
     }
 

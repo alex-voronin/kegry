@@ -44,6 +44,7 @@ public class AdminPanelModuleStartup : IFeatureStartup
             .AddCookie(AdminPanelConstants.AuthScheme, options =>
             {
                 options.Cookie.Name = "AdminPanel.Auth";
+                options.ExpireTimeSpan = TimeSpan.FromDays(7);
                 options.LoginPath = $"{AdminPanelConstants.PathPrefix}/Login";
                 options.LogoutPath = $"{AdminPanelConstants.PathPrefix}/Logout";
                 options.ReturnUrlParameter = "returnUrl";

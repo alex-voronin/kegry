@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS } from '@/lib/routes';
 import { ApiResult } from '@/lib/api-types';
-
+import { extractApiError } from '@/lib/api-error';
 import { isOurDomain } from '@/lib/qr-utils';
 
 interface UseQrCheckInOptions {
@@ -55,8 +55,9 @@ export function useQrCheckIn({ onSuccess }: UseQrCheckInOptions = {}) {
 
           setShowCheckIn(true);
           await onSuccess?.(venueId);
-        } catch {
-          toast.error(t('toast.checkInFailed'));
+        } catch (error: any) {
+          var errormMessage = extractApiError(error)[0];
+          toast.error(errormMessage || t('toast.checkInFailed'));
         }
       } else {
         toast.error(t('toast.invalidQr'));
