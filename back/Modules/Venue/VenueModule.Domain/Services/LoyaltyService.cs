@@ -4,6 +4,8 @@ using SharedCore.Services.LifeTimes;
 using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.Exceptions;
 using VenueModule.Domain.Repositories;
+using Microsoft.Extensions.Localization;
+using VenueModule.Domain.Resources;
 
 namespace VenueModule.Domain.Services;
 
@@ -53,19 +55,22 @@ internal class LoyaltyService : ILoyaltyService, IScoped
     private readonly IUserLoyaltyRepository _userLoyaltyRepository;
     private readonly IDiscountRepository _discountRepository;
     private readonly TimeProvider _timeProvider;
+    private readonly IStringLocalizer<VenueLocalization> _localizer;
 
     public LoyaltyService(
         IVenueRepository venueRepository,
         IVisitRepository visitRepository,
         IUserLoyaltyRepository userLoyaltyRepository,
         IDiscountRepository discountRepository,
-        TimeProvider timeProvider)
+        TimeProvider timeProvider,
+        IStringLocalizer<VenueLocalization> localizer)
     {
         _venueRepository = venueRepository;
         _visitRepository = visitRepository;
         _userLoyaltyRepository = userLoyaltyRepository;
         _discountRepository = discountRepository;
         _timeProvider = timeProvider;
+        _localizer = localizer;
     }
 
     public async Task<(List<DiscountWithDistance> Discounts, int TotalCount)> GetAvailableDiscountsAsync(
@@ -128,13 +133,13 @@ internal class LoyaltyService : ILoyaltyService, IScoped
 
         if (distanceMeters > MaxCheckInDistanceMeters)
         {
-            return (venue.Id, "You must be in the venue to check in.");
+            return (venue.Id, _localizer.GetString("NotInVenueError"));
         }
 
         var now = _timeProvider.GetUtcNow();
         if (lastVisit != null && lastVisit.CheckedInAt > now - TimeSpan.FromHours(CheckInCooldownHours))
         {
-            return (venue.Id, "You've already checked in recently");
+            return (venue.Id, _localizer.GetString("AlreadyCheckedInError"));
         }
 
         var visit = new Visit
