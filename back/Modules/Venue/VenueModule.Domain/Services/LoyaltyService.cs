@@ -37,7 +37,7 @@ public interface ILoyaltyService
         Guid venueId,
         CancellationToken ct = default);
 
-    Task<Guid> CheckInToVenue(
+    Task<(Guid, string? error)> CheckInToVenue(
         Guid userId, Guid qrCode,
         double userLatitude, double userLongitude,
         CancellationToken ct = default);
@@ -91,7 +91,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             ct: ct);
     }
 
-    public async Task<Guid> CheckInToVenue(
+    public async Task<(Guid, string? error)> CheckInToVenue(
         Guid userId, Guid qrCode,
         double userLatitude, double userLongitude,
         CancellationToken ct = default)
@@ -128,13 +128,13 @@ internal class LoyaltyService : ILoyaltyService, IScoped
 
         if (distanceMeters > MaxCheckInDistanceMeters)
         {
-            throw VenueExceptions.TooFarFromVenue();
+            return (venue.Id, "You must be in the venue to check in.");
         }
 
         var now = _timeProvider.GetUtcNow();
         if (lastVisit != null && lastVisit.CheckedInAt > now - TimeSpan.FromHours(CheckInCooldownHours))
         {
-            throw VenueExceptions.AlreadyCheckedInRecently();
+            return (venue.Id, "You've already checked in recently");
         }
 
         var visit = new Visit
@@ -156,7 +156,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         await _userLoyaltyRepository.SaveChangesAsync(ct);
         await transaction.CommitAsync(ct);
 
-        return venue.Id;
+        return (venue.Id, null);
     }
 
     public async Task<LoyaltyLevelWithDiscount> GetLoyaltyLevelWithDiscountAsync(

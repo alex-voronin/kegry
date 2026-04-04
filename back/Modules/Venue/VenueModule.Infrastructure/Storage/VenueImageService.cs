@@ -11,7 +11,7 @@ namespace VenueModule.Infrastructure.Storage;
 internal class VenueImageService : IVenueImageService, ISingleton
 {
     private const int HashKeyLength = 20;
-    
+
     private readonly IS3StorageService _storageService;
     private readonly S3Config _config;
 
@@ -59,7 +59,7 @@ internal class VenueImageService : IVenueImageService, ISingleton
         var companyHash = Hash(companyId.ToString() + _config.KeySalt);
         var venueHash = Hash(venuId.ToString() + _config.KeySalt);
         var companyPrefix = companyHash[..HashKeyLength];
-        var venuePrefix   = venueHash[..HashKeyLength];
+        var venuePrefix = venueHash[..HashKeyLength];
         return $"company_{companyPrefix}/venue_{venuePrefix}/{fileName}.jpg";
     }
 

@@ -29,17 +29,37 @@ public class Discount : IAuditable
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset UpdatedAt { get; set; }
 
-    private void UpdateDays(IReadOnlyCollection<DiscountDay> days)
+    private void UpdateDays(IReadOnlyCollection<DiscountDay> newDays)
     {
-        var uniqueDaysCount = days.Select(d => d.DayOfWeek).Distinct().Count();
+        var uniqueDaysCount = newDays.Select(d => d.DayOfWeek).Distinct().Count();
         Validation.ThrowIfInvalid(nameof(Days),
-            isValid: () => uniqueDaysCount == days.Count,
+            isValid: () => uniqueDaysCount == newDays.Count,
             validationError: "Days cannot be repeated");
 
-        _days.Clear();
-        foreach (var day in days)
+        var newDaysOfWeek = newDays.Select(d => d.DayOfWeek).ToHashSet();
+
+        var daysToRemove = _days
+            .Where(d => !newDaysOfWeek.Contains(d.DayOfWeek))
+            .ToList();
+
+        foreach (var day in daysToRemove)
         {
-            _days.Add(day);
+            _days.Remove(day);
+        }
+
+        var existingDayOfWeeks = _days.Select(d => d.DayOfWeek).ToHashSet();
+        foreach (var day in newDays)
+        {
+            if (!existingDayOfWeeks.Contains(day.DayOfWeek))
+            {
+                _days.Add(
+                    new DiscountDay
+                    {
+                        DiscountId = Id,
+                        DayOfWeek = day.DayOfWeek
+                    }
+                );
+            }
         }
     }
 

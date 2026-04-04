@@ -37,9 +37,9 @@ public class ApiResult<TResult>
         Success = errors.Length == 0;
     }
 
-    public static ApiResult<TResult> Build(TResult result)
+    public static ApiResult<TResult> Build(TResult result, ApiError[]? errors = null)
     {
-        return new ApiResult<TResult>(result, errors: Array.Empty<ApiError>());
+        return new ApiResult<TResult>(result, errors: errors ?? []);
     }
 }
 

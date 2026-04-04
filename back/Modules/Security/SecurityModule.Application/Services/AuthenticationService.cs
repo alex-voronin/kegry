@@ -279,7 +279,7 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         {
             throw SecurityExceptions.UserIsBanned(user.Email!);
         }
-        
+
         _refreshTokenRepository.Delete(storedToken);
 
         var (newAccessToken, newRefreshToken) = await GenerateTokensAsync(user);

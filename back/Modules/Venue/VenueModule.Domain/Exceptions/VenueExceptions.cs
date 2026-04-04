@@ -15,22 +15,10 @@ public static class VenueExceptions
         return new HttpCodeException($"Venue with id {id} not found", HttpStatusCode.NotFound, ErrorCode.NotFound);
     }
 
-    public static HttpCodeException TooFarFromVenue()
-    {
-        return new HttpCodeException("You must be in the venue to check in.",
-            HttpStatusCode.BadRequest, ErrorCode.ValidationError);
-    }
-
     public static HttpCodeException SomeoneElseCompany(Guid id)
     {
         return new HttpCodeException($"Company with id {id} doesn't belong to you",
             HttpStatusCode.NotFound, ErrorCode.NotFound);
-    }
-
-    public static HttpCodeException AlreadyCheckedInRecently()
-    {
-        return new HttpCodeException("You've already checked in recently",
-            HttpStatusCode.UnprocessableEntity, ErrorCode.TooManyRequests);
     }
 
     public static HttpCodeException DiscountNotFound(Guid id)

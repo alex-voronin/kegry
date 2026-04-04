@@ -29,7 +29,7 @@ public class IndexModel : PageModel
             .OrderBy(v => v.CreatedAt)
             .Take(50)
             .ToListAsync();
-        
+
         var ownerIds = venues.Select(v => v.Company.OwnerId)
                 .Distinct()
                 .ToList();

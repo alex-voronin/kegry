@@ -250,7 +250,9 @@ public class B2BDealsEndpoints : IEndpoints
             asNoTracking: true,
             ct: ct);
 
-        var discount = await discountRepository.GetByIdAsync(id, ct: ct);
+        var discount = await discountRepository.GetByIdAsync(id, 
+            includes: [d => d.Days],  
+            ct: ct);
         if (discount == null || discount.VenueId != venueId)
         {
             throw VenueExceptions.DiscountNotFound(id);

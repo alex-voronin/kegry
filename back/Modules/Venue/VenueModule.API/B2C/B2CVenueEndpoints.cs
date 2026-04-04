@@ -39,7 +39,7 @@ public class B2CVenueEndpoints : IEndpoints
         CancellationToken ct)
     {
         var userId = user.GetId();
-        var venueId = await loyaltyService.CheckInToVenue(
+        var (venueId, error) = await loyaltyService.CheckInToVenue(
             userId: userId,
             qrCode: qrCode,
             userLatitude: request.Latitude,
@@ -47,7 +47,8 @@ public class B2CVenueEndpoints : IEndpoints
             ct: ct);
 
         return ApiResult<CheckInResponse>.Build(
-            new CheckInResponse(venueId)
+            result: new CheckInResponse(venueId),
+            errors: error != null ? [new ApiError { Error = error }] : null
         );
     }
 
