@@ -63,7 +63,7 @@
       },
       "contactUs": {
         "title": "Kontaktirajte nas",
-        "description": "Možda se pitate isto što i mi: jesu li ovi goblini isti ili različiti? Iskreno, još nismo sigurni... Još nismo shvatili kako da ih razlikujemo. Ako slučajno znaš kako, ili imaš pitanja ili predloge o servisu, rado ćemo čuti od tebe putem email-a na <email>contacts@kegry.com</email> ili kroz naš <chat>chat</chat>."
+        "description": "Možda se pitaš isto što i mi: da li su ovi goblini isti ili različiti? Iskreno, još nismo sigurni... Još nismo shvatili kako da ih razlikujemo. Ako slučajno znaš kako, ili imaš pitanja ili predloge o servisu, radujemo se tvom javljanju putem email-a na <email>contacts@kegry.com</email> ili kroz naš <chat>chat</chat>."
       },
       "footer": {
         "copyright": "© 2026 Kegrycorn™. All rights reserved.",
@@ -119,7 +119,7 @@
       }
     },
     "forgot": {
-      "title": "Zaboravili ste lozinku?",
+      "title": "Zaboravljena lozinka?",
       "description": "Unesite svoju email adresu i poslaćemo vam link za resetovanje lozinke.",
       "email": "Email",
       "submit": "Pošalji link za resetovanje",
@@ -348,7 +348,7 @@
         "notFound": "Korisnik nije pronađen"
       },
       "deleteAccountDialog": {
-        "title": "Da li si siguran da želiš da obrišeš nalog? Ova akcija se ne može poništiti.",
+        "title": "Želiš li da obrišeš nalog? Ova akcija se ne može poništiti.",
         "buttonYes": "Da",
         "buttonNo": "Ne"
       }
