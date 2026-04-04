@@ -51,3 +51,15 @@
 .submitButton {
   @apply w-[280px];
 }
+
+.coordinatesRow {
+  @apply flex gap-4;
+}
+
+.coordinateCol {
+  @apply w-0 flex-1;
+}
+
+.mapPickerButton {
+  @apply text-primary bg-form-element hover:bg-active flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-lg transition-all sm:rounded-xl;
+}

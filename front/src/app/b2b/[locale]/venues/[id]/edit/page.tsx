@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'react-toastify';
-import { Camera } from 'lucide-react';
+import { Camera, MapPin } from 'lucide-react';
 import { Header } from '@/components/ui/header';
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -21,8 +21,9 @@ import { Input } from '@/components/ui/input';
 import { useVenueStore } from '../use-venue-store';
 import { API_ENDPOINTS, PAGE_ROUTES } from '@/lib/routes';
 import { uploadImage, compressImageToBlob } from '@/lib/image-utils';
-import { parseGoogleMapsUrl } from '@/lib/geo-utils';
+import { LeafletMapPickerModal } from '@/components/ui/leaflet-mappicker-modal';
 import styles from './edit-venue.module.css';
+import { cn } from '@/lib/utils';
 
 export default function VenueEditPage() {
   const t = useTranslations('screens.editVenue');
@@ -36,6 +37,7 @@ export default function VenueEditPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [coverBlob, setCoverBlob] = useState<Blob | null>(null);
+  const [isMapPickerOpen, setIsMapPickerOpen] = useState(false);
 
   const { currentVenue, isLoading, fetchVenue, patchVenue } = useVenueStore();
 
@@ -99,18 +101,6 @@ export default function VenueEditPage() {
       longitude: 0,
     },
   });
-
-  const watchedGoogleMapsUrl = watch('googleMapsUrl');
-
-  useEffect(() => {
-    if (watchedGoogleMapsUrl) {
-      const coords = parseGoogleMapsUrl(watchedGoogleMapsUrl);
-      if (coords) {
-        setValue('latitude', coords.latitude, { shouldDirty: true });
-        setValue('longitude', coords.longitude, { shouldDirty: true });
-      }
-    }
-  }, [watchedGoogleMapsUrl, setValue]);
 
   useEffect(() => {
     if (!currentVenue) return;
@@ -263,15 +253,18 @@ export default function VenueEditPage() {
           )}
         </div>
 
-        <div className="flex gap-4">
-          <div className={`${stylesCommon.sectionContainer} flex-1`}>
+        <div className={styles.coordinatesRow}>
+          <div className={cn(stylesCommon.sectionContainer, styles.coordinateCol)}>
             <FormSectionTitle required>{t('latitude')}</FormSectionTitle>
             <Input
               {...register('latitude', { valueAsNumber: true })}
               type="number"
               step="any"
               placeholder={t('latitude')}
-              className={stylesCommon.inputDark}
+              className={cn(
+                stylesCommon.inputDark,
+                'w-full rounded-lg! sm:rounded-xl!',
+              )}
             />
             {errors.latitude?.message && (
               <p className={stylesCommon.errorMessage}>
@@ -279,20 +272,35 @@ export default function VenueEditPage() {
               </p>
             )}
           </div>
-          <div className={`${stylesCommon.sectionContainer} flex-1`}>
+          <div className={cn(stylesCommon.sectionContainer, styles.coordinateCol)}>
             <FormSectionTitle required>{t('longitude')}</FormSectionTitle>
             <Input
               {...register('longitude', { valueAsNumber: true })}
               type="number"
               step="any"
               placeholder={t('longitude')}
-              className={stylesCommon.inputDark}
+              className={cn(
+                stylesCommon.inputDark,
+                'w-full rounded-lg! sm:rounded-xl!',
+              )}
             />
             {errors.longitude?.message && (
               <p className={stylesCommon.errorMessage}>
                 {errors.longitude.message}
               </p>
             )}
+          </div>
+          <div className={stylesCommon.sectionContainer}>
+            <FormSectionTitle required className="invisible">
+              Map
+            </FormSectionTitle>
+            <button
+              type="button"
+              onClick={() => setIsMapPickerOpen(true)}
+              className={styles.mapPickerButton}
+            >
+              <MapPin size={21} />
+            </button>
           </div>
         </div>
 
@@ -364,6 +372,23 @@ export default function VenueEditPage() {
           </Button>
         </div>
       </form>
+
+      <LeafletMapPickerModal
+        isOpen={isMapPickerOpen}
+        onClose={() => setIsMapPickerOpen(false)}
+        initialLat={watch('latitude')}
+        initialLng={watch('longitude')}
+        onSave={(lat, lng) => {
+          setValue('latitude', lat, {
+            shouldValidate: true,
+            shouldDirty: true,
+          });
+          setValue('longitude', lng, {
+            shouldValidate: true,
+            shouldDirty: true,
+          });
+        }}
+      />
     </div>
   );
 }

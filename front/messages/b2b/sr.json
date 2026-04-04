@@ -24,6 +24,11 @@
     "logo": {
       "tagline": "Za biznise"
     },
+    "mapPicker": {
+      "title": "Izaberi lokaciju",
+      "save": "Sačuvaj",
+      "cancel": "Otkaži"
+    },
     "forms": {
       "discount": {
         "loyaltyLevelOption": "Nivo {level} (ispod {visits} poseta)",
@@ -330,8 +335,8 @@
       "instagramUrl": "Instagram URL",
       "phoneNumber": "Broj telefona",
       "workingHours": "Radno vreme",
-      "latitude": "Geografska širina",
-      "longitude": "Geografska dužina",
+      "latitude": "Širina",
+      "longitude": "Dužina",
       "latitudeRequired": "Geografska širina je obavezna",
       "longitudeRequired": "Geografska dužina je obavezna",
       "latitudeRange": "Geografska širina mora biti između -90 i 90",
@@ -353,8 +358,8 @@
       "instagramUrl": "Instagram URL",
       "phoneNumber": "Broj telefona",
       "workingHours": "Radno vreme",
-      "latitude": "Geografska širina",
-      "longitude": "Geografska dužina",
+      "latitude": "Širina",
+      "longitude": "Dužina",
       "validation": {
         "addressRequired": "Adresa je obavezna",
         "latitudeRequired": "Geografska širina je obavezna",

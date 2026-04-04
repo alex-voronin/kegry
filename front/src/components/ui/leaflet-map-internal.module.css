@@ -1,0 +1,4 @@
+.mapContainer :global(.leaflet-control-geosearch form input),
+.mapContainer :global(.leaflet-control-geosearch .results > *) {
+  color: #000000 !important;
+}

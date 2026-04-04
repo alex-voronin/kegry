@@ -24,6 +24,11 @@
     "logo": {
       "tagline": "For Business"
     },
+    "mapPicker": {
+      "title": "Select Location",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
     "forms": {
       "discount": {
         "loyaltyLevelOption": "Level {level} (under {visits} visits)",

@@ -17,6 +17,7 @@ interface VenuesState {
   totalCount: number;
   isLoading: boolean;
   hasMore: boolean;
+  hasError: boolean;
   fetchVenues: (
     lat: number,
     lon: number,
@@ -31,8 +32,9 @@ export const useVenuesStore = create<VenuesState>()((set) => ({
   totalCount: 0,
   isLoading: false,
   hasMore: true,
+  hasError: false,
   fetchVenues: async (lat, lon, offset, limit) => {
-    set({ isLoading: true });
+    set({ isLoading: true, hasError: false });
     try {
       const response = await apiClient.get(API_ENDPOINTS.VENUES.LIST, {
         params: {
@@ -53,9 +55,8 @@ export const useVenuesStore = create<VenuesState>()((set) => ({
         isLoading: false,
       }));
     } catch (error) {
+      set({ isLoading: false, hasError: true });
       throw error;
-    } finally {
-      set({ isLoading: false });
     }
   },
   reset: () =>
