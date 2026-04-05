@@ -14,7 +14,7 @@ import styles from './modal-dialog.module.css';
 interface ModalDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  message: string;
+  message: string | React.ReactNode;
   primaryButtonText: string;
   secondaryButtonText?: string;
   primaryButtonVariant?: ButtonVariant;

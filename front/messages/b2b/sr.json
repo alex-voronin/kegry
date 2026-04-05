@@ -90,7 +90,7 @@
       },
       "contactUs": {
         "title": "Kontaktirajte nas",
-        "description": "Zainteresovani ste za povećanje lojalnosti gostiju i vidljivosti vašeg bara? Radujemo se vašem javljanju. Bilo da želite da registrujete lokal, počnete da koristite naše besplatne alate za lojalnost ili saznate više o nadolazećim funkcijama — naš tim je spreman da pomogne. Obratite nam se putem <email>contacts@kegry.com</email> ili kroz naš <chat>chat</chat>."
+        "description": "Zainteresovani ste za povećanje lojalnosti gostiju i vidljivosti vašeg bara? Radujemo se vašem javljanju. Bilo da želite da registrujete lokal, počnete da koristite naše besplatne alate za lojalnost ili saznate više o nadolazećim funkcijama — naš tim je spreman da pomogne. Obratite nam se putem <email>contacts@kegry.com</email> ili preko našeg <chat>četa</chat>."
       },
       "features": {
         "one": {
@@ -308,7 +308,8 @@
         "editVenue": "Uredi",
         "qrCode": "QR kod",
         "deleteVenue": "Obriši lokal",
-        "advanced": "Napredno"
+        "advanced": "Napredno",
+        "verifyVenue": "Verifikuj lokal"
       },
       "deleteDialog": {
         "title": "Da li ste sigurni da želite da obrišete ovaj lokal?",
@@ -320,6 +321,11 @@
       },
       "deleteDiscountDialog": {
         "title": "Da li ste sigurni da želite da obrišete ovaj popust?"
+      },
+      "verificationDialog": {
+        "title": "Potrebna verifikacija",
+        "message": "Kontaktirajte nas putem imejla na <email>contacts@kegry.com</email> ili koristite naš <chat>čet</chat> da verifikujete ovaj lokal.",
+        "close": "OK"
       },
       "toast": {
         "deleteFailed": "Brisanje objekta nije uspelo"

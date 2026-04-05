@@ -29,7 +29,7 @@
 }
 
 .statusNonVerified {
-  @apply bg-secondary/20 text-secondary border-secondary/30 border;
+  @apply bg-secondary/20 text-secondary border-secondary/30 cursor-pointer border;
 }
 
 .mainContent {

@@ -56,6 +56,8 @@ export default function VenueDetailPage() {
   const [isDiscountDeleteModalOpen, setIsDiscountDeleteModalOpen] =
     useState(false);
   const [isQrPopupOpen, setIsQrPopupOpen] = useState(false);
+  const [isVerificationDialogOpen, setIsVerificationDialogOpen] =
+    useState(false);
 
   const { safeBack } = useSafeBack();
 
@@ -203,6 +205,18 @@ export default function VenueDetailPage() {
   };
 
   const menuOptions = [
+    ...(currentVenue && !currentVenue.isVerified
+      ? [
+          {
+            icon: <BadgeAlert size={24} className="text-primary" />,
+            label: t('menu.verifyVenue'),
+            onClick: () => {
+              setIsMenuOpen(false);
+              setIsVerificationDialogOpen(true);
+            },
+          },
+        ]
+      : []),
     {
       icon: <QrCode size={24} className="text-primary" />,
       label: t('menu.qrCode'),
@@ -314,6 +328,11 @@ export default function VenueDetailPage() {
                   ? styles.statusVerified
                   : styles.statusNonVerified,
               )}
+              onClick={() => {
+                if (!currentVenue.isVerified) {
+                  setIsVerificationDialogOpen(true);
+                }
+              }}
             >
               {currentVenue.isVerified ? (
                 <BadgeCheck size={14} />
@@ -556,6 +575,39 @@ export default function VenueDetailPage() {
         isOpen={isQrPopupOpen}
         onClose={() => setIsQrPopupOpen(false)}
         url={buildQrUrl(currentVenue.qrCode)}
+      />
+      <ModalDialog
+        isOpen={isVerificationDialogOpen}
+        onClose={() => setIsVerificationDialogOpen(false)}
+        message={t.rich('verificationDialog.message', {
+          email: (chunks) => (
+            <a
+              href="mailto:contacts@kegry.com"
+              className="text-primary underline"
+            >
+              {chunks}
+            </a>
+          ),
+          chat: (chunks) => (
+            <a
+              href="#"
+              className="text-primary underline"
+              onClick={(e) => {
+                e.preventDefault();
+                // @ts-ignore
+                if (window.Tawk_API) {
+                  // @ts-ignore
+                  window.Tawk_API.maximize();
+                }
+                setIsVerificationDialogOpen(false);
+              }}
+            >
+              {chunks}
+            </a>
+          ),
+        })}
+        primaryButtonText={t('verificationDialog.close')}
+        onPrimaryAction={() => setIsVerificationDialogOpen(false)}
       />
     </div>
   );
