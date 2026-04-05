@@ -26,8 +26,7 @@ public class IndexModel : PageModel
             {
                 UserId = g.Key,
                 ReportCount = g.Count(),
-                LatestReportDate = g.Max(x => x.InvitedAt) // Or maybe just LastSeenAt/InviteExpiresAt? 
-                // We'll just take Max of InvitedAt as a proxy for the timeline since there is no ReportCreatedAt field
+                LatestReportDate = g.Max(x => x.LastSeenAt) 
             })
             .OrderByDescending(g => g.ReportCount)
             .Skip((page - 1) * PageSize)

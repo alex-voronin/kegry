@@ -8,8 +8,8 @@
     <div class="card-header">Search B2C User</div>
     <div class="card-body">
         <form method="get" class="flex gap-8">
-            <input type="text" name="SearchEmail" value="@Model.SearchEmail" placeholder="Enter user email..." class="form-control" style="flex: 1;" />
-            <button type="submit" class="btn btn-primary">Search</button>
+            <input type="text" name="SearchQuery" value="@Model.SearchQuery" placeholder="Search by email or ID..." class="form-control" style="flex: 1;" />
+            <button type="submit" class="btn btn-primary" style="min-width: 120px;">Search</button>
         </form>
 
         @if (!string.IsNullOrEmpty(Model.Message))

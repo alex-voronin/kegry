@@ -17,7 +17,7 @@ public class IndexModel : PageModel
     }
 
     [BindProperty(SupportsGet = true)]
-    public string? SearchEmail { get; set; }
+    public string? SearchQuery { get; set; }
 
     public User? FoundUser { get; set; }
     public string? Message { get; set; }
@@ -25,18 +25,26 @@ public class IndexModel : PageModel
 
     public async Task OnGetAsync()
     {
-        if (string.IsNullOrWhiteSpace(SearchEmail))
+        if (string.IsNullOrWhiteSpace(SearchQuery))
         {
             return;
         }
 
-        var normalizedEmail = SearchEmail.Trim().ToUpperInvariant();
-        FoundUser = await _security.Users
-            .FirstOrDefaultAsync(u => u.NormalizedEmail == normalizedEmail);
+        var query = SearchQuery.Trim();
+        if (Guid.TryParse(query, out var userId))
+        {
+            FoundUser = await _security.Users.FindAsync(userId);
+        }
+        else
+        {
+            var normalizedEmail = query.ToUpperInvariant();
+            FoundUser = await _security.Users
+                .FirstOrDefaultAsync(u => u.NormalizedEmail == normalizedEmail);
+        }
 
         if (FoundUser == null)
         {
-            Message = $"User with email '{SearchEmail}' not found.";
+            Message = "User not found.";
             IsError = true;
         }
     }
@@ -57,7 +65,7 @@ public class IndexModel : PageModel
         Message = $"User {user.Email} has been banned.";
         IsError = false;
         FoundUser = user;
-        SearchEmail = user.Email;
+        SearchQuery = user.Email;
 
         return Page();
     }
@@ -78,7 +86,7 @@ public class IndexModel : PageModel
         Message = $"User {user.Email} has been un-banned.";
         IsError = false;
         FoundUser = user;
-        SearchEmail = user.Email;
+        SearchQuery = user.Email;
 
         return Page();
     }
@@ -105,7 +113,7 @@ public class IndexModel : PageModel
         Message = $"User {user.Email} successfully converted to B2B!";
         IsError = false;
         FoundUser = user;
-        SearchEmail = user.Email;
+        SearchQuery = user.Email;
 
         return Page();
     }

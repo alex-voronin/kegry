@@ -32,7 +32,7 @@
                         <tr>
                             <td>
                                 <div style="font-weight:500">@user.FullName</div>
-                                <div class="text-muted text-sm">ID: @user.UserId.ToString().Substring(0, 8)...</div>
+                                <div class="text-muted text-sm">ID: @user.UserId.ToString()</div>
                             </td>
                             <td><span class="badge @(user.IsPublic ? "badge-green" : "badge-gray")">@(user.IsPublic ? "B2C" : "Private")</span></td>
                             <td><span class="badge badge-red">@user.ReportCount Reports</span></td>
