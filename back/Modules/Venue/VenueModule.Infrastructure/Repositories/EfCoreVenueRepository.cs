@@ -77,7 +77,8 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
 
         var baseQuery = Context.Venues
             .Where(v => EF.Functions.IsWithinDistance(
-                v.Coordinates, userLocation, radiusMeters, useSpheroid: false));
+                v.Coordinates, userLocation, radiusMeters, useSpheroid: false))
+            .Where(v => v.Promos.Count > 0);
 
         var totalCount = await baseQuery.CountAsync(ct);
 
