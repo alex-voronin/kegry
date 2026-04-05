@@ -35,7 +35,7 @@ public class EfCoreDiscountRepository : Repository<VenueContext, Discount>, IDis
     {
         var userLocation = new Point(longitude, latitude) { SRID = 4326 };
 
-        // Filter for all queries
+        // 1. Base filter used for both count and main query
         Expression<Func<Discount, bool>> baseFilter = d =>
             d.Venue.IsVerified &&
             !d.Venue.IsDeleted &&
@@ -48,7 +48,7 @@ public class EfCoreDiscountRepository : Repository<VenueContext, Discount>, IDis
                  l.CompanyId == d.CompanyId &&
                  l.LoyaltyLevelId >= d.LoyaltyLevelId));
 
-        // 2. Get total count
+        // 2. Get total count of unique venues
         var totalCount = await Context.Discounts
             .Where(baseFilter)
             .GroupBy(d => d.VenueId)
@@ -59,49 +59,64 @@ public class EfCoreDiscountRepository : Repository<VenueContext, Discount>, IDis
             return ([], 0);
         }
 
-        // 3. Get ids of the best applicable discounts.
-        // (We have to split it to 2 queries as EF Core can't translate GroupBy() +
-        // OrderByDescending() + FirstOrDefault() + Includes())
-        var bestDiscountIds = await Context.Discounts
+        // 3. Get best discount per venue + pre-calculated distance for global sorting
+        var venueData = await Context.Discounts
             .Where(baseFilter)
             .GroupBy(d => d.VenueId)
-            .Select(g => g
-                .OrderByDescending(x => x.Percent)
-                .ThenBy(x => x.Id) // tie-breaker for stable sorting
-                .Select(x => x.Id)
-                .FirstOrDefault())
+            .Select(g => new
+            {
+                BestDiscountId = g
+                    .OrderByDescending(x => x.Percent)
+                    .ThenBy(x => x.Id)
+                    .Select(x => x.Id)
+                    .FirstOrDefault(),
+
+                // Pre-calculated values for sorting
+                MaxPercent = g.Max(x => x.Percent),
+                DistanceMeters = EF.Functions.Distance(
+                    g.First().Venue.Coordinates,
+                    userLocation,
+                    useSpheroid: false),
+                CompanyName = g.First().Venue.Company.Name
+            })
+            .OrderByDescending(x => x.MaxPercent)
+            .ThenBy(x => x.DistanceMeters)
+            .ThenBy(x => x.CompanyName)
+            .Select(x => new
+            {
+                x.BestDiscountId,
+                x.DistanceMeters
+            })
             .Skip(offset)
             .Take(limit)
             .ToListAsync(ct);
 
-        if (bestDiscountIds.Count == 0)
+        if (venueData.Count == 0)
         {
             return ([], totalCount);
         }
 
-        // 4. Load actual data
+        var bestDiscountIds = venueData.Select(x => x.BestDiscountId).ToList();
+
+        // 4. Load full discount data (distance already calculated in previous query)
         var rawData = await Context.Discounts
             .AsNoTracking()
             .Include(d => d.Days)
             .Include(d => d.Venue)
             .ThenInclude(v => v.Company)
             .Where(d => bestDiscountIds.Contains(d.Id))
-            .Select(d => new
-            {
-                Discount = d,
-                DistanceMeters = EF.Functions.Distance(
-                    d.Venue.Coordinates,
-                    userLocation,
-                    useSpheroid: false)
-            })
-            .ToListAsync(ct);
+            .ToListAsync(ct); // No need to calculate Distance again
 
-        // 5. Sort them in memory
+        // 5. Final in-memory sort + attach pre-calculated distance
+        //    We use dictionary for fast lookup by DiscountId
+        var discountIdToDistance = venueData
+            .ToDictionary(x => x.BestDiscountId, x => x.DistanceMeters);
+
         var items = rawData
-            .OrderByDescending(x => x.Discount.Percent)
-            .ThenBy(x => x.DistanceMeters)
-            .ThenBy(x => x.Discount.Venue.Company.Name)
-            .Select(x => new DiscountWithDistance(x.Discount, x.DistanceMeters))
+            .OrderByDescending(d => d.Percent)
+            .ThenBy(d => discountIdToDistance.GetValueOrDefault(d.Id))
+            .ThenBy(d => d.Venue.Company.Name)
+            .Select(d => new DiscountWithDistance(d, discountIdToDistance.GetValueOrDefault(d.Id)))
             .ToList();
 
         return (items, totalCount);
