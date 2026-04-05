@@ -26,7 +26,7 @@
     },
     "mapPicker": {
       "title": "Select Location",
-      "save": "Save",
+      "save": "Confirm",
       "cancel": "Cancel"
     },
     "forms": {

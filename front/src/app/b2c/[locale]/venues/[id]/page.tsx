@@ -45,6 +45,8 @@ export default function VenueDetailScreen() {
   );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isHelpDialogOpen, setIsHelpDialogOpen] = useState(false);
+  const [checkInVenueId, setCheckInVenueId] = useState<string | null>(null);
+
   const {
     isScannerOpen,
     setIsScannerOpen,
@@ -52,7 +54,7 @@ export default function VenueDetailScreen() {
     setShowCheckIn,
     handleQrCode,
   } = useQrCheckIn({
-    onSuccess: () => fetchVenue(venueId),
+    onSuccess: (id) => setCheckInVenueId(id),
   });
 
   const { safeBack } = useSafeBack();
@@ -419,7 +421,17 @@ export default function VenueDetailScreen() {
 
       <CheckInAnimation
         visible={showCheckIn}
-        onDone={() => setShowCheckIn(false)}
+        onDone={() => {
+          setShowCheckIn(false);
+          if (checkInVenueId) {
+            if (checkInVenueId === venueId) {
+              fetchVenue(venueId);
+            } else {
+              router.push(PAGE_ROUTES.VENUE_DETAIL(checkInVenueId));
+            }
+            setCheckInVenueId(null);
+          }
+        }}
       />
     </div>
   );

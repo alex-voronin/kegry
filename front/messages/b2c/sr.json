@@ -487,7 +487,7 @@
       "discount": "Popust: {percent}%",
       "nextDiscountLevelInfo": "Sledeći nivo popusta je: {percent}%",
       "maxDiscountLevelReached": "Dostignuta je maksimalna vrednost popusta.",
-      "maxLoyaltyLevelReached": "Dostignut je maksimalni nivo lojalnosti.",
+      "maxLoyaltyLevelReached": "Dostignut je maksimalni nivo",
       "visits": "{current}/{total} poseta do sledećeg nivoa",
       "helpDialog": "Ovaj popust važi samo za ovaj lokal i danas. Tapni na karticu da pogledaš dnevne popuste.",
       "ok": "OK",
