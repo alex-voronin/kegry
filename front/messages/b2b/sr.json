@@ -202,7 +202,7 @@
         "loadFailed": "Učitavanje kompanija nije uspelo"
       },
       "menu": {
-        "viewCompany": "Pogledaj kompaniju"
+        "viewCompany": "Pogledajte kompaniju"
       }
     },
     "b2bVenues": {
@@ -243,8 +243,8 @@
       "noVenues": "Nema pronađenih lokala.",
       "addVenue": "Dodaj lokal",
       "menu": {
-        "edit": "Uredi",
-        "delete": "Obriši kompaniju"
+        "edit": "Uredite",
+        "delete": "Obrišite kompaniju"
       },
       "deleteDialog": {
         "title": "Da li ste sigurni da želite da obrišete ovu kompaniju?",
@@ -278,8 +278,8 @@
       "title": "Napredna podešavanja",
       "qrCode": "QR kod",
       "qrCodePlaceholder": "Unesite ID QR koda",
-      "downloadHighContrastQr": "Preuzmi kontrastni QR kod",
-      "downloadDefaultQr": "Preuzmi standardni QR kod",
+      "downloadHighContrastQr": "Preuzmite kontrastni QR kod",
+      "downloadDefaultQr": "Preuzmite standardni QR kod",
       "submit": "Sačuvaj",
       "toast": {
         "updateFailed": "Ažuriranje QR koda nije uspelo"
@@ -298,18 +298,18 @@
       "discounts": "Popusti",
       "notFound": "Lokal nije pronađen",
       "menu": {
-        "openInstagram": "Otvori Instagram",
-        "openWebsite": "Otvori sajt",
-        "openInMaps": "Otvori na Google Maps",
-        "editPromotion": "Uredi",
-        "deletePromotion": "Obriši",
-        "editDiscount": "Uredi",
-        "deleteDiscount": "Obriši",
-        "editVenue": "Uredi",
+        "openInstagram": "Otvorite Instagram",
+        "openWebsite": "Otvorite sajt",
+        "openInMaps": "Otvorite na Google Maps",
+        "editPromotion": "Uredite",
+        "deletePromotion": "Obrišite",
+        "editDiscount": "Uredite",
+        "deleteDiscount": "Obrišite",
+        "editVenue": "Uredite",
         "qrCode": "QR kod",
-        "deleteVenue": "Obriši lokal",
+        "deleteVenue": "Obrišite lokal",
         "advanced": "Napredno",
-        "verifyVenue": "Verifikuj lokal"
+        "verifyVenue": "Verifikujte lokal"
       },
       "deleteDialog": {
         "title": "Da li ste sigurni da želite da obrišete ovaj lokal?",

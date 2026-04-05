@@ -1,7 +1,7 @@
 {
   "common": {
     "errors": {
-      "network": "Greška mreže. Molimo pokušajte ponovo."
+      "network": "Greška mreže. Molimo pokušaj ponovo."
     },
     "toast": {
       "linkCopied": "Link kopiran u clipboard"
@@ -120,11 +120,11 @@
     },
     "forgot": {
       "title": "Zaboravljena lozinka?",
-      "description": "Unesite svoju email adresu i poslaćemo vam link za resetovanje lozinke.",
+      "description": "Unesi svoju email adresu i poslaćemo ti link za resetovanje lozinke.",
       "email": "Email",
       "submit": "Pošalji link za resetovanje",
-      "successTitle": "Proverite email",
-      "successDescription": "Poslali smo link za resetovanje lozinke na vašu email adresu.",
+      "successTitle": "Proveri email",
+      "successDescription": "Poslali smo link za resetovanje lozinke na tvoju email adresu.",
       "backToLogin": "Nazad na prijavu",
       "errors": {
         "emailRequired": "Email je obavezan",
@@ -135,7 +135,7 @@
       "newPassword": "Nova lozinka",
       "confirmPassword": "Potvrdi lozinku",
       "submit": "Promeni lozinku",
-      "success": "Lozinka je uspešno promenjena. Molimo prijavite se sa novom lozinkom.",
+      "success": "Lozinka je uspešno promenjena. Molimo prijavi se sa novom lozinkom.",
       "backToLogin": "Nazad na prijavu",
       "errors": {
         "passwordRequired": "Lozinka je obavezna",
@@ -146,15 +146,15 @@
       }
     },
     "verifyEmail": {
-      "description": "Molimo unesite 6-cifreni kod poslat na vašu email adresu.",
+      "description": "Molimo unesi 6-cifreni kod poslat na tvoju email adresu.",
       "submit": "Verifikuj email",
       "verifying": "Verifikacija...",
-      "successDescription": "Vaš email je uspešno verifikovan.",
+      "successDescription": "Tvoj email je uspešno verifikovan.",
       "errorTitle": "Verifikacija nije uspela",
       "backToLogin": "Nazad na prijavu",
       "resend": "Ponovo pošalji kod",
       "errors": {
-        "userNotFound": "Korisnička sesija nije pronađena. Molimo prijavite se ponovo.",
+        "userNotFound": "Korisnička sesija nije pronađena. Molimo prijavi se ponovo.",
         "invalidCode": "Nevažeći verifikacioni kod"
       }
     },
@@ -194,7 +194,7 @@
         "firstNameRequired": "Ime je obavezno",
         "lastNameRequired": "Prezime je obavezno",
         "birthdayRequired": "Datum rođenja je obavezan",
-        "minAge": "Morate imati najmanje 18 godina",
+        "minAge": "Moraš imati najmanje 18 godina",
         "genderRequired": "Pol je obavezan",
         "minHobbies": "Molimo izaberi bar 1 hobi",
         "maxHobbies": "Možeš izabrati do 10 hobija"
@@ -430,13 +430,13 @@
       },
       "shareFallback": {
         "title": "Podeli link",
-        "instruction": "Automatsko kopiranje nije uspelo. Molimo kopirajte link ručno:",
+        "instruction": "Automatsko kopiranje nije uspelo. Molimo kopiraj link ručno:",
         "close": "Zatvori"
       }
     },
     "permissions": {
       "title": "Dozvole",
-      "description": "Da bismo vam pružili najbolje iskustvo, potreban nam je pristup vašoj lokaciji i obaveštenjima.",
+      "description": "Da bismo ti pružili najbolje iskustvo, potreban nam je pristup tvojoj lokaciji i obaveštenjima.",
       "locationTitle": "Lokacija",
       "locationDesc": "Apsolutno neophodno za otkrivanje ljudi u blizini. Bez toga feed neće raditi",
       "notificationsTitle": "Obaveštenja",
@@ -502,7 +502,7 @@
     "qr-code-reader": {
       "toast": {
         "invalidQr": "Neispravan QR kod",
-        "checkInFailed": "Prijava nije uspela. Molimo pokušajte ponovo."
+        "checkInFailed": "Prijava nije uspela. Molimo pokušaj ponovo."
       }
     },
     "logo": {
@@ -515,8 +515,8 @@
       "confirm": "Imam 18+"
     },
     "reportDialog": {
-      "title": "Zašto blokirate ovog korisnika?",
-      "placeholder": "Recite nam više...",
+      "title": "Zašto blokiraš ovog korisnika?",
+      "placeholder": "Reci nam više...",
       "cancel": "Otkaži",
       "confirm": "Blokiraj i prijavi"
     },
