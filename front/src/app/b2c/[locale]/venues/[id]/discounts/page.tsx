@@ -56,8 +56,8 @@ export default function VenueDiscountsPage() {
             <Icon
               src="/assets/common/disclosure-left-icon.svg"
               alt="back"
-              width={20}
-              height={26}
+              width={14}
+              height={27}
               onClick={handleBack}
             />
           }
@@ -79,8 +79,8 @@ export default function VenueDiscountsPage() {
           <Icon
             src="/assets/common/disclosure-left-icon.svg"
             alt="back"
-            width={20}
-            height={26}
+            width={14}
+            height={27}
             onClick={handleBack}
           />
         }

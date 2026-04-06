@@ -494,7 +494,11 @@
       "menu": {
         "openInstagram": "Open Instagram",
         "openWebsite": "Open Website",
-        "openInMaps": "Open on Google Maps"
+        "openInMaps": "Open on Google Maps",
+        "copyLink": "Copy Link"
+      },
+      "toast": {
+        "linkCopied": "Link copied"
       }
     }
   },

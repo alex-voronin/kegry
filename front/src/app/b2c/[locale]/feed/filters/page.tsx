@@ -15,7 +15,10 @@ import { HobbiesSection } from '@/components/ui/profile-sections/hobbies-section
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { useFeedFiltersStore, FilterDto } from './use-feed-filters-store';
-import { useSettingsStore, DistanceUnits } from '@/app/b2c/[locale]/settings/use-settings-store';
+import {
+  useSettingsStore,
+  DistanceUnits,
+} from '@/app/b2c/[locale]/settings/use-settings-store';
 import { useHobbiesStore } from '@/store/use-hobbies-store';
 import { useFeedStore } from '../use-feed-store';
 import {
@@ -204,8 +207,8 @@ export default function FiltersScreen() {
           <Icon
             src="/assets/common/disclosure-left-icon.svg"
             alt="back"
-            width={20}
-            height={26}
+            width={14}
+            height={27}
             onClick={handleBack}
           />
         }

@@ -269,14 +269,14 @@ export default function FriendsAndFoesPage() {
   };
 
   return (
-    <div className="flex flex-1 flex-col">
+    <>
       <Header
         left={
           <Icon
             src="/assets/common/disclosure-left-icon.svg"
             alt="back"
-            width={20}
-            height={26}
+            width={14}
+            height={27}
             onClick={() => safeBack(PAGE_ROUTES.PROFILE)}
             priority
           />
@@ -296,69 +296,71 @@ export default function FriendsAndFoesPage() {
         }
       />
 
-      <div className={styles.tabBar}>
-        <SegmentedControl
-          options={TAB_OPTIONS}
-          value={activeTab}
-          onChange={(v) => setActiveTab(v as Tab)}
-        />
-      </div>
-
-      <div className={styles.content}>{renderTabContent()}</div>
-
-      <ModalMenu
-        isOpen={!!selectedUser}
-        onClose={() => setSelectedUser(null)}
-        options={getMenuOptions()}
-      />
-
-      <ModalMenu
-        isOpen={isAddMenuOpen}
-        onClose={() => setIsAddMenuOpen(false)}
-        options={[
-          {
-            icon: '/assets/friends-and-foes/share-icon.svg',
-            label: t('menu.shareLink'),
-            onClick: handleShareLink,
-          },
-        ]}
-      />
-
-      <ShareFallbackDialog
-        isOpen={isShareFallbackOpen}
-        onClose={() => setIsShareFallbackOpen(false)}
-        url={shareUrl}
-      />
-
-      <ReportDialog
-        isOpen={isReportDialogOpen}
-        onClose={() => setIsReportDialogOpen(false)}
-        onConfirm={handleBlockConfirm}
-      />
-
-      <InviteDialog
-        isOpen={isInviteDialogOpen}
-        friendName={userToInvite?.firstName || ''}
-        onClose={() => setIsInviteDialogOpen(false)}
-        onConfirm={handleInviteConfirm}
-      />
-
-      {/* NPC Cover Image Viewer */}
-      {selectedNpcCover && (
-        <div
-          className={styles.coverOverlay}
-          onClick={() => setSelectedNpcCover(null)}
-        >
-          <div className={styles.coverContainer}>
-            <Image
-              src={selectedNpcCover.coverUrl}
-              alt={selectedNpcCover.name}
-              fill
-              className="object-cover"
-            />
-          </div>
+      <div className="flex flex-1 flex-col">
+        <div className={styles.tabBar}>
+          <SegmentedControl
+            options={TAB_OPTIONS}
+            value={activeTab}
+            onChange={(v) => setActiveTab(v as Tab)}
+          />
         </div>
-      )}
-    </div>
+
+        <div className={styles.content}>{renderTabContent()}</div>
+
+        <ModalMenu
+          isOpen={!!selectedUser}
+          onClose={() => setSelectedUser(null)}
+          options={getMenuOptions()}
+        />
+
+        <ModalMenu
+          isOpen={isAddMenuOpen}
+          onClose={() => setIsAddMenuOpen(false)}
+          options={[
+            {
+              icon: '/assets/friends-and-foes/share-icon.svg',
+              label: t('menu.shareLink'),
+              onClick: handleShareLink,
+            },
+          ]}
+        />
+
+        <ShareFallbackDialog
+          isOpen={isShareFallbackOpen}
+          onClose={() => setIsShareFallbackOpen(false)}
+          url={shareUrl}
+        />
+
+        <ReportDialog
+          isOpen={isReportDialogOpen}
+          onClose={() => setIsReportDialogOpen(false)}
+          onConfirm={handleBlockConfirm}
+        />
+
+        <InviteDialog
+          isOpen={isInviteDialogOpen}
+          friendName={userToInvite?.firstName || ''}
+          onClose={() => setIsInviteDialogOpen(false)}
+          onConfirm={handleInviteConfirm}
+        />
+
+        {/* NPC Cover Image Viewer */}
+        {selectedNpcCover && (
+          <div
+            className={styles.coverOverlay}
+            onClick={() => setSelectedNpcCover(null)}
+          >
+            <div className={styles.coverContainer}>
+              <Image
+                src={selectedNpcCover.coverUrl}
+                alt={selectedNpcCover.name}
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }

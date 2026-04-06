@@ -15,7 +15,7 @@ import { useVenueStore } from './use-venue-store';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 import { toast } from 'react-toastify';
-import { HelpCircle, ChevronRight, ScanQrCode } from 'lucide-react';
+import { HelpCircle, ChevronRight, ScanQrCode, Link } from 'lucide-react';
 import styles from './venue-detail.module.css';
 import { InstagramIcon } from './_components/instagram-icon';
 import { PromoIcon } from '@/lib/promo-types';
@@ -91,8 +91,8 @@ export default function VenueDetailScreen() {
             <Icon
               src="/assets/common/disclosure-left-icon.svg"
               alt="back"
-              width={20}
-              height={26}
+              width={14}
+              height={27}
               onClick={handleBack}
             />
           }
@@ -112,8 +112,8 @@ export default function VenueDetailScreen() {
             <Icon
               src="/assets/common/disclosure-left-icon.svg"
               alt="back"
-              width={20}
-              height={26}
+              width={14}
+              height={27}
               onClick={handleBack}
             />
           }
@@ -137,8 +137,8 @@ export default function VenueDetailScreen() {
             <Icon
               src="/assets/common/disclosure-left-icon.svg"
               alt="back"
-              width={20}
-              height={26}
+              width={14}
+              height={27}
               onClick={handleBack}
             />
           }
@@ -377,6 +377,15 @@ export default function VenueDetailScreen() {
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
         options={[
+          {
+            label: t('menu.copyLink'),
+            icon: <Link size={24} />,
+            onClick: () => {
+              navigator.clipboard.writeText(window.location.href);
+              toast.success(t('toast.linkCopied'));
+              setIsMenuOpen(false);
+            },
+          },
           {
             label: t('menu.openInMaps'),
             icon: '/assets/venue/google-maps-icon.svg',

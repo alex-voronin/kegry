@@ -4,6 +4,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
   }
 
   const reg = await navigator.serviceWorker.register('/sw.js');
+  await reg.update();
   await navigator.serviceWorker.ready;
   return reg;
 }

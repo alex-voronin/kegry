@@ -494,7 +494,11 @@
       "menu": {
         "openInstagram": "Otvori Instagram",
         "openWebsite": "Otvori sajt",
-        "openInMaps": "Otvori na Google Maps"
+        "openInMaps": "Otvori na Google Maps",
+        "copyLink": "Kopiraj link"
+      },
+      "toast": {
+        "linkCopied": "Link je kopiran"
       }
     }
   },

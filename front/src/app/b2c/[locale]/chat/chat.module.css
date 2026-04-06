@@ -41,7 +41,7 @@
 }
 
 .messageBubble {
-  @apply relative max-w-[85%] px-4 py-3 text-base leading-relaxed;
+  @apply relative max-w-[85%] px-4 py-3 text-base leading-relaxed wrap-break-word;
 }
 
 .bubbleLeft {

@@ -25,6 +25,7 @@ import { CheckInAnimation } from './_components/check-in-animation';
 import { useQrCheckIn } from './use-qr-check-in';
 import { ScanQrCode } from 'lucide-react';
 import styles from './venues.module.css';
+import { useSafeBack } from '@/hooks/use-safe-back';
 
 export default function VenuesScreen() {
   const router = useRouter();
@@ -50,6 +51,7 @@ export default function VenuesScreen() {
     },
   });
   const distanceUnits = useSettingsStore((state) => state.distanceUnits);
+  const { safeBack } = useSafeBack();
 
   const { ref: pageBottomRef, inView } = useInView({
     threshold: 0,
@@ -143,9 +145,9 @@ export default function VenuesScreen() {
           <Icon
             src="/assets/common/disclosure-left-icon.svg"
             alt="back"
-            width={20}
-            height={26}
-            onClick={() => router.replace(PAGE_ROUTES.FEED)}
+            width={14}
+            height={27}
+            onClick={() => safeBack(PAGE_ROUTES.FEED)}
             priority
           />
         }

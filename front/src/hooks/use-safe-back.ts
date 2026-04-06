@@ -15,7 +15,7 @@ export const useSafeBack = () => {
       router.back();
     } else {
       if (fallbackUrl) {
-        router.push(fallbackUrl);
+        router.replace(fallbackUrl);
       } else {
         window.close();
       }
