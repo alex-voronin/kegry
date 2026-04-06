@@ -29,46 +29,11 @@ import EmojiPicker, {
 } from 'emoji-picker-react';
 import * as linkify from 'linkifyjs';
 import { cn } from '@/lib/utils';
+import { getInternalPath } from '@/lib/url-utils';
 
 const LOW_MESSAGE_WARNING_THRESHOLD = 10;
 const END_MEETING_PROMPT_COOLDOWN = 8 * 60 * 60 * 1000; // 8 hours
 const END_MEETING_PROMPT_CLOSED_AT_KEY = 'end_meeting_prompt_closed_at';
-
-const renderMessageText = (text: string) => {
-  const links = linkify.find(text, 'url');
-  if (links.length === 0) return text;
-
-  const elements = [];
-  let lastIndex = 0;
-
-  links.forEach((link, i) => {
-    if (link.start > lastIndex) {
-      elements.push(text.substring(lastIndex, link.start));
-    }
-    const href = link.href.startsWith('http')
-      ? link.href
-      : `https://${link.href}`;
-    elements.push(
-      <a
-        key={`link-${i}`}
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="wrap-break-words underline"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {link.value}
-      </a>,
-    );
-    lastIndex = link.end;
-  });
-
-  if (lastIndex < text.length) {
-    elements.push(text.substring(lastIndex));
-  }
-
-  return elements;
-};
 
 export default function ChatScreen() {
   const t = useTranslations('screens.chat');
@@ -83,10 +48,60 @@ export default function ChatScreen() {
   const [isFirstTimePopupOpen, setIsFirstTimePopupOpen] = useState(false);
   const router = useRouter();
 
+  const renderMessageText = useCallback(
+    (text: string) => {
+      const links = linkify.find(text, 'url');
+      if (links.length === 0) return text;
+
+      const elements = [];
+      let lastIndex = 0;
+
+      links.forEach((link, i) => {
+        if (link.start > lastIndex) {
+          elements.push(text.substring(lastIndex, link.start));
+        }
+        const href = link.href.startsWith('http')
+          ? link.href
+          : `https://${link.href}`;
+
+        const internalPath = getInternalPath(href);
+        const isInternal = !!internalPath;
+
+        elements.push(
+          <a
+            key={`link-${i}`}
+            href={href}
+            target={isInternal ? undefined : '_blank'}
+            rel={isInternal ? undefined : 'noopener noreferrer'}
+            className="wrap-break-word underline"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (isInternal) {
+                e.preventDefault();
+                router.push(internalPath);
+              }
+            }}
+          >
+            {link.value}
+          </a>,
+        );
+        lastIndex = link.end;
+      });
+
+      if (lastIndex < text.length) {
+        elements.push(text.substring(lastIndex));
+      }
+
+      return elements;
+    },
+    [router],
+  );
+
   const emojiPickerRef = useRef<HTMLDivElement>(null);
   const emojiButtonRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -305,12 +320,16 @@ export default function ChatScreen() {
     }
   }, [remainingTimeMs]);
 
-  const onMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const el = e.target;
-    setMessage(el.value);
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'inherit';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [message]);
 
-    el.style.height = 'inherit';
-    el.style.height = `${el.scrollHeight}px`;
+  const onMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(e.target.value);
   };
 
   const handleSendMessage = async () => {
@@ -357,16 +376,16 @@ export default function ChatScreen() {
 
   const menuOptions = [
     {
-      icon: '/assets/chat/cancel-icon.svg',
-      label: t('menu.cancel'),
-      onClick: handleEndMeeting,
-    },
-    {
       icon: '/assets/venue/venue-icon.svg',
       label: t('menu.venues'),
       onClick: () => {
         router.push(PAGE_ROUTES.VENUES);
       },
+    },
+    {
+      icon: '/assets/chat/cancel-icon.svg',
+      label: t('menu.cancel'),
+      onClick: handleEndMeeting,
     },
   ];
 
@@ -416,8 +435,8 @@ export default function ChatScreen() {
             <Icon
               src="/assets/common/disclosure-left-icon.svg"
               alt="back"
-              width={20}
-              height={26}
+              width={14}
+              height={27}
               onClick={() => router.replace(PAGE_ROUTES.FEED)}
               priority
             />
@@ -545,6 +564,7 @@ export default function ChatScreen() {
           />
         </div>
         <textarea
+          ref={textareaRef}
           value={message}
           onChange={(e) => onMessageChange(e)}
           onKeyDown={(e) => {
