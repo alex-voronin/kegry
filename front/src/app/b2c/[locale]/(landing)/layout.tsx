@@ -7,5 +7,9 @@ export default function LandingLayout({
 }) {
   // Landing page uses full-width layout
   // This wrapper breaks out of the parent container's max-width constraint
-  return <div className={styles.wrapper}>{children}</div>;
+  return (
+    <div id="landing-scroll-container" className={styles.wrapper}>
+      {children}
+    </div>
+  );
 }

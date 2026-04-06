@@ -11,6 +11,7 @@ import { useNewsStore } from '../store/use-news-store';
 import Script from 'next/script';
 import SocialLinks from './social-links';
 import { LanguageSelector } from '@/components/common/LanguageSelector';
+import { ScrollToTopButton } from '@/components/common/ScrollToTopButton';
 import styles from './desktop-landing.module.css';
 import mobileStyles from './mobile-landing.module.css';
 
@@ -404,6 +405,8 @@ export default function MobileLayout() {
         </div>
         <span className={styles.footerCopyright}>{t('footer.copyright')}</span>
       </footer>
+
+      <ScrollToTopButton containerId="landing-scroll-container" />
     </div>
   );
 }

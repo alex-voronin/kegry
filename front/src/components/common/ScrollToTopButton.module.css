@@ -1,0 +1,24 @@
+@reference "../../app/globals.css";
+
+/* .scrollTopButton {
+  @apply fixed right-6 bottom-6 z-40 flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-all duration-300;
+  background-color: var(--color-landing-button, #ffab10);
+  color: #000;
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+}
+
+.scrollTopButtonVisible {
+  @apply opacity-60;
+  transform: translateY(0);
+  pointer-events: auto;
+} */
+
+.scrollTopButton {
+  @apply pointer-events-none fixed right-6 bottom-6 z-40 flex h-12 w-12 translate-y-5 items-center justify-center rounded-full bg-(--color-landing-subheading,#ffab10) text-black opacity-0 shadow-lg transition-all duration-300;
+}
+
+.scrollTopButtonVisible {
+  @apply pointer-events-auto translate-y-0 opacity-60;
+}

@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Menu, X } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { LanguageSelector } from '@/components/common/LanguageSelector';
+import { ScrollToTopButton } from '@/components/common/ScrollToTopButton';
 import SocialLinks from './social-links';
 import styles from './desktop-landing.module.css';
 import mobileStyles from './mobile-landing.module.css';
@@ -302,6 +303,8 @@ export default function MobileLayout() {
         </div>
         <span className={styles.footerCopyright}>{t('footer.copyright')}</span>
       </footer>
+
+      <ScrollToTopButton containerId="landing-scroll-container" />
     </div>
   );
 }
