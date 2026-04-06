@@ -58,7 +58,7 @@ public class LoginModel : PageModel
             new AuthenticationProperties
             {
                 IsPersistent = true,
-                ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8)
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(AdminPanelConstants.AuthExpirationDays)
             });
 
         return RedirectToPage("/Index");

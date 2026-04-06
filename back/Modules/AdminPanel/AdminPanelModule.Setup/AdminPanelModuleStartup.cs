@@ -1,5 +1,6 @@
 using AdminPanelModule.RazorPages.Config;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -44,7 +45,13 @@ public class AdminPanelModuleStartup : IFeatureStartup
             .AddCookie(AdminPanelConstants.AuthScheme, options =>
             {
                 options.Cookie.Name = "AdminPanel.Auth";
-                options.ExpireTimeSpan = TimeSpan.FromDays(7);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = appBuilder.Environment.IsDevelopment()
+                    ? CookieSecurePolicy.SameAsRequest
+                    : CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.Lax;
+                options.ExpireTimeSpan = TimeSpan.FromDays(AdminPanelConstants.AuthExpirationDays);
+                options.SlidingExpiration = true;
                 options.LoginPath = $"{AdminPanelConstants.PathPrefix}/Login";
                 options.LogoutPath = $"{AdminPanelConstants.PathPrefix}/Logout";
                 options.ReturnUrlParameter = "returnUrl";

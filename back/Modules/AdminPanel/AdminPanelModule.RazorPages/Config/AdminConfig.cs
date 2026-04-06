@@ -10,4 +10,5 @@ public static class AdminPanelConstants
 {
     public const string AuthScheme = "AdminCookies";
     public const string PathPrefix = "/admin";
+    public const int AuthExpirationDays = 7;
 }
