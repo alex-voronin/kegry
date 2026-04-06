@@ -367,7 +367,7 @@ export default function VenueDetailPage() {
                 src="/assets/b2b/google-maps-icon.svg"
                 alt="Maps"
                 width={24}
-                height={24}
+                height={30}
               />
               <span className={styles.fieldText}>{currentVenue.address}</span>
             </div>
