@@ -489,7 +489,7 @@
       "maxDiscountLevelReached": "The maximum discount has been reached.",
       "maxLoyaltyLevelReached": "Max level reached",
       "visits": "{current}/{total} visits to next level",
-      "helpDialog": "This discount applies only to this venue and today. Tap the card to view daily discounts.",
+      "helpDialog": "This discount applies only to this venue and today. Tap the card to view daily discounts. Scan the QR code to increase the number of visits.",
       "ok": "OK",
       "menu": {
         "openInstagram": "Open Instagram",

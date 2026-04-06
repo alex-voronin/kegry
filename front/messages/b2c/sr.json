@@ -489,7 +489,7 @@
       "maxDiscountLevelReached": "Dostignuta je maksimalna vrednost popusta.",
       "maxLoyaltyLevelReached": "Dostignut je maksimalni nivo",
       "visits": "{current}/{total} poseta do sledećeg nivoa",
-      "helpDialog": "Ovaj popust važi samo za ovaj lokal i danas. Tapni na karticu da pogledaš dnevne popuste.",
+      "helpDialog": "Ovaj popust važi samo za ovaj lokal i danas. Tapni na karticu da pogledaš dnevne popuste. Skeniraj QR kod da povećaš broj poseta.",
       "ok": "OK",
       "menu": {
         "openInstagram": "Otvori Instagram",
