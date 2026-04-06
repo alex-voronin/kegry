@@ -53,14 +53,22 @@ self.addEventListener('fetch', (event) => {
     ASSETS_TO_CACHE.some((url) => event.request.url.endsWith(url))
   ) {
     event.respondWith(
-      caches.match(event.request).then((response) => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request).then((networkResponse) => {
-          return networkResponse;
-        });
-      }),
+      caches
+        .match(event.request)
+        .then((response) => {
+          if (response) {
+            return response;
+          }
+          return fetch(event.request).then((networkResponse) => {
+            return networkResponse;
+          });
+        })
+        .catch(() => {
+          return new Response('Offline', {
+            status: 503,
+            statusText: 'Service Unavailable',
+          });
+        }),
     );
     return;
   }
@@ -70,12 +78,20 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       caches.open(CACHE_NAME).then((cache) => {
         return cache.match(event.request).then((cachedResponse) => {
-          const fetchPromise = fetch(event.request).then((networkResponse) => {
-            if (networkResponse.ok) {
-              cache.put(event.request, networkResponse.clone());
-            }
-            return networkResponse;
-          });
+          const fetchPromise = fetch(event.request)
+            .then((networkResponse) => {
+              if (networkResponse.ok) {
+                cache.put(event.request, networkResponse.clone());
+              }
+              return networkResponse;
+            })
+            .catch((err) => {
+              console.warn('[SW] Network failed for:', url, err);
+              return new Response('Offline content unavailable', {
+                status: 503,
+                statusText: 'Service Unavailable',
+              });
+            });
           return cachedResponse || fetchPromise;
         });
       }),
