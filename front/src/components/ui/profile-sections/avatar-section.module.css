@@ -1,17 +1,25 @@
 @reference "../../../app/globals.css";
 
-.profileSection {
-  @apply relative my-4 flex h-48 w-48 items-center justify-center;
+.avatarSection {
+  @apply my-4 flex flex-col items-center gap-2;
 }
 
-.profilePlaceholder {
-  @apply border-secondary flex h-full w-full items-center justify-center overflow-hidden rounded-full border;
+.avatarContainer {
+  @apply border-secondary relative cursor-pointer overflow-hidden rounded-full border;
+  width: 192px;
+  height: 192px;
+  background-color: var(--color-form-element);
 }
 
 .avatarImage {
-  @apply object-contain;
+  @apply h-full w-full object-cover;
 }
 
-.hint {
-  @apply text-secondary absolute top-[164px] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-sm;
+.avatarPlaceholderIcon {
+  @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
+}
+
+.requiredAsterisk {
+  @apply absolute -top-1.5 -right-1.5 text-lg font-bold;
+  color: var(--color-primary);
 }

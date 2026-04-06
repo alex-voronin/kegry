@@ -4,6 +4,7 @@ import Image from 'next/image';
 import styles from './avatar-section.module.css';
 import { useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Camera } from 'lucide-react';
 import AvatarCropper from '../avatar-cropper';
 import { blobToBase64 } from '@/store/use-user-profile-store';
 
@@ -52,8 +53,20 @@ export const AvatarSection = ({
   const displayUrl = localAvatarUrl || avatarBase64;
 
   return (
-    <div className={styles.profileSection} onClick={handleClick}>
-      <div className={styles.profilePlaceholder}>
+    <div className={styles.avatarSection} onClick={handleClick}>
+      <div className={styles.avatarContainer}>
+        {displayUrl ? (
+          <img
+            src={displayUrl}
+            alt="avatar"
+            className={styles.avatarImage}
+          />
+        ) : (
+          <div className={styles.avatarPlaceholderIcon}>
+            <Camera size={40} className="text-secondary opacity-50" />
+            <span className={styles.requiredAsterisk}>*</span>
+          </div>
+        )}
         <input
           type="file"
           accept="image/*"
@@ -61,14 +74,6 @@ export const AvatarSection = ({
           onChange={handleFileChange}
           className="hidden"
         />
-        <Image
-          src={displayUrl || '/assets/common/camera-placeholder.svg'}
-          alt={'Avatar Image'}
-          width={192}
-          height={192}
-          className={styles.avatarImage}
-        />
-        {!displayUrl && <div className={styles.hint}>{t('selectAvatar')}</div>}
       </div>
     </div>
   );

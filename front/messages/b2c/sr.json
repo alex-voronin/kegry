@@ -541,9 +541,6 @@
         "firstName": "Ime",
         "lastName": "Prezime"
       },
-      "avatar": {
-        "selectAvatar": "Izaberi avatar"
-      },
       "birthday": {
         "title": "Datum rođenja",
         "placeholder": "Datum rođenja"

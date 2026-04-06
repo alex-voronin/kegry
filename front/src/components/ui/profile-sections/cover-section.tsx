@@ -4,6 +4,7 @@ import Image from 'next/image';
 import styles from './cover-section.module.css';
 import { useRef, useState, useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
+import { Camera } from 'lucide-react';
 import { compressImageToBlob } from '@/lib/image-utils';
 
 type CoverSectionProps = {
@@ -83,12 +84,7 @@ export const CoverSection = ({
         </>
       ) : (
         <div className={styles.placeholder}>
-          <Image
-            src="/assets/common/camera-placeholder.svg"
-            alt="Select cover"
-            width={64}
-            height={64}
-          />
+          <Camera size={48} className="text-secondary opacity-50" />
           <span className={styles.placeholderText}>{t('selectCover')}</span>
         </div>
       )}

@@ -25,7 +25,6 @@ const STATIC_ASSETS = [
   "/assets/common/avatar-placeholder.webp",
   "/assets/common/beer-mug.webp",
   "/assets/common/block-icon.svg",
-  "/assets/common/camera-placeholder.svg",
   "/assets/common/delete-icon.svg",
   "/assets/common/dialog-logo.webp",
   "/assets/common/disclosure-left-icon.svg",
