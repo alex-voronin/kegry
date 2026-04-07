@@ -1,8 +1,8 @@
 'use client';
 
 import { create, resetAllStores } from '@/lib/zustand-reset';
-import axios from 'axios';
 import { persist } from 'zustand/middleware';
+import authClient from '../auth-client';
 import { API_ENDPOINTS, PAGE_ROUTES } from '../routes';
 import { rethrowApiError, ApiRequestError } from '../api-error';
 
@@ -140,7 +140,7 @@ export const useAuthStore = create<AuthState>()(
 
       signin: async (email, password, allowedUserTypes) => {
         try {
-          const signinRes = await axios.post<ApiResult<SigninResponse>>(
+          const signinRes = await authClient.post<ApiResult<SigninResponse>>(
             API_ENDPOINTS.AUTH.SIGNIN,
             { email, password },
           );
@@ -174,7 +174,7 @@ export const useAuthStore = create<AuthState>()(
 
       signup: async (email, password, userType) => {
         try {
-          const signupRes = await axios.post<ApiResult<AuthResponse>>(
+          const signupRes = await authClient.post<ApiResult<AuthResponse>>(
             API_ENDPOINTS.AUTH.SIGNUP,
             { email, password, userType },
           );
@@ -193,7 +193,7 @@ export const useAuthStore = create<AuthState>()(
 
       signinWithGoogle: async (idToken, userType, allowedUserTypes) => {
         try {
-          const res = await axios.post<ApiResult<AuthResponse>>(
+          const res = await authClient.post<ApiResult<AuthResponse>>(
             API_ENDPOINTS.AUTH.GOOGLE,
             { idToken, userType },
           );
@@ -218,7 +218,7 @@ export const useAuthStore = create<AuthState>()(
 
       confirmEmail: async (userId, token) => {
         try {
-          const res = await axios.post<ApiResult<AuthResponse>>(
+          const res = await authClient.post<ApiResult<AuthResponse>>(
             API_ENDPOINTS.AUTH.CONFIRM_EMAIL,
             { userId, token },
           );
@@ -238,7 +238,7 @@ export const useAuthStore = create<AuthState>()(
 
       logout: async () => {
         try {
-          await axios.post(API_ENDPOINTS.AUTH.LOGOUT);
+          await authClient.post(API_ENDPOINTS.AUTH.LOGOUT);
         } finally {
           if (typeof window === 'undefined') return;
           resetAllStores();
@@ -249,7 +249,7 @@ export const useAuthStore = create<AuthState>()(
 
       requestPasswordReset: async (email) => {
         try {
-          const res = await axios.post<ApiResult<any>>(
+          const res = await authClient.post<ApiResult<any>>(
             API_ENDPOINTS.AUTH.REQUEST_PASSWORD_RESET,
             { email },
           );
@@ -265,7 +265,7 @@ export const useAuthStore = create<AuthState>()(
 
       confirmPasswordReset: async (encodedEmail, encodedToken, newPassword) => {
         try {
-          const res = await axios.post<ApiResult<any>>(
+          const res = await authClient.post<ApiResult<any>>(
             API_ENDPOINTS.AUTH.CONFIRM_PASSWORD_RESET,
             {
               encodedEmail,
@@ -285,7 +285,7 @@ export const useAuthStore = create<AuthState>()(
 
       deleteAccount: async () => {
         try {
-          await axios.delete(API_ENDPOINTS.AUTH.DELETE_ACCOUNT);
+          await authClient.delete(API_ENDPOINTS.AUTH.DELETE_ACCOUNT);
         } catch (error) {
           rethrowApiError(error, 'Account deletion failed');
         }
@@ -309,7 +309,7 @@ export const useAuthStore = create<AuthState>()(
 
 // --- Axios Interceptors ---
 
-axios.interceptors.request.use((config) => {
+authClient.interceptors.request.use((config) => {
   const { accessToken } = useAuthStore.getState();
   if (accessToken && config.headers) {
     config.headers.Authorization = `Bearer ${accessToken}`;
@@ -345,7 +345,7 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = [];
 };
 
-axios.interceptors.response.use(
+authClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
@@ -366,7 +366,7 @@ axios.interceptors.response.use(
         })
           .then((token) => {
             originalRequest.headers['Authorization'] = 'Bearer ' + token;
-            return axios(originalRequest);
+            return authClient(originalRequest);
           })
           .catch((err) => {
             return Promise.reject(err);
@@ -384,7 +384,7 @@ axios.interceptors.response.use(
       }
 
       try {
-        const response = await axios.post<ApiResult<AuthResponse>>(
+        const response = await authClient.post<ApiResult<AuthResponse>>(
           API_ENDPOINTS.AUTH.RENEW_TOKENS,
           { refreshToken },
         );
@@ -397,7 +397,7 @@ axios.interceptors.response.use(
             'Bearer ' + newAuth.accessToken;
 
           processQueue(null, newAuth.accessToken);
-          return axios(originalRequest);
+          return authClient(originalRequest);
         } else {
           throw new Error('Failed to renew token');
         }

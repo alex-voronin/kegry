@@ -2,7 +2,9 @@
 
 import { ReactNode, useEffect, useCallback } from 'react';
 import { NextIntlClientProvider, useLocale } from 'next-intl';
+import axios from 'axios';
 import apiClient from '@/lib/api-client';
+import authClient from '@/lib/auth-client';
 import { useRouter } from '@/i18n/routing';
 import { useBackgroundLocation } from '@/lib/use-background-location';
 import { useFcm } from '@/lib/fcm/use-fcm';
@@ -166,7 +168,11 @@ function LocaleHeaderSync() {
   useEffect(() => {
     if (apiClient.defaults.headers.common['Accept-Language'] !== locale) {
       apiClient.defaults.headers.common['Accept-Language'] = locale;
-      console.log(`Accept-Language updated to: ${locale}`);
+      console.log(`apiClient Accept-Language updated to: ${locale}`);
+    }
+    if (authClient.defaults.headers.common['Accept-Language'] !== locale) {
+      authClient.defaults.headers.common['Accept-Language'] = locale;
+      console.log(`authClient Accept-Language updated to: ${locale}`);
     }
   }, [locale]);
 

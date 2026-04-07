@@ -4,6 +4,7 @@ import axios, {
   InternalAxiosRequestConfig,
 } from 'axios';
 import { useAuthStore } from './auth/use-auth-store';
+import authClient from './auth-client';
 import { API_ENDPOINTS, PAGE_ROUTES } from './routes';
 
 // --- Configuration ---
@@ -125,7 +126,7 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await axios.post(
+        const response = await authClient.post(
           API_ENDPOINTS.AUTH.RENEW_TOKENS,
           {
             refreshToken,
