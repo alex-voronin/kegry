@@ -289,7 +289,7 @@
       "tomorrow": "sutra",
       "todayUntil": "danas do {h}:{m}",
       "tomorrowUntil": "sutra do {h}:{m}",
-      "ago": "pre {time}",
+      "expired": "Isteklo {time}",
       "menu": {
         "viewProfile": "Pogledaj profil",
         "accept": "Prihvati",

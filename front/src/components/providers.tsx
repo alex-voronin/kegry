@@ -18,6 +18,7 @@ import { FcmPayload, NotificationType } from '@/lib/fcm/types';
 import { TawkMessenger } from './tawk-messenger';
 import { BRAND_NAME } from '@/lib/constants';
 import { NavigationTracker } from './common/NavigationTracker';
+import { DayjsLocaleProvider } from './DayjsLocaleProvider';
 
 function FcmGlobalHandler() {
   const router = useRouter();
@@ -192,6 +193,7 @@ export function Providers({
   return (
     <NextIntlClientProvider messages={messages} locale={locale} timeZone="UTC">
       <NavigationTracker />
+      <DayjsLocaleProvider />
       <LocaleHeaderSync />
       <TawkMessenger />
       {runPushesAndLocationHandling && (

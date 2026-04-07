@@ -289,7 +289,7 @@
       "tomorrow": "tomorrow",
       "todayUntil": "today until {h}:{m}",
       "tomorrowUntil": "tomorrow until {h}:{m}",
-      "ago": "{time} ago",
+      "expired": "Expired {time}",
       "menu": {
         "viewProfile": "View Profile",
         "accept": "Accept",

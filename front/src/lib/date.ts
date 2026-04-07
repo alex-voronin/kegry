@@ -25,6 +25,10 @@ export function formatNotificationDate(
     return t('tomorrowUntil', { h: hours, m: minutes });
   }
 
+  if (date.isBefore(dayjs())) {
+    return t('expired', { time: date.fromNow() });
+  }
+
   // specified formats: 1 day ago, 3 days ago, 1 week ago, 1 month ago, 1 year ago
   return date.fromNow();
 }
