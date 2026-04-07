@@ -350,7 +350,8 @@
       "deleteAccountDialog": {
         "title": "Are you sure you want to delete your account? This action cannot be undone.",
         "buttonYes": "Yes",
-        "buttonNo": "No"
+        "buttonNo": "No",
+        "cannotDeleteBusinessAccount": "You cannot delete a business account from the customer portal. Please log in to the business portal first and delete your account from the business profile."
       }
     },
     "settings": {

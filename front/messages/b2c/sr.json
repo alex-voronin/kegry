@@ -350,7 +350,8 @@
       "deleteAccountDialog": {
         "title": "Želiš li da obrišeš nalog? Ova akcija se ne može poništiti.",
         "buttonYes": "Da",
-        "buttonNo": "Ne"
+        "buttonNo": "Ne",
+        "cannotDeleteBusinessAccount": "Ne možete obrisati poslovni nalog sa korisničkog portala. Molimo vas da se prvo prijavite na biznis portal i obrišete nalog iz vašeg biznis profila."
       }
     },
     "settings": {

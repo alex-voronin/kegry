@@ -16,7 +16,7 @@ import AvatarCropper from '@/components/ui/avatar-cropper';
 import { cn } from '@/lib/utils';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { openTawkChat } from '@/components/tawk-messenger';
-import { useAuthStore } from '@/lib/auth/use-auth-store';
+import { useAuthStore, UserType } from '@/lib/auth/use-auth-store';
 import {
   useUserProfileStore,
   blobToBase64,
@@ -62,7 +62,7 @@ export default function ProfilePage() {
   } = useUserProfileStore();
 
   const { hobbies } = useHobbiesStore();
-  const { logout, deleteAccount } = useAuthStore();
+  const { logout, deleteAccount, userType } = useAuthStore();
 
   const isInitialized = useRef(false);
   const [showPermissionsLink, setShowPermissionsLink] = useState(false);
@@ -96,6 +96,11 @@ export default function ProfilePage() {
   };
 
   const handleDeleteAccount = async () => {
+    if (userType === UserType.B2B) {
+      toast.error(t('deleteAccountDialog.cannotDeleteBusinessAccount'));
+      setIsDeleteAccountModalOpen(false);
+      return;
+    }
     setIsDeleting(true);
     try {
       await deleteAccount();
