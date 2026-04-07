@@ -9,6 +9,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 console.log(`api calls will be redirected to: ${API_BASE_URL}`);
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   reactStrictMode: true,
   env: {
     NEXT_PUBLIC_APP_VERSION: version,
