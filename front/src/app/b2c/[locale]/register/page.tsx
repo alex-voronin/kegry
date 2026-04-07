@@ -73,7 +73,10 @@ export default function RegisterPage() {
   const handleGoogleSuccess = async (credential: string) => {
     setLoading(true);
     try {
-      const result = await signinWithGoogle(credential, UserType.B2C);
+      const result = await signinWithGoogle(credential, UserType.B2C, [
+        UserType.B2C,
+        UserType.B2B,
+      ]);
 
       if (result.requiredAction === RequiredAction.OnboardingCompletion) {
         router.push(PAGE_ROUTES.ONBOARDING);

@@ -21,6 +21,7 @@ import { createRegisterSchema } from '@/lib/auth/register-schema';
 import { EmailField } from '@/components/auth/fields/EmailField';
 import { PasswordField } from '@/components/auth/fields/PasswordField';
 import { GoogleSignInButton } from '@/components/auth/google/GoogleSignInButton';
+import { B2CUserLoginAttemptDialog } from '@/components/auth/B2CUserLoginAttemptDialog';
 
 export default function RegisterPage() {
   const t = useTranslations('screens.register');
@@ -30,6 +31,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const signup = useAuthStore((state) => state.signup);
   const signinWithGoogle = useAuthStore((state) => state.signinWithGoogle);
+  const [isB2CDialogOpen, setIsB2CDialogOpen] = useState(false);
 
   const schema = createRegisterSchema(t);
 
@@ -68,7 +70,15 @@ export default function RegisterPage() {
   const handleGoogleSuccess = async (credential: string) => {
     setLoading(true);
     try {
-      const result = await signinWithGoogle(credential, UserType.B2B);
+      const result = await signinWithGoogle(credential, UserType.B2B, [
+        UserType.B2B,
+      ]);
+
+      if (result.userType === UserType.B2C) {
+        setIsB2CDialogOpen(true);
+        return;
+      }
+
       router.push(PAGE_ROUTES.B2B.COMPANIES);
     } catch (err: any) {
       toast.error(err.message || tCommonErrors('network'));
@@ -189,6 +199,10 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
+      <B2CUserLoginAttemptDialog
+        isOpen={isB2CDialogOpen}
+        onClose={() => setIsB2CDialogOpen(false)}
+      />
     </>
   );
 }

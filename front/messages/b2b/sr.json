@@ -133,6 +133,11 @@
         "passwordShort": "Lozinka mora imati najmanje 10 karaktera",
         "passwordComplexity": "Lozinka mora sadržati bar jedno veliko slovo, jedno malo slovo i jedan broj",
         "wrongCredentials": "Neispravna email adresa ili lozinka"
+      },
+      "b2cUserAttemptDialog": {
+        "message": "Registrovani ste kao standardni korisnik i nemate pristup biznis portalu.\n\nAko ste vlasnik lokala ili predstavnik firme, molimo vas da kontaktirate naš tim za podršku. U suprotnom, prijavite se na glavni korisnički portal.",
+        "contactSupport": "Podrška",
+        "openCustomerPortal": "Korisnički portal"
       }
     },
     "register": {

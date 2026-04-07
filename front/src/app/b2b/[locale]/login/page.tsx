@@ -22,6 +22,7 @@ import { createLoginSchema } from '@/lib/auth/login-schema';
 import { EmailField } from '@/components/auth/fields/EmailField';
 import { PasswordField } from '@/components/auth/fields/PasswordField';
 import { GoogleSignInButton } from '@/components/auth/google/GoogleSignInButton';
+import { B2CUserLoginAttemptDialog } from '@/components/auth/B2CUserLoginAttemptDialog';
 
 export default function LoginPage() {
   const t = useTranslations('screens.login');
@@ -31,6 +32,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const signin = useAuthStore((state) => state.signin);
   const signinWithGoogle = useAuthStore((state) => state.signinWithGoogle);
+  const [isB2CDialogOpen, setIsB2CDialogOpen] = useState(false);
   const { accessToken, hasHydrated, requiredAction } = useAuthStore();
 
   const shouldRedirect = searchParams.get('auto-signin');
@@ -69,7 +71,13 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const result = await signin(data.email, data.password);
+      const result = await signin(data.email, data.password, [UserType.B2B]);
+
+      if (result.userType === UserType.B2C) {
+        setIsB2CDialogOpen(true);
+        return;
+      }
+
       if (result.requiredAction === RequiredAction.EmailVerification) {
         router.push(PAGE_ROUTES.B2B.VERIFY_EMAIL);
       } else {
@@ -89,7 +97,15 @@ export default function LoginPage() {
   const handleGoogleSuccess = async (credential: string) => {
     setLoading(true);
     try {
-      const result = await signinWithGoogle(credential, UserType.B2B);
+      const result = await signinWithGoogle(credential, UserType.B2B, [
+        UserType.B2B,
+      ]);
+
+      if (result.userType === UserType.B2C) {
+        setIsB2CDialogOpen(true);
+        return;
+      }
+
       router.push(PAGE_ROUTES.B2B.VENUES);
     } catch (err: any) {
       toast.error(err.message || tCommonErrors('network'));
@@ -178,6 +194,10 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+      <B2CUserLoginAttemptDialog
+        isOpen={isB2CDialogOpen}
+        onClose={() => setIsB2CDialogOpen(false)}
+      />
     </>
   );
 }

@@ -77,7 +77,11 @@ interface AuthState {
 
   setHasHydrated: (hydrated: boolean) => void;
 
-  signin: (email: string, password: string) => Promise<AuthResponse>;
+  signin: (
+    email: string,
+    password: string,
+    allowedUserTypes: UserType[],
+  ) => Promise<AuthResponse>;
   signup: (
     email: string,
     password: string,
@@ -86,6 +90,7 @@ interface AuthState {
   signinWithGoogle: (
     idToken: string,
     userType: UserType,
+    allowedUserTypes: UserType[],
   ) => Promise<AuthResponse>;
   confirmEmail: (userId: string, token: string) => Promise<AuthResponse>;
   logout: () => Promise<void>;
@@ -130,7 +135,7 @@ export const useAuthStore = create<AuthState>()(
         set({ requiredAction: action });
       },
 
-      signin: async (email, password) => {
+      signin: async (email, password, allowedUserTypes) => {
         try {
           const signinRes = await axios.post<ApiResult<SigninResponse>>(
             API_ENDPOINTS.AUTH.SIGNIN,
@@ -151,7 +156,10 @@ export const useAuthStore = create<AuthState>()(
             throw new Error('Unexpected auth state');
           }
 
-          get().setAuth(auth);
+          if (allowedUserTypes.includes(auth.userType)) {
+            get().setAuth(auth);
+          }
+
           return auth;
         } catch (error) {
           rethrowApiError(error, 'Signin failed');
@@ -177,7 +185,7 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      signinWithGoogle: async (idToken, userType) => {
+      signinWithGoogle: async (idToken, userType, allowedUserTypes) => {
         try {
           const res = await axios.post<ApiResult<AuthResponse>>(
             API_ENDPOINTS.AUTH.GOOGLE,
@@ -191,7 +199,11 @@ export const useAuthStore = create<AuthState>()(
           }
 
           const auth = res.data.result;
-          get().setAuth(auth);
+
+          if (allowedUserTypes.includes(auth.userType)) {
+            get().setAuth(auth);
+          }
+
           return auth;
         } catch (error) {
           rethrowApiError(error, 'Google sign-in failed');

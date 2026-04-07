@@ -70,17 +70,22 @@ export default function LoginPage() {
     },
   });
 
-  const handleSuccessRedirect = async () => {
+  const applyServerLocaleAndOpenFeed = async () => {
     await fetchSettings();
     const serverLocale = useSettingsStore.getState().locale;
-    router.push(PAGE_ROUTES.FEED, { locale: (serverLocale as 'en' | 'sr') || locale });
+    router.push(PAGE_ROUTES.FEED, {
+      locale: (serverLocale as 'en' | 'sr') || locale,
+    });
   };
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
 
     try {
-      const result = await signin(data.email, data.password);
+      const result = await signin(data.email, data.password, [
+        UserType.B2C,
+        UserType.B2B,
+      ]);
 
       if (result.requiredAction === RequiredAction.EmailVerification) {
         router.push(PAGE_ROUTES.VERIFY_EMAIL);
@@ -89,7 +94,7 @@ export default function LoginPage() {
       ) {
         router.push(PAGE_ROUTES.ONBOARDING);
       } else {
-        await handleSuccessRedirect();
+        await applyServerLocaleAndOpenFeed();
       }
     } catch (err: any) {
       if (err.code === 'ValidationError') {
@@ -105,12 +110,15 @@ export default function LoginPage() {
   const handleGoogleSuccess = async (credential: string) => {
     setLoading(true);
     try {
-      const result = await signinWithGoogle(credential, UserType.B2C);
+      const result = await signinWithGoogle(credential, UserType.B2C, [
+        UserType.B2C,
+        UserType.B2B,
+      ]);
 
       if (result.requiredAction === RequiredAction.OnboardingCompletion) {
         router.push(PAGE_ROUTES.ONBOARDING);
       } else {
-        await handleSuccessRedirect();
+        await applyServerLocaleAndOpenFeed();
       }
     } catch (err: any) {
       toast.error(err.message || tCommonErrors('network'));
