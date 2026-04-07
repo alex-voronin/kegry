@@ -2,9 +2,10 @@
 
 import { ReactNode, useEffect, useCallback } from 'react';
 import { NextIntlClientProvider, useLocale } from 'next-intl';
-import axios from 'axios';
-import apiClient from '@/lib/api-client';
-import authClient from '@/lib/auth-client';
+import apiClient, {
+  setAcceptLanguage as setApiClientLanguage,
+} from '@/lib/api-client';
+import { setAcceptLanguage as setAuthClientLanguage } from '@/lib/auth-client';
 import { useRouter } from '@/i18n/routing';
 import { useBackgroundLocation } from '@/lib/use-background-location';
 import { useFcm } from '@/lib/fcm/use-fcm';
@@ -12,7 +13,6 @@ import { useFcmStore } from '@/lib/fcm/store';
 import { useFeedStore } from '@/app/b2c/[locale]/feed/use-feed-store';
 import {
   useAuthStore,
-  RequiredAction,
   hasCompletedOnboarding,
 } from '@/lib/auth/use-auth-store';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
@@ -166,14 +166,8 @@ function LocaleHeaderSync() {
   const locale = useLocale();
 
   useEffect(() => {
-    if (apiClient.defaults.headers.common['Accept-Language'] !== locale) {
-      apiClient.defaults.headers.common['Accept-Language'] = locale;
-      console.log(`apiClient Accept-Language updated to: ${locale}`);
-    }
-    if (authClient.defaults.headers.common['Accept-Language'] !== locale) {
-      authClient.defaults.headers.common['Accept-Language'] = locale;
-      console.log(`authClient Accept-Language updated to: ${locale}`);
-    }
+    setApiClientLanguage(locale);
+    setAuthClientLanguage(locale);
   }, [locale]);
 
   return null;

@@ -189,4 +189,11 @@ apiClient.interceptors.response.use(
   },
 );
 
+export const setAcceptLanguage = (locale: string) => {
+  if (apiClient.defaults.headers.common['Accept-Language'] !== locale) {
+    apiClient.defaults.headers.common['Accept-Language'] = locale;
+    console.log(`apiClient Accept-Language updated to: ${locale}`);
+  }
+};
+
 export default apiClient;

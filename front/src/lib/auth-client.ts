@@ -15,4 +15,11 @@ const authClient: AxiosInstance = axios.create({
   },
 });
 
+export const setAcceptLanguage = (locale: string) => {
+  if (authClient.defaults.headers.common['Accept-Language'] !== locale) {
+    authClient.defaults.headers.common['Accept-Language'] = locale;
+    console.log(`authClient Accept-Language updated to: ${locale}`);
+  }
+};
+
 export default authClient;
