@@ -1,3 +1,6 @@
-.env.back
-.env.front
-.env.deploy
+.env.*
+configs/.env.*
+configs/cloudflared/credentials.json
+
+!*.env.*.example
+!configs/.env.*.example

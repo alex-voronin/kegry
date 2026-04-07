@@ -16,7 +16,7 @@ else
 fi
 
 # Check env vars
-for var in TARGET_USER TARGET_HOST TARGET_PATH DOCKER_BIN DOCKER_COMPOSE_BIN FRONT_ENV_FILE BACK_ENV_FILE; do
+for var in TARGET_USER TARGET_HOST TARGET_PATH DOCKER_BIN DOCKER_COMPOSE_BIN FRONT_ENV_FILE; do
     if [ -z "${!var}" ]; then
         echo "❌ Error: Required variable $var is not set in devops/.env.deploy"
         exit 1
@@ -66,13 +66,11 @@ echo "📁 Preparing remote path $TARGET_PATH..."
 ssh "$TARGET_USER@$TARGET_HOST" "mkdir -p $TARGET_PATH"
 
 # 5. Transfer configuration
-echo "📫 Transferring docker-compose.yml and $BACK_ENV_FILE..."
+echo "📫 Transferring docker-compose.yml and configs/..."
 scp devops/docker-compose.yml "$TARGET_USER@$TARGET_HOST:$TARGET_PATH/"
-if [ -f "$BACK_ENV_FILE" ]; then
-    scp "$BACK_ENV_FILE" "$TARGET_USER@$TARGET_HOST:$TARGET_PATH/"
-else
-    echo "⚠️  Warning: $BACK_ENV_FILE not found. Ensure it exists on the target host."
-fi
+rsync -av --progress \
+    devops/configs/ \
+    "$TARGET_USER@$TARGET_HOST:$TARGET_PATH/configs/"
 
 # 6. Transfer and Load Images
 echo "📤 Transferring and loading images (this may take a few minutes)..."

@@ -1,0 +1,27 @@
+# Cloudflare Tunnel Configuration
+# https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/configure-tunnels/local-management/
+
+tunnel: TUNNEL_UUID_HERE
+credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  # Main site -> Nginx reverse proxy
+  - hostname: kegry.com
+    service: http://kegry-nginx:80
+  - hostname: "*.kegry.com"
+    service: http://kegry-nginx:80
+  - hostname: kegrycorn.com
+    service: http://kegry-nginx:80
+  - hostname: "*.kegrycorn.com"
+    service: http://kegry-nginx:80
+  - hostname: kegry.rs
+    service: http://kegry-nginx:80
+  - hostname: "*.kegry.rs"
+    service: http://kegry-nginx:80
+
+  # VictoriaMetrics UI (optional, for monitoring access)
+  - hostname: metrics.kegry.com
+    service: http://kegry-victoriametrics:8428
+
+  # Catch-all (required by cloudflared)
+  - service: http_status:404

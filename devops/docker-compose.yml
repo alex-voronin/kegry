@@ -1,25 +1,94 @@
 services:
+  # ── Database ────────────────────────────────────────────────
+  postgres:
+    image: postgres:18.3
+    container_name: kegry-postgres
+    restart: always
+    env_file:
+      - ./configs/.env.postgresql
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - kegry-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Backend (.NET) ──────────────────────────────────────────
   backend:
     image: kegry-back:latest
     container_name: kegry-back
     restart: always
     env_file:
-      - .env.back
-    ports:
-      - "8080:8080"
+      - ./configs/.env.back
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - kegry-network
 
+  # ── Frontend (Next.js) ─────────────────────────────────────
   frontend:
     image: kegry-front:latest
     container_name: kegry-front
     restart: always
-    ports:
-      - "3000:3000"
-    networks:
-      - kegry-network
     depends_on:
       - backend
+    networks:
+      - kegry-network
+
+  # ── Metrics (VictoriaMetrics) ───────────────────────────────
+  victoriametrics:
+    image: victoriametrics/victoria-metrics:latest
+    container_name: kegry-victoriametrics
+    restart: always
+    volumes:
+      - vmdata:/victoria-metrics-data
+      - ./configs/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - "-promscrape.config=/etc/prometheus/prometheus.yml"
+      - "-retentionPeriod=30d"
+    ports:
+      - "8428:8428"
+    networks:
+      - kegry-network
+
+  # ── Reverse Proxy (Nginx) ──────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: kegry-nginx
+    restart: always
+    volumes:
+      - ./configs/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - kegry-network
+
+  # ── Cloudflare Tunnel ──────────────────────────────────────
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: kegry-cloudflared
+    restart: always
+    command: tunnel --config /etc/cloudflared/config.yml run
+    volumes:
+      - ./configs/cloudflared/config.yml:/etc/cloudflared/config.yml:ro
+      - ./configs/cloudflared/credentials.json:/etc/cloudflared/credentials.json:ro
+    depends_on:
+      - nginx
+    networks:
+      - kegry-network
+
+volumes:
+  pgdata:
+  vmdata:
 
 networks:
   kegry-network:

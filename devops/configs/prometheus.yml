@@ -1,0 +1,7 @@
+# VictoriaMetrics scrape configuration
+# Backend exposes Prometheus metrics on port 9500
+scrape_configs:
+  - job_name: "kegry-backend"
+    scrape_interval: 15s
+    static_configs:
+      - targets: ["kegry-back:9500"]
