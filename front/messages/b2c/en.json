@@ -95,7 +95,8 @@
         "passwordRequired": "Password is required",
         "passwordShort": "Password must be at least 10 characters",
         "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
-        "wrongCredentials": "Invalid email or password"
+        "wrongCredentials": "Invalid email or password",
+        "accountNotFound": "Account not found. Please sign up first."
       }
     },
     "register": {
@@ -350,7 +351,9 @@
       "deleteAccountDialog": {
         "title": "Are you sure you want to delete your account? This action cannot be undone.",
         "buttonYes": "Yes",
-        "buttonNo": "No",
+        "buttonNo": "No"
+      },
+      "toast": {
         "cannotDeleteBusinessAccount": "You cannot delete a business account from the customer portal. Please log in to the business portal first and delete your account from the business profile."
       }
     },

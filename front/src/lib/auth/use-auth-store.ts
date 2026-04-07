@@ -4,7 +4,7 @@ import { create, resetAllStores } from '@/lib/zustand-reset';
 import axios from 'axios';
 import { persist } from 'zustand/middleware';
 import { API_ENDPOINTS, PAGE_ROUTES } from '../routes';
-import { rethrowApiError } from '../api-error';
+import { rethrowApiError, ApiRequestError } from '../api-error';
 
 // Note: Auth endpoints use raw axios to avoid token interceptor issues during login/signup.
 // For other API calls, use apiClient from '../api-client' for automatic token handling and retries.
@@ -152,7 +152,10 @@ export const useAuthStore = create<AuthState>()(
           const { isSignupRequired, auth } = signinRes.data.result;
 
           if (isSignupRequired) {
-            throw new Error('Account not found. Please sign up first.');
+            throw new ApiRequestError(
+              'Account not found. Please sign up first.',
+              'AccountNotFound',
+            );
           }
 
           if (!auth) {

@@ -97,7 +97,7 @@ export default function ProfilePage() {
 
   const handleDeleteAccount = async () => {
     if (userType === UserType.B2B) {
-      toast.error(t('deleteAccountDialog.cannotDeleteBusinessAccount'));
+      toast.error(t('toast.cannotDeleteBusinessAccount'));
       setIsDeleteAccountModalOpen(false);
       return;
     }

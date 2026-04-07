@@ -132,7 +132,8 @@
         "passwordRequired": "Password is required",
         "passwordShort": "Password must be at least 10 characters",
         "passwordComplexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
-        "wrongCredentials": "Invalid email or password"
+        "wrongCredentials": "Invalid email or password",
+        "accountNotFound": "Account not found. Please sign up first."
       },
       "b2cUserAttemptDialog": {
         "message": "You are registered as a standard user and do not have permission to access the business portal.\n\nIf you are a venue owner or business representative, please contact our support team. Otherwise, please sign in through the main customer portal.",

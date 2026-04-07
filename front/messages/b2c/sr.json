@@ -95,7 +95,8 @@
         "passwordRequired": "Lozinka je obavezna",
         "passwordShort": "Lozinka mora imati najmanje 10 karaktera",
         "passwordComplexity": "Lozinka mora sadržati bar jedno veliko slovo, jedno malo slovo i jedan broj",
-        "wrongCredentials": "Neispravna email adresa ili lozinka"
+        "wrongCredentials": "Neispravna email adresa ili lozinka",
+        "accountNotFound": "Nalog nije pronađen. Molimo vas da se prvo registrujete."
       }
     },
     "register": {
@@ -350,7 +351,9 @@
       "deleteAccountDialog": {
         "title": "Želiš li da obrišeš nalog? Ova akcija se ne može poništiti.",
         "buttonYes": "Da",
-        "buttonNo": "Ne",
+        "buttonNo": "Ne"
+      },
+      "toast": {
         "cannotDeleteBusinessAccount": "Ne možete obrisati poslovni nalog sa korisničkog portala. Molimo vas da se prvo prijavite na biznis portal i obrišete nalog iz vašeg biznis profila."
       }
     },

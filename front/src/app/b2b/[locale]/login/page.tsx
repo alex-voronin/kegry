@@ -84,10 +84,12 @@ export default function LoginPage() {
         router.push(PAGE_ROUTES.B2B.VENUES);
       }
     } catch (err: any) {
-      if (err.code === 'ValidationError') {
+      if (err.code === 'AccountNotFound') {
+        toast.error(t('errors.accountNotFound'));
+      } else if (err.code === 'ValidationError') {
         toast.error(t('errors.wrongCredentials'));
       } else {
-        toast.error(err.message);
+        toast.error(err.message || tCommonErrors('network'));
       }
     } finally {
       setLoading(false);

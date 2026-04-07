@@ -132,7 +132,8 @@
         "passwordRequired": "Lozinka je obavezna",
         "passwordShort": "Lozinka mora imati najmanje 10 karaktera",
         "passwordComplexity": "Lozinka mora sadržati bar jedno veliko slovo, jedno malo slovo i jedan broj",
-        "wrongCredentials": "Neispravna email adresa ili lozinka"
+        "wrongCredentials": "Neispravna email adresa ili lozinka",
+        "accountNotFound": "Nalog nije pronađen. Molimo vas da se prvo registrujete."
       },
       "b2cUserAttemptDialog": {
         "message": "Registrovani ste kao standardni korisnik i nemate pristup biznis portalu.\n\nAko ste vlasnik lokala ili predstavnik firme, molimo vas da kontaktirate naš tim za podršku. U suprotnom, prijavite se na glavni korisnički portal.",
