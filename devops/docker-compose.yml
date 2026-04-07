@@ -1,0 +1,26 @@
+services:
+  backend:
+    image: kegry-back:latest
+    container_name: kegry-back
+    restart: always
+    env_file:
+      - .env.back
+    ports:
+      - "8080:8080"
+    networks:
+      - kegry-network
+
+  frontend:
+    image: kegry-front:latest
+    container_name: kegry-front
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - kegry-network
+    depends_on:
+      - backend
+
+networks:
+  kegry-network:
+    driver: bridge
