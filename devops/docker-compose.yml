@@ -1,3 +1,11 @@
+# ── Shared logging config ─────────────────────────────────────
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "20m"
+    max-file: "5"
+    compress: "true"
+
 services:
   # ── Database ────────────────────────────────────────────────
   postgres:
@@ -12,6 +20,7 @@ services:
       - "5432:5432"
     networks:
       - kegry-network
+    logging: *default-logging
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -30,6 +39,7 @@ services:
         condition: service_healthy
     networks:
       - kegry-network
+    logging: *default-logging
 
   # ── Frontend (Next.js) ─────────────────────────────────────
   frontend:
@@ -40,6 +50,7 @@ services:
       - backend
     networks:
       - kegry-network
+    logging: *default-logging
 
   # ── Metrics (VictoriaMetrics) ───────────────────────────────
   victoriametrics:
@@ -56,6 +67,7 @@ services:
       - "8428:8428"
     networks:
       - kegry-network
+    logging: *default-logging
 
   # ── Reverse Proxy (Nginx) ──────────────────────────────────
   nginx:
@@ -71,6 +83,7 @@ services:
       - frontend
     networks:
       - kegry-network
+    logging: *default-logging
 
   # ── Cloudflare Tunnel ──────────────────────────────────────
   cloudflared:
@@ -85,6 +98,7 @@ services:
       - nginx
     networks:
       - kegry-network
+    logging: *default-logging
 
 volumes:
   pgdata:
