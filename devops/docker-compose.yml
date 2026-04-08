@@ -16,6 +16,8 @@ services:
       - ./configs/.env.postgresql
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./configs/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+    command: ["-c", "config_file=/etc/postgresql/postgresql.conf"]
     ports:
       - "5432:5432"
     networks:
@@ -43,7 +45,7 @@ services:
     env_file:
       - ./configs/.env.back
     environment:
-      - DOTNET_GCHeapHardLimit=0x48000000
+      - DOTNET_GCHeapHardLimitPercent=0x55 # 85%
     depends_on:
       postgres:
         condition: service_healthy
@@ -53,10 +55,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1.4"
-          memory: 1400M
+          cpus: "1.5"
+          memory: 1600M
         reservations:
-          memory: 700M
+          memory: 800M
 
   # ── Frontend (Next.js) ─────────────────────────────────────
   frontend:
@@ -149,9 +151,9 @@ services:
       resources:
         limits:
           cpus: "0.5"
-          memory: 512M
-        reservations:
           memory: 256M
+        reservations:
+          memory: 128M
 
   # ── Cloudflare Tunnel ──────────────────────────────────────
   cloudflared:
