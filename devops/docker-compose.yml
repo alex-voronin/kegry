@@ -177,9 +177,44 @@ services:
         reservations:
           memory: 64M
 
+  # ── Database Backup (kartoza -> R2) ──────────────────────────
+  db-backup:
+    image: kartoza/pg-backup:18-3.6--v2026.03.07
+    container_name: kegry-db-backup
+    restart: always
+    env_file:
+      - ./configs/.env.postgresql
+      - ./configs/.env.backup
+    environment:
+      - POSTGRES_HOST=kegry-postgres
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASS=${POSTGRES_PASSWORD}
+      - PGDATABASE=${POSTGRES_DB}
+      - POSTGRES_PORT=5432
+      - DUMPPREFIX=kegry
+      - CRON_SCHEDULE=0 3 * * *
+      - REMOVE_BEFORE=7
+      - STORAGE_BACKEND=S3
+    volumes:
+      - pg_backups:/backups
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - kegry-network
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 256M
+        reservations:
+          memory: 64M
+
 volumes:
   pgdata:
   vmagentdata:
+  pg_backups:
 
 networks:
   kegry-network:
