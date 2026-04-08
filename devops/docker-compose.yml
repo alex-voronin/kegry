@@ -52,19 +52,40 @@ services:
       - kegry-network
     logging: *default-logging
 
-  # ── Metrics (VictoriaMetrics) ───────────────────────────────
-  victoriametrics:
-    image: victoriametrics/victoria-metrics:latest
-    container_name: kegry-victoriametrics
+  # ── Metrics Agent (vmagent -> Grafana Cloud) ─────────────────
+  vmagent:
+    image: victoriametrics/vmagent:latest
+    container_name: kegry-vmagent
     restart: always
+    env_file:
+      - ./configs/.env.vmagent
     volumes:
-      - vmdata:/victoria-metrics-data
+      - vmagentdata:/vmagentdata
       - ./configs/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     command:
       - "-promscrape.config=/etc/prometheus/prometheus.yml"
-      - "-retentionPeriod=30d"
-    ports:
-      - "8428:8428"
+      - "-remoteWrite.url=${VM_REMOTE_WRITE_URL}"
+      - "-remoteWrite.basicAuth.username=${VM_REMOTE_WRITE_USERNAME}"
+      - "-remoteWrite.basicAuth.password=${VM_REMOTE_WRITE_PASSWORD}"
+      - "-remoteWrite.tmpDataPath=/vmagentdata"
+    networks:
+      - kegry-network
+    logging: *default-logging
+
+  # ── Host Metrics (node-exporter) ────────────────────────────
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: kegry-node-exporter
+    restart: always
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--path.rootfs=/host/root"
+      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/host/root:ro
     networks:
       - kegry-network
     logging: *default-logging
@@ -102,7 +123,7 @@ services:
 
 volumes:
   pgdata:
-  vmdata:
+  vmagentdata:
 
 networks:
   kegry-network:
