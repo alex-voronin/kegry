@@ -9,7 +9,7 @@ x-logging: &default-logging
 services:
   # ── Database ────────────────────────────────────────────────
   postgres:
-    image: postgres:18.3
+    image: postgis/postgis:18-3.6
     container_name: kegry-postgres
     restart: always
     env_file:
@@ -54,7 +54,7 @@ services:
 
   # ── Metrics Agent (vmagent -> Grafana Cloud) ─────────────────
   vmagent:
-    image: victoriametrics/vmagent:latest
+    image: victoriametrics/vmagent:v1.139.0
     container_name: kegry-vmagent
     restart: always
     env_file:
@@ -74,7 +74,7 @@ services:
 
   # ── Host Metrics (node-exporter) ────────────────────────────
   node-exporter:
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.11.1-busybox
     container_name: kegry-node-exporter
     restart: always
     command:
@@ -92,7 +92,7 @@ services:
 
   # ── Reverse Proxy (Nginx) ──────────────────────────────────
   nginx:
-    image: nginx:alpine
+    image: nginx:1.29.8-alpine
     container_name: kegry-nginx
     restart: always
     volumes:
@@ -108,7 +108,7 @@ services:
 
   # ── Cloudflare Tunnel ──────────────────────────────────────
   cloudflared:
-    image: cloudflare/cloudflared:latest
+    image: cloudflare/cloudflared:2026.3.0
     container_name: kegry-cloudflared
     restart: always
     command: tunnel --config /etc/cloudflared/config.yml run
