@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -194,7 +193,11 @@ public class UserProfileEndpoints : IEndpoints
     {
         Validation.ThrowIfFileSizeExceed(request.ContentLength, Validation.MaxAvatarSizeBytes);
         var userId = user.GetId();
-        var urls = await imageService.GetAvatarUploadUrlAsync(userId, request.ContentLength, ct);
+        var urls = await imageService.GetAvatarUploadUrlAsync(
+            userId: userId,
+            contentType: request.ContentType,
+            contentLength: request.ContentLength,
+            ct: ct);
         return ApiResult<GetPresignedUrlResponse>.Build(
             new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl)
         );
@@ -208,7 +211,10 @@ public class UserProfileEndpoints : IEndpoints
     {
         Validation.ThrowIfFileSizeExceed(request.ContentLength, Validation.MaxCoverSizeBytes);
         var userId = user.GetId();
-        var urls = await imageService.GetCoverUploadUrlAsync(userId, request.ContentLength, ct);
+        var urls = await imageService.GetCoverUploadUrlAsync(userId: userId,
+            contentType: request.ContentType,
+            contentLength: request.ContentLength,
+            ct: ct);
         return ApiResult<GetPresignedUrlResponse>.Build(
             new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl)
         );

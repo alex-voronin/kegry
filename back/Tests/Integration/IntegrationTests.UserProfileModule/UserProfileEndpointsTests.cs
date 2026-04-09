@@ -4,6 +4,7 @@ using NotificationModule.Domain.ValueObjects;
 using NotificationsModule.API.Dto;
 using Serilog;
 using SharedCore.Api.Dto;
+using SharedCore.Enums;
 using SharedCore.Exceptions;
 using SharedCore.Extensions;
 using SharedCore.ValueObjects;
@@ -55,6 +56,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         {
             Log.Error(response.Errors.First().Error);
         }
+
         response.Success.ShouldBeTrue();
 
         // 3. Check response
@@ -296,7 +298,10 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. Get upload url
         var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
             ApiRoutes.UserProfile.AvatarUploadUrl,
-            new GetPresignedUrlRequest(ContentLength: Validation.MaxAvatarSizeBytes));
+            new GetPresignedUrlRequest(
+                ContentType: ContentType.ImageWebp,
+                ContentLength: Validation.MaxAvatarSizeBytes)
+        );
 
         // 3. Check response
         response.Success.ShouldBeTrue();
@@ -315,7 +320,10 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. Get upload url
         var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
             ApiRoutes.UserProfile.CoverUploadUrl,
-            new GetPresignedUrlRequest(ContentLength: Validation.MaxCoverSizeBytes));
+            new GetPresignedUrlRequest(
+                ContentType: ContentType.ImageWebp,
+                ContentLength: Validation.MaxCoverSizeBytes)
+        );
 
         // 3. Check response
         response.Success.ShouldBeTrue();
@@ -334,7 +342,10 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. Get upload url
         var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
             ApiRoutes.UserProfile.AvatarUploadUrl,
-            new GetPresignedUrlRequest(ContentLength: Validation.MaxAvatarSizeBytes + 1));
+            new GetPresignedUrlRequest(
+                ContentType: ContentType.ImageWebp,
+                ContentLength: Validation.MaxAvatarSizeBytes + 1)
+            );
 
         // 3. Check response
         response.Success.ShouldBeFalse();
@@ -352,7 +363,10 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. Get upload url
         var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
             ApiRoutes.UserProfile.CoverUploadUrl,
-            new GetPresignedUrlRequest(ContentLength: Validation.MaxCoverSizeBytes + 1));
+            new GetPresignedUrlRequest(
+                ContentType: ContentType.ImageWebp,
+                ContentLength: Validation.MaxCoverSizeBytes + 1)
+            );
 
         // 3. Check response
         response.Success.ShouldBeFalse();
@@ -367,11 +381,23 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var authResponse = await Factory.AuthManager.CreateAndLoginUserAsync("test@example.com", "Password123!");
         Factory.ApiClient.SetAuth(authResponse);
 
+        // 2. Test jpeg upload
+        await TestImageUpload(ContentType.ImageJpeg);
+
+        // 3. Test webp upload
+        await TestImageUpload(ContentType.ImageWebp);
+    }
+
+    private async Task TestImageUpload(ContentType imageType)
+    {
         // 2. Get upload url
         var imageToUpload = "dummy image content"u8.ToArray();
 
         var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
-            ApiRoutes.UserProfile.AvatarUploadUrl, new GetPresignedUrlRequest(ContentLength: imageToUpload.Length));
+            ApiRoutes.UserProfile.AvatarUploadUrl, new GetPresignedUrlRequest(
+                ContentType: imageType,
+                ContentLength: imageToUpload.Length)
+        );
 
         // 3. Check response
         response.Success.ShouldBeTrue();
@@ -381,11 +407,12 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         downloadUrl.ShouldNotBeNullOrEmpty();
 
         // 4. Upload dummy image
-        var uploadResponse = await Factory.S3Client.UploadAsync(uploadUrl, imageToUpload, "image/jpeg");
+        var uploadResponse = await Factory.S3Client.UploadAsync(uploadUrl, imageToUpload, imageType.ToMimeType());
         uploadResponse.EnsureSuccessStatusCode();
 
         // 5. Verify in Minio (S3)
         var downloadedImage = await Factory.S3Client.Download(downloadUrl);
         downloadedImage.ShouldBe(imageToUpload);
     }
+
 }

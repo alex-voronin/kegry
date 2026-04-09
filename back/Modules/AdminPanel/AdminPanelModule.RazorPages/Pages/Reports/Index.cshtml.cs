@@ -26,7 +26,7 @@ public class IndexModel : PageModel
             {
                 UserId = g.Key,
                 ReportCount = g.Count(),
-                LatestReportDate = g.Max(x => x.LastSeenAt) 
+                LatestReportDate = g.Max(x => x.LastSeenAt)
             })
             .OrderByDescending(g => g.ReportCount)
             .Skip((page - 1) * PageSize)

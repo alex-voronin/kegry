@@ -201,6 +201,7 @@ public class B2BVenueEndpoints : IEndpoints
         var urls = await imageService.GetVenueCoverUploadUrlAsync(
             companyId: venue.CompanyId,
             venueId: id,
+            contentType: request.ContentType,
             contentLength: request.ContentLength,
             ct: ct);
         return ApiResult<GetPresignedUrlResponse>.Build(

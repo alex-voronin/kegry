@@ -193,6 +193,7 @@ public class B2BCompanyEndpoints : IEndpoints
 
         var urls = await imageService.GetCompanyAvatarUploadUrlAsync(
             companyId: id,
+            contentType: request.ContentType,
             contentLength: request.ContentLength,
             ct: ct);
         return ApiResult<GetPresignedUrlResponse>.Build(

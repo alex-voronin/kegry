@@ -2,6 +2,7 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.Extensions.Options;
 using Shared.Infrastructure.Storage.Configs;
+using SharedCore.Enums;
 using SharedCore.Services.LifeTimes;
 
 namespace Shared.Infrastructure.Storage;
@@ -10,12 +11,12 @@ public interface IS3StorageService
 {
     public string PublicFileUrlToS3Key(string publicFileUrl);
 
-    // Timestamp is required to bypass CDN cache after file has changed.
+    // Timestamp is required to bypass CDN cache after a file has changed.
     public string S3KeyToPublicFileUrl(string s3Key, DateTimeOffset? timestamp);
 
     public Task<string> GetPresignedUploadUrlAsync(
         string key,
-        string contentType,
+        ContentType contentType,
         int contentLength,
         TimeSpan expires);
 }
@@ -53,7 +54,7 @@ internal class S3StorageService : IS3StorageService, ISingleton
 
     public Task<string> GetPresignedUploadUrlAsync(
         string key,
-        string contentType,
+        ContentType contentType,
         int contentLength,
         TimeSpan expires)
     {
@@ -61,7 +62,7 @@ internal class S3StorageService : IS3StorageService, ISingleton
         {
             BucketName = _config.BucketName,
             Key = key,
-            ContentType = contentType,
+            ContentType = contentType.ToMimeType(),
             Verb = HttpVerb.PUT,
             Expires = DateTime.UtcNow.Add(expires),
             Headers =

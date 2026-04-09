@@ -2,7 +2,7 @@
 
 # Default target
 help:
-	@echo "Kegry Development Commands:"
+	@echo "Development Commands:"
 	@echo "  make build-back  - Build the .NET backend solution"
 	@echo "  make build-front - Install dependencies and build the Next.js frontend"
 	@echo "  make run-back    - Run the .NET backend API (API.Web)"
@@ -10,7 +10,7 @@ help:
 	@echo "  make run-tests   - Run all backend tests (Unit, Integration)"
 	@echo "  make format      - Run linters and format code (dotnet format, eslint, prettier)"
 	@echo "  make clean       - Deep clean build artifacts (bin, obj, .next)"
-	@echo "  make deploy      - Execute the production deployment script"
+	@echo "  make deploy      - Build and deploy the produciton build"
 
 # Backend commands
 build-back:
