@@ -27,7 +27,7 @@
     "leaflet-geosearch": "^4.4.0",
     "linkifyjs": "^4.3.2",
     "lucide-react": "^0.562.0",
-    "next": "16.0.10",
+    "next": "^16.2.3",
     "next-intl": "^4.6.1",
     "posthog-js": "^1.336.4",
     "qr-code-styling": "^1.9.2",
