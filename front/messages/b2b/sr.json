@@ -334,7 +334,7 @@
         "close": "OK"
       },
       "toast": {
-        "deleteFailed": "Brisanje objekta nije uspelo"
+        "deleteFailed": "Brisanje lokala nije uspelo"
       }
     },
     "editVenue": {
