@@ -85,7 +85,7 @@ export default function CompanyEditPage() {
       reader.onloadend = () => setAvatarPreview(reader.result as string);
       reader.readAsDataURL(file);
 
-      const compressedBlob = await compressImageToBlob(file, 1024 * 1024, 800);
+      const compressedBlob = await compressImageToBlob(file, 256 * 1024, 512);
       setAvatarBlob(compressedBlob);
     } catch {
       toast.error('Failed to process image');

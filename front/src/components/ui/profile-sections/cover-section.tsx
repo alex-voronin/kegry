@@ -13,8 +13,8 @@ type CoverSectionProps = {
   existingCoverUrl?: string;
 };
 
-const MAX_COVER_SIZE_BYTES = 1024 * 1024; // 1MB
-const MAX_COVER_WIDTH = 1920;
+const MAX_COVER_SIZE_BYTES = 512 * 1024;
+const MAX_COVER_HEIGHT = 1980;
 
 export const CoverSection = ({
   coverBlob,
@@ -50,12 +50,10 @@ export const CoverSection = ({
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-
-      // Compress to under 1MB
       const compressed = await compressImageToBlob(
         file,
         MAX_COVER_SIZE_BYTES,
-        MAX_COVER_WIDTH,
+        MAX_COVER_HEIGHT,
       );
 
       setLocalBlob(compressed);

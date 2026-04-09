@@ -74,7 +74,7 @@ export default function CompanyCreatePage() {
       reader.readAsDataURL(file);
 
       // Compress and set blob
-      const compressedBlob = await compressImageToBlob(file, 1024 * 1024, 800);
+      const compressedBlob = await compressImageToBlob(file, 256 * 1024, 512);
       setAvatarBlob(compressedBlob);
     } catch (err) {
       toast.error('Failed to process image');

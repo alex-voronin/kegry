@@ -1,144 +1,49 @@
 import axios from 'axios';
 import apiClient from '@/lib/api-client';
+import imageCompression from 'browser-image-compression';
 
 const uploadClient = axios.create({
   baseURL: '',
   headers: {},
 });
 
-/**
- * Resize an image to specific dimensions and return as Blob
- */
-export function resizeImageToBlob(
-  imageSource: string | Blob,
-  targetWidth: number,
-  targetHeight: number,
-  quality = 0.9,
+export async function compressImageToBlob(
+  imageSource: string | Blob | File,
+  maxSizeBytes: number = 512 * 1024,
+  maxLongSide: number = 1920,
 ): Promise<Blob> {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    const src =
-      typeof imageSource === 'string'
-        ? imageSource
-        : URL.createObjectURL(imageSource);
+  let file: File;
 
-    image.src = src;
-    image.onload = () => {
-      // Revoke object URL if we created one
-      if (typeof imageSource !== 'string') {
-        URL.revokeObjectURL(src);
-      }
+  if (typeof imageSource === 'string') {
+    const response = await fetch(imageSource, { mode: 'cors' });
+    const blob = await response.blob();
+    file = new File([blob], 'image.jpg', { type: blob.type || 'image/jpeg' });
+  } else if (imageSource instanceof File) {
+    file = imageSource;
+  } else {
+    // Blob to File
+    file = new File([imageSource], 'image.jpg', {
+      type: imageSource.type || 'image/jpeg',
+    });
+  }
 
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return reject('No canvas context');
+  const options = {
+    maxSizeMB: maxSizeBytes / (1024 * 1024),
+    maxWidthOrHeight: maxLongSide,
+    useWebWorker: false,
+    fileType: supportsWebP() ? 'image/webp' : 'image/jpeg',
+    initialQuality: 0.85,
+    preserveExif: false,
+    libURL: undefined,
+  };
 
-      canvas.width = targetWidth;
-      canvas.height = targetHeight;
-
-      ctx.drawImage(image, 0, 0, targetWidth, targetHeight);
-
-      canvas.toBlob(
-        (blob) => {
-          if (blob) {
-            resolve(blob);
-          } else {
-            reject('Failed to create blob');
-          }
-        },
-        'image/jpeg',
-        quality,
-      );
-    };
-    image.onerror = reject;
-  });
+  const compressedFile = await imageCompression(file, options);
+  return compressedFile;
 }
 
-/**
- * Compress an image to be under a target file size (in bytes)
- * Uses iterative quality reduction and returns a Blob
- */
-export async function compressImageToBlob(
-  imageSource: string | Blob,
-  maxSizeBytes: number,
-  maxWidth?: number,
-): Promise<Blob> {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    const src =
-      typeof imageSource === 'string'
-        ? imageSource
-        : URL.createObjectURL(imageSource);
-
-    image.src = src;
-    image.onload = () => {
-      // Revoke object URL if we created one
-      if (typeof imageSource !== 'string') {
-        URL.revokeObjectURL(src);
-      }
-
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return reject('No canvas context');
-
-      // Calculate dimensions (optionally limit max width while preserving aspect ratio)
-      let width = image.width;
-      let height = image.height;
-
-      if (maxWidth && width > maxWidth) {
-        const ratio = maxWidth / width;
-        width = maxWidth;
-        height = Math.round(height * ratio);
-      }
-
-      canvas.width = width;
-      canvas.height = height;
-      ctx.drawImage(image, 0, 0, width, height);
-
-      // Try different quality levels to get under maxSizeBytes
-      const tryCompress = (quality: number) => {
-        canvas.toBlob(
-          (blob) => {
-            if (!blob) {
-              reject('Failed to create blob');
-              return;
-            }
-
-            if (blob.size <= maxSizeBytes || quality <= 0.1) {
-              // If still too large at min quality, reduce dimensions
-              if (blob.size > maxSizeBytes) {
-                const scaleFactor = Math.sqrt(maxSizeBytes / blob.size);
-                canvas.width = Math.round(width * scaleFactor);
-                canvas.height = Math.round(height * scaleFactor);
-                ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-                canvas.toBlob(
-                  (finalBlob) => {
-                    if (finalBlob) {
-                      resolve(finalBlob);
-                    } else {
-                      reject('Failed to create final blob');
-                    }
-                  },
-                  'image/jpeg',
-                  0.8,
-                );
-              } else {
-                resolve(blob);
-              }
-            } else {
-              // Try lower quality
-              tryCompress(quality - 0.1);
-            }
-          },
-          'image/jpeg',
-          quality,
-        );
-      };
-
-      tryCompress(0.9);
-    };
-    image.onerror = reject;
-  });
+function supportsWebP(): boolean {
+  const canvas = document.createElement('canvas');
+  return canvas.toDataURL('image/webp').startsWith('data:image/webp');
 }
 
 /**
@@ -167,7 +72,10 @@ export async function uploadImage(
     success: boolean;
     result: PresignedUrlResponse;
     errors: { error: string }[];
-  }>(presignedUrlEndpoint, { ContentLength: blob.size });
+  }>(presignedUrlEndpoint, {
+    ContentType: blob.type === 'image/jpeg' ? 'ImageJpeg' : 'ImageWebp',
+    ContentLength: blob.size,
+  });
 
   if (!presignedResponse.data.success) {
     throw new Error(
@@ -180,7 +88,7 @@ export async function uploadImage(
   // Upload to S3
   await uploadClient.put(uploadUrl, blob, {
     headers: {
-      'Content-Type': blob.type || 'image/jpeg',
+      'Content-Type': blob.type || 'image/webp',
     },
   });
 

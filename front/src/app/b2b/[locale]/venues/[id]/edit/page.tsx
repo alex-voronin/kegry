@@ -129,11 +129,7 @@ export default function VenueEditPage() {
       reader.onloadend = () => setCoverPreview(reader.result as string);
       reader.readAsDataURL(file);
 
-      const compressedBlob = await compressImageToBlob(
-        file,
-        2 * 1024 * 1024,
-        1200,
-      );
+      const compressedBlob = await compressImageToBlob(file, 512 * 1024, 1280);
       setCoverBlob(compressedBlob);
     } catch {
       toast.error('Failed to process image');
@@ -254,7 +250,9 @@ export default function VenueEditPage() {
         </div>
 
         <div className={styles.coordinatesRow}>
-          <div className={cn(stylesCommon.sectionContainer, styles.coordinateCol)}>
+          <div
+            className={cn(stylesCommon.sectionContainer, styles.coordinateCol)}
+          >
             <FormSectionTitle required>{t('latitude')}</FormSectionTitle>
             <Input
               {...register('latitude', { valueAsNumber: true })}
@@ -272,7 +270,9 @@ export default function VenueEditPage() {
               </p>
             )}
           </div>
-          <div className={cn(stylesCommon.sectionContainer, styles.coordinateCol)}>
+          <div
+            className={cn(stylesCommon.sectionContainer, styles.coordinateCol)}
+          >
             <FormSectionTitle required>{t('longitude')}</FormSectionTitle>
             <Input
               {...register('longitude', { valueAsNumber: true })}
