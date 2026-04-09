@@ -19,9 +19,5 @@ ingress:
   - hostname: "*.kegry.rs"
     service: http://kegry-nginx:80
 
-  # VictoriaMetrics UI (optional, for monitoring access)
-  - hostname: metrics.kegry.com
-    service: http://kegry-victoriametrics:8428
-
   # Catch-all (required by cloudflared)
   - service: http_status:404
