@@ -1,4 +1,4 @@
-.PHONY: build-back build-front run-back run-front run-tests deploy format db-shell clean help
+.PHONY: build-back build-front run-back run-front run-tests deploy format audit db-shell clean help
 
 # Default target
 help:
@@ -9,6 +9,7 @@ help:
 	@echo "  make run-front   - Run the Next.js frontend in development mode"
 	@echo "  make run-tests   - Run all backend tests (Unit, Integration)"
 	@echo "  make format      - Run linters and format code (dotnet format, eslint, prettier)"
+	@echo "  make audit       - Runs security audit for both backend and frontend"
 	@echo "  make clean       - Deep clean build artifacts (bin, obj, .next)"
 	@echo "  make deploy      - Build and deploy the produciton build"
 
@@ -25,6 +26,9 @@ run-tests:
 format-back:
 	dotnet format back/hoppyfy.me.sln
 
+audit-back:
+	dotnet list back/hoppyfy.me.sln package --vulnerable
+
 # Frontend commands
 build-front:
 	cd front && npm install && npm run build
@@ -35,8 +39,13 @@ run-front:
 format-front:
 	cd front && npm run lint -- --fix && npx prettier --write .
 
+audit-front:
+	cd front && npm audit
+
 # Combined commands
 format: format-back format-front
+
+audit: audit-back audit-front
 
 clean:
 	@echo "Cleaning build artifacts..."
