@@ -156,7 +156,7 @@ export default function FeedScreen() {
   const [profilesCountToNpc, setProfilesCountToNpc] = useState<number | null>(
     null,
   );
-  const [isInvitePromptOpen, setIsInvitePromptOpen] = useState(false);
+  const [isReferralPromptOpen, setIsReferralPromptOpen] = useState(false);
 
   useEffect(() => {
     const checkPermissions = async () => {
@@ -170,16 +170,6 @@ export default function FeedScreen() {
     window.addEventListener('focus', checkPermissions);
     return () => window.removeEventListener('focus', checkPermissions);
   }, []);
-
-  useEffect(() => {
-    const v = searchParams.get('v');
-    if (v) {
-      // handle qr code in query parameter first
-      handleQrCode(window.location.href);
-      // then clear query parameters
-      router.replace(PAGE_ROUTES.FEED);
-    }
-  }, [searchParams, handleQrCode]);
 
   const distanceUnits = useSettingsStore((state) => state.distanceUnits);
 
@@ -208,8 +198,16 @@ export default function FeedScreen() {
       if (!hasHydrated || initializationStarted.current) return;
       initializationStarted.current = true;
 
+      // 1. Handle QR code in query parameters early
+      const v = searchParams.get('v');
+      if (v) {
+        handleQrCode(window.location.href);
+        router.replace(PAGE_ROUTES.FEED);
+        return;
+      }
+
       try {
-        // Send location first, then fetch feed
+        // 2. Send location first
         const locationResult = await SendLocationWithRateLimit();
         if (locationResult === 'denied') {
           setIsLocationDenied(true);
@@ -217,6 +215,7 @@ export default function FeedScreen() {
         }
         setIsLocationDenied(false);
 
+        // 3. Fetch feed data and status
         const [status] = await Promise.all([
           fetchFeedStatus(),
           fetchFeed(),
@@ -224,6 +223,7 @@ export default function FeedScreen() {
           fetchNpc(),
         ]);
 
+        // 4. Handle redirects (Check-in/Meeting/Rating)
         if (status.isInMeeting) {
           useFeedStore.setState({ isInMeeting: true });
           if (searchParams.get('auto-chat-redirect') !== 'false') {
@@ -237,7 +237,24 @@ export default function FeedScreen() {
           return;
         }
 
-        // If an NPC was fetched (or already exists), set a random index
+        // 5. If we reached here, it's a "true" feed display. Count the visit.
+        const referralShown = localStorage.getItem('referral_prompt_shown');
+
+        if (!referralShown) {
+          const currentCount = Number(
+            localStorage.getItem('feed_visit_count') || '0',
+          );
+
+          const newCount = currentCount + 1;
+          localStorage.setItem('feed_visit_count', String(newCount));
+
+          if (newCount === 3) {
+            setIsReferralPromptOpen(true);
+            localStorage.setItem('referral_prompt_shown', 'true');
+            localStorage.removeItem('feed_visit_count');
+          }
+        }
+        // 6. Handle NPC logic
         const currentNpc = useNpcStore.getState().npc;
         const currentFeed = useFeedStore.getState().feed;
         if (currentNpc && currentFeed.length > 0) {
@@ -262,27 +279,18 @@ export default function FeedScreen() {
     fetchUnseenNotificationCount,
     fetchNpc,
     router,
+    searchParams,
+    handleQrCode,
   ]);
-
-  const triggerReferralPrompt = () => {
-    if (!showPermissionsBadge) {
-      const hasSeenPrompt = localStorage.getItem(
-        'has_seen_invite_friends_prompt',
-      );
-      if (!hasSeenPrompt) {
-        setIsInvitePromptOpen(true);
-      }
-    }
-  };
 
   const handleCloseInvitePrompt = () => {
     localStorage.setItem('has_seen_invite_friends_prompt', 'true');
-    setIsInvitePromptOpen(false);
+    setIsReferralPromptOpen(false);
   };
 
   const handleGoToInvite = () => {
     localStorage.setItem('has_seen_invite_friends_prompt', 'true');
-    setIsInvitePromptOpen(false);
+    setIsReferralPromptOpen(false);
     router.push(`${PAGE_ROUTES.FRIENDS_AND_FOES}?share=true`);
   };
 
@@ -324,7 +332,6 @@ export default function FeedScreen() {
     try {
       await ignoreUser(currentItem.profile.id);
       decreaseProfilesCountToNpc();
-      triggerReferralPrompt();
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -354,11 +361,6 @@ export default function FeedScreen() {
       }
       await inviteUser(currentItem.profile.id, when);
       decreaseProfilesCountToNpc();
-      if (!incomingExpiration) {
-        // Only trigger referral prompt if we didn't receive their invite before
-        // or this action will redirect to the chat almost immediately
-        triggerReferralPrompt();
-      }
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -386,7 +388,6 @@ export default function FeedScreen() {
     try {
       await skipUser(currentItem.profile.id);
       decreaseProfilesCountToNpc();
-      triggerReferralPrompt();
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -534,7 +535,7 @@ export default function FeedScreen() {
           onSecondaryAction={handleAcceptSuggestedExpiration}
         />
         <ModalDialog
-          isOpen={isInvitePromptOpen}
+          isOpen={isReferralPromptOpen}
           onClose={handleCloseInvitePrompt}
           message={tFeed('invitePrompt.message')}
           primaryButtonText={tFeed('invitePrompt.later')}
