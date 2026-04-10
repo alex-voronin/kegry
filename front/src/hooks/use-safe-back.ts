@@ -15,6 +15,11 @@ export const useSafeBack = () => {
       router.back();
     } else {
       if (fallbackUrl) {
+        // if we can't go back then all navigation branch must be unrolled up to the root
+        // So, delete all keys related to navigation to force fallback branch on the next
+        // safeBack() call
+        sessionStorage.removeItem('currentPath');
+        sessionStorage.removeItem('previousPath');
         router.replace(fallbackUrl);
       } else {
         window.close();
