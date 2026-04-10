@@ -14,7 +14,7 @@ We do not have a designated Data Protection Officer (DPO) as this is not require
 2.1.2. Profile photos or images
 2.1.3. Age and date of birth (to verify 18+)
 2.1.4. Gender
-2.1.5 Interests and social preferences related to friendship
+2.1.5. Interests and social preferences related to friendship
 2.1.6. Any text or content you post in profiles or activity descriptions
 
 2.2. Automatically Collected Information. We may collect:
@@ -23,7 +23,7 @@ We do not have a designated Data Protection Officer (DPO) as this is not require
 2.2.3. Usage and interaction data (e.g., profile views, invites sent/received, timestamps, app crashes)
 2.2.4. Log data (IP address, access times, browser/app version)
 
-2.3 Data Obtained via Google OAuth
+2.3. Data Obtained via Google OAuth
 Our Service uses Google OAuth to allow you to sign in securely. When you authenticate using your Google Account, we collect your email address and a unique internal identifier. This information is used exclusively to identify your account, maintain your session, and send service-related communications. We use this data solely to provide and improve our services; we do not sell, rent, or trade your Google user data to third parties.
 
 3. Purpose of Processing
@@ -33,7 +33,7 @@ We process your personal data to:
 3.3. Enable matching and discovery features
 3.4. Allow users to create, join, and display user-organized social activities (including in-person meetups)
 3.5. Improve app performance and user experience
-3.6 Ensure safety, security, and prevent abuse
+3.6. Ensure safety, security, and prevent abuse
 
 4. Legal Basis for Processing
 We rely on the following lawful bases under Article 6 GDPR:
@@ -51,7 +51,7 @@ Sort and recommend profiles based on age, interests, and approximate distance
 This profiling:
 5.1. Is used only to improve user experience
 5.2. Does not produce legal effects
-5.3 Does not significantly affect users in a similar way
+5.3. Does not significantly affect users in a similar way
 We do not use automated decision-making as defined under Article 22 GDPR.
 
 6. Analytics and Third-Party Processors

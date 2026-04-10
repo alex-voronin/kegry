@@ -1,0 +1,106 @@
+Politika privatnosti
+
+Datum stupanja na snagu: 10.4.2026.
+
+1. Ko smo mi (Rukovalac podacima)
+Kegrycorn je društvena platforma koja funkcioniše kao nezavisni digitalni proizvod koji pomaže korisnicima starijim od 18 godina da pronađu nove prijatelje i organizuju dobrovoljne društvene veze.
+Mi delujemo kao rukovalac podacima u skladu sa Opštom uredbom o zaštiti podataka (GDPR) (EU) 2016/679 za korisnike u EU/EIP i drugim jurisdikcijama gde se GDPR primenjuje.
+Kontakt: contacts@kegry.com (za sve upite u vezi sa privatnošću, uključujući ostvarivanje prava iz GDPR-a).
+Nismo odabrali službenika za zaštitu podataka (DPO) jer to nije obavezno prema članu 37. GDPR-a za naš obim i aktivnosti.
+
+2. Podaci koje prikupljamo
+2.1 Informacije koje dajete dobrovoljno. Kada kreirate i koristite nalog, možete dostaviti:
+2.1.1. Ime ili nadimak
+2.1.2. Profilne fotografije ili slike
+2.1.3. Starost i datum rođenja (radi verifikacije 18+)
+2.1.4. Pol
+2.1.5. Interesovanja i društvene preferencije u vezi sa prijateljstvom
+2.1.6. Bilo koji tekst ili sadržaj koji objavite u profilima ili opisima aktivnosti
+
+2.2. Automatski prikupljene informacije. Možemo prikupljati:
+2.2.1. Približnu lokaciju (na osnovu IP adrese, a ne precizan GPS)
+2.2.2. Informacije o uređaju (tip, operativni sistem, jedinstveni identifikatori kao što je reklamni ID)
+2.2.3. Podatke o upotrebi i interakciji (npr. pregledi profila, poslati/primljeni pozivi, vremenske oznake, rušenja aplikacije)
+2.2.4. Podatke o logovanju (IP adresa, vremena pristupa, verzija pretraživača/aplikacije)
+
+2.3. Podaci dobijeni putem Google OAuth-a
+Naša Usluga koristi Google OAuth kako bi vam omogućila bezbednu prijavu. Kada se prijavite koristeći svoj Google nalog, prikupljamo vašu e-adresu i jedinstveni interni identifikator. Ove informacije se koriste isključivo za identifikaciju vašeg naloga, održavanje vaše sesije i slanje komunikacija u vezi sa uslugom. Ove podatke koristimo isključivo za pružanje i poboljšanje naših usluga; ne prodajemo, ne iznajmljujemo i ne trgujemo vašim Google korisničkim podacima sa trećim stranama.
+
+3. Svrha obrade
+Vaše lične podatke obrađujemo radi:
+3.1. Kreiranja i upravljanja korisničkim nalozima
+3.2. Prikazivanja obližnjih i relevantnih korisnika
+3.3. Omogućavanja funkcija uparivanja i otkrivanja
+3.4. Omogućavanja korisnicima da kreiraju, pridruže se i prikazuju društvene aktivnosti (uključujući susrete uživo)
+3.5. Poboljšanja performansi aplikacije i korisničkog iskustva
+3.6. Osiguravanja bezbednosti, sigurnosti i sprečavanja zloupotrebe
+
+4. Pravni osnov za obradu
+Oslanjamo se na sledeće pravne osnove prema članu 6. GDPR-a:
+4.1.1. Pristanak (Član 6(1)(a)): Za obradu profilnih fotografija, opcionog pola, marketinških komunikacija (npr. novosti o novim funkcijama) i bilo kakvog opcionog deljenja precizne lokacije. Pristanak je slobodno dat, specifičan, informisan i jasan. Možete ga povući u bilo kom trenutku putem podešavanja aplikacije bez uticaja na zakonitost prethodne obrade.
+4.1.2. Izvršenje ugovora (Član 6(1)(b)): Za osnovno kreiranje naloga, uparivanje, prikazivanje obližnjih korisnika i omogućavanje aktivnosti koje organizuju korisnici - obrada je neophodna za pružanje usluge koju ste tražili.
+4.1.3. Legitimni interesi (Član 6(1)(f)): Za sprečavanje prevara/zloupotreba, bezbednost i sigurnost (npr. moderiranje prijava), osnovnu analitiku za poboljšanje aplikacije, uparivanje zasnovano na približnoj lokaciji (nivo grada) i preporuku profila na osnovu interesovanja/starosti/udaljenosti.
+Rezime procene legitimnog interesa (LIA):
+4.2.1. Interes: Pružanje funkcionalne, bezbedne usluge za pronalaženje prijatelja; sprečavanje zloupotrebe; poboljšanje korisničkog iskustva kroz uvide zasnovane na podacima.
+4.2.2. Neophodnost: Koristimo najmanje invazivna sredstva (npr. pseudonimizaciju, bez preciznog praćenja podrazumevano, minimizaciju podataka).
+4.2.3. Balansiranje: Vaša prava su zaštićena kroz transparentnost, lako brisanje, opcije odustajanja od preporuka, ograničeno zadržavanje i odsustvo marketinškog profilisanja. Smatramo da je uticaj nizak za većinu korisnika u kontekstu dobrovoljnog prijateljstva. Možete uložiti prigovor na obradu zasnovanu na legitimnim interesima u bilo kom trenutku (videti Vaša prava).
+
+5. Profilisanje i preporuke
+Kegrycorn koristi automatizovanu obradu da:
+Sortira i preporučuje profile na osnovu starosti, interesovanja i približne udaljenosti.
+Ovo profilisanje:
+5.1. Se koristi isključivo za poboljšanje korisničkog iskustva
+5.2. Ne proizvodi pravna dejstva
+5.3. Ne utiče značajno na korisnike na sličan način
+Ne koristimo automatizovano donošenje odluka definisano članom 22. GDPR-a.
+
+6. Analitika i obrađivači treće strane
+Koristimo PostHog za analitiku proizvoda.
+PostHog obrađuje:
+6.1.1. Pseudonimizovane podatke o upotrebi i interakciji
+6.1.2. Tehničke podatke i analitiku zasnovanu na događajima
+Podaci analitike se:
+6.2.1. Koriste isključivo za razumevanje korišćenja aplikacije
+6.2.2. Čuvaju i obrađuju na evropskim serverima
+6.2.3. Ne koriste za oglašavanje ili praćenje na drugim uslugama
+Ne prodajemo lične podatke.
+
+7. Čuvanje podataka
+Svi lični podaci se čuvaju i obrađuju isključivo unutar Evropskog ekonomskog prostora (EIP). Ne prenosimo podatke van EIP-a.
+Zadržavanje:
+7.1. Podaci o nalogu - sve dok je vaš nalog aktivan.
+7.2. Nakon zahteva za brisanje - nepovratno se brišu ili anonimizuju u roku od 30 dana (osim rezervnih kopija do maksimalno 90 dana, a zatim se čiste; ili ako je zakonom zahtevano, npr. za sporove).
+7.3. Bezbednosni logovi / izveštaji o zloupotrebi - do 12 meseci (zatim se anonimizuju ili brišu).
+Vaši podaci se čuvaju bezbedno i dostupni su samo ovlašćenom osoblju. Pridržavamo se Google-ovih zahteva o ograničenoj upotrebi, osiguravajući da korišćenje informacija dobijenih od Google API-ja bude u skladu sa Google API politikom korisničkih podataka, uključujući zahteve o ograničenoj upotrebi.
+
+8. Brisanje podataka
+8.1. Možete opozvati naš pristup vašim Google podacima u bilo kom trenutku putem vaših Google bezbednosnih podešavanja.
+8.2. Možete obrisati svoj nalog u bilo kom trenutku putem podešavanja aplikacije.
+Nakon brisanja, vaši podaci će biti trajno uklonjeni u razumnom roku, osim ako zakon ne zahteva njihovo zadržavanje.
+
+9. Vaša prava prema GDPR-u
+Imate pravo da:
+9.1. Pristupite svojim ličnim podacima
+9.2. Ispravite netačne ili nepotpune podatke
+9.3. Zahtevate brisanje („pravo na zaborav“)
+9.4. Ograničite obradu
+9.5. Uložite prigovor na obradu
+9.6. Primite svoje podatke u prenosivom formatu
+9.7. Povučete pristanak u bilo kom trenutku
+Takođe imate pravo da podnesete žalbu svom lokalnom nadzornom organu.
+Da biste ostvarili svoja prava, kontaktirajte: contacts@kegry.com
+
+10. Bezbednost podataka i povrede
+Primenjujemo odgovarajuće tehničke i organizacione mere za zaštitu ličnih podataka.
+U slučaju povrede ličnih podataka koja predstavlja rizik za korisnike, obavestićemo pogođene korisnike i relevantne organe u skladu sa zakonom.
+
+11. Privatnost dece
+Kegrycorn je namenjen korisnicima od 18 godina i starijim.
+Ne prikupljamo svesno lične podatke od maloletnika.
+Ako verujete da je maloletnik dostavio podatke, kontaktirajte nas i mi ćemo ih odmah obrisati.
+
+12. Izmene ove politike
+Možemo ažurirati ovu Politiku privatnosti. O materijalnim promenama bićete obavešteni unutar aplikacije (baner/pop-up) i/ili putem e-pošte najmanje 30 dana unapred, gde je to moguće. Nastavak korišćenja nakon izmena predstavlja njihovo prihvatanje.
+
+13. Međunarodni transferi podataka
+Ne prenosimo lične podatke van EIP-a. Sva obrada se odvija u centrima podataka u EU/EEA.

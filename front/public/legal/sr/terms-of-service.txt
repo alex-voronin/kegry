@@ -1,0 +1,69 @@
+Uslovi korišćenja
+
+1. Podobnost
+Morate imati najmanje 18 godina da biste koristili Kegrycorn.
+
+2. Svrha Usluge
+Kegrycorn je namenjen isključivo za prijateljstva i društvene veze, a ne za romantične ili seksualne odnose.
+
+3. Korisnički sadržaj
+Vi zadržavate vlasništvo nad svojim sadržajem.
+Slanjem sadržaja dajete Kegrycornu neekskluzivnu, opozivu licencu za njegovo prikazivanje unutar usluge.
+Potvrđujete da:
+3.1. Posedujete ili imate prava na sadržaj
+3.2. Sadržaj je zakonit i ne krši prava drugih
+
+4. Intelektualna svojina i imovina brenda
+Sva prava intelektualne svojine u Usluzi, uključujući, ali ne ograničavajući se na ime Kegrycorn, logo, softverski kod, UI/UX dizajn i maskotu brenda, su u našem vlasništvu ili pod našom licencom.
+4.1. Vlasništvo nad maskotom: Naša maskota je vlasnički lik (uključujući elemente generisane veštačkom inteligencijom koje je modifikovao čovek). Mi držimo sva prava na njen vizuelni izgled i upotrebu unutar Usluge.
+4.2. Ograničenja: Ne smete kopirati, modifikovati, distribuirati ili koristiti našu maskotu, logo ili bilo koje druge elemente brenda u bilo koju komercijalnu ili nekomercijalnu svrhu bez naše izričite pismene dozvole.
+4.3. Dokaz o pravima: Održavamo digitalne zapise (uključujući, ali ne ograničavajući se na GitHub istoriju commit-a, Figma verziranje i vremenski označene arhive) kako bismo utvrdili datum stvaranja i vlasništvo nad svom imovinom brenda.
+
+5. Zabranjena upotreba
+Ne smete:
+5.1. Uznemiravati, pretiti ili zlostavljati druge
+5.2. Lažno se predstavljati kao druga osoba
+5.3. Deliti eksplicitan ili seksualan sadržaj
+5.4. Koristiti uslugu za komercijalno nuđenje usluga
+
+6. Raskid naloga
+Možemo suspendovati ili ugasiti naloge zbog kršenja ovih Uslova ili Smernica zajednice, posebno u slučajevima teške ili ponovljene zloupotrebe.
+
+7. Odricanje od odgovornosti i ograničenje odgovornosti
+Usluga se pruža na bazi "kakva jeste" i "kako je dostupna", bez bilo kakvih izričitih ili podrazumevanih garancija, u maksimalnoj meri dozvoljenoj važećim zakonom.
+Ne sprovodimo proveru prošlosti korisnika i ne garantujemo ponašanje, bezbednost, identitet ili namere bilo kog korisnika. Vaša interakcija sa drugim korisnicima, uključujući sve susrete uživo, aktivnosti ili događaje, je u potpunosti na vaš sopstveni rizik i po sopstvenom nahođenju.
+U najvećoj meri dozvoljenoj zakonom i osim ako je zabranjeno obaveznim pravilima o zaštiti potrošača ili drugim važećim zakonom, Kegrycorn, njegovi povezani entiteti, službenici, direktori, zaposleni i agenti neće biti odgovorni za bilo kakvu indirektnu, slučajnu, posebnu, posledičnu ili kaznenu štetu, uključujući, ali ne ograničavajući se na gubitak profita, podataka, dobre volje, mogućnosti korišćenja ili druge nematerijalne gubitke, koji proizilaze iz ili su u vezi sa:
+7.1.1. vašim korišćenjem ili nemogućnošću korišćenja Usluge;
+7.1.2. interakcijama ili odnosima sa drugim korisnicima;
+7.1.3. bilo kojim aktivnostima uživo, sastancima ili događajima (bez obzira da li su organizovani putem Usluge ili ne);
+7.1.4. bilo kojim incidentima u vezi sa konzumiranjem alkohola ili ličnom bezbednošću tokom takvih aktivnosti.
+Ništa u ovim Uslovima ne isključuje niti ograničava našu odgovornost za:
+7.2.1. smrt ili telesnu povredu uzrokovanu našim nemarom ili nemarom naših zaposlenih, agenata ili podizvođača;
+7.2.2. prevaru ili lažno predstavljanje;
+7.2.3. kršenje bilo kojih obaveznih zakonskih obaveza ili prava potrošača prema važećem zakonu (uključujući, bez ograničenja, odgovornost koja se ne može isključiti ili ograničiti prema zakonima vaše jurisdikcije);
+7.2.4. bilo koje drugo pitanje gde se odgovornost ne može zakonito isključiti ili ograničiti.
+Ako ste potrošač u Evropskoj uniji, možete imati dodatna zakonska prava i pravne lekove na koje ovi Uslovi ne utiču.
+
+8. Merodavno pravo
+Ovi Uslovi uređeni su zakonima Republike Srbije.
+
+9. Aktivnosti uživo i odricanje od odgovornosti u vezi sa alkoholom
+Kegrycorn je isključivo platforma koja omogućava korisnicima da se povežu, komuniciraju i dobrovoljno organizuju ili se pridruže društvenim aktivnostima, uključujući one u lokalima u kojima se služi alkohol (kao što su barovi, pabovi ili događaji). Mi ne organizujemo, ne hostujemo, ne nadgledamo, ne upravljamo, ne podržavamo niti preuzimamo bilo kakvu kontrolu nad aktivnostima uživo, događajima ili sastancima. Sve takve aktivnosti iniciraju, dogovaraju ih i u njima učestvuju isključivo korisnici.
+Vi ste u potpunosti i isključivo odgovorni za:
+9.1. sopstvene odluke, ponašanje i bezbednost;
+9.2. procenu bilo kakvih rizika povezanih sa upoznavanjem drugih;
+9.3. sopstvenu konzumaciju alkohola (ako je primenljivo) i poštovanje zakonske starosne granice za piće i svih relevantnih zakona na vašoj lokaciji;
+9.4. sopstvenu dobrobit i poštovanje pravila lokala i lokalnih propisa.
+Iako nastojimo da podstaknemo poštovanje i bezbednu zajednicu kroz naše Smernice zajednice, moderiranje sadržaja i mehanizme prijavljivanja, ne možemo garantovati ili kontrolisati akcije, namere ili bezbednost drugih korisnika. Sve rizike u vezi sa interakcijama uživo, uključujući one koji uključuju alkohol, lokale trećih strana ili ličnu bezbednost, snosite isključivo vi.
+Ništa u ovom odeljku ili ovim Uslovima nema za cilj da isključi ili ograniči našu odgovornost za smrt, telesnu povredu ili drugu štetu uzrokovanu direktno našim sopstvenim nemarom, namernim lošim ponašanjem, prevarom ili gde je takvo isključenje ili ograničenje zabranjeno obaveznim važećim zakonom (uključujući pravila EU o zaštiti potrošača).
+
+10. Zakonska starosna granica za piće
+Korisnici su odgovorni da osiguraju da ispunjavaju zakonsku starosnu granicu za konzumiranje alkohola koji se primenjuju u njihovoj zemlji ili regionu pre konzumiranja alkohola tokom bilo koje aktivnosti uživo.
+
+11. Bez organizovanih ili profesionalnih događaja
+Kegrycorn ne pruža profesionalnu organizaciju događaja, vođene ture niti organizovana iskustva.
+Usluga funkcioniše isključivo kao platforma za društvene veze koje iniciraju korisnici.
+
+12. Potrošačka prava EU
+Ako ste potrošač sa prebivalištem u Evropskoj uniji, ovi Uslovi ne utiču na vaša obavezna zakonska prava prema važećem zakonu o zaštiti potrošača, uključujući, ali ne ograničavajući se na prava prema Direktivi o nepravičnim ugovornim uslovima (93/13/EEZ), Direktivi o pravima potrošača ili njihovim nacionalnim sprovođenjem. Svaka odredba za koju se utvrdi da je nepravična ili nevažeća prema tim zakonima neće uticati na važenje preostalih odredbi.
+Ovi uslovi su regulisani zakonima Srbije, pod uslovom da vas to ne lišava zaštite koju vam pružaju obavezne odredbe zakona zemlje u kojoj boravite kao potrošač.

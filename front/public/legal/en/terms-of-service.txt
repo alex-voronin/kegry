@@ -17,7 +17,7 @@ You confirm that:
 All intellectual property rights in the Service, including but not limited to the Kegrycorn name, logo, software code, UI/UX design, and the brand mascot, are owned by or licensed to us.
 4.1. Mascot Ownership: Our mascot is a proprietary character (including human-modified AI-generated elements). We hold all rights to its visual appearance and usage within the Service.
 4.2. Restrictions: You may not copy, modify, distribute, or use our mascot, logo, or any other branding elements for any commercial or non-commercial purpose without our express written permission.
-4.3 Evidence of Rights: We maintain digital records (including but not limited to GitHub commit history, Figma versioning, and time-stamped archives) to establish the date of creation and ownership of all brand assets.
+4.3. Evidence of Rights: We maintain digital records (including but not limited to GitHub commit history, Figma versioning, and time-stamped archives) to establish the date of creation and ownership of all brand assets.
 
 5. Prohibited Use
 You may not:

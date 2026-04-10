@@ -5,9 +5,9 @@ import { notFound } from 'next/navigation';
 export default async function LegalPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const allowedSlugs = [
     'terms-of-service',
     'privacy-policy',
@@ -19,7 +19,15 @@ export default async function LegalPage({
     notFound();
   }
 
-  const filePath = path.join(process.cwd(), 'public', 'legal', `${slug}.txt`);
+  // Try to find the file in the requested locale, fallback to 'en'
+  const getFilePath = (lang: string) =>
+    path.join(process.cwd(), 'public', 'legal', lang, `${slug}.txt`);
+
+  let filePath = getFilePath(locale);
+
+  if (!fs.existsSync(filePath)) {
+    filePath = getFilePath('en');
+  }
 
   try {
     const content = fs.readFileSync(filePath, 'utf-8');
@@ -29,3 +37,4 @@ export default async function LegalPage({
     notFound();
   }
 }
+

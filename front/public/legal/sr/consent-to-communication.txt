@@ -1,0 +1,21 @@
+Saglasnost za komunikaciju
+
+Možemo vam slati poruke putem e-pošte, "push" obaveštenja ili obaveštenja unutar aplikacije. Razlikujemo:
+
+1. Obavezne servisne poruke (nije moguće odustati)
+Ovo su suštinske komunikacije neophodne za pružanje i obezbeđivanje Usluge, kao što su:
+1.1. Obaveštenja o kreiranju/verifikaciji naloga
+1.2. Bezbednosna upozorenja (npr. sumnjiva prijava, resetovanje lozinke)
+1.3. Važna ažuriranja Uslova, Politike privatnosti ili Smernica zajednice
+1.4. Obaveštenja u vezi sa bezbednošću (npr. ishodi prijava, moderatorske akcije)
+1.5. Transakcione/servisne poruke (npr. prihvaćeni pozivi, podsetnici na aktivnosti ako ste se pridružili)
+Pravni osnov: Izvršenje našeg ugovora sa vama (član 6(1)(b) GDPR) i/ili naš legitimni interes za održavanje bezbednosti i funkcionalnosti usluge (član 6(1)(f) GDPR). Ove poruke nisu marketing i od njih se ne može odustati, jer su neophodne za pravilan rad Usluge.
+
+2. Opcione marketinške i promotivne poruke (prihvatanje/odbijanje)
+2.1. Vesti o novim funkcijama, ažuriranjima proizvoda ili poboljšanjima
+2.2. Obaveštenja o događajima, partnerstvima ili unapređenjima aplikacije
+2.3. Saveti, novosti ili pozivi da isprobate nove alate
+Pravni osnov: Vaš pristanak (član 6(1)(a) GDPR). Ove poruke ćemo slati samo ako ste dali eksplicitan pristanak (npr. tokom registracije ili u podešavanjima).
+Možete povući pristanak / odustati u bilo kom trenutku putem podešavanja profila (ili linka za odjavu u svakoj poruci). Povlačenje pristanka je besplatno, lako i ne utiče na vaše korišćenje osnovne Usluge. Nakon odustajanja, odmah prestajemo sa slanjem promotivnih poruka (iako ćete i dalje dobijati obavezne servisne poruke).
+
+Ne šaljemo neželjeni marketing bez važećeg pravnog osnova. Sve poruke nas jasno identifikuju kao pošiljaoca i uključuju jednostavan način za upravljanje preferencijama.
