@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_APP_VERSION: version,
   },
+  allowedDevOrigins: ['localhost:3000', '10.140.79.179'],
   images: {
     remotePatterns: [
       {
