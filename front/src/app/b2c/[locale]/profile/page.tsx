@@ -308,12 +308,14 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <div className={styles.section} onClick={handleEditProfile}>
-            <FormSectionTitle>{tBio('title')}</FormSectionTitle>
-            <div className={styles.field}>
-              <p>{userBio || '--'}</p>
+          {userBio && (
+            <div className={styles.section} onClick={handleEditProfile}>
+              <FormSectionTitle>{tBio('title')}</FormSectionTitle>
+              <div className={styles.field}>
+                <p>{userBio}</p>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className={styles.section} onClick={handleEditProfile}>
             <FormSectionTitle>{tHobbies('title')}</FormSectionTitle>

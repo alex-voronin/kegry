@@ -182,12 +182,14 @@ export default function UserProfilePage() {
             </div>
           </div>
 
-          <div className={styles.section}>
-            <FormSectionTitle>{tBio('title')}</FormSectionTitle>
-            <div className={styles.field}>
-              <p>{profile.bio || '--'}</p>
+          {profile.bio && (
+            <div className={styles.section}>
+              <FormSectionTitle>{tBio('title')}</FormSectionTitle>
+              <div className={styles.field}>
+                <p>{profile.bio}</p>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className={styles.section}>
             <FormSectionTitle>{tHobbies('title')}</FormSectionTitle>
