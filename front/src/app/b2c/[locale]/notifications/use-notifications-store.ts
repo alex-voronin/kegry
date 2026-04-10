@@ -24,8 +24,7 @@ interface NotificationsState {
   hasError: boolean;
 
   fetchNotifications: (offset?: number, limit?: number) => Promise<void>;
-  acceptInvite: (userId: string, notificationId: string) => Promise<void>;
-  ignoreInvite: (userId: string, notificationId: string) => Promise<void>;
+  acceptInvite: (userId: string) => Promise<void>;
   deleteNotification: (notificationId: string) => Promise<void>;
   blockUser: (userId: string, reportMessage?: string) => Promise<void>;
   reset: () => void;
@@ -77,12 +76,12 @@ export const useNotificationsStore = create<NotificationsState>()(
       }
     },
 
-    acceptInvite: async (userId: string, notificationId: string) => {
-      await apiClient.post(API_ENDPOINTS.FEED.ACCEPT_INVITE(userId));
-    },
-
-    ignoreInvite: async (userId: string, notificationId: string) => {
-      await apiClient.post(API_ENDPOINTS.FEED.IGNORE(userId));
+    acceptInvite: async (userId: string) => {
+      try {
+        await apiClient.post(API_ENDPOINTS.FEED.ACCEPT_INVITE(userId));
+      } catch (error) {
+        rethrowApiError(error, 'Failed to accept invite');
+      }
     },
 
     deleteNotification: async (notificationId: string) => {

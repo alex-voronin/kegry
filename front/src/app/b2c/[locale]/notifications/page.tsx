@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import { useRouter } from '@/i18n/routing';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
@@ -47,7 +46,6 @@ export default function NotificationsScreen() {
     hasMore,
     fetchNotifications,
     acceptInvite,
-    ignoreInvite,
     deleteNotification,
     blockUser,
     reset,
@@ -111,19 +109,10 @@ export default function NotificationsScreen() {
       return;
     }
     try {
-      await acceptInvite(notif.fromUserId, notif.id);
+      await acceptInvite(notif.fromUserId);
       toast.success(t('toast.accepted'));
     } catch (err: any) {
       toast.error(err.message || t('toast.acceptFailed'));
-    }
-  };
-
-  const handleIgnore = async (notif: NotificationDto) => {
-    if (!notif.fromUserId) return;
-    try {
-      await ignoreInvite(notif.fromUserId, notif.id);
-    } catch (err: any) {
-      toast.error(err.message || t('toast.ignoreFailed'));
     }
   };
 
