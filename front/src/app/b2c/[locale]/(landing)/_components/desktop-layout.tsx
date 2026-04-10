@@ -166,7 +166,7 @@ export default function DesktopLayout() {
             {t('pollsNews.pollDescription')}
           </p>
           <button
-            data-tally-open="obGVDN"
+            data-tally-open={locale === 'sr' ? 'b58L1g' : 'obGVDN'}
             data-tally-emoji-text="👋"
             data-tally-emoji-animation="wave"
             data-tally-auto-close="2500"
