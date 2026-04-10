@@ -312,7 +312,7 @@ public class B2BDealsEndpoints : IEndpoints
         Percent: d.Percent,
         Days: d.Days
             .Select(day => day.DayOfWeek)
-            .Order()
+            .OrderBy(day => day == DayOfWeek.Sunday ? 7 : (int)day)
             .ToArray()
     );
 }
