@@ -6,7 +6,7 @@ import apiClient, {
   setAcceptLanguage as setApiClientLanguage,
 } from '@/lib/api-client';
 import { setAcceptLanguage as setAuthClientLanguage } from '@/lib/auth-client';
-import { useRouter } from '@/i18n/routing';
+import { useRouter, usePathname } from '@/i18n/routing';
 import { useBackgroundLocation } from '@/lib/use-background-location';
 import { useFcm } from '@/lib/fcm/use-fcm';
 import { useFcmStore } from '@/lib/fcm/store';
@@ -24,6 +24,7 @@ import { DayjsLocaleProvider } from './DayjsLocaleProvider';
 
 function FcmGlobalHandler() {
   const router = useRouter();
+  const pathname = usePathname();
   const {
     registerForegroundHandler,
     unregisterForegroundHandler,
@@ -59,6 +60,13 @@ function FcmGlobalHandler() {
         showNotification = true;
       }
 
+      if (
+        type === NotificationType.CHAT_MESSAGE_RECEIVED &&
+        pathname !== PAGE_ROUTES.CHAT
+      ) {
+        showNotification = true;
+      }
+
       if (showNotification) {
         if (
           'serviceWorker' in navigator &&
@@ -79,7 +87,7 @@ function FcmGlobalHandler() {
         }
       }
     },
-    [router],
+    [router, pathname],
   );
 
   const handleBackgroundMessage = useCallback(
