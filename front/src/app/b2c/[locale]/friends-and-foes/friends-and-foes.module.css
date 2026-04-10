@@ -29,7 +29,7 @@
 }
 
 .userName {
-  @apply text-base leading-tight font-normal;
+  @apply overflow-hidden text-base leading-tight font-normal wrap-anywhere;
 }
 
 .emptyState {

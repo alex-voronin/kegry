@@ -21,7 +21,7 @@
 }
 
 .userName {
-  @apply text-primary mt-6 text-center text-4xl font-bold;
+  @apply text-primary mt-6 text-center text-4xl font-bold overflow-hidden wrap-anywhere;
 }
 
 .section {
@@ -29,7 +29,7 @@
 }
 
 .field {
-  @apply bg-form-element flex min-h-[48px] px-4 py-3 sm:rounded-xl;
+  @apply bg-form-element flex min-h-[48px] px-4 py-3 sm:rounded-xl overflow-hidden wrap-anywhere;
 }
 
 .hobbiesField {
