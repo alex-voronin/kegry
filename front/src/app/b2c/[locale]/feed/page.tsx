@@ -29,6 +29,7 @@ import {
 import { NpcFeedBody, NpcFeedFooter } from './_components/npc-feed-card';
 import { useQrCheckIn } from '@/app/b2c/[locale]/venues/use-qr-check-in';
 import { CheckInAnimation } from '@/app/b2c/[locale]/venues/_components/check-in-animation';
+import { FEED_VISITS_TO_SHOW_REFERRAL_PROMPT } from '@/lib/constants';
 
 // --- Discriminated union for feed items ---
 
@@ -248,7 +249,7 @@ export default function FeedScreen() {
           const newCount = currentCount + 1;
           localStorage.setItem('feed_visit_count', String(newCount));
 
-          if (newCount === 3) {
+          if (newCount === FEED_VISITS_TO_SHOW_REFERRAL_PROMPT) {
             setIsReferralPromptOpen(true);
             localStorage.setItem('referral_prompt_shown', 'true');
             localStorage.removeItem('feed_visit_count');

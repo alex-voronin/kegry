@@ -24,6 +24,10 @@ import { uploadImage, compressImageToBlob } from '@/lib/image-utils';
 import { LeafletMapPickerModal } from '@/components/ui/leaflet-mappicker-modal';
 import styles from './edit-venue.module.css';
 import { cn } from '@/lib/utils';
+import {
+  VENUE_COVER_MAX_LONG_SIDE,
+  VENUE_COVER_MAX_SIZE_BYTES,
+} from '@/lib/constants';
 
 export default function VenueEditPage() {
   const t = useTranslations('screens.editVenue');
@@ -129,7 +133,11 @@ export default function VenueEditPage() {
       reader.onloadend = () => setCoverPreview(reader.result as string);
       reader.readAsDataURL(file);
 
-      const compressedBlob = await compressImageToBlob(file, 512 * 1024, 1280);
+      const compressedBlob = await compressImageToBlob(
+        file,
+        VENUE_COVER_MAX_SIZE_BYTES,
+        VENUE_COVER_MAX_LONG_SIDE,
+      );
       setCoverBlob(compressedBlob);
     } catch {
       toast.error('Failed to process image');

@@ -20,6 +20,7 @@ import { API_ENDPOINTS, PAGE_ROUTES } from '@/lib/routes';
 import { uploadImage, compressImageToBlob } from '@/lib/image-utils';
 import styles from './create.module.css';
 import { useSafeBack } from '@/hooks/use-safe-back';
+import { AVATAR_MAX_LONG_SIDE, AVATAR_MAX_SIZE_BYTES } from '@/lib/constants';
 
 export default function CompanyCreatePage() {
   const t = useTranslations('screens.createCompany');
@@ -74,7 +75,11 @@ export default function CompanyCreatePage() {
       reader.readAsDataURL(file);
 
       // Compress and set blob
-      const compressedBlob = await compressImageToBlob(file, 256 * 1024, 512);
+      const compressedBlob = await compressImageToBlob(
+        file,
+        AVATAR_MAX_SIZE_BYTES,
+        AVATAR_MAX_LONG_SIDE,
+      );
       setAvatarBlob(compressedBlob);
     } catch (err) {
       toast.error('Failed to process image');

@@ -6,15 +6,16 @@ import { useRef, useState, useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Camera } from 'lucide-react';
 import { compressImageToBlob } from '@/lib/image-utils';
+import {
+  USER_COVER_MAX_LONG_SIDE,
+  USER_COVER_MAX_SIZE_BYTES,
+} from '@/lib/constants';
 
 type CoverSectionProps = {
   coverBlob?: Blob | null;
   onCoverChange?: (coverBlob: Blob) => void;
   existingCoverUrl?: string;
 };
-
-const MAX_COVER_SIZE_BYTES = 512 * 1024;
-const MAX_COVER_HEIGHT = 1980;
 
 export const CoverSection = ({
   coverBlob,
@@ -52,8 +53,8 @@ export const CoverSection = ({
       const file = e.target.files[0];
       const compressed = await compressImageToBlob(
         file,
-        MAX_COVER_SIZE_BYTES,
-        MAX_COVER_HEIGHT,
+        USER_COVER_MAX_SIZE_BYTES,
+        USER_COVER_MAX_LONG_SIDE,
       );
 
       setLocalBlob(compressed);

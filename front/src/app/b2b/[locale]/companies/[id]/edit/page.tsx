@@ -22,6 +22,7 @@ import { API_ENDPOINTS, PAGE_ROUTES } from '@/lib/routes';
 import { uploadImage, compressImageToBlob } from '@/lib/image-utils';
 import { useCompanyProfileStore } from '../use-company-profile-store';
 import styles from '../../create/create.module.css';
+import { AVATAR_MAX_LONG_SIDE, AVATAR_MAX_SIZE_BYTES } from '@/lib/constants';
 
 export default function CompanyEditPage() {
   const t = useTranslations('screens.editCompany');
@@ -85,7 +86,11 @@ export default function CompanyEditPage() {
       reader.onloadend = () => setAvatarPreview(reader.result as string);
       reader.readAsDataURL(file);
 
-      const compressedBlob = await compressImageToBlob(file, 256 * 1024, 512);
+      const compressedBlob = await compressImageToBlob(
+        file,
+        AVATAR_MAX_SIZE_BYTES,
+        AVATAR_MAX_LONG_SIDE,
+      );
       setAvatarBlob(compressedBlob);
     } catch {
       toast.error('Failed to process image');
