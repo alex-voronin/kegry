@@ -72,18 +72,30 @@ function FcmGlobalHandler() {
           'serviceWorker' in navigator &&
           navigator.serviceWorker.controller
         ) {
-          navigator.serviceWorker.ready.then((registration) => {
-            if (data) {
-              registration.showNotification(data.title || BRAND_NAME, {
-                body: data.body || '',
-                icon:
-                  data.icon || '/assets/notifications/notification-logo.webp',
-                badge: '/assets/notifications/notification-badge.png', // webp is not supported for badges
-                tag: `${type}-${messageId}`, // tag for deduplication
-                data: payload,
-              });
-            }
-          });
+          navigator.serviceWorker.ready
+            .then(async (registration) => {
+              if (!data) return;
+
+              try {
+                const tag = `${type}-${messageId}`; // tag for deduplication
+                await registration.showNotification(data.title || BRAND_NAME, {
+                  body: data.body || '',
+                  icon:
+                    data.icon || '/assets/notifications/notification-logo.webp',
+                  badge: '/assets/notifications/notification-badge.png', // webp is not supported for badges
+                  tag: tag,
+                  data: payload,
+                });
+              } catch (error) {
+                console.error('Failed to show notification:', error);
+              }
+            })
+            .catch((err) => {
+              console.error(
+                'Service Worker ready failed or notification error:',
+                err,
+              );
+            });
         }
       }
     },
