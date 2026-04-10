@@ -13,7 +13,7 @@
 }
 
 .coverContainer {
-  @apply relative h-[150px] w-full shrink-0 cursor-pointer;
+  @apply relative h-[130px] w-full shrink-0 cursor-pointer;
 }
 
 .header {
@@ -41,7 +41,7 @@
 }
 
 .form > div:not(.coverSection) {
-  @apply sm:px-4 px-0;
+  @apply px-0 sm:px-4;
 }
 
 .footer {

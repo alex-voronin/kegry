@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { PromoIcon } from '@/lib/promo-types';
+import { parseInstagramHandle } from '@/lib/url-utils';
 
 export default function VenueDetailPage() {
   const router = useRouter();
@@ -363,12 +364,14 @@ export default function VenueDetailPage() {
                 }
               }}
             >
-              <Image
-                src="/assets/b2b/google-maps-icon.svg"
-                alt="Maps"
-                width={24}
-                height={30}
-              />
+              <div className={styles.fieldIcon}>
+                <Image
+                  src="/assets/b2b/google-maps-icon.svg"
+                  alt="Maps"
+                  width={24}
+                  height={30}
+                />
+              </div>
               <span className={styles.fieldText}>{currentVenue.address}</span>
             </div>
           </div>
@@ -381,12 +384,14 @@ export default function VenueDetailPage() {
 
               {currentVenue.phoneNumber && (
                 <div className={styles.field}>
-                  <Image
-                    src="/assets/b2b/phone-icon.svg"
-                    alt="Phone"
-                    width={24}
-                    height={24}
-                  />
+                  <div className={styles.fieldIcon}>
+                    <Image
+                      src="/assets/b2b/phone-icon.svg"
+                      alt="Phone"
+                      width={24}
+                      height={24}
+                    />
+                  </div>
                   <span>{currentVenue.phoneNumber}</span>
                 </div>
               )}
@@ -398,12 +403,14 @@ export default function VenueDetailPage() {
                     window.open(currentVenue.websiteUrl as string, '_blank')
                   }
                 >
-                  <Image
-                    src="/assets/b2b/website-icon.svg"
-                    alt="Website"
-                    width={24}
-                    height={24}
-                  />
+                  <div className={styles.fieldIcon}>
+                    <Image
+                      src="/assets/b2b/website-icon.svg"
+                      alt="Website"
+                      width={24}
+                      height={24}
+                    />
+                  </div>
                   <span className={styles.fieldText}>
                     {currentVenue.websiteUrl}
                   </span>
@@ -417,12 +424,11 @@ export default function VenueDetailPage() {
                     window.open(currentVenue.instagramUrl as string, '_blank')
                   }
                 >
-                  <InstagramIcon />
+                  <div className={styles.fieldIcon}>
+                    <InstagramIcon />
+                  </div>
                   <span className={styles.fieldText}>
-                    {currentVenue.instagramUrl
-                      .split('/')
-                      .filter(Boolean)
-                      .at(-1)}
+                    {parseInstagramHandle(currentVenue.instagramUrl)}
                   </span>
                 </div>
               )}

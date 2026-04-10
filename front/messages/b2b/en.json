@@ -203,7 +203,7 @@
     },
     "companies": {
       "title": "Companies",
-      "noCompanies": "No companies found.",
+      "noCompanies": "No companies found. Tap anywhere to create one.",
       "toast": {
         "loadFailed": "Failed to load companies"
       },

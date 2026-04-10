@@ -5,7 +5,7 @@
 }
 
 .coverContainer {
-  @apply relative h-[150px] w-full shrink-0;
+  @apply relative h-[130px] w-full shrink-0;
 }
 
 .coverImage {
@@ -44,12 +44,16 @@
   @apply flex flex-col gap-2;
 }
 
+.fieldIcon {
+  @apply w-6 shrink-0 flex items-center justify-center;
+}
+
 .field {
   @apply bg-form-element flex min-h-[48px] items-center gap-3 rounded-none px-4 py-3 sm:rounded-xl;
 }
 
 .fieldText {
-  @apply text-foreground leading-relaxed;
+  @apply text-foreground overflow-hidden leading-relaxed wrap-anywhere;
 }
 
 .actionField {
@@ -57,7 +61,7 @@
 }
 
 .workingHoursText {
-  @apply text-foreground text-base leading-relaxed whitespace-pre-line;
+  @apply text-foreground overflow-hidden text-base leading-relaxed wrap-anywhere whitespace-pre-line;
 }
 
 .promoList,
@@ -75,7 +79,7 @@
 
 .promoItem,
 .discountItem {
-  @apply bg-form-element text-foreground rounded-none px-4 py-3 text-base leading-relaxed sm:rounded-xl;
+  @apply bg-form-element text-foreground overflow-hidden rounded-none px-4 py-3 text-base leading-relaxed wrap-anywhere sm:rounded-xl;
 }
 
 .promoItemActionable {
@@ -87,7 +91,7 @@
 }
 
 .promoBody {
-  @apply flex-1;
+  @apply flex-1 overflow-hidden wrap-anywhere;
 }
 
 .discountHeader {

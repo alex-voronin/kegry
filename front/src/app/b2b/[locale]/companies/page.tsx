@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from './companies.module.css';
 import { useSidebar, SidebarIcon, Sidebar } from '@/components/b2b/Sidebar';
+import { cn } from '@/lib/utils';
 import { ChevronRight } from 'lucide-react';
 
 export default function CompaniesPage() {
@@ -57,7 +58,10 @@ export default function CompaniesPage() {
             <Spinner />
           </div>
         ) : companies.length === 0 ? (
-          <div className={styles.emptyState}>
+          <div
+            className={cn(styles.emptyState, 'cursor-pointer')}
+            onClick={() => router.push(PAGE_ROUTES.B2B.COMPANIES_CREATE)}
+          >
             <span className={styles.emptyStateText}>{t('noCompanies')}</span>
           </div>
         ) : (

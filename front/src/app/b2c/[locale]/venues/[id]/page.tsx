@@ -23,6 +23,7 @@ import { useSafeBack } from '@/hooks/use-safe-back';
 import { QrScannerPopup } from '../_components/qr-scanner-popup';
 import { CheckInAnimation } from '../_components/check-in-animation';
 import { useQrCheckIn } from '../use-qr-check-in';
+import { parseInstagramHandle } from '@/lib/url-utils';
 
 function calculateProgressPercentage(
   count: number,
@@ -142,7 +143,6 @@ export default function VenueDetailScreen() {
               onClick={handleBack}
             />
           }
-          title={<h1 className={styles.companyName}>{company.name}</h1>}
           right={
             <div className="flex items-center gap-3">
               <Icon onClick={() => setIsScannerOpen(true)}>
@@ -189,6 +189,10 @@ export default function VenueDetailScreen() {
         </div>
 
         <div className={styles.content}>
+          <div className={styles.section}>
+            <h1 className={styles.companyName}>{company.name}</h1>
+          </div>
+
           {(loyaltyLevel.discount > 0 ||
             loyaltyLevel.userLoyaltyLevel > 0 ||
             loyaltyLevel.visitsUpperBound != null) && (
@@ -271,12 +275,14 @@ export default function VenueDetailScreen() {
               onClick={() => window.open(venue.googleMapsUrl, '_blank')}
             >
               <div className={styles.actionLabel}>
-                <Image
-                  src="/assets/venue/google-maps-icon.svg"
-                  alt="Maps"
-                  width={24}
-                  height={24}
-                />
+                <div className={styles.fieldIcon}>
+                  <Image
+                    src="/assets/venue/google-maps-icon.svg"
+                    alt="Maps"
+                    width={24}
+                    height={24}
+                  />
+                </div>
                 <span className={styles.fieldText}>{venue.address}</span>
               </div>
             </div>
@@ -290,12 +296,14 @@ export default function VenueDetailScreen() {
               {venue.phoneNumber && (
                 <div className={styles.field}>
                   <div className={styles.actionLabel}>
-                    <Image
-                      src="/assets/venue/phone-icon.svg"
-                      alt="Phone"
-                      width={24}
-                      height={24}
-                    />
+                    <div className={styles.fieldIcon}>
+                      <Image
+                        src="/assets/venue/phone-icon.svg"
+                        alt="Phone"
+                        width={24}
+                        height={24}
+                      />
+                    </div>
                     <span>{venue.phoneNumber}</span>
                   </div>
                 </div>
@@ -310,12 +318,14 @@ export default function VenueDetailScreen() {
                   }
                 >
                   <div className={styles.actionLabel}>
-                    <Image
-                      src="/assets/venue/website-icon.svg"
-                      alt="Website"
-                      width={24}
-                      height={24}
-                    />
+                    <div className={styles.fieldIcon}>
+                      <Image
+                        src="/assets/venue/website-icon.svg"
+                        alt="Website"
+                        width={24}
+                        height={24}
+                      />
+                    </div>
                     <span className={styles.fieldText}>{venue.websiteUrl}</span>
                   </div>
                 </div>
@@ -330,9 +340,11 @@ export default function VenueDetailScreen() {
                   }
                 >
                   <div className={styles.actionLabel}>
-                    <InstagramIcon />
+                    <div className={styles.fieldIcon}>
+                      <InstagramIcon />
+                    </div>
                     <span className={styles.fieldText}>
-                      {venue.instagramUrl.split('/').at(-1)}
+                      {parseInstagramHandle(venue.instagramUrl)}
                     </span>
                   </div>
                 </div>

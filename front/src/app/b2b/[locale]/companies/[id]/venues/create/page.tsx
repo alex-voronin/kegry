@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import { useSafeBack } from '@/hooks/use-safe-back';
@@ -21,7 +21,6 @@ import { Input } from '@/components/ui/input';
 import { useVenueStore } from '@/app/b2b/[locale]/venues/[id]/use-venue-store';
 import { API_ENDPOINTS, PAGE_ROUTES } from '@/lib/routes';
 import { uploadImage, compressImageToBlob } from '@/lib/image-utils';
-import { parseGoogleMapsUrl } from '@/lib/geo-utils';
 import { LeafletMapPickerModal } from '@/components/ui/leaflet-mappicker-modal';
 import styles from './create-venue.module.css';
 import { cn } from '@/lib/utils';
@@ -97,18 +96,6 @@ export default function VenueCreatePage() {
     },
   });
 
-  const googleMapsUrlValue = watch('googleMapsUrl');
-
-  useEffect(() => {
-    if (googleMapsUrlValue) {
-      const coords = parseGoogleMapsUrl(googleMapsUrlValue);
-      if (coords) {
-        setValue('latitude', coords.latitude, { shouldValidate: true });
-        setValue('longitude', coords.longitude, { shouldValidate: true });
-      }
-    }
-  }, [googleMapsUrlValue, setValue]);
-
   const handleCoverClick = () => {
     fileInputRef.current?.click();
   };
@@ -160,8 +147,8 @@ export default function VenueCreatePage() {
       await patchVenue(venueId, { coverImageUrl: publicUrl });
 
       safeBack(PAGE_ROUTES.B2B.COMPANIES_DETAIL(companyId));
-    } catch (err: any) {
-      toast.error(t('toast.createFailed'));
+    } catch (error: any) {
+      toast.error(error.message || t('toast.createFailed'));
     } finally {
       setIsSubmitting(false);
     }

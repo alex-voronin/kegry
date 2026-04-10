@@ -5,7 +5,7 @@
 }
 
 .coverContainer {
-  @apply relative h-[150px] w-full shrink-0;
+  @apply relative h-[130px] w-full shrink-0;
 }
 
 .coverImage {
@@ -21,7 +21,7 @@
 }
 
 .workingHoursText {
-  @apply text-base leading-relaxed whitespace-pre-line;
+  @apply overflow-hidden text-base leading-relaxed wrap-anywhere whitespace-pre-line;
 }
 
 /* Avatar overlapping the cover and mainContent */
@@ -38,7 +38,11 @@
 }
 
 .companyName {
-  @apply text-primary mx-auto w-[min(420px,calc(100vw-6rem))] text-2xl font-bold;
+  @apply text-primary px-4 text-center text-2xl font-bold;
+}
+
+.fieldIcon {
+  @apply w-6 shrink-0 flex items-center justify-center;
 }
 
 .content {
@@ -62,7 +66,7 @@
 }
 
 .fieldText {
-  @apply text-primary leading-relaxed;
+  @apply text-primary overflow-hidden leading-relaxed wrap-anywhere;
 }
 
 .actionField {
@@ -78,7 +82,11 @@
 }
 
 .promoItem {
-  @apply bg-form-element text-primary px-4 py-3 text-base leading-relaxed sm:rounded-xl;
+  @apply bg-form-element text-primary overflow-hidden px-4 py-3 text-base leading-relaxed wrap-anywhere sm:rounded-xl;
+}
+
+.promoBody {
+  @apply flex-1 overflow-hidden wrap-anywhere;
 }
 
 .loadingOverlay {
