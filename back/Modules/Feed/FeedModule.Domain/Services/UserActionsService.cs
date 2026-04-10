@@ -2,6 +2,8 @@ using FeedModule.Contracts.Events;
 using FeedModule.Domain.Aggregates;
 using FeedModule.Domain.Exceptions;
 using FeedModule.Domain.Repositories;
+using FeedModule.Domain.Resources;
+using Microsoft.Extensions.Localization;
 using Serilog;
 using SharedCore.Services.LifeTimes;
 
@@ -15,6 +17,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
     private readonly IUserRepository _userRepository;
     private readonly IUserRatingRepository _userRatingRepository;
     private readonly TimeProvider _timeProvider;
+    private readonly IStringLocalizer<FeedLocalization> _localizer;
 
     public UserActionsService(
         IUserActionLimitsService userActionLimitsService,
@@ -22,7 +25,8 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         IFilterRepository filterRepository,
         IUserRepository userRepository,
         IUserRatingRepository userRatingRepository,
-        TimeProvider timeProvider)
+        TimeProvider timeProvider,
+        IStringLocalizer<FeedLocalization> localizer)
     {
         _userActionLimitsService = userActionLimitsService;
         _feedUserRelationRepository = feedUserRelationRepository;
@@ -30,6 +34,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         _userRepository = userRepository;
         _userRatingRepository = userRatingRepository;
         _timeProvider = timeProvider;
+        _localizer = localizer;
     }
 
     public async Task RateUserAsync(Guid myUserId, Guid otherUserId, decimal? rating, CancellationToken ct)
@@ -143,7 +148,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         var otherToMeUserRelation = await _feedUserRelationRepository.GetAsync(otherUserId, myUserId, false, ct);
         if (otherToMeUserRelation == null || otherToMeUserRelation.IsInviteExpired(now))
         {
-            throw FeedExceptions.InviteExpired();
+            throw FeedExceptions.InviteExpired(_localizer);
         }
 
         await InviteUserAsync(
@@ -216,7 +221,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
                 ct: ct);
             if (!succeed && throwInMeetingException)
             {
-                throw FeedExceptions.UserAlreadyInMeeting();
+                throw FeedExceptions.UserAlreadyInMeeting(_localizer);
             }
         }
         else

@@ -1,5 +1,7 @@
 using System.Net;
+using Microsoft.Extensions.Localization;
 using SharedCore.Exceptions;
+using FeedModule.Domain.Resources;
 
 namespace FeedModule.Domain.Exceptions;
 
@@ -33,9 +35,9 @@ public static class FeedExceptions
             ErrorCode.ValidationError);
     }
 
-    public static HttpCodeException InviteExpired()
+    public static HttpCodeException InviteExpired(IStringLocalizer<FeedLocalization> localizer)
     {
-        return new HttpCodeException("The invite has already expired",
+        return new HttpCodeException(localizer.GetString("InviteExpired"),
             HttpStatusCode.BadRequest,
             ErrorCode.ValidationError);
     }
@@ -47,9 +49,9 @@ public static class FeedExceptions
             ErrorCode.ValidationError);
     }
 
-    public static HttpCodeException UserAlreadyInMeeting()
+    public static HttpCodeException UserAlreadyInMeeting(IStringLocalizer<FeedLocalization> localizer)
     {
-        return new HttpCodeException("The user already has a meetup scheduled.",
+        return new HttpCodeException(localizer.GetString("UserAlreadyInMeeting"),
             HttpStatusCode.Forbidden,
             ErrorCode.ValidationError);
     }
