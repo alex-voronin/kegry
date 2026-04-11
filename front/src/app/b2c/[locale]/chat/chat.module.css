@@ -13,7 +13,7 @@
 }
 
 .userName {
-  @apply mt-1 text-sm;
+  @apply absolute top-full left-1/2 mt-1 w-max max-w-[85vw] -translate-x-1/2 truncate text-center text-sm whitespace-nowrap;
 }
 
 .headerActionsWrapper {
