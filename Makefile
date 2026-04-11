@@ -1,80 +1,115 @@
-.PHONY: build-back build-front run-back describe-bus-back add-migration-back list-modules-back run-front run-tests deploy format audit db-shell clean help
+.PHONY: help build build-back build-front run-back describe-bus-back \
+        add-migration-back list-modules-back run-front run-tests \
+        format audit deploy db-shell clean
 
-# Default target
-help:
-	@echo "Development Commands:"
-	@echo "  make build-back  - Build the .NET backend solution"
-	@echo "  make build-front - Install dependencies and build the Next.js frontend"
-	@echo "  make run-back    - Run the .NET backend API (API.Web)"
-	@echo "  make describe-bus-back - Describe WolverineFX bus routes"
-	@echo "  make run-front   - Run the Next.js frontend in development mode"
-	@echo "  make run-tests   - Run all backend tests (Unit, Integration)"
-	@echo "  make format      - Run linters and format code (dotnet format, eslint, prettier)"
-	@echo "  make audit       - Runs security audit for both backend and frontend"
-	@echo "  make clean       - Deep clean build artifacts (bin, obj, .next)"
-	@echo "  make deploy      - Build and deploy the produciton build"
-	@echo "  make add-migration-back module=<Module> name=<Name> - Add EF migration for a module"
-	@echo "  make list-modules-back - List all backend modules"
+# =============================================
+# Configuration
+# =============================================
+SHELL := /bin/bash
+.DEFAULT_GOAL := help
 
-# Backend commands
-build-back:
-	dotnet build back/hoppyfy.me.sln
+BACK_DIR        := back
+FRONT_DIR       := front
+BACK_SOLUTION   := $(BACK_DIR)/hoppyfy.me.sln
+WEB_API_PROJECT := $(BACK_DIR)/API.Web/API.Web.csproj
 
-run-back:
-	dotnet run --project back/API.Web/API.Web.csproj
+# Colors for nice help output
+BLUE  := \033[36m
+GREEN := \033[32m
+RESET := \033[0m
+BOLD  := \033[1m
 
-describe-bus-back:
-	dotnet run --project back/API.Web/API.Web.csproj -- describe
+# =============================================
+# Main commands
+# =============================================
 
-run-tests:
-	dotnet test back/hoppyfy.me.sln -m:1
+help: ## Show all available commands
+	@echo -e "${BOLD}Available commands:${RESET}"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+		awk 'BEGIN {FS = ":.*?## "}; \
+		{printf "  ${BLUE}%-25s${RESET} %s\n", $$1, $$2}' | sort
 
-format-back:
-	dotnet format back/hoppyfy.me.sln
+build: build-back build-front ## Build both backend and frontend
 
-audit-back:
-	dotnet list back/hoppyfy.me.sln package --vulnerable
+# =============================================
+# Backend
+# =============================================
 
-list-modules-back:
-	@ls -d back/Modules/*/ | xargs -n 1 basename
+build-back: ## Build the .NET backend solution
+	dotnet build $(BACK_SOLUTION)
 
-add-migration-back:
+run-back: ## Run the .NET backend API
+	dotnet run --project $(WEB_API_PROJECT)
+
+describe-bus-back: ## Describe WolverineFX bus routes
+	dotnet run --project $(WEB_API_PROJECT) -- describe
+
+run-tests: ## Run all backend tests
+	dotnet test $(BACK_SOLUTION) -m:1
+
+list-modules-back: ## List all backend modules
+	@ls -d $(BACK_DIR)/Modules/*/ | xargs -n 1 basename
+
+add-migration-back: ## Add EF Core migration. Usage: make add-migration-back module=Security name=AddSecurity
 	@if [ -z "$(module)" ] || [ -z "$(name)" ]; then \
+		echo "Error: module and name parameters are required"; \
 		echo "Usage: make add-migration-back module=<ModuleName> name=<MigrationName>"; \
 		echo "Example: make add-migration-back module=Security name=AddSecurity"; \
 		exit 1; \
 	fi
 	dotnet ef migrations add $(name) \
-		--project back/Modules/$(module)/$(module)Module.Infrastructure \
-		--startup-project back/API.Web/API.Web.csproj \
+		--project $(BACK_DIR)/Modules/$(module)/$(module)Module.Infrastructure \
+		--startup-project $(WEB_API_PROJECT) \
 		--output-dir Persistence/Migrations \
 		--context $(module)Context
 
-# Frontend commands
-build-front:
-	cd front && npm install && npm run build
+# =============================================
+# Frontend
+# =============================================
 
-run-front:
-	cd front && npm run dev
+build-front: ## Build the Next.js frontend
+	cd $(FRONT_DIR) && npm install && npm run build
 
-format-front:
-	cd front && npm run lint -- --fix && npx prettier --write .
+run-front: ## Run the Next.js frontend in development mode
+	cd $(FRONT_DIR) && npm run dev
 
-audit-front:
-	cd front && npm audit
-
+# =============================================
 # Combined commands
-format: format-back format-front
+# =============================================
 
-audit: audit-back audit-front
+format: ## Format code (backend + frontend)
+	@$(MAKE) format-back
+	@$(MAKE) format-front
 
-clean:
-	@echo "Cleaning build artifacts..."
-	find . -type d -name "bin" -exec rm -rf {} +
-	find . -type d -name "obj" -exec rm -rf {} +
-	rm -rf front/.next
+audit: ## Run security audit (backend + frontend)
+	@$(MAKE) audit-back
+	@$(MAKE) audit-front
+
+clean: ## Deep clean build artifacts
+	@echo "Cleaning .NET artifacts..."
+	find $(BACK_DIR) -type d \( -name "bin" -o -name "obj" \) -exec rm -rf {} + 2>/dev/null || true
+	@echo "Cleaning Next.js artifacts..."
+	rm -rf $(FRONT_DIR)/.next 2>/dev/null || true
 	@echo "Clean complete."
 
-# Deployment
-deploy:
+deploy: ## Build and deploy the production build
 	./devops/deploy.sh
+
+# =============================================
+# Helper targets
+# =============================================
+
+format-back:
+	dotnet format $(BACK_SOLUTION)
+
+format-front:
+	cd $(FRONT_DIR) && npm run lint -- --fix && npx prettier --write .
+
+audit-back:
+	dotnet list $(BACK_SOLUTION) package --vulnerable
+
+audit-front:
+	cd $(FRONT_DIR) && npm audit
+
+db-shell:
+	@echo "TODO: configure db-shell for your database (psql, dotnet ef, etc.)"
