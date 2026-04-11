@@ -47,7 +47,7 @@ export function UserFeedBody({
         {currentProfile.rating && currentProfile.rating > Number.EPSILON && (
           <div className={styles.ratingRow}>
             <StarRating
-              initialRating={currentProfile.rating || 0}
+              initialRating={Math.round((currentProfile.rating || 0) * 2) / 2}
               isReadOnly
               dimension={12}
               isHalfRatingEnabled={true}
