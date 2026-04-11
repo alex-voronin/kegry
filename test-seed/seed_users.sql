@@ -82,6 +82,49 @@ CROSS JOIN LATERAL (
 ) h
 ON CONFLICT DO NOTHING;
 
+-- FeedUserRelation seeds: 20 random relations for each user (none in meeting)
+INSERT INTO feed.user_relations (
+    id, 
+    my_user_id, 
+    other_user_id, 
+    rating, 
+    is_blocked, 
+    report_message, 
+    is_friend, 
+    is_in_meeting, 
+    should_rate, 
+    invite_expires_at, 
+    invited_at, 
+    skipped_at, 
+    last_seen_at
+)
+SELECT 
+    gen_random_uuid(), 
+    u1.id, 
+    u2.id, 
+    NULL, 
+    false, 
+    NULL, 
+    false, 
+    false, 
+    false, 
+    CURRENT_TIMESTAMP + interval '1 day', 
+    CURRENT_TIMESTAMP, 
+    '0001-01-01 00:00:00+00', 
+    CURRENT_TIMESTAMP
+FROM (
+    SELECT id 
+    FROM user_profile.users 
+    WHERE avatar_image_s3key = 'user_4117e9874570268472469b977e0b88296d8d9c3f80381a5ca85fc3a8f68f109e/avatar.jpg'
+) u1
+CROSS JOIN LATERAL (
+    SELECT id 
+    FROM user_profile.users 
+    WHERE id <> u1.id 
+    ORDER BY random() 
+    LIMIT 20
+) u2
+ON CONFLICT DO NOTHING;
+
 -- Reset seen_npc_at for all users
 update engagement.users set seen_npc_at = '2020-01-01 01:01:01';
-    
