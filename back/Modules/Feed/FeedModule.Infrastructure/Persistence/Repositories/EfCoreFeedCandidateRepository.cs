@@ -48,6 +48,11 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
                     useSpheroid: false
                 )
             )
+            .Where(j =>
+                !_context.FeedUserRelations.Any(r =>
+                    r.IsInMeeting && r.MyUserId == j.User.Id
+                )
+            )
             .LeftJoin(
                 _context.FeedUserRelations.AsNoTracking()
                     .Where(r => r.MyUserId == user.Id),
@@ -75,7 +80,6 @@ internal class EfCoreFeedCandidateRepository : IFeedCandidateRepository, IScoped
             .Where(j => j.User.IsPublic)
             .Where(j => j.User.Id != user.Id)
             .Where(j => j.FeedUserRelation == null || !j.FeedUserRelation.IsBlocked)
-            .Where(j => j.FeedUserRelation == null || !j.FeedUserRelation.IsInMeeting)
             .Where(j => j.FeedUserRelation == null || j.FeedUserRelation.SkippedAt < skipCutoff)
             .Where(j => j.FeedUserRelation == null || j.FeedUserRelation.InviteExpiresAt <= now);
 

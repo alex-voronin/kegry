@@ -578,8 +578,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
     }
 
     [Fact]
-    public async Task
-        GivenInvitedUser_WhenThisUserAcceptsDifferentInvite_ThenAvailableInvitesCountReverted()
+    public async Task GivenInvitedUser_WhenThisUserAcceptsDifferentInvite_ThenAvailableInvitesCountReverted()
     {
         // 1. Create users
         var authMain = await Factory.AuthManager.CreateAndLoginUserAsync("user@example.com", "Password123!");
@@ -634,8 +633,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
     }
 
     [Fact]
-    public async Task
-       GivenInvitedUser_WhenThisUserBecomesPrivate_ThenAvailableInvitesCountReverted()
+    public async Task GivenInvitedUser_WhenThisUserBecomesPrivate_ThenAvailableInvitesCountReverted()
     {
         // 1. Create users
         var authA = await Factory.AuthManager.CreateAndLoginUserAsync("_user_a@example.com", "Password123!");
@@ -1025,5 +1023,42 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.Notifications.GetNotificationsPaginated(0, 10));
         notificationsResponse.Success.ShouldBeTrue();
         notificationsResponse.Result.TotalCount.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task GivenThreeUsers_WhenUserOneAndTwoInMeeting_ThenUserThreeSeesEmptyFeed()
+    {
+        // 1. Create three users A, B, and C
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("meeting_a@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("meeting_b@example.com", "Password123!");
+        var userBId = authB.UserId;
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authC = await Factory.AuthManager.CreateAndLoginUserAsync("meeting_c@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authC);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Establish a meeting between User A and User B
+        Factory.ApiClient.SetAuth(authA);
+        var inviteResponseA = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.InviteUser(userBId),
+            new InviteUserRequest(ComputeExpiresAtForNowOption()));
+        inviteResponseA.Success.ShouldBeTrue();
+
+        Factory.ApiClient.SetAuth(authB);
+        var inviteResponseB = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.InviteUser(authA.UserId),
+            new InviteUserRequest(ComputeExpiresAtForNowOption()));
+        inviteResponseB.Success.ShouldBeTrue();
+
+        // 3. User C checks feed, should not see A or B, so feed should be empty
+        Factory.ApiClient.SetAuth(authC);
+        var feedResponse = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        feedResponse.Success.ShouldBeTrue();
+        feedResponse.Result.Feed.ShouldBeEmpty();
     }
 }
