@@ -11,6 +11,7 @@ using Shared.Infrastructure.Storage;
 using SharedCore.Api;
 using SharedCore.Api.Dto;
 using SharedCore.Extensions;
+using SharedCore.Interfaces;
 
 namespace FeedModule.API;
 
@@ -71,11 +72,15 @@ public class FeedEndpoints : IEndpoints
 
     private static async Task<ApiResult<GetFeedStatusResponse>> GetFeedStatus(
         ClaimsPrincipal user,
+        IUserContext userContext,
         IFeedUserRelationRepository repository,
         IUserActionLimitsService userActionsLimitsService,
         CancellationToken ct)
     {
-        var availableInvitesCount = await userActionsLimitsService.GetAvailableInvitesAsync(user.GetId(), ct);
+        var availableInvitesCount = await userActionsLimitsService.GetAvailableInvitesAsync(
+            userId: user.GetId(),
+            userTimeZone: userContext.UserTimeZone,
+            ct: ct);
         var (isInMeeting, userIdToRate) = await repository.GetFeedStatusAsync(user.GetId(), ct);
         return ApiResult<GetFeedStatusResponse>.Build(
             new GetFeedStatusResponse(isInMeeting, userIdToRate, availableInvitesCount)

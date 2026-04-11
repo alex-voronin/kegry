@@ -2,5 +2,5 @@ namespace FeedModule.Domain.Services;
 
 public interface IUserActionLimitsService
 {
-    Task<int> GetAvailableInvitesAsync(Guid userId, CancellationToken ct = default);
+    public Task<int> GetAvailableInvitesAsync(Guid userId, TimeZoneInfo userTimeZone, CancellationToken ct = default);
 }

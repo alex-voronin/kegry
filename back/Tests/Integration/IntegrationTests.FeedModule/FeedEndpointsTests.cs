@@ -552,7 +552,10 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         failedResponse.Errors.First().Code.ShouldBe(nameof(ErrorCode.TooManyRequests));
 
         // 5. Wait until midnight and check limit
-        var today23H = Factory.FakeTimeProvider.GetUtcNow().Date.AddDays(1).AddHours(-1);
+        // .UtcDateTime is required to keep UTC timezone after calculations
+        var today23H = Factory.FakeTimeProvider.GetUtcNow()
+            .UtcDateTime.Date.AddDays(1).AddHours(-1);
+        today23H = DateTime.SpecifyKind(today23H, DateTimeKind.Utc);
         Factory.FakeTimeProvider.SetUtcNow(today23H);
 
         var today23HStatus = await Factory.ApiClient
@@ -561,7 +564,9 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         today23HStatus.Result.AvailableInvitesCount.ShouldBe(0);
 
         // 6. Wait until midnight and check limit
-        var tomorrow = Factory.FakeTimeProvider.GetUtcNow().Date.AddDays(1);
+        var tomorrow = Factory.FakeTimeProvider.GetUtcNow()
+            .UtcDateTime.Date.AddDays(1);
+        tomorrow = DateTime.SpecifyKind(tomorrow, DateTimeKind.Utc);
         Factory.FakeTimeProvider.SetUtcNow(tomorrow);
 
         var tomorrowStatus = await Factory.ApiClient

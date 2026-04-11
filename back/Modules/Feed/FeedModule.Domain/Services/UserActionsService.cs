@@ -5,6 +5,7 @@ using FeedModule.Domain.Repositories;
 using FeedModule.Domain.Resources;
 using Microsoft.Extensions.Localization;
 using Serilog;
+using SharedCore.Interfaces;
 using SharedCore.Services.LifeTimes;
 
 namespace FeedModule.Domain.Services;
@@ -16,6 +17,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
     private readonly IFilterRepository _filterRepository;
     private readonly IUserRepository _userRepository;
     private readonly IUserRatingRepository _userRatingRepository;
+    private readonly IUserContext _userContext;
     private readonly TimeProvider _timeProvider;
     private readonly IStringLocalizer<FeedLocalization> _localizer;
 
@@ -25,6 +27,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         IFilterRepository filterRepository,
         IUserRepository userRepository,
         IUserRatingRepository userRatingRepository,
+        IUserContext userContext,
         TimeProvider timeProvider,
         IStringLocalizer<FeedLocalization> localizer)
     {
@@ -33,6 +36,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         _filterRepository = filterRepository;
         _userRepository = userRepository;
         _userRatingRepository = userRatingRepository;
+        _userContext = userContext;
         _timeProvider = timeProvider;
         _localizer = localizer;
     }
@@ -116,6 +120,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         return InviteUserAsync(
             myUserId: myUserId,
             otherUserId: otherUserId,
+            userTimeZone: _userContext.UserTimeZone,
             expiresAt: expiresAt,
             ignoreAvailableInvites: false,
             throwInMeetingException: false,
@@ -135,6 +140,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         await InviteUserAsync(
             myUserId: myUserId,
             otherUserId: otherUserId,
+            userTimeZone: _userContext.UserTimeZone,
             expiresAt: expiresAt,
             ignoreAvailableInvites: true,
             throwInMeetingException: false,
@@ -154,6 +160,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         await InviteUserAsync(
             myUserId: myUserId,
             otherUserId: otherUserId,
+            userTimeZone: _userContext.UserTimeZone,
             expiresAt: otherToMeUserRelation.InviteExpiresAt,
             ignoreAvailableInvites: true,
             throwInMeetingException: true,
@@ -241,6 +248,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
     private async Task InviteUserAsync(
         Guid myUserId,
         Guid otherUserId,
+        TimeZoneInfo userTimeZone,
         DateTimeOffset expiresAt,
         bool ignoreAvailableInvites,
         bool throwInMeetingException,
@@ -254,7 +262,10 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
 
         if (!ignoreAvailableInvites)
         {
-            var availableInvitesCount = await _userActionLimitsService.GetAvailableInvitesAsync(myUserId, ct);
+            var availableInvitesCount = await _userActionLimitsService.GetAvailableInvitesAsync(
+                userId: myUserId,
+                userTimeZone: userTimeZone,
+                ct: ct);
             if (availableInvitesCount <= 0)
             {
                 throw FeedExceptions.NoAvailableInvitesLeft(myUserId);

@@ -96,15 +96,15 @@ internal class EfCoreFeedUserRelationRepository : RepositoryOutbox<FeedContext, 
                 ct);
     }
 
-    public Task<int> GetMadeInvitesCountAsync(Guid userId, DateOnly date, CancellationToken ct = default)
+    public Task<int> GetMadeInvitesCountAsync(Guid userId,
+        DateTimeOffset userDateStartUtc,
+        DateTimeOffset userDateEndUtc,
+        CancellationToken ct = default)
     {
-        var start = new DateTimeOffset(date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
-        var end = start.AddDays(1);
-
         return Context.FeedUserRelations
             .Where(invite =>
                 invite.MyUserId == userId &&
-                invite.InvitedAt >= start && invite.InvitedAt < end &&
+                invite.InvitedAt >= userDateStartUtc && invite.InvitedAt < userDateEndUtc &&
                 !invite.IsBlocked)
             .Where(invite =>
                 !Context.FeedUserRelations
