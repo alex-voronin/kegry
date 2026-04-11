@@ -196,4 +196,11 @@ export const setAcceptLanguage = (locale: string) => {
   }
 };
 
+export const setTimezone = (timezone: string) => {
+  if (apiClient.defaults.headers.common['X-Timezone-Id'] !== timezone) {
+    apiClient.defaults.headers.common['X-Timezone-Id'] = timezone;
+    console.log(`apiClient X-Timezone-Id updated to: ${timezone}`);
+  }
+};
+
 export default apiClient;

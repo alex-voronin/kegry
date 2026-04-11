@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useCallback } from 'react';
 import { NextIntlClientProvider, useLocale } from 'next-intl';
 import apiClient, {
   setAcceptLanguage as setApiClientLanguage,
+  setTimezone as setApiClientTimezone,
 } from '@/lib/api-client';
 import { setAcceptLanguage as setAuthClientLanguage } from '@/lib/auth-client';
 import { useRouter, usePathname } from '@/i18n/routing';
@@ -193,6 +194,15 @@ function LocaleHeaderSync() {
   return null;
 }
 
+function TimezoneHeaderSync() {
+  useEffect(() => {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    setApiClientTimezone(timezone);
+  }, []);
+
+  return null;
+}
+
 export function Providers({
   children,
   runPushesAndLocationHandling,
@@ -215,6 +225,7 @@ export function Providers({
       <NavigationTracker />
       <DayjsLocaleProvider />
       <LocaleHeaderSync />
+      <TimezoneHeaderSync />
       <TawkMessenger />
       {runPushesAndLocationHandling && (
         <>
