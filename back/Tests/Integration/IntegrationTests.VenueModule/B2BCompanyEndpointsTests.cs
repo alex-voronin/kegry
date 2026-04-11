@@ -5,6 +5,7 @@ using SecurityModule.Domain.ValueObjects;
 using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
 using Shouldly;
+using VenueModule.API;
 using VenueModule.API.B2B.Companies.Dto;
 
 namespace IntegrationTests.VenueModule;
@@ -45,6 +46,33 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
             c => c.Name.ShouldBe(createRequest.Name),
             c => c.Email.ShouldBe(createRequest.Email)
         );
+    }
+
+    [Fact]
+    public async Task GivenAuthenticatedB2BUser_WhenUserCreatesTooManyCompanies_ThenErrorReturned()
+    {
+        // 1. Sign in as B2B user
+        var authResponse =
+            await Factory.AuthManager.CreateAndLoginUserAsync("b2b_create@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(authResponse);
+
+        // 2. Create companies until we fail
+        for (int i = 0; i <= Validation.MaxCompaniesPerUser; i++)
+        {
+            var createRequest = new CreateCompanyRequest(Name: $"Test Company {i}", Email: $"company{i}@test.com");
+            var createResponse =
+                await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+                    ApiRoutes.B2B.Company.Root, createRequest);
+            if (i < Validation.MaxCompaniesPerUser)
+            {
+                createResponse.Success.ShouldBeTrue();
+            }
+            else
+            {
+                createResponse.Success.ShouldBeFalse();
+                createResponse.Errors.ShouldContain(e => e.Code == nameof(ErrorCode.TooManyEntities));
+            }
+        }
     }
 
     [Fact]

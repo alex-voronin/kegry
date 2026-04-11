@@ -10,9 +10,21 @@ public static class VenueExceptions
         return new HttpCodeException("No companies found", HttpStatusCode.NotFound, ErrorCode.NotFound);
     }
 
+    public static HttpCodeException TooManyCompanies()
+    {
+        return new HttpCodeException("You've reached the maximum number of companies.",
+            HttpStatusCode.Forbidden, ErrorCode.TooManyEntities);
+    }
+
     public static HttpCodeException VenueNotFound(Guid id)
     {
         return new HttpCodeException($"Venue with id {id} not found", HttpStatusCode.NotFound, ErrorCode.NotFound);
+    }
+
+    public static HttpCodeException TooManyVenues(string companyName)
+    {
+        return new HttpCodeException($"You've reached the maximum number of venues for {companyName}.",
+            HttpStatusCode.Forbidden, ErrorCode.TooManyEntities);
     }
 
     public static HttpCodeException SomeoneElseCompany(Guid id)

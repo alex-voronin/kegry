@@ -55,6 +55,12 @@ public class B2BVenueEndpoints : IEndpoints
             throw VenueExceptions.CompanyNotFound();
         }
 
+        var venuesCount = await venueRepository.CountByCompanyIdAsync(companyId, ct);
+        if (venuesCount >= Validation.MaxVenuesPerCompany)
+        {
+            throw VenueExceptions.TooManyVenues(company.Name);
+        }
+
         var venueId = Guid.CreateVersion7();
         var venue = new Venue
         {

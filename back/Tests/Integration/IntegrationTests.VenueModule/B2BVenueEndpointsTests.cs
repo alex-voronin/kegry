@@ -3,7 +3,9 @@ using IntegrationTests.Shared;
 using IntegrationTests.Shared.Extensions;
 using SecurityModule.Domain.ValueObjects;
 using SharedCore.Api.Dto;
+using SharedCore.Exceptions;
 using Shouldly;
+using VenueModule.API;
 using VenueModule.API.B2B.Companies.Dto;
 using VenueModule.API.B2B.Venues.Dto;
 
@@ -68,6 +70,50 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             v => v.WorkingHours.ShouldBe(createVenueRequest.WorkingHours),
             v => v.CoverImageUrl!.ShouldBeNewerOrTheSameS3Url(createVenueRequest.CoverImageUrl!)
         );
+    }
+
+    [Fact]
+    public async Task GivenAuthenticatedB2BUser_WhenUserCreatesTooManyCompanies_ThenErrorReturned()
+    {
+        // 1. Sign in as B2B user and create company
+        var authResponse = await Factory.AuthManager
+            .CreateAndLoginUserAsync("b2b_venue@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(authResponse);
+
+        var createCompanyRequest = new CreateCompanyRequest(Name: "Venue Owner Co", Email: "owner@test.com");
+        var createCompanyResponse =
+            await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+                ApiRoutes.B2B.Company.Root, createCompanyRequest);
+        var companyId = createCompanyResponse.Result.Id;
+
+        // 2. Create venues until we fail
+        for (int i = 0; i <= Validation.MaxVenuesPerCompany; i++)
+        {
+            var createVenueRequest = new CreateVenueRequest(
+                Latitude: 40.7128,
+                Longitude: -74.0060,
+                Address: $"{i} Venue St",
+                WebsiteUrl: $"https://venue{i}.com",
+                GoogleMapsUrl: $"https://maps.google.com/venue{i}",
+                InstagramUrl: $"https://instagram.com/venue{i}",
+                PhoneNumber: $"123456789{i}",
+                WorkingHours: "9:00 - 18:00",
+                CoverImageUrl: TestConfig.S3.PublicUrl + "/cover.jpg");
+
+            var createVenueResponse =
+                await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+                    ApiRoutes.B2B.Company.Venues(companyId), createVenueRequest);
+
+            if (i < Validation.MaxVenuesPerCompany)
+            {
+                createVenueResponse.Success.ShouldBeTrue();
+            }
+            else
+            {
+                createVenueResponse.Success.ShouldBeFalse();
+                createVenueResponse.Errors.ShouldContain(e => e.Code == nameof(ErrorCode.TooManyEntities));
+            }
+        }
     }
 
     [Fact]

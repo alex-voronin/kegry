@@ -9,7 +9,7 @@ public class DateTimeOffsetExtensionsTests
     private readonly TimeZoneInfo _london = TimeZoneInfo.FindSystemTimeZoneById("Europe/London");
 
     [Fact]
-    public void GetUserDayBoundsInUtc_NormalDay_ReturnsCorrectBounds()
+    public void GetUserDayBoundsInUtc_WhenNormalDay_ThenReturnsCorrectBounds()
     {
         var utcTime = new DateTimeOffset(2026, 4, 11, 10, 0, 0, TimeSpan.Zero);
         var (start, end) = utcTime.GetDayBoundsInUtc(_moscow);
@@ -18,7 +18,7 @@ public class DateTimeOffsetExtensionsTests
     }
 
     [Fact]
-    public void GetUserDayBoundsInUtc_DstTransitionDay_HandlesCorrectly()
+    public void GetUserDayBoundsInUtc_WhenDstTransitionDay_ThenHandlesCorrectly()
     {
         // DST day in UK
         var utcTime = new DateTimeOffset(2025, 3, 30, 1, 0, 0, TimeSpan.Zero);
@@ -27,7 +27,7 @@ public class DateTimeOffsetExtensionsTests
     }
 
     [Fact]
-    public void GetUserDayBoundsInUtc_MidnightEdgeCase_Works()
+    public void GetUserDayBoundsInUtc_WhenMidnightEdgeCase_ThenHandlesCorrectly()
     {
         var utcTime = new DateTimeOffset(2026, 4, 11, 0, 0, 0, TimeSpan.Zero);
         var (start, end) = utcTime.GetDayBoundsInUtc(_moscow);

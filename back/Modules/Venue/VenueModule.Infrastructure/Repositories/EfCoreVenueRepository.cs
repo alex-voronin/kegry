@@ -146,4 +146,11 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
 
         return (venues, totalCount);
     }
+
+    public Task<int> CountByCompanyIdAsync(Guid companyId, CancellationToken ct)
+    {
+        return Context.Venues
+            .IgnoreQueryFilters([NamedFilters.Venue.Verified])
+            .CountAsync(v => v.CompanyId == companyId, ct);
+    }
 }

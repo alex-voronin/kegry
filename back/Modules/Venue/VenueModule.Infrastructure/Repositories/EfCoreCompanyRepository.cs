@@ -56,6 +56,13 @@ public class EfCoreCompanyRepository : Repository<VenueContext, Company>, ICompa
             .ToArrayAsync(ct);
     }
 
+    public Task<int> CountByOwnerIdAsync(Guid ownerId, CancellationToken ct = default)
+    {
+        return Context.Companies
+            .Where(c => c.OwnerId == ownerId)
+            .CountAsync(ct);
+    }
+
     public Task<Company?> GetByIdAsync(
         Guid companyId,
         Guid ownerId,

@@ -43,6 +43,12 @@ public class B2BCompanyEndpoints : IEndpoints
     {
         var userId = user.GetId();
 
+        var ownedCount = await repository.CountByOwnerIdAsync(userId, ct);
+        if (ownedCount >= Validation.MaxCompaniesPerUser)
+        {
+            throw VenueExceptions.TooManyCompanies();
+        }
+
         var company = new Company
         {
             Id = Guid.CreateVersion7(),
@@ -165,6 +171,7 @@ public class B2BCompanyEndpoints : IEndpoints
         {
             venue.IsDeleted = true;
         }
+
         company.IsDeleted = true;
         await repository.SaveChangesAsync(ct);
 

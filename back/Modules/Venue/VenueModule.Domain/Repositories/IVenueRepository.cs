@@ -28,4 +28,6 @@ public interface IVenueRepository : IRepository<Venue>
         CancellationToken ct = default);
 
     Task<Venue[]> GetByUserIdAsync(Guid userId, CancellationToken ct);
+
+    Task<int> CountByCompanyIdAsync(Guid companyId, CancellationToken ct);
 }

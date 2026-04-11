@@ -9,6 +9,9 @@ public static class Validation
     public const int MaxAvatarSizeBytes = 512 * 1024;
     public const int MaxCoverSizeBytes = 1024 * 1024;
 
+    public const int MaxCompaniesPerUser = 10;
+    public const int MaxVenuesPerCompany = 20;
+
     public static void ThrowIfFileSizeExceed(int contentLength, int limit)
     {
         CoreValidation.ThrowIfInvalid(

@@ -12,6 +12,8 @@ public interface ICompanyRepository : IRepository<Company>
         bool includeVenues = false,
         CancellationToken ct = default);
 
+    public Task<int> CountByOwnerIdAsync(Guid ownerId, CancellationToken ct = default);
+
     public Task<Company?> GetByIdAsync(
         Guid companyId,
         Guid ownerId,
