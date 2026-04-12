@@ -1,6 +1,6 @@
 .PHONY: help build build-back build-front run-back describe-bus-back \
         add-migration-back list-modules-back run-front run-tests \
-        format audit deploy db-shell clean
+        format audit deploy provision db-shell clean
 
 # =============================================
 # Configuration
@@ -91,6 +91,9 @@ clean: ## Deep clean build artifacts
 	@echo "Cleaning Next.js artifacts..."
 	rm -rf $(FRONT_DIR)/.next 2>/dev/null || true
 	@echo "Clean complete."
+
+provision: ## Initialize the remote server (install all required software)
+	./devops/provision.sh
 
 deploy: ## Build and deploy the production build
 	./devops/deploy.sh

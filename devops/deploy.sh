@@ -23,14 +23,16 @@ for var in TARGET_USER TARGET_HOST TARGET_PATH DOCKER_BIN DOCKER_COMPOSE_BIN FRO
     fi
 done
 
+SSH_PORT=${SSH_PORT:-22}
+
 # Quick checkup ssh connection
 echo "🔍 Checking SSH connection..."
-ssh -o ConnectTimeout=5 -q "$TARGET_USER@$TARGET_HOST" exit || { 
-    echo "❌ Error: Cannot connect to $TARGET_HOST via SSH."
+ssh -p "$SSH_PORT" -o ConnectTimeout=5 -q "$TARGET_USER@$TARGET_HOST" exit || { 
+    echo "❌ Error: Cannot connect to $TARGET_HOST via SSH on port $SSH_PORT."
     exit 1 
 }
 
-echo "🚀 Starting deployment to $TARGET_USER@$TARGET_HOST..."
+echo "🚀 Starting deployment to $TARGET_USER@$TARGET_HOST:$SSH_PORT..."
 BUILD_TAG=$(date +%Y%m%d%H%M%S)
 
 # 1. Build Backend
@@ -63,12 +65,12 @@ $DOCKER_BIN save \
 
 # 4. Prepare remote environment
 echo "📁 Preparing remote path $TARGET_PATH..."
-ssh "$TARGET_USER@$TARGET_HOST" "mkdir -p $TARGET_PATH"
+ssh -p "$SSH_PORT" "$TARGET_USER@$TARGET_HOST" "mkdir -p $TARGET_PATH"
 
 # 5. Transfer configuration
 echo "📫 Transferring docker-compose.yml and configs/..."
-scp devops/docker-compose.yml "$TARGET_USER@$TARGET_HOST:$TARGET_PATH/"
-rsync -av --progress \
+scp -P "$SSH_PORT" devops/docker-compose.yml "$TARGET_USER@$TARGET_HOST:$TARGET_PATH/"
+rsync -av --progress -e "ssh -p $SSH_PORT" \
     devops/configs/ \
     "$TARGET_USER@$TARGET_HOST:$TARGET_PATH/configs/"
 
@@ -76,22 +78,22 @@ rsync -av --progress \
 echo "📤 Transferring and loading images (this may take a few minutes)..."
 
 # Create remote directory
-ssh "$TARGET_USER@$TARGET_HOST" "mkdir -p $TARGET_PATH/tmp"
+ssh -p "$SSH_PORT" "$TARGET_USER@$TARGET_HOST" "mkdir -p $TARGET_PATH/tmp"
 
 # Transfer via rsync with progress, compression and possibility to continue
 echo "→ Transferring kegry-back.tar.gz..."
-rsync -av --progress --partial \
+rsync -av --progress --partial -e "ssh -p $SSH_PORT" \
     devops/tmp/kegry-back.tar.gz \
     "$TARGET_USER@$TARGET_HOST:$TARGET_PATH/tmp/"
 
 echo "→ Transferring kegry-front.tar.gz..."
-rsync -av --progress --partial \
+rsync -av --progress --partial -e "ssh -p $SSH_PORT" \
     devops/tmp/kegry-front.tar.gz \
     "$TARGET_USER@$TARGET_HOST:$TARGET_PATH/tmp/"
 
 # Load images on remote host
 echo "📥 Loading images on remote host..."
-ssh "$TARGET_USER@$TARGET_HOST" "
+ssh -p "$SSH_PORT" "$TARGET_USER@$TARGET_HOST" "
     cd $TARGET_PATH/tmp &&
     gunzip -c kegry-back.tar.gz | $DOCKER_BIN load &&
     gunzip -c kegry-front.tar.gz | $DOCKER_BIN load
@@ -99,18 +101,18 @@ ssh "$TARGET_USER@$TARGET_HOST" "
 
 # Verify images
 echo "✅ Verifying images on remote host..."
-ssh "$TARGET_USER@$TARGET_HOST" "
+ssh -p "$SSH_PORT" "$TARGET_USER@$TARGET_HOST" "
     $DOCKER_BIN image ls kegry-back:latest --format '{{.Repository}}:{{.Tag}}' | grep -q . || { echo '❌ kegry-back:latest not found'; exit 1; }
     $DOCKER_BIN image ls kegry-front:latest --format '{{.Repository}}:{{.Tag}}' | grep -q . || { echo '❌ kegry-front:latest not found'; exit 1; }
 "
 
 # 7. Start Services
 echo "🔄 Starting services..."
-ssh "$TARGET_USER@$TARGET_HOST" "cd $TARGET_PATH && $DOCKER_COMPOSE_BIN up -d"
+ssh -p "$SSH_PORT" "$TARGET_USER@$TARGET_HOST" "cd $TARGET_PATH && $DOCKER_COMPOSE_BIN up -d"
 
 # 8. Cleanup Remote Images (keep only 3 latest for each)
 echo "🧹 Cleaning up old images on remote (keeping last 3)..."
-ssh "$TARGET_USER@$TARGET_HOST" '
+ssh -p "$SSH_PORT" "$TARGET_USER@$TARGET_HOST" '
     echo "🧹 Removing old containers..."
     docker container prune -f
 
