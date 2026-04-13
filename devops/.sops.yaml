@@ -1,0 +1,4 @@
+creation_rules:
+  - path_regex: \.env\..+
+    age: >-
+      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIINtHOMz0huYbybV8vaTG7n1YnFtNXgPA74Rd2UQJBMk

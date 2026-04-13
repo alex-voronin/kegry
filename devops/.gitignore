@@ -4,3 +4,5 @@ configs/cloudflared/credentials.json
 
 !*.env.*.example
 !configs/.env.*.example
+!*.env.*.sops
+!configs/.env.*.sops

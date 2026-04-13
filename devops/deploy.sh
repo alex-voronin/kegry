@@ -3,9 +3,18 @@
 # Exit on any error + pipefail
 set -euo pipefail
 
+# Cleanup decrypted .env files on script termination
+trap "./devops/clean-dotenv.sh" EXIT
+
 # Change to project root relative to script location
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$DIR/.."
+
+# Decrypt secrets if they haven't been decrypted yet
+if [ ! -f "devops/.env.deploy" ] && [ -f "devops/.env.deploy.sops" ]; then
+    echo "🔒 Password required to decrypt SOPS secrets..."
+    ./devops/secrets.sh decrypt
+fi
 
 # Load deployment config
 if [ -f "devops/.env.deploy" ]; then

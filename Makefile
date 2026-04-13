@@ -1,6 +1,7 @@
 .PHONY: help build build-back build-front run-back describe-bus-back \
         add-migration-back list-modules-back run-front run-tests \
-        format audit deploy provision db-shell clean
+        format audit deploy provision db-shell clean \
+        dotenv-setup-encryption dotenv-encrypt dotenv-decrypt dotenv-cleanup
 
 # =============================================
 # Configuration
@@ -92,6 +93,10 @@ clean: ## Deep clean build artifacts
 	rm -rf $(FRONT_DIR)/.next 2>/dev/null || true
 	@echo "Clean complete."
 
+# =============================================
+# Deployment
+# =============================================
+
 provision: ## Initialize the remote server (install all required software)
 	./devops/provision.sh
 
@@ -101,6 +106,22 @@ deploy: ## Build and deploy the production build
 forward-prod-db: ## Forward remote PostgreSQL port to local 54321
 	@echo "The PostgreSQL database is now available locally on port 54321."
 	ssh -L 54321:localhost:5432 kegry-host
+
+# =============================================
+# Secrets Management
+# =============================================
+
+dotenv-setup-encryption: ## Initialize SOPS configuration using your SSH key
+	./devops/sops-init.sh
+
+dotenv-encrypt: ## Encrypt all .env.* files into .env.*.sops
+	./devops/secrets.sh encrypt
+
+dotenv-decrypt: ## Decrypt all .env.*.sops files into .env.*
+	./devops/secrets.sh decrypt
+
+dotenv-cleanup: ## Remove decrypted .env files that have a .sops source
+	./devops/clean-dotenv.sh
 
 # =============================================
 # Helper targets
