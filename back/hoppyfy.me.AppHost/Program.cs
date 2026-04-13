@@ -15,9 +15,9 @@ var postgres = builder
 // .WithBindMount(postgresDataDirectory, "/var/lib/postgresql", false); // TODO: uncomment
 
 // TODO: find a way to share a constant with the database name between Aspire project and main backend 
-var hoppyfyDb = postgres.AddDatabase("hoppyfydb");
+var db = postgres.AddDatabase("kegrydb");
 
 builder.AddProject<Projects.API_Web>("hoppyfy-me-api")
-    .WithReference(hoppyfyDb);
+    .WithReference(db);
 
 builder.Build().Run();

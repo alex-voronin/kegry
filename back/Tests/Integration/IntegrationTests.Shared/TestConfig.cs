@@ -15,7 +15,7 @@ public static class TestConfig
     {
         internal const string User = "postgres";
         internal const string Password = "admin";
-        internal const string DbName = "hoppyfydb";
+        internal const string DbName = "kegrydb";
         internal const int HostPort = 54321;
         internal const int ContainerPort = 5432;
     }

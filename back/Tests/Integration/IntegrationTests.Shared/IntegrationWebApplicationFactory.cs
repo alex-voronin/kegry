@@ -14,6 +14,7 @@ using NSubstitute;
 using IntegrationTests.Shared.HttpClients;
 using SecurityModule.Infrastructure.Service;
 using PostHog;
+using Shared.Setup;
 using Wolverine;
 using Xunit;
 
@@ -37,7 +38,7 @@ public class IntegrationWebApplicationFactory : WebApplicationFactory<Program>, 
 
         // connection string must be configured via builder.UseSetting as 
         // AppModuleStartupBase reads connection string in constructor
-        builder.UseSetting("ConnectionStrings:hoppyfydb", ContainerManager.DbConnectionString);
+        builder.UseSetting($"ConnectionStrings:{SharedConstants.DbName}", ContainerManager.DbConnectionString);
         builder.ConfigureAppConfiguration((_, config) =>
         {
             config.AddInMemoryCollection(new Dictionary<string, string?>
