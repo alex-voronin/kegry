@@ -1,8 +1,9 @@
 # Cloudflare Tunnel Configuration
 # https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/configure-tunnels/local-management/
 
-tunnel: TUNNEL_UUID_HERE
+tunnel: 333b6f24-7790-486c-8b11-e5686d6ae1eb
 credentials-file: /etc/cloudflared/credentials.json
+protocol: http2
 
 ingress:
   # Main site -> Nginx reverse proxy

@@ -37,7 +37,7 @@ BUILD_TAG=$(date +%Y%m%d%H%M%S)
 
 # 1. Build Backend
 echo "📦 Building backend..."
-$DOCKER_BIN build -t kegry-back:latest -f back/Dockerfile back/
+$DOCKER_BIN build --platform linux/amd64 -t kegry-back:latest -f back/Dockerfile back/
 $DOCKER_BIN tag kegry-back:latest kegry-back:$BUILD_TAG
 
 # 2. Build Frontend
@@ -46,7 +46,7 @@ if [ ! -f "$FRONT_ENV_FILE" ]; then
     echo "❌ Error: $FRONT_ENV_FILE not found. Build aborted."
     exit 1
 fi
-$DOCKER_BIN build --secret id=next_env,src=$FRONT_ENV_FILE -t kegry-front:latest -f front/Dockerfile front/
+$DOCKER_BIN build --platform linux/amd64 --secret id=next_env,src=$FRONT_ENV_FILE -t kegry-front:latest -f front/Dockerfile front/
 $DOCKER_BIN tag kegry-front:latest kegry-front:$BUILD_TAG
 
 # 3. Save and compress images
@@ -65,7 +65,7 @@ $DOCKER_BIN save \
 
 # 4. Prepare remote environment
 echo "📁 Preparing remote path $TARGET_PATH..."
-ssh -p "$SSH_PORT" "$TARGET_USER@$TARGET_HOST" "mkdir -p $TARGET_PATH"
+ssh -t -p "$SSH_PORT" "$TARGET_USER@$TARGET_HOST" "sudo mkdir -p $TARGET_PATH && sudo chown -R $TARGET_USER:$TARGET_USER $TARGET_PATH"
 
 # 5. Transfer configuration
 echo "📫 Transferring docker-compose.yml and configs/..."
@@ -108,7 +108,7 @@ ssh -p "$SSH_PORT" "$TARGET_USER@$TARGET_HOST" "
 
 # 7. Start Services
 echo "🔄 Starting services..."
-ssh -p "$SSH_PORT" "$TARGET_USER@$TARGET_HOST" "cd $TARGET_PATH && $DOCKER_COMPOSE_BIN up -d"
+ssh -p "$SSH_PORT" "$TARGET_USER@$TARGET_HOST" 'cd '"$TARGET_PATH"' && '"$DOCKER_COMPOSE_BIN"' up -d'
 
 # 8. Cleanup Remote Images (keep only 3 latest for each)
 echo "🧹 Cleaning up old images on remote (keeping last 3)..."

@@ -43,7 +43,7 @@ echo "🧹 Removing old Docker versions if any..."
 apt-get remove -y docker docker-engine docker.io containerd runc 2>/dev/null || true
 
 echo "🐳 Installing prerequisites..."
-apt-get install -y ca-certificates curl gnupg lsb-release htop
+apt-get install -y ca-certificates curl gnupg lsb-release htop rsync
 
 echo "🐳 Setting up Docker official repository..."
 

@@ -98,6 +98,10 @@ provision: ## Initialize the remote server (install all required software)
 deploy: ## Build and deploy the production build
 	./devops/deploy.sh
 
+forward-prod-db: ## Forward remote PostgreSQL port to local 54321
+	@echo "The PostgreSQL database is now available locally on port 54321."
+	ssh -L 54321:localhost:5432 kegry-host
+
 # =============================================
 # Helper targets
 # =============================================
