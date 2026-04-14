@@ -30,7 +30,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
-# Port 8080 is the default for ASP.NET 8.0+ in containers
-EXPOSE 8080
+EXPOSE 5214
 
+USER $APP_UID
 ENTRYPOINT ["dotnet", "API.Web.dll"]
