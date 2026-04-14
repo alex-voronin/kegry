@@ -190,9 +190,10 @@ services:
       - CRON_SCHEDULE=0 3 * * *
       - REMOVE_BEFORE=7
       - STORAGE_BACKEND=S3
-      - S3_RETAIN_LOCAL_DUMPS=true
+      - S3_RETAIN_LOCAL_DUMPS=True
+      - CONSOLE_LOGGING=True
     volumes:
-      - pg_backups:/backups
+      - pg_backups:/db-backups
     depends_on:
       postgres:
         condition: service_healthy
@@ -206,6 +207,73 @@ services:
           memory: 256M
         reservations:
           memory: 64M
+
+  # ── Database Backup Local Retention Policy ──────────────────────────────
+  # We need it as kartoza/pg-backup can't handle local retention policy in S3 mode.
+  # It keeps all dumps locally even if REMOVE_BEFORE is set. So we need to clean them up ourselves.
+  # We keep 1 backup per month + all backups newer than 35 days.
+  db-backup-retention:
+    image: alpine:3.22
+    container_name: kegry-db-backup-retention
+    restart: always
+    depends_on:
+      - db-backup
+    volumes:
+      - pg_backups:/db-backups
+    entrypoint: |
+      /bin/sh -c '
+        set -eu
+        echo "=== DB Backup Retention Service started (35 days + 1 monthly) ==="
+
+        while true; do
+          echo "$$(date "+%Y-%m-%d %H:%M:%S") - Cleanup started"
+
+          KEEP_LIST=$$(mktemp)
+
+          # 1. Choose one oldest backup per month
+          echo "→ Selecting monthly keepers..."
+          find /db-backups -mindepth 2 -maxdepth 2 -type d | while read -r month_dir; do
+            [ -d "$$month_dir" ] || continue
+
+            oldest=$$(find "$$month_dir" -name "*.dmp.gz" -type f | sort | head -n 1 || true)
+
+            if [ -n "$$oldest" ] && [ -f "$$oldest" ]; then
+              base="$${oldest%.dmp.gz}"
+              echo "$$oldest" >> "$$KEEP_LIST"
+              [ -f "$${base}.dmp" ]               && echo "$${base}.dmp" >> "$$KEEP_LIST"
+              [ -f "$${base}.dmp.gz.meta.json" ]   && echo "$${base}.dmp.gz.meta.json" >> "$$KEEP_LIST"
+              echo "Keeping monthly: $$(basename "$$oldest")"
+            fi
+          done
+
+          # 2. Delete files older than 35 days (except monthly keepers)
+          echo "→ Deleting files older than 35 days..."
+          find /db-backups -type f \( -name "*.dmp" -o -name "*.dmp.gz" -o -name "*.meta.json" \) -mtime +35 | while read -r file; do
+            if ! grep -Fxq "$$file" "$$KEEP_LIST" 2>/dev/null; then
+              echo "Deleting: $$file"
+              rm -f "$$file"
+            else
+              echo "Keeping old monthly: $$file"
+            fi
+          done
+
+          # 3. Clean up empty month directories
+          find /db-backups -mindepth 2 -maxdepth 2 -type d -empty -delete 2>/dev/null || true
+
+          rm -f "$$KEEP_LIST"
+
+          echo "$$(date "+%Y-%m-%d %H:%M:%S") - Cleanup finished. Sleeping 24h."
+          sleep 86400
+        done
+      '
+    networks:
+      - kegry-network
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          cpus: "0.12"
+          memory: 48M
 
 volumes:
   pgdata:
