@@ -1,7 +1,8 @@
 .PHONY: help build build-back build-front run-back describe-bus-back \
         add-migration-back list-modules-back run-front run-tests \
         format audit deploy provision db-shell clean \
-        dotenv-setup-encryption dotenv-encrypt dotenv-decrypt dotenv-cleanup
+        dotenv-setup-encryption dotenv-encrypt dotenv-decrypt \
+        dotenv-encrypt-file dotenv-decrypt-file dotenv-cleanup
 
 # =============================================
 # Configuration
@@ -119,6 +120,14 @@ dotenv-encrypt: ## Encrypt all .env.* files into .env.*.sops
 
 dotenv-decrypt: ## Decrypt all .env.*.sops files into .env.*
 	./devops/secrets.sh decrypt
+
+dotenv-encrypt-file: ## Encrypt a specific .env file. Usage: make dotenv-encrypt-file file=devops/configs/.env.back
+	@if [ -z "$(file)" ]; then echo "Error: file parameter is required"; exit 1; fi
+	./devops/secrets.sh encrypt $(file)
+
+dotenv-decrypt-file: ## Decrypt a specific .sops file. Usage: make dotenv-decrypt-file file=devops/configs/.env.back.sops
+	@if [ -z "$(file)" ]; then echo "Error: file parameter is required"; exit 1; fi
+	./devops/secrets.sh decrypt $(file)
 
 dotenv-cleanup: ## Remove decrypted .env files that have a .sops source
 	./devops/clean-dotenv.sh
