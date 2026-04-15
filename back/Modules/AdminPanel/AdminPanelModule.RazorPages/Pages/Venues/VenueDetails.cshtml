@@ -1,0 +1,103 @@
+@page
+@model AdminPanelModule.RazorPages.Pages.Venues.VenueDetailsModel
+@{
+    ViewData["Title"] = "Venue Details";
+}
+
+@if (TempData["Success"] is string msg)
+{
+    <div class="alert alert-success">@msg</div>
+}
+
+<div class="card mb-16">
+    <div class="card-header">Search Venue</div>
+    <div class="card-body">
+        <form method="post" asp-page-handler="Search" class="flex items-center gap-8">
+            <div style="flex: 1">
+                <input type="text" name="searchVenueId" class="form-control" placeholder="Enter Venue ID (Guid)..." required />
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+</div>
+
+@if (Model.VenueId.HasValue && Model.Venue == null)
+{
+    <div class="alert alert-danger">
+        Venue with ID <strong>@Model.VenueId</strong> not found.
+    </div>
+}
+
+@if (Model.Venue != null)
+{
+    <div class="card">
+        <div class="card-header">
+            Venue Info
+            <span class="badge @(Model.Venue.IsVerified ? "badge-green" : "badge-red")">
+                @(Model.Venue.IsVerified ? "Verified" : "Unverified")
+            </span>
+        </div>
+        <div class="detail-grid">
+            <div class="detail-row">
+                <div class="detail-label">ID</div>
+                <div class="detail-value text-muted">@Model.Venue.Id</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Address</div>
+                <div class="detail-value">@Model.Venue.Address</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Company</div>
+                <div class="detail-value">@Model.Venue.CompanyName</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Instagram</div>
+                <div class="detail-value">
+                    @if (!string.IsNullOrEmpty(Model.Venue.InstagramUrl))
+                    {
+                        <a href="@Model.Venue.InstagramUrl" target="_blank" class="btn btn-link" style="padding:0">↗ Instagram</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">—</span>
+                    }
+                </div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Google Maps</div>
+                <div class="detail-value text-sm">
+                    @if (!string.IsNullOrEmpty(Model.Venue.GoogleMapsUrl))
+                    {
+                        <a href="@Model.Venue.GoogleMapsUrl" target="_blank" class="btn btn-link" style="padding:0">↗ Google Maps</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">—</span>
+                    }
+                </div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Created At</div>
+                <div class="detail-value text-muted">@Model.Venue.CreatedAt.ToString("f")</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Current QR Code</div>
+                <div class="detail-value" style="font-family: monospace; font-weight: bold;">@Model.Venue.QrCode</div>
+            </div>
+        </div>
+
+        <div class="card-body" style="border-top: 1px solid var(--border); background: #fcfcfc;">
+            <form method="post" asp-page-handler="UpdateQr">
+                <input type="hidden" name="venueId" value="@Model.Venue.Id" />
+                <div class="form-group">
+                    <label asp-for="NewQrCode">New QR Code GUID</label>
+                    <input asp-for="NewQrCode" class="form-control" style="font-family: monospace" placeholder="00000000-0000-0000-0000-000000000000" />
+                    <span class="form-hint">Enter the new GUID for the physical QR sticker at this venue.</span>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Update QR Code</button>
+                </div>
+            </form>
+        </div>
+    </div>
+}
