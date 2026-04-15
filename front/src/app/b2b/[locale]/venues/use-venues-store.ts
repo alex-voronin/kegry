@@ -13,13 +13,13 @@ interface VenuesState {
 
 export const useVenuesStore = create<VenuesState>()((set) => ({
   venues: [],
-  isLoading: false,
+  isLoading: true,
   fetchVenues: async () => {
     set({ isLoading: true });
     try {
-      const response = await apiClient.get<{ result: { venues: VenueListItemDto[] } }>(
-        API_ENDPOINTS.B2B.VENUES.BASE,
-      );
+      const response = await apiClient.get<{
+        result: { venues: VenueListItemDto[] };
+      }>(API_ENDPOINTS.B2B.VENUES.BASE);
       set({ venues: response.data.result.venues, isLoading: false });
     } catch (error) {
       set({ isLoading: false });

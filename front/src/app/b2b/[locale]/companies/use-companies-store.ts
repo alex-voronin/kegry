@@ -55,7 +55,7 @@ export const useCompaniesStore = create<CompaniesState>()(
     (set) => ({
       companies: [],
       selectedCompany: null,
-      isLoading: false,
+      isLoading: true,
       isProfileLoading: false,
 
       fetchCompanies: async () => {

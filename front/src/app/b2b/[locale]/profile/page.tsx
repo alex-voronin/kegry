@@ -28,7 +28,7 @@ export default function B2BProfilePage() {
 
       <Sidebar isOpen={isOpen} onClose={close} />
 
-      <div className="flex flex-1 flex-col overflow-y-auto px-4 py-6">
+      <div className="flex flex-1 flex-col overflow-y-auto py-6 sm:px-4">
         {isLoading && !account ? (
           <div className="flex flex-1 items-center justify-center">
             <Spinner />
