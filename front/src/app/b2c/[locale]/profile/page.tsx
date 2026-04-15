@@ -12,7 +12,7 @@ import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { Spinner } from '@/components/ui/spinner';
-import AvatarCropper from '@/components/ui/avatar-cropper';
+import { ImageCropperModal } from '@/components/ui/image-cropper-modal';
 import { cn } from '@/lib/utils';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { openTawkChat } from '@/components/tawk-messenger';
@@ -443,13 +443,14 @@ export default function ProfilePage() {
         onSecondaryAction={handleDeleteAccount}
       />
 
-      {isCropperOpen && selectedImage && (
-        <AvatarCropper
-          imageSrc={selectedImage}
-          onCrop={handleCropComplete}
-          onClose={() => setIsCropperOpen(false)}
-        />
-      )}
+      <ImageCropperModal
+        isOpen={isCropperOpen}
+        onClose={() => setIsCropperOpen(false)}
+        imageSrc={selectedImage}
+        onCropComplete={handleCropComplete}
+        cropShape="round"
+        outputSize={{ width: 256, height: 256 }}
+      />
     </div>
   );
 }

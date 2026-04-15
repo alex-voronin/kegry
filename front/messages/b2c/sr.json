@@ -536,8 +536,10 @@
       "cancel": "Otkaži",
       "ok": "OK"
     },
-    "avatar-cropper": {
-      "save": "Sačuvaj"
+    "imageCropper": {
+      "title": "Izaberi avatar",
+      "save": "Izaberi",
+      "cancel": "Otkaži"
     },
     "profile-sections": {
       "name": {

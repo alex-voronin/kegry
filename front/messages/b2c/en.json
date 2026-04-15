@@ -536,8 +536,10 @@
       "cancel": "Cancel",
       "ok": "OK"
     },
-    "avatar-cropper": {
-      "save": "Save"
+    "imageCropper": {
+      "title": "Select avatar",
+      "save": "Select",
+      "cancel": "Cancel"
     },
     "profile-sections": {
       "name": {

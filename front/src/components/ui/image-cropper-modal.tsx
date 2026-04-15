@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import Cropper from 'react-easy-crop';
 import {
@@ -20,6 +20,7 @@ interface ImageCropperModalProps {
   imageSrc: string | null;
   onCropComplete: (croppedBlob: Blob) => void;
   outputSize?: { width: number; height: number };
+  cropShape?: 'rect' | 'round';
 }
 
 export function ImageCropperModal({
@@ -28,6 +29,7 @@ export function ImageCropperModal({
   imageSrc,
   onCropComplete,
   outputSize,
+  cropShape = 'rect',
 }: ImageCropperModalProps) {
   const t = useTranslations('components.imageCropper');
 
@@ -39,6 +41,14 @@ export function ImageCropperModal({
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [isShown, setIsShown] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+      setCroppedAreaPixels(null);
+    }
+  }, [isOpen]);
 
   const handleCropComplete = useCallback(
     (croppedArea: any, croppedAreaPixels: any) => {
@@ -114,12 +124,29 @@ export function ImageCropperModal({
                     crop={crop}
                     zoom={zoom}
                     showGrid={false}
+                    cropShape={cropShape}
                     aspect={calculatedAspect}
                     onCropChange={setCrop}
                     onCropComplete={handleCropComplete}
                     onZoomChange={setZoom}
                   />
                 )}
+              </div>
+
+              <div className="flex items-center justify-center border-t border-white/10 p-4">
+                <div className="flex w-full max-w-sm items-center gap-4">
+                  <span className="text-xs text-white/50">1x</span>
+                  <input
+                    type="range"
+                    min={1}
+                    max={3}
+                    step={0.01}
+                    value={zoom}
+                    onChange={(e) => setZoom(Number(e.target.value))}
+                    className="accent-primary bg-secondary h-2 flex-1 rounded-lg"
+                  />
+                  <span className="text-xs text-white/50">3x</span>
+                </div>
               </div>
             </DialogPanel>
           </TransitionChild>

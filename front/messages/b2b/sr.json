@@ -25,14 +25,14 @@
       "tagline": "Za biznise"
     },
     "mapPicker": {
-      "title": "Izaberi lokaciju",
-      "save": "Izaberi",
-      "cancel": "Otkaži"
+      "title": "Izaberite lokaciju",
+      "save": "Izaberite",
+      "cancel": "Otkažite"
     },
     "imageCropper": {
-      "title": "Iseci sliku",
-      "save": "Sačuvaj",
-      "cancel": "Otkaži"
+      "title": "Isecite sliku",
+      "save": "Izaberite",
+      "cancel": "Otkažite"
     },
     "forms": {
       "discount": {

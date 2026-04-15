@@ -1,11 +1,10 @@
 'use client';
 
-import Image from 'next/image';
 import styles from './avatar-section.module.css';
 import { useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Camera } from 'lucide-react';
-import AvatarCropper from '../avatar-cropper';
+import { ImageCropperModal } from '../image-cropper-modal';
 import { blobToBase64 } from '@/store/use-user-profile-store';
 
 type AvatarSectionProps = {
@@ -32,6 +31,8 @@ export const AvatarSection = ({
       const file = e.target.files[0];
       setImageToCropSrc(URL.createObjectURL(file));
     }
+    // Reset input so same file can be selected again
+    e.target.value = '';
   };
 
   const handleCrop = async (blob: Blob) => {
@@ -47,20 +48,13 @@ export const AvatarSection = ({
     onAvatarChange?.(base64);
   };
 
-  if (imageToCropSrc)
-    return <AvatarCropper imageSrc={imageToCropSrc} onCrop={handleCrop} />;
-
   const displayUrl = localAvatarUrl || avatarBase64;
 
   return (
     <div className={styles.avatarSection} onClick={handleClick}>
       <div className={styles.avatarContainer}>
         {displayUrl ? (
-          <img
-            src={displayUrl}
-            alt="avatar"
-            className={styles.avatarImage}
-          />
+          <img src={displayUrl} alt="avatar" className={styles.avatarImage} />
         ) : (
           <div className={styles.avatarPlaceholderIcon}>
             <Camera size={40} className="text-secondary opacity-50" />
@@ -75,6 +69,15 @@ export const AvatarSection = ({
           className="hidden"
         />
       </div>
+
+      <ImageCropperModal
+        isOpen={!!imageToCropSrc}
+        onClose={() => setImageToCropSrc(null)}
+        imageSrc={imageToCropSrc}
+        onCropComplete={handleCrop}
+        cropShape="round"
+        outputSize={{ width: 256, height: 256 }}
+      />
     </div>
   );
 };

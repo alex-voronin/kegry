@@ -31,7 +31,7 @@
     },
     "imageCropper": {
       "title": "Crop Image",
-      "save": "Save",
+      "save": "Select",
       "cancel": "Cancel"
     },
     "forms": {
