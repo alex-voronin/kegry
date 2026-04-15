@@ -35,6 +35,28 @@
       "cancel": "Otkažite"
     },
     "forms": {
+      "venue": {
+        "address": "Adresa",
+        "googleMapsUrl": "Google Maps URL",
+        "websiteUrl": "URL sajta",
+        "instagramUrl": "Instagram URL",
+        "phoneNumber": "Broj telefona",
+        "workingHours": "Radno vreme",
+        "latitude": "Širina",
+        "longitude": "Dužina",
+        "validation": {
+          "addressRequired": "Adresa je obavezna",
+          "latitudeRequired": "Geografska širina je obavezna",
+          "longitudeRequired": "Geografska dužina je obavezna",
+          "latitudeRange": "Geografska širina mora biti između -90 i 90",
+          "longitudeRange": "Geografska dužina mora biti između -180 i 180",
+          "googleMapsUrlInvalid": "Nevažeći Google Maps URL",
+          "instagramUrlInvalid": "Nevažeći Instagram URL",
+          "websiteUrlInvalid": "Nevažeći URL sajta",
+          "invalidUrl": "Nevažeći URL",
+          "coverRequired": "Naslovna slika je obavezna"
+        }
+      },
       "discount": {
         "loyaltyLevelOption": "Nivo {level} (ispod {visits} poseta)",
         "loyaltyLevel": "Nivo lojalnosti",
@@ -345,23 +367,6 @@
     "editVenue": {
       "title": "Uredi lokal",
       "submit": "Sačuvaj",
-      "address": "Adresa",
-      "addressRequired": "Adresa je obavezna",
-      "googleMapsUrl": "Google Maps URL",
-      "websiteUrl": "URL sajta",
-      "instagramUrl": "Instagram URL",
-      "phoneNumber": "Broj telefona",
-      "workingHours": "Radno vreme",
-      "latitude": "Širina",
-      "longitude": "Dužina",
-      "latitudeRequired": "Geografska širina je obavezna",
-      "longitudeRequired": "Geografska dužina je obavezna",
-      "latitudeRange": "Geografska širina mora biti između -90 i 90",
-      "longitudeRange": "Geografska dužina mora biti između -180 i 180",
-      "googleMapsUrlInvalid": "Nevažeći Google Maps URL",
-      "instagramUrlInvalid": "Nevažeći Instagram URL",
-      "websiteUrlInvalid": "Nevažeći URL sajta",
-      "invalidUrl": "Nevažeći URL",
       "toast": {
         "updateFailed": "Ažuriranje lokala nije uspelo"
       }
@@ -369,26 +374,6 @@
     "createVenue": {
       "title": "Kreiraj lokal",
       "submit": "Kreiraj",
-      "address": "Adresa",
-      "googleMapsUrl": "Google Maps URL",
-      "websiteUrl": "URL sajta",
-      "instagramUrl": "Instagram URL",
-      "phoneNumber": "Broj telefona",
-      "workingHours": "Radno vreme",
-      "latitude": "Širina",
-      "longitude": "Dužina",
-      "validation": {
-        "addressRequired": "Adresa je obavezna",
-        "latitudeRequired": "Geografska širina je obavezna",
-        "longitudeRequired": "Geografska dužina je obavezna",
-        "latitudeRange": "Geografska širina mora biti između -90 i 90",
-        "longitudeRange": "Geografska dužina mora biti između -180 i 180",
-        "googleMapsUrlInvalid": "Nevažeći Google Maps URL",
-        "instagramUrlInvalid": "Nevažeći Instagram URL",
-        "websiteUrlInvalid": "Nevažeći URL sajta",
-        "invalidUrl": "Nevažeći URL",
-        "coverRequired": "Naslovna slika je obavezna"
-      },
       "toast": {
         "createFailed": "Kreiranje lokala nije uspelo"
       }

@@ -1,4 +1,4 @@
-@reference "../../../../../../globals.css";
+@reference "../../app/globals.css";
 
 .wrapper {
   @apply overflow-hidden sm:rounded-[16px];
@@ -17,7 +17,7 @@
 }
 
 .header {
-  @apply absolute! top-0! left-0! w-full! bg-transparent!;
+  @apply absolute! top-0! left-0! z-10! w-full! bg-transparent!;
 }
 
 .coverImage {
@@ -33,7 +33,7 @@
 }
 
 .coverPlaceholderIcon {
-  @apply relative flex items-center justify-center;
+  @apply relative flex flex-col items-center gap-2;
 }
 
 .cameraOverlay {
