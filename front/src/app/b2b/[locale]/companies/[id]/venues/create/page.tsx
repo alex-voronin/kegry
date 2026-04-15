@@ -22,6 +22,7 @@ import { useVenueStore } from '@/app/b2b/[locale]/venues/[id]/use-venue-store';
 import { API_ENDPOINTS, PAGE_ROUTES } from '@/lib/routes';
 import { uploadImage, compressImageToBlob } from '@/lib/image-utils';
 import { LeafletMapPickerModal } from '@/components/ui/leaflet-mappicker-modal';
+import { ImageCropperModal } from '@/components/ui/image-cropper-modal';
 import styles from './create-venue.module.css';
 import { cn } from '@/lib/utils';
 import {
@@ -41,6 +42,8 @@ export default function VenueCreatePage() {
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [coverBlob, setCoverBlob] = useState<Blob | null>(null);
   const [isMapPickerOpen, setIsMapPickerOpen] = useState(false);
+  const [isCropperOpen, setIsCropperOpen] = useState(false);
+  const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
 
   const { createVenue, patchVenue } = useVenueStore();
 
@@ -107,18 +110,33 @@ export default function VenueCreatePage() {
     try {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setCoverPreview(reader.result as string);
+        setRawImageSrc(reader.result as string);
+        setIsCropperOpen(true);
       };
       reader.readAsDataURL(file);
 
+      // Reset input value to allow selecting the same file again
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } catch (err) {
+      toast.error('Failed to process image');
+    }
+  };
+
+  const handleCropComplete = async (croppedBlob: Blob) => {
+    try {
+      setCoverPreview(URL.createObjectURL(croppedBlob));
+
       const compressedBlob = await compressImageToBlob(
-        file,
+        croppedBlob,
         VENUE_COVER_MAX_SIZE_BYTES,
         VENUE_COVER_MAX_LONG_SIDE,
       );
       setCoverBlob(compressedBlob);
+      setIsCropperOpen(false);
     } catch (err) {
-      toast.error('Failed to process image');
+      toast.error('Failed to process cropped image');
     }
   };
 
@@ -382,6 +400,14 @@ export default function VenueCreatePage() {
             shouldDirty: true,
           });
         }}
+      />
+
+      <ImageCropperModal
+        isOpen={isCropperOpen}
+        onClose={() => setIsCropperOpen(false)}
+        imageSrc={rawImageSrc}
+        onCropComplete={handleCropComplete}
+        outputSize={{ width: 490, height: 130 }}
       />
     </>
   );

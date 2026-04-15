@@ -29,6 +29,11 @@
       "save": "Select",
       "cancel": "Cancel"
     },
+    "imageCropper": {
+      "title": "Crop Image",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
     "forms": {
       "discount": {
         "loyaltyLevelOption": "Level {level} (under {visits} visits)",

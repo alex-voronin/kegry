@@ -4,51 +4,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import Cropper from 'react-easy-crop';
 import { Button } from './button';
-
-const AVATAR_SIZE = 256;
-
-function getCroppedImageBlob(
-  imageSrc: string,
-  crop: { x: number; y: number; width: number; height: number },
-): Promise<Blob> {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.src = imageSrc;
-    image.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return reject('No ctx');
-
-      canvas.width = AVATAR_SIZE;
-      canvas.height = AVATAR_SIZE;
-
-      ctx.drawImage(
-        image,
-        crop.x,
-        crop.y,
-        crop.width,
-        crop.height,
-        0,
-        0,
-        AVATAR_SIZE,
-        AVATAR_SIZE,
-      );
-
-      canvas.toBlob(
-        (blob) => {
-          if (blob) {
-            resolve(blob);
-          } else {
-            reject('Failed to create blob');
-          }
-        },
-        'image/jpeg',
-        0.9,
-      );
-    };
-    image.onerror = reject;
-  });
-}
+import { getCroppedImg } from '@/lib/image-utils';
 
 export default function AvatarCropper({
   imageSrc,
@@ -71,8 +27,11 @@ export default function AvatarCropper({
 
   const saveCroppedImage = useCallback(async () => {
     if (!croppedAreaPixels) return;
-    const blob = await getCroppedImageBlob(imageSrc, croppedAreaPixels);
-    onCrop(blob);
+    const blob = await getCroppedImg(imageSrc, croppedAreaPixels, undefined, {
+      width: 256,
+      height: 256,
+    });
+    if (blob) onCrop(blob);
   }, [croppedAreaPixels, imageSrc, onCrop]);
 
   return (

@@ -94,3 +94,80 @@ export async function uploadImage(
 
   return publicDownloadUrl;
 }
+
+/**
+ * Load an image from a URL and return the HTMLImageElement
+ */
+export const createImage = (url: string): Promise<HTMLImageElement> =>
+  new Promise((resolve, reject) => {
+    const image = new Image();
+    image.addEventListener('load', () => resolve(image));
+    image.addEventListener('error', (error) => reject(error));
+    image.setAttribute('crossOrigin', 'anonymous');
+    image.src = url;
+  });
+
+/**
+ * Crop an image to the specified pixel area and return as a Blob.
+ * Optionally supports flipping the image horizontally/vertically.
+ * @param outputSize - If provided, the cropped image will be resized to this size.
+ */
+export async function getCroppedImg(
+  imageSrc: string,
+  pixelCrop: { x: number; y: number; width: number; height: number },
+  flip = { horizontal: false, vertical: false },
+  outputSize?: { width: number; height: number },
+): Promise<Blob | null> {
+  const image = await createImage(imageSrc);
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  if (!ctx) {
+    return null;
+  }
+
+  // set canvas size to match the bounding box
+  canvas.width = image.width;
+  canvas.height = image.height;
+
+  // translate canvas context to a central location to allow rotating and flipping around the center
+  ctx.translate(image.width / 2, image.height / 2);
+  ctx.scale(flip.horizontal ? -1 : 1, flip.vertical ? -1 : 1);
+  ctx.translate(-image.width / 2, -image.height / 2);
+
+  // draw image
+  ctx.drawImage(image, 0, 0);
+
+  const croppedCanvas = document.createElement('canvas');
+  const croppedCtx = croppedCanvas.getContext('2d');
+
+  if (!croppedCtx) {
+    return null;
+  }
+
+  // Set the size of the output canvas (use outputSize if provided, otherwise use crop dimensions)
+  const outWidth = outputSize?.width ?? pixelCrop.width;
+  const outHeight = outputSize?.height ?? pixelCrop.height;
+  croppedCanvas.width = outWidth;
+  croppedCanvas.height = outHeight;
+
+  // Draw the cropped image onto the new canvas, scaling to the output size
+  croppedCtx.drawImage(
+    canvas,
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height,
+    0,
+    0,
+    outWidth,
+    outHeight,
+  );
+
+  // As a blob
+  return new Promise((resolve) => {
+    croppedCanvas.toBlob((file) => {
+      resolve(file);
+    }, 'image/jpeg');
+  });
+}

@@ -29,6 +29,11 @@
       "save": "Izaberi",
       "cancel": "Otkaži"
     },
+    "imageCropper": {
+      "title": "Iseci sliku",
+      "save": "Sačuvaj",
+      "cancel": "Otkaži"
+    },
     "forms": {
       "discount": {
         "loyaltyLevelOption": "Nivo {level} (ispod {visits} poseta)",
