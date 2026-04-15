@@ -178,10 +178,10 @@ export default function DesktopLayout() {
         </div>
         <div className={cn(styles.sideImage, '-mt-6')}>
           <Image
-            src="/assets/landing/section-contact-us.webp"
-            alt="Goblin Teacher"
-            width={230}
-            height={259}
+            src="/assets/b2b/landing/section-contact-us.webp"
+            alt="Contact Us"
+            width={270}
+            height={254}
           />
         </div>
       </section>

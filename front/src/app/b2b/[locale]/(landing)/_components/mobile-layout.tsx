@@ -239,10 +239,10 @@ export default function MobileLayout() {
       <section id="mobile-contact-us" className={mobileStyles.mobileSection}>
         <div className={mobileStyles.mobileSectionImage}>
           <Image
-            src="/assets/landing/section-contact-us.webp"
+            src="/assets/b2b/landing/section-contact-us.webp"
             alt="Contact Us"
-            width={220}
-            height={248}
+            width={300}
+            height={282}
             className={mobileStyles.sectionImg}
           />
         </div>
