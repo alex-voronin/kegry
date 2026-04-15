@@ -35,6 +35,16 @@
       "cancel": "Cancel"
     },
     "forms": {
+      "company": {
+        "name": "Company Name",
+        "email": "Email",
+        "emailPlaceholder": "Company Email (Optional)",
+        "validation": {
+          "nameRequired": "Company name is required",
+          "emailInvalid": "Invalid email address",
+          "avatarRequired": "Company avatar is required"
+        }
+      },
       "venue": {
         "address": "Address",
         "googleMapsUrl": "Google Maps URL",
@@ -247,15 +257,7 @@
     },
     "createCompany": {
       "title": "Create Company",
-      "name": "Company Name",
-      "email": "Email",
-      "emailPlaceholder": "Company Email (Optional)",
       "submit": "Create",
-      "validation": {
-        "nameRequired": "Company name is required",
-        "emailInvalid": "Invalid email address",
-        "avatarRequired": "Company avatar is required"
-      },
       "toast": {
         "createFailed": "Failed to create company"
       }
@@ -269,6 +271,9 @@
     },
     "companyProfile": {
       "title": "Company",
+      "name": "Company Name",
+      "email": "Email",
+      "emailPlaceholder": "Company Email (Optional)",
       "loyaltyLevelsTitle": "Loyalty levels",
       "loyaltyLevelItemTitle": "Level {level}",
       "loyaltyLevelSubtitle": "Visits under: {visitsUpperBound}",

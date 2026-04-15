@@ -13,18 +13,10 @@ const MAX_RETRIES = 2;
 const RETRY_DELAY_MS = 1000;
 const RETRYABLE_STATUS_CODES = [408, 429, 500, 502, 503, 504];
 
-// Validate base URL in development
-const baseURL = process.env.NEXT_PUBLIC_API_URL;
-if (!baseURL && process.env.NODE_ENV === 'development') {
-  console.error(
-    '[api-client] Warning: NEXT_PUBLIC_API_URL is not set. API calls may fail.',
-  );
-}
-
 // --- API Client ---
 
 const apiClient: AxiosInstance = axios.create({
-  baseURL: baseURL || '',
+  baseURL: '',
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',

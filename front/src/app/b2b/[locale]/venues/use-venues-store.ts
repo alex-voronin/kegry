@@ -2,7 +2,7 @@ import { create } from '@/lib/zustand-reset';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
 import { API_ENDPOINTS } from '@/lib/routes';
-import { VenueListItemDto } from '../companies/[id]/use-company-profile-store';
+import { VenueListItemDto } from '../companies/use-companies-store';
 
 interface VenuesState {
   venues: VenueListItemDto[];

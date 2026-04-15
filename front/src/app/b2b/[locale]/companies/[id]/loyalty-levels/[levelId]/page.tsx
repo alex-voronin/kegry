@@ -18,7 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Toggle } from '@/components/ui/toggle';
 import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS, PAGE_ROUTES } from '@/lib/routes';
-import { useCompanyProfileStore } from '../../use-company-profile-store';
+import { useCompaniesStore } from '../../../use-companies-store';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { extractApiError } from '@/lib/api-error';
 
@@ -37,7 +37,11 @@ export default function LoyaltyLevelEditPage() {
 
   const numericLevelId = Number(levelId);
 
-  const { selectedCompany, isLoading, fetchCompany } = useCompanyProfileStore();
+  const {
+    selectedCompany,
+    isProfileLoading: isLoading,
+    fetchCompany,
+  } = useCompaniesStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { safeBack } = useSafeBack();

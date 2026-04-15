@@ -1,0 +1,45 @@
+@reference "../../app/globals.css";
+
+.wrapper {
+  @apply flex flex-col items-center sm:p-4 sm:pt-0;
+}
+
+.form {
+  @apply flex w-full flex-col gap-5;
+}
+
+.avatarSection {
+  @apply my-6 flex flex-col items-center gap-2;
+}
+
+.avatarContainer {
+  @apply border-secondary relative cursor-pointer overflow-hidden rounded-full border;
+  width: 192px;
+  height: 192px;
+  background-color: var(--color-form-element);
+}
+
+.avatarImage {
+  @apply h-full w-full object-cover;
+}
+
+.avatarPlaceholderIcon {
+  @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
+}
+
+.form > div:not(.avatarSection) {
+  @apply px-0 sm:px-4;
+}
+
+.requiredAsterisk {
+  @apply absolute -top-1.5 -right-1.5 text-lg font-bold;
+  color: var(--color-primary);
+}
+
+.footer {
+  @apply mt-6 mb-10 flex w-full justify-center;
+}
+
+.submitButton {
+  @apply w-[280px];
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import { useSafeBack } from '@/hooks/use-safe-back';
@@ -57,6 +57,28 @@ export default function VenueEditPage() {
     }
   };
 
+  const initialValues = useMemo(() => ({
+    address: currentVenue?.address || '',
+    googleMapsUrl: currentVenue?.googleMapsUrl || '',
+    websiteUrl: currentVenue?.websiteUrl || '',
+    instagramUrl: currentVenue?.instagramUrl || '',
+    phoneNumber: currentVenue?.phoneNumber || '',
+    workingHours: currentVenue?.workingHours || '',
+    latitude: currentVenue?.latitude || 0,
+    longitude: currentVenue?.longitude || 0,
+    coverImageUrl: currentVenue?.coverImageUrl || null,
+  }), [
+    currentVenue?.address,
+    currentVenue?.googleMapsUrl,
+    currentVenue?.websiteUrl,
+    currentVenue?.instagramUrl,
+    currentVenue?.phoneNumber,
+    currentVenue?.workingHours,
+    currentVenue?.latitude,
+    currentVenue?.longitude,
+    currentVenue?.coverImageUrl
+  ]);
+
   if (isLoading || !currentVenue) {
     return (
       <div className="flex flex-1 items-center justify-center">
@@ -71,17 +93,7 @@ export default function VenueEditPage() {
       submitText={t('submit')}
       isSubmitting={isSubmitting}
       requireCover={false}
-      initialValues={{
-        address: currentVenue.address || '',
-        googleMapsUrl: currentVenue.googleMapsUrl || '',
-        websiteUrl: currentVenue.websiteUrl || '',
-        instagramUrl: currentVenue.instagramUrl || '',
-        phoneNumber: currentVenue.phoneNumber || '',
-        workingHours: currentVenue.workingHours || '',
-        latitude: currentVenue.latitude,
-        longitude: currentVenue.longitude,
-        coverImageUrl: currentVenue.coverImageUrl,
-      }}
+      initialValues={initialValues}
       onCancel={handleCancel}
       onSubmit={handleSubmit}
     />

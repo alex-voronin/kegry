@@ -3,7 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter, useParams } from 'next/navigation';
-import { ChevronDown, ChevronRight, Plus, Medal, SquarePen, Trash2 } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronRight,
+  Plus,
+  Medal,
+  SquarePen,
+  Trash2,
+} from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
@@ -18,14 +25,13 @@ import stylesCommon from '@/components/ui/common.module.css';
 import { Input } from '@/components/ui/input';
 import { PAGE_ROUTES } from '@/lib/routes';
 import {
-  useCompanyProfileStore,
+  useCompaniesStore,
   VenueListItemDto,
-} from './use-company-profile-store';
+} from '../use-companies-store';
 import styles from './profile.module.css';
 
 export default function CompanyProfilePage() {
   const t = useTranslations('screens.companyProfile');
-  const tCreate = useTranslations('screens.createCompany');
   const router = useRouter();
   const { id } = useParams() as { id: string };
   const EXPANDED_SESSION_STORAGE_KEY = `loyalty_expanded_${id}`;
@@ -37,8 +43,12 @@ export default function CompanyProfilePage() {
 
   const { safeBack } = useSafeBack();
 
-  const { selectedCompany, isLoading, fetchCompany, deleteCompany } =
-    useCompanyProfileStore();
+  const {
+    selectedCompany,
+    isProfileLoading: isLoading,
+    fetchCompany,
+    deleteCompany,
+  } = useCompaniesStore();
 
   const handleBack = () => {
     safeBack(PAGE_ROUTES.B2B.COMPANIES);
@@ -174,7 +184,7 @@ export default function CompanyProfilePage() {
           </div>
 
           <div className={stylesCommon.sectionContainer}>
-            <FormSectionTitle>{tCreate('name')}</FormSectionTitle>
+            <FormSectionTitle>{t('name')}</FormSectionTitle>
             <Input
               value={selectedCompany.name}
               readOnly
@@ -183,11 +193,11 @@ export default function CompanyProfilePage() {
           </div>
 
           <div className={stylesCommon.sectionContainer}>
-            <FormSectionTitle>{tCreate('email')}</FormSectionTitle>
+            <FormSectionTitle>{t('email')}</FormSectionTitle>
             <Input
               value={selectedCompany.email || ''}
               readOnly
-              placeholder={tCreate('emailPlaceholder')}
+              placeholder={t('emailPlaceholder')}
               className={stylesCommon.inputDark}
             />
           </div>

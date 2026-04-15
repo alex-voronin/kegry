@@ -35,6 +35,16 @@
       "cancel": "Otkažite"
     },
     "forms": {
+      "company": {
+        "name": "Naziv kompanije",
+        "email": "Email",
+        "emailPlaceholder": "Email kompanije (opciono)",
+        "validation": {
+          "nameRequired": "Naziv kompanije je obavezan",
+          "emailInvalid": "Neispravna email adresa",
+          "avatarRequired": "Avatar kompanije je obavezan"
+        }
+      },
       "venue": {
         "address": "Adresa",
         "googleMapsUrl": "Google Maps URL",
@@ -247,15 +257,7 @@
     },
     "createCompany": {
       "title": "Kreiraj kompaniju",
-      "name": "Naziv kompanije",
-      "email": "Email",
-      "emailPlaceholder": "Email kompanije (opciono)",
       "submit": "Kreiraj",
-      "validation": {
-        "nameRequired": "Naziv kompanije je obavezan",
-        "emailInvalid": "Neispravna email adresa",
-        "avatarRequired": "Avatar kompanije je obavezan"
-      },
       "toast": {
         "createFailed": "Kreiranje kompanije nije uspelo"
       }
@@ -269,6 +271,9 @@
     },
     "companyProfile": {
       "title": "Kompanija",
+      "name": "Naziv kompanije",
+      "email": "Email",
+      "emailPlaceholder": "Email kompanije (opciono)",
       "loyaltyLevelsTitle": "Nivoi lojalnosti",
       "loyaltyLevelItemTitle": "Nivo {level}",
       "loyaltyLevelSubtitle": "Posete ispod: {visitsUpperBound}",
