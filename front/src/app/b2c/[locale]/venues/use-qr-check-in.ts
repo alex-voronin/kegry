@@ -23,17 +23,12 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [showCheckIn, setShowCheckIn] = useState(false);
 
-  const handleQrCode = useCallback(
-    async (rawValue: string) => {
-      setIsScannerOpen(false);
-
-      const qrCode = extractQrCode(rawValue, true) || '';
-      if (!qrCode) {
-        toast.error(t('toast.invalidQr'));
-        onError?.(null);
-        return;
-      }
-
+  const performCheckIn = useCallback(
+    async (
+      qrCode: string,
+      onSuccessCallback?: (venueId: string) => Promise<void> | void,
+      onErrorCallback?: (venueId: string | null) => void,
+    ): Promise<boolean> => {
       try {
         const position = await new Promise<GeolocationPosition>(
           (resolve, reject) => {
@@ -53,19 +48,38 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
 
         if (response.data.success) {
           setShowCheckIn(true);
-          await onSuccess?.(venueId);
+          await onSuccessCallback?.(venueId);
+          return true;
         } else {
           const errorMessage = response.data?.errors?.[0]?.error;
           toast.error(errorMessage || t('toast.checkInFailed'));
-          onError?.(venueId);
+          onErrorCallback?.(venueId);
+          return false;
         }
       } catch (error: any) {
         const errorMessage = extractApiError(error)[0];
         toast.error(errorMessage || t('toast.checkInFailed'));
-        onError?.(qrCode);
+        onErrorCallback?.(null);
+        return false;
       }
     },
-    [t, onSuccess, onError],
+    [t],
+  );
+
+  const handleQrCode = useCallback(
+    async (rawValue: string): Promise<boolean> => {
+      setIsScannerOpen(false);
+
+      const qrCode = extractQrCode(rawValue, true) || '';
+      if (!qrCode) {
+        toast.error(t('toast.invalidQr'));
+        onError?.(null);
+        return false;
+      }
+
+      return await performCheckIn(qrCode, onSuccess, onError);
+    },
+    [t, onError, onSuccess, performCheckIn],
   );
 
   return {
@@ -74,5 +88,6 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
     showCheckIn,
     setShowCheckIn,
     handleQrCode,
+    performCheckIn,
   };
 }

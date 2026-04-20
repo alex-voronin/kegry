@@ -21,7 +21,6 @@ import {
 } from '@/app/b2c/[locale]/settings/use-settings-store';
 import { metersToKilometers, metersToMiles } from '@/lib/distance-utils';
 import { QrScannerPopup } from '@/components/common/qr-scanner-popup';
-import { CheckInAnimation } from './_components/check-in-animation';
 import { useQrCheckIn } from './use-qr-check-in';
 import { ScanQrCode } from 'lucide-react';
 import styles from './venues.module.css';
@@ -35,15 +34,10 @@ export default function VenuesScreen() {
     null,
   );
   const [isLocationDenied, setIsLocationDenied] = useState(false);
-  const [checkInVenueId, setCheckInVenueId] = useState<string | null>(null);
-  const {
-    isScannerOpen,
-    setIsScannerOpen,
-    showCheckIn,
-    setShowCheckIn,
-    handleQrCode,
-  } = useQrCheckIn({
-    onSuccess: (id) => setCheckInVenueId(id),
+  const { isScannerOpen, setIsScannerOpen, handleQrCode } = useQrCheckIn({
+    onSuccess: (id) => {
+      router.push(`${PAGE_ROUTES.VENUE_DETAIL(id)}?animate-check-in=true`);
+    },
     onError: (venueId) => {
       if (venueId) {
         router.push(PAGE_ROUTES.VENUE_DETAIL(venueId));
@@ -249,16 +243,6 @@ export default function VenuesScreen() {
         isOpen={isScannerOpen}
         onClose={() => setIsScannerOpen(false)}
         onScan={handleQrCode}
-      />
-
-      <CheckInAnimation
-        visible={showCheckIn}
-        onDone={() => {
-          setShowCheckIn(false);
-          if (checkInVenueId) {
-            router.push(PAGE_ROUTES.VENUE_DETAIL(checkInVenueId));
-          }
-        }}
       />
     </div>
   );

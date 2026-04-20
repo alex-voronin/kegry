@@ -14,8 +14,11 @@ export function QrRedirect() {
   const router = useRouter();
 
   useEffect(() => {
+    if (v) {
+      sessionStorage.setItem('qr_code_to_check_in', v);
+    }
     if (v && hasHydrated && accessToken) {
-      router.replace(`${PAGE_ROUTES.FEED}?v=${v}`);
+      router.replace(`${PAGE_ROUTES.FEED}`);
     }
   }, [v, hasHydrated, accessToken, router]);
 

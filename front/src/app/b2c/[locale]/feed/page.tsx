@@ -28,8 +28,8 @@ import {
 } from './_components/user-feed-card';
 import { NpcFeedBody, NpcFeedFooter } from './_components/npc-feed-card';
 import { useQrCheckIn } from '@/app/b2c/[locale]/venues/use-qr-check-in';
-import { CheckInAnimation } from '@/app/b2c/[locale]/venues/_components/check-in-animation';
 import { FEED_VISITS_TO_SHOW_REFERRAL_PROMPT } from '@/lib/constants';
+import { buildQrUrl } from '@/lib/qr-utils';
 
 // --- Discriminated union for feed items ---
 
@@ -145,9 +145,19 @@ export default function FeedScreen() {
   const { npc, monolog, fetchNpc, inviteNpc, dismissNpc } = useNpcStore();
   const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
-  const [checkInVenueId, setCheckInVenueId] = useState<string | null>(null);
-  const { handleQrCode, showCheckIn, setShowCheckIn } = useQrCheckIn({
-    onSuccess: (id) => setCheckInVenueId(id),
+  const { handleQrCode } = useQrCheckIn({
+    onSuccess: (venueId) => {
+      router.push(`${PAGE_ROUTES.VENUE_DETAIL(venueId)}?animate-check-in=true`);
+    },
+    onError(venueId) {
+      if (venueId) {
+        router.push(PAGE_ROUTES.VENUE_DETAIL(venueId));
+      } else {
+        // hack to reload the feed
+        initializationStarted.current = false;
+        router.refresh();
+      }
+    },
   });
   const [when, setWhen] = useState<InviteExpiration>(InviteExpiration.Today);
   const [expirationPopup, setExpirationPopup] = useState<{
@@ -199,11 +209,12 @@ export default function FeedScreen() {
       if (!hasHydrated || initializationStarted.current) return;
       initializationStarted.current = true;
 
-      // 1. Handle QR code in query parameters early
-      const v = searchParams.get('v');
-      if (v) {
-        handleQrCode(window.location.href);
-        router.replace(PAGE_ROUTES.FEED);
+      // 1. Handle QR code in query parameters or session storage early
+      const qrCode = sessionStorage.getItem('qr_code_to_check_in');
+      if (qrCode) {
+        sessionStorage.removeItem('qr_code_to_check_in');
+        const qrUrl = buildQrUrl(qrCode);
+        await handleQrCode(qrUrl);
         return;
       }
 
@@ -543,15 +554,6 @@ export default function FeedScreen() {
           onPrimaryAction={handleCloseInvitePrompt}
           secondaryButtonText={tFeed('invitePrompt.letsGo')}
           onSecondaryAction={handleGoToInvite}
-        />
-        <CheckInAnimation
-          visible={showCheckIn}
-          onDone={() => {
-            setShowCheckIn(false);
-            if (checkInVenueId) {
-              router.push(PAGE_ROUTES.VENUE_DETAIL(checkInVenueId));
-            }
-          }}
         />
       </div>
     </div>

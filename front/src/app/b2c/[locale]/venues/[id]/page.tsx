@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { useRouter } from '@/i18n/routing';
-import { useParams } from 'next/navigation';
+import { useRouter, usePathname } from '@/i18n/routing';
+import { useParams, useSearchParams } from 'next/navigation';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
@@ -36,7 +36,9 @@ function calculateProgressPercentage(
 
 export default function VenueDetailScreen() {
   const router = useRouter();
+  const pathname = usePathname();
   const params = useParams();
+  const searchParams = useSearchParams();
   const venueId = params.id as string;
   const t = useTranslations('screens.venueDetail');
 
@@ -59,6 +61,13 @@ export default function VenueDetailScreen() {
   });
 
   const { safeBack } = useSafeBack();
+
+  useEffect(() => {
+    if (searchParams.get('animate-check-in') === 'true') {
+      setShowCheckIn(true);
+      router.replace(pathname);
+    }
+  }, [searchParams, setShowCheckIn, router, pathname]);
 
   useEffect(() => {
     const loadVenue = async () => {
