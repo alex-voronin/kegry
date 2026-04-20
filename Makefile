@@ -72,6 +72,9 @@ add-migration-back: ## Add EF Core migration. Usage: make add-migration-back mod
 build-front: ## Build the Next.js frontend
 	cd $(FRONT_DIR) && npm install && npm run build
 
+build-front-standalone: ## Build the Next.js frontend and copy static resources to standalone folder
+	cd $(FRONT_DIR) && npm install && npm run build && npm run prepare:standalone
+
 run-front: ## Run the Next.js frontend in development mode
 	cd $(FRONT_DIR) && npm run dev
 

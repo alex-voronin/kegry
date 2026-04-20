@@ -9,6 +9,7 @@
     "dev": "next dev",
     "prebuild": "npm run generate-firebase-config && npm run generate-pwa-assets",
     "build": "next build",
+    "prepare:standalone": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
     "start": "next start",
     "lint": "eslint"
   },
