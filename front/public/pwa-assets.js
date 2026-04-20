@@ -10,7 +10,6 @@ const STATIC_ASSETS = [
   "/assets/b2b/landing/feature-loyalty.webp",
   "/assets/b2b/landing/feature-venues.webp",
   "/assets/b2b/landing/header-logo.webp",
-  "/assets/b2b/landing/section-contact-us.png",
   "/assets/b2b/landing/section-contact-us.webp",
   "/assets/b2b/landing/section-hero.webp",
   "/assets/b2b/logo.webp",

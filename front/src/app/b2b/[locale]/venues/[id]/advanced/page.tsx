@@ -13,10 +13,11 @@ import { Button } from '@/components/ui/button';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { buildQrUrl, downloadQrCode } from '@/lib/qr-utils';
+import { buildQrUrl, downloadQrCode, extractQrCode } from '@/lib/qr-utils';
 import { useVenueStore } from '../use-venue-store';
-import { Download } from 'lucide-react';
+import { Download, QrCode } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { QrScannerPopup } from '@/components/common/qr-scanner-popup';
 import stylesCommon from '@/components/ui/common.module.css';
 import styles from '../promotions/_components/promotion-form.module.css'; // Reusing Promotion Form styles for consistency
 
@@ -29,6 +30,7 @@ export default function AdvancedSettingsPage() {
   const [qrCode, setQrCode] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
 
   useEffect(() => {
     if (venueId) {
@@ -75,6 +77,12 @@ export default function AdvancedSettingsPage() {
   const isDownloadEnabled =
     qrCode === currentVenue.qrCode && qrCode.trim().length > 0;
 
+  const handleScan = (scannedValue: string) => {
+    const qrCode = extractQrCode(scannedValue, false) || '';
+    setQrCode(qrCode);
+    setIsScannerOpen(false);
+  };
+
   const downloadOptions = [
     {
       icon: <Download size={24} className="text-primary" />,
@@ -106,6 +114,14 @@ export default function AdvancedSettingsPage() {
             height={27}
             onClick={handleBack}
           />
+        }
+        right={
+          <Icon
+            onClick={() => setIsScannerOpen(true)}
+            className="cursor-pointer"
+          >
+            <QrCode size={24} className="text-primary" />
+          </Icon>
         }
       />
       <div className={styles.wrapper}>
@@ -153,6 +169,13 @@ export default function AdvancedSettingsPage() {
         isOpen={isDownloadMenuOpen}
         onClose={() => setIsDownloadMenuOpen(false)}
         options={downloadOptions}
+      />
+
+      <QrScannerPopup
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onScan={handleScan}
+        checkLocation={false}
       />
     </>
   );

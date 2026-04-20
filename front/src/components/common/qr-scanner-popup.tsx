@@ -12,24 +12,28 @@ interface QrScannerPopupProps {
   isOpen: boolean;
   onClose: () => void;
   onScan: (url: string) => void;
+  checkLocation?: boolean;
 }
 
 export function QrScannerPopup({
   isOpen,
   onClose,
   onScan,
+  checkLocation = true,
 }: QrScannerPopupProps) {
-  const t = useTranslations('screens.venues');
+  const t = useTranslations('components.qrScannerPopup');
   const [cameraError, setCameraError] = useState(false);
-  const [isLocationAllowed, setIsLocationAllowed] = useState(false);
+  const [isLocationAllowed, setIsLocationAllowed] = useState(!checkLocation);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && checkLocation) {
       checkPermissionStatus().then(({ locationAllowed }) => {
         setIsLocationAllowed(locationAllowed);
       });
+    } else if (isOpen) {
+      setIsLocationAllowed(true);
     }
-  }, [isOpen]);
+  }, [isOpen, checkLocation]);
 
   const handleScan = useCallback(
     (detectedCodes: IDetectedBarcode[]) => {
@@ -51,7 +55,7 @@ export function QrScannerPopup({
           onClick={(e) => e.stopPropagation()}
         >
           <div className={styles.header}>
-            <h2 className={styles.title}>{t('scanQrTitle')}</h2>
+            <h2 className={styles.title}>{t('title')}</h2>
             <button className={styles.closeButton} onClick={onClose}>
               <X size={20} />
             </button>
@@ -68,7 +72,7 @@ export function QrScannerPopup({
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.popup} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2 className={styles.title}>{t('scanQrTitle')}</h2>
+          <h2 className={styles.title}>{t('title')}</h2>
           <button className={styles.closeButton} onClick={onClose}>
             <X size={20} />
           </button>

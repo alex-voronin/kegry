@@ -20,7 +20,7 @@ import styles from './venue-detail.module.css';
 import { InstagramIcon } from './_components/instagram-icon';
 import { PromoIcon } from '@/lib/promo-types';
 import { useSafeBack } from '@/hooks/use-safe-back';
-import { QrScannerPopup } from '../_components/qr-scanner-popup';
+import { QrScannerPopup } from '@/components/common/qr-scanner-popup';
 import { CheckInAnimation } from '../_components/check-in-animation';
 import { useQrCheckIn } from '../use-qr-check-in';
 import { parseInstagramHandle } from '@/lib/url-utils';

@@ -475,10 +475,7 @@
       },
       "toast": {
         "loadFailed": "Učitavanje lokala nije uspelo"
-      },
-      "cameraDenied": "Dozvola za kameru odbijena. Dozvoli pristup u podešavanjima pregledača ili skeniraj QR kod sistemskim čitačem.",
-      "locationDenied": "Pristup lokaciji je neophodan za prijavu. Molimo omogući lokaciju u podešavanjima pregledača.",
-      "scanQrTitle": "Skeniraj QR za prijavu"
+      }
     },
     "venueDetail": {
       "contacts": "Kontakti",
@@ -540,6 +537,11 @@
       "title": "Izaberi avatar",
       "save": "Izaberi",
       "cancel": "Otkaži"
+    },
+    "qrScannerPopup": {
+      "title": "Skeniraj QR za prijavu",
+      "cameraDenied": "Dozvola za kameru odbijena. Dozvoli pristup u podešavanjima pregledača ili skeniraj QR kod sistemskim čitačem.",
+      "locationDenied": "Pristup lokaciji je neophodan za skeniranje. Molimo omogući lokaciju u podešavanjima pregledača."
     },
     "profile-sections": {
       "name": {

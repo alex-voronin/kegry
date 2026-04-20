@@ -20,7 +20,7 @@ import {
   DistanceUnits,
 } from '@/app/b2c/[locale]/settings/use-settings-store';
 import { metersToKilometers, metersToMiles } from '@/lib/distance-utils';
-import { QrScannerPopup } from './_components/qr-scanner-popup';
+import { QrScannerPopup } from '@/components/common/qr-scanner-popup';
 import { CheckInAnimation } from './_components/check-in-animation';
 import { useQrCheckIn } from './use-qr-check-in';
 import { ScanQrCode } from 'lucide-react';

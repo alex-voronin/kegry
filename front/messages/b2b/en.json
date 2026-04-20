@@ -34,6 +34,11 @@
       "save": "Select",
       "cancel": "Cancel"
     },
+    "qrScannerPopup": {
+      "title": "Scan new QR Code",
+      "cameraDenied": "Camera permission denied. Allow access in browser settings or scan with your system QR reader.",
+      "locationDenied": "Location access is required for scanning. Please enable location in your browser settings."
+    },
     "forms": {
       "company": {
         "name": "Company Name",

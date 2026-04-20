@@ -64,10 +64,15 @@ export async function downloadQrCode(url: string, style: 'default' | 'bw') {
   });
 }
 
-export function extractQrCode(rawValue: string): string | null {
+export function extractQrCode(
+  rawValue: string,
+  failOnDomainMismatch: boolean = true,
+): string | null {
   try {
     const url = new URL(rawValue);
-    if (!isOurDomain(url)) return null;
+    if (failOnDomainMismatch && !isOurDomain(url)) {
+      return null;
+    }
     return url.searchParams.get('v');
   } catch {
     return null;
