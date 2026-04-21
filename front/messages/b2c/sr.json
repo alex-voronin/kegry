@@ -28,6 +28,7 @@
         "keywords": "bar buddy, barski drugar, upoznavanje ljudi uživo, IRL druženje, barski susreti, oflajn prijatelji, jednorog, kegry, program lojalnosti, priče van ekrana"
       },
       "header": {
+        "brandName": "Kegry za drugare",
         "subtitle": "Najbolje priče počinju van ekrana",
         "nav": {
           "forBusiness": "Za biznise",
@@ -511,6 +512,7 @@
       }
     },
     "logo": {
+      "brandName": "Kegry za drugare",
       "tagline": "Najbolje priče počinju van ekrana"
     },
     "ageVerification": {

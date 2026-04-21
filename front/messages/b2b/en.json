@@ -22,7 +22,8 @@
   },
   "components": {
     "logo": {
-      "tagline": "For Business"
+      "brandName": "Kegry for Business",
+      "tagline": "The Swiss Army Knife for Bar Growth"
     },
     "mapPicker": {
       "title": "Select Location",
@@ -107,7 +108,8 @@
         "keywords": "bar buddy, bar meetups, unicorn, kegry, manage venues, venue management, loyalty program, manage discounts, bar promotions"
       },
       "header": {
-        "subtitle": "For Business",
+        "brandName": "Kegry for Business",
+        "subtitle": "The Swiss Army Knife for Bar Growth",
         "nav": {
           "forCustomers": "For Customers",
           "features": "Features",

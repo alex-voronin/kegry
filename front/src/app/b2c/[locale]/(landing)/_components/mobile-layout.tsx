@@ -52,7 +52,7 @@ export default function MobileLayout() {
           <div className={mobileStyles.mobileLogoTextWrapper}>
             <div className={mobileStyles.mobileLogoTitleRow}>
               <span className={mobileStyles.mobileLogoText}>
-                Kegry for Friends
+                {t('header.brandName')}
               </span>
             </div>
             <span className={mobileStyles.mobileLogoSubtitle}>

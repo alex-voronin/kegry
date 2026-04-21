@@ -23,7 +23,7 @@
 }
 
 .mobileLogoText {
-  @apply text-2xl leading-tight font-bold;
+  @apply text-[26px] leading-tight font-bold;
   color: var(--color-landing-heading);
   font-family: var(--font-landing-title);
 }

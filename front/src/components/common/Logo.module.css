@@ -15,7 +15,7 @@
 }
 
 .brandName {
-  @apply text-brand text-4xl font-bold;
+  @apply text-brand text-3xl font-bold;
   font-family: var(--font-fundamento), serif;
 }
 
@@ -25,35 +25,25 @@
 
 /* Medium mobile */
 @media (min-width: 395px) {
+  .brandName {
+    @apply text-4xl;
+  }
+
   .logoImage {
     width: 203px;
     height: 203px;
-  }
-
-  .brandName {
-    @apply text-5xl;
-  }
-
-  .beerMug {
-    width: 26px;
-    height: 36px;
   }
 }
 
 /* Desktop */
 @media (min-width: 640px) {
+  .brandName {
+    @apply text-5xl;
+  }
+
   .logoImage {
     width: 180px;
     height: 254px;
-  }
-
-  .brandName {
-    @apply text-6xl;
-  }
-
-  .beerMug {
-    width: 32px;
-    height: 45px;
   }
 
   .tagline {

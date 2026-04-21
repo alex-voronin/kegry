@@ -34,7 +34,7 @@ export default function DesktopLayout() {
           />
           <div className={styles.logoTextWrapper}>
             <div className={styles.logoTitleRow}>
-              <span className={`${styles.logoText}`}>Kegry</span>
+              <span className={`${styles.logoText}`}>{t('header.brandName')}</span>
             </div>
             <span className={styles.logoSubtitle}>{t('header.subtitle')}</span>
           </div>

@@ -207,8 +207,12 @@
 }
 
 @media (max-width: 1200px) {
+  .loginButton {
+    @apply px-3;
+  }
+
   .logoText {
-    @apply ml-2 text-[26px] font-bold;
+    @apply ml-2 text-[27px] font-bold;
     color: var(--color-landing-heading);
     font-family: var(--font-landing-title);
   }

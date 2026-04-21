@@ -22,7 +22,8 @@
   },
   "components": {
     "logo": {
-      "tagline": "Za biznise"
+      "brandName": "Kegry za biznise",
+      "tagline": "Švajcarski nož za rast barova"
     },
     "mapPicker": {
       "title": "Izaberite lokaciju",
@@ -107,7 +108,8 @@
         "keywords": "bar buddy, barski drugar, druženje u baru, jednorog, kegry, upravljanje lokalima, upravljanje barovima, program lojalnosti, popusti u baru, barske promocije"
       },
       "header": {
-        "subtitle": "Za biznise",
+        "brandName": "Kegry za biznise",
+        "subtitle": "Švajcarski nož za rast barova",
         "nav": {
           "forCustomers": "Za posetioce",
           "features": "Funkcije",

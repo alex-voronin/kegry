@@ -23,7 +23,7 @@ export function Logo({ b2b, tagline }: LogoProps) {
           priority
         />
         <div className={styles.logoRow}>
-          <span className={styles.brandName}>Kegry</span>
+          <span className={styles.brandName}>{t('brandName')}</span>
         </div>
         {finalTagline && <p className={styles.tagline}>{finalTagline}</p>}
       </div>

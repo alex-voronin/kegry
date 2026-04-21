@@ -40,7 +40,9 @@ export default function MobileLayout() {
           />
           <div className={mobileStyles.mobileLogoTextWrapper}>
             <div className={mobileStyles.mobileLogoTitleRow}>
-              <span className={mobileStyles.mobileLogoText}>Kegry</span>
+              <span className={mobileStyles.mobileLogoText}>
+                {t('header.brandName')}
+              </span>
             </div>
             <span className={mobileStyles.mobileLogoSubtitle}>
               {t('header.subtitle')}

@@ -28,6 +28,7 @@
         "keywords": "bar buddy, drinking buddy, meet people IRL, real life social, bar meetups, offline friends, unicorn, kegry, loyalty programs, off-screen stories"
       },
       "header": {
+        "brandName": "Kegry for Friends",
         "subtitle": "The best stories start off-screen",
         "nav": {
           "forBusiness": "For Business",
@@ -39,7 +40,7 @@
       },
       "cheers": {
         "title": "Find your bar buddy right now!",
-        "description": "Up for a drink and good company? No dating. No endless chats. Check a profile, send an invite, arrange a meetup, and there you go, you're at the bar! Talk about life, laugh, vent and keep your head up. If any hobgoblins appear, maybe it's time to slow down a bit 🥴",
+        "description": "Up for a drink and good company? No dating. No endless chats. Check a profile, send an invite, arrange a meetup, and there you go, you're at the bar! Talk about life, laugh, vent and keep your head up. If any goblins appear, maybe it's time to slow down a bit 🥴",
         "loyaltyPrograms": "And one more thing: don't forget about our <link>loyalty programs</link>.",
         "cta": "Ready?"
       },
@@ -55,7 +56,7 @@
         "step2": "2. Chat & Plan",
         "step3": "3. Meet & Enjoy",
         "step4": "4. Save with Loyalty",
-        "note": "Hey adventurer! Just a heads-up: invites expire, you can have only one chat at a time, and there is a limited number of messages per chat, so choose wisely. Invite buddies only if you're really ready for a bar adventure and hurry before the hobgoblins drink all the beer!"
+        "note": "Hey adventurer! Just a heads-up: invites expire, you can have only one chat at a time, and there is a limited number of messages per chat, so choose wisely. Invite buddies only if you're really ready for a bar adventure and hurry before the goblins drink all the beer!"
       },
       "loyalty": {
         "title": "Loyalty Programs",
@@ -63,7 +64,7 @@
       },
       "contactUs": {
         "title": "Contact Us",
-        "description": "You might be wondering the same thing we are: are these hobgoblins the same or different? Honestly, we're not sure yet... We still haven't figured out how to tell them apart. If you happen to know how to, or if you have any questions or suggestions about the service, we'd be happy to hear from you via email at <email>contacts@kegry.com</email> or through our <chat>chat</chat>."
+        "description": "You might be wondering the same thing we are: are these goblins the same or different? Honestly, we're not sure yet... We still haven't figured out how to tell them apart. If you happen to know how to, or if you have any questions or suggestions about the service, we'd be happy to hear from you via email at <email>contacts@kegry.com</email> or through our <chat>chat</chat>."
       },
       "footer": {
         "copyright": "© 2026 Kegry™. All rights reserved.",
@@ -511,6 +512,7 @@
       }
     },
     "logo": {
+      "brandName": "Kegry for Friends",
       "tagline": "The best stories start off-screen"
     },
     "ageVerification": {
