@@ -33,7 +33,7 @@
 }
 
 .mobileLogoSubtitle {
-  @apply ml-3 text-[12px];
+  @apply self-end text-[12px];
   transform: translateY(-4px);
   color: var(--color-landing-subheading);
 }

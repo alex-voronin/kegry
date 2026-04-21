@@ -64,7 +64,7 @@
 }
 
 .logoSubtitle {
-  @apply ml-4 translate-y-[-2px] text-sm;
+  @apply self-end text-sm;
   color: var(--color-landing-subheading);
 }
 
