@@ -23,7 +23,7 @@
   "components": {
     "logo": {
       "brandName": "Kegry za biznise",
-      "tagline": "Švajcarski nož za rast barova"
+      "tagline": "Švajcarski nož za razvoj barova"
     },
     "mapPicker": {
       "title": "Izaberite lokaciju",
@@ -109,7 +109,7 @@
       },
       "header": {
         "brandName": "Kegry za biznise",
-        "subtitle": "Švajcarski nož za rast barova",
+        "subtitle": "Švajcarski nož za razvoj barova",
         "nav": {
           "forCustomers": "Za posetioce",
           "features": "Funkcije",
