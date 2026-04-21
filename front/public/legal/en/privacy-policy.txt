@@ -3,7 +3,7 @@ Privacy Policy
 Effective Date: 02/02/2026
 
 1. Who We Are (Data Controller)
-Kegrycorn is a social platform operated as an independent digital product to help users aged 18+ find new friends and organise voluntary social connections.
+Kegry is a social platform operated as an independent digital product to help users aged 18+ find new friends and organise voluntary social connections.
 We act as the data controller under the General Data Protection Regulation (GDPR) (EU) 2016/679 for users in the EU/EEA and other jurisdictions where GDPR applies (e.g., due to offering services to EU residents).
 Contact: contacts@kegry.com (for all privacy queries, including exercising GDPR rights).
 We do not have a designated Data Protection Officer (DPO) as this is not required under Article 37 GDPR for our scale and activities.
@@ -46,7 +46,7 @@ Legitimate Interests Assessment (LIA) summary:
 4.2.3. Balancing: Your rights are protected via transparency, easy deletion, opt-out options for recommendations, limited retention, and no marketing profiling. We consider the impact low for most users in a voluntary friendship context. You can object to processing based on legitimate interests at any time (see Your Rights).
 
 5. Profiling and Recommendations
-Kegrycorn uses automated processing to:
+Kegry uses automated processing to:
 Sort and recommend profiles based on age, interests, and approximate distance
 This profiling:
 5.1. Is used only to improve user experience
@@ -95,7 +95,7 @@ We apply appropriate technical and organizational measures to protect personal d
 In the event of a personal data breach that poses a risk to users, we will notify affected users and relevant authorities as required by law.
 
 11. Children’s Privacy
-Kegrycorn is intended for users aged 18 and older.
+Kegry is intended for users aged 18 and older.
 We do not knowingly collect personal data from minors.
 If you believe a minor has provided data, contact us and we will delete it promptly.
 

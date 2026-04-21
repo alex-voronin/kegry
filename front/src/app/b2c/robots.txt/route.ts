@@ -7,7 +7,7 @@ Disallow: /api/
 Disallow: /login
 Disallow: /login?*
 
-Sitemap: https://kegry.com/sitemap.xml`;
+Sitemap: https://kegry.rs/sitemap.xml`;
 
   return new NextResponse(robots, {
     headers: {

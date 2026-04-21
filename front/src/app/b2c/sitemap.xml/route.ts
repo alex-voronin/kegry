@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const DOMAIN = 'https://kegry.com';
+const DOMAIN = 'https://kegry.rs';
 const LOCALES = ['en', 'sr'];
 
 export async function GET() {

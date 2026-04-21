@@ -102,9 +102,9 @@
   "screens": {
     "landing": {
       "metadata": {
-        "title": "Kegrycorn za biznise",
-        "description": "Kegrycorn za biznise je sveobuhvatna platforma za rast barova. Pomažemo vam da privučete više gostiju, izgradite lojalnost i povećate prihode.",
-        "keywords": "bar buddy, barski drugar, druženje u baru, kegrycorn, kegry, upravljanje lokalima, upravljanje barovima, program lojalnosti, popusti u baru, barske promocije"
+        "title": "Kegry za biznise",
+        "description": "Kegry za biznise je sveobuhvatna platforma za rast barova. Pomažemo vam da privučete više gostiju, izgradite lojalnost i povećate prihode.",
+        "keywords": "bar buddy, barski drugar, druženje u baru, jednorog, kegry, upravljanje lokalima, upravljanje barovima, program lojalnosti, popusti u baru, barske promocije"
       },
       "header": {
         "subtitle": "Za biznise",
@@ -116,7 +116,7 @@
         "login": "Prijava/Registracija"
       },
       "footer": {
-        "copyright": "© 2026 Kegrycorn™. All rights reserved.",
+        "copyright": "© 2026 Kegry™. Sva prava zadržana.",
         "privacy": "Politika privatnosti",
         "consent": "Saglasnost za komunikaciju",
         "terms": "Uslovi korišćenja",
@@ -150,7 +150,7 @@
       }
     },
     "home": {
-      "title": "Kegrycorn za biznise",
+      "title": "Kegry za biznise",
       "description": "Dobrodošli u poslovni portal. Upravljajte lokalima, pratite posete i kreirajte ponude."
     },
     "profile": {
@@ -200,7 +200,7 @@
         "passwordMismatch": "Lozinke se ne poklapaju"
       },
       "legal": {
-        "text": "Registracijom na Kegrycorn za biznise slažete se sa našim <terms>Uslovima korišćenja</terms> i <privacy>Politikom privatnosti</privacy>."
+        "text": "Registracijom na Kegry za biznise slažete se sa našim <terms>Uslovima korišćenja</terms> i <privacy>Politikom privatnosti</privacy>."
       }
     },
     "forgot": {

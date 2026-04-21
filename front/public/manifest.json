@@ -1,6 +1,6 @@
 {
-  "name": "Kegrycorn",
-  "short_name": "Kegrycorn",
+  "name": "Kegry",
+  "short_name": "Kegry",
   "description": "The best stories start off-screen",
   "start_url": "/login?auto-signin=true",
   "display": "standalone",

@@ -102,9 +102,9 @@
   "screens": {
     "landing": {
       "metadata": {
-        "title": "Kegrycorn for Business",
-        "description": "Kegrycorn for Business is an all-in-one growth platform for bars. We help you attract more customers, build loyalty, and increase revenue.",
-        "keywords": "bar buddy, bar meetups, kegrycorn, kegry, manage venues, venue management, loyalty program, manage discounts, bar promotions"
+        "title": "Kegry for Business",
+        "description": "Kegry for Business is an all-in-one growth platform for bars. We help you attract more customers, build loyalty, and increase revenue.",
+        "keywords": "bar buddy, bar meetups, unicorn, kegry, manage venues, venue management, loyalty program, manage discounts, bar promotions"
       },
       "header": {
         "subtitle": "For Business",
@@ -116,7 +116,7 @@
         "login": "Sign In/Sign Up"
       },
       "footer": {
-        "copyright": "© 2026 Kegrycorn™. All rights reserved.",
+        "copyright": "© 2026 Kegry™. All rights reserved.",
         "privacy": "Privacy Policy",
         "consent": "Consent to Communication",
         "terms": "Terms of Service",
@@ -127,7 +127,7 @@
         "mobileCommunity": "Guidelines"
       },
       "hero": {
-        "title": "All-in-One Growth Platform for bars",
+        "title": "All-in-One Growth Platform for Bars",
         "description": "We help bar owners attract new guests, turn them into loyal regulars, and grow their business with loyalty programs, promotions and easy discovery. All in one easy-to-use platform built for growth. Essential loyalty tools are available today and will remain completely free forever."
       },
       "contactUs": {
@@ -150,7 +150,7 @@
       }
     },
     "home": {
-      "title": "Kegrycorn for Business",
+      "title": "Kegry for Business",
       "description": "Welcome to the Business Portal. Manage your venues, track visits, and create offers."
     },
     "profile": {
@@ -200,7 +200,7 @@
         "passwordMismatch": "Passwords do not match"
       },
       "legal": {
-        "text": "By signing up to Kegrycorn for Business, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+        "text": "By signing up to Kegry for Business, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
       }
     },
     "forgot": {

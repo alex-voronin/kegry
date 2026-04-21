@@ -43,9 +43,9 @@
     <data name="Email.UserInvited.Body" xml:space="preserve">
         <value>
             You have received an invitation from another user!&lt;br /&gt;&lt;br /&gt;
-            Open &lt;a href=&quot;https://kegry.com/notifications&quot;&gt;Notifications&lt;/a&gt; to view details.&lt;br /&gt;&lt;br /&gt;
+            Open &lt;a href=&quot;https://kegry.rs/notifications&quot;&gt;Notifications&lt;/a&gt; to view details.&lt;br /&gt;&lt;br /&gt;
             Best regards,&lt;br /&gt;
-            The Kegrycorn Team
+            The Kegry Team
         </value>
     </data>
     <data name="Email.ConfirmEmail.Subject" xml:space="preserve">
@@ -56,7 +56,7 @@
             Your verification code is {0}&lt;br /&gt;&lt;br /&gt;
             Please note that the code is valid for 10 minutes.&lt;br /&gt;&lt;br /&gt;
             Best regards,&lt;br /&gt;
-            The Kegrycorn Team
+            The Kegry Team
         </value>
     </data>
     <data name="Email.Common.UnsubscribeText" xml:space="preserve">
@@ -95,9 +95,9 @@
     <data name="Email.ChatMessageReceived.Body" xml:space="preserve">
         <value>
             You have received a new message from {0}!&lt;br /&gt;&lt;br /&gt;
-            Open &lt;a href=&quot;https://kegry.com/chat&quot;&gt;Chat&lt;/a&gt; to view details.&lt;br /&gt;&lt;br /&gt;
+            Open &lt;a href=&quot;https://kegry.rs/chat&quot;&gt;Chat&lt;/a&gt; to view details.&lt;br /&gt;&lt;br /&gt;
             Best regards,&lt;br /&gt;
-            The Kegrycorn Team
+            The Kegry Team
         </value>
     </data>
     <data name="Email.PasswordReset.Subject" xml:space="preserve">
@@ -108,7 +108,7 @@
             You requested a password reset.&lt;br /&gt;&lt;br /&gt;
             Follow the link to reset your password: &lt;a href=&quot;{0}/password-reset?email={1}&amp;token={2}&quot;&gt;{0}/password-reset?email={1}&amp;token={2}&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;
             Best regards,&lt;br /&gt;
-            The Kegrycorn Team
+            The Kegry Team
         </value>
     </data>
     <data name="Email.ReferrerRewardReceived.Title" xml:space="preserve">
@@ -117,9 +117,9 @@
     <data name="Email.ReferrerRewardReceived.Body" xml:space="preserve">
         <value>
             Your friend just joined. Thank you for helping us grow!&lt;br /&gt;
-            Open &lt;a href=&quot;https://kegry.com/friends-and-foes?tab=imaginary&quot;&gt;Imaginary Friends List&lt;/a&gt; to view a new friend.&lt;br /&gt;&lt;br /&gt;
+            Open &lt;a href=&quot;https://kegry.rs/friends-and-foes?tab=imaginary&quot;&gt;Imaginary Friends List&lt;/a&gt; to view a new friend.&lt;br /&gt;&lt;br /&gt;
             Best regards,&lt;br /&gt;
-            The Kegrycorn Team
+            The Kegry Team
         </value>
     </data>
 </root>

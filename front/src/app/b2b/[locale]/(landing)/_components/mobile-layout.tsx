@@ -33,14 +33,14 @@ export default function MobileLayout() {
         <div className={mobileStyles.mobileLogoContainer}>
           <Image
             src="/assets/b2b/landing/header-logo.webp"
-            alt="Kegrycorn"
+            alt="Kegry"
             width={46}
             height={64}
             className={`${styles.logoIconImage} ${mobileStyles.mobileLogoImage}`}
           />
           <div className={mobileStyles.mobileLogoTextWrapper}>
             <div className={mobileStyles.mobileLogoTitleRow}>
-              <span className={mobileStyles.mobileLogoText}>Kegrycorn</span>
+              <span className={mobileStyles.mobileLogoText}>Kegry</span>
             </div>
             <span className={mobileStyles.mobileLogoSubtitle}>
               {t('header.subtitle')}

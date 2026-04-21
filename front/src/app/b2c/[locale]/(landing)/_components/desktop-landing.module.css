@@ -1,5 +1,4 @@
 @reference "../../../../globals.css";
-@import './landing-theme.css';
 
 /* ===== Common ===== */
 
@@ -62,10 +61,6 @@
 
 .logoTextFull {
   @apply block;
-}
-
-.logoTextShort {
-  @apply hidden;
 }
 
 .logoSubtitle {
@@ -212,12 +207,12 @@
 }
 
 @media (max-width: 1200px) {
-  .logoTextFull {
-    display: none;
+  .logoText {
+    @apply ml-2 text-[26px] font-bold;
+    color: var(--color-landing-heading);
+    font-family: var(--font-landing-title);
   }
-  .logoTextShort {
-    display: block;
-  }
+
   .nav {
     @apply gap-4;
   }

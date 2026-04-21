@@ -43,9 +43,9 @@
     <data name="Email.UserInvited.Body" xml:space="preserve">
         <value>
             Primili ste pozivnicu od drugog korisnika!&lt;br /&gt;&lt;br /&gt;
-            Otvorite &lt;a href=&quot;https://kegry.com/notifications&quot;&gt;Obaveštenja&lt;/a&gt; da biste videli detalje.&lt;br /&gt;&lt;br /&gt;
+            Otvorite &lt;a href=&quot;https://kegry.rs/notifications&quot;&gt;Obaveštenja&lt;/a&gt; da biste videli detalje.&lt;br /&gt;&lt;br /&gt;
             Srdačan pozdrav,&lt;br /&gt;
-            Tim Kegrycorn
+            Tim Kegry
         </value>
     </data>
     <data name="Email.ConfirmEmail.Subject" xml:space="preserve">
@@ -56,7 +56,7 @@
             Vaš verifikacioni kod je {0}&lt;br /&gt;&lt;br /&gt;
             Napomena: kod važi 10 minuta.&lt;br /&gt;&lt;br /&gt;
             Srdačan pozdrav,&lt;br /&gt;
-            Tim Kegrycorn
+            Tim Kegry
         </value>
     </data>
     <data name="Email.Common.UnsubscribeText" xml:space="preserve">
@@ -95,9 +95,9 @@
     <data name="Email.ChatMessageReceived.Body" xml:space="preserve">
         <value>
             Primili ste novu poruku od {}!&lt;br /&gt;&lt;br /&gt;
-            Otvorite &lt;a href=&quot;https://kegry.com/chat&quot;&gt;Razgovor&lt;/a&gt; da biste videli detalje.&lt;br /&gt;&lt;br /&gt;
+            Otvorite &lt;a href=&quot;https://kegry.rs/chat&quot;&gt;Razgovor&lt;/a&gt; da biste videli detalje.&lt;br /&gt;&lt;br /&gt;
             Srdačan pozdrav,&lt;br /&gt;
-            Tim Kegrycorn
+            Tim Kegry
         </value>
     </data>
     <data name="Email.PasswordReset.Subject" xml:space="preserve">
@@ -108,7 +108,7 @@
             Zatražili ste resetovanje lozinke.&lt;br /&gt;&lt;br /&gt;
             Pratite link da biste resetovali lozinku: &lt;a href=&quot;{0}/password-reset?email={1}&amp;token={2}&quot;&gt;{0}/password-reset?email={1}&amp;token={2}&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;
             Srdačan pozdrav,&lt;br /&gt;
-            Tim Kegrycorn
+            Tim Kegry
         </value>
     </data>
     <data name="Email.ReferrerRewardReceived.Title" xml:space="preserve">
@@ -117,9 +117,9 @@
     <data name="Email.ReferrerRewardReceived.Body" xml:space="preserve">
         <value>
             Vaš prijatelj se upravo pridružio. Hvala što nam pomažete da rastemo!&lt;br /&gt;
-            Otvorite &lt;a href=&quot;https://kegry.com/friends-and-foes?tab=imaginary&quot;&gt;Listu imaginarnih prijatelja&lt;/a&gt; da vidite novog prijatelja.&lt;br /&gt;&lt;br /&gt;
+            Otvorite &lt;a href=&quot;https://kegry.rs/friends-and-foes?tab=imaginary&quot;&gt;Listu imaginarnih prijatelja&lt;/a&gt; da vidite novog prijatelja.&lt;br /&gt;&lt;br /&gt;
             Srdačan pozdrav,&lt;br /&gt;
-            Tim Kegrycorn
+            Tim Kegry
         </value>
     </data>
 </root>

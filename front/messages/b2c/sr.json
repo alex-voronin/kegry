@@ -23,17 +23,17 @@
   "screens": {
     "landing": {
       "metadata": {
-        "title": "Kegrycorn. Pronađi barskog druga!",
-        "description": "Kegrycorn ti pomaže da pronađeš barske drugare. Bez dejtinga, bez beskonačnog dopisivanja — samo spontani susreti uživo u baru. Najbolje priče počinju van ekrana!",
-        "keywords": "bar buddy, barski drugar, upoznavanje ljudi uživo, IRL druženje, barski susreti, oflajn prijatelji, kegrycorn, kegry, program lojalnosti, priče van ekrana"
+        "title": "Kegry. Pronađi barskog druga!",
+        "description": "Kegry ti pomaže da pronađeš barske drugare. Bez dejtinga, bez beskonačnog dopisivanja — samo spontani susreti uživo u baru. Najbolje priče počinju van ekrana!",
+        "keywords": "bar buddy, barski drugar, upoznavanje ljudi uživo, IRL druženje, barski susreti, oflajn prijatelji, jednorog, kegry, program lojalnosti, priče van ekrana"
       },
       "header": {
         "subtitle": "Najbolje priče počinju van ekrana",
         "nav": {
           "forBusiness": "Za biznise",
-          "howItWorks": "Kako funkcioniše",
+          "howItWorks": "Kako radi",
           "loyaltyPrograms": "Programi lojalnosti",
-          "contactUs": "Kontaktirajte nas",
+          "contactUs": "Kontakt",
           "login": "Prijava/Registracija"
         }
       },
@@ -50,12 +50,12 @@
         "pollButton": "Učestvuj u anketi"
       },
       "howItWorks": {
-        "title": "Kako funkcioniše",
+        "title": "Kako radi",
         "step1": "1. Pretraži i pozovi",
         "step2": "2. Ćaskaj i planiraj",
         "step3": "3. Sretni se i uživaj",
         "step4": "4. Štedi uz lojalnost",
-        "note": "Hej avanturisto! Samo da napomenem: pozivi ističu, možeš imati samo jedan razgovor odjednom i postoji ograničen broj poruka po razgovoru, pa biraj mudro. Pozivaj prijatelje samo ako si zaista spreman za barsku avanturu — i požuri pre nego što goblini popiju svo pivo!"
+        "note": "Hej avanturisto! Samo da napomenem: pozivi ističu, možeš imati samo jedan čet odjednom i postoji ograničen broj poruka po četu, pa biraj mudro. Pozivaj prijatelje samo ako si zaista spreman za barsku avanturu — i požuri pre nego što goblini popiju svo pivo!"
       },
       "loyalty": {
         "title": "Programi lojalnosti",
@@ -66,7 +66,7 @@
         "description": "Možda se pitaš isto što i mi: da li su ovi goblini isti ili različiti? Iskreno, još nismo sigurni... Još nismo shvatili kako da ih razlikujemo. Ako slučajno znaš kako, ili imaš pitanja ili predloge o servisu, radujemo se tvom javljanju putem imejla na <email>contacts@kegry.com</email> ili preko našeg <chat>četa</chat>."
       },
       "footer": {
-        "copyright": "© 2026 Kegrycorn™. All rights reserved.",
+        "copyright": "© 2026 Kegry™. Sva prava zadržana.",
         "privacy": "Politika privatnosti",
         "consent": "Saglasnost za komunikaciju",
         "terms": "Uslovi korišćenja",
@@ -116,7 +116,7 @@
         "passwordMismatch": "Lozinke se ne poklapaju"
       },
       "legal": {
-        "text": "Registracijom na Kegrycorn potvrđuješ da imaš <age>18 ili više godina</age> i da se slažeš sa našim <terms>Uslovima korišćenja</terms> i <privacy>Politikom privatnosti</privacy>."
+        "text": "Registracijom na Kegry potvrđuješ da imaš <age>18 ili više godina</age> i da se slažeš sa našim <terms>Uslovima korišćenja</terms> i <privacy>Politikom privatnosti</privacy>."
       }
     },
     "forgot": {
@@ -188,7 +188,7 @@
       "creating": "Kreiranje profila...",
       "back": "Nazad",
       "legal": {
-        "text": "Kreiranjem profila na Kegrycorn potvrđuješ da imaš <age>18 ili više godina</age> i da se slažeš sa našim <terms>Uslovima korišćenja</terms> i <privacy>Politikom privatnosti</privacy>."
+        "text": "Kreiranjem profila na Kegry potvrđuješ da imaš <age>18 ili više godina</age> i da se slažeš sa našim <terms>Uslovima korišćenja</terms> i <privacy>Politikom privatnosti</privacy>."
       },
       "validation": {
         "avatarRequired": "Molimo izaberi avatar",
@@ -219,7 +219,7 @@
         "noInvites": "Nema više pozivnica. Obnavljaju se sutra."
       },
       "invitePrompt": {
-        "message": "Hajde da zajedno gradimo Kegrycorn! 😊\nPozovi prijatelje preko referalnog linka: više ljudi = mnogo više avantura i zabave. Dovedi prijatelja i dobij posebnu nagradu: posebnog imaginarnog prijatelja u znak zahvalnosti! 🎉",
+        "message": "Hajde da zajedno gradimo Kegry! 😊\nPozovi prijatelje preko referalnog linka: više ljudi = mnogo više avantura i zabave. Dovedi prijatelja i dobij posebnu nagradu: posebnog imaginarnog prijatelja u znak zahvalnosti! 🎉",
         "later": "Kasnije",
         "letsGo": "Hajde"
       }

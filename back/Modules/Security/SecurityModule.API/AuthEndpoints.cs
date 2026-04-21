@@ -21,7 +21,6 @@ namespace SecurityModule.API;
 public class AuthEndpoints : IEndpoints
 {
     private static readonly string[] HostWhitelist = [
-        "kegrycorn.com",
         "kegry.com",
         "business.kegry.com",
         "kegry.rs",

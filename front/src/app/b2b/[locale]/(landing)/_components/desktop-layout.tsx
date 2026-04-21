@@ -27,14 +27,14 @@ export default function DesktopLayout() {
         <div className={styles.logoContainer}>
           <Image
             src="/assets/b2b/landing/header-logo.webp"
-            alt="Kegrycorn"
+            alt="Kegry"
             width={56}
             height={77}
             className={styles.logoIconImage}
           />
           <div className={styles.logoTextWrapper}>
             <div className={styles.logoTitleRow}>
-              <span className={`${styles.logoText}`}>Kegrycorn</span>
+              <span className={`${styles.logoText}`}>Kegry</span>
             </div>
             <span className={styles.logoSubtitle}>{t('header.subtitle')}</span>
           </div>
@@ -92,8 +92,8 @@ export default function DesktopLayout() {
           <Image
             src="/assets/b2b/landing/section-hero.webp"
             alt="Corn Graph"
-            width={250}
-            height={248}
+            width={260}
+            height={258}
           />
         </div>
       </section>
@@ -180,8 +180,8 @@ export default function DesktopLayout() {
           <Image
             src="/assets/b2b/landing/section-contact-us.webp"
             alt="Contact Us"
-            width={270}
-            height={254}
+            width={290}
+            height={280}
           />
         </div>
       </section>

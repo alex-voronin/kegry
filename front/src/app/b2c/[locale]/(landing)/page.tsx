@@ -32,7 +32,7 @@ export async function generateMetadata({
       .split(',')
       .map((k) => k.trim()),
 
-    metadataBase: new URL('https://kegry.com'),
+    metadataBase: new URL('https://kegry.rs'),
 
     alternates: {
       canonical: locale === 'sr' ? '/sr' : '/',
@@ -41,7 +41,7 @@ export async function generateMetadata({
     openGraph: {
       title: t('title'),
       description: t('description'),
-      url: 'https://kegry.com',
+      url: 'https://kegry.rs',
       siteName: BRAND_NAME,
       images: [
         {

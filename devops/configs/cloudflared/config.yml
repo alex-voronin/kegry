@@ -11,9 +11,9 @@ ingress:
     service: http://kegry-nginx:80
   - hostname: "*.kegry.com"
     service: http://kegry-nginx:80
-  - hostname: kegrycorn.com
+  - hostname: kegry.net
     service: http://kegry-nginx:80
-  - hostname: "*.kegrycorn.com"
+  - hostname: "*.kegry.net"
     service: http://kegry-nginx:80
   - hostname: kegry.rs
     service: http://kegry-nginx:80

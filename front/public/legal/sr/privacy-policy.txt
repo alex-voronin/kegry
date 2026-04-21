@@ -3,7 +3,7 @@ Politika privatnosti
 Datum stupanja na snagu: 10.4.2026.
 
 1. Ko smo mi (Rukovalac podacima)
-Kegrycorn je društvena platforma koja funkcioniše kao nezavisni digitalni proizvod koji pomaže korisnicima starijim od 18 godina da pronađu nove prijatelje i organizuju dobrovoljne društvene veze.
+Kegry je društvena platforma koja funkcioniše kao nezavisni digitalni proizvod koji pomaže korisnicima starijim od 18 godina da pronađu nove prijatelje i organizuju dobrovoljne društvene veze.
 Mi delujemo kao rukovalac podacima u skladu sa Opštom uredbom o zaštiti podataka (GDPR) (EU) 2016/679 za korisnike u EU/EIP i drugim jurisdikcijama gde se GDPR primenjuje.
 Kontakt: contacts@kegry.com (za sve upite u vezi sa privatnošću, uključujući ostvarivanje prava iz GDPR-a).
 Nismo odabrali službenika za zaštitu podataka (DPO) jer to nije obavezno prema članu 37. GDPR-a za naš obim i aktivnosti.
@@ -46,7 +46,7 @@ Rezime procene legitimnog interesa (LIA):
 4.2.3. Balansiranje: Vaša prava su zaštićena kroz transparentnost, lako brisanje, opcije odustajanja od preporuka, ograničeno zadržavanje i odsustvo marketinškog profilisanja. Smatramo da je uticaj nizak za većinu korisnika u kontekstu dobrovoljnog prijateljstva. Možete uložiti prigovor na obradu zasnovanu na legitimnim interesima u bilo kom trenutku (videti Vaša prava).
 
 5. Profilisanje i preporuke
-Kegrycorn koristi automatizovanu obradu da:
+Kegry koristi automatizovanu obradu da:
 Sortira i preporučuje profile na osnovu starosti, interesovanja i približne udaljenosti.
 Ovo profilisanje:
 5.1. Se koristi isključivo za poboljšanje korisničkog iskustva
@@ -95,7 +95,7 @@ Primenjujemo odgovarajuće tehničke i organizacione mere za zaštitu ličnih po
 U slučaju povrede ličnih podataka koja predstavlja rizik za korisnike, obavestićemo pogođene korisnike i relevantne organe u skladu sa zakonom.
 
 11. Privatnost dece
-Kegrycorn je namenjen korisnicima od 18 godina i starijim.
+Kegry je namenjen korisnicima od 18 godina i starijim.
 Ne prikupljamo svesno lične podatke od maloletnika.
 Ako verujete da je maloletnik dostavio podatke, kontaktirajte nas i mi ćemo ih odmah obrisati.
 

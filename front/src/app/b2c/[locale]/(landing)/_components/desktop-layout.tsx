@@ -45,10 +45,7 @@ export default function DesktopLayout() {
           <div className={styles.logoTextWrapper}>
             <div className={styles.logoTitleRow}>
               <span className={`${styles.logoText} ${styles.logoTextFull}`}>
-                Kegrycorn & Friends
-              </span>
-              <span className={`${styles.logoText} ${styles.logoTextShort}`}>
-                Kegrycorn
+                Kegry for Friends
               </span>
             </div>
             <span className={styles.logoSubtitle}>{t('header.subtitle')}</span>

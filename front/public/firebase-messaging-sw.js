@@ -62,7 +62,7 @@ messaging.onBackgroundMessage(async (payload) => {
   try {
     await self.registration.showNotification(
       // TODO: Use BRAND_NAME constant here after moving to modular firebase SDK
-      data.title ?? 'Kegrycorn',
+      data.title ?? 'Kegry',
       {
         body: data.body ?? '',
         icon: data.icon ?? '/assets/notifications/notification-logo.webp',

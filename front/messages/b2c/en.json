@@ -23,9 +23,9 @@
   "screens": {
     "landing": {
       "metadata": {
-        "title": "Kegrycorn. Find Your Bar Buddy!",
-        "description": "Kegrycorn helps you find bar buddies. No dating, no endless texting - just spontaneous real-life meetups at the bar. The best stories start off-screen!",
-        "keywords": "bar buddy, drinking buddy, meet people IRL, real life social, bar meetups, offline friends, kegrycorn, kegry, loyalty programs, off-screen stories"
+        "title": "Kegry. Find Your Bar Buddy!",
+        "description": "Kegry helps you find bar buddies. No dating, no endless texting - just spontaneous real-life meetups at the bar. The best stories start off-screen!",
+        "keywords": "bar buddy, drinking buddy, meet people IRL, real life social, bar meetups, offline friends, unicorn, kegry, loyalty programs, off-screen stories"
       },
       "header": {
         "subtitle": "The best stories start off-screen",
@@ -66,7 +66,7 @@
         "description": "You might be wondering the same thing we are: are these hobgoblins the same or different? Honestly, we're not sure yet... We still haven't figured out how to tell them apart. If you happen to know how to, or if you have any questions or suggestions about the service, we'd be happy to hear from you via email at <email>contacts@kegry.com</email> or through our <chat>chat</chat>."
       },
       "footer": {
-        "copyright": "© 2026 Kegrycorn™. All rights reserved.",
+        "copyright": "© 2026 Kegry™. All rights reserved.",
         "privacy": "Privacy Policy",
         "consent": "Consent to Communication",
         "terms": "Terms of Service",
@@ -116,7 +116,7 @@
         "passwordMismatch": "Passwords do not match"
       },
       "legal": {
-        "text": "By signing up to Kegrycorn, you confirm that you are <age>18 or older</age> and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+        "text": "By signing up to Kegry, you confirm that you are <age>18 or older</age> and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
       }
     },
     "forgot": {
@@ -188,7 +188,7 @@
       "creating": "Creating profile...",
       "back": "Back",
       "legal": {
-        "text": "By creating a profile on Kegrycorn, you confirm that you are <age>18 or older</age> and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+        "text": "By creating a profile on Kegry, you confirm that you are <age>18 or older</age> and agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
       },
       "validation": {
         "avatarRequired": "Please select your avatar",
@@ -219,7 +219,7 @@
         "noInvites": "No invites left. They'll reset tomorrow."
       },
       "invitePrompt": {
-        "message": "Let's grow Kegrycorn together! 😊\nInvite your friends with a referral link: more people = way more adventures and fun. Bring a friend and get a special reward: special imaginary friend as a thank you! 🎉",
+        "message": "Let's grow Kegry together! 😊\nInvite your friends with a referral link: more people = way more adventures and fun. Bring a friend and get a special reward: special imaginary friend as a thank you! 🎉",
         "later": "Later",
         "letsGo": "Let's Go"
       }

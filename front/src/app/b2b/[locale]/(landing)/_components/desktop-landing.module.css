@@ -127,7 +127,7 @@
 
 /* ===== Contact Us Section ===== */
 .contactSection {
-  @apply flex scroll-mt-[110px] items-start gap-8 px-16 pt-10;
+  @apply flex scroll-mt-[110px] items-start gap-4 px-16 pt-10;
 }
 
 .contactCard {

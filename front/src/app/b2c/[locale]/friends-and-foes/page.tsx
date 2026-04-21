@@ -135,8 +135,8 @@ export default function FriendsAndFoesPage() {
 
   const handleShareLink = async () => {
     const shareData = {
-      title: 'Kegrycorn',
-      text: 'Join me on Kegrycorn!',
+      title: 'Kegry',
+      text: 'Join me on Kegry!',
       url:
         userId != null
           ? `${window.location.origin}?referrer=${userId}`
