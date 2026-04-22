@@ -1,4 +1,3 @@
-using System.Globalization;
 using NotificationModule.Domain.Aggregates;
 using NotificationModule.Domain.Repositories;
 using NotificationsModule.Application.Services;
@@ -73,23 +72,6 @@ public static class AccountEventHandlers
             toEmail: @event.Email,
             baseUrl: @event.BaseUrl,
             resetToken: @event.ResetToken,
-            ct: ct);
-    }
-
-    public static async Task HandleAsync(
-        EmailConfirmationRequestedEvent @event,
-        IEmailNotificationStrategy emailNotificationStrategy,
-        INotificationsSettingsRepository settingsRepository,
-        CancellationToken ct = default)
-    {
-        Log.Information("{HandlerClass} Handling event {@Event}",
-            typeof(AccountEventHandlers).FullName, @event);
-
-        var settings = await settingsRepository.GetByIdOrDefaultAsync(@event.UserId, asNoTracking: true, ct: ct);
-        settings.ApplyCurrentLocale();
-        await emailNotificationStrategy.SendConfirmEmail(
-            toEmail: @event.Email,
-            confirmationCode: @event.ConfirmationCode,
             ct: ct);
     }
 }
