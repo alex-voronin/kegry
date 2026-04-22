@@ -45,6 +45,31 @@ public class AccountAnalyticsTests : IntegrationTestBase, IAsyncLifetime
     }
 
     [Fact]
+    public async Task WhenEmailConfirmationRequest_ThenEmailConfirmationEventIsCaptured()
+    {
+        var @event = new EmailConfirmationRequestedEvent()
+        {
+            UserId = Guid.NewGuid(),
+            Email = "test@example.com",
+            ConfirmationCode = "123456",
+        };
+
+        await Factory.Host
+            .TrackActivity()
+            .DoNotAssertOnExceptionsDetected()
+            .PublishMessageAndWaitAsync(@event);
+
+        Factory.PostHogClient.Received(1).Capture(
+            distinctId: @event.UserId.ToString(),
+            eventName: AnalyticsEvents.Account.EmailConfirmationRequests,
+            properties: Arg.Is<Dictionary<string, object>>(p =>
+                p[AnalyticsEvents.Keys.Environment].ToString() == AnalyticsEnv.Dev &&
+                p[AnalyticsEvents.Keys.Email].ToString() == @event.Email
+            )
+        );
+    }
+
+    [Fact]
     public async Task WhenAccountIsDeleted_ThenAccountDeletedEventIsCaptured()
     {
         var @event = new AccountDeletedEvent

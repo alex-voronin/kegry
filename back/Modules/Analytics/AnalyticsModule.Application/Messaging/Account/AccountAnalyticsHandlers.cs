@@ -18,6 +18,17 @@ public static class AccountAnalyticsHandlers
             });
     }
 
+    public static void Handle(EmailConfirmationRequestedEvent @event, IAnalyticsService analyticsService)
+    {
+        analyticsService.Capture(
+            distinctId: @event.UserId.ToString(),
+            eventName: AnalyticsEvents.Account.EmailConfirmationRequests,
+            properties: new Dictionary<string, object>
+            {
+                { AnalyticsEvents.Keys.Email, @event.Email },
+            });
+    }
+
     public static void Handle(AccountDeletedEvent @event, IAnalyticsService analyticsService)
     {
         analyticsService.Capture(

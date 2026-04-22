@@ -5,6 +5,7 @@ public static class AnalyticsEvents
     public static class Account
     {
         public const string Created = "account_created_v1";
+        public const string EmailConfirmationRequests = "email_confirmation_requested_v1";
         public const string Deleted = "account_deleted_v1";
         public const string PasswordResetRequested = "password_reset_requested_v1";
     }
