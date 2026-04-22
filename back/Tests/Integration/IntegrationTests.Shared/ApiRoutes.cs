@@ -6,6 +6,7 @@ public static class ApiRoutes
     {
         public const string Signup = "/api/v1/auth/signup";
         public const string ConfirmEmail = "/api/v1/auth/confirm-email";
+        public const string ResendConfirmationEmail = "/api/v1/auth/resend-confirmation-email";
         public const string Signin = "/api/v1/auth/signin";
         public const string RequestPasswordReset = "/api/v1/auth/request-password-reset";
         public const string ConfirmPasswordReset = "/api/v1/auth/confirm-password-reset";

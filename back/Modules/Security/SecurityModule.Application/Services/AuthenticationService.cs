@@ -305,6 +305,27 @@ internal class AuthenticationService : IAuthenticationService, IScoped
         }
     }
 
+    public async Task ResendConfirmationEmailAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null || user.IsBanned || user.Email == null || user.EmailConfirmed)
+        {
+            // Don't reveal user state for security reasons
+            return;
+        }
+
+        var confirmationCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+        await _bus.PublishAsync(
+            new EmailConfirmationRequestedEvent
+            {
+                UserId = user.Id,
+                Email = user.Email,
+                ConfirmationCode = confirmationCode,
+            }
+        );
+    }
+
     public async Task RequestPasswordResetAsync(string email, string baseUrl)
     {
         var user = await _userManager.FindByEmailAsync(email);

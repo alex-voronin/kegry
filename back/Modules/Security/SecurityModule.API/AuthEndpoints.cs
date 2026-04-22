@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -20,7 +20,8 @@ namespace SecurityModule.API;
 
 public class AuthEndpoints : IEndpoints
 {
-    private static readonly string[] HostWhitelist = [
+    private static readonly string[] HostWhitelist =
+    [
         "kegry.com",
         "business.kegry.com",
         "kegry.rs",
@@ -41,6 +42,7 @@ public class AuthEndpoints : IEndpoints
         anonymousGroup.MapPost("/api/v1/auth/google", SigninWithGoogle);
         anonymousGroup.MapPost("/api/v1/auth/renew-tokens", RenewTokens);
         anonymousGroup.MapPost("/api/v1/auth/confirm-email", ConfirmEmail);
+        anonymousGroup.MapPost("/api/v1/auth/resend-confirmation-email", ResendConfirmationEmail);
         anonymousGroup.MapPost("/api/v1/auth/request-password-reset", RequestPasswordReset);
         anonymousGroup.MapPost("/api/v1/auth/confirm-password-reset", ConfirmPasswordReset);
 
@@ -110,6 +112,14 @@ public class AuthEndpoints : IEndpoints
         );
     }
 
+    private static async Task<ApiResult.EmptyResult> ResendConfirmationEmail(
+        [FromBody] ResendConfirmationEmailRequest request,
+        IAuthenticationService service)
+    {
+        await service.ResendConfirmationEmailAsync(request.UserId);
+        return ApiResult.Empty;
+    }
+
     private static async Task<ApiResult<AuthResponse>> RenewTokens(
         [FromBody] RenewTokensRequest request,
         IAuthenticationService service)
@@ -135,6 +145,7 @@ public class AuthEndpoints : IEndpoints
         {
             throw SecurityExceptions.UntrustedHostException();
         }
+
         var baseUrl = httpRequest.Scheme + "://" + httpRequest.Host;
         await service.RequestPasswordResetAsync(request.Email, baseUrl);
         return ApiResult.Empty;

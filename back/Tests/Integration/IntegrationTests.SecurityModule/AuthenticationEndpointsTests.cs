@@ -87,6 +87,51 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
     }
 
     [Fact]
+    public async Task GivenUserWithNonVerifiedEmail_WhenUserRequestNewConfirmationCode_ThenNewConfirmationCodeIsSent()
+    {
+        string capturedCode = null!;
+        await Factory.NotificationManager.EmailSender
+            .SendEmailAsync(Arg.Do<Email>(e =>
+            {
+                var match = Regex.Match(e.Body, @"is (\d+)");
+                if (match.Success)
+                {
+                    capturedCode = match.Groups[1].Value;
+                }
+            }), Arg.Any<CancellationToken>());
+
+        ApiResult<AuthResponse>? signupResponse = null;
+        await Factory.Host.ExecuteAndWaitAsync(async () =>
+        {
+            // 1. Signup
+            var email = "new_code_email@gmail.com";
+            var request = new SignUpRequest(Email: email, Password: "123456789Qwe", UserType: UserType.B2C);
+
+            signupResponse = await Factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
+                ApiRoutes.Auth.Signup, request);
+        });
+
+        // 2. Check signup response
+        signupResponse.ShouldNotBeNull();
+        signupResponse.Success.ShouldBeTrue();
+        capturedCode.ShouldNotBeNullOrEmpty();
+
+        // 3. Get new confirmation code
+        capturedCode = "";
+        await Factory.Host.ExecuteAndWaitAsync(async () =>
+        {
+            var newCodeRequest = new ResendConfirmationEmailRequest(signupResponse.Result.UserId);
+            var newCodeResponse = await Factory.ApiClient
+                .PostAsync<ResendConfirmationEmailRequest, ApiResult.EmptyResult>(
+                    ApiRoutes.Auth.ResendConfirmationEmail, newCodeRequest);
+            newCodeResponse.Success.ShouldBeTrue();
+        });
+
+        // 5. Check email is sent
+        capturedCode.ShouldNotBeNullOrEmpty();
+    }
+
+    [Fact]
     public async Task GivenNoUsers_WhenUserSignsUpAndPassesInvalidEmail_ThenEmailErrorIsReturned()
     {
         var email = "asd@asldk.com";
