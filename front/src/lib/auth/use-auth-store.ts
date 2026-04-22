@@ -94,6 +94,7 @@ interface AuthState {
     allowedUserTypes: UserType[],
   ) => Promise<AuthResponse>;
   confirmEmail: (userId: string, token: string) => Promise<AuthResponse>;
+  resendConfirmationEmail: (userId: string) => Promise<void>;
   logout: () => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
   confirmPasswordReset: (
@@ -107,6 +108,9 @@ interface AuthState {
   setAuth: (auth: AuthResponse) => void;
   setRequiredAction: (action: RequiredAction) => void;
 }
+
+const RESEND_COOLDOWN_MS = 30_000;
+let lastResendTimestamp = 0;
 
 // --- Store ---
 
@@ -233,6 +237,32 @@ export const useAuthStore = create<AuthState>()(
           return res.data.result;
         } catch (error) {
           rethrowApiError(error, 'Email verification failed');
+        }
+      },
+
+      resendConfirmationEmail: async (userId) => {
+        const now = Date.now();
+        if (now - lastResendTimestamp < RESEND_COOLDOWN_MS) {
+          const err: any = new Error('Cooldown active');
+          err.code = 'CooldownActive';
+          throw err;
+        }
+
+        try {
+          const res = await authClient.post<ApiResult<any>>(
+            API_ENDPOINTS.AUTH.RESEND_CONFIRMATION_EMAIL,
+            { userId },
+          );
+
+          if (!res.data.success) {
+            throw new Error(
+              res.data.errors[0]?.error || 'Failed to resend verification email',
+            );
+          }
+
+          lastResendTimestamp = now;
+        } catch (error) {
+          rethrowApiError(error, 'Failed to resend verification email');
         }
       },
 

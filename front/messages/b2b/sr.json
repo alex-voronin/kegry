@@ -240,6 +240,9 @@
       "errorTitle": "Verifikacija nije uspela",
       "backToLogin": "Nazad na prijavu",
       "resend": "Ponovo pošalji kod",
+      "resendHint": "Niste primili kod? Proverite spam folder ili",
+      "resendSuccess": "Verifikacioni kod je ponovo poslat",
+      "resendCooldown": "Molimo sačekajte 30 sekundi pre ponovnog slanja",
       "errors": {
         "userNotFound": "Korisnička sesija nije pronađena. Molimo prijavite se ponovo.",
         "invalidCode": "Nevažeći verifikacioni kod"

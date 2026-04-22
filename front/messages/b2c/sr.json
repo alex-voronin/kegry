@@ -155,6 +155,9 @@
       "errorTitle": "Verifikacija nije uspela",
       "backToLogin": "Nazad na prijavu",
       "resend": "Ponovo pošalji kod",
+      "resendHint": "Nisi primio kod? Proveri spam folder ili",
+      "resendSuccess": "Verifikacioni kod je ponovo poslat",
+      "resendCooldown": "Molimo sačekaj 30 sekundi pre ponovnog slanja",
       "errors": {
         "userNotFound": "Korisnička sesija nije pronađena. Molimo prijavi se ponovo.",
         "invalidCode": "Nevažeći verifikacioni kod"

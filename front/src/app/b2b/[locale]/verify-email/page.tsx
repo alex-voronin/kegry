@@ -22,9 +22,13 @@ export default function VerifyEmailPage() {
   const t = useTranslations('screens.verifyEmail');
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
   const [value, setValue] = useState('');
 
   const confirmEmail = useAuthStore((state) => state.confirmEmail);
+  const resendConfirmationEmail = useAuthStore(
+    (state) => state.resendConfirmationEmail,
+  );
   const userId = useAuthStore((state) => state.userId);
 
   const handleSubmit = async (e?: React.FormEvent) => {
@@ -56,13 +60,45 @@ export default function VerifyEmailPage() {
     }
   };
 
+  const handleResend = async () => {
+    if (!userId) {
+      toast.error(t('errors.userNotFound'));
+      router.push(PAGE_ROUTES.B2B.LOGIN());
+      return;
+    }
+
+    setResending(true);
+
+    try {
+      await resendConfirmationEmail(userId);
+      toast.success(t('resendSuccess'));
+    } catch (err: any) {
+      if (err.code === 'CooldownActive') {
+        toast.warning(t('resendCooldown'));
+      } else {
+        toast.error(err.message);
+      }
+    } finally {
+      setResending(false);
+    }
+  };
+
   return (
     <div className={styles.page}>
       <div className={styles.container}>
         <Logo b2b={true} />
-        <div className="mt-8 flex flex-col items-center gap-2">
-          <p className="text-secondary text-center text-sm">
-            {t('description')}
+        <div className="mt-6 flex flex-col gap-2 px-8">
+          <p className="text-secondary text-lg">{t('description')}</p>
+          <p className="text-secondary mt-2 text-sm">
+            {t('resendHint')}{' '}
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={resending}
+              className="text-primary cursor-pointer bg-transparent font-semibold underline hover:opacity-80 disabled:opacity-50"
+            >
+              {t('resend').toLowerCase()}
+            </button>
           </p>
         </div>
 

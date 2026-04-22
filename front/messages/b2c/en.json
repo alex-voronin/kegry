@@ -155,6 +155,9 @@
       "errorTitle": "Verification failed",
       "backToLogin": "Back to login",
       "resend": "Resend Code",
+      "resendHint": "Didn't receive the code? Check your spam folder or",
+      "resendSuccess": "Verification code has been resent",
+      "resendCooldown": "Please wait 30 seconds before resending",
       "errors": {
         "userNotFound": "User session not found. Please login again.",
         "invalidCode": "Invalid verification code"

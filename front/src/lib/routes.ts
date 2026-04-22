@@ -69,6 +69,7 @@ export const API_ENDPOINTS = {
     SIGNIN: '/api/v1/auth/signin',
     SIGNUP: '/api/v1/auth/signup',
     CONFIRM_EMAIL: '/api/v1/auth/confirm-email',
+    RESEND_CONFIRMATION_EMAIL: '/api/v1/auth/resend-confirmation-email',
     LOGOUT: '/api/v1/auth/logout',
     REQUEST_PASSWORD_RESET: '/api/v1/auth/request-password-reset',
     CONFIRM_PASSWORD_RESET: '/api/v1/auth/confirm-password-reset',
