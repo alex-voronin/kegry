@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import {
   Dialog,
   DialogBackdrop,
@@ -12,6 +12,7 @@ import {
 import { Button, ButtonVariant } from './button';
 import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
+import { LocateFixed } from 'lucide-react';
 
 const LeafletMapInternal = dynamic(() => import('./leaflet-map-internal'), {
   ssr: false,
@@ -45,14 +46,36 @@ export function LeafletMapPickerModal({
     lng: number;
   } | null>(null);
 
+  const handleCurrentLocation = useCallback(() => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setSelectedLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.warn('Geolocation failed:', error);
+        },
+        { timeout: 10000 },
+      );
+    }
+  }, []);
+
   // Reset state on open
   useEffect(() => {
     if (isOpen) {
-      const lat = initialLat && initialLat !== 0 ? initialLat : DEFAULT_CENTER.lat;
-      const lng = initialLng && initialLng !== 0 ? initialLng : DEFAULT_CENTER.lng;
-      setSelectedLocation({ lat, lng });
+      const hasInitial =
+        initialLat && initialLat !== 0 && initialLng && initialLng !== 0;
+      if (hasInitial) {
+        setSelectedLocation({ lat: initialLat, lng: initialLng });
+      } else {
+        setSelectedLocation(DEFAULT_CENTER);
+        handleCurrentLocation();
+      }
     }
-  }, [isOpen, initialLat, initialLng]);
+  }, [isOpen, initialLat, initialLng, handleCurrentLocation]);
 
   const handleSave = () => {
     if (selectedLocation) {
@@ -60,6 +83,7 @@ export function LeafletMapPickerModal({
     }
     onClose();
   };
+
 
   return (
     <Transition show={isOpen}>
@@ -99,17 +123,28 @@ export function LeafletMapPickerModal({
                 </div>
               </div>
 
-              <div className="relative flex-1 bg-zinc-900">
-                {isOpen && selectedLocation && (
-                  <LeafletMapInternal 
-                    center={selectedLocation} 
-                    onLocationSelect={(lat, lng) => setSelectedLocation({ lat, lng })}
-                  />
-                )}
-                <div className="absolute bottom-0 right-0 z-1000 bg-black/40 px-2 py-0.5 text-[10px] text-zinc-300 backdrop-blur-sm pointer-events-none">
-                  © OpenStreetMap contributors
+                <div className="relative flex-1 bg-zinc-900">
+                  {isOpen && selectedLocation && (
+                    <LeafletMapInternal 
+                      center={selectedLocation} 
+                      onLocationSelect={(lat, lng) => setSelectedLocation({ lat, lng })}
+                    />
+                  )}
+                  
+                  <button
+                    type="button"
+                    onClick={handleCurrentLocation}
+                    className="absolute top-[84px] left-[10px] z-[1000] flex h-[34px] w-[34px] items-center justify-center rounded-[4px] bg-white text-neutral-700 shadow-[0_1px_5px_rgba(0,0,0,0.65)] hover:bg-neutral-100 transition-colors"
+                    title="Move to current location"
+                    aria-label="Move to current location"
+                  >
+                    <LocateFixed size={18} />
+                  </button>
+
+                  <div className="absolute bottom-0 right-0 z-[1000] bg-black/40 px-2 py-0.5 text-[10px] text-zinc-300 backdrop-blur-sm pointer-events-none">
+                    © OpenStreetMap contributors
+                  </div>
                 </div>
-              </div>
             </DialogPanel>
           </TransitionChild>
         </div>
