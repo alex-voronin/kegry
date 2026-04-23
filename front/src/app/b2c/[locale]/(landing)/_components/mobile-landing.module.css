@@ -127,7 +127,7 @@
 }
 
 .mobileSection:first-of-type {
-  @apply pt-20;
+  @apply pt-24;
 }
 
 .mobileSectionImage {
