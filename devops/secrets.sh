@@ -8,6 +8,7 @@ cd "$DIR"
 
 COMMAND=${1:-}
 FILE=${2:-}
+CLOUDFLARED_CREDS_PATH="configs/cloudflared/credentials.json"
 
 if [[ "$COMMAND" != "encrypt" && "$COMMAND" != "decrypt" ]]; then
     echo "Usage: ./secrets.sh [encrypt|decrypt] [optional_file]"
@@ -19,6 +20,11 @@ process_file() {
     local file=$2
     local target
     
+    local type="dotenv"
+    if [[ "$file" == *.json* ]]; then
+        type="json"
+    fi
+
     if [[ "$cmd" == "encrypt" ]]; then
         target="${file}.sops"
         if [ -f "$target" ]; then
@@ -26,7 +32,7 @@ process_file() {
             return
         fi
         echo "→ Encrypting $file"
-        sops -e --input-type dotenv --output-type dotenv "$file" > "$target"
+        sops -e --input-type "$type" --output-type "$type" "$file" > "$target"
     else
         target="${file%.sops}"
         if [ -f "$target" ]; then
@@ -34,7 +40,7 @@ process_file() {
             return
         fi
         echo "→ Decrypting $file"
-        sops -d --input-type dotenv --output-type dotenv "$file" > "$target"
+        sops -d --input-type "$type" --output-type "$type" "$file" > "$target"
     fi
 }
 
@@ -44,10 +50,18 @@ elif [ "$COMMAND" = "encrypt" ]; then
     while IFS= read -r file; do
         process_file "$COMMAND" "$file"
     done < <(find . -type f -name ".env.*" ! -name "*.example" ! -name "*.sops")
+    
+    if [ -f "$CLOUDFLARED_CREDS_PATH" ]; then
+        process_file "encrypt" "$CLOUDFLARED_CREDS_PATH"
+    fi
 elif [ "$COMMAND" = "decrypt" ]; then
     while IFS= read -r file; do
         process_file "$COMMAND" "$file"
     done < <(find . -type f -name ".env.*.sops")
+    
+    if [ -f "${CLOUDFLARED_CREDS_PATH}.sops" ]; then
+        process_file "decrypt" "${CLOUDFLARED_CREDS_PATH}.sops"
+    fi
 fi
 
 echo "✅ Done."

@@ -14,4 +14,9 @@ find devops -type f -name ".env.*.sops" | while read -r sops_file; do
     fi
 done
 
+# Clean up decrypted cloudflared credentials
+creds_file="devops/configs/cloudflared/credentials.json"
+if [ -f "$creds_file" ]; then
+    rm "$creds_file"
+fi
 echo "✅ Cleanup complete."
