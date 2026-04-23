@@ -168,7 +168,7 @@
       "slideFeed": {
         "textDontGoAlone": "Pick a companion and start your journey together! But keep in mind:",
         "textInvites": "• You have a limited number of invites per day. Don't worry, they refresh tomorrow.",
-        "textNewChat": "• Once you've both sent invites and match, a chat will open so you can start planning your meetup! 🍺"
+        "textNewChat": "• Once you both accept the invites, a chat will open so you can start planning your meetup! 🍺"
       },
       "slidePermissions": {
         "location": "📍 Geolocation is absolutely necessary for the feed to work. Please allow it when we ask for permission.",
