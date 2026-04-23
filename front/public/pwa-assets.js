@@ -57,6 +57,8 @@ const STATIC_ASSETS = [
   "/assets/npc/cockatrice/cover.webp",
   "/assets/npc/corn-tavern/avatar.webp",
   "/assets/npc/corn-tavern/cover.webp",
+  "/assets/npc/sheep-corn/avatar.webp",
+  "/assets/npc/sheep-corn/cover.webp",
   "/assets/permissions/check-mark.svg",
   "/assets/profile/edit-icon.svg",
   "/assets/profile/logout-icon.svg",
