@@ -185,7 +185,8 @@ public class NpcEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetLocale(SupportedLocales.English);
         var inviteResponse = await Factory.ApiClient.GetAsync<ApiResult<InviteNpcResponse>>(ApiRoutes.Npc.Invite(npcId));
         inviteResponse.Success.ShouldBeTrue();
-        inviteResponse.Result.Monolog.ShouldContain("beer");
+        // There is no letter "y" in the Serbian language, so we can just check for its presence.
+        inviteResponse.Result.Monolog.ShouldContain("y");
     }
 
     [Fact]
@@ -206,6 +207,6 @@ public class NpcEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetLocale(SupportedLocales.Serbian);
         var inviteResponse = await Factory.ApiClient.GetAsync<ApiResult<InviteNpcResponse>>(ApiRoutes.Npc.Invite(npcId));
         inviteResponse.Success.ShouldBeTrue();
-        inviteResponse.Result.Monolog.ShouldContain("pivo");
+        inviteResponse.Result.Monolog.ShouldContain(" je ");
     }
 }

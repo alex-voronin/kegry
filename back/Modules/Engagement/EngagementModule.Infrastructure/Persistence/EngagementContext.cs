@@ -56,6 +56,7 @@ public class EngagementContext : DbContext
 
             const string cornKey = "Corn.Name";
             const string cockatriceKey = "Cockatrice.Name";
+            const string sheepCornKey = "SheepCorn.Name";
             builder.HasData(
                 new Npc
                 {
@@ -65,6 +66,15 @@ public class EngagementContext : DbContext
                     AvatarUrl = "/assets/npc/corn-tavern/avatar.webp",
                     CoverUrl = "/assets/npc/corn-tavern/cover.webp",
                     MonologKey = "Corn.Monolog"
+                },
+                new Npc
+                {
+                    Id = sheepCornKey.ToDeterministicGuid(),
+                    IsSecret = false,
+                    NameKey = sheepCornKey,
+                    AvatarUrl = "/assets/npc/sheep-corn/avatar.webp",
+                    CoverUrl = "/assets/npc/sheep-corn/cover.webp",
+                    MonologKey = "SheepCorn.Monolog"
                 },
                 new Npc
                 {

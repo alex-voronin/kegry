@@ -82,6 +82,7 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                 values: new object[,]
                 {
                     { new Guid("78c08461-c88c-4a9b-8061-6cdeb1273b47"), "/assets/npc/cockatrice/avatar.webp", "/assets/npc/cockatrice/cover.webp", true, "Cockatrice.Monolog", "Cockatrice.Name" },
+                    { new Guid("9750df0d-b1d2-18a7-898c-9aa2a5531e7d"), "/assets/npc/sheep-corn/avatar.webp", "/assets/npc/sheep-corn/cover.webp", false, "SheepCorn.Monolog", "SheepCorn.Name" },
                     { new Guid("f7f487f8-0d3c-6e39-efd7-0c2be686b864"), "/assets/npc/corn-tavern/avatar.webp", "/assets/npc/corn-tavern/cover.webp", false, "Corn.Monolog", "Corn.Name" }
                 });
 

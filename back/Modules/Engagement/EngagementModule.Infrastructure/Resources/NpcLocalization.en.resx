@@ -19,10 +19,20 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="Corn.Name" xml:space="preserve">
-        <value>Wibbly Toby</value>
+        <value>Kegry the Corn</value>
     </data>
     <data name="Corn.Monolog" xml:space="preserve">
         <value>Hey! What?! Who drank the beer from your mug? The dark, thick one with that fresh foam you just can't resist? I can't even imagine! It definitely wasn't me. But here's a little gift for you anyway. *[Brings you a bundle of straw]* Just in case. And definitely not because I'm trying to make up for something I totally didn't do.</value>
+    </data>
+    <data name="SheepCorn.Name" xml:space="preserve">
+        <value>Curly Dolly</value>
+    </data>
+    <data name="SheepCorn.Monolog" xml:space="preserve">
+        <value>Why so serious?  
+The pleasure is to play, it makes no difference what you say  
+I don't share your greed, the only card I need is  
+The Ace of Spades
+        </value>
     </data>
     <data name="Cockatrice.Name" xml:space="preserve">
         <value>Clumsy Benny</value>

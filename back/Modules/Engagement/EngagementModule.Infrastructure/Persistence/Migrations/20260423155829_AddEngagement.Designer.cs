@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EngagementModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(EngagementContext))]
-    [Migration("20260318142046_AddEngagement")]
+    [Migration("20260423155829_AddEngagement")]
     partial class AddEngagement
     {
         /// <inheritdoc />
@@ -21,7 +21,7 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("engagement")
-                .HasAnnotation("ProductVersion", "10.0.1")
+                .HasAnnotation("ProductVersion", "10.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -73,6 +73,15 @@ namespace EngagementModule.Infrastructure.Persistence.Migrations
                             IsSecret = false,
                             MonologKey = "Corn.Monolog",
                             NameKey = "Corn.Name"
+                        },
+                        new
+                        {
+                            Id = new Guid("9750df0d-b1d2-18a7-898c-9aa2a5531e7d"),
+                            AvatarUrl = "/assets/npc/sheep-corn/avatar.webp",
+                            CoverUrl = "/assets/npc/sheep-corn/cover.webp",
+                            IsSecret = false,
+                            MonologKey = "SheepCorn.Monolog",
+                            NameKey = "SheepCorn.Name"
                         },
                         new
                         {
