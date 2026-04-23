@@ -63,3 +63,11 @@
 .loadingOverlay {
   @apply bg-background/80 fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-sm;
 }
+
+.socialLinks {
+  @apply mt-6 flex justify-center items-center gap-6;
+}
+
+.socialLink {
+  @apply opacity-60 transition-opacity hover:opacity-100 text-secondary;
+}

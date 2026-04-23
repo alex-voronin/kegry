@@ -1,6 +1,7 @@
+import { cn } from '@/lib/utils';
 import styles from './desktop-landing.module.css';
 
-const SOCIAL_LINKS = [
+export const SOCIAL_LINKS = [
   {
     name: 'Instagram',
     href: 'https://www.instagram.com/thekegry',
@@ -30,16 +31,21 @@ const SOCIAL_LINKS = [
   },
 ];
 
-export default function SocialLinks() {
+interface SocialLinksProps {
+  className?: string;
+  iconClassName?: string;
+}
+
+export default function SocialLinks({ className, iconClassName }: SocialLinksProps) {
   return (
-    <div className={styles.socialLinks}>
+    <div className={cn(styles.socialLinks, className)}>
       {SOCIAL_LINKS.map((link) => (
         <a
           key={link.name}
           href={link.href}
           target="_blank"
           rel="noopener noreferrer"
-          className={styles.socialLink}
+          className={cn(styles.socialLink, iconClassName)}
           aria-label={link.name}
         >
           {link.icon}
