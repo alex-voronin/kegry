@@ -41,6 +41,10 @@
   color: var(--color-landing-subheading);
 }
 
+.actions {
+  @apply flex w-full items-center justify-center gap-2;
+}
+
 .confirmButton {
   @apply cursor-pointer rounded-md px-6 py-2 text-sm font-semibold transition-colors;
   background-color: var(--color-landing-button);

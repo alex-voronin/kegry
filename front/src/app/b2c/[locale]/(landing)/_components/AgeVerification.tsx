@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { LanguageSelector } from '@/components/common/LanguageSelector';
 import styles from './AgeVerification.module.css';
 
 const STORAGE_KEY = 'age_verified';
@@ -33,9 +34,12 @@ export function AgeVerification() {
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <p className={styles.message}>{t('message')}</p>
-        <button onClick={handleConfirm} className={styles.confirmButton}>
-          {t('confirm')}
-        </button>
+        <div className={styles.actions}>
+          <LanguageSelector />
+          <button onClick={handleConfirm} className={styles.confirmButton}>
+            {t('confirm')}
+          </button>
+        </div>
         <div className={styles.links}>
           <Link href={PAGE_ROUTES.LEGAL.TERMS} className={styles.link}>
             {t('termsOfService')}
