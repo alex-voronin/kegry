@@ -2,7 +2,8 @@
         add-migration-back list-modules-back run-front run-tests \
         format audit deploy provision db-shell clean \
         dotenv-setup-encryption dotenv-encrypt dotenv-decrypt \
-        dotenv-encrypt-file dotenv-decrypt-file dotenv-cleanup
+        dotenv-encrypt-file dotenv-decrypt-file dotenv-cleanup \
+        get-version set-version
 
 # =============================================
 # Configuration
@@ -134,6 +135,36 @@ dotenv-decrypt-file: ## Decrypt a specific .sops file. Usage: make dotenv-decryp
 
 dotenv-cleanup: ## Remove decrypted .env files that have a .sops source
 	./devops/clean-dotenv.sh
+
+# =============================================
+# Versioning
+# =============================================
+
+get-version: ## Get current frontend version
+	@npm pkg get version --prefix $(FRONT_DIR) | tr -d '\"'
+
+set-version: ## Set frontend version and create git tag. Usage: make set-version version=X.X.X
+	@if [ -z "$(version)" ]; then \
+		echo "Error: version parameter is required"; \
+		echo "Usage: make set-version version=1.2.3"; \
+		exit 1; \
+	fi
+	@if [ -n "$$(git status --porcelain)" ]; then \
+		echo "Error: working directory is dirty. Commit or stash all changes first"; \
+		exit 1; \
+	fi
+	@if git rev-parse "v$(version)" >/dev/null 2>&1; then \
+		echo "Error: tag v$(version) already exists"; \
+		exit 1; \
+	fi
+
+	cd $(FRONT_DIR) && npm version $(version) --no-git-tag-version && \
+	git add package.json package-lock.json && \
+	git commit -m "chore: release v$(version)" && \
+	git tag "v$(version)"
+
+	@echo "Version set to $(version) and tagged."
+
 
 # =============================================
 # Helper targets
