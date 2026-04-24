@@ -10,6 +10,10 @@ trap "./devops/clean-dotenv.sh" EXIT
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$DIR/.."
 
+echo "Verifying WolverineFX handlers are up-to-date..."
+dotnet run --project back/API.Web/API.Web.csproj -- codegen write
+git diff --exit-code || { echo "❌ Codegen is out of sync"; exit 1; }
+
 # Decrypt secrets if they haven't been decrypted yet
 if [ ! -f "devops/.env.deploy" ] && [ -f "devops/.env.deploy.sops" ]; then
     echo "🔒 Password required to decrypt SOPS secrets..."

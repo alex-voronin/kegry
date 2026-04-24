@@ -1,5 +1,5 @@
 .PHONY: help build build-back build-front run-back describe-bus-back \
-        add-migration-back list-modules-back run-front run-tests \
+        generate-handlers-back add-migration-back list-modules-back run-front run-tests \
         format audit deploy provision db-shell clean \
         dotenv-setup-encryption dotenv-encrypt dotenv-decrypt \
         dotenv-encrypt-file dotenv-decrypt-file dotenv-cleanup \
@@ -46,6 +46,9 @@ run-back: ## Run the .NET backend API
 
 describe-bus-back: ## Describe WolverineFX bus routes
 	dotnet run --project $(WEB_API_PROJECT) -- describe
+
+generate-handlers-back: ## Generate WolverineFX handlers
+	dotnet run --project $(WEB_API_PROJECT) -- codegen write
 
 run-tests: ## Run all backend tests
 	dotnet test $(BACK_SOLUTION) -m:1

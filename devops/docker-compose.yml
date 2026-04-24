@@ -45,7 +45,8 @@ services:
     env_file:
       - ./configs/.env.back
     environment:
-      - DOTNET_GCHeapHardLimitPercent=0x55 # 85%
+      - DOTNET_GCHeapHardLimitPercent=0x50 # 80%
+      - DOTNET_gcServer=0
     depends_on:
       postgres:
         condition: service_healthy
