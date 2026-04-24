@@ -11,7 +11,11 @@ import { useViewportItemCount } from '@/hooks/use-viewport-item-count';
 import { toast } from 'react-toastify';
 import { checkPermissionStatus } from '@/lib/permissions';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { useDiscountsStore, AvailableDiscountDto } from '../use-discounts-store';
+import { getLowAccuracyLocation } from '@/lib/geo-utils';
+import {
+  useDiscountsStore,
+  AvailableDiscountDto,
+} from '../use-discounts-store';
 import styles from '../page.module.css';
 
 export function DiscountsTab() {
@@ -36,12 +40,7 @@ export function DiscountsTab() {
 
   const loadData = async (offset: number) => {
     try {
-      const position = await new Promise<GeolocationPosition>(
-        (resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject);
-        },
-      );
-      const { latitude, longitude } = position.coords;
+      const { latitude, longitude } = await getLowAccuracyLocation();
       await fetchOffers(latitude, longitude, offset, limit);
     } catch (err: any) {
       if (err.code === 1) {
@@ -140,8 +139,7 @@ export function DiscountsTab() {
             className="cursor-pointer"
             onClick={() => setSelectedOffer(offer)}
             avatarUrl={
-              offer.companyAvatarImageUrl ||
-              '/assets/common/venues-icon.svg'
+              offer.companyAvatarImageUrl || '/assets/common/venues-icon.svg'
             }
             avatarAlt={offer.companyName}
             title={offer.companyName}

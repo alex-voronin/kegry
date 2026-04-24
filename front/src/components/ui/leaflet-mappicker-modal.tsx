@@ -13,12 +13,13 @@ import { Button, ButtonVariant } from './button';
 import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
 import { LocateFixed } from 'lucide-react';
+import { getLowAccuracyLocation } from '@/lib/geo-utils';
 
 const LeafletMapInternal = dynamic(() => import('./leaflet-map-internal'), {
   ssr: false,
   loading: () => (
     <div className="flex h-full w-full items-center justify-center bg-[#1A1A1A]">
-      <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+      <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
     </div>
   ),
 });
@@ -46,20 +47,17 @@ export function LeafletMapPickerModal({
     lng: number;
   } | null>(null);
 
-  const handleCurrentLocation = useCallback(() => {
+  const handleCurrentLocation = useCallback(async () => {
     if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setSelectedLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.warn('Geolocation failed:', error);
-        },
-        { timeout: 10000 },
-      );
+      try {
+        const { latitude, longitude } = await getLowAccuracyLocation();
+        setSelectedLocation({
+          lat: latitude,
+          lng: longitude,
+        });
+      } catch (error) {
+        console.warn('Geolocation failed:', error);
+      }
     }
   }, []);
 
@@ -83,7 +81,6 @@ export function LeafletMapPickerModal({
     }
     onClose();
   };
-
 
   return (
     <Transition show={isOpen}>
@@ -123,28 +120,30 @@ export function LeafletMapPickerModal({
                 </div>
               </div>
 
-                <div className="relative flex-1 bg-zinc-900">
-                  {isOpen && selectedLocation && (
-                    <LeafletMapInternal 
-                      center={selectedLocation} 
-                      onLocationSelect={(lat, lng) => setSelectedLocation({ lat, lng })}
-                    />
-                  )}
-                  
-                  <button
-                    type="button"
-                    onClick={handleCurrentLocation}
-                    className="absolute top-[84px] left-[10px] z-[1000] flex h-[34px] w-[34px] items-center justify-center rounded-[4px] bg-white text-neutral-700 shadow-[0_1px_5px_rgba(0,0,0,0.65)] hover:bg-neutral-100 transition-colors"
-                    title="Move to current location"
-                    aria-label="Move to current location"
-                  >
-                    <LocateFixed size={18} />
-                  </button>
+              <div className="relative flex-1 bg-zinc-900">
+                {isOpen && selectedLocation && (
+                  <LeafletMapInternal
+                    center={selectedLocation}
+                    onLocationSelect={(lat, lng) =>
+                      setSelectedLocation({ lat, lng })
+                    }
+                  />
+                )}
 
-                  <div className="absolute bottom-0 right-0 z-[1000] bg-black/40 px-2 py-0.5 text-[10px] text-zinc-300 backdrop-blur-sm pointer-events-none">
-                    © OpenStreetMap contributors
-                  </div>
+                <button
+                  type="button"
+                  onClick={handleCurrentLocation}
+                  className="absolute top-[84px] left-[10px] z-[1000] flex h-[34px] w-[34px] items-center justify-center rounded-[4px] bg-white text-neutral-700 shadow-[0_1px_5px_rgba(0,0,0,0.65)] transition-colors hover:bg-neutral-100"
+                  title="Move to current location"
+                  aria-label="Move to current location"
+                >
+                  <LocateFixed size={18} />
+                </button>
+
+                <div className="pointer-events-none absolute right-0 bottom-0 z-[1000] bg-black/40 px-2 py-0.5 text-[10px] text-zinc-300 backdrop-blur-sm">
+                  © OpenStreetMap contributors
                 </div>
+              </div>
             </DialogPanel>
           </TransitionChild>
         </div>

@@ -6,6 +6,7 @@ import { API_ENDPOINTS } from '@/lib/routes';
 import { ApiResult } from '@/lib/api-types';
 import { extractApiError } from '@/lib/api-error';
 import { extractQrCode } from '@/lib/qr-utils';
+import { getHighAccuracyLocation } from '@/lib/geo-utils';
 
 interface UseQrCheckInOptions {
   /** Called after a successful check-in, e.g. to reload venue data. */
@@ -30,11 +31,7 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
       onErrorCallback?: (venueId: string | null) => void,
     ): Promise<boolean> => {
       try {
-        const position = await new Promise<GeolocationPosition>(
-          (resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject);
-          },
-        );
+        const position = await getHighAccuracyLocation();
 
         const response = await apiClient.post<ApiResult<CheckInResponse>>(
           API_ENDPOINTS.VENUES.QR_CHECK_IN(qrCode),

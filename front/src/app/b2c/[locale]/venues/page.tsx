@@ -20,6 +20,7 @@ import {
   DistanceUnits,
 } from '@/app/b2c/[locale]/settings/use-settings-store';
 import { metersToKilometers, metersToMiles } from '@/lib/distance-utils';
+import { getLowAccuracyLocation } from '@/lib/geo-utils';
 import { QrScannerPopup } from '@/components/common/qr-scanner-popup';
 import { useQrCheckIn } from './use-qr-check-in';
 import { ScanQrCode } from 'lucide-react';
@@ -69,12 +70,7 @@ export default function VenuesScreen() {
 
   const loadData = async (offset: number) => {
     try {
-      const position = await new Promise<GeolocationPosition>(
-        (resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject);
-        },
-      );
-      const { latitude, longitude } = position.coords;
+      const { latitude, longitude } = await getLowAccuracyLocation();
       await fetchVenues(latitude, longitude, offset, limit);
     } catch (err: any) {
       if (err.code === 1) {

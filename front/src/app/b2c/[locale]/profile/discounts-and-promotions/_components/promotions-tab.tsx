@@ -11,6 +11,7 @@ import { useViewportItemCount } from '@/hooks/use-viewport-item-count';
 import { toast } from 'react-toastify';
 import { checkPermissionStatus } from '@/lib/permissions';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { getLowAccuracyLocation } from '@/lib/geo-utils';
 import { PromoIcon } from '@/lib/promo-types';
 import {
   usePromotionsStore,
@@ -41,12 +42,7 @@ export function PromotionsTab() {
 
   const loadData = async (offset: number) => {
     try {
-      const position = await new Promise<GeolocationPosition>(
-        (resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject);
-        },
-      );
-      const { latitude, longitude } = position.coords;
+      const { latitude, longitude } = await getLowAccuracyLocation();
       await fetchPromotions(latitude, longitude, offset, limit);
     } catch (err: any) {
       if (err.code === 1) {
