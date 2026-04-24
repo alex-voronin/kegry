@@ -16,7 +16,7 @@ internal class LocationService : DomainService<ILocationRepository>, ILocationSe
         internal static readonly TimeSpan CurrentLocationTtl = TimeSpan.FromMinutes(45);
         internal const double ThresholdMeters = 750;
         internal const double MaxSpeedMps = 100; // 360 km/h
-        internal const double MetThresholdMeters = 100;
+        internal const double MetThresholdMeters = 150;
     }
 
     private readonly ITrackedUserPairRepository _trackedUserPairRepository;

@@ -47,7 +47,7 @@ public interface ILoyaltyService
 
 internal class LoyaltyService : ILoyaltyService, IScoped
 {
-    internal const double MaxCheckInDistanceMeters = 100.0;
+    internal const double MaxCheckInDistanceMeters = 150.0;
     internal const double CheckInCooldownHours = 12;
 
     private readonly IVenueRepository _venueRepository;
