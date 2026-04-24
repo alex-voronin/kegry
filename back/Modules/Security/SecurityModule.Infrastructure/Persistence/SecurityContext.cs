@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SecurityModule.Domain.Aggregates;
@@ -6,8 +7,9 @@ using Shared.Infrastructure.Persistence.Audit;
 
 namespace SecurityModule.Infrastructure.Persistence;
 
-public class SecurityContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
+public class SecurityContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>, IDataProtectionKeyContext
 {
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } 
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     public SecurityContext(DbContextOptions<SecurityContext> options) : base(options)

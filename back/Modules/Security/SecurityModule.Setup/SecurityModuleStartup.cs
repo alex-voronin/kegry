@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,6 +36,10 @@ public class SecurityModuleStartup : AppModuleStartupBase<SecurityContext>
     public override void Register(IHostApplicationBuilder appBuilder, IHostBuilder host)
     {
         base.Register(appBuilder, host);
+        
+        appBuilder.Services.AddDataProtection()
+            .PersistKeysToDbContext<SecurityContext>()
+            .SetApplicationName("kegry");
 
         var authTokenConfigSection = appBuilder.Configuration
             .GetSection($"Authentication:{nameof(AuthTokenConfig)}");
