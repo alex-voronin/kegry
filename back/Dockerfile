@@ -23,8 +23,6 @@ RUN dotnet restore "hoppyfy.me.sln"
 # The 'COPY . .' here brings in all source files (respecting .dockerignore)
 COPY . .
 WORKDIR "/src/API.Web"
-# generate WolverineFx handlers to save memory at runtime
-RUN DOTNET_ENVIRONMENT=Codegen dotnet run --project "API.Web.csproj" -- codegen write
 RUN dotnet publish "API.Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Stage 4: Final - Production runtime image
