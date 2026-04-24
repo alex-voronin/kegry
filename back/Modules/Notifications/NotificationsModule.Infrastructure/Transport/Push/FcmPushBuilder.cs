@@ -101,8 +101,8 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
     public PushMessage BuildChatMessageReceivedPush(string[] fcmTokens, ChatMessageSentEvent @event,
         bool silent = false)
     {
-        var title = _localizer.GetString("Push.ChatMessageReceived.Title");
-        var body = _localizer.GetString("Push.ChatMessageReceived.Body", @event.FromUserName);
+        var title = _localizer.GetString("Push.ChatMessageReceived.Title", @event.FromUserName);
+        var body = _localizer.GetString("Push.ChatMessageReceived.Body");
 
         var data = new Dictionary<string, string>()
         {
