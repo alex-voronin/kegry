@@ -167,6 +167,9 @@ public class VenueContext : DbContext
                 .WithOne()
                 .HasForeignKey(dd => dd.DiscountId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasQueryFilter(NamedFilters.Venue.Verified, d => d.Venue.IsVerified);
+            entity.HasQueryFilter(NamedFilters.Venue.SoftDeleted, d => !d.Venue.IsDeleted);
         });
     }
 
@@ -214,6 +217,9 @@ public class VenueContext : DbContext
                 .WithMany(v => v.Promos)
                 .HasForeignKey(d => d.VenueId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasQueryFilter(NamedFilters.Venue.Verified, p => p.Venue.IsVerified);
+            entity.HasQueryFilter(NamedFilters.Venue.SoftDeleted, p => !p.Venue.IsDeleted);
         });
     }
 }

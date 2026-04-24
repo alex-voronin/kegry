@@ -63,6 +63,8 @@ public class ChatContext : DbContext
                 .WithOne(u => u.ChatLink)
                 .HasForeignKey<ActiveChatUserLink>(l => l.UserId)
                 .IsRequired();
+
+            builder.HasQueryFilter(l => !l.Chat.IsDeleted);
         });
 
         modelBuilder.Entity<ChatMessage>(builder =>
@@ -76,6 +78,8 @@ public class ChatContext : DbContext
                 .WithMany(x => x.Messages)
                 .HasForeignKey(x => x.ChatId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasQueryFilter(x => !x.Chat.IsDeleted);
         });
 
         base.OnModelCreating(modelBuilder);

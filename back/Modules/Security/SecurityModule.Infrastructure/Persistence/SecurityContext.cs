@@ -9,7 +9,7 @@ namespace SecurityModule.Infrastructure.Persistence;
 
 public class SecurityContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>, IDataProtectionKeyContext
 {
-    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } 
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     public SecurityContext(DbContextOptions<SecurityContext> options) : base(options)

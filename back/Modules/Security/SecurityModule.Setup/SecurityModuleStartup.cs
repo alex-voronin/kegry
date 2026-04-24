@@ -36,7 +36,7 @@ public class SecurityModuleStartup : AppModuleStartupBase<SecurityContext>
     public override void Register(IHostApplicationBuilder appBuilder, IHostBuilder host)
     {
         base.Register(appBuilder, host);
-        
+
         appBuilder.Services.AddDataProtection()
             .PersistKeysToDbContext<SecurityContext>()
             .SetApplicationName("kegry");
