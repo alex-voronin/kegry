@@ -35,6 +35,7 @@ export default function VenuesScreen() {
     null,
   );
   const [isLocationDenied, setIsLocationDenied] = useState(false);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
   const { isScannerOpen, setIsScannerOpen, handleQrCode } = useQrCheckIn({
     onSuccess: (id) => {
       router.push(`${PAGE_ROUTES.VENUE_DETAIL(id)}?animate-check-in=true`);
@@ -69,6 +70,7 @@ export default function VenuesScreen() {
   }, [reset]);
 
   const loadData = async (offset: number) => {
+    setIsGettingLocation(true);
     try {
       const { latitude, longitude } = await getLowAccuracyLocation();
       await fetchVenues(latitude, longitude, offset, limit);
@@ -79,6 +81,8 @@ export default function VenuesScreen() {
       } else {
         toast.error(t('toast.loadFailed'));
       }
+    } finally {
+      setIsGettingLocation(false);
     }
   };
 
@@ -158,7 +162,7 @@ export default function VenuesScreen() {
       />
 
       <div className={styles.content}>
-        {isLoading && venues.length === 0 ? (
+        {(isLoading || isGettingLocation) && venues.length === 0 ? (
           <div className={styles.emptyState}>
             <Spinner />
           </div>

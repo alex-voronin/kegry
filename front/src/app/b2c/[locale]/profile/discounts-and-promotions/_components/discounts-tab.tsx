@@ -24,6 +24,7 @@ export function DiscountsTab() {
   const [selectedOffer, setSelectedOffer] =
     useState<AvailableDiscountDto | null>(null);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
 
   const { ref: pageBottomRef, inView } = useInView({
     threshold: 0,
@@ -39,6 +40,7 @@ export function DiscountsTab() {
   const { offers, isLoading, hasMore, fetchOffers } = useDiscountsStore();
 
   const loadData = async (offset: number) => {
+    setIsGettingLocation(true);
     try {
       const { latitude, longitude } = await getLowAccuracyLocation();
       await fetchOffers(latitude, longitude, offset, limit);
@@ -48,6 +50,8 @@ export function DiscountsTab() {
       } else {
         toast.error(t('toast.loadFailed'));
       }
+    } finally {
+      setIsGettingLocation(false);
     }
   };
 
@@ -100,7 +104,7 @@ export function DiscountsTab() {
       : []),
   ];
 
-  if (isLoading && offers.length === 0) {
+  if ((isLoading || isGettingLocation) && offers.length === 0) {
     return (
       <div className={styles.emptyState}>
         <Spinner />

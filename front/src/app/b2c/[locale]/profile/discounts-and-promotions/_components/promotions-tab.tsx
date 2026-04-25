@@ -25,6 +25,7 @@ export function PromotionsTab() {
   const [selectedPromotion, setSelectedPromotion] =
     useState<AvailablePromotionDto | null>(null);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
 
   const { ref: pageBottomRef, inView } = useInView({
     threshold: 0,
@@ -41,6 +42,7 @@ export function PromotionsTab() {
     usePromotionsStore();
 
   const loadData = async (offset: number) => {
+    setIsGettingLocation(true);
     try {
       const { latitude, longitude } = await getLowAccuracyLocation();
       await fetchPromotions(latitude, longitude, offset, limit);
@@ -50,6 +52,8 @@ export function PromotionsTab() {
       } else {
         toast.error(t('toast.loadFailed'));
       }
+    } finally {
+      setIsGettingLocation(false);
     }
   };
 
@@ -102,7 +106,7 @@ export function PromotionsTab() {
       : []),
   ];
 
-  if (isLoading && promotions.length === 0) {
+  if ((isLoading || isGettingLocation) && promotions.length === 0) {
     return (
       <div className={styles.emptyState}>
         <Spinner />
