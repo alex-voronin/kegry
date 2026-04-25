@@ -27,21 +27,21 @@ export const AvatarSection = ({
     inputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setImageToCropSrc(URL.createObjectURL(file));
+      try {
+        const base64 = await blobToBase64(file);
+        setImageToCropSrc(base64);
+      } catch (error) {
+        console.error('Failed to read file:', error);
+      }
     }
     // Reset input so same file can be selected again
     e.target.value = '';
   };
 
   const handleCrop = async (blob: Blob) => {
-    // Revoke the source URL after cropping is complete
-    if (imageToCropSrc) {
-      URL.revokeObjectURL(imageToCropSrc);
-    }
-
     // Convert blob to base64 for localStorage persistence
     const base64 = await blobToBase64(blob);
     setLocalAvatarUrl(base64);

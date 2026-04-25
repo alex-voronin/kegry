@@ -6,6 +6,7 @@ import { useRef, useState, useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Camera } from 'lucide-react';
 import { compressImageToBlob } from '@/lib/image-utils';
+import { toast } from 'react-toastify';
 import {
   USER_COVER_MAX_LONG_SIDE,
   USER_COVER_MAX_SIZE_BYTES,
@@ -51,15 +52,22 @@ export const CoverSection = ({
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const compressed = await compressImageToBlob(
-        file,
-        USER_COVER_MAX_SIZE_BYTES,
-        USER_COVER_MAX_LONG_SIDE,
-      );
+      try {
+        const compressed = await compressImageToBlob(
+          file,
+          USER_COVER_MAX_SIZE_BYTES,
+          USER_COVER_MAX_LONG_SIDE,
+        );
 
-      setLocalBlob(compressed);
-      onCoverChange?.(compressed);
+        setLocalBlob(compressed);
+        onCoverChange?.(compressed);
+      } catch (error) {
+        console.error('Failed to process cover image:', error);
+        toast.error(t('uploadFailed'));
+      }
     }
+    // Reset input so same file can be selected again
+    e.target.value = '';
   };
 
   return (

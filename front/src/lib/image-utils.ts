@@ -103,7 +103,9 @@ export const createImage = (url: string): Promise<HTMLImageElement> =>
     const image = new Image();
     image.addEventListener('load', () => resolve(image));
     image.addEventListener('error', (error) => reject(error));
-    image.setAttribute('crossOrigin', 'anonymous');
+    if (!url.startsWith('data:') && !url.startsWith('blob:')) {
+      image.setAttribute('crossOrigin', 'anonymous');
+    }
     image.src = url;
   });
 
