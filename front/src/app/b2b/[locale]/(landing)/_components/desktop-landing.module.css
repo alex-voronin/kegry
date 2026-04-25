@@ -164,4 +164,12 @@
   .footer {
     @apply px-8;
   }
+
+  .footerLinks {
+    @apply gap-4;
+  }
+
+  .socialLinks {
+    @apply gap-4;
+  }
 }
