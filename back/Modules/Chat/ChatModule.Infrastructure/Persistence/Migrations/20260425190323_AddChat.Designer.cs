@@ -12,16 +12,16 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ChatModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ChatContext))]
-    [Migration("20260323203821_AddChats")]
-    partial class AddChats
+    [Migration("20260425190323_AddChat")]
+    partial class AddChat
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("meetings")
-                .HasAnnotation("ProductVersion", "10.0.1")
+                .HasDefaultSchema("chat")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -58,7 +58,7 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                     b.HasIndex("IsDeleted")
                         .HasDatabaseName("ix_chats_is_deleted");
 
-                    b.ToTable("chats", "meetings");
+                    b.ToTable("chats", "chat");
                 });
 
             modelBuilder.Entity("ChatModule.Domain.Aggregates.User", b =>
@@ -99,7 +99,7 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                     b.HasIndex("IsDeleted")
                         .HasDatabaseName("ix_users_is_deleted");
 
-                    b.ToTable("users", "meetings");
+                    b.ToTable("users", "chat");
                 });
 
             modelBuilder.Entity("ChatModule.Domain.Entities.ActiveChatUserLink", b =>
@@ -118,7 +118,7 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                     b.HasIndex("ChatId")
                         .HasDatabaseName("ix_active_chat_user_links_chat_id");
 
-                    b.ToTable("active_chat_user_links", "meetings");
+                    b.ToTable("active_chat_user_links", "chat");
                 });
 
             modelBuilder.Entity("ChatModule.Domain.Entities.ChatMessage", b =>
@@ -151,7 +151,7 @@ namespace ChatModule.Infrastructure.Persistence.Migrations
                     b.HasIndex("ChatId")
                         .HasDatabaseName("ix_chat_messages_chat_id");
 
-                    b.ToTable("chat_messages", "meetings");
+                    b.ToTable("chat_messages", "chat");
                 });
 
             modelBuilder.Entity("ChatModule.Domain.Entities.ActiveChatUserLink", b =>

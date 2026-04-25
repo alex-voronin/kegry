@@ -16,8 +16,8 @@ public class WolverineBusStartup : IFeatureStartup
             discovery: ExtensionDiscovery.Automatic,
             overrides: opts =>
             {
-                opts.CodeGeneration.TypeLoadMode = TypeLoadMode.Static; 
-                
+                opts.CodeGeneration.TypeLoadMode = TypeLoadMode.Static;
+
                 opts.Durability.HealthCheckPollingTime = TimeSpan.FromSeconds(30);
                 opts.Durability.NodeReassignmentPollingTime = TimeSpan.FromSeconds(30);
                 opts.Durability.ScheduledJobPollingTime = TimeSpan.FromSeconds(10);

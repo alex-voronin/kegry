@@ -18,7 +18,7 @@ public class ChatContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("meetings");
+        modelBuilder.HasDefaultSchema("chat");
 
         modelBuilder.Entity<User>(builder =>
         {

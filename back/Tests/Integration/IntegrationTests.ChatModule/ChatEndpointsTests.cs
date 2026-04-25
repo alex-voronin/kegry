@@ -13,6 +13,7 @@ using Polly;
 using SecurityModule.API.Dto;
 using SharedCore.Api.Dto;
 using Shouldly;
+using Wolverine.Tracking;
 
 namespace IntegrationTests.ChatModule;
 
@@ -283,6 +284,76 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         responseExtra.Success.ShouldBeFalse();
         responseExtra.Errors[0].Error.ShouldStartWith("You are unable to post more than");
+    }
+
+    [Fact]
+    public async Task GivenActiveChat_WhenUserDeletesAccount_ThenAnotherUserCanEstablishNewChat()
+    {
+        // 1. Create two users and establish chat
+        var (authA, authB) = await CreateTwoUsersWithChatAsync();
+
+        // 2. Delete account B
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.Host.ExecuteAndWaitAsync(async () =>
+        {
+            var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(ApiRoutes.Auth.Account);
+            deleteResponse.Success.ShouldBeTrue();
+        });
+
+        // 3. Create account C
+        var authC = await Factory.AuthManager.CreateAndLoginUserAsync("chatUserC@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authC);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var tokenRequestC = new UpdateFcmTokenRequest("devC", "tokenC");
+        await Factory.ApiClient
+            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+                tokenRequestC);
+
+        // 4. User A and C establishes a new chat
+        var inviteExpiresAt = Factory.FakeTimeProvider.GetUtcNow().AddHours(4);
+        await Factory.Host.ExecuteAndWaitAsync(async () =>
+        {
+            // User A invites User C
+            Factory.ApiClient.SetAuth(authA);
+            await Factory.ApiClient
+                .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                    ApiRoutes.Feed.InviteUser(authC.UserId),
+                    new InviteUserRequest(inviteExpiresAt)
+                );
+
+            // User B invites User A (creates chat)
+            Factory.ApiClient.SetAuth(authC);
+            await Factory.ApiClient
+                .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                    ApiRoutes.Feed.InviteUser(authA.UserId),
+                    new InviteUserRequest(inviteExpiresAt)
+                );
+        });
+
+        // 5. Check chat existence
+        Factory.ApiClient.SetAuth(authA);
+
+        var statusA = await Factory.ApiClient
+            .GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
+
+        statusA.Success.ShouldBeTrue();
+        statusA.Result.IsInMeeting.ShouldBeTrue();
+
+        var chatResponseA = await Factory.ApiClient
+            .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
+        chatResponseA.Success.ShouldBeTrue();
+
+        Factory.ApiClient.SetAuth(authC);
+
+        var statusC = await Factory.ApiClient
+            .GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
+        statusC.Success.ShouldBeTrue();
+        statusC.Result.IsInMeeting.ShouldBeTrue();
+
+        var chatResponseC = await Factory.ApiClient
+            .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
+        chatResponseC.Success.ShouldBeTrue();
     }
 
     private async Task<(AuthResponse authA, AuthResponse authB)>

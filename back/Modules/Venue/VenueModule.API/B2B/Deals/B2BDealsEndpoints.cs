@@ -173,7 +173,7 @@ public class B2BDealsEndpoints : IEndpoints
             asNoTracking: true,
             ct: ct);
 
-        var promo = await promoRepository.GetByIdAsync(id, 
+        var promo = await promoRepository.GetByIdAsync(id,
             ignoreFilters: [NamedFilters.Venue.Verified],
             ct: ct);
         if (promo == null || promo.VenueId != venueId)
@@ -297,7 +297,7 @@ public class B2BDealsEndpoints : IEndpoints
             asNoTracking: true,
             ct: ct);
 
-        var discount = await discountRepository.GetByIdAsync(id, 
+        var discount = await discountRepository.GetByIdAsync(id,
             ignoreFilters: [NamedFilters.Venue.Verified],
             ct: ct);
         if (discount == null || discount.VenueId != venueId)

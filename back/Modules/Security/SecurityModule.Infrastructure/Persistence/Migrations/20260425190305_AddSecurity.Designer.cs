@@ -12,8 +12,8 @@ using SecurityModule.Infrastructure.Persistence;
 namespace SecurityModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SecurityContext))]
-    [Migration("20260424111512_AddDataProtectionKeys")]
-    partial class AddDataProtectionKeys
+    [Migration("20260425190305_AddSecurity")]
+    partial class AddSecurity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

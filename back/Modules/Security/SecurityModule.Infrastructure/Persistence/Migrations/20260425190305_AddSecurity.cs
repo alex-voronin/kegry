@@ -63,6 +63,21 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "data_protection_keys",
+                schema: "security",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    friendly_name = table.Column<string>(type: "text", nullable: true),
+                    xml = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_data_protection_keys", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 schema: "security",
                 columns: table => new
@@ -290,6 +305,10 @@ namespace SecurityModule.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens",
+                schema: "security");
+
+            migrationBuilder.DropTable(
+                name: "data_protection_keys",
                 schema: "security");
 
             migrationBuilder.DropTable(

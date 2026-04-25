@@ -22,6 +22,11 @@ namespace Internal.Generated.WolverineHandlers
             await using var serviceScope = _serviceScopeFactory.CreateAsyncScope();
             
             /*
+            * Concrete type ChatModule.Domain.Services.ChatService is not public, so requires service location
+            */
+            var chatService = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<ChatModule.Domain.Services.IChatService>(serviceScope.ServiceProvider);
+            
+            /*
             * Dependency: Descriptor: ServiceType: ChatModule.Infrastructure.Persistence.ChatContext Lifetime: Scoped ImplementationType: ChatModule.Infrastructure.Persistence.ChatContext
             * 
             * Dependency: Descriptor: ServiceType: Microsoft.EntityFrameworkCore.DbContextOptions"1[ChatModule.Infrastructure.Persistence.ChatContext] Lifetime: Scoped ImplementationFactory: Microsoft.Extensions.DependencyInjection.EntityFrameworkServiceCollectionExtensions.CreateDbContextOptions
@@ -42,7 +47,7 @@ namespace Internal.Generated.WolverineHandlers
             System.Diagnostics.Activity.Current?.SetTag("message.handler", "ChatModule.Application.Messaging.Account.AccountEventHandlers");
             
             // The actual message execution
-            await ChatModule.Application.Messaging.Account.AccountEventHandlers.HandleAsync(accountDeletedEvent, userRepository, cancellation).ConfigureAwait(false);
+            await ChatModule.Application.Messaging.Account.AccountEventHandlers.HandleAsync(accountDeletedEvent, userRepository, chatService, cancellation).ConfigureAwait(false);
 
         }
 
