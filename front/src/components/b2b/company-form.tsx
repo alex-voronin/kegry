@@ -237,7 +237,10 @@ export function CompanyForm({
         onClose={() => setIsCropperOpen(false)}
         imageSrc={rawImageSrc}
         onCropComplete={handleCropComplete}
-        outputSize={{ width: 256, height: 256 }}
+        outputSize={{
+          width: AVATAR_MAX_LONG_SIDE,
+          height: AVATAR_MAX_LONG_SIDE,
+        }}
         cropShape="round"
       />
     </>

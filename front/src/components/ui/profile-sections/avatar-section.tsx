@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Camera } from 'lucide-react';
 import { ImageCropperModal } from '../image-cropper-modal';
 import { blobToBase64 } from '@/store/use-user-profile-store';
+import { AVATAR_MAX_LONG_SIDE } from '@/lib/constants';
 
 type AvatarSectionProps = {
   avatarBase64?: string | null;
@@ -76,7 +77,7 @@ export const AvatarSection = ({
         imageSrc={imageToCropSrc}
         onCropComplete={handleCrop}
         cropShape="round"
-        outputSize={{ width: 256, height: 256 }}
+        outputSize={{ width: AVATAR_MAX_LONG_SIDE, height: AVATAR_MAX_LONG_SIDE }}
       />
     </div>
   );
