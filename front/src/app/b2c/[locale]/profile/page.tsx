@@ -25,7 +25,7 @@ import { calculateAge } from '@/lib/date';
 import { useHobbiesStore } from '@/store/use-hobbies-store';
 import { uploadImage } from '@/lib/image-utils';
 import { checkIfPermissionsDenied } from '@/lib/permissions';
-import { BRAND_NAME } from '@/lib/constants';
+import { BRAND_NAME, AVATAR_MAX_LONG_SIDE } from '@/lib/constants';
 import SocialLinks from '../(landing)/_components/social-links';
 import styles from './profile.module.css';
 
@@ -456,7 +456,10 @@ export default function ProfilePage() {
         imageSrc={selectedImage}
         onCropComplete={handleCropComplete}
         cropShape="round"
-        outputSize={{ width: 256, height: 256 }}
+        outputSize={{
+          width: AVATAR_MAX_LONG_SIDE,
+          height: AVATAR_MAX_LONG_SIDE,
+        }}
       />
     </div>
   );
