@@ -206,7 +206,7 @@ export default function ChatScreen() {
         await fetchChat();
       } catch (err: any) {
         if (err.code === 'NotFound') {
-          router.replace(PAGE_ROUTES.FEED);
+          router.replace(`${PAGE_ROUTES.FEED}?auto-chat-redirect=false`);
           return;
         }
         toast.error(err.message || t('toast.loadFailed'));
