@@ -15,7 +15,7 @@ export function QrRedirect() {
 
   useEffect(() => {
     if (v) {
-      sessionStorage.setItem('qr_code_to_check_in', v);
+      localStorage.setItem('qr_code_to_check_in', v);
     }
     if (v && hasHydrated && accessToken) {
       router.replace(`${PAGE_ROUTES.FEED}`);

@@ -209,10 +209,10 @@ export default function FeedScreen() {
       if (!hasHydrated || initializationStarted.current) return;
       initializationStarted.current = true;
 
-      // 1. Handle QR code in query parameters or session storage early
-      const qrCode = sessionStorage.getItem('qr_code_to_check_in');
+      // 1. Handle QR code from local storage early
+      const qrCode = localStorage.getItem('qr_code_to_check_in');
       if (qrCode) {
-        sessionStorage.removeItem('qr_code_to_check_in');
+        localStorage.removeItem('qr_code_to_check_in');
         const qrUrl = buildQrUrl(qrCode);
         await handleQrCode(qrUrl);
         return;
