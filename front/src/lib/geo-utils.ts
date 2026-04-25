@@ -59,8 +59,29 @@ export async function getLowAccuracyLocation(): Promise<{
  * Gets a high accuracy geolocation by watching position for up to 7 seconds.
  * Resolves early if accuracy <= expectedAccuracy. Falls back to best position or standard getCurrentPosition.
  */
-export async function getHighAccuracyLocation(expectedAccuracy: number = 50): Promise<GeolocationPosition> {
+export async function getHighAccuracyLocation(
+  expectedAccuracy: number = 50,
+): Promise<GeolocationPosition> {
   const TIMEOUT_MS = 7000;
+
+  // Try fast path first
+  try {
+    const fastPosition = await new Promise<GeolocationPosition>(
+      (resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: false,
+          maximumAge: 30000,
+          timeout: 2500,
+        });
+      },
+    );
+
+    if (fastPosition.coords.accuracy <= expectedAccuracy) {
+      return fastPosition;
+    }
+  } catch (error) {
+    // Ignore errors from fast path and fallback to slow path
+  }
 
   return new Promise((resolve, reject) => {
     let resolved = false;
@@ -111,6 +132,7 @@ export async function getHighAccuracyLocation(expectedAccuracy: number = 50): Pr
       } else {
         navigator.geolocation.getCurrentPosition(resolve, reject, {
           enableHighAccuracy: false,
+          timeout: 3000,
         });
       }
     }, TIMEOUT_MS);

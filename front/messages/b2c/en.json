@@ -511,6 +511,7 @@
     "qr-code-reader": {
       "toast": {
         "invalidQr": "Invalid QR code",
+        "gettingLocation": "Finding your precise location...",
         "checkInFailed": "Check-in failed. Please try again."
       }
     },

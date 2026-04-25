@@ -31,7 +31,13 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
       onErrorCallback?: (venueId: string | null) => void,
     ): Promise<boolean> => {
       try {
-        const position = await getHighAccuracyLocation();
+        const toastId = toast.loading(t('toast.gettingLocation'));
+        let position;
+        try {
+          position = await getHighAccuracyLocation();
+        } finally {
+          toast.dismiss(toastId);
+        }
 
         const response = await apiClient.post<ApiResult<CheckInResponse>>(
           API_ENDPOINTS.VENUES.QR_CHECK_IN(qrCode),

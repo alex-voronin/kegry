@@ -511,6 +511,7 @@
     "qr-code-reader": {
       "toast": {
         "invalidQr": "Neispravan QR kod",
+        "gettingLocation": "Tražimo tvoju preciznu lokaciju...",
         "checkInFailed": "Prijava nije uspela. Molimo pokušaj ponovo."
       }
     },
