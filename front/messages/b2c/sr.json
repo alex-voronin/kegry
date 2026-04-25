@@ -23,7 +23,7 @@
   "screens": {
     "landing": {
       "metadata": {
-        "title": "Kegry. Pronađi barskog druga!",
+        "title": "Kegry. Pronađi svog barskog drugara!",
         "description": "Kegry ti pomaže da pronađeš barske drugare. Bez dejtinga, bez beskonačnog dopisivanja — samo spontani susreti uživo u baru. Najbolje priče počinju van ekrana!",
         "keywords": "bar buddy, barski drugar, upoznavanje ljudi uživo, IRL druženje, barski susreti, oflajn prijatelji, jednorog, kegry, program lojalnosti, priče van ekrana"
       },
@@ -39,7 +39,7 @@
         }
       },
       "cheers": {
-        "title": "Pronađi svog barskog druga odmah!",
+        "title": "Pronađi svog barskog drugara odmah!",
         "description": "Spreman za piće i dobro društvo? Bez dejtinga. Bez beskrajnih razgovora. Pogledaj profil, pošalji poziv, dogovori susret — i eto te u baru! Priča o životu, smej se, ispucaj se i drži glavu gore. Ako se pojave goblini, možda je vreme da malo usporiš 🥴",
         "loyaltyPrograms": "I još nešto: ne zaboravi na naše <link>programe lojalnosti</link>.",
         "cta": "Spreman?"
