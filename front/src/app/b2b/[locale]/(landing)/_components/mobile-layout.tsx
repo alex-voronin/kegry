@@ -85,13 +85,11 @@ export default function MobileLayout() {
               const newHostname = hostname.startsWith('business.')
                 ? hostname.replace('business.', '')
                 : hostname;
-              window.open(
+              window.location.href =
                 window.location.protocol +
-                  '//' +
-                  newHostname +
-                  window.location.pathname,
-                '_blank',
-              );
+                '//' +
+                newHostname +
+                window.location.pathname;
             }}
           >
             {t('header.nav.forCustomers')}

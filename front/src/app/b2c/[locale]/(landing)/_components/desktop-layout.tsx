@@ -55,12 +55,10 @@ export default function DesktopLayout() {
           <span
             className={styles.navLink}
             onClick={() =>
-              window.open(
+              (window.location.href =
                 'https://business.' +
-                  window.location.hostname +
-                  window.location.pathname,
-                '_blank',
-              )
+                window.location.hostname +
+                window.location.pathname)
             }
           >
             {t('header.nav.forBusiness')}

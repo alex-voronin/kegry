@@ -91,12 +91,10 @@ export default function MobileLayout() {
           <span
             className={mobileStyles.drawerNavLink}
             onClick={() =>
-              window.open(
+              (window.location.href =
                 'https://business.' +
-                  window.location.hostname +
-                  window.location.pathname,
-                '_blank',
-              )
+                window.location.hostname +
+                window.location.pathname)
             }
           >
             {t('header.nav.forBusiness')}

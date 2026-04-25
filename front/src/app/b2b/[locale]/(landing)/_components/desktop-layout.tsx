@@ -34,7 +34,9 @@ export default function DesktopLayout() {
           />
           <div className={styles.logoTextWrapper}>
             <div className={styles.logoTitleRow}>
-              <span className={`${styles.logoText}`}>{t('header.brandName')}</span>
+              <span className={`${styles.logoText}`}>
+                {t('header.brandName')}
+              </span>
             </div>
             <span className={styles.logoSubtitle}>{t('header.subtitle')}</span>
           </div>
@@ -47,13 +49,11 @@ export default function DesktopLayout() {
               const newHostname = hostname.startsWith('business.')
                 ? hostname.replace('business.', '')
                 : hostname;
-              window.open(
+              window.location.href =
                 window.location.protocol +
-                  '//' +
-                  newHostname +
-                  window.location.pathname,
-                '_blank',
-              );
+                '//' +
+                newHostname +
+                window.location.pathname;
             }}
           >
             {t('header.nav.forCustomers')}
