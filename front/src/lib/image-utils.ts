@@ -166,8 +166,9 @@ export async function getCroppedImg(
 
   // As a blob
   return new Promise((resolve) => {
+    const fileType = supportsWebP() ? 'image/webp' : 'image/jpeg';
     croppedCanvas.toBlob((file) => {
       resolve(file);
-    }, 'image/jpeg');
+    }, fileType);
   });
 }
