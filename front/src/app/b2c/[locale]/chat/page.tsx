@@ -188,6 +188,15 @@ export default function ChatScreen() {
     };
   }, [scrollToBottom]);
 
+  // Lock body scroll to prevent double scrollbars and address bar layout shifts
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, []);
+
   const { registerForegroundHandler, unregisterForegroundHandler } =
     useFcmStore();
 

@@ -1,7 +1,7 @@
 @reference "../../../globals.css";
 
 .wrapper {
-  @apply relative flex h-dvh flex-col overflow-hidden;
+  @apply fixed inset-0 mx-auto flex w-full max-w-[500px] flex-col overflow-hidden;
 }
 
 .titleWrapper {
