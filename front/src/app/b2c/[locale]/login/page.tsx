@@ -45,6 +45,8 @@ export default function LoginPage() {
         router.replace(PAGE_ROUTES.VERIFY_EMAIL);
       } else if (requiredAction === RequiredAction.OnboardingCompletion) {
         router.replace(PAGE_ROUTES.ONBOARDING);
+      } else if (requiredAction === RequiredAction.HowItWorksCompletion) {
+        router.replace(PAGE_ROUTES.HOW_IT_WORKS);
       } else {
         router.replace(PAGE_ROUTES.FEED);
       }

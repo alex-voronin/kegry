@@ -21,6 +21,7 @@ import {
   clearReferrerId,
   getReferrerId,
 } from '@/app/b2c/[locale]/(landing)/_components/ReferrerTracker';
+import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 
 export default function CoverPage() {
   const t = useTranslations('screens.onboarding');
@@ -40,6 +41,7 @@ export default function CoverPage() {
   } = useUserProfileStore();
 
   const { selectedHobbyIds, reset: resetHobbies } = useHobbiesStore();
+  const { setRequiredAction } = useAuthStore();
 
   const handleContinue = async () => {
     setIsSubmitting(true);
@@ -90,6 +92,7 @@ export default function CoverPage() {
         clearReferrerId();
       }
 
+      setRequiredAction(RequiredAction.HowItWorksCompletion);
       router.push(PAGE_ROUTES.HOW_IT_WORKS);
     } catch (err) {
       const errorMessage =

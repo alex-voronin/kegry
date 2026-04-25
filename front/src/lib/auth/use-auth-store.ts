@@ -31,6 +31,10 @@ export enum RequiredAction {
   None = 'None',
   EmailVerification = 'EmailVerification',
   OnboardingCompletion = 'OnboardingCompletion',
+  // it's a fake value that exists only on frontend
+  // we use it to open a how-it-works page after pwa installation
+  // if it's installed on how-it-works page
+  HowItWorksCompletion = 'HowItWorksCompletion',
 }
 
 export interface AuthResponse {
@@ -256,7 +260,8 @@ export const useAuthStore = create<AuthState>()(
 
           if (!res.data.success) {
             throw new Error(
-              res.data.errors[0]?.error || 'Failed to resend verification email',
+              res.data.errors[0]?.error ||
+                'Failed to resend verification email',
             );
           }
 
