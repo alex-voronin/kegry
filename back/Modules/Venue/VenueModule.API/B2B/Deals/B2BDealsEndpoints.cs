@@ -11,6 +11,7 @@ using VenueModule.API.B2B.Deals.Dto;
 using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.Exceptions;
 using VenueModule.Domain.Repositories;
+using VenueModule.Infrastructure.Persistence;
 
 namespace VenueModule.API.B2B.Deals;
 
@@ -139,7 +140,9 @@ public class B2BDealsEndpoints : IEndpoints
             asNoTracking: true,
             ct: ct);
 
-        var promo = await promoRepository.GetByIdAsync(id, ct: ct);
+        var promo = await promoRepository.GetByIdAsync(id,
+            ignoreFilters: [NamedFilters.Venue.Verified],
+            ct: ct);
         if (promo == null || promo.VenueId != venueId)
         {
             throw VenueExceptions.PromoNotFound(id);
@@ -170,13 +173,15 @@ public class B2BDealsEndpoints : IEndpoints
             asNoTracking: true,
             ct: ct);
 
-        var discount = await promoRepository.GetByIdAsync(id, ct: ct);
-        if (discount == null || discount.VenueId != venueId)
+        var promo = await promoRepository.GetByIdAsync(id, 
+            ignoreFilters: [NamedFilters.Venue.Verified],
+            ct: ct);
+        if (promo == null || promo.VenueId != venueId)
         {
             throw VenueExceptions.PromoNotFound(id);
         }
 
-        promoRepository.Delete(discount);
+        promoRepository.Delete(promo);
         await promoRepository.SaveChangesAsync(ct);
 
         return ApiResult.Empty;
@@ -251,6 +256,7 @@ public class B2BDealsEndpoints : IEndpoints
             ct: ct);
 
         var discount = await discountRepository.GetByIdAsync(id,
+            ignoreFilters: [NamedFilters.Venue.Verified],
             includes: [d => d.Days],
             ct: ct);
         if (discount == null || discount.VenueId != venueId)
@@ -291,7 +297,9 @@ public class B2BDealsEndpoints : IEndpoints
             asNoTracking: true,
             ct: ct);
 
-        var discount = await discountRepository.GetByIdAsync(id, ct: ct);
+        var discount = await discountRepository.GetByIdAsync(id, 
+            ignoreFilters: [NamedFilters.Venue.Verified],
+            ct: ct);
         if (discount == null || discount.VenueId != venueId)
         {
             throw VenueExceptions.DiscountNotFound(id);

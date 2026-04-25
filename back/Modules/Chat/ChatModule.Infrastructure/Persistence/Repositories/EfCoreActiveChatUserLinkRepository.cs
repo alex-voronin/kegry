@@ -26,6 +26,7 @@ public class EfCoreActiveChatUserLinkRepository : Repository<ChatContext, Active
         var chatIds = linksToDelete.Select(l => l.ChatId);
 
         await Context.ActiveChatUserLinks
+            .IgnoreQueryFilters()
             .Where(l => chatIds.Contains(l.ChatId))
             .ExecuteDeleteAsync(ct);
 
