@@ -146,6 +146,7 @@ export function HobbiesSection({
         isClearable={!readOnly}
         isLoading={isLoading}
         styles={readOnly ? readOnlySelectStyles : selectStyles}
+        menuPlacement="auto"
         components={
           readOnly
             ? { DropdownIndicator: () => null, IndicatorSeparator: () => null }

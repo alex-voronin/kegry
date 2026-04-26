@@ -608,7 +608,7 @@
       },
       "hobbies": {
         "title": "Hobbies",
-        "placeholder": "Select your hobbies...",
+        "placeholder": "Find or select hobbies...",
         "gym": "🏋️ Gym",
         "running": "🏃 Running",
         "swimming": "🏊 Swimming",
