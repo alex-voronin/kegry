@@ -13,7 +13,6 @@ import { useInView } from 'react-intersection-observer';
 import { useViewportItemCount } from '@/hooks/use-viewport-item-count';
 import { useVenuesStore, VenueListItemDto } from './use-venues-store';
 import { toast } from 'react-toastify';
-import { checkPermissionStatus } from '@/lib/permissions';
 import { PAGE_ROUTES } from '@/lib/routes';
 import {
   useSettingsStore,
@@ -89,15 +88,11 @@ export default function VenuesScreen() {
   useEffect(() => {
     const init = async () => {
       if (limit === 0) return;
-      const { locationAllowed } = await checkPermissionStatus();
-      if (!locationAllowed) {
-        setIsLocationDenied(true);
-      } else {
+      
+      // If we already have venues, we don't need to re-init unless we want to refresh
+      if (venues.length === 0 && !isLoading && !hasError) {
         setIsLocationDenied(false);
-        // Only load if we don't have venues yet or if it was previously denied
-        if (venues.length === 0 && !isLoading && !hasError) {
-          await loadData(0);
-        }
+        await loadData(0);
       }
     };
     init();

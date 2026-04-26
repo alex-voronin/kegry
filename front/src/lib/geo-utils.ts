@@ -39,7 +39,13 @@ export function saveLocationToCache(latitude: number, longitude: number) {
   }
 }
 
-function getCachedLocation(maxAgeMs?: number): LocationCoords | null {
+export function clearLocationCache() {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem(LAST_LOCATION_CACHE_KEY);
+  }
+}
+
+export function getCachedLocation(maxAgeMs?: number): LocationCoords | null {
   if (typeof window === 'undefined') return null;
   const cached = localStorage.getItem(LAST_LOCATION_CACHE_KEY);
   if (!cached) return null;
@@ -122,7 +128,11 @@ export async function getLowAccuracyLocation(): Promise<LocationCoords> {
 
     saveLocationToCache(coords.latitude, coords.longitude);
     return coords;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code === 1) {
+      // PERMISSION_DENIED
+      clearLocationCache();
+    }
     const cached = getCachedLocation();
     if (cached) return cached;
     throw error;

@@ -9,7 +9,6 @@ import { ListItem } from '@/components/ui/list-item';
 import { useInView } from 'react-intersection-observer';
 import { useViewportItemCount } from '@/hooks/use-viewport-item-count';
 import { toast } from 'react-toastify';
-import { checkPermissionStatus } from '@/lib/permissions';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { getLowAccuracyLocation } from '@/lib/geo-utils';
 import {
@@ -58,14 +57,10 @@ export function DiscountsTab() {
   useEffect(() => {
     const init = async () => {
       if (limit === 0) return;
-      const { locationAllowed } = await checkPermissionStatus();
-      if (!locationAllowed) {
-        setIsLocationDenied(true);
-      } else {
+      
+      if (offers.length === 0 && !isLoading) {
         setIsLocationDenied(false);
-        if (offers.length === 0 && !isLoading) {
-          await loadData(0);
-        }
+        await loadData(0);
       }
     };
     init();
