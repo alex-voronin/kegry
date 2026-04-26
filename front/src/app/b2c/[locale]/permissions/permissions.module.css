@@ -28,6 +28,42 @@
   @apply text-secondary text-sm leading-relaxed whitespace-pre-line;
 }
 
-.checkIcon {
-  @apply shrink-0;
+.statusIconAllowed {
+  @apply shrink-0 text-green-500;
+}
+
+.statusIconDenied {
+  @apply shrink-0 text-red-500;
+}
+
+.platformSection {
+  @apply flex flex-col gap-4 pt-4;
+}
+
+.platformTitle {
+  @apply text-primary text-xl font-bold;
+}
+
+.instructionGroup {
+  @apply bg-form-element flex flex-col gap-2 rounded-2xl p-4;
+}
+
+.instructionSubtitle {
+  @apply text-base font-semibold;
+}
+
+.instructionText {
+  @apply text-secondary text-sm leading-relaxed;
+}
+
+.stepRow {
+  @apply flex items-center gap-2;
+}
+
+.systemLink {
+  @apply text-primary mt-1 flex w-fit items-center gap-2 text-sm underline decoration-1 underline-offset-4 transition-opacity hover:opacity-80;
+}
+
+.inlineLink {
+  @apply text-primary inline-flex items-center gap-1 text-sm underline decoration-1 underline-offset-4 transition-opacity hover:opacity-80;
 }

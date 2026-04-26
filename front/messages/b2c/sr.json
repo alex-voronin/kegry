@@ -455,7 +455,35 @@
       "locationDesc": "Apsolutno neophodno za otkrivanje ljudi u blizini. Bez toga feed neće raditi",
       "notificationsTitle": "Obaveštenja",
       "notificationsDesc": "Aplikacija će raditi bez omogućenih obaveštenja, ali nećete primati pozivnice ni obaveštenja o novim porukama. Korisničko iskustvo nekih funkcija će biti narušeno.",
-      "instructions": "Za omogućavanje dozvola:\n1. Tapni ikonu katanca 🔒 ili ikonu podešavanja u adresnoj traci pregledača.\n2. Tapni 'Dozvole' ili 'Podešavanja sajta'.\n3. Dozvoli 'Lokaciju' i 'Obaveštenja'.\n4. Osveži ovu stranicu."
+      "status": {
+        "location": "Lokacija",
+        "notifications": "Obaveštenja"
+      },
+      "ios": {
+        "title": "iOS",
+        "notifications": {
+          "title": "Da omogućiš obaveštenja:",
+          "desc": "Trenutno, obaveštenja u pretraživaču nisu podržana na iOS-u. Jedini način da u potpunosti koristiš uslugu je da instaliraš ovaj veb-sajt kao mobilnu aplikaciju.",
+          "step1": "Dodirni ikonu Share u Safariju.",
+          "step2": "Izaberi \"Dodaj na početni ekran\""
+        },
+        "location": {
+          "title": "Da omogućiš geolokaciju:",
+          "step1": "Otvori Podešavanja → Privatnost i bezbednost → Usluge lokacije",
+          "step2": "Izaberi Safari ili Chrome",
+          "step3": "Omogući pristup lokacijia",
+          "step4": "Izaberi \"Dok se koristi aplikacija\" i uključi \"Precizna lokacija\""
+        }
+      },
+      "androidDesktop": {
+        "title": "Android i desktop",
+        "titleAll": "Da omogućiš obaveštenja i geolokaciju:",
+        "step1": "Dodirni ikonu podešavanja u adresnoj traci pretraživača",
+        "step2": "Izaberi „Dozvole“ ili „Podešavanja sajta“",
+        "step3": "Dozvoli lokaciju i obaveštenja",
+        "step4": "Osveži stranicu",
+        "step5": "Ako je lokacija i dalje onemogućena, proveri <link>sistemska podešavanja</link> uređaja da potvrdiš da je pristup lokaciji omogućen za tvoj pretraživač."
+      }
     },
     "discountsAndPromotions": {
       "title": "Ponude",

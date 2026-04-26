@@ -452,10 +452,38 @@
       "title": "Permissions",
       "description": "To provide you with the best experience, we need access to your location and notifications.",
       "locationTitle": "Location",
-      "locationDesc": "Absolutely necessary to discover people around you. Without it, the feed won't work",
+      "locationDesc": "Absolutely necessary to discover people and venues around. Without it, the feed won't work.",
       "notificationsTitle": "Notifications",
       "notificationsDesc": "The app will work without notifications enabled, but you won't receive invitations or new message notifications. The user experience of some features will also be degraded.",
-      "instructions": "To enable permissions:\n1. Tap the lock icon 🔒 or settings icon in your browser address bar.\n2. Tap 'Permissions' or 'Site Settings'.\n3. Allow 'Location' and 'Notifications'.\n4. Refresh this page."
+      "status": {
+        "location": "Location",
+        "notifications": "Notifications"
+      },
+      "ios": {
+        "title": "iOS",
+        "notifications": {
+          "title": "To enable Notifications:",
+          "desc": "Currently, browser notifications are not supported on iOS. The only way to fully use the service is to install this website as a mobile app.",
+          "step1": "Tap the Share icon in Safari.",
+          "step2": "Select \"Add to Home Screen\""
+        },
+        "location": {
+          "title": "To enable Geolocation:",
+          "step1": "Open Settings → Privacy & Security → Location Services",
+          "step2": "Select Safari or Chrome",
+          "step3": "Enable Location",
+          "step4": "Choose \"While Using the App\" and turn on \"Precise Location\""
+        }
+      },
+      "androidDesktop": {
+        "title": "Android and Desktop",
+        "titleAll": "To enable Notifications & Geolocation:",
+        "step1": "Tap the settings icon in your browser’s address bar",
+        "step2": "Select “Permissions” or “Site settings”",
+        "step3": "Allow Location and Notifications",
+        "step4": "Refresh the page",
+        "step5": "If location is still disabled after this, check your device's <link>system settings</link> to ensure that location access is enabled for your browser."
+      }
     },
     "discountsAndPromotions": {
       "title": "Deals",
