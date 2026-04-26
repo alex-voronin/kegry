@@ -73,6 +73,7 @@ const STATIC_ASSETS = [
   "/icons/favicon-192.png",
   "/icons/favicon-32.png",
   "/icons/favicon-48.png",
+  "/icons/favicon-512-maskable.png",
   "/icons/favicon-512.png",
   "/icons/favicon.ico",
   "/manifest.json"
