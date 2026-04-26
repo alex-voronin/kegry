@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
@@ -174,18 +174,18 @@ export default function FeedScreen() {
   );
   const [isReferralPromptOpen, setIsReferralPromptOpen] = useState(false);
 
-  useEffect(() => {
-    const checkPermissions = async () => {
-      const isDenied = await checkIfPermissionsDenied();
-      setShowPermissionsBadge(isDenied);
-    };
+  const checkPermissions = useCallback(async () => {
+    const isDenied = await checkIfPermissionsDenied();
+    setShowPermissionsBadge(isDenied);
+  }, []);
 
+  useEffect(() => {
     checkPermissions();
 
     // Re-check when window gains focus
     window.addEventListener('focus', checkPermissions);
     return () => window.removeEventListener('focus', checkPermissions);
-  }, []);
+  }, [checkPermissions]);
 
   const distanceUnits = useSettingsStore((state) => state.distanceUnits);
 
@@ -226,6 +226,7 @@ export default function FeedScreen() {
       try {
         // 2. Send location first
         const locationResult = await SendLocationWithRateLimit();
+        await checkPermissions(); // Sync the permissions badge after location attempt
         if (locationResult === 'denied') {
           setIsLocationDenied(true);
           return;
