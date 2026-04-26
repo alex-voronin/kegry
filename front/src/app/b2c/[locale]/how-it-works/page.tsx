@@ -9,6 +9,10 @@ import { PAGE_ROUTES } from '@/lib/routes';
 import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import styles from './how-it-works.module.css';
 import { getOS } from '@/lib/os-utils';
+import { checkPermissionStatus } from '@/lib/permissions';
+import { useCallback } from 'react';
+import { ModalDialog } from '@/components/ui/modal-dialog';
+import { ButtonVariant } from '@/components/ui/button';
 
 const TOTAL_SLIDES = 3;
 const SWIPE_THRESHOLD = 30;
@@ -25,10 +29,50 @@ export default function HowItWorksPage() {
   const wasDragged = useRef(false);
   const [os, setOs] = useState<'ios' | 'android' | 'other' | null>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
+  const [permissionsAllowed, setPermissionsAllowed] = useState(false);
+  const [isPermissionDialogOpen, setIsPermissionDialogOpen] = useState(false);
+
+  const checkStatus = useCallback(async () => {
+    const { locationAllowed, notificationAllowed } =
+      await checkPermissionStatus();
+    setPermissionsAllowed(locationAllowed && notificationAllowed);
+  }, []);
 
   useEffect(() => {
     setOs(getOS());
-  }, []);
+    checkStatus();
+  }, [checkStatus]);
+
+  const requestPrompts = async () => {
+    // Trigger location prompt
+    try {
+      await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          timeout: 1000,
+        });
+      });
+    } catch (e) {
+      console.warn('Location request failed or denied', e);
+    }
+
+    // Trigger notification prompt
+    if ('Notification' in window) {
+      try {
+        await Notification.requestPermission();
+      } catch (e) {
+        console.warn('Notification request failed or denied', e);
+      }
+    }
+
+    // Check status again
+    const { locationAllowed, notificationAllowed } = await checkPermissionStatus();
+    setPermissionsAllowed(locationAllowed && notificationAllowed);
+  };
+
+  const finishOnboarding = useCallback(() => {
+    setRequiredAction(RequiredAction.None);
+    router.push(PAGE_ROUTES.FEED);
+  }, [router, setRequiredAction]);
 
   useLayoutEffect(() => {
     const adjustScroll = () => {
@@ -48,12 +92,23 @@ export default function HowItWorksPage() {
     return () => clearTimeout(timeoutId);
   }, []);
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    if (currentSlide === 1) {
+      await requestPrompts();
+
+      // Proceed regardless of status
+      setCurrentSlide(2);
+      return;
+    }
+
     if (currentSlide < TOTAL_SLIDES - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      setRequiredAction(RequiredAction.None);
-      router.push(PAGE_ROUTES.FEED);
+      if (!permissionsAllowed) {
+        setIsPermissionDialogOpen(true);
+      } else {
+        finishOnboarding();
+      }
     }
   };
 
@@ -242,9 +297,28 @@ export default function HowItWorksPage() {
 
         <div className={styles.footer} ref={buttonRef}>
           <Button onClick={handleNext} className={styles.continueButton}>
-            {currentSlide === TOTAL_SLIDES - 1 ? t('continue') : t('next')}
+            {currentSlide === TOTAL_SLIDES - 1
+              ? t('continue')
+              : currentSlide === 1
+                ? t('enablePermissions')
+                : t('next')}
           </Button>
         </div>
+
+        <ModalDialog
+          isOpen={isPermissionDialogOpen}
+          onClose={() => setIsPermissionDialogOpen(false)}
+          message={t('permissionsWarningDialog.message')}
+          primaryButtonText={t('permissionsWarningDialog.allow')}
+          secondaryButtonText={t('permissionsWarningDialog.proceed')}
+          onPrimaryAction={async () => {
+            await requestPrompts();
+            finishOnboarding();
+          }}
+          onSecondaryAction={finishOnboarding}
+          primaryButtonVariant={ButtonVariant.Default}
+          secondaryButtonVariant={ButtonVariant.Secondary}
+        />
       </div>
     </div>
   );

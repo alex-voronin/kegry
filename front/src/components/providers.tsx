@@ -9,6 +9,7 @@ import apiClient, {
 import { setAcceptLanguage as setAuthClientLanguage } from '@/lib/auth-client';
 import { useRouter, usePathname } from '@/i18n/routing';
 import { useBackgroundLocation } from '@/lib/use-background-location';
+import { useLocationWarmer } from '@/lib/use-location-warmer';
 import { useFcm } from '@/lib/fcm/use-fcm';
 import { useFcmStore } from '@/lib/fcm/store';
 import { useFeedStore } from '@/app/b2c/[locale]/feed/use-feed-store';
@@ -172,6 +173,7 @@ import { registerServiceWorker } from '@/lib/service-worker';
 function BackgroundServices() {
   const isOnboardingCompleted = useAuthStore(hasCompletedOnboarding);
   useBackgroundLocation();
+  useLocationWarmer();
   useFcm(isOnboardingCompleted);
 
   useEffect(() => {

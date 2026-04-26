@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS } from '@/lib/routes';
 import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
+import { saveLocationToCache } from '@/lib/geo-utils';
 
 const LOCATION_UPDATE_INTERVAL = 60 * 60 * 1000; // 1 hour
 const ENABLE_HIGH_ACCURACY = false;
@@ -56,6 +57,12 @@ export function SendLocationWithRateLimit(): Promise<LocationResult> {
       return await new Promise<LocationResult>((resolve) => {
         navigator.geolocation.getCurrentPosition(
           async (position) => {
+            // Update local cache whenever we get a fresh position
+            saveLocationToCache(
+              position.coords.latitude,
+              position.coords.longitude,
+            );
+
             // Double-check rate limit (could have been updated by another tab)
             if (!isRateLimited()) {
               try {

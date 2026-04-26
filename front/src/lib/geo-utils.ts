@@ -7,7 +7,7 @@ export interface LocationCoords {
 }
 
 const LAST_LOCATION_CACHE_KEY = 'last_known_location';
-const DEFAULT_TIMEOUT = 7000;
+const LOW_ACCURACY_TIMEOUT = 5000;
 const HIGH_ACCURACY_TIMEOUT = 10000;
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
@@ -28,7 +28,7 @@ function getCurrentPositionAsync(
   });
 }
 
-function saveLocationToCache(latitude: number, longitude: number) {
+export function saveLocationToCache(latitude: number, longitude: number) {
   if (typeof window !== 'undefined') {
     const data: CachedLocation = {
       latitude,
@@ -39,7 +39,7 @@ function saveLocationToCache(latitude: number, longitude: number) {
   }
 }
 
-function getCachedLocation(): LocationCoords | null {
+function getCachedLocation(maxAgeMs?: number): LocationCoords | null {
   if (typeof window === 'undefined') return null;
   const cached = localStorage.getItem(LAST_LOCATION_CACHE_KEY);
   if (!cached) return null;
@@ -47,9 +47,16 @@ function getCachedLocation(): LocationCoords | null {
   try {
     const data = JSON.parse(cached) as CachedLocation;
     const now = Date.now();
+    const age = now - data.timestamp;
 
-    if (now - data.timestamp > CACHE_TTL_MS) {
+    // 1. Check absolute expiration accurately
+    if (age > CACHE_TTL_MS) {
       localStorage.removeItem(LAST_LOCATION_CACHE_KEY);
+      return null;
+    }
+
+    // 2. Check custom "freshness" expiration if requested
+    if (maxAgeMs !== undefined && age > maxAgeMs) {
       return null;
     }
 
@@ -98,11 +105,14 @@ export function parseGoogleMapsUrl(url: string): LocationCoords | null {
  * Gets a low accuracy geolocation with a fallback to localStorage cache.
  */
 export async function getLowAccuracyLocation(): Promise<LocationCoords> {
+  const freshLocation = getCachedLocation(300000); // 5 minutes fresh
+  if (freshLocation) return freshLocation;
+
   try {
     const position = await getCurrentPositionAsync({
       enableHighAccuracy: false,
-      maximumAge: 300000,
-      timeout: DEFAULT_TIMEOUT,
+      maximumAge: 600000,
+      timeout: LOW_ACCURACY_TIMEOUT,
     });
 
     const coords = {

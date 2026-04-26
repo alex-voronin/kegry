@@ -181,7 +181,13 @@
         "instructionAndroid": "Otvori meni pregledača (⋮) → Dodaj na početni ekran"
       },
       "continue": "Hajde!",
-      "next": "Dalje"
+      "next": "Dalje",
+      "enablePermissions": "Omogući geolokaciju i obaveštenja",
+      "permissionsWarningDialog": {
+        "message": "Da bismo ti pružili najbolje iskustvo, potreban nam je pristup tvojoj lokaciji i obaveštenjima. Da li si siguran da želiš da nastaviš bez njih?",
+        "allow": "Dozvoli pristup",
+        "proceed": "Nastavi bez toga"
+      }
     },
     "onboarding": {
       "title": "Reci nam o sebi",
