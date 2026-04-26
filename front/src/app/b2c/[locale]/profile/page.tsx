@@ -98,11 +98,6 @@ export default function ProfilePage() {
   };
 
   const handleDeleteAccount = async () => {
-    if (userType === UserType.B2B) {
-      toast.error(t('toast.cannotDeleteBusinessAccount'));
-      setIsDeleteAccountModalOpen(false);
-      return;
-    }
     setIsDeleting(true);
     try {
       await deleteAccount();
@@ -154,7 +149,13 @@ export default function ProfilePage() {
     {
       icon: '/assets/common/delete-icon.svg',
       label: t('menu.delete'),
-      onClick: () => setIsDeleteAccountModalOpen(true),
+      onClick: () => {
+        if (userType === UserType.B2B) {
+          toast.error(t('toast.cannotDeleteBusinessAccount'));
+        } else {
+          setIsDeleteAccountModalOpen(true);
+        }
+      },
       isDestructive: true,
     },
   ];

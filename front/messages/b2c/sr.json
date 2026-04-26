@@ -184,7 +184,7 @@
       "next": "Dalje",
       "enablePermissions": "Omogući geolokaciju i obaveštenja",
       "permissionsWarningDialog": {
-        "message": "Da bismo ti pružili najbolje iskustvo, potreban nam je pristup tvojoj lokaciji i obaveštenjima. Da li si siguran da želiš da nastaviš bez njih?",
+        "message": "Za najbolje iskustvo potrebno nam je da uključiš lokaciju i obaveštenja. Da li želiš da nastaviš bez toga?",
         "allow": "Dozvoli pristup",
         "proceed": "Nastavi bez toga"
       }
@@ -364,7 +364,7 @@
         "buttonNo": "Ne"
       },
       "toast": {
-        "cannotDeleteBusinessAccount": "Ne možete obrisati poslovni nalog sa korisničkog portala. Molimo vas da se prvo prijavite na biznis portal i obrišete nalog iz vašeg biznis profila."
+        "cannotDeleteBusinessAccount": "Ne možete da obrišete poslovni nalog sa korisničkog portala. Prijavite se na biznis portal i obrišite nalog iz svog biznis profila."
       }
     },
     "settings": {

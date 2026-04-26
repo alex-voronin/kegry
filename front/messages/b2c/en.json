@@ -364,7 +364,7 @@
         "buttonNo": "No"
       },
       "toast": {
-        "cannotDeleteBusinessAccount": "You cannot delete a business account from the customer portal. Please log in to the business portal first and delete your account from the business profile."
+        "cannotDeleteBusinessAccount": "Business accounts cannot be deleted from the customer portal. Please log in to the business portal and delete your account via the business profile settings."
       }
     },
     "settings": {
