@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
+import { AlertCircle } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { ButtonVariant } from '@/components/ui/button';
 import { Header } from '@/components/ui/header';
@@ -403,7 +404,7 @@ export default function ProfilePage() {
               >
                 <div className={styles.permissionsLabel}>
                   <span>{t('permissions')}</span>
-                  <div className={styles.permissionsBadge} />
+                  <AlertCircle size={16} className={styles.permissionsIcon} />
                 </div>
                 <Icon
                   src="/assets/common/disclosure-right-icon.svg"

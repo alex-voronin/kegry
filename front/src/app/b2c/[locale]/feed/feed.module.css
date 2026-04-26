@@ -20,8 +20,8 @@
   @apply absolute -top-1 -right-1 rounded-full bg-red-500 px-1 text-xs text-white;
 }
 
-.permissionsBadge {
-  @apply absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 px-1 text-xs text-white;
+.permissionsIcon {
+  @apply text-alert-vibrant absolute -top-1 -right-2;
 }
 
 .profileImage {

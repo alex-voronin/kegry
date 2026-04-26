@@ -22,6 +22,7 @@ input[type='number']::-webkit-inner-spin-button {
   --color-surface: #333333;
   --color-brand: #f5eccd;
   --color-error: #f68581;
+  --color-alert-vibrant: #ff4b4b;
 
   /* Text/Primary Colors - use with text-primary, bg-primary, border-primary */
   --color-primary: #f0f0f0;
@@ -48,6 +49,7 @@ input[type='number']::-webkit-inner-spin-button {
   --color-form-element: var(--color-form-element);
   --color-hover: var(--color-hover);
   --color-active: var(--color-active);
+  --color-alert-vibrant: var(--color-alert-vibrant);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-fundamento: var(--font-fundamento);

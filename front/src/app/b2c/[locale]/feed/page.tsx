@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
+import { AlertCircle } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import styles from './feed.module.css';
 import { Header } from '@/components/ui/header';
@@ -62,7 +63,11 @@ function FeedHeader({
           onClick={() => router.push(PAGE_ROUTES.PROFILE)}
         >
           {showPermissionsBadge && (
-            <span className={styles.permissionsBadge}></span>
+            <AlertCircle
+              size={16}
+              strokeWidth={3}
+              className={styles.permissionsIcon}
+            />
           )}
         </Icon>
       }
