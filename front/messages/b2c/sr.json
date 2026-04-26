@@ -324,7 +324,7 @@
       "title": "Moj profil",
       "blockedUsers": "Blokirani korisnici",
       "friendsAndFoes": "Prijatelji i neprijatelji",
-      "discountsAndPromotions": "Popusti i promocije",
+      "discountsAndPromotions": "Ponude",
       "coverImage": "Naslovna slika",
       "settings": "Podešavanja",
       "permissions": "Dozvole",
@@ -452,7 +452,7 @@
       "instructions": "Za omogućavanje dozvola:\n1. Tapni ikonu katanca 🔒 ili ikonu podešavanja u adresnoj traci pregledača.\n2. Tapni 'Dozvole' ili 'Podešavanja sajta'.\n3. Dozvoli 'Lokaciju' i 'Obaveštenja'.\n4. Osveži ovu stranicu."
     },
     "discountsAndPromotions": {
-      "title": "Popusti i promocije",
+      "title": "Ponude",
       "tabs": {
         "discounts": "Popusti",
         "promotions": "Promocije"

@@ -324,7 +324,7 @@
       "title": "My Profile",
       "blockedUsers": "Blocked Users",
       "friendsAndFoes": "Friends & Foes",
-      "discountsAndPromotions": "Discounts & Promotions",
+      "discountsAndPromotions": "Deals",
       "coverImage": "Cover Image",
       "settings": "Settings",
       "permissions": "Permissions",
@@ -452,7 +452,7 @@
       "instructions": "To enable permissions:\n1. Tap the lock icon 🔒 or settings icon in your browser address bar.\n2. Tap 'Permissions' or 'Site Settings'.\n3. Allow 'Location' and 'Notifications'.\n4. Refresh this page."
     },
     "discountsAndPromotions": {
-      "title": "Discounts & Promotions",
+      "title": "Deals",
       "tabs": {
         "discounts": "Discounts",
         "promotions": "Promotions"

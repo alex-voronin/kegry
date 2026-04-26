@@ -70,6 +70,7 @@ const STATIC_ASSETS = [
   "/assets/venue/venue-icon.svg",
   "/assets/venue/website-icon.svg",
   "/icons/favicon-16.png",
+  "/icons/favicon-192-maskable.png",
   "/icons/favicon-192.png",
   "/icons/favicon-32.png",
   "/icons/favicon-48.png",
