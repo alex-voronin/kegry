@@ -13,6 +13,7 @@ import { checkPermissionStatus } from '@/lib/permissions';
 import { useCallback } from 'react';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { ButtonVariant } from '@/components/ui/button';
+import { SafariShareIcon } from '@/components/ui/safari-share-icon';
 
 const TOTAL_SLIDES = 3;
 const SWIPE_THRESHOLD = 30;
@@ -65,7 +66,8 @@ export default function HowItWorksPage() {
     }
 
     // Check status again
-    const { locationAllowed, notificationAllowed } = await checkPermissionStatus();
+    const { locationAllowed, notificationAllowed } =
+      await checkPermissionStatus();
     setPermissionsAllowed(locationAllowed && notificationAllowed);
   };
 
@@ -265,8 +267,12 @@ export default function HowItWorksPage() {
                 {(os === 'ios' || os === 'other' || os === null) && (
                   <div className={styles.permissionNote}>
                     <p>{t('slidePWA.textIphone')}</p>
-                    <p className="mt-2 font-semibold">
-                      {t('slidePWA.instructionIphone')}
+                    <p className="mt-2 flex items-center font-semibold">
+                      {t.rich('slidePWA.instructionIphone', {
+                        icon: () => (
+                          <SafariShareIcon className="text-primary inline" />
+                        ),
+                      })}
                     </p>
                   </div>
                 )}
