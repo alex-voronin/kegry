@@ -30,19 +30,11 @@ export default function HowItWorksPage() {
   const wasDragged = useRef(false);
   const [os, setOs] = useState<'ios' | 'android' | 'other' | null>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
-  const [permissionsAllowed, setPermissionsAllowed] = useState(false);
   const [isPermissionDialogOpen, setIsPermissionDialogOpen] = useState(false);
-
-  const checkStatus = useCallback(async () => {
-    const { locationAllowed, notificationAllowed } =
-      await checkPermissionStatus();
-    setPermissionsAllowed(locationAllowed && notificationAllowed);
-  }, []);
 
   useEffect(() => {
     setOs(getOS());
-    checkStatus();
-  }, [checkStatus]);
+  }, []);
 
   const requestPrompts = async () => {
     // Trigger location prompt
@@ -59,16 +51,11 @@ export default function HowItWorksPage() {
     // Trigger notification prompt
     if ('Notification' in window) {
       try {
-        await Notification.requestPermission();
+        await window.Notification.requestPermission();
       } catch (e) {
         console.warn('Notification request failed or denied', e);
       }
     }
-
-    // Check status again
-    const { locationAllowed, notificationAllowed } =
-      await checkPermissionStatus();
-    setPermissionsAllowed(locationAllowed && notificationAllowed);
   };
 
   const finishOnboarding = useCallback(() => {
@@ -106,7 +93,9 @@ export default function HowItWorksPage() {
     if (currentSlide < TOTAL_SLIDES - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      if (!permissionsAllowed) {
+      const { locationAllowed, notificationAllowed } =
+        await checkPermissionStatus();
+      if (!locationAllowed || !notificationAllowed) {
         setIsPermissionDialogOpen(true);
       } else {
         finishOnboarding();
