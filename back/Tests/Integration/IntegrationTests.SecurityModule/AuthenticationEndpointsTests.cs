@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using IntegrationTests.Shared;
 using Microsoft.IdentityModel.Tokens;
@@ -7,6 +7,8 @@ using IntegrationTests.Shared.Fakes;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using NotificationModule.Domain.Aggregates;
+using NotificationsModule.Infrastructure.Persistence;
 using NotificationsModule.Infrastructure.Transport.Emails;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
@@ -18,6 +20,7 @@ using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
 using Shouldly;
 using Wolverine.Tracking;
+using User = SecurityModule.Domain.Aggregates.User;
 
 namespace IntegrationTests.SecurityModule;
 
@@ -347,7 +350,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Log out
         var logoutResponse = await Factory.ApiClient
-            .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, null);
+            .PostAsync<LogoutRequest, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, new LogoutRequest(null));
         logoutResponse.Success.ShouldBeTrue();
 
         // 3. Renew token
@@ -369,7 +372,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Log out
         var logoutResponse = await Factory.ApiClient
-            .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, null);
+            .PostAsync<LogoutRequest, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, new LogoutRequest(null));
         logoutResponse.Success.ShouldBeTrue();
 
         // 3. Sign in again
@@ -420,7 +423,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. Logout
         Factory.ApiClient.SetAuth(signupResponse.Result);
         var logoutResponse = await Factory.ApiClient
-            .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, null);
+            .PostAsync<LogoutRequest, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, new LogoutRequest(null));
         logoutResponse.Success.ShouldBeTrue();
 
         // 3. Signin via Google
@@ -453,7 +456,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. Logout
         Factory.ApiClient.SetAuth(auth);
         var logoutResponse = await Factory.ApiClient
-            .PostAsync<object?, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, null);
+            .PostAsync<LogoutRequest, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, new LogoutRequest(null));
         logoutResponse.Success.ShouldBeTrue();
 
         // 3. Login via Google
@@ -497,5 +500,149 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         user!.EmailConfirmed.ShouldBeTrue();
         user.HasGoogleAuth.ShouldBeTrue();
         user.RequiredAction.ShouldBe(RequiredAction.OnboardingCompletion); // Changed from Verification to Onboarding
+    }
+
+    [Fact]
+    public async Task GivenUserWithDevice_WhenLoggedOut_ThenDeviceIsDeleted()
+    {
+        // 1. Authenticate
+        var email = "device1@example.com";
+        var auth = await Factory.AuthManager.CreateAndLoginUserAsync(email, "Password123!");
+        Factory.ApiClient.SetAuth(auth);
+
+        var deviceIdA = Guid.NewGuid().ToString();
+        var deviceIdB = Guid.NewGuid().ToString();
+
+        // 2. Add device
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
+            context.Devices.Add(new Device
+            {
+                Id = deviceIdA,
+                FcmToken = "token1",
+                UserId = Guid.Parse(auth.UserId)
+            });
+            context.Devices.Add(new Device
+            {
+                Id = deviceIdB,
+                FcmToken = "token2",
+                UserId = Guid.Parse(auth.UserId)
+            });
+            await context.SaveChangesAsync();
+        }
+
+        // 3. Log out and wait for events
+        await Factory.Host.ExecuteAndWaitAsync(async () =>
+        {
+            var logoutResponse = await Factory.ApiClient
+                .PostAsync<LogoutRequest, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, new LogoutRequest(deviceIdA));
+            logoutResponse.Success.ShouldBeTrue();
+        });
+
+        // 4. Verify device is deleted
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
+            var existsA = await context.Devices.AnyAsync(d => d.Id == deviceIdA);
+            existsA.ShouldBeFalse();
+            var existsB = await context.Devices.AnyAsync(d => d.Id == deviceIdB);
+            existsB.ShouldBeTrue();
+        }
+    }
+
+    [Fact]
+    public async Task GivenUserWithDevices_WhenAccountDeleted_ThenAllDevicesAreDeleted()
+    {
+        // 1. Authenticate
+        var email = "device2@example.com";
+        var auth = await Factory.AuthManager.CreateAndLoginUserAsync(email, "Password123!");
+        Factory.ApiClient.SetAuth(auth);
+
+        var deviceIdA = Guid.NewGuid().ToString();
+        var deviceIdB = Guid.NewGuid().ToString();
+
+        // 2. Add devices
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
+            var userId = Guid.Parse(auth.UserId);
+            context.Devices.AddRange(
+                new Device { Id = deviceIdA, FcmToken = "token1", UserId = userId },
+                new Device { Id = deviceIdB, FcmToken = "token2", UserId = userId }
+            );
+            await context.SaveChangesAsync();
+        }
+
+        // 3. Delete account and wait for events
+        await Factory.Host.ExecuteAndWaitAsync(async () =>
+        {
+            var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(ApiRoutes.Auth.Account);
+            deleteResponse.Success.ShouldBeTrue();
+        });
+
+        // 4. Verify all devices are deleted
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
+            var deviceExists = await context.Devices.AnyAsync(d => d.UserId == Guid.Parse(auth.UserId));
+            deviceExists.ShouldBeFalse();
+        }
+    }
+
+    [Fact]
+    public async Task GivenTwoUsersWithDevices_WhenOneAccountDeleted_ThenDevicesForAnotherAccountIsAlive()
+    {
+        // 1. Authenticate A
+        var emailA = "userA@example.com";
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync(emailA, "Password123!");
+
+        // 2. Authenticate B
+        var emailB = "userB@example.com";
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync(emailB, "Password123!");
+
+        // 3. Add devices for A
+        Factory.ApiClient.SetAuth(authA);
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
+            var userId = Guid.Parse(authA.UserId);
+            context.Devices.AddRange(
+                new Device { Id = Guid.NewGuid().ToString(), FcmToken = "tokenA1", UserId = userId },
+                new Device { Id = Guid.NewGuid().ToString(), FcmToken = "tokenA2", UserId = userId }
+            );
+            await context.SaveChangesAsync();
+        }
+
+        // 3. Add devices for B
+        Factory.ApiClient.SetAuth(authB);
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
+            var userId = Guid.Parse(authB.UserId);
+            context.Devices.AddRange(
+                new Device { Id = Guid.NewGuid().ToString(), FcmToken = "tokenB1", UserId = userId },
+                new Device { Id = Guid.NewGuid().ToString(), FcmToken = "tokenB2", UserId = userId }
+            );
+            await context.SaveChangesAsync();
+        }
+
+        // 3. Delete account A and wait for events
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.Host.ExecuteAndWaitAsync(async () =>
+        {
+            var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(ApiRoutes.Auth.Account);
+            deleteResponse.Success.ShouldBeTrue();
+        });
+
+        // 4. Verify that exists only devices for user A
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
+            var deviceCountA = await context.Devices.CountAsync(d => d.UserId == Guid.Parse(authA.UserId));
+            var deviceCountB = await context.Devices.CountAsync(d => d.UserId == Guid.Parse(authB.UserId));
+            deviceCountA.ShouldBe(0);
+            deviceCountB.ShouldBe(2);
+        }
     }
 }

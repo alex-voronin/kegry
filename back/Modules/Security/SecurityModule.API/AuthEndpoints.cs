@@ -130,9 +130,11 @@ public class AuthEndpoints : IEndpoints
         );
     }
 
-    private static async Task<ApiResult.EmptyResult> Logout(IAuthenticationService service)
+    private static async Task<ApiResult.EmptyResult> Logout(
+        [FromBody] LogoutRequest request,
+        IAuthenticationService service)
     {
-        await service.LogoutAsync();
+        await service.LogoutAsync(request.DeviceId);
         return ApiResult.Empty;
     }
 

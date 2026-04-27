@@ -15,6 +15,7 @@ using SecurityModule.Domain.ValueObjects;
 using SecurityModule.Infrastructure.Service;
 using Serilog;
 using SharedCore.Exceptions;
+using SharedCore.Extensions;
 using SharedCore.Services.LifeTimes;
 using Wolverine;
 
@@ -290,9 +291,10 @@ internal class AuthenticationService : IAuthenticationService, IScoped
             RefreshToken: newRefreshToken);
     }
 
-    public async Task LogoutAsync()
+    public async Task LogoutAsync(string? deviceId = null)
     {
         var claimsPrincipal = _signInManager.Context.User;
+        var userId = claimsPrincipal.GetId();
         var jti = claimsPrincipal.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
         if (jti == null)
         {
@@ -303,6 +305,14 @@ internal class AuthenticationService : IAuthenticationService, IScoped
             await _refreshTokenRepository.DeleteByJtiAsync(jti);
             await _refreshTokenRepository.SaveChangesAsync();
         }
+
+        await _bus.PublishAsync(
+            new AccountLoggedOutEvent
+            {
+                UserId = userId,
+                DeviceId = deviceId
+            }
+        );
     }
 
     public async Task ResendConfirmationEmailAsync(string userId)

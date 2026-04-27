@@ -10,15 +10,15 @@ namespace Internal.Generated.WolverineHandlers
     [global::System.CodeDom.Compiler.GeneratedCode("JasperFx", "1.0.0")]
     public sealed class ScheduledEventMessageHandler1802167045 : Wolverine.Runtime.Handlers.MessageHandler
     {
+        private readonly Microsoft.Extensions.DependencyInjection.IServiceScopeFactory _serviceScopeFactory;
         private readonly System.TimeProvider _timeProvider;
         private readonly Microsoft.Extensions.Caching.Hybrid.HybridCache _hybridCache;
-        private readonly Microsoft.Extensions.DependencyInjection.IServiceScopeFactory _serviceScopeFactory;
 
-        public ScheduledEventMessageHandler1802167045(System.TimeProvider timeProvider, Microsoft.Extensions.Caching.Hybrid.HybridCache hybridCache, Microsoft.Extensions.DependencyInjection.IServiceScopeFactory serviceScopeFactory)
+        public ScheduledEventMessageHandler1802167045(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory serviceScopeFactory, System.TimeProvider timeProvider, Microsoft.Extensions.Caching.Hybrid.HybridCache hybridCache)
         {
+            _serviceScopeFactory = serviceScopeFactory;
             _timeProvider = timeProvider;
             _hybridCache = hybridCache;
-            _serviceScopeFactory = serviceScopeFactory;
         }
 
 

@@ -21,7 +21,7 @@ public interface IAuthenticationService
     public Task<bool> IsUserExistAsync(string email);
     public Task<AuthResult> ConfirmEmailAsync(string userId, string token);
     public Task<AuthResult> RenewTokensAsync(string refreshToken);
-    public Task LogoutAsync();
+    public Task LogoutAsync(string? deviceId = null);
 
     public Task ResendConfirmationEmailAsync(string userId);
     public Task RequestPasswordResetAsync(string email, string baseUrl);

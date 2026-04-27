@@ -74,4 +74,31 @@ public static class AccountEventHandlers
             resetToken: @event.ResetToken,
             ct: ct);
     }
+
+    public static async Task HandleAsync(
+        AccountDeletedEvent @event,
+        IDeviceRepository deviceRepository,
+        CancellationToken ct = default)
+    {
+        Log.Information("{HandlerClass} Handling event {@Event}",
+            typeof(AccountEventHandlers).FullName, @event);
+
+        await deviceRepository.DeleteByUserIdAsync(@event.Id, ct: ct);
+        await deviceRepository.SaveChangesAsync(ct);
+    }
+
+    public static async Task HandleAsync(
+        AccountLoggedOutEvent @event,
+        IDeviceRepository deviceRepository,
+        CancellationToken ct = default)
+    {
+        Log.Information("{HandlerClass} Handling event {@Event}",
+            typeof(AccountEventHandlers).FullName, @event);
+
+        if (@event.DeviceId != null)
+        {
+            await deviceRepository.DeleteByIdAsync(@event.DeviceId, @event.UserId, ct: ct);
+            await deviceRepository.SaveChangesAsync(ct);
+        }
+    }
 }

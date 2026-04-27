@@ -32,4 +32,11 @@ internal class EfCoreDeviceRepository : Repository<NotificationsContext, Device>
             .Where(d => d.Id == id && d.UserId == userId)
             .ExecuteDeleteAsync(ct);
     }
+
+    public Task DeleteByUserIdAsync(Guid userId, CancellationToken ct = default)
+    {
+        return Context.Devices
+            .Where(d => d.UserId == userId)
+            .ExecuteDeleteAsync(ct);
+    }
 }
