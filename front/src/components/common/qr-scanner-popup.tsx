@@ -2,10 +2,12 @@
 
 import { useCallback, useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import { X } from 'lucide-react';
 import { Scanner } from '@yudiel/react-qr-scanner';
 import type { IDetectedBarcode } from '@yudiel/react-qr-scanner';
 import { checkPermissionStatus } from '@/lib/permissions';
+import { PAGE_ROUTES } from '@/lib/routes';
 import styles from './qr-scanner-popup.module.css';
 
 interface QrScannerPopupProps {
@@ -61,7 +63,18 @@ export function QrScannerPopup({
             </button>
           </div>
           <div className={styles.deniedMessage}>
-            {cameraError ? t('cameraDenied') : t('locationDenied')}
+            {cameraError
+              ? t('cameraDenied')
+              : t.rich('locationDenied', {
+                  link: (chunks) => (
+                    <Link
+                      href={PAGE_ROUTES.PERMISSIONS}
+                      className={styles.inlineLink}
+                    >
+                      {chunks}
+                    </Link>
+                  ),
+                })}
           </div>
         </div>
       </div>

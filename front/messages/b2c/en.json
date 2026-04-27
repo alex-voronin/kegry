@@ -213,8 +213,8 @@
     },
     "feed": {
       "distance": "Distance: {distance} {units}",
-      "noProfiles": "No profiles found. Try changing the filters.",
-      "locationRequired": "Location access is required to show profiles nearby. Please enable location in your browser settings.",
+      "noProfiles": "No profiles found. Try changing the <link>filters</link>.",
+      "locationRequired": "Location access is off. To see local profiles, please enable it in your browser settings. <link>View instructions</link>",
       "inMeeting": "Can't invite anyone while you're planning a meetup, finish it first 😊 Tap anywhere to open the chat.",
       "inviteExpirationDialog": {
         "message": "This person invited you for {when}. Would you like to match their time?",
@@ -509,7 +509,7 @@
     "venues": {
       "title": "Venues",
       "noVenues": "No venues found nearby.",
-      "locationRequired": "Location access is required to show venues nearby. Please enable location in your browser settings.",
+      "locationRequired": "Location access is required to show venues nearby. Please enable location in your browser settings. <link>View instructions</link>",
       "distance": "{distance} {units}",
       "menu": {
         "viewVenue": "View Venue",
@@ -585,7 +585,7 @@
     "qrScannerPopup": {
       "title": "Scan QR to check-in",
       "cameraDenied": "Camera permission denied. Allow access in browser settings or scan with your system QR reader.",
-      "locationDenied": "Location access is required for scanning. Please enable location in your browser settings."
+      "locationDenied": "Location access is required for scanning. Please enable location in your browser settings. <link>View instructions</link>"
     },
     "profile-sections": {
       "name": {

@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { useRouter } from '@/i18n/routing';
+import { Link, useRouter } from '@/i18n/routing';
 import { AlertCircle } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import styles from './feed.module.css';
@@ -456,7 +456,18 @@ export default function FeedScreen() {
             height={300}
             className={styles.emptyStateImage}
           />
-          <p className={styles.emptyStateText}>{tFeed('locationRequired')}</p>
+          <p className={styles.emptyStateText}>
+            {tFeed.rich('locationRequired', {
+              link: (chunks) => (
+                <Link
+                  href={PAGE_ROUTES.PERMISSIONS}
+                  className={styles.emptyStateLink}
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
+          </p>
         </div>
       );
     }
@@ -471,7 +482,18 @@ export default function FeedScreen() {
             height={300}
             className={styles.emptyStateImage}
           />
-          <p className={styles.emptyStateText}>{tFeed('noProfiles')}</p>
+          <p className={styles.emptyStateText}>
+            {tFeed.rich('noProfiles', {
+              link: (chunks) => (
+                <Link
+                  href={PAGE_ROUTES.FEED_FILTERS}
+                  className={styles.emptyStateLink}
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
+          </p>
         </div>
       );
     }

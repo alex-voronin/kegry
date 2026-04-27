@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { useRouter } from '@/i18n/routing';
+import { Link, useRouter } from '@/i18n/routing';
 import Image from 'next/image';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
@@ -169,7 +169,18 @@ export default function VenuesScreen() {
               width={300}
               height={300}
             />
-            <span className={styles.emptyText}>{t('locationRequired')}</span>
+            <span className={styles.emptyText}>
+              {t.rich('locationRequired', {
+                link: (chunks) => (
+                  <Link
+                    href={PAGE_ROUTES.PERMISSIONS}
+                    className={styles.emptyStateLink}
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
+            </span>
           </div>
         ) : venues.length === 0 && !isLoading ? (
           <div className={styles.emptyState}>

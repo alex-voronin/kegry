@@ -131,3 +131,7 @@
 .isPerformingAction {
   @apply pointer-events-none cursor-wait;
 }
+
+.emptyStateLink {
+  @apply text-primary underline decoration-1 underline-offset-4 transition-opacity hover:opacity-80;
+}

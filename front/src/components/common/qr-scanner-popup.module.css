@@ -43,3 +43,7 @@
 .title {
   @apply text-center text-base font-semibold;
 }
+
+.inlineLink {
+  @apply text-primary font-semibold underline decoration-1 underline-offset-4 transition-opacity hover:opacity-80;
+}

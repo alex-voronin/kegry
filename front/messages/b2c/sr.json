@@ -213,8 +213,8 @@
     },
     "feed": {
       "distance": "Udaljenost: {distance} {units}",
-      "noProfiles": "Nije pronađen nijedan profil. Pokušaj da promeniš filtere.",
-      "locationRequired": "Pristup lokaciji je neophodan za prikaz profila u blizini. Molimo omogući lokaciju u podešavanjima pregledača.",
+      "noProfiles": "Nema pronađenih profila. Pokušaj da promeniš <link>filtere</link>.",
+      "locationRequired": "Pristup lokaciji je isključen. Da bi video profile u blizini, uključi lokaciju u podešavanjima pregledača. <link>Pogledaj uputstvo</link>",
       "inMeeting": "Ne možeš pozivati dok planiraš susret, prvo ga završi 😊 Tapni bilo gde da otvoriš chat.",
       "inviteExpirationDialog": {
         "message": "Ova osoba te je pozvala za {when}. Želiš li da prihvatiš njihovo vreme?",
@@ -509,7 +509,7 @@
     "venues": {
       "title": "Lokali",
       "noVenues": "Nisu pronađeni lokali u blizini.",
-      "locationRequired": "Pristup lokaciji je neophodan za prikaz lokala u blizini. Molimo omogući lokaciju u podešavanjima pregledača.",
+      "locationRequired": "Pristup lokaciji je neophodan za prikaz lokala u blizini. Omogući lokaciju u podešavanjima pregledača. <link>Pogledaj uputstvo</link>",
       "distance": "{distance} {units}",
       "menu": {
         "viewVenue": "Pogledaj lokal",
@@ -585,7 +585,7 @@
     "qrScannerPopup": {
       "title": "Skeniraj QR za prijavu",
       "cameraDenied": "Dozvola za kameru odbijena. Dozvoli pristup u podešavanjima pregledača ili skeniraj QR kod sistemskim čitačem.",
-      "locationDenied": "Pristup lokaciji je neophodan za skeniranje. Molimo omogući lokaciju u podešavanjima pregledača."
+      "locationDenied": "Pristup lokaciji je neophodan za skeniranje. Omogući ga u podešavanjima svog pregledača. <link>Pogledaj uputstvo</link>"
     },
     "profile-sections": {
       "name": {

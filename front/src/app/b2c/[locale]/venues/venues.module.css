@@ -15,3 +15,7 @@
 .emptyState {
   @apply text-secondary flex flex-1 flex-col items-center justify-center gap-4 text-center;
 }
+
+.emptyStateLink {
+  @apply text-primary cursor-pointer underline decoration-1 underline-offset-4 transition-opacity hover:opacity-80;
+}
