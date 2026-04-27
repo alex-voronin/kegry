@@ -164,13 +164,13 @@ export function useFcm(hasOnboardingCompleted: boolean = false) {
               return;
             }
 
-            if (Notification.permission === 'denied') {
+            if (window.Notification.permission === 'denied') {
               transition(FcmState.IDLE);
               return;
             }
 
-            if (Notification.permission !== 'granted') {
-              const p = await Notification.requestPermission();
+            if (window.Notification.permission !== 'granted') {
+              const p = await window.Notification.requestPermission();
               if (p !== 'granted') {
                 transition(FcmState.IDLE);
                 return;
