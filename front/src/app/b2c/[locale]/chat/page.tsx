@@ -157,6 +157,20 @@ export default function ChatScreen() {
     scrollToBottom('auto');
   }, [scrollToBottom]);
 
+  // Scroll page to bottom when emoji picker opens so iOS keyboard doesn't overlap it
+  useEffect(() => {
+    if (showEmojiPicker) {
+      // Wait for keyboard animation to finish, then scroll the page down
+      const timer = setTimeout(() => {
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: 'smooth',
+        });
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [showEmojiPicker]);
+
   // Scroll to bottom on viewport resize (e.g. keyboard open)
   // and update emoji picker max height
   useEffect(() => {
@@ -508,7 +522,10 @@ export default function ChatScreen() {
               priority
               onClick={() => setIsTimerInfoOpen(true)}
             />
-            <span className={styles.timer} onClick={() => setIsTimerInfoOpen(true)}>
+            <span
+              className={styles.timer}
+              onClick={() => setIsTimerInfoOpen(true)}
+            >
               {formatRemainingTime(remainingTimeMs)}
             </span>
             <Icon
@@ -523,93 +540,97 @@ export default function ChatScreen() {
         }
       />
 
-      <div ref={messageListRef} className={styles.messageList}>
-        {chat.messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`${styles.messageRow} ${
-              msg.isMine ? styles.messageRowRight : styles.messageRowLeft
-            }`}
-          >
+      {/* Clipping container: prevents the absolutely-positioned emoji picker
+          from overlapping the header during keyboard resize animations */}
+      <div className="relative flex flex-1 flex-col overflow-hidden">
+        <div ref={messageListRef} className={styles.messageList}>
+          {chat.messages.map((msg) => (
             <div
-              className={`${styles.messageBubble} ${
-                msg.isMine ? styles.bubbleRight : styles.bubbleLeft
+              key={msg.id}
+              className={`${styles.messageRow} ${
+                msg.isMine ? styles.messageRowRight : styles.messageRowLeft
               }`}
             >
-              {renderMessageText(msg.messageText)}
+              <div
+                className={`${styles.messageBubble} ${
+                  msg.isMine ? styles.bubbleRight : styles.bubbleLeft
+                }`}
+              >
+                {renderMessageText(msg.messageText)}
+              </div>
+              <span className={styles.timestamp}>
+                {formatTime(msg.createdAt)}
+              </span>
             </div>
-            <span className={styles.timestamp}>
-              {formatTime(msg.createdAt)}
-            </span>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      <footer ref={footerRef} className={styles.footer}>
-        {showEmojiPicker && (
-          <div ref={emojiPickerRef} className={styles.emojiPickerWrapper}>
-            <EmojiPicker
-              onEmojiClick={onEmojiClick}
-              theme={Theme.DARK}
-              lazyLoadEmojis={true}
-              emojiStyle={EmojiStyle.NATIVE}
-              width={300}
-              height={maxEmojiPickerHeight}
-              previewConfig={{
-                showPreview: false,
-              }}
+        <footer ref={footerRef} className={styles.footer}>
+          {showEmojiPicker && (
+            <div ref={emojiPickerRef} className={styles.emojiPickerWrapper}>
+              <EmojiPicker
+                onEmojiClick={onEmojiClick}
+                theme={Theme.DARK}
+                lazyLoadEmojis={true}
+                emojiStyle={EmojiStyle.NATIVE}
+                width={300}
+                height={maxEmojiPickerHeight}
+                previewConfig={{
+                  showPreview: false,
+                }}
+              />
+            </div>
+          )}
+          <div ref={emojiButtonRef} className="flex">
+            <Icon
+              className={styles.footerIcon}
+              src="/assets/chat/smiley-icon.svg"
+              alt="emoji"
+              width={24}
+              height={24}
+              priority
+              onClick={() => setShowEmojiPicker((prev) => !prev)}
             />
           </div>
-        )}
-        <div ref={emojiButtonRef} className="flex">
-          <Icon
-            className={styles.footerIcon}
-            src="/assets/chat/smiley-icon.svg"
-            alt="emoji"
-            width={24}
-            height={24}
-            priority
-            onClick={() => setShowEmojiPicker((prev) => !prev)}
+          <textarea
+            ref={textareaRef}
+            value={message}
+            onChange={(e) => onMessageChange(e)}
+            onKeyDown={(e) => {
+              if (
+                (e.metaKey || e.ctrlKey) &&
+                e.key === 'Enter' &&
+                remainingMessages > 0
+              ) {
+                e.preventDefault();
+                handleSendMessage();
+              }
+            }}
+            className={styles.input}
+            placeholder={t('messagePlaceholder', {
+              remaining: remainingMessages,
+              total: maxMessages,
+            })}
+            rows={1}
           />
-        </div>
-        <textarea
-          ref={textareaRef}
-          value={message}
-          onChange={(e) => onMessageChange(e)}
-          onKeyDown={(e) => {
-            if (
-              (e.metaKey || e.ctrlKey) &&
-              e.key === 'Enter' &&
-              remainingMessages > 0
-            ) {
-              e.preventDefault();
-              handleSendMessage();
-            }
-          }}
-          className={styles.input}
-          placeholder={t('messagePlaceholder', {
-            remaining: remainingMessages,
-            total: maxMessages,
-          })}
-          rows={1}
-        />
-        <div
-          className={cn(
-            styles.sendButton,
-            remainingMessages <= 0 ? 'opacity-50' : 'hover:opacity-80',
-          )}
-          onClick={remainingMessages > 0 ? handleSendMessage : undefined}
-        >
-          <Image
-            className="ml-1"
-            src="/assets/chat/send-icon.svg"
-            alt="send"
-            width={21}
-            height={21}
-            priority
-          />
-        </div>
-      </footer>
+          <div
+            className={cn(
+              styles.sendButton,
+              remainingMessages <= 0 ? 'opacity-50' : 'hover:opacity-80',
+            )}
+            onClick={remainingMessages > 0 ? handleSendMessage : undefined}
+          >
+            <Image
+              className="ml-1"
+              src="/assets/chat/send-icon.svg"
+              alt="send"
+              width={21}
+              height={21}
+              priority
+            />
+          </div>
+        </footer>
+      </div>
 
       <ModalMenu
         isOpen={isMenuOpen}
