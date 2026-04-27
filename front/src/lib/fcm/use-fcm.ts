@@ -30,7 +30,7 @@ const firebaseConfig = {
 
 const VAPID_KEY = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY!;
 const TOKEN_STORAGE_KEY = 'fcm_token_info';
-const DEVICE_ID_KEY = 'fcm_device_id';
+export const DEVICE_ID_KEY = 'fcm_device_id';
 const TOKEN_TTL = 30 * 24 * 60 * 60 * 1000;
 
 /* ------------------------------------------------------------------ */

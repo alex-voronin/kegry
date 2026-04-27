@@ -27,6 +27,7 @@ import { useHobbiesStore } from '@/store/use-hobbies-store';
 import { uploadImage } from '@/lib/image-utils';
 import { checkIfPermissionsDenied } from '@/lib/permissions';
 import { BRAND_NAME, AVATAR_MAX_LONG_SIDE } from '@/lib/constants';
+import { DEVICE_ID_KEY } from '@/lib/fcm/use-fcm';
 import SocialLinks from '../(landing)/_components/social-links';
 import styles from './profile.module.css';
 
@@ -93,7 +94,8 @@ export default function ProfilePage() {
   }, [fetchMyProfile, t]);
 
   const handleLogout = async () => {
-    await logout();
+    const deviceId = localStorage.getItem(DEVICE_ID_KEY) || undefined;
+    await logout(deviceId);
     window.location.href = PAGE_ROUTES.LOGIN();
   };
 
@@ -101,7 +103,9 @@ export default function ProfilePage() {
     setIsDeleting(true);
     try {
       await deleteAccount();
-      await logout();
+      // there is no need to pass a device id here, as we deleted all devices
+      // in deleteAccount endpoint
+      await logout(undefined);
       window.location.href = PAGE_ROUTES.LOGIN();
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete account');

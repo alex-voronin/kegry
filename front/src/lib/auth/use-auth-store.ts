@@ -99,7 +99,7 @@ interface AuthState {
   ) => Promise<AuthResponse>;
   confirmEmail: (userId: string, token: string) => Promise<AuthResponse>;
   resendConfirmationEmail: (userId: string) => Promise<void>;
-  logout: () => Promise<void>;
+  logout: (deviceId?: string) => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
   confirmPasswordReset: (
     encodedEmail: string,
@@ -271,9 +271,9 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      logout: async () => {
+      logout: async (deviceId?: string) => {
         try {
-          await authClient.post(API_ENDPOINTS.AUTH.LOGOUT);
+          await authClient.post(API_ENDPOINTS.AUTH.LOGOUT, deviceId ? { deviceId } : {});
         } finally {
           if (typeof window === 'undefined') return;
           resetAllStores();
