@@ -11,6 +11,7 @@ import { checkPermissionStatus } from '@/lib/permissions';
 import { Check, CircleOff } from 'lucide-react';
 import { SafariShareIcon } from '@/components/ui/safari-share-icon';
 import { TuneIcon } from '@/components/ui/tune-icon';
+import { SafariSiteSettingsIcon } from '@/components/ui/safari-site-settings-icon';
 import { getOS } from '@/lib/os-utils';
 import styles from './permissions.module.css';
 
@@ -132,6 +133,21 @@ export default function PermissionsPage() {
               </p>
               <p className={styles.instructionText}>
                 4. {t('ios.location.step4')}
+              </p>
+              <div className={styles.stepRow}>
+                <p className={styles.instructionText}>
+                  5. {t('ios.location.step5')}
+                </p>
+                <SafariSiteSettingsIcon className="text-primary" />
+              </div>
+              <p className={styles.instructionText}>
+                6. {t('ios.location.step6')}
+              </p>
+              <p className={styles.instructionText}>
+                7. {t('ios.location.step7')}
+              </p>
+              <p className={styles.instructionText}>
+                8. {t('ios.location.step8')}
               </p>
             </div>
           </div>

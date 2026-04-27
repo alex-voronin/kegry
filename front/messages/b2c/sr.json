@@ -472,7 +472,11 @@
           "step1": "Otvori Podešavanja → Privatnost i bezbednost → Usluge lokacije",
           "step2": "Izaberi Safari ili Chrome",
           "step3": "Omogući pristup lokacijia",
-          "step4": "Izaberi \"Dok se koristi aplikacija\" i uključi \"Precizna lokacija\""
+          "step4": "Izaberi \"Dok se koristi aplikacija\" i uključi \"Precizna lokacija\"",
+          "step5": "Dodirnite Podešavanja sajta u Safari navigacionoj traci.",
+          "step6": "Dodirnite tri tačke.",
+          "step7": "Skrolujte do dna do Podešavanja veb-sajta za kegry.rs.",
+          "step8": "Izaberite Dozvoli lokaciju"
         }
       },
       "androidDesktop": {
