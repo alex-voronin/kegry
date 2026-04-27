@@ -107,12 +107,10 @@ export default function PermissionsPage() {
               <p className={styles.instructionText}>
                 {t('ios.notifications.desc')}
               </p>
-              <div className={styles.stepRow}>
-                <p className={styles.instructionText}>
-                  1. {t('ios.notifications.step1')}
-                </p>
-                <SafariShareIcon className="text-primary" />
-              </div>
+              <p className={styles.instructionText}>
+                1. {t('ios.notifications.step1')}
+                <SafariShareIcon className={styles.inlineIcon} />
+              </p>
               <p className={styles.instructionText}>
                 2. {t('ios.notifications.step2')}
               </p>
@@ -134,12 +132,10 @@ export default function PermissionsPage() {
               <p className={styles.instructionText}>
                 4. {t('ios.location.step4')}
               </p>
-              <div className={styles.stepRow}>
-                <p className={styles.instructionText}>
-                  5. {t('ios.location.step5')}
-                </p>
-                <SafariSiteSettingsIcon className="text-primary" />
-              </div>
+              <p className={styles.instructionText}>
+                5. {t('ios.location.step5')}
+                <SafariSiteSettingsIcon className={styles.inlineIcon} />
+              </p>
               <p className={styles.instructionText}>
                 6. {t('ios.location.step6')}
               </p>
@@ -164,12 +160,10 @@ export default function PermissionsPage() {
               <h4 className={styles.instructionSubtitle}>
                 {t('androidDesktop.titleAll')}
               </h4>
-              <div className={styles.stepRow}>
-                <p className={styles.instructionText}>
-                  1. {t('androidDesktop.step1')}
-                </p>
-                <TuneIcon className="text-primary" />
-              </div>
+              <p className={styles.instructionText}>
+                1. {t('androidDesktop.step1')}
+                <TuneIcon className={styles.inlineIcon} />
+              </p>
               <p className={styles.instructionText}>
                 2. {t('androidDesktop.step2')}
               </p>

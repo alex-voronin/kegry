@@ -267,10 +267,10 @@ export default function HowItWorksPage() {
                 {(os === 'ios' || os === 'other' || os === null) && (
                   <div className={styles.permissionNote}>
                     <p>{t('slidePWA.textIphone')}</p>
-                    <p className="mt-2 flex items-center font-semibold">
+                    <p className="mt-2 font-semibold">
                       {t.rich('slidePWA.instructionIphone', {
                         icon: () => (
-                          <SafariShareIcon className="text-primary inline" />
+                          <SafariShareIcon className={styles.inlineIcon} />
                         ),
                       })}
                     </p>

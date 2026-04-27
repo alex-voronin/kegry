@@ -56,8 +56,10 @@
   @apply text-secondary text-sm leading-relaxed;
 }
 
-.stepRow {
-  @apply flex items-center gap-2;
+.inlineIcon {
+  @apply text-primary ml-1.5 inline-block align-bottom;
+  height: 1.5em;
+  width: auto;
 }
 
 .systemLink {

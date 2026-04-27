@@ -464,19 +464,19 @@
         "notifications": {
           "title": "Da omogućiš obaveštenja:",
           "desc": "Trenutno, obaveštenja u pretraživaču nisu podržana na iOS-u. Jedini način da u potpunosti koristiš uslugu je da instaliraš ovaj veb-sajt kao mobilnu aplikaciju.",
-          "step1": "Dodirni ikonu Share u Safariju.",
-          "step2": "Izaberi \"Dodaj na početni ekran\""
+          "step1": "Dodirni ikonu za deljenje u Safariju.",
+          "step2": "Izaberi \"Add to Home Screen\""
         },
         "location": {
           "title": "Da omogućiš geolokaciju:",
-          "step1": "Otvori Podešavanja → Privatnost i bezbednost → Usluge lokacije",
+          "step1": "Otvori Settings → Privacy & Security → Location Services",
           "step2": "Izaberi Safari ili Chrome",
-          "step3": "Omogući pristup lokacijia",
-          "step4": "Izaberi \"Dok se koristi aplikacija\" i uključi \"Precizna lokacija\"",
-          "step5": "Dodirnite Podešavanja sajta u Safari navigacionoj traci.",
-          "step6": "Dodirnite tri tačke.",
-          "step7": "Skrolujte do dna do Podešavanja veb-sajta za kegry.rs.",
-          "step8": "Izaberite Dozvoli lokaciju"
+          "step3": "Omogući Location",
+          "step4": "Izaberi \"While Using the App\" i uključi \"Precise Location\"",
+          "step5": "Dodirnite Site Settings u Safari navigacionoj traci.",
+          "step6": "Dodirnite tri tačke. (⋮)",
+          "step7": "Skrolujte do dna do \"Website Settings for kegry.rs\".",
+          "step8": "Izaberite Allow za lokaciju"
         }
       },
       "androidDesktop": {

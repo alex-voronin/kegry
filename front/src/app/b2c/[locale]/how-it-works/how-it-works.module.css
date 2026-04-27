@@ -61,3 +61,10 @@
 .continueButton {
   @apply w-[298px];
 }
+
+.inlineIcon {
+  @apply text-primary relative mx-1 inline-block align-bottom;
+  height: 1.3em;
+  width: auto;
+  top: -4px;
+}

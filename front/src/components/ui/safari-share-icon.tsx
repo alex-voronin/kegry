@@ -3,7 +3,7 @@ import React from 'react';
 export function SafariShareIcon({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 50 50"
+      viewBox="12 5 26 36"
       className={className}
       fill="currentColor"
       width="32"
