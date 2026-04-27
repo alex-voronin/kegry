@@ -21,7 +21,7 @@
 }
 
 .timer {
-  @apply text-sm;
+  @apply cursor-pointer text-sm;
 }
 
 .messageList {

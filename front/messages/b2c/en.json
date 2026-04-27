@@ -463,12 +463,12 @@
         "title": "iOS",
         "notifications": {
           "title": "To enable Notifications:",
-          "desc": "Currently, browser notifications are not supported on iOS. The only way to fully use the service is to install this website as a mobile app.",
+          "desc": "Currently, browser notifications on iOS are only available when the website is installed as an app. To do this:",
           "step1": "Tap the Share icon in Safari.",
           "step2": "Select \"Add to Home Screen\""
         },
         "location": {
-          "title": "To enable Geolocation:",
+          "title": "To enable Location:",
           "step1": "Open Settings → Privacy & Security → Location Services",
           "step2": "Select Safari or Chrome",
           "step3": "Enable Location",

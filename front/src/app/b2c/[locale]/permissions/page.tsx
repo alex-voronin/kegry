@@ -102,22 +102,6 @@ export default function PermissionsPage() {
 
             <div className={styles.instructionGroup}>
               <h4 className={styles.instructionSubtitle}>
-                {t('ios.notifications.title')}
-              </h4>
-              <p className={styles.instructionText}>
-                {t('ios.notifications.desc')}
-              </p>
-              <p className={styles.instructionText}>
-                1. {t('ios.notifications.step1')}
-                <SafariShareIcon className={styles.inlineIcon} />
-              </p>
-              <p className={styles.instructionText}>
-                2. {t('ios.notifications.step2')}
-              </p>
-            </div>
-
-            <div className={styles.instructionGroup}>
-              <h4 className={styles.instructionSubtitle}>
                 {t('ios.location.title')}
               </h4>
               <p className={styles.instructionText}>
@@ -144,6 +128,22 @@ export default function PermissionsPage() {
               </p>
               <p className={styles.instructionText}>
                 8. {t('ios.location.step8')}
+              </p>
+            </div>
+
+            <div className={styles.instructionGroup}>
+              <h4 className={styles.instructionSubtitle}>
+                {t('ios.notifications.title')}
+              </h4>
+              <p className={styles.instructionText}>
+                {t('ios.notifications.desc')}
+              </p>
+              <p className={styles.instructionText}>
+                1. {t('ios.notifications.step1')}
+                <SafariShareIcon className={styles.inlineIcon} />
+              </p>
+              <p className={styles.instructionText}>
+                2. {t('ios.notifications.step2')}
               </p>
             </div>
           </div>

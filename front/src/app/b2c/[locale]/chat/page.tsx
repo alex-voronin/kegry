@@ -508,7 +508,7 @@ export default function ChatScreen() {
               priority
               onClick={() => setIsTimerInfoOpen(true)}
             />
-            <span className={styles.timer}>
+            <span className={styles.timer} onClick={() => setIsTimerInfoOpen(true)}>
               {formatRemainingTime(remainingTimeMs)}
             </span>
             <Icon

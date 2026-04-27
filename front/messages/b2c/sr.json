@@ -463,12 +463,12 @@
         "title": "iOS",
         "notifications": {
           "title": "Da omogućiš obaveštenja:",
-          "desc": "Trenutno, obaveštenja u pretraživaču nisu podržana na iOS-u. Jedini način da u potpunosti koristiš uslugu je da instaliraš ovaj veb-sajt kao mobilnu aplikaciju.",
+          "desc": "Trenutno su browser notifikacije na iOS-u dostupne samo kada instaliraš veb-sajt kao aplikaciju. Da bi to uradio:",
           "step1": "Dodirni ikonu za deljenje u Safariju.",
           "step2": "Izaberi \"Add to Home Screen\""
         },
         "location": {
-          "title": "Da omogućiš geolokaciju:",
+          "title": "Da omogućiš lokaciju:",
           "step1": "Otvori Settings → Privacy & Security → Location Services",
           "step2": "Izaberi Safari ili Chrome",
           "step3": "Omogući Location",
