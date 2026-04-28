@@ -30,6 +30,7 @@ import { BRAND_NAME, AVATAR_MAX_LONG_SIDE } from '@/lib/constants';
 import { DEVICE_ID_KEY } from '@/lib/fcm/use-fcm';
 import SocialLinks from '../(landing)/_components/social-links';
 import styles from './profile.module.css';
+import { useFeedStore } from '@/app/b2c/[locale]/feed/use-feed-store';
 
 export default function ProfilePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -156,6 +157,8 @@ export default function ProfilePage() {
       onClick: () => {
         if (userType === UserType.B2B) {
           toast.error(t('toast.cannotDeleteBusinessAccount'));
+        } else if (useFeedStore.getState().isInMeeting) {
+          toast.error(t('toast.cannotDeleteWhileInMeetup'));
         } else {
           setIsDeleteAccountModalOpen(true);
         }

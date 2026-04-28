@@ -364,7 +364,8 @@
         "buttonNo": "No"
       },
       "toast": {
-        "cannotDeleteBusinessAccount": "Business accounts cannot be deleted from the customer portal. Please log in to the business portal and delete your account via the business profile settings."
+        "cannotDeleteBusinessAccount": "Business accounts cannot be deleted from the customer portal. Please log in to the business portal and delete your account via the business profile settings.",
+        "cannotDeleteWhileInMeetup": "You can't delete your account while a meetup is active. Please end it first."
       }
     },
     "settings": {

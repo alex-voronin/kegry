@@ -364,7 +364,8 @@
         "buttonNo": "Ne"
       },
       "toast": {
-        "cannotDeleteBusinessAccount": "Ne možete da obrišete poslovni nalog sa korisničkog portala. Prijavite se na biznis portal i obrišite nalog iz svog biznis profila."
+        "cannotDeleteBusinessAccount": "Ne možete da obrišete poslovni nalog sa korisničkog portala. Prijavite se na biznis portal i obrišite nalog iz svog biznis profila.",
+        "cannotDeleteWhileInMeetup": "Ne možeš obrisati svoj nalog dok je sastanak u toku. Molim te da ga prvo završiš."
       }
     },
     "settings": {
