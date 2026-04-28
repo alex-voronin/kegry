@@ -105,7 +105,7 @@ export default function FiltersScreen() {
     distance: 10,
     ageFrom: '',
     ageTo: '',
-    gender: 'any',
+    gender: 'Any',
     hobbies: [],
   };
 
@@ -153,7 +153,7 @@ export default function FiltersScreen() {
         distance: roundedDistance,
         ageFrom: serverFilters.ageFrom ?? '',
         ageTo: serverFilters.ageTo ?? '',
-        gender: serverFilters.gender || 'any',
+        gender: serverFilters.gender || 'Any',
         hobbies: hobbyIds,
       });
       isLoaded.current = true;
@@ -177,7 +177,7 @@ export default function FiltersScreen() {
       radiusMeters,
       ageFrom: data.ageFrom === '' ? null : Number(data.ageFrom),
       ageTo: data.ageTo === '' ? null : Number(data.ageTo),
-      gender: data.gender === 'any' ? null : (data.gender as any),
+      gender: data.gender === 'Any' ? null : (data.gender as any),
       hobbyIds: data.hobbies,
     };
 
@@ -195,9 +195,9 @@ export default function FiltersScreen() {
   };
 
   const genderOptions = [
-    { value: 'any', label: t('genderAny'), width: 100 },
-    { value: 'male', label: t('male'), width: 100 },
-    { value: 'female', label: t('female'), width: 100 },
+    { value: 'Any', label: t('genderAny'), width: 100 },
+    { value: 'Male', label: t('male'), width: 100 },
+    { value: 'Female', label: t('female'), width: 100 },
   ];
 
   return (
