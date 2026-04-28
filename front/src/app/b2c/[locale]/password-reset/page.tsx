@@ -104,7 +104,7 @@ export default function PasswordResetPage() {
         <Logo />
 
         <form onSubmit={handleSubmit(onSubmit)} className={styles.formSection}>
-          <div>
+          <div className={styles.inputWrapper}>
             <Input
               type="password"
               placeholder={t('newPassword')}
@@ -117,7 +117,7 @@ export default function PasswordResetPage() {
             )}
           </div>
 
-          <div>
+          <div className={styles.inputWrapper}>
             <Input
               type="password"
               placeholder={t('confirmPassword')}
