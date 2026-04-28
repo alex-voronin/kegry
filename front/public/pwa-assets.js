@@ -68,6 +68,7 @@ const STATIC_ASSETS = [
   "/assets/venue/phone-icon.svg",
   "/assets/venue/venue-icon.svg",
   "/assets/venue/website-icon.svg",
+  "/icons/apple-touch-icon.png",
   "/icons/favicon-16.png",
   "/icons/favicon-192-maskable.png",
   "/icons/favicon-192.png",
