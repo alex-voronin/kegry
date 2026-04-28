@@ -24,7 +24,8 @@ We do not have a designated Data Protection Officer (DPO) as this is not require
 2.2.4. Log data (IP address, access times, browser/app version)
 
 2.3. Data Obtained via Google OAuth
-Our Service uses Google OAuth to allow you to sign in securely. When you authenticate using your Google Account, we collect your email address and a unique internal identifier. This information is used exclusively to identify your account, maintain your session, and send service-related communications. We use this data solely to provide and improve our services; we do not sell, rent, or trade your Google user data to third parties.
+Our Service uses Google OAuth to enable secure user authentication. When you sign in using your Google Account, we collect your email address and a unique internal user identifier associated with your account. This information is used solely to authenticate you, maintain your session, and provide essential service-related communications (such as notifications about new connections or activity updates, as configured in your settings). We do not use this data for advertising purposes, nor do we sell, rent, or otherwise share your Google user data with third parties, except as necessary to provide our services or as required by law.
+Our use and transfer of information received from Google APIs will comply with the Google API Services User Data Policy, including the Limited Use requirements.
 
 3. Purpose of Processing
 We process your personal data to:

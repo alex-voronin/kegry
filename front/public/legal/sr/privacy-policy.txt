@@ -24,7 +24,8 @@ Nismo odabrali službenika za zaštitu podataka (DPO) jer to nije obavezno prema
 2.2.4. Podatke o logovanju (IP adresa, vremena pristupa, verzija pretraživača/aplikacije)
 
 2.3. Podaci dobijeni putem Google OAuth-a
-Naša Usluga koristi Google OAuth kako bi vam omogućila bezbednu prijavu. Kada se prijavite koristeći svoj Google nalog, prikupljamo vašu e-adresu i jedinstveni interni identifikator. Ove informacije se koriste isključivo za identifikaciju vašeg naloga, održavanje vaše sesije i slanje komunikacija u vezi sa uslugom. Ove podatke koristimo isključivo za pružanje i poboljšanje naših usluga; ne prodajemo, ne iznajmljujemo i ne trgujemo vašim Google korisničkim podacima sa trećim stranama.
+Naš servis koristi Google OAuth kako bi omogućio bezbednu autentifikaciju korisnika. Kada se prijavite koristeći svoj Google nalog, prikupljamo vašu imejl adresu i jedinstveni interni identifikator korisnika povezan sa vašim nalogom. Ove informacije se koriste isključivo za vašu autentifikaciju, održavanje vaše sesije i slanje važnih obaveštenja u vezi sa servisom. Vaše podatke ne koristimo u svrhe oglašavanja, niti ih prodajemo, iznajmljujemo ili na bilo koji drugi način delimo sa trećim stranama, osim ako je to neophodno za pružanje naših usluga ili ako je propisano zakonom. 
+Naše korišćenje i prenos informacija dobijenih putem Google API-ja biće u skladu sa Google API Services User Data Policy, uključujući i zahteve o ograničenoj upotrebi (Limited Use).
 
 3. Svrha obrade
 Vaše lične podatke obrađujemo radi:
