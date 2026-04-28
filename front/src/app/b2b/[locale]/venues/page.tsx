@@ -7,7 +7,7 @@ import { ChevronRight } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Header } from '@/components/ui/header';
 import { Spinner } from '@/components/ui/spinner';
-import { ListItem } from '@/components/ui/list-item';
+import { VenueListItem } from '@/components/b2b/venue-list-item';
 import { useSidebar, SidebarIcon, Sidebar } from '@/components/b2b/Sidebar';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useVenuesStore } from './use-venues-store';
@@ -51,16 +51,15 @@ export default function VenuesPage() {
         ) : (
           <div className={styles.companyList}>
             {venues.map((venue) => (
-              <ListItem
+              <VenueListItem
                 key={venue.id}
                 className="cursor-pointer"
                 onClick={() => handleVenueClick(venue.id)}
-                avatarUrl={venue.coverImageUrl || '/assets/b2b/venue-icon.svg'}
-                avatarAlt={venue.address}
+                imageUrl={venue.coverImageUrl || '/assets/b2b/venue-icon.svg'}
+                imageAlt={venue.address}
                 title={venue.address}
-                subtitle=""
                 dimmed={!venue.isVerified}
-                rightEl={<ChevronRight size={24} className="text-secondary" />}
+                rightEl={<ChevronRight size={24} className="text-primary" />}
               />
             ))}
           </div>

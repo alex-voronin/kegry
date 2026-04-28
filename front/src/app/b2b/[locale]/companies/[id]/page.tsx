@@ -16,6 +16,7 @@ import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { ListItem } from '@/components/ui/list-item';
+import { VenueListItem } from '@/components/b2b/venue-list-item';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
@@ -24,10 +25,7 @@ import { useSafeBack } from '@/hooks/use-safe-back';
 import stylesCommon from '@/components/ui/common.module.css';
 import { Input } from '@/components/ui/input';
 import { PAGE_ROUTES } from '@/lib/routes';
-import {
-  useCompaniesStore,
-  VenueListItemDto,
-} from '../use-companies-store';
+import { useCompaniesStore, VenueListItemDto } from '../use-companies-store';
 import styles from './profile.module.css';
 
 export default function CompanyProfilePage() {
@@ -271,19 +269,18 @@ export default function CompanyProfilePage() {
             ) : (
               <div className={styles.list}>
                 {selectedCompany.venues.map((venue: VenueListItemDto) => (
-                  <ListItem
+                  <VenueListItem
                     key={venue.id}
                     className="cursor-pointer"
                     onClick={() => handleVenueClick(venue.id)}
-                    avatarUrl={
+                    imageUrl={
                       venue.coverImageUrl || '/assets/b2b/venue-icon.svg'
                     }
-                    avatarAlt={venue.address}
+                    imageAlt={venue.address}
                     title={venue.address}
-                    subtitle=""
                     dimmed={!venue.isVerified}
                     rightEl={
-                      <ChevronRight size={24} className="text-secondary" />
+                      <ChevronRight size={24} className="text-primary" />
                     }
                   />
                 ))}
