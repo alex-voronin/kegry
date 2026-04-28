@@ -212,10 +212,12 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.AuthManager.CreateAndLoginUserAsync(email, oldPassword);
 
         // 2. Reset password
-        var requestReset = new RequestPasswordResetRequest(email);
-        await Factory.ApiClient.PostAsync<RequestPasswordResetRequest, ApiResult.EmptyResult>(
-            ApiRoutes.Auth.RequestPasswordReset, requestReset);
-
+        await Factory.Host.ExecuteAndWaitAsync(async () =>
+        {
+            var requestReset = new RequestPasswordResetRequest(email);
+            await Factory.ApiClient.PostAsync<RequestPasswordResetRequest, ApiResult.EmptyResult>(
+                ApiRoutes.Auth.RequestPasswordReset, requestReset);
+        });
         capturedToken.ShouldNotBeNullOrEmpty();
 
         // 3. Confirm password reset 

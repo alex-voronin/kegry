@@ -10,14 +10,14 @@ namespace Internal.Generated.WolverineHandlers
     [global::System.CodeDom.Compiler.GeneratedCode("JasperFx", "1.0.0")]
     public sealed class ChatMessageSentEventHandlerEmailsHandler1870037464 : Wolverine.Runtime.Handlers.MessageHandler
     {
-        private readonly Microsoft.Extensions.DependencyInjection.IServiceScopeFactory _serviceScopeFactory;
         private readonly System.TimeProvider _timeProvider;
+        private readonly Microsoft.Extensions.DependencyInjection.IServiceScopeFactory _serviceScopeFactory;
         private readonly Microsoft.Extensions.Caching.Hybrid.HybridCache _hybridCache;
 
-        public ChatMessageSentEventHandlerEmailsHandler1870037464(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory serviceScopeFactory, System.TimeProvider timeProvider, Microsoft.Extensions.Caching.Hybrid.HybridCache hybridCache)
+        public ChatMessageSentEventHandlerEmailsHandler1870037464(System.TimeProvider timeProvider, Microsoft.Extensions.DependencyInjection.IServiceScopeFactory serviceScopeFactory, Microsoft.Extensions.Caching.Hybrid.HybridCache hybridCache)
         {
-            _serviceScopeFactory = serviceScopeFactory;
             _timeProvider = timeProvider;
+            _serviceScopeFactory = serviceScopeFactory;
             _hybridCache = hybridCache;
         }
 
