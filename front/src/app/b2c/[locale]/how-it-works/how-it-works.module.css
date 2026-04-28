@@ -5,7 +5,7 @@
 }
 
 .content {
-  @apply flex flex-1 flex-col items-center gap-4;
+  @apply flex flex-1 flex-col items-center justify-center gap-4;
 }
 
 .sensei {
