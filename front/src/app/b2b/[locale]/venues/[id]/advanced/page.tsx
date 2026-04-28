@@ -15,7 +15,7 @@ import { useSafeBack } from '@/hooks/use-safe-back';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { buildQrUrl, downloadQrCode, extractQrCode } from '@/lib/qr-utils';
 import { useVenueStore } from '../use-venue-store';
-import { Download, QrCode } from 'lucide-react';
+import { Download, ScanQrCode } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { QrScannerPopup } from '@/components/common/qr-scanner-popup';
 import stylesCommon from '@/components/ui/common.module.css';
@@ -120,7 +120,7 @@ export default function AdvancedSettingsPage() {
             onClick={() => setIsScannerOpen(true)}
             className="cursor-pointer"
           >
-            <QrCode size={24} className="text-primary" />
+            <ScanQrCode size={24} className="text-primary" />
           </Icon>
         }
       />
