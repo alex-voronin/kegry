@@ -30,11 +30,19 @@ export default function HowItWorksPage() {
   const wasDragged = useRef(false);
   const [os, setOs] = useState<'ios' | 'android' | 'other' | null>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
-  const [isPermissionDialogOpen, setIsPermissionDialogOpen] = useState(false);
+
+  const hasRequestedPrompts = useRef(false);
 
   useEffect(() => {
     setOs(getOS());
   }, []);
+
+  useEffect(() => {
+    if (currentSlide === 2 && !hasRequestedPrompts.current) {
+      hasRequestedPrompts.current = true;
+      requestPrompts();
+    }
+  }, [currentSlide]);
 
   const requestPrompts = async () => {
     // Trigger location prompt
@@ -82,24 +90,10 @@ export default function HowItWorksPage() {
   }, []);
 
   const handleNext = async () => {
-    if (currentSlide === 1) {
-      await requestPrompts();
-
-      // Proceed regardless of status
-      setCurrentSlide(2);
-      return;
-    }
-
     if (currentSlide < TOTAL_SLIDES - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      const { locationAllowed, notificationAllowed } =
-        await checkPermissionStatus();
-      if (!locationAllowed || !notificationAllowed) {
-        setIsPermissionDialogOpen(true);
-      } else {
-        finishOnboarding();
-      }
+      finishOnboarding();
     }
   };
 
@@ -303,20 +297,7 @@ export default function HowItWorksPage() {
           </Button>
         </div>
 
-        <ModalDialog
-          isOpen={isPermissionDialogOpen}
-          onClose={() => setIsPermissionDialogOpen(false)}
-          message={t('permissionsWarningDialog.message')}
-          primaryButtonText={t('permissionsWarningDialog.allow')}
-          secondaryButtonText={t('permissionsWarningDialog.proceed')}
-          onPrimaryAction={async () => {
-            await requestPrompts();
-            finishOnboarding();
-          }}
-          onSecondaryAction={finishOnboarding}
-          primaryButtonVariant={ButtonVariant.Default}
-          secondaryButtonVariant={ButtonVariant.Secondary}
-        />
+
       </div>
     </div>
   );

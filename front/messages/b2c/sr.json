@@ -184,12 +184,7 @@
       },
       "continue": "Hajde!",
       "next": "Dalje",
-      "enablePermissions": "Omogući geolokaciju i obaveštenja",
-      "permissionsWarningDialog": {
-        "message": "Za najbolje iskustvo potrebno nam je da uključiš lokaciju i obaveštenja. Da li želiš da nastaviš bez toga?",
-        "allow": "Dozvoli pristup",
-        "proceed": "Nastavi bez toga"
-      }
+      "enablePermissions": "Omogući geolokaciju i obaveštenja"
     },
     "onboarding": {
       "title": "Reci nam o sebi",

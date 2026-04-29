@@ -184,12 +184,7 @@
       },
       "continue": "Let's go!",
       "next": "Next",
-      "enablePermissions": "Enable geolocations & notification",
-      "permissionsWarningDialog": {
-        "message": "To provide the best experience, we need access to your location and notifications. Are you sure you want to proceed without enabling them?",
-        "allow": "Allow permissions",
-        "proceed": "Proceed without"
-      }
+      "enablePermissions": "Enable geolocations & notification"
     },
     "onboarding": {
       "title": "Tell us about yourself",
