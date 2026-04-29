@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/routing';
 import Image from 'next/image';
@@ -35,15 +35,25 @@ export default function VenuesScreen() {
   );
   const [isLocationDenied, setIsLocationDenied] = useState(false);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
-  const { isScannerOpen, setIsScannerOpen, handleQrCode } = useQrCheckIn({
-    onSuccess: (id) => {
+  const handleCheckInSuccess = useCallback(
+    (id: string) => {
       router.push(`${PAGE_ROUTES.VENUE_DETAIL(id)}?animate-check-in=true`);
     },
-    onError: (venueId) => {
+    [router],
+  );
+
+  const handleCheckInError = useCallback(
+    (venueId: string | null) => {
       if (venueId) {
         router.push(PAGE_ROUTES.VENUE_DETAIL(venueId));
       }
     },
+    [router],
+  );
+
+  const { isScannerOpen, setIsScannerOpen, handleQrCode } = useQrCheckIn({
+    onSuccess: handleCheckInSuccess,
+    onError: handleCheckInError,
   });
   const distanceUnits = useSettingsStore((state) => state.distanceUnits);
   const { safeBack } = useSafeBack();
@@ -88,7 +98,7 @@ export default function VenuesScreen() {
   useEffect(() => {
     const init = async () => {
       if (limit === 0) return;
-      
+
       // If we already have venues, we don't need to re-init unless we want to refresh
       if (venues.length === 0 && !isLoading && !hasError) {
         setIsLocationDenied(false);

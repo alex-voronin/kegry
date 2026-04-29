@@ -153,11 +153,15 @@ export default function FeedScreen() {
   const { npc, monolog, fetchNpc, inviteNpc, dismissNpc } = useNpcStore();
   const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
-  const { handleQrCode } = useQrCheckIn({
-    onSuccess: (venueId) => {
+  const handleCheckInSuccess = useCallback(
+    (venueId: string) => {
       router.push(`${PAGE_ROUTES.VENUE_DETAIL(venueId)}?animate-check-in=true`);
     },
-    onError(venueId) {
+    [router],
+  );
+
+  const handleCheckInError = useCallback(
+    (venueId: string | null) => {
       if (venueId) {
         router.push(PAGE_ROUTES.VENUE_DETAIL(venueId));
       } else {
@@ -166,6 +170,12 @@ export default function FeedScreen() {
         router.refresh();
       }
     },
+    [router],
+  );
+
+  const { handleQrCode } = useQrCheckIn({
+    onSuccess: handleCheckInSuccess,
+    onError: handleCheckInError,
   });
   const [when, setWhen] = useState<InviteExpiration>(InviteExpiration.Today);
   const [expirationPopup, setExpirationPopup] = useState<{

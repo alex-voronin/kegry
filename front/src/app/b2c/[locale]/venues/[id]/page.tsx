@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter, usePathname } from '@/i18n/routing';
@@ -50,6 +50,10 @@ export default function VenueDetailScreen() {
   const [isHelpDialogOpen, setIsHelpDialogOpen] = useState(false);
   const [checkInVenueId, setCheckInVenueId] = useState<string | null>(null);
 
+  const handleCheckInSuccess = useCallback((id: string) => {
+    setCheckInVenueId(id);
+  }, []);
+
   const {
     isScannerOpen,
     setIsScannerOpen,
@@ -57,7 +61,7 @@ export default function VenueDetailScreen() {
     setShowCheckIn,
     handleQrCode,
   } = useQrCheckIn({
-    onSuccess: (id) => setCheckInVenueId(id),
+    onSuccess: handleCheckInSuccess,
   });
 
   const { safeBack } = useSafeBack();
