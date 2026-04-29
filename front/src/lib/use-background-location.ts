@@ -10,7 +10,7 @@ const LOCATION_UPDATE_INTERVAL = 60 * 60 * 1000; // 1 hour
 const ENABLE_HIGH_ACCURACY = false;
 const LOCATION_LAST_SENT_KEY = 'location_last_sent';
 
-function getLastSentTimestamp(): number {
+export function getLastSentTimestamp(): number {
   if (typeof window === 'undefined') return 0;
   const stored = localStorage.getItem(LOCATION_LAST_SENT_KEY);
   return stored ? parseInt(stored, 10) : 0;
@@ -36,7 +36,7 @@ let activeRequest: Promise<LocationResult> | null = null;
  * Requests location and sends to server if rate limit allows.
  * Returns a promise with the result status.
  */
-export function SendLocationWithRateLimit(): Promise<LocationResult> {
+export function SendLocationWithRateLimit(timeout: number = 15000): Promise<LocationResult> {
   if (activeRequest) {
     return activeRequest.finally(() => {
       activeRequest = null;
@@ -87,7 +87,7 @@ export function SendLocationWithRateLimit(): Promise<LocationResult> {
           },
           {
             enableHighAccuracy: ENABLE_HIGH_ACCURACY,
-            timeout: 10000,
+            timeout,
             maximumAge: 300000,
           },
         );

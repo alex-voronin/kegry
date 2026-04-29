@@ -4,7 +4,8 @@
       "network": "Network error. Please try again."
     },
     "toast": {
-      "linkCopied": "Link copied to clipboard"
+      "linkCopied": "Link copied to clipboard",
+      "gettingLocation": "Finding your location..."
     },
     "units": {
       "kilometers": "km",

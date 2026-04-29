@@ -20,7 +20,10 @@ import { InviteExpiration, expiresAtToWhen } from '@/lib/invite-utils';
 import { useFcmStore } from '@/lib/fcm/store';
 import { NotificationType, FcmPayload } from '@/lib/fcm/types';
 import { checkIfPermissionsDenied } from '@/lib/permissions';
-import { SendLocationWithRateLimit } from '@/lib/use-background-location';
+import {
+  SendLocationWithRateLimit,
+  getLastSentTimestamp,
+} from '@/lib/use-background-location';
 import {
   UserFeedBody,
   UserFeedFooter,
@@ -208,8 +211,13 @@ export default function FeedScreen() {
 
   const [isInitialized, setIsInitialized] = useState(false);
   const initializationStarted = useRef(false);
+  const locationToastRef = useRef<ReturnType<typeof toast.loading> | null>(
+    null,
+  );
 
+  const autoChatRedirect = searchParams.get('auto-chat-redirect');
   useEffect(() => {
+    let isMounted = true;
     const initializeFeed = async () => {
       if (!hasHydrated || initializationStarted.current) return;
       initializationStarted.current = true;
@@ -225,7 +233,25 @@ export default function FeedScreen() {
 
       try {
         // 2. Send location first
-        const locationResult = await SendLocationWithRateLimit();
+        const isFirstLocationSubmission = getLastSentTimestamp() === 0;
+
+        if (isFirstLocationSubmission) {
+          locationToastRef.current = toast.loading(
+            tCommon('toast.gettingLocation'),
+          );
+        }
+
+        const locationResult = await SendLocationWithRateLimit(
+          isFirstLocationSubmission ? 30000 : 15000,
+        );
+
+        if (!isMounted) return;
+
+        if (locationToastRef.current !== null) {
+          toast.dismiss(locationToastRef.current);
+          locationToastRef.current = null;
+        }
+
         await checkPermissions(); // Sync the permissions badge after location attempt
         if (locationResult === 'denied') {
           setIsLocationDenied(true);
@@ -241,10 +267,12 @@ export default function FeedScreen() {
           fetchNpc(),
         ]);
 
+        if (!isMounted) return;
+
         // 4. Handle redirects (Check-in/Meeting/Rating)
         if (status.isInMeeting) {
           useFeedStore.setState({ isInMeeting: true });
-          if (searchParams.get('auto-chat-redirect') !== 'false') {
+          if (autoChatRedirect !== 'false') {
             router.push(PAGE_ROUTES.CHAT);
             return;
           }
@@ -289,15 +317,22 @@ export default function FeedScreen() {
     };
 
     initializeFeed();
+
+    return () => {
+      isMounted = false;
+
+      if (locationToastRef.current !== null) {
+        toast.dismiss(locationToastRef.current);
+        locationToastRef.current = null;
+      }
+    };
   }, [
     hasHydrated,
-    isInitialized,
     fetchFeedStatus,
     fetchFeed,
     fetchUnseenNotificationCount,
     fetchNpc,
     router,
-    searchParams,
     handleQrCode,
   ]);
 

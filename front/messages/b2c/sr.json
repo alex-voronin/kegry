@@ -4,7 +4,8 @@
       "network": "Greška mreže. Molimo pokušaj ponovo."
     },
     "toast": {
-      "linkCopied": "Link kopiran u clipboard"
+      "linkCopied": "Link kopiran u clipboard",
+      "gettingLocation": "Tražimo tvoju lokaciju..."
     },
     "units": {
       "kilometers": "km",
