@@ -8,7 +8,7 @@ import { PAGE_ROUTES } from '@/lib/routes';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { checkPermissionStatus } from '@/lib/permissions';
-import { Check, CircleOff } from 'lucide-react';
+import { Check, CircleOff, ChevronDown, ChevronUp } from 'lucide-react';
 import { SafariShareIcon } from '@/components/ui/safari-share-icon';
 import { TuneIcon } from '@/components/ui/tune-icon';
 import { SafariSiteSettingsIcon } from '@/components/ui/safari-site-settings-icon';
@@ -24,6 +24,7 @@ export default function PermissionsPage() {
     notificationAllowed: false,
   });
   const [os, setOs] = useState<'ios' | 'android' | 'other' | null>(null);
+  const [isIosTroubleExpanded, setIsIosTroubleExpanded] = useState(false);
 
   useEffect(() => {
     setOs(getOS());
@@ -116,19 +117,35 @@ export default function PermissionsPage() {
               <p className={styles.instructionText}>
                 4. {t('ios.location.step4')}
               </p>
-              <p className={styles.instructionText}>
-                5. {t('ios.location.step5')}
-                <SafariSiteSettingsIcon className={styles.inlineIcon} />
-              </p>
-              <p className={styles.instructionText}>
-                6. {t('ios.location.step6')}
-              </p>
-              <p className={styles.instructionText}>
-                7. {t('ios.location.step7')}
-              </p>
-              <p className={styles.instructionText}>
-                8. {t('ios.location.step8')}
-              </p>
+              <div
+                className={styles.disclosureToggle}
+                onClick={() => setIsIosTroubleExpanded(!isIosTroubleExpanded)}
+              >
+                <span>{t('ios.location.trouble')}</span>
+                {isIosTroubleExpanded ? (
+                  <ChevronUp size={16} />
+                ) : (
+                  <ChevronDown size={16} />
+                )}
+              </div>
+              
+              {isIosTroubleExpanded && (
+                <div className={styles.disclosureContent}>
+                  <p className={styles.instructionText}>
+                    5. {t('ios.location.step5')}
+                    <SafariSiteSettingsIcon className={styles.inlineIcon} />
+                  </p>
+                  <p className={styles.instructionText}>
+                    6. {t('ios.location.step6')}
+                  </p>
+                  <p className={styles.instructionText}>
+                    7. {t('ios.location.step7')}
+                  </p>
+                  <p className={styles.instructionText}>
+                    8. {t('ios.location.step8')}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className={styles.instructionGroup}>

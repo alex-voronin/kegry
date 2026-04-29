@@ -474,10 +474,11 @@
           "step2": "Izaberi Safari ili Chrome",
           "step3": "Omogući Location",
           "step4": "Izaberi \"While Using the App\" i uključi \"Precise Location\"",
-          "step5": "Dodirnite Site Settings u Safari navigacionoj traci.",
-          "step6": "Dodirnite tri tačke. (⋮)",
-          "step7": "Skrolujte do dna do \"Website Settings for kegry.rs\".",
-          "step8": "Izaberite Allow za lokaciju"
+          "step5": "Dodirni Site Settings u Safari navigacionoj traci.",
+          "step6": "Dodirni tri tačke. (⋮)",
+          "step7": "Skroluj do dna do \"Website Settings for kegry.rs\".",
+          "step8": "Izaberi Allow za lokaciju",
+          "trouble": "Još uvek imaš problema?"
         }
       },
       "androidDesktop": {

@@ -69,3 +69,11 @@
 .inlineLink {
   @apply text-primary inline-flex items-center gap-1 text-sm underline decoration-1 underline-offset-4 transition-opacity hover:opacity-80;
 }
+
+.disclosureToggle {
+  @apply text-primary mt-2 flex w-fit cursor-pointer items-center gap-2 text-sm underline decoration-1 underline-offset-4 transition-opacity hover:opacity-80;
+}
+
+.disclosureContent {
+  @apply mt-2 flex flex-col gap-2;
+}
