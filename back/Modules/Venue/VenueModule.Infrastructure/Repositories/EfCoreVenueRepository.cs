@@ -9,7 +9,7 @@ namespace VenueModule.Infrastructure.Repositories;
 
 public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepository
 {
-    private const double SearchRadiusMeters = 100_000;
+    private const double SearchRadiusMeters = 25_000;
 
     public EfCoreVenueRepository(VenueContext context) : base(context)
     {

@@ -39,9 +39,9 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Sorting Co", "sort@example.com"))).Result.Id;
 
         // 2. Create venues
-        await _testUtils.CreateVerifiedVenueAsync(companyId, 0.5, 0.5, "Middle");
-        await _testUtils.CreateVerifiedVenueAsync(companyId, 0.2, 0.2, "Closest");
-        await _testUtils.CreateVerifiedVenueAsync(companyId, 0.6, 0.6, "Farthest");
+        await _testUtils.CreateVerifiedVenueAsync(companyId, 0.1, 0.1, "Middle");
+        await _testUtils.CreateVerifiedVenueAsync(companyId, 0.05, 0.05, "Closest");
+        await _testUtils.CreateVerifiedVenueAsync(companyId, 0.15, 0.15, "Farthest");
 
         // 3. Create B2C user with (0,0) location
         var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_list@example.com", "Password123!");
@@ -76,11 +76,11 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Visibility Co", "vis@example.com"))).Result.Id;
 
         // 2. Create verified and non-verified venue
-        await _testUtils.CreateVerifiedVenueAsync(companyId, 0.2, 0.2, "Verified Venue");
+        await _testUtils.CreateVerifiedVenueAsync(companyId, 0.05, 0.05, "Verified Venue");
         // Non-verified venue
         await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyId),
-            new CreateVenueRequest(0.4, 0.4, "Non-Verified Venue", null, null, null, null, null, null));
+            new CreateVenueRequest(0.1, 0.1, "Non-Verified Venue", null, null, null, null, null, null));
 
         // 3. Create B2C user
         var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_visibility@example.com", "Password123!");
