@@ -35,7 +35,7 @@ export async function generateMetadata({
     metadataBase: new URL('https://kegry.rs'),
 
     alternates: {
-      canonical: locale === 'sr' ? '/sr' : '/',
+      canonical: locale === 'en' ? '/en' : '/',
     },
 
     openGraph: {

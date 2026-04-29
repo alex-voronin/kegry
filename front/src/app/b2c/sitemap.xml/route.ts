@@ -36,7 +36,7 @@ export async function GET() {
 
       if (isHomePage) {
         // Alternates for SEO
-        xml += `    <xhtml:link rel="alternate" hreflang="en" href="${DOMAIN}/" />\n`;
+        xml += `    <xhtml:link rel="alternate" hreflang="en" href="${DOMAIN}/en/" />\n`;
         xml += `    <xhtml:link rel="alternate" hreflang="sr" href="${DOMAIN}/sr/" />\n`;
         xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${DOMAIN}/" />\n`;
       }
