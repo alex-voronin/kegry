@@ -178,7 +178,8 @@
         "textIphone": "🍎 On iPhone, push notifications work only after you add the app to your Home Screen.",
         "instructionIphone": "Tap Share<icon></icon>→ Add to Home Screen",
         "textAndroid": "🤖 On Android, we recommend installing the app for the best experience.",
-        "instructionAndroid": "Open the browser menu (⋮) → Add to Home Screen"
+        "instructionAndroid": "Open the browser menu (⋮) → Add to Home Screen",
+        "recommendBrowserReg": "Finish your registration in the browser to be automatically checked in if you've scanned a venue's QR code."
       },
       "continue": "Let's go!",
       "next": "Next",

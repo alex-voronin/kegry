@@ -178,7 +178,8 @@
         "textIphone": "🍎 Na iPhone-u, push notifikacije rade samo nakon što dodaš aplikaciju na početni ekran.",
         "instructionIphone": "Tapni Deli<icon></icon>→ Dodaj na početni ekran",
         "textAndroid": "🤖 Na Android-u, preporučujemo instalaciju aplikacije za najbolje iskustvo.",
-        "instructionAndroid": "Otvori meni pregledača (⋮) → Dodaj na početni ekran"
+        "instructionAndroid": "Otvori meni pregledača (⋮) → Dodaj na početni ekran",
+        "recommendBrowserReg": "Završi registraciju u pregledaču kako bi se automatski prijavio ukoliko si skenirao QR kod lokala."
       },
       "continue": "Hajde!",
       "next": "Dalje",

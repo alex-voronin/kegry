@@ -263,6 +263,9 @@ export default function HowItWorksPage() {
                         ),
                       })}
                     </p>
+                    <p className="mt-4 text-sm text-secondary">
+                      {t('slidePWA.recommendBrowserReg')}
+                    </p>
                   </div>
                 )}
                 {(os === 'android' || os === 'other' || os === null) && (
