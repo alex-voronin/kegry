@@ -152,7 +152,7 @@ export default function LoyaltyLevelEditPage() {
   const isActive = watch('isActive');
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex h-dvh flex-col overflow-hidden">
       <Header
         title={t('title')}
         left={
@@ -172,40 +172,44 @@ export default function LoyaltyLevelEditPage() {
       />
 
       <form
-        className="flex flex-1 flex-col gap-4 px-4 sm:p-4"
+        className="flex flex-1 flex-col overflow-hidden"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className={stylesCommon.sectionContainer}>
-          <FormSectionTitle>{t('isActive')}</FormSectionTitle>
-          <div className="bg-form-element flex h-[44px] items-center justify-between px-4 sm:rounded-xl">
-            <span className="text-secondary text-sm">
-              {t('loyaltyLevelItemTitle', { level: level.id })}
-            </span>
-            <Toggle
-              checked={isActive}
-              onChange={(checked) => {
-                setValue('isActive', checked, { shouldDirty: true });
-              }}
-              srTitle={t('isActive')}
-            />
+        <div className="flex-1 overflow-y-auto py-4 sm:px-4">
+          <div className="flex flex-col gap-4">
+            <div className={stylesCommon.sectionContainer}>
+              <FormSectionTitle className="px-4 sm:px-0">{t('isActive')}</FormSectionTitle>
+              <div className="bg-form-element flex h-[44px] items-center justify-between rounded-none px-4 sm:rounded-xl">
+                <span className="text-secondary text-sm">
+                  {t('loyaltyLevelItemTitle', { level: level.id })}
+                </span>
+                <Toggle
+                  checked={isActive}
+                  onChange={(checked) => {
+                    setValue('isActive', checked, { shouldDirty: true });
+                  }}
+                  srTitle={t('isActive')}
+                />
+              </div>
+            </div>
+
+            <div className={stylesCommon.sectionContainer}>
+              <FormSectionTitle className="px-4 sm:px-0">{t('visitsUpperBound')}</FormSectionTitle>
+              <Input
+                type="number"
+                {...register('visitsUpperBound', { valueAsNumber: true })}
+                className={stylesCommon.inputDark}
+              />
+              {errors.visitsUpperBound?.message && (
+                <p className={`${stylesCommon.errorMessage} px-4 sm:px-0`}>
+                  {errors.visitsUpperBound.message}
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className={stylesCommon.sectionContainer}>
-          <FormSectionTitle>{t('visitsUpperBound')}</FormSectionTitle>
-          <Input
-            type="number"
-            {...register('visitsUpperBound', { valueAsNumber: true })}
-            className={stylesCommon.inputDark}
-          />
-          {errors.visitsUpperBound?.message && (
-            <p className={stylesCommon.errorMessage}>
-              {errors.visitsUpperBound.message}
-            </p>
-          )}
-        </div>
-
-        <div className="mt-auto mb-10 flex w-full justify-center">
+        <div className="flex w-full justify-center pt-4 pb-10 sm:pb-6">
           <Button
             variant={ButtonVariant.Default}
             className="h-[40px] w-[298px]"
