@@ -340,6 +340,24 @@ export default function ProfilePage() {
           </div>
 
           <div className={styles.actionsSection}>
+            {showPermissionsLink && (
+              <div
+                className={cn(styles.field, styles.actionField)}
+                onClick={() => router.push(PAGE_ROUTES.PERMISSIONS)}
+              >
+                <div className={styles.permissionsLabel}>
+                  <span>{t('permissions')}</span>
+                  <AlertCircle size={16} className={styles.permissionsIcon} />
+                </div>
+                <Icon
+                  src="/assets/common/disclosure-right-icon.svg"
+                  alt="chevron"
+                  width={10}
+                  height={18}
+                  priority
+                />
+              </div>
+            )}
             <div
               className={cn(styles.field, styles.actionField)}
               onClick={() => router.push(PAGE_ROUTES.DISCOUNTS_AND_PROMOTIONS)}
@@ -405,24 +423,7 @@ export default function ProfilePage() {
                 priority
               />
             </div>
-            {showPermissionsLink && (
-              <div
-                className={cn(styles.field, styles.actionField)}
-                onClick={() => router.push(PAGE_ROUTES.PERMISSIONS)}
-              >
-                <div className={styles.permissionsLabel}>
-                  <span>{t('permissions')}</span>
-                  <AlertCircle size={16} className={styles.permissionsIcon} />
-                </div>
-                <Icon
-                  src="/assets/common/disclosure-right-icon.svg"
-                  alt="chevron"
-                  width={10}
-                  height={18}
-                  priority
-                />
-              </div>
-            )}
+
             <div
               className={cn(styles.field, styles.actionField, 'mt-8')}
               onClick={handleLogout}
