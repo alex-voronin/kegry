@@ -89,12 +89,23 @@
     <data name="Push.ReferrerRewardReceived.Body" xml:space="preserve">
         <value>Novi imaginarni prijatelj otključan! Dodirni da vidiš</value>
     </data>
+    <data name="Email.MeetingArranged.Title" xml:space="preserve">
+        <value>Pozivnica prihvaćena!</value>
+    </data>
+    <data name="Email.MeetingArranged.Body" xml:space="preserve">
+        <value>
+            {0} je prihvatio/prihvatila vašu pozivnicu!&lt;br /&gt;&lt;br /&gt;
+            Otvorite &lt;a href=&quot;https://kegry.rs/chat&quot;&gt;Razgovor&lt;/a&gt; da biste videli detalje.&lt;br /&gt;&lt;br /&gt;
+            Srdačan pozdrav,&lt;br /&gt;
+            Tim Kegry
+        </value>
+    </data>
     <data name="Email.ChatMessageReceived.Title" xml:space="preserve">
         <value>Nova poruka!</value>
     </data>
     <data name="Email.ChatMessageReceived.Body" xml:space="preserve">
         <value>
-            Primili ste novu poruku od {}!&lt;br /&gt;&lt;br /&gt;
+            Primili ste novu poruku od {0}!&lt;br /&gt;&lt;br /&gt;
             Otvorite &lt;a href=&quot;https://kegry.rs/chat&quot;&gt;Razgovor&lt;/a&gt; da biste videli detalje.&lt;br /&gt;&lt;br /&gt;
             Srdačan pozdrav,&lt;br /&gt;
             Tim Kegry

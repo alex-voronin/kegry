@@ -38,8 +38,8 @@ internal class EmailBuilder : IEmailBuilder, ISingleton
 
     public Email BuildMeetingArrangedEmail(string toEmail, string otherUserFullName)
     {
-        var title = _localizer.GetString("Push.MeetingArranged.Title");
-        var body = _localizer.GetString("Push.MeetingArranged.Body", otherUserFullName);
+        var title = _localizer.GetString("Email.MeetingArranged.Title");
+        var body = _localizer.GetString("Email.MeetingArranged.Body", otherUserFullName);
         return new Email(ToEmail: toEmail, Subject: title, Body: body, IsImportant: false);
     }
 

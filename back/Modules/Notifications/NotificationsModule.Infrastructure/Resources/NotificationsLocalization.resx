@@ -89,6 +89,17 @@
     <data name="Push.ReferrerRewardReceived.Body" xml:space="preserve">
         <value>New imaginary friend unlocked! Tap to see</value>
     </data>
+    <data name="Email.MeetingArranged.Title" xml:space="preserve">
+        <value>Invitation accepted!</value>
+    </data>
+    <data name="Email.MeetingArranged.Body" xml:space="preserve">
+        <value>
+            {0} has accepted your invitation!&lt;br /&gt;&lt;br /&gt;
+            Open &lt;a href=&quot;https://kegry.rs/chat&quot;&gt;Chat&lt;/a&gt; to view details.&lt;br /&gt;&lt;br /&gt;
+            Best regards,&lt;br /&gt;
+            The Kegry Team
+        </value>
+    </data>
     <data name="Email.ChatMessageReceived.Title" xml:space="preserve">
         <value>New message!</value>
     </data>
