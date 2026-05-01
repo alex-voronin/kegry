@@ -59,7 +59,7 @@ export default function RegisterPage() {
       } else if (
         result.requiredAction === RequiredAction.OnboardingCompletion
       ) {
-        router.push(PAGE_ROUTES.ONBOARDING);
+        router.push(PAGE_ROUTES.FEED);
       } else {
         router.push(PAGE_ROUTES.FEED);
       }
@@ -79,7 +79,7 @@ export default function RegisterPage() {
       ]);
 
       if (result.requiredAction === RequiredAction.OnboardingCompletion) {
-        router.push(PAGE_ROUTES.ONBOARDING);
+        router.push(PAGE_ROUTES.FEED);
       } else {
         router.push(PAGE_ROUTES.FEED);
       }

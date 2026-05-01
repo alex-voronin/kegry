@@ -44,7 +44,7 @@ export default function LoginPage() {
       if (requiredAction === RequiredAction.EmailVerification) {
         router.replace(PAGE_ROUTES.VERIFY_EMAIL);
       } else if (requiredAction === RequiredAction.OnboardingCompletion) {
-        router.replace(PAGE_ROUTES.ONBOARDING);
+        router.replace(PAGE_ROUTES.FEED);
       } else if (requiredAction === RequiredAction.HowItWorksCompletion) {
         router.replace(PAGE_ROUTES.HOW_IT_WORKS);
       } else {
@@ -94,7 +94,7 @@ export default function LoginPage() {
       } else if (
         result.requiredAction === RequiredAction.OnboardingCompletion
       ) {
-        router.push(PAGE_ROUTES.ONBOARDING);
+        router.push(PAGE_ROUTES.FEED);
       } else {
         await applyServerLocaleAndOpenFeed();
       }
@@ -120,7 +120,7 @@ export default function LoginPage() {
       ]);
 
       if (result.requiredAction === RequiredAction.OnboardingCompletion) {
-        router.push(PAGE_ROUTES.ONBOARDING);
+        router.push(PAGE_ROUTES.FEED);
       } else {
         await applyServerLocaleAndOpenFeed();
       }

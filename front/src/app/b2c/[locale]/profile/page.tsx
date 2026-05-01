@@ -17,7 +17,11 @@ import { ImageCropperModal } from '@/components/ui/image-cropper-modal';
 import { cn } from '@/lib/utils';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { openTawkChat } from '@/components/tawk-messenger';
-import { useAuthStore, UserType } from '@/lib/auth/use-auth-store';
+import {
+  useAuthStore,
+  UserType,
+  RequiredAction,
+} from '@/lib/auth/use-auth-store';
 import {
   useUserProfileStore,
   blobToBase64,
@@ -66,7 +70,10 @@ export default function ProfilePage() {
   } = useUserProfileStore();
 
   const { hobbies } = useHobbiesStore();
-  const { logout, deleteAccount, userType } = useAuthStore();
+  const { logout, deleteAccount, userType, requiredAction, hasHydrated } =
+    useAuthStore();
+  const onboardingRequired =
+    requiredAction === RequiredAction.OnboardingCompletion;
 
   const isInitialized = useRef(false);
   const [showPermissionsLink, setShowPermissionsLink] = useState(false);
@@ -81,7 +88,7 @@ export default function ProfilePage() {
   }, []);
 
   useEffect(() => {
-    if (isInitialized.current) return;
+    if (isInitialized.current || !hasHydrated || onboardingRequired) return;
     isInitialized.current = true;
 
     const loadProfile = async () => {
@@ -92,7 +99,7 @@ export default function ProfilePage() {
       }
     };
     loadProfile();
-  }, [fetchMyProfile, t]);
+  }, [fetchMyProfile, t, onboardingRequired, hasHydrated]);
 
   const handleLogout = async () => {
     const deviceId = localStorage.getItem(DEVICE_ID_KEY) || undefined;
@@ -116,56 +123,82 @@ export default function ProfilePage() {
     }
   };
 
-  const menuOptions = [
-    {
-      icon: '/assets/profile/privacy-icon.svg',
-      label: profile?.isPublic ? t('menu.makePrivate') : t('menu.makePublic'),
-      onClick: async () => {
-        try {
-          await updatePrivacy(!profile?.isPublic);
-          toast.success(
-            profile?.isPublic ? t('menu.madePrivate') : t('menu.madePublic'),
-          );
-        } catch (error) {
-          toast.error(t('menu.privacyError'));
-        }
-      },
-    },
-    {
-      icon: '/assets/profile/edit-icon.svg',
-      label: t('menu.edit'),
-      onClick: () => router.push(PAGE_ROUTES.PROFILE_EDIT),
-    },
-    {
-      icon: '/assets/profile/set-photo-icon.svg',
-      label: t('menu.setAvatar'),
-      onClick: () => fileInputRef.current?.click(),
-    },
-    {
-      icon: '/assets/profile/set-photo-icon.svg',
-      label: t('menu.setCover'),
-      onClick: () => router.push(PAGE_ROUTES.PROFILE_COVER),
-    },
-    {
-      icon: '/assets/profile/logout-icon.svg',
-      label: t('menu.logOut'),
-      onClick: handleLogout,
-    },
-    {
-      icon: '/assets/common/delete-icon.svg',
-      label: t('menu.delete'),
-      onClick: () => {
-        if (userType === UserType.B2B) {
-          toast.error(t('toast.cannotDeleteBusinessAccount'));
-        } else if (useFeedStore.getState().isInMeeting) {
-          toast.error(t('toast.cannotDeleteWhileInMeetup'));
-        } else {
-          setIsDeleteAccountModalOpen(true);
-        }
-      },
-      isDestructive: true,
-    },
-  ];
+  const menuOptions = onboardingRequired
+    ? [
+        {
+          icon: '/assets/profile/logout-icon.svg',
+          label: t('menu.logOut'),
+          onClick: handleLogout,
+        },
+        {
+          icon: '/assets/common/delete-icon.svg',
+          label: t('menu.delete'),
+          onClick: () => {
+            if (userType === UserType.B2B) {
+              toast.error(t('toast.cannotDeleteBusinessAccount'));
+            } else if (useFeedStore.getState().isInMeeting) {
+              toast.error(t('toast.cannotDeleteWhileInMeetup'));
+            } else {
+              setIsDeleteAccountModalOpen(true);
+            }
+          },
+          isDestructive: true,
+        },
+      ]
+    : [
+        {
+          icon: '/assets/profile/privacy-icon.svg',
+          label: profile?.isPublic
+            ? t('menu.makePrivate')
+            : t('menu.makePublic'),
+          onClick: async () => {
+            try {
+              await updatePrivacy(!profile?.isPublic);
+              toast.success(
+                profile?.isPublic
+                  ? t('menu.madePrivate')
+                  : t('menu.madePublic'),
+              );
+            } catch (error) {
+              toast.error(t('menu.privacyError'));
+            }
+          },
+        },
+        {
+          icon: '/assets/profile/edit-icon.svg',
+          label: t('menu.edit'),
+          onClick: () => router.push(PAGE_ROUTES.PROFILE_EDIT),
+        },
+        {
+          icon: '/assets/profile/set-photo-icon.svg',
+          label: t('menu.setAvatar'),
+          onClick: () => fileInputRef.current?.click(),
+        },
+        {
+          icon: '/assets/profile/set-photo-icon.svg',
+          label: t('menu.setCover'),
+          onClick: () => router.push(PAGE_ROUTES.PROFILE_COVER),
+        },
+        {
+          icon: '/assets/profile/logout-icon.svg',
+          label: t('menu.logOut'),
+          onClick: handleLogout,
+        },
+        {
+          icon: '/assets/common/delete-icon.svg',
+          label: t('menu.delete'),
+          onClick: () => {
+            if (userType === UserType.B2B) {
+              toast.error(t('toast.cannotDeleteBusinessAccount'));
+            } else if (useFeedStore.getState().isInMeeting) {
+              toast.error(t('toast.cannotDeleteWhileInMeetup'));
+            } else {
+              setIsDeleteAccountModalOpen(true);
+            }
+          },
+          isDestructive: true,
+        },
+      ];
 
   const handleEditProfile = () => {
     router.push(PAGE_ROUTES.PROFILE_EDIT);
@@ -298,46 +331,54 @@ export default function ProfilePage() {
               />
             )}
           </div>
-          <h1 className={styles.userName} onClick={handleEditProfile}>
-            {displayName}
-          </h1>
+          {!onboardingRequired && (
+            <h1 className={styles.userName} onClick={handleEditProfile}>
+              {displayName}
+            </h1>
+          )}
         </div>
 
         <div className={styles.content}>
-          <div className={styles.section} onClick={handleEditProfile}>
-            <FormSectionTitle>{tGender('title')}</FormSectionTitle>
-            <div className={styles.field}>
-              <span>{genderLabel}</span>
-            </div>
-          </div>
-
-          <div className={styles.section} onClick={handleEditProfile}>
-            <FormSectionTitle>{tAge('title')}</FormSectionTitle>
-            <div className={styles.field}>
-              <span>{age ?? '--'}</span>
-            </div>
-          </div>
-
-          {userBio && (
-            <div className={styles.section} onClick={handleEditProfile}>
-              <FormSectionTitle>{tBio('title')}</FormSectionTitle>
-              <div className={styles.field}>
-                <p>{userBio}</p>
-              </div>
-            </div>
-          )}
-
-          <div className={styles.section} onClick={handleEditProfile}>
-            <FormSectionTitle>{tHobbies('title')}</FormSectionTitle>
-            <div className={cn(styles.field, styles.hobbiesField)}>
-              {userHobbies.map((hobby) => (
-                <div key={hobby.id} className={styles.hobbyTag}>
-                  {tHobbies(hobby.name as any) || hobby.name}
+          {!onboardingRequired && (
+            <>
+              <div className={styles.section} onClick={handleEditProfile}>
+                <FormSectionTitle>{tGender('title')}</FormSectionTitle>
+                <div className={styles.field}>
+                  <span>{genderLabel}</span>
                 </div>
-              ))}
-              {(!userHobbies || userHobbies.length === 0) && <span>--</span>}
-            </div>
-          </div>
+              </div>
+
+              <div className={styles.section} onClick={handleEditProfile}>
+                <FormSectionTitle>{tAge('title')}</FormSectionTitle>
+                <div className={styles.field}>
+                  <span>{age ?? '--'}</span>
+                </div>
+              </div>
+
+              {userBio && (
+                <div className={styles.section} onClick={handleEditProfile}>
+                  <FormSectionTitle>{tBio('title')}</FormSectionTitle>
+                  <div className={styles.field}>
+                    <p>{userBio}</p>
+                  </div>
+                </div>
+              )}
+
+              <div className={styles.section} onClick={handleEditProfile}>
+                <FormSectionTitle>{tHobbies('title')}</FormSectionTitle>
+                <div className={cn(styles.field, styles.hobbiesField)}>
+                  {userHobbies.map((hobby) => (
+                    <div key={hobby.id} className={styles.hobbyTag}>
+                      {tHobbies(hobby.name as any) || hobby.name}
+                    </div>
+                  ))}
+                  {(!userHobbies || userHobbies.length === 0) && (
+                    <span>--</span>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
 
           <div className={styles.actionsSection}>
             {showPermissionsLink && (
@@ -360,7 +401,9 @@ export default function ProfilePage() {
             )}
             <div
               className={cn(styles.field, styles.actionField)}
-              onClick={() => router.push(PAGE_ROUTES.DISCOUNTS_AND_PROMOTIONS)}
+              onClick={() =>
+                router.push(PAGE_ROUTES.DISCOUNTS_AND_PROMOTIONS)
+              }
             >
               <span>{t('discountsAndPromotions')}</span>
               <Icon
@@ -371,19 +414,23 @@ export default function ProfilePage() {
                 priority
               />
             </div>
-            <div
-              className={cn(styles.field, styles.actionField)}
-              onClick={() => router.push(PAGE_ROUTES.FRIENDS_AND_FOES)}
-            >
-              <span>{t('friendsAndFoes')}</span>
-              <Icon
-                src="/assets/common/disclosure-right-icon.svg"
-                alt="chevron"
-                width={10}
-                height={18}
-                priority
-              />
-            </div>
+            {!onboardingRequired && (
+              <>
+                <div
+                  className={cn(styles.field, styles.actionField)}
+                  onClick={() => router.push(PAGE_ROUTES.FRIENDS_AND_FOES)}
+                >
+                  <span>{t('friendsAndFoes')}</span>
+                  <Icon
+                    src="/assets/common/disclosure-right-icon.svg"
+                    alt="chevron"
+                    width={10}
+                    height={18}
+                    priority
+                  />
+                </div>
+              </>
+            )}
             <div
               className={cn(styles.field, styles.actionField)}
               onClick={() => router.push(PAGE_ROUTES.SETTINGS)}
@@ -397,19 +444,23 @@ export default function ProfilePage() {
                 priority
               />
             </div>
-            <div
-              className={cn(styles.field, styles.actionField)}
-              onClick={() => router.push(PAGE_ROUTES.PROFILE_COVER)}
-            >
-              <span>{t('coverImage')}</span>
-              <Icon
-                src="/assets/common/disclosure-right-icon.svg"
-                alt="chevron"
-                width={10}
-                height={18}
-                priority
-              />
-            </div>
+            {!onboardingRequired && (
+              <>
+                <div
+                  className={cn(styles.field, styles.actionField)}
+                  onClick={() => router.push(PAGE_ROUTES.PROFILE_COVER)}
+                >
+                  <span>{t('coverImage')}</span>
+                  <Icon
+                    src="/assets/common/disclosure-right-icon.svg"
+                    alt="chevron"
+                    width={10}
+                    height={18}
+                    priority
+                  />
+                </div>
+              </>
+            )}
             <div
               className={cn(styles.field, styles.actionField)}
               onClick={openTawkChat}

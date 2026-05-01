@@ -11,7 +11,9 @@ import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { ModalDialog } from '@/components/ui/modal-dialog';
+import { Button, ButtonVariant } from '@/components/ui/button';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import { useFeedStore, UserProfileDto } from './use-feed-store';
 import { useNpcStore, NpcDto } from './use-npc-store';
 import { useSettingsStore } from '@/app/b2c/[locale]/settings/use-settings-store';
@@ -48,11 +50,13 @@ function FeedHeader({
   unseenCount,
   showPermissionsBadge,
   isInMeeting,
+  onboardingRequired,
 }: {
   router: ReturnType<typeof useRouter>;
   unseenCount: number;
   showPermissionsBadge: boolean;
   isInMeeting: boolean;
+  onboardingRequired: boolean;
 }) {
   return (
     <Header
@@ -76,7 +80,7 @@ function FeedHeader({
       }
       right={
         <div className={styles.headerRightSideIconsWrapper}>
-          {!isInMeeting && (
+          {!isInMeeting && !onboardingRequired && (
             <Icon
               src="/assets/feed/filters-icon.svg"
               alt="filters"
@@ -150,6 +154,7 @@ export default function FeedScreen() {
     isInMeeting,
     isPerformingAction,
   } = useFeedStore();
+  const requiredAction = useAuthStore((state) => state.requiredAction);
   const { npc, monolog, fetchNpc, inviteNpc, dismissNpc } = useNpcStore();
   const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
@@ -238,6 +243,10 @@ export default function FeedScreen() {
         localStorage.removeItem('qr_code_to_check_in');
         const qrUrl = buildQrUrl(qrCode);
         await handleQrCode(qrUrl);
+        return;
+      }
+
+      if (requiredAction === RequiredAction.OnboardingCompletion) {
         return;
       }
 
@@ -468,6 +477,34 @@ export default function FeedScreen() {
   // --- Render ---
 
   const renderBody = () => {
+    if (requiredAction === RequiredAction.OnboardingCompletion) {
+      return (
+        <div className={styles.emptyState}>
+          <div className={styles.incognitoWrapper}>
+            <Image
+              src="/assets/feed/incognito.webp"
+              alt="incognito"
+              width={300}
+              height={300}
+              className="object-cover"
+            />
+          </div>
+          <p className={styles.emptyStateText}>
+            {tFeed.rich('onboardingPlaceholder', {
+              link: (chunks) => (
+                <Link
+                  href={PAGE_ROUTES.ONBOARDING}
+                  className={styles.emptyStateLink}
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
+          </p>
+        </div>
+      );
+    }
+
     if (showLoading && !currentItem && !isInMeeting) {
       return (
         <div className={styles.loadingContainer}>
@@ -560,7 +597,13 @@ export default function FeedScreen() {
   };
 
   const renderFooter = () => {
-    if (isInMeeting || isLocationDenied || !currentItem) return null;
+    if (
+      isInMeeting ||
+      isLocationDenied ||
+      !currentItem ||
+      requiredAction === RequiredAction.OnboardingCompletion
+    )
+      return null;
 
     if (currentItem.kind === 'npc') {
       return (
@@ -598,6 +641,9 @@ export default function FeedScreen() {
             unseenCount={unseenNotificationCount}
             showPermissionsBadge={showPermissionsBadge}
             isInMeeting={isInMeeting}
+            onboardingRequired={
+              requiredAction === RequiredAction.OnboardingCompletion
+            }
           />
         </div>
         {renderBody()}

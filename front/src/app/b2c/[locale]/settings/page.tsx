@@ -9,8 +9,14 @@ import { Icon } from '@/components/ui/icon';
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { Toggle } from '@/components/ui/toggle';
-import { useSettingsStore, DistanceUnits } from './use-settings-store';
+import { Spinner } from '@/components/ui/spinner';
+import {
+  useSettingsStore,
+  DistanceUnits,
+  SettingsFetchType,
+} from './use-settings-store';
 import { useUserProfileStore } from '@/store/use-user-profile-store';
+import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import { toast } from 'react-toastify';
 import styles from './settings.module.css';
 import { PAGE_ROUTES } from '@/lib/routes';
@@ -60,6 +66,9 @@ export default function SettingsPage() {
     setIsPublic,
     updatePrivacy,
   } = useUserProfileStore();
+  const { requiredAction, hasHydrated } = useAuthStore();
+  const onboardingRequired =
+    requiredAction === RequiredAction.OnboardingCompletion;
 
   const [isDistanceMenuOpen, setIsDistanceMenuOpen] = useState(false);
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
@@ -73,18 +82,31 @@ export default function SettingsPage() {
 
   const loadData = async () => {
     try {
-      await Promise.all([
-        fetchSettings(),
-        serverProfile ? Promise.resolve() : fetchMyProfile(),
-      ]);
+      if (onboardingRequired) {
+        await fetchSettings(SettingsFetchType.OnlyNotifications);
+      } else {
+        await Promise.all([
+          fetchSettings(SettingsFetchType.All),
+          serverProfile ? Promise.resolve() : fetchMyProfile(),
+        ]);
+      }
     } catch (error) {
       toast.error(t('fetchFailed'));
     }
   };
 
   useEffect(() => {
+    if (!hasHydrated) return;
+
     loadData();
-  }, [fetchSettings, fetchMyProfile, serverProfile, t]);
+  }, [
+    fetchSettings,
+    fetchMyProfile,
+    serverProfile,
+    t,
+    hasHydrated,
+    RequiredAction,
+  ]);
 
   const handleBack = () => {
     safeBack(PAGE_ROUTES.PROFILE);
@@ -142,6 +164,28 @@ export default function SettingsPage() {
 
   const isLoading = isSettingsLoading || isProfileLoading;
 
+  if (!hasHydrated) {
+    return (
+      <>
+        <Header
+          title={t('title')}
+          left={
+            <Icon
+              src="/assets/common/disclosure-left-icon.svg"
+              alt="back"
+              width={14}
+              height={27}
+              onClick={handleBack}
+            />
+          }
+        />
+        <div className="flex h-screen items-center justify-center">
+          <Spinner />
+        </div>
+      </>
+    );
+  }
+
   return (
     <div>
       <Header
@@ -158,22 +202,28 @@ export default function SettingsPage() {
       />
       <div className={styles.container}>
         <div className="mt-4">
-          <h3 className={styles.sectionTitle}>{t('publicAccount')}</h3>
-          <div className={styles.group}>
-            <div className={styles.groupItem}>
-              <div className={styles.itemContent}>
-                <span className={styles.itemLabel}>{t('publicAccount')}</span>
-                <span className={styles.itemDescription}>
-                  {t('publicAccountDesc')}
-                </span>
+          {!onboardingRequired && (
+            <>
+              <h3 className={styles.sectionTitle}>{t('publicAccount')}</h3>
+              <div className={styles.group}>
+                <div className={styles.groupItem}>
+                  <div className={styles.itemContent}>
+                    <span className={styles.itemLabel}>
+                      {t('publicAccount')}
+                    </span>
+                    <span className={styles.itemDescription}>
+                      {t('publicAccountDesc')}
+                    </span>
+                  </div>
+                  <Toggle
+                    checked={isPublic}
+                    onChange={setIsPublic}
+                    srTitle={t('publicAccount')}
+                  />
+                </div>
               </div>
-              <Toggle
-                checked={isPublic}
-                onChange={setIsPublic}
-                srTitle={t('publicAccount')}
-              />
-            </div>
-          </div>
+            </>
+          )}
 
           <h3 className={styles.sectionTitle}>{t('language')}</h3>
           <div
@@ -183,15 +233,19 @@ export default function SettingsPage() {
             <span className={styles.value}>{currentLocale.label}</span>
           </div>
 
-          <h3 className={styles.sectionTitle}>{t('distanceUnits')}</h3>
-          <div
-            className={`${styles.item} ${styles.itemClickable}`}
-            onClick={() => setIsDistanceMenuOpen(true)}
-          >
-            <span className={styles.value}>
-              {distanceUnits === DistanceUnits.Miles ? t('mi') : t('km')}
-            </span>
-          </div>
+          {!onboardingRequired && (
+            <>
+              <h3 className={styles.sectionTitle}>{t('distanceUnits')}</h3>
+              <div
+                className={`${styles.item} ${styles.itemClickable}`}
+                onClick={() => setIsDistanceMenuOpen(true)}
+              >
+                <span className={styles.value}>
+                  {distanceUnits === DistanceUnits.Miles ? t('mi') : t('km')}
+                </span>
+              </div>
+            </>
+          )}
 
           <h3 className={styles.sectionTitle}>{t('notifications')}</h3>
           <div className={styles.group}>

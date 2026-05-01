@@ -229,7 +229,9 @@
         "message": "Let's grow Kegry together! 😊\nInvite your friends with a referral link: more people = way more adventures and fun. Bring a friend and get a special reward: special imaginary friend as a thank you! 🎉",
         "later": "Later",
         "letsGo": "Let's Go"
-      }
+      },
+      "onboardingPlaceholder": "You're currently a mysterious stranger in the bar 😎\nYou can check in, but making friends is harder this way.\n<link>Create your profile and start finding company</link>",
+      "onboardingButton": "Create"
     },
     "chat": {
       "messagePlaceholder": "Message {remaining}/{total}",

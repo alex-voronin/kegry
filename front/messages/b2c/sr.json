@@ -226,10 +226,12 @@
         "noInvites": "Nema više pozivnica. Obnavljaju se sutra."
       },
       "invitePrompt": {
-        "message": "Hajde da zajedno gradimo Kegry! 😊\nPozovi prijatelje preko referalnog linka: više ljudi = mnogo više avantura i zabave. Dovedi prijatelja i dobij posebnu nagradu: posebnog imaginarnog prijatelja u znak zahvalnosti! 🎉",
+        "message": "Hajde da zajedno razvijamo Kegry! 😊\nPozovite prijatelje pomoću referalnog linka: više ljudi = mnogo više avantura i zabave. Povedite prijatelja i dobićete posebnu nagradu: specijalnog imaginarnog prijatelja kao znak pažnje! 🎉",
         "later": "Kasnije",
-        "letsGo": "Hajde"
-      }
+        "letsGo": "Idemo"
+      },
+      "onboardingPlaceholder": "Trenutno si misteriozni stranac u baru 😎\nMožeš da se prijaviš, ali je na ovaj način teže naći društvo.\n<link>Napravi profil i počni da pronalaziš društvo!</link>",
+      "onboardingButton": "Napravi"
     },
     "chat": {
       "messagePlaceholder": "Poruka {remaining}/{total}",

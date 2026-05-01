@@ -81,7 +81,7 @@
 }
 
 .emptyStateText {
-  @apply text-secondary text-center text-sm leading-relaxed;
+  @apply text-secondary text-center text-sm leading-relaxed whitespace-pre-line;
 }
 
 .loadingContainer {
@@ -134,4 +134,8 @@
 
 .emptyStateLink {
   @apply text-primary underline decoration-1 underline-offset-4 transition-opacity hover:opacity-80;
+}
+
+.incognitoWrapper {
+  @apply bg-surface mb-6 flex h-[300px] w-[300px] items-center justify-center overflow-hidden rounded-full;
 }

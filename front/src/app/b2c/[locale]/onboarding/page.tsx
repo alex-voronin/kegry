@@ -11,6 +11,8 @@ import { GenderSection } from '@/components/ui/profile-sections/gender-section';
 import { BioSection } from '@/components/ui/profile-sections/bio-section';
 import styles from './onboarding.module.css';
 import { Header } from '@/components/ui/header';
+import { Icon } from '@/components/ui/icon';
+import { useSafeBack } from '@/hooks/use-safe-back';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useUserProfileStore, Gender } from '@/store/use-user-profile-store';
 import { calculateAge } from '@/lib/date';
@@ -27,6 +29,7 @@ export default function OnboardingPage() {
   const router = useRouter();
   const tHobbies = useTranslations('components.profile-sections.hobbies');
   const tGender = useTranslations('components.profile-sections.gender');
+  const { safeBack } = useSafeBack();
 
   const {
     firstName,
@@ -102,57 +105,74 @@ export default function OnboardingPage() {
     router.push(PAGE_ROUTES.ONBOARDING_COVER);
   };
 
-  return (
-    <div className={styles.wrapper}>
-      <Header title={t('title')} />
+  const handleBack = () => {
+    safeBack(PAGE_ROUTES.FEED);
+  };
 
-      <AvatarSection
-        avatarBase64={avatarBase64}
-        onAvatarChange={setAvatarBase64}
+  return (
+    <>
+      <Header
+        title={t('title')}
+        left={
+          <Icon
+            src="/assets/common/disclosure-left-icon.svg"
+            alt="back"
+            width={14}
+            height={27}
+            onClick={handleBack}
+          />
+        }
       />
 
-      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-        <NameSection
-          control={control}
-          required
-          onFirstNameChange={setFirstName}
-          onLastNameChange={setLastName}
+      <div className={styles.wrapper}>
+        <AvatarSection
+          avatarBase64={avatarBase64}
+          onAvatarChange={setAvatarBase64}
         />
 
-        <BirthdaySection
-          control={control}
-          required
-          onBirthdayChange={setBirthday}
-        />
+        <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+          <NameSection
+            control={control}
+            required
+            onFirstNameChange={setFirstName}
+            onLastNameChange={setLastName}
+          />
 
-        <GenderSection
-          control={control}
-          options={GENDER_OPTIONS}
-          required
-          onChange={(val) => setGender(val as Gender | null)}
-        />
+          <BirthdaySection
+            control={control}
+            required
+            onBirthdayChange={setBirthday}
+          />
 
-        <BioSection control={control} onBioChange={setBio} />
+          <GenderSection
+            control={control}
+            options={GENDER_OPTIONS}
+            required
+            onChange={(val) => setGender(val as Gender | null)}
+          />
 
-        <HobbiesSection
-          control={control}
-          required
-          onChange={(selected) => {
-            const ids = selected.map((h) => h.value);
-            setSelectedHobbyIds(ids);
-          }}
-        />
+          <BioSection control={control} onBioChange={setBio} />
 
-        <div className={styles.footer}>
-          <Button
-            variant={ButtonVariant.Default}
-            className={styles.continueButton}
-            type="submit"
-          >
-            {t('continue')}
-          </Button>
-        </div>
-      </form>
-    </div>
+          <HobbiesSection
+            control={control}
+            required
+            onChange={(selected) => {
+              const ids = selected.map((h) => h.value);
+              setSelectedHobbyIds(ids);
+            }}
+          />
+
+          <div className={styles.footer}>
+            <Button
+              variant={ButtonVariant.Default}
+              className={styles.continueButton}
+              type="submit"
+            >
+              {t('continue')}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </>
   );
 }

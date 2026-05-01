@@ -2,6 +2,8 @@
 
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { Header } from '@/components/ui/header';
+import { Icon } from '@/components/ui/icon';
+import { useSafeBack } from '@/hooks/use-safe-back';
 import { CoverSection } from '@/components/ui/profile-sections/cover-section';
 import { Link, useRouter } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
@@ -26,6 +28,7 @@ import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 export default function CoverPage() {
   const t = useTranslations('screens.onboarding');
   const router = useRouter();
+  const { safeBack } = useSafeBack();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -109,7 +112,18 @@ export default function CoverPage() {
       </div>
 
       <div className={styles.contentLayer}>
-        {!coverBlob && <Header title={t('uploadCoverTitle')} />}
+        <Header
+          title={!coverBlob ? t('uploadCoverTitle') : ''}
+          left={
+            <Icon
+              src="/assets/common/disclosure-left-icon.svg"
+              alt="back"
+              width={14}
+              height={27}
+              onClick={() => safeBack(PAGE_ROUTES.ONBOARDING)}
+            />
+          }
+        />
 
         <div className={cn(styles.footer, !coverBlob ? '' : 'mt-auto')}>
           <Button
@@ -154,12 +168,12 @@ export default function CoverPage() {
               ),
             })}
           </div>
-          <Link
-            href={PAGE_ROUTES.ONBOARDING}
-            className="mt-4 text-center text-sm underline"
+          <div
+            className="mt-4 cursor-pointer text-center text-sm underline"
+            onClick={() => safeBack(PAGE_ROUTES.ONBOARDING)}
           >
             {t('back')}
-          </Link>
+          </div>
         </div>
       </div>
     </div>

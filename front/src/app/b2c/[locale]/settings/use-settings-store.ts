@@ -16,6 +16,11 @@ export interface SettingsDto {
   locale: string;
 }
 
+export enum SettingsFetchType {
+  All = 'All',
+  OnlyNotifications = 'OnlyNotifications',
+}
+
 interface SettingsState {
   distanceUnits: DistanceUnits;
   pushesEnabled: boolean;
@@ -24,7 +29,7 @@ interface SettingsState {
   serverSettings: SettingsDto | null;
   isLoading: boolean;
 
-  fetchSettings: () => Promise<void>;
+  fetchSettings: (fetchType?: SettingsFetchType) => Promise<void>;
   updateDistanceUnits: (units: DistanceUnits) => void;
   updateLocale: (locale: string) => void;
   togglePushes: (enabled: boolean) => void;
@@ -41,39 +46,74 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   serverSettings: null,
   isLoading: false,
 
-  fetchSettings: async () => {
+  fetchSettings: async (fetchType: SettingsFetchType = SettingsFetchType.All) => {
     set({ isLoading: true });
     try {
-      const [feedSettingsRes, notifSettingsRes] = await Promise.all([
-        apiClient.get<
-          ApiResult<{
-            settings: { distanceUnits: DistanceUnits };
-          }>
-        >(API_ENDPOINTS.FEED.SETTINGS),
-        apiClient.get<
-          ApiResult<{ pushesEnabled: boolean; emailsEnabled: boolean; locale: string }>
-        >(API_ENDPOINTS.NOTIFICATIONS.SETTINGS),
-      ]);
+      const fetchFeed = fetchType === SettingsFetchType.All;
+      const fetchNotif = true; // For now we always fetch notifications in this store
 
-      if (feedSettingsRes.data.success && notifSettingsRes.data.success) {
+      const promises = [];
+      if (fetchFeed) {
+        promises.push(
+          apiClient.get<
+            ApiResult<{
+              settings: { distanceUnits: DistanceUnits };
+            }>
+          >(API_ENDPOINTS.FEED.SETTINGS),
+        );
+      } else {
+        promises.push(Promise.resolve(null));
+      }
+
+      if (fetchNotif) {
+        promises.push(
+          apiClient.get<
+            ApiResult<{
+              pushesEnabled: boolean;
+              emailsEnabled: boolean;
+              locale: string;
+            }>
+          >(API_ENDPOINTS.NOTIFICATIONS.SETTINGS),
+        );
+      }
+
+      const [feedSettingsRes, notifSettingsRes] = (await Promise.all(
+        promises,
+      )) as [any, any];
+
+      const newState: Partial<SettingsState> = {};
+      const newServerSettings: Partial<SettingsDto> = {
+        ...get().serverSettings,
+      };
+
+      if (feedSettingsRes?.data?.success) {
         const distanceUnits =
           feedSettingsRes.data.result.settings.distanceUnits;
-        const { pushesEnabled, emailsEnabled, locale: serverLocale } = notifSettingsRes.data.result;
-        const locale = serverLocale || 'en';
+        newState.distanceUnits = distanceUnits;
+        newServerSettings.distanceUnits = distanceUnits;
+      }
 
-        set({
-          distanceUnits,
+      if (notifSettingsRes?.data?.success) {
+        const {
           pushesEnabled,
           emailsEnabled,
-          locale,
-          serverSettings: {
-            distanceUnits,
-            pushesEnabled,
-            emailsEnabled,
-            locale,
-          },
-        });
+          locale: serverLocale,
+        } = notifSettingsRes.data.result;
+        const locale = serverLocale || 'en';
+
+        newState.pushesEnabled = pushesEnabled;
+        newState.emailsEnabled = emailsEnabled;
+        newState.locale = locale;
+
+        newServerSettings.pushesEnabled = pushesEnabled;
+        newServerSettings.emailsEnabled = emailsEnabled;
+        newServerSettings.locale = locale;
       }
+
+      set({
+        ...newState,
+        serverSettings: newServerSettings as SettingsDto,
+      });
     } catch (error) {
       rethrowApiError(error, 'Failed to fetch settings');
     } finally {

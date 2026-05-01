@@ -20,3 +20,7 @@
 .variantDestructive {
   @apply text-destructive border-destructive hover:bg-destructive/10 active:bg-destructive/20 h-[40px] rounded-[16px] border bg-transparent px-4 font-sans text-sm font-semibold select-none;
 }
+
+.variantAccent {
+  @apply bg-accent h-[36px] rounded-[4px] px-8 py-2 font-sans text-sm font-semibold text-black select-none hover:opacity-90 active:opacity-100;
+}
