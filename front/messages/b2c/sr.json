@@ -1,5 +1,10 @@
 {
   "common": {
+    "cities": {
+      "Nearby": "U blizini",
+      "Belgrade": "Beograd",
+      "NoviSad": "Novi Sad"
+    },
     "errors": {
       "network": "Greška mreže. Molimo pokušaj ponovo."
     },

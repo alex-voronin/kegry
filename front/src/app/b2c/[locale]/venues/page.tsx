@@ -25,11 +25,32 @@ import { useQrCheckIn } from './use-qr-check-in';
 import { ScanQrCode } from 'lucide-react';
 import styles from './venues.module.css';
 import { useSafeBack } from '@/hooks/use-safe-back';
+import {
+  City,
+  BELGRADE_COORDS,
+  NOVI_SAD_COORDS,
+  LAST_CITY_KEY,
+} from '@/lib/cities';
+import { CitySelector } from '@/components/common/city-selector';
+import { checkPermissionStatus } from '@/lib/permissions';
 
 export default function VenuesScreen() {
   const router = useRouter();
   const t = useTranslations('screens.venues');
   const tCommon = useTranslations('common');
+  const tCities = useTranslations('common.cities');
+
+  const [selectedCity, setSelectedCity] = useState<City | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const saved = localStorage.getItem(LAST_CITY_KEY);
+    if (!saved) return null;
+    try {
+      return JSON.parse(saved);
+    } catch {
+      return null;
+    }
+  });
+
   const [selectedVenue, setSelectedVenue] = useState<VenueListItemDto | null>(
     null,
   );
@@ -85,15 +106,38 @@ export default function VenuesScreen() {
     };
   }, [reset]);
 
-  const loadData = async (offset: number) => {
+  const loadData = async (offset: number, cityOverride?: City | null) => {
     setIsGettingLocation(true);
+    const city = cityOverride !== undefined ? cityOverride : selectedCity;
+
     try {
-      const { latitude, longitude } = await getLowAccuracyLocation();
-      await fetchVenues(latitude, longitude, offset, limit);
+      let lat, lon;
+      if (city) {
+        lat = city.latitude;
+        lon = city.longitude;
+        // as we don't perform location request explicitly, we need to check permission status
+        // to handle "Don't Allow" case properly
+        const { locationAllowed } = await checkPermissionStatus();
+        setIsLocationDenied(!locationAllowed);
+      } else {
+        const coords = await getLowAccuracyLocation();
+        lat = coords.latitude;
+        lon = coords.longitude;
+      }
+      await fetchVenues(lat, lon, offset, limit);
     } catch (err: any) {
       if (err.code === 1) {
         // PERMISSION_DENIED
         setIsLocationDenied(true);
+        // If "Nearby" (selectedCity === null) failed, switch to Belgrade
+        if (!city) {
+          const belgrade = {
+            ...BELGRADE_COORDS,
+            label: tCities('Belgrade'),
+          };
+          setSelectedCity(belgrade);
+          loadData(0, belgrade);
+        }
       } else {
         toast.error(t('toast.loadFailed'));
       }
@@ -108,8 +152,7 @@ export default function VenuesScreen() {
 
       // If we already have venues, we don't need to re-init unless we want to refresh
       if (venues.length === 0 && !isLoading && !hasError) {
-        setIsLocationDenied(false);
-        await loadData(0);
+        await loadData(0, selectedCity);
       }
     };
     init();
@@ -117,13 +160,13 @@ export default function VenuesScreen() {
     window.addEventListener('focus', init);
     return () => window.removeEventListener('focus', init);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [limit, venues.length]); // Fetch when limit is calculated or returned from background
+  }, [limit, venues.length, selectedCity]); // Fetch when limit is calculated, list is reset, or city changes
 
   useEffect(() => {
     if (inView && hasMore && !isLoading && !hasError && venues.length > 0) {
-      loadData(venues.length);
+      loadData(venues.length, selectedCity);
     }
-  }, [inView, hasMore, isLoading, hasError, venues.length]);
+  }, [inView, hasMore, isLoading, hasError, venues.length, selectedCity]);
 
   const getMenuOptions = (venue: VenueListItemDto) => [
     {
@@ -144,6 +187,12 @@ export default function VenuesScreen() {
     },
   ];
 
+  const handleCityChange = (city: City | null) => {
+    setSelectedCity(city);
+    reset();
+    loadData(0, city);
+  };
+
   return (
     <div className="flex flex-1 flex-col">
       <Header
@@ -157,7 +206,13 @@ export default function VenuesScreen() {
             priority
           />
         }
-        title={t('title')}
+        title={
+          <CitySelector
+            selectedCity={selectedCity}
+            onCityChange={handleCityChange}
+            isLocationDenied={isLocationDenied}
+          />
+        }
         right={
           <button
             onClick={() => setIsScannerOpen(true)}
@@ -178,7 +233,7 @@ export default function VenuesScreen() {
           <div className={styles.emptyState}>
             <Spinner />
           </div>
-        ) : isLocationDenied ? (
+        ) : isLocationDenied && !selectedCity ? (
           <div className={styles.emptyState}>
             <Image
               src="/assets/venue/geolocation-disabled-placeholder.webp"
@@ -218,19 +273,23 @@ export default function VenuesScreen() {
                 title={venue.companyName}
                 subtitle={
                   <>
-                    <span>
-                      {t('distance', {
-                        distance:
-                          distanceUnits === DistanceUnits.Miles
-                            ? metersToMiles(venue.distanceMeters)
-                            : metersToKilometers(venue.distanceMeters),
-                        units:
-                          distanceUnits === DistanceUnits.Miles
-                            ? tCommon('units.miles')
-                            : tCommon('units.kilometers'),
-                      })}
-                    </span>
-                    <span>•</span>
+                    {!selectedCity && (
+                      <>
+                        <span>
+                          {t('distance', {
+                            distance:
+                              distanceUnits === DistanceUnits.Miles
+                                ? metersToMiles(venue.distanceMeters)
+                                : metersToKilometers(venue.distanceMeters),
+                            units:
+                              distanceUnits === DistanceUnits.Miles
+                                ? tCommon('units.miles')
+                                : tCommon('units.kilometers'),
+                          })}
+                        </span>
+                        <span>•</span>
+                      </>
+                    )}
                     <span>{venue.address}</span>
                   </>
                 }

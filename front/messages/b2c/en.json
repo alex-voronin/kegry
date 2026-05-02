@@ -1,5 +1,10 @@
 {
   "common": {
+    "cities": {
+      "Nearby": "Nearby",
+      "Belgrade": "Belgrade",
+      "NoviSad": "Novi Sad"
+    },
     "errors": {
       "network": "Network error. Please try again."
     },
