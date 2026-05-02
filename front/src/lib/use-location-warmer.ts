@@ -3,7 +3,9 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { getLowAccuracyLocation } from './geo-utils';
 
-import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
+import { useAuthStore } from '@/lib/auth/use-auth-store';
+
+import { checkPermissionStatus } from './permissions';
 
 const WARMUP_INTERVAL = 3 * 60 * 1000; // 3 minutes
 
@@ -14,19 +16,19 @@ const WARMUP_INTERVAL = 3 * 60 * 1000; // 3 minutes
  */
 export function useLocationWarmer() {
   const accessToken = useAuthStore((state) => state.accessToken);
-  const requiredAction = useAuthStore((state) => state.requiredAction);
   const isAuthenticated = !!accessToken;
-  const hasCompletedOnboarding = requiredAction === RequiredAction.None;
 
   const lastWarmupRef = useRef<number>(0);
   const isWarmingUpRef = useRef<boolean>(false);
 
   const warmup = useCallback(async () => {
-    if (!isAuthenticated || !hasCompletedOnboarding || isWarmingUpRef.current)
-      return;
+    if (!isAuthenticated || isWarmingUpRef.current) return;
 
     const now = Date.now();
     if (now - lastWarmupRef.current < WARMUP_INTERVAL) return;
+
+    const { locationAllowed } = await checkPermissionStatus();
+    if (!locationAllowed) return;
 
     isWarmingUpRef.current = true;
     lastWarmupRef.current = now;
@@ -39,10 +41,10 @@ export function useLocationWarmer() {
     } finally {
       isWarmingUpRef.current = false;
     }
-  }, [isAuthenticated, hasCompletedOnboarding]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
-    if (!isAuthenticated || !hasCompletedOnboarding) return;
+    if (!isAuthenticated) return;
 
     // Initial warmup on mount
     warmup();
@@ -61,5 +63,5 @@ export function useLocationWarmer() {
       window.removeEventListener('focus', handleFocus);
       window.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [warmup, isAuthenticated, hasCompletedOnboarding]);
+  }, [warmup, isAuthenticated]);
 }

@@ -38,7 +38,7 @@ const STATIC_ASSETS = [
   "/assets/feed/geolocation-disabled-placeholder.webp",
   "/assets/feed/go-to-chat.webp",
   "/assets/feed/ignore-icon.svg",
-  "/assets/feed/incognito.png",
+  "/assets/feed/incognito.webp",
   "/assets/feed/invite-icon.webp",
   "/assets/feed/location-icon.svg",
   "/assets/feed/no-profiles-placeholder.webp",

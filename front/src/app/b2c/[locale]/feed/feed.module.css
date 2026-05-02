@@ -81,7 +81,7 @@
 }
 
 .emptyStateText {
-  @apply text-secondary text-center text-sm leading-relaxed whitespace-pre-line;
+  @apply text-secondary pb-8 text-center text-sm leading-relaxed whitespace-pre-line;
 }
 
 .loadingContainer {
@@ -138,4 +138,20 @@
 
 .incognitoWrapper {
   @apply bg-surface mb-6 flex h-[300px] w-[300px] items-center justify-center overflow-hidden rounded-full;
+}
+
+.onboardingContent {
+  @apply flex flex-1 flex-col items-center justify-center;
+}
+
+.qrScanButton {
+  @apply border-primary mb-0 flex flex-col items-center rounded-2xl border p-2 transition-transform active:scale-95;
+}
+
+.qrScanIcon {
+  @apply text-primary h-10 w-10;
+}
+
+.qrScanText {
+  @apply text-primary text-sm font-semibold tracking-wider uppercase;
 }

@@ -4,14 +4,14 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/routing';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, ScanQrCode } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import styles from './feed.module.css';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { ModalDialog } from '@/components/ui/modal-dialog';
-import { Button, ButtonVariant } from '@/components/ui/button';
+import { QrScannerPopup } from '@/components/common/qr-scanner-popup';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import { useFeedStore, UserProfileDto } from './use-feed-store';
@@ -21,7 +21,10 @@ import { toast } from 'react-toastify';
 import { InviteExpiration, expiresAtToWhen } from '@/lib/invite-utils';
 import { useFcmStore } from '@/lib/fcm/store';
 import { NotificationType, FcmPayload } from '@/lib/fcm/types';
-import { checkIfPermissionsDenied } from '@/lib/permissions';
+import {
+  checkIfPermissionsDenied,
+  checkPermissionStatus,
+} from '@/lib/permissions';
 import {
   SendLocationWithRateLimit,
   getLastSentTimestamp,
@@ -69,7 +72,7 @@ function FeedHeader({
           priority
           onClick={() => router.push(PAGE_ROUTES.PROFILE)}
         >
-          {showPermissionsBadge && (
+          {showPermissionsBadge && !onboardingRequired && (
             <AlertCircle
               size={16}
               strokeWidth={3}
@@ -170,18 +173,30 @@ export default function FeedScreen() {
       if (venueId) {
         router.push(PAGE_ROUTES.VENUE_DETAIL(venueId));
       } else {
-        // hack to reload the feed
-        initializationStarted.current = false;
         router.refresh();
       }
     },
     [router],
   );
 
-  const { handleQrCode } = useQrCheckIn({
+  const { isScannerOpen, setIsScannerOpen, handleQrCode } = useQrCheckIn({
     onSuccess: handleCheckInSuccess,
     onError: handleCheckInError,
   });
+
+  const handleIncognitoCheckInClick = async () => {
+    const { locationAllowed } = await checkPermissionStatus();
+    if (!locationAllowed) {
+      // Trigger the native browser permission prompt if not granted yet
+      navigator.geolocation.getCurrentPosition(
+        () => setIsScannerOpen(true),
+        () => setIsScannerOpen(true),
+        { timeout: 500 },
+      );
+    } else {
+      setIsScannerOpen(true);
+    }
+  };
   const [when, setWhen] = useState<InviteExpiration>(InviteExpiration.Today);
   const [expirationPopup, setExpirationPopup] = useState<{
     isOpen: boolean;
@@ -225,7 +240,6 @@ export default function FeedScreen() {
   }, [currentItem?.kind === 'user' ? currentItem.profile.id : null]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [isInitialized, setIsInitialized] = useState(false);
-  const initializationStarted = useRef(false);
   const locationToastRef = useRef<ReturnType<typeof toast.loading> | null>(
     null,
   );
@@ -234,8 +248,7 @@ export default function FeedScreen() {
   useEffect(() => {
     let isMounted = true;
     const initializeFeed = async () => {
-      if (!hasHydrated || initializationStarted.current) return;
-      initializationStarted.current = true;
+      if (!hasHydrated) return;
 
       // 1. Handle QR code from local storage early
       const qrCode = localStorage.getItem('qr_code_to_check_in');
@@ -480,27 +493,36 @@ export default function FeedScreen() {
     if (requiredAction === RequiredAction.OnboardingCompletion) {
       return (
         <div className={styles.emptyState}>
-          <div className={styles.incognitoWrapper}>
-            <Image
-              src="/assets/feed/incognito.webp"
-              alt="incognito"
-              width={300}
-              height={300}
-              className="object-cover"
-            />
+          <div className={styles.onboardingContent}>
+            <div className={styles.incognitoWrapper}>
+              <Image
+                src="/assets/feed/incognito.webp"
+                alt="incognito"
+                width={300}
+                height={300}
+                className="object-cover"
+              />
+            </div>
+            <p className={styles.emptyStateText}>
+              {tFeed.rich('onboardingPlaceholder', {
+                link: (chunks) => (
+                  <Link
+                    href={PAGE_ROUTES.ONBOARDING}
+                    className={styles.emptyStateLink}
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
+            </p>
           </div>
-          <p className={styles.emptyStateText}>
-            {tFeed.rich('onboardingPlaceholder', {
-              link: (chunks) => (
-                <Link
-                  href={PAGE_ROUTES.ONBOARDING}
-                  className={styles.emptyStateLink}
-                >
-                  {chunks}
-                </Link>
-              ),
-            })}
-          </p>
+          <button
+            className={styles.qrScanButton}
+            onClick={() => handleIncognitoCheckInClick()}
+          >
+            <ScanQrCode className={styles.qrScanIcon} />
+            <span className={styles.qrScanText}>{tFeed('scanQr')}</span>
+          </button>
         </div>
       );
     }
@@ -673,6 +695,12 @@ export default function FeedScreen() {
           onPrimaryAction={handleCloseInvitePrompt}
           secondaryButtonText={tFeed('invitePrompt.letsGo')}
           onSecondaryAction={handleGoToInvite}
+        />
+        <QrScannerPopup
+          isOpen={isScannerOpen}
+          onClose={() => setIsScannerOpen(false)}
+          onScan={handleQrCode}
+          checkLocation={false}
         />
       </div>
     </div>
