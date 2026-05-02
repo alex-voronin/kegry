@@ -157,7 +157,7 @@ public class VenueTests
         Should.Throw<HttpCodeException>(() => venue.GoogleMapsUrl = "https://non-google.com/some-obj")
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
-    
+
     [Theory]
     [InlineData("6789")]
     [InlineData("")]

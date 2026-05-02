@@ -492,8 +492,8 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         response.Success.ShouldBeTrue();
         response.Result.VenueId.ShouldBe(venueId);
     }
-    
-     [Fact]
+
+    [Fact]
     public async Task GivenVenue_WhenB2CUserChecksInWitWrongPinCode_ThenCheckInFailed()
     {
         // 1. Setup: B2B user creates verified venue

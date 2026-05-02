@@ -47,7 +47,7 @@ public interface ILoyaltyService
         string? pinCode,
         CancellationToken ct = default);
 
-    string GetDailyPinCode(Venue venue);
+    string GenerateDailyTotpPinCode(Venue venue);
 }
 
 internal class LoyaltyService : ILoyaltyService, IScoped
@@ -197,12 +197,12 @@ internal class LoyaltyService : ILoyaltyService, IScoped
 
     private string? CheckInByPin(string pinCode, Venue venue)
     {
-        var expectedPinCode = venue.PinCode.Length > 0 ? venue.PinCode : GetDailyPinCode(venue);
+        var expectedPinCode = venue.PinCode.Length > 0 ? venue.PinCode : GenerateDailyTotpPinCode(venue);
         if (expectedPinCode != pinCode)
         {
             return _localizer.GetString("InvalidPinCodeError");
         }
-  
+
         return null;
     }
 
@@ -265,16 +265,16 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         return result;
     }
 
-    public string GetDailyPinCode(Venue venue)
+    private const string TotpSalt = "salt-848Clfjevnz52i4u5y";
+
+    public string GenerateDailyTotpPinCode(Venue venue)
     {
         var now = _timeProvider.GetUtcNow();
         var timeZone = TimeZoneInfo.FindSystemTimeZoneById(venue.TimeZoneId);
         var venueLocalTime = TimeZoneInfo.ConvertTimeFromUtc(now.DateTime, timeZone);
         var dateStr = venueLocalTime.ToString("yyyy-MM-dd");
-        var input = dateStr + venue.Id + "salt-848Clfjevnz52i4u5y";
-
-        using SHA256 sha256 = SHA256.Create();
-        var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
+        var input = dateStr + venue.Id + TotpSalt;
+        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
 
         // Take 4 bytes and convert to positive number
         var number = Math.Abs(BitConverter.ToInt32(bytes, 0));

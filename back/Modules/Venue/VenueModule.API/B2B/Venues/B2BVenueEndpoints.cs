@@ -218,8 +218,8 @@ public class B2BVenueEndpoints : IEndpoints
     }
 
     private static VenueDto DomainVenueToDto(
-        IS3StorageService storageService, 
-        ILoyaltyService loyaltyService, 
+        IS3StorageService storageService,
+        ILoyaltyService loyaltyService,
         Venue venue)
     {
         return new VenueDto(
@@ -236,7 +236,7 @@ public class B2BVenueEndpoints : IEndpoints
             CoverImageUrl: venue.CoverImageS3Key != null
                 ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.UpdatedAt)
                 : null,
-            PinCode: string.IsNullOrEmpty(venue.PinCode) ? loyaltyService.GetDailyPinCode(venue) :  venue.PinCode,
+            PinCode: string.IsNullOrEmpty(venue.PinCode) ? loyaltyService.GenerateDailyTotpPinCode(venue) : venue.PinCode,
             IsGeneratedPinCode: string.IsNullOrEmpty(venue.PinCode),
             QrCode: venue.QrCode,
             Promos: venue.Promos
