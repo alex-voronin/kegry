@@ -21,11 +21,11 @@ export function QrScannerPopup({
   isOpen,
   onClose,
   onScan,
-  checkLocation = true,
+  checkLocation = false,
 }: QrScannerPopupProps) {
   const t = useTranslations('components.qrScannerPopup');
   const [cameraError, setCameraError] = useState(false);
-  const [isLocationAllowed, setIsLocationAllowed] = useState(!checkLocation);
+  const [isLocationAllowed, setIsLocationAllowed] = useState(true);
 
   useEffect(() => {
     if (isOpen && checkLocation) {
@@ -94,7 +94,7 @@ export function QrScannerPopup({
           <Scanner
             components={{
               torch: true,
-              finder: false,
+              finder: true,
             }}
             onScan={handleScan}
             onError={(err) => {
@@ -107,7 +107,7 @@ export function QrScannerPopup({
               }
             }}
             constraints={{ facingMode: 'environment' }}
-            scanDelay={400}
+            scanDelay={300}
             sound={false}
           />
         </div>

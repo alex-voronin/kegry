@@ -20,7 +20,7 @@ import {
 } from '@/app/b2c/[locale]/settings/use-settings-store';
 import { metersToKilometers, metersToMiles } from '@/lib/distance-utils';
 import { getLowAccuracyLocation } from '@/lib/geo-utils';
-import { QrScannerPopup } from '@/components/common/qr-scanner-popup';
+import { CheckInManager } from '@/components/common/check-in-manager';
 import { useQrCheckIn } from './use-qr-check-in';
 import { ScanQrCode } from 'lucide-react';
 import styles from './venues.module.css';
@@ -44,6 +44,7 @@ export default function VenuesScreen() {
 
   const handleCheckInError = useCallback(
     (venueId: string | null) => {
+      setIsScannerOpen(false);
       if (venueId) {
         router.push(PAGE_ROUTES.VENUE_DETAIL(venueId));
       }
@@ -51,7 +52,13 @@ export default function VenuesScreen() {
     [router],
   );
 
-  const { isScannerOpen, setIsScannerOpen, handleQrCode } = useQrCheckIn({
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const {
+    isCodePopupOpen,
+    setIsCodePopupOpen,
+    handleQrCode,
+    handleCodeSubmit,
+  } = useQrCheckIn({
     onSuccess: handleCheckInSuccess,
     onError: handleCheckInError,
   });
@@ -255,10 +262,13 @@ export default function VenuesScreen() {
         options={selectedVenue ? getMenuOptions(selectedVenue) : []}
       />
 
-      <QrScannerPopup
-        isOpen={isScannerOpen}
-        onClose={() => setIsScannerOpen(false)}
-        onScan={handleQrCode}
+      <CheckInManager
+        isScannerOpen={isScannerOpen}
+        onScannerOpenChange={setIsScannerOpen}
+        isCodePopupOpen={isCodePopupOpen}
+        onCodePopupOpenChange={setIsCodePopupOpen}
+        handleQrCode={handleQrCode}
+        handleCodeSubmit={handleCodeSubmit}
       />
     </div>
   );

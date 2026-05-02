@@ -1,0 +1,37 @@
+@reference "../../app/globals.css";
+
+.overlay {
+  @apply fixed inset-0 z-[100] flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm;
+}
+
+.popup {
+  @apply bg-surface w-full max-w-[360px] rounded-3xl p-6 shadow-xl;
+}
+
+.header {
+  @apply mb-4 flex items-center justify-between;
+}
+
+.title {
+  @apply text-primary text-xl font-bold;
+}
+
+.closeButton {
+  @apply text-secondary hover:text-primary transition-colors;
+}
+
+.content {
+  @apply flex flex-col items-center gap-6;
+}
+
+.description {
+  @apply text-secondary text-center text-sm leading-relaxed;
+}
+
+.otpWrapper {
+  @apply my-4;
+}
+
+.submitButton {
+  @apply w-full;
+}

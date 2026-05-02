@@ -11,7 +11,7 @@ import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { ModalDialog } from '@/components/ui/modal-dialog';
-import { QrScannerPopup } from '@/components/common/qr-scanner-popup';
+import { CheckInManager } from '@/components/common/check-in-manager';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import { useFeedStore, UserProfileDto } from './use-feed-store';
@@ -170,6 +170,7 @@ export default function FeedScreen() {
 
   const handleCheckInError = useCallback(
     (venueId: string | null) => {
+      setIsScannerOpen(false);
       if (venueId) {
         router.push(PAGE_ROUTES.VENUE_DETAIL(venueId));
       } else {
@@ -179,7 +180,13 @@ export default function FeedScreen() {
     [router],
   );
 
-  const { isScannerOpen, setIsScannerOpen, handleQrCode } = useQrCheckIn({
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const {
+    isCodePopupOpen,
+    setIsCodePopupOpen,
+    handleQrCode,
+    handleCodeSubmit,
+  } = useQrCheckIn({
     onSuccess: handleCheckInSuccess,
     onError: handleCheckInError,
   });
@@ -366,6 +373,7 @@ export default function FeedScreen() {
     fetchNpc,
     router,
     handleQrCode,
+    checkPermissions,
   ]);
 
   const handleCloseInvitePrompt = () => {
@@ -696,11 +704,13 @@ export default function FeedScreen() {
           secondaryButtonText={tFeed('invitePrompt.letsGo')}
           onSecondaryAction={handleGoToInvite}
         />
-        <QrScannerPopup
-          isOpen={isScannerOpen}
-          onClose={() => setIsScannerOpen(false)}
-          onScan={handleQrCode}
-          checkLocation={false}
+        <CheckInManager
+          isScannerOpen={isScannerOpen}
+          onScannerOpenChange={setIsScannerOpen}
+          isCodePopupOpen={isCodePopupOpen}
+          onCodePopupOpenChange={setIsCodePopupOpen}
+          handleQrCode={handleQrCode}
+          handleCodeSubmit={handleCodeSubmit}
         />
       </div>
     </div>

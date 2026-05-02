@@ -3,7 +3,11 @@ export function isOurDomain(url: URL): boolean {
   const parts = hostname.split('.');
   const ownRoot = parts.slice(-2).join('.');
   const scannedRoot = url.hostname.split('.').slice(-2).join('.');
-  return ownRoot === scannedRoot;
+  return (
+    ownRoot === scannedRoot ||
+    scannedRoot === 'kegry.rs' ||
+    scannedRoot === 'kegry.com'
+  );
 }
 
 export function buildQrUrl(qrCode: string = ''): string {

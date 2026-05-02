@@ -548,6 +548,13 @@
     }
   },
   "components": {
+    "checkInCodePopup": {
+      "title": "Kod za prijavu",
+      "description": "Lokacija nije dostupna. Molimo unesi 4-cifreni kod koji je prikazan u lokalu.",
+      "submit": "Prijava",
+      "cancel": "Otkaži",
+      "error": "Neispravan kod"
+    },
     "qr-code-reader": {
       "toast": {
         "invalidQr": "Neispravan QR kod",

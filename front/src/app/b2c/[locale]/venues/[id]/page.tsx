@@ -20,7 +20,7 @@ import styles from './venue-detail.module.css';
 import { InstagramIcon } from './_components/instagram-icon';
 import { PromoIcon } from '@/lib/promo-types';
 import { useSafeBack } from '@/hooks/use-safe-back';
-import { QrScannerPopup } from '@/components/common/qr-scanner-popup';
+import { CheckInManager } from '@/components/common/check-in-manager';
 import { CheckInAnimation } from '../_components/check-in-animation';
 import { useQrCheckIn } from '../use-qr-check-in';
 import { parseInstagramHandle } from '@/lib/url-utils';
@@ -54,14 +54,27 @@ export default function VenueDetailScreen() {
     setCheckInVenueId(id);
   }, []);
 
+  const handleCheckInError = useCallback(
+    (venueId: string | null) => {
+      setIsScannerOpen(false);
+      if (venueId) {
+        router.push(PAGE_ROUTES.VENUE_DETAIL(venueId));
+      }
+    },
+    [router],
+  );
+
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
   const {
-    isScannerOpen,
-    setIsScannerOpen,
+    isCodePopupOpen,
+    setIsCodePopupOpen,
     showCheckIn,
     setShowCheckIn,
     handleQrCode,
+    handleCodeSubmit,
   } = useQrCheckIn({
     onSuccess: handleCheckInSuccess,
+    onError: handleCheckInError,
   });
 
   const { safeBack } = useSafeBack();
@@ -71,7 +84,7 @@ export default function VenueDetailScreen() {
       setShowCheckIn(true);
       router.replace(pathname);
     }
-  }, [searchParams, setShowCheckIn, router, pathname]);
+  }, [searchParams, router, pathname]);
 
   useEffect(() => {
     const loadVenue = async () => {
@@ -439,10 +452,13 @@ export default function VenueDetailScreen() {
         ]}
       />
 
-      <QrScannerPopup
-        isOpen={isScannerOpen}
-        onClose={() => setIsScannerOpen(false)}
-        onScan={handleQrCode}
+      <CheckInManager
+        isScannerOpen={isScannerOpen}
+        onScannerOpenChange={setIsScannerOpen}
+        isCodePopupOpen={isCodePopupOpen}
+        onCodePopupOpenChange={setIsCodePopupOpen}
+        handleQrCode={handleQrCode}
+        handleCodeSubmit={handleCodeSubmit}
       />
 
       <ModalDialog
