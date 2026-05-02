@@ -237,6 +237,7 @@ public class B2BVenueEndpoints : IEndpoints
                 ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.UpdatedAt)
                 : null,
             PinCode: string.IsNullOrEmpty(venue.PinCode) ? loyaltyService.GetDailyPinCode(venue) :  venue.PinCode,
+            IsGeneratedPinCode: string.IsNullOrEmpty(venue.PinCode),
             QrCode: venue.QrCode,
             Promos: venue.Promos
                 .OrderBy(p => p.CreatedAt)
