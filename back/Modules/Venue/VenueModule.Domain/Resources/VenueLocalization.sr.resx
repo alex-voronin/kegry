@@ -12,8 +12,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="InvalidPinCodeError" xml:space="preserve">
+    <value>Nevažeći PIN kod</value>
+  </data>
   <data name="NotInVenueError" xml:space="preserve">
-    <value>Moraš biti u lokalu da bi se prijavio.</value>
+    <value>Moraš biti u lokalu da bi se prijavio</value>
   </data>
   <data name="AlreadyCheckedInError" xml:space="preserve">
     <value>Nedavno si se već prijavio</value>

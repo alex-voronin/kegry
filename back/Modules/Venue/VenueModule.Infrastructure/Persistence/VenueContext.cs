@@ -72,6 +72,8 @@ public class VenueContext : DbContext
             entity.HasKey(v => v.Id);
             entity.Property(h => h.Id)
                 .ValueGeneratedNever();
+            entity.Property(v => v.PinCode)
+                .HasMaxLength(4);
             entity.Property(v => v.CoverImageS3Key)
                 .HasMaxLength(500);
             entity.Property(v => v.Address)

@@ -10,4 +10,5 @@ public record PatchVenueRequest(
     string? PhoneNumber,
     string? WorkingHours,
     string? CoverImageUrl,
+    string? PinCode,
     Guid? QrCode);

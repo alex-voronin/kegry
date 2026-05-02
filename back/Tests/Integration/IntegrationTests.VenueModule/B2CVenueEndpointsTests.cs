@@ -9,6 +9,7 @@ using VenueModule.API.B2B.Deals.Dto;
 using VenueModule.API.B2B.Venues.Dto;
 using VenueModule.API.B2C.Dto;
 using VenueModule.Domain.ValueObjects;
+using B2BGetVenueResponse = VenueModule.API.B2B.Venues.Dto.GetVenueResponse;
 using GetVenueResponse = VenueModule.API.B2C.Dto.GetVenueResponse;
 using VenueListItemDto = VenueModule.API.B2C.Dto.VenueListItemDto;
 
@@ -269,7 +270,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
             // Perform Check-in
             var checkInResponse = await Factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
-                ApiRoutes.Venue.QrCheckIn(venueId), new CheckInRequest(0, 0));
+                ApiRoutes.Venue.QrCheckIn(venueId), new CheckInRequest(0, 0, null));
             checkInResponse.Success.ShouldBeTrue();
 
             // Advance time by 1 day
@@ -304,7 +305,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(b2CAuth);
 
         // 3. Check in as B2C user
-        var checkInRequest = new CheckInRequest(50.00001, 50.00001);
+        var checkInRequest = new CheckInRequest(50.00001, 50.00001, null);
         var response = await Factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
             ApiRoutes.Venue.QrCheckIn(venueId), checkInRequest);
 
@@ -336,7 +337,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(b2CAuth);
 
         // 3. Check in as B2C user
-        var checkInRequest = new CheckInRequest(51, 51);
+        var checkInRequest = new CheckInRequest(51, 51, null);
         var response = await Factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
             ApiRoutes.Venue.QrCheckIn(venueId), checkInRequest);
 
@@ -379,6 +380,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 PhoneNumber: null,
                 WorkingHours: null,
                 CoverImageUrl: null,
+                PinCode: null,
                 QrCode: newQr
             )
         );
@@ -391,7 +393,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var oldResponse = await Factory.ApiClient
             .PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
                 ApiRoutes.Venue.QrCheckIn(venueId),
-                new CheckInRequest(0, 0)
+                new CheckInRequest(0, 0, null)
             );
         oldResponse.Success.ShouldBeFalse();
 
@@ -399,10 +401,147 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var newResponse = await Factory.ApiClient
             .PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
                 ApiRoutes.Venue.QrCheckIn(newQr),
-                new CheckInRequest(0, 0)
+                new CheckInRequest(0, 0, null)
             );
         newResponse.Success.ShouldBeTrue();
         newResponse.Result.VenueId.ShouldBe(venueId);
+    }
+
+    [Fact]
+    public async Task GivenVenue_WhenB2CUserChecksInWithDailyPinCode_ThenCheckInSuccessful()
+    {
+        // 1. Setup: B2B user creates verified venue
+        var b2BAuth =
+            await Factory.AuthManager.CreateAndLoginUserAsync("b2b_checkin@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Checkin Co", "chk@example.com"))).Result.Id;
+
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+                ApiRoutes.B2B.Company.Venues(companyId),
+                new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null)))
+            .Result
+            .Id;
+        await _testUtils.VerifyVenueByIdAsync(venueId);
+
+        var getVenueResponse = await Factory.ApiClient.GetAsync<ApiResult<B2BGetVenueResponse>>(
+            ApiRoutes.B2B.Venue.Single(venueId));
+        getVenueResponse.Success.ShouldBeTrue();
+
+        // 2. Create B2C user
+        var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_checkin@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(b2CAuth);
+
+        // 3. Check in as B2C user
+        var checkInRequest = new CheckInRequest(null, null, getVenueResponse.Result.Venue.PinCode);
+        var response = await Factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+            ApiRoutes.Venue.QrCheckIn(venueId), checkInRequest);
+
+        response.Success.ShouldBeTrue();
+        response.Result.VenueId.ShouldBe(venueId);
+    }
+
+    [Fact]
+    public async Task GivenVenue_WhenB2CUserChecksInWithCorrectPinCode_ThenCheckInSuccessful()
+    {
+        // 1. Setup: B2B user creates verified venue
+        var b2BAuth =
+            await Factory.AuthManager.CreateAndLoginUserAsync("b2b_checkin@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Checkin Co", "chk@example.com"))).Result.Id;
+
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+                ApiRoutes.B2B.Company.Venues(companyId),
+                new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null)))
+            .Result
+            .Id;
+
+        var newPinCode = "1234";
+        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
+            ApiRoutes.B2B.Venue.Single(venueId),
+            new PatchVenueRequest(
+                Latitude: null,
+                Longitude: null,
+                Address: null,
+                WebsiteUrl: null,
+                GoogleMapsUrl: null,
+                InstagramUrl: null,
+                PhoneNumber: null,
+                WorkingHours: null,
+                CoverImageUrl: null,
+                PinCode: newPinCode,
+                QrCode: null
+            )
+        );
+        patchResponse.Success.ShouldBeTrue();
+
+        await _testUtils.VerifyVenueByIdAsync(venueId);
+
+        // 2. Create B2C user
+        var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_checkin@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(b2CAuth);
+
+        // 3. Check in as B2C user
+        var checkInRequest = new CheckInRequest(null, null, newPinCode);
+        var response = await Factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+            ApiRoutes.Venue.QrCheckIn(venueId), checkInRequest);
+
+        response.Success.ShouldBeTrue();
+        response.Result.VenueId.ShouldBe(venueId);
+    }
+    
+     [Fact]
+    public async Task GivenVenue_WhenB2CUserChecksInWitWrongPinCode_ThenCheckInFailed()
+    {
+        // 1. Setup: B2B user creates verified venue
+        var b2BAuth =
+            await Factory.AuthManager.CreateAndLoginUserAsync("b2b_checkin@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Checkin Co", "chk@example.com"))).Result.Id;
+
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+                ApiRoutes.B2B.Company.Venues(companyId),
+                new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null)))
+            .Result
+            .Id;
+
+        var newPinCode = "1234";
+        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
+            ApiRoutes.B2B.Venue.Single(venueId),
+            new PatchVenueRequest(
+                Latitude: null,
+                Longitude: null,
+                Address: null,
+                WebsiteUrl: null,
+                GoogleMapsUrl: null,
+                InstagramUrl: null,
+                PhoneNumber: null,
+                WorkingHours: null,
+                CoverImageUrl: null,
+                PinCode: newPinCode,
+                QrCode: null
+            )
+        );
+        patchResponse.Success.ShouldBeTrue();
+
+        await _testUtils.VerifyVenueByIdAsync(venueId);
+
+        // 2. Create B2C user
+        var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_checkin@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(b2CAuth);
+
+        // 3. Check in as B2C user
+        var checkInRequest = new CheckInRequest(null, null, newPinCode.Reverse().ToString());
+        var response = await Factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+            ApiRoutes.Venue.QrCheckIn(venueId), checkInRequest);
+
+        response.Success.ShouldBeFalse();
+        response.Result.VenueId.ShouldBe(venueId);
     }
 
     [Fact]

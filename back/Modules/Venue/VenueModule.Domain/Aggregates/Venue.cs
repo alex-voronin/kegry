@@ -8,6 +8,13 @@ namespace VenueModule.Domain.Aggregates;
 public class Venue : ISoftDeletable<Guid>, IAuditable
 {
     public required Guid Id { get; init; }
+
+    public string PinCode
+    {
+        get;
+        set => field = ValidatePinCode(nameof(PinCode), value);
+    } = "";
+
     public required Guid QrCode { get; set; }
     public required Guid CompanyId { get; init; }
     public Company Company { get; init; } = null!;
@@ -105,6 +112,18 @@ public class Venue : ISoftDeletable<Guid>, IAuditable
     }
 
     #region ================================= Validation =================================
+
+    private static string ValidatePinCode(string fieldName, string value)
+    {
+        Validation.ThrowIfNull(fieldName, value);
+
+        var trimmed = value!.Trim();
+        Validation.ThrowIfInvalid(fieldName,
+            () => trimmed.Length == 4 || trimmed.Length == 0,
+            "Pin code must be 4 digits or empty string"
+        );
+        return trimmed;
+    }
 
     private static string? ValidateS3Key(string fieldName, string? value)
     {

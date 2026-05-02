@@ -45,6 +45,7 @@ public class B2CVenueEndpoints : IEndpoints
             qrCode: qrCode,
             userLatitude: request.Latitude,
             userLongitude: request.Longitude,
+            pinCode: request.PinCode,
             ct: ct);
 
         return ApiResult<CheckInResponse>.Build(

@@ -157,6 +157,27 @@ public class VenueTests
         Should.Throw<HttpCodeException>(() => venue.GoogleMapsUrl = "https://non-google.com/some-obj")
             .ErrorCode.ShouldBe(ErrorCode.ValidationError);
     }
+    
+    [Theory]
+    [InlineData("6789")]
+    [InlineData("")]
+    public void PinCode_WhenValid_ThenSet(string pinCode)
+    {
+        var venue = CreateValidVenue();
+        venue.PinCode = pinCode;
+        venue.PinCode.ShouldBe(pinCode);
+    }
+
+    [Theory]
+    [InlineData("678")]
+    [InlineData("56789")]
+    public void PinCode_WhenInvalid_ThenThrows(string pinCode)
+    {
+        var venue = CreateValidVenue();
+        Should.Throw<HttpCodeException>(() => venue.PinCode = pinCode)
+            .ErrorCode.ShouldBe(ErrorCode.ValidationError);
+    }
+
 
     [Fact]
     public void AddPromo_WhenValid_AddsPromo()

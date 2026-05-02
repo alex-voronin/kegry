@@ -14,6 +14,7 @@ public record VenueDto(
     string? PhoneNumber,
     string? WorkingHours,
     string? CoverImageUrl,
+    string PinCode,
     Guid QrCode,
     PromoDto[] Promos,
     DiscountDto[] Discounts,

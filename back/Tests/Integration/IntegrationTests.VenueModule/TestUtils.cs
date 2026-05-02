@@ -116,7 +116,7 @@ public class TestUtils
         for (var i = 0; i < levels[index].VisitsUpperBound; i++)
         {
             var checkInResponse = await _factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
-                ApiRoutes.Venue.QrCheckIn(venueId), new CheckInRequest(0, 0));
+                ApiRoutes.Venue.QrCheckIn(venueId), new CheckInRequest(0, 0, null));
             checkInResponse.Success.ShouldBeTrue();
 
             // Advance time to allow next check-in

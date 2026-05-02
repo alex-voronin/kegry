@@ -115,6 +115,7 @@ public class B2BVenueEndpoints : IEndpoints
         ClaimsPrincipal user,
         IVenueRepository venueRepository,
         IS3StorageService storageService,
+        ILoyaltyService loyaltyService,
         CancellationToken ct)
     {
         var venue = await venueRepository.GetByIdWithAllRelationsAsync(id, ct);
@@ -124,7 +125,7 @@ public class B2BVenueEndpoints : IEndpoints
         }
 
         return ApiResult<GetVenueResponse>.Build(
-            new GetVenueResponse(DomainVenueToDto(storageService, venue))
+            new GetVenueResponse(DomainVenueToDto(storageService, loyaltyService, venue))
         );
     }
 
@@ -161,6 +162,7 @@ public class B2BVenueEndpoints : IEndpoints
         venue.InstagramUrl = request.InstagramUrl ?? venue.InstagramUrl;
         venue.PhoneNumber = request.PhoneNumber ?? venue.PhoneNumber;
         venue.WorkingHours = request.WorkingHours ?? venue.WorkingHours;
+        venue.PinCode = request.PinCode ?? venue.PinCode;
         venue.QrCode = request.QrCode ?? venue.QrCode;
         await venueRepository.SaveChangesAsync(ct);
 
@@ -215,7 +217,10 @@ public class B2BVenueEndpoints : IEndpoints
         );
     }
 
-    private static VenueDto DomainVenueToDto(IS3StorageService storageService, Venue venue)
+    private static VenueDto DomainVenueToDto(
+        IS3StorageService storageService, 
+        ILoyaltyService loyaltyService, 
+        Venue venue)
     {
         return new VenueDto(
             Id: venue.Id.ToString(),
@@ -231,6 +236,7 @@ public class B2BVenueEndpoints : IEndpoints
             CoverImageUrl: venue.CoverImageS3Key != null
                 ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.UpdatedAt)
                 : null,
+            PinCode: string.IsNullOrEmpty(venue.PinCode) ? loyaltyService.GetDailyPinCode(venue) :  venue.PinCode,
             QrCode: venue.QrCode,
             Promos: venue.Promos
                 .OrderBy(p => p.CreatedAt)

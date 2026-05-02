@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using GeoTimeZone;
 using SharedCore.Geolocation;
 using SharedCore.Services.LifeTimes;
@@ -41,8 +43,11 @@ public interface ILoyaltyService
 
     Task<(Guid, string? error)> CheckInToVenue(
         Guid userId, Guid qrCode,
-        double userLatitude, double userLongitude,
+        double? userLatitude, double? userLongitude,
+        string? pinCode,
         CancellationToken ct = default);
+
+    string GetDailyPinCode(Venue venue);
 }
 
 internal class LoyaltyService : ILoyaltyService, IScoped
@@ -98,7 +103,8 @@ internal class LoyaltyService : ILoyaltyService, IScoped
 
     public async Task<(Guid, string? error)> CheckInToVenue(
         Guid userId, Guid qrCode,
-        double userLatitude, double userLongitude,
+        double? userLatitude, double? userLongitude,
+        string? pinCode,
         CancellationToken ct = default)
     {
         var transaction = await _venueRepository
@@ -127,13 +133,24 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             await _userLoyaltyRepository.AddAsync(userLoyalty, ct);
         }
 
-        var distanceMeters = Haversine.DistanceMeters(
-            userLatitude, userLongitude,
-            venue.Coordinates.Y, venue.Coordinates.X);
-
-        if (distanceMeters > MaxCheckInDistanceMeters)
+        if (pinCode == null && (userLatitude == null || userLongitude == null))
         {
-            return (venue.Id, _localizer.GetString("NotInVenueError"));
+            throw new ArgumentException("Either PIN or latitude and longitude must be provided");
+        }
+
+        string? error;
+        if (pinCode != null)
+        {
+            error = CheckInByPin(pinCode, venue);
+        }
+        else
+        {
+            error = CanCheckInUsingLocation(userLatitude!.Value, userLongitude!.Value, venue);
+        }
+
+        if (error != null)
+        {
+            return (venue.Id, error);
         }
 
         var now = _timeProvider.GetUtcNow();
@@ -162,6 +179,31 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         await transaction.CommitAsync(ct);
 
         return (venue.Id, null);
+    }
+
+    private string? CanCheckInUsingLocation(double userLatitude, double userLongitude, Venue venue)
+    {
+        var distanceMeters = Haversine.DistanceMeters(
+            userLatitude, userLongitude,
+            venue.Coordinates.Y, venue.Coordinates.X);
+
+        if (distanceMeters > MaxCheckInDistanceMeters)
+        {
+            return _localizer.GetString("NotInVenueError");
+        }
+
+        return null;
+    }
+
+    private string? CheckInByPin(string pinCode, Venue venue)
+    {
+        var expectedPinCode = venue.PinCode.Length > 0 ? venue.PinCode : GetDailyPinCode(venue);
+        if (expectedPinCode != pinCode)
+        {
+            return _localizer.GetString("InvalidPinCodeError");
+        }
+  
+        return null;
     }
 
     public async Task<LoyaltyLevelWithDiscount> GetLoyaltyLevelWithDiscountAsync(
@@ -221,6 +263,25 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         }
 
         return result;
+    }
+
+    public string GetDailyPinCode(Venue venue)
+    {
+        var now = _timeProvider.GetUtcNow();
+        var timeZone = TimeZoneInfo.FindSystemTimeZoneById(venue.TimeZoneId);
+        var venueLocalTime = TimeZoneInfo.ConvertTimeFromUtc(now.DateTime, timeZone);
+        var dateStr = venueLocalTime.ToString("yyyy-MM-dd");
+        var input = dateStr + venue.Id + "salt-848Clfjevnz52i4u5y";
+
+        using SHA256 sha256 = SHA256.Create();
+        var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+        // Take 4 bytes and convert to positive number
+        var number = Math.Abs(BitConverter.ToInt32(bytes, 0));
+        var pin = number % 10000;
+
+        // Return string with 4 leading zeroes
+        return pin.ToString("D4");
     }
 
     private static (int currentLevelDiscount, int? nextLevelDiscount) ComputeCurrentAndNextLevelDiscount(
