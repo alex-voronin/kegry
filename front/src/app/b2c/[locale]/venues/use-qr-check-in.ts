@@ -101,7 +101,7 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
       try {
         return await executeCheckIn(
           qrCode,
-          { code: pinCode },
+          { pinCode },
           onSuccessCallback,
           onErrorCallback,
         );

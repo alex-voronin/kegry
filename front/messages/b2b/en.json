@@ -326,11 +326,14 @@
       "title": "Advanced Settings",
       "qrCode": "QR Code",
       "qrCodePlaceholder": "Enter QR Code ID",
+      "pinCode": "PIN Code",
+      "pinCodePlaceholder": "Enter PIN Code",
+      "generatePinEveryday": "Generate new pin code everyday",
       "downloadHighContrastQr": "Download high contrast QR",
       "downloadDefaultQr": "Download default QR",
       "submit": "Save",
       "toast": {
-        "updateFailed": "Failed to update QR Code"
+        "updateFailed": "Failed to update settings"
       }
     },
     "venueDetail": {

@@ -11,6 +11,7 @@ import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ModalMenu } from '@/components/ui/modal-menu';
+import { Toggle } from '@/components/ui/toggle';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { buildQrUrl, downloadQrCode, extractQrCode } from '@/lib/qr-utils';
@@ -28,6 +29,8 @@ export default function AdvancedSettingsPage() {
   const { currentVenue, fetchVenue, patchVenue, isLoading } = useVenueStore();
 
   const [qrCode, setQrCode] = useState('');
+  const [pinCode, setPinCode] = useState('');
+  const [isGeneratedPinCode, setIsGeneratedPinCode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
@@ -41,6 +44,8 @@ export default function AdvancedSettingsPage() {
   useEffect(() => {
     if (currentVenue) {
       setQrCode(currentVenue.qrCode || '');
+      setPinCode(currentVenue.pinCode || '');
+      setIsGeneratedPinCode(currentVenue.isGeneratedPinCode);
     }
   }, [currentVenue]);
 
@@ -53,7 +58,10 @@ export default function AdvancedSettingsPage() {
 
     setIsSubmitting(true);
     try {
-      await patchVenue(venueId, { qrCode });
+      await patchVenue(venueId, {
+        qrCode,
+        pinCode: isGeneratedPinCode ? '' : pinCode,
+      });
       handleBack();
     } catch (err: any) {
       toast.error(err.message || t('toast.updateFailed'));
@@ -152,12 +160,40 @@ export default function AdvancedSettingsPage() {
             </div>
           </div>
 
+          <div className={stylesCommon.sectionContainer}>
+            <FormSectionTitle>{t('pinCode')}</FormSectionTitle>
+            <div className="flex flex-col gap-4">
+              <Input
+                value={isGeneratedPinCode ? currentVenue.pinCode : pinCode}
+                onChange={(e) => setPinCode(e.target.value)}
+                placeholder={t('pinCodePlaceholder')}
+                className={cn(stylesCommon.inputDark, 'w-full')}
+                disabled={isGeneratedPinCode}
+                maxLength={4}
+              />
+              <div className="flex items-center justify-between">
+                <span className="text-secondary text-sm">
+                  {t('generatePinEveryday')}
+                </span>
+                <Toggle
+                  checked={isGeneratedPinCode}
+                  onChange={setIsGeneratedPinCode}
+                />
+              </div>
+            </div>
+          </div>
+
           <div className={styles.footer}>
             <Button
               onClick={handleSave}
               loading={isSubmitting}
               className="w-[280px]"
-              disabled={!qrCode.trim() || qrCode === currentVenue.qrCode}
+              disabled={
+                !qrCode.trim() ||
+                (qrCode === currentVenue.qrCode &&
+                  isGeneratedPinCode === currentVenue.isGeneratedPinCode &&
+                  (isGeneratedPinCode || pinCode === currentVenue.pinCode))
+              }
             >
               {t('submit')}
             </Button>

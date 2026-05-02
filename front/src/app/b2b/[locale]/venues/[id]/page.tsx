@@ -344,6 +344,11 @@ export default function VenueDetailPage() {
                 {currentVenue.isVerified ? t('verified') : t('nonVerified')}
               </span>
             </div>
+            {currentVenue.pinCode && (
+              <div className={styles.pinBadge}>
+                <span>{currentVenue.pinCode}</span>
+              </div>
+            )}
           </>
         ) : (
           <div className="bg-surface-dark h-full w-full" />

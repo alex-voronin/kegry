@@ -326,11 +326,14 @@
       "title": "Napredna podešavanja",
       "qrCode": "QR kod",
       "qrCodePlaceholder": "Unesite ID QR koda",
+      "pinCode": "PIN kod",
+      "pinCodePlaceholder": "Unesite PIN kod",
+      "generatePinEveryday": "Novi PIN kod se generiše svakodnevno",
       "downloadHighContrastQr": "Preuzmite kontrastni QR kod",
       "downloadDefaultQr": "Preuzmite standardni QR kod",
       "submit": "Sačuvaj",
       "toast": {
-        "updateFailed": "Ažuriranje QR koda nije uspelo"
+        "updateFailed": "Ažuriranje podešavanja nije uspelo"
       }
     },
     "venueDetail": {

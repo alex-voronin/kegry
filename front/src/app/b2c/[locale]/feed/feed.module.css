@@ -145,7 +145,7 @@
 }
 
 .qrScanButton {
-  @apply border-primary mb-0 flex flex-col items-center rounded-2xl border p-2 transition-transform active:scale-95;
+  @apply border-primary bg-form-element mb-0 flex flex-col items-center rounded-2xl border p-2 transition-transform active:scale-95;
 }
 
 .qrScanIcon {

@@ -107,6 +107,7 @@ export function QrScannerPopup({
               }
             }}
             constraints={{ facingMode: 'environment' }}
+            formats={['qr_code']}
             scanDelay={300}
             sound={false}
           />
