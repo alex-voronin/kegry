@@ -165,5 +165,6 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
     performCheckIn,
     performCodeCheckIn,
     handleCodeSubmit,
+    setPendingQrCode,
   };
 }

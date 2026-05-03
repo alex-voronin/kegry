@@ -20,6 +20,7 @@ export interface PromoDto {
 
 export interface VenueDto {
   id: string;
+  qrCode: string;
   latitude: number;
   longitude: number;
   address: string;

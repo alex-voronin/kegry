@@ -18,6 +18,7 @@ import { toast } from 'react-toastify';
 import { HelpCircle, ChevronRight, ScanQrCode, Link } from 'lucide-react';
 import styles from './venue-detail.module.css';
 import { InstagramIcon } from './_components/instagram-icon';
+import { PinpadIcon } from '@/components/icons/pinpad-icon';
 import { PromoIcon } from '@/lib/promo-types';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { CheckInManager } from '@/components/common/check-in-manager';
@@ -72,6 +73,7 @@ export default function VenueDetailScreen() {
     setShowCheckIn,
     handleQrCode,
     handleCodeSubmit,
+    setPendingQrCode,
   } = useQrCheckIn({
     onSuccess: handleCheckInSuccess,
     onError: handleCheckInError,
@@ -171,6 +173,14 @@ export default function VenueDetailScreen() {
           }
           right={
             <div className="flex items-center gap-3">
+              <Icon
+                onClick={() => {
+                  setPendingQrCode(venue.qrCode);
+                  setIsCodePopupOpen(true);
+                }}
+              >
+                <PinpadIcon size={24} className="text-white" />
+              </Icon>
               <Icon onClick={() => setIsScannerOpen(true)}>
                 <ScanQrCode size={24} className="text-white" />
               </Icon>
