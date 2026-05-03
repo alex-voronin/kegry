@@ -323,7 +323,7 @@ export default function ProfilePage() {
               </div>
             ) : (
               <Image
-                src={userAvatarUrl || '/assets/common/avatar-placeholder.webp'}
+                src={userAvatarUrl || '/assets/common/avatar-incognito.webp'}
                 alt="Avatar"
                 fill
                 className={styles.avatarImage}
@@ -401,9 +401,7 @@ export default function ProfilePage() {
             )}
             <div
               className={cn(styles.field, styles.actionField)}
-              onClick={() =>
-                router.push(PAGE_ROUTES.DISCOUNTS_AND_PROMOTIONS)
-              }
+              onClick={() => router.push(PAGE_ROUTES.DISCOUNTS_AND_PROMOTIONS)}
             >
               <span>{t('discountsAndPromotions')}</span>
               <Icon
