@@ -54,12 +54,16 @@ function FeedHeader({
   showPermissionsBadge,
   isInMeeting,
   onboardingRequired,
+  showQrScan,
+  onQrScanClick,
 }: {
   router: ReturnType<typeof useRouter>;
   unseenCount: number;
   showPermissionsBadge: boolean;
   isInMeeting: boolean;
   onboardingRequired: boolean;
+  showQrScan: boolean;
+  onQrScanClick: () => void;
 }) {
   return (
     <Header
@@ -83,6 +87,19 @@ function FeedHeader({
       }
       right={
         <div className={styles.headerRightSideIconsWrapper}>
+          {showQrScan && (
+            <Icon width={32} height={32} onClick={onQrScanClick}>
+              <ScanQrCode className="text-primary h-full w-full" />
+            </Icon>
+          )}
+          <Icon
+            src="/assets/venue/venue-icon.svg"
+            alt="venues"
+            width={30}
+            height={30}
+            priority
+            onClick={() => router.push(PAGE_ROUTES.VENUES)}
+          />
           {!isInMeeting && !onboardingRequired && (
             <Icon
               src="/assets/feed/filters-icon.svg"
@@ -93,14 +110,6 @@ function FeedHeader({
               onClick={() => router.push(PAGE_ROUTES.FEED_FILTERS)}
             />
           )}
-          <Icon
-            src="/assets/venue/venue-icon.svg"
-            alt="venues"
-            width={30}
-            height={30}
-            priority
-            onClick={() => router.push(PAGE_ROUTES.VENUES)}
-          />
           {isInMeeting ? (
             <Icon
               src="/assets/feed/chat-icon.svg"
@@ -674,6 +683,8 @@ export default function FeedScreen() {
             onboardingRequired={
               requiredAction === RequiredAction.OnboardingCompletion
             }
+            showQrScan={requiredAction === RequiredAction.None}
+            onQrScanClick={() => setIsScannerOpen(true)}
           />
         </div>
         {renderBody()}
