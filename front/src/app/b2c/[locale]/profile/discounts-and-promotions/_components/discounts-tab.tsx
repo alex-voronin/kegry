@@ -11,18 +11,26 @@ import { useViewportItemCount } from '@/hooks/use-viewport-item-count';
 import { toast } from 'react-toastify';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { getLowAccuracyLocation } from '@/lib/geo-utils';
+import { City } from '@/lib/cities';
 import {
   useDiscountsStore,
   AvailableDiscountDto,
 } from '../use-discounts-store';
 import styles from '../page.module.css';
 
-export function DiscountsTab() {
+interface DiscountsTabProps {
+  selectedCity: City | null;
+  isLocationDenied: boolean;
+}
+
+export function DiscountsTab({
+  selectedCity,
+  isLocationDenied,
+}: DiscountsTabProps) {
   const router = useRouter();
   const t = useTranslations('screens.discountsAndPromotions');
   const [selectedOffer, setSelectedOffer] =
     useState<AvailableDiscountDto | null>(null);
-  const [isLocationDenied, setIsLocationDenied] = useState(false);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
 
   const { ref: pageBottomRef, inView } = useInView({
@@ -36,17 +44,25 @@ export function DiscountsTab() {
     buffer: 4,
   });
 
-  const { offers, isLoading, hasMore, fetchOffers } = useDiscountsStore();
+  const { offers, isLoading, hasMore, fetchOffers, reset } = useDiscountsStore();
 
-  const loadData = async (offset: number) => {
+  const loadData = async (offset: number, cityOverride?: City | null) => {
     setIsGettingLocation(true);
+    const city = cityOverride !== undefined ? cityOverride : selectedCity;
+
     try {
-      const { latitude, longitude } = await getLowAccuracyLocation();
-      await fetchOffers(latitude, longitude, offset, limit);
-    } catch (err: any) {
-      if (err.code === 1) {
-        setIsLocationDenied(true);
+      let lat, lon;
+      if (city) {
+        lat = city.latitude;
+        lon = city.longitude;
       } else {
+        const coords = await getLowAccuracyLocation();
+        lat = coords.latitude;
+        lon = coords.longitude;
+      }
+      await fetchOffers(lat, lon, offset, limit);
+    } catch (err: any) {
+      if (err.code !== 1) {
         toast.error(t('toast.loadFailed'));
       }
     } finally {
@@ -55,12 +71,15 @@ export function DiscountsTab() {
   };
 
   useEffect(() => {
+    reset();
+  }, [selectedCity, reset]);
+
+  useEffect(() => {
     const init = async () => {
       if (limit === 0) return;
-      
+
       if (offers.length === 0 && !isLoading) {
-        setIsLocationDenied(false);
-        await loadData(0);
+        await loadData(0, selectedCity);
       }
     };
     init();
@@ -68,13 +87,13 @@ export function DiscountsTab() {
     window.addEventListener('focus', init);
     return () => window.removeEventListener('focus', init);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [limit, offers.length]);
+  }, [limit, offers.length, selectedCity]);
 
   useEffect(() => {
     if (inView && hasMore && !isLoading && offers.length > 0) {
-      loadData(offers.length);
+      loadData(offers.length, selectedCity);
     }
-  }, [inView, hasMore, isLoading, offers.length]);
+  }, [inView, hasMore, isLoading, offers.length, selectedCity]);
 
   const getMenuOptions = (offer: AvailableDiscountDto) => [
     {
@@ -107,7 +126,7 @@ export function DiscountsTab() {
     );
   }
 
-  if (isLocationDenied) {
+  if (isLocationDenied && !selectedCity) {
     return (
       <div className={styles.emptyState}>
         <Image

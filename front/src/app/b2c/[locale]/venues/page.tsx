@@ -25,14 +25,10 @@ import { useQrCheckIn } from './use-qr-check-in';
 import { ScanQrCode } from 'lucide-react';
 import styles from './venues.module.css';
 import { useSafeBack } from '@/hooks/use-safe-back';
-import {
-  City,
-  BELGRADE_COORDS,
-  NOVI_SAD_COORDS,
-  LAST_CITY_KEY,
-} from '@/lib/cities';
+import { City, BELGRADE_COORDS } from '@/lib/cities';
 import { CitySelector } from '@/components/common/city-selector';
 import { checkPermissionStatus } from '@/lib/permissions';
+import { useCitySelection } from '@/hooks/use-city-selection';
 
 export default function VenuesScreen() {
   const router = useRouter();
@@ -40,16 +36,11 @@ export default function VenuesScreen() {
   const tCommon = useTranslations('common');
   const tCities = useTranslations('common.cities');
 
-  const [selectedCity, setSelectedCity] = useState<City | null>(() => {
-    if (typeof window === 'undefined') return null;
-    const saved = localStorage.getItem(LAST_CITY_KEY);
-    if (!saved) return null;
-    try {
-      return JSON.parse(saved);
-    } catch {
-      return null;
-    }
-  });
+  const {
+    selectedCity,
+    hasHydrated,
+    handleCityChange: setCity,
+  } = useCitySelection();
 
   const [selectedVenue, setSelectedVenue] = useState<VenueListItemDto | null>(
     null,
@@ -101,10 +92,30 @@ export default function VenuesScreen() {
     useVenuesStore();
 
   useEffect(() => {
+    const check = async () => {
+      const { locationAllowed } = await checkPermissionStatus();
+      setIsLocationDenied(!locationAllowed);
+    };
+    check();
+
+    window.addEventListener('focus', check);
     return () => {
+      window.removeEventListener('focus', check);
       reset();
     };
   }, [reset]);
+
+  // Fallback to Belgrade if Nearby is selected but location is denied
+  useEffect(() => {
+    if (hasHydrated && isLocationDenied && !selectedCity) {
+      const belgrade = {
+        ...BELGRADE_COORDS,
+        label: tCities('Belgrade'),
+      };
+      setCity(belgrade);
+      loadData(0, belgrade);
+    }
+  }, [hasHydrated, isLocationDenied, selectedCity, setCity, tCities]);
 
   const loadData = async (offset: number, cityOverride?: City | null) => {
     setIsGettingLocation(true);
@@ -135,7 +146,7 @@ export default function VenuesScreen() {
             ...BELGRADE_COORDS,
             label: tCities('Belgrade'),
           };
-          setSelectedCity(belgrade);
+          setCity(belgrade);
           loadData(0, belgrade);
         }
       } else {
@@ -148,7 +159,7 @@ export default function VenuesScreen() {
 
   useEffect(() => {
     const init = async () => {
-      if (limit === 0) return;
+      if (limit === 0 || !hasHydrated) return;
 
       // If we already have venues, we don't need to re-init unless we want to refresh
       if (venues.length === 0 && !isLoading && !hasError) {
@@ -160,13 +171,28 @@ export default function VenuesScreen() {
     window.addEventListener('focus', init);
     return () => window.removeEventListener('focus', init);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [limit, venues.length, selectedCity]); // Fetch when limit is calculated, list is reset, or city changes
+  }, [limit, venues.length, selectedCity, hasHydrated]); // Fetch when limit is calculated, list is reset, city changes, or recovered
 
   useEffect(() => {
-    if (inView && hasMore && !isLoading && !hasError && venues.length > 0) {
+    if (
+      inView &&
+      hasMore &&
+      !isLoading &&
+      !hasError &&
+      venues.length > 0 &&
+      hasHydrated
+    ) {
       loadData(venues.length, selectedCity);
     }
-  }, [inView, hasMore, isLoading, hasError, venues.length, selectedCity]);
+  }, [
+    inView,
+    hasMore,
+    isLoading,
+    hasError,
+    venues.length,
+    selectedCity,
+    hasHydrated,
+  ]);
 
   const getMenuOptions = (venue: VenueListItemDto) => [
     {
@@ -187,8 +213,8 @@ export default function VenuesScreen() {
     },
   ];
 
-  const handleCityChange = (city: City | null) => {
-    setSelectedCity(city);
+  const onCityChange = (city: City | null) => {
+    setCity(city);
     reset();
     loadData(0, city);
   };
@@ -209,7 +235,7 @@ export default function VenuesScreen() {
         title={
           <CitySelector
             selectedCity={selectedCity}
-            onCityChange={handleCityChange}
+            onCityChange={onCityChange}
             isLocationDenied={isLocationDenied}
           />
         }

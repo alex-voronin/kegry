@@ -11,6 +11,7 @@ import { useViewportItemCount } from '@/hooks/use-viewport-item-count';
 import { toast } from 'react-toastify';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { getLowAccuracyLocation } from '@/lib/geo-utils';
+import { City } from '@/lib/cities';
 import { PromoIcon } from '@/lib/promo-types';
 import {
   usePromotionsStore,
@@ -18,12 +19,19 @@ import {
 } from '../use-promotions-store';
 import styles from '../page.module.css';
 
-export function PromotionsTab() {
+interface PromotionsTabProps {
+  selectedCity: City | null;
+  isLocationDenied: boolean;
+}
+
+export function PromotionsTab({
+  selectedCity,
+  isLocationDenied,
+}: PromotionsTabProps) {
   const router = useRouter();
   const t = useTranslations('screens.discountsAndPromotions');
   const [selectedPromotion, setSelectedPromotion] =
     useState<AvailablePromotionDto | null>(null);
-  const [isLocationDenied, setIsLocationDenied] = useState(false);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
 
   const { ref: pageBottomRef, inView } = useInView({
@@ -37,18 +45,26 @@ export function PromotionsTab() {
     buffer: 4,
   });
 
-  const { promotions, isLoading, hasMore, fetchPromotions } =
+  const { promotions, isLoading, hasMore, fetchPromotions, reset } =
     usePromotionsStore();
 
-  const loadData = async (offset: number) => {
+  const loadData = async (offset: number, cityOverride?: City | null) => {
     setIsGettingLocation(true);
+    const city = cityOverride !== undefined ? cityOverride : selectedCity;
+
     try {
-      const { latitude, longitude } = await getLowAccuracyLocation();
-      await fetchPromotions(latitude, longitude, offset, limit);
-    } catch (err: any) {
-      if (err.code === 1) {
-        setIsLocationDenied(true);
+      let lat, lon;
+      if (city) {
+        lat = city.latitude;
+        lon = city.longitude;
       } else {
+        const coords = await getLowAccuracyLocation();
+        lat = coords.latitude;
+        lon = coords.longitude;
+      }
+      await fetchPromotions(lat, lon, offset, limit);
+    } catch (err: any) {
+      if (err.code !== 1) {
         toast.error(t('toast.loadFailed'));
       }
     } finally {
@@ -57,12 +73,15 @@ export function PromotionsTab() {
   };
 
   useEffect(() => {
+    reset();
+  }, [selectedCity, reset]);
+
+  useEffect(() => {
     const init = async () => {
       if (limit === 0) return;
-      
+
       if (promotions.length === 0 && !isLoading) {
-        setIsLocationDenied(false);
-        await loadData(0);
+        await loadData(0, selectedCity);
       }
     };
     init();
@@ -70,13 +89,13 @@ export function PromotionsTab() {
     window.addEventListener('focus', init);
     return () => window.removeEventListener('focus', init);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [limit, promotions.length]);
+  }, [limit, promotions.length, selectedCity]);
 
   useEffect(() => {
     if (inView && hasMore && !isLoading && promotions.length > 0) {
-      loadData(promotions.length);
+      loadData(promotions.length, selectedCity);
     }
-  }, [inView, hasMore, isLoading, promotions.length]);
+  }, [inView, hasMore, isLoading, promotions.length, selectedCity]);
 
   const getMenuOptions = (promotion: AvailablePromotionDto) => [
     {
@@ -109,7 +128,7 @@ export function PromotionsTab() {
     );
   }
 
-  if (isLocationDenied) {
+  if (isLocationDenied && !selectedCity) {
     return (
       <div className={styles.emptyState}>
         <Image

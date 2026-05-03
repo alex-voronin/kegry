@@ -11,6 +11,10 @@ import { usePromotionsStore } from './use-promotions-store';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { DiscountsTab } from './_components/discounts-tab';
 import { PromotionsTab } from './_components/promotions-tab';
+import { City, BELGRADE_COORDS, LAST_CITY_KEY } from '@/lib/cities';
+import { CitySelector } from '@/components/common/city-selector';
+import { checkPermissionStatus } from '@/lib/permissions';
+import { useCitySelection } from '@/hooks/use-city-selection';
 import styles from './page.module.css';
 
 type Tab = 'discounts' | 'promotions';
@@ -18,6 +22,7 @@ type Tab = 'discounts' | 'promotions';
 export default function DiscountsAndPromotionsScreen() {
   const router = useRouter();
   const t = useTranslations('screens.discountsAndPromotions');
+  const tCities = useTranslations('common.cities');
 
   const TAB_OPTIONS = [
     { value: 'discounts', label: t('tabs.discounts'), width: '50%' },
@@ -25,19 +30,53 @@ export default function DiscountsAndPromotionsScreen() {
   ];
 
   const [activeTab, setActiveTab] = useState<Tab>('discounts');
+  const { selectedCity, hasHydrated, handleCityChange } = useCitySelection();
+  const [isLocationDenied, setIsLocationDenied] = useState(false);
 
   useEffect(() => {
+    const check = async () => {
+      const { locationAllowed } = await checkPermissionStatus();
+      setIsLocationDenied(!locationAllowed);
+    };
+    check();
+
+    window.addEventListener('focus', check);
     return () => {
+      window.removeEventListener('focus', check);
       useDiscountsStore.getState().reset();
       usePromotionsStore.getState().reset();
     };
   }, []);
 
-  const renderTabContent = () => {
-    if (activeTab === 'discounts') {
-      return <DiscountsTab />;
+  // Fallback to Belgrade if Nearby is selected but location is denied
+  useEffect(() => {
+    if (hasHydrated && isLocationDenied && !selectedCity) {
+      const belgrade = {
+        ...BELGRADE_COORDS,
+        label: tCities('Belgrade'),
+      };
+      handleCityChange(belgrade);
     }
-    return <PromotionsTab />;
+  }, [hasHydrated, isLocationDenied, selectedCity, handleCityChange, tCities]);
+
+
+  const renderTabContent = () => {
+    if (!hasHydrated) return null;
+
+    if (activeTab === 'discounts') {
+      return (
+        <DiscountsTab
+          selectedCity={selectedCity}
+          isLocationDenied={isLocationDenied}
+        />
+      );
+    }
+    return (
+      <PromotionsTab
+        selectedCity={selectedCity}
+        isLocationDenied={isLocationDenied}
+      />
+    );
   };
 
   return (
@@ -53,7 +92,13 @@ export default function DiscountsAndPromotionsScreen() {
             priority
           />
         }
-        title={t('title')}
+        title={
+          <CitySelector
+            selectedCity={selectedCity}
+            onCityChange={handleCityChange}
+            isLocationDenied={isLocationDenied}
+          />
+        }
       />
 
       <div className={styles.tabBar}>

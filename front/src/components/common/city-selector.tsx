@@ -25,31 +25,31 @@ export function CitySelector({
     NoviSad: { ...NOVI_SAD_COORDS, label: tCities('NoviSad') },
   };
 
-  const handleSelect = (city: City | null) => {
-    if (city) {
-      localStorage.setItem(LAST_CITY_KEY, JSON.stringify(city));
-    } else {
-      localStorage.removeItem(LAST_CITY_KEY);
-    }
-    onCityChange(city);
-  };
-
   const options = [
     ...(!isLocationDenied
       ? [
           {
             label: tCities('Nearby'),
-            onClick: () => handleSelect(null),
+            onClick: () => {
+              onCityChange(null);
+              setIsOpen(false);
+            },
           },
         ]
       : []),
     {
       label: tCities('Belgrade'),
-      onClick: () => handleSelect(CITIES.Belgrade),
+      onClick: () => {
+        onCityChange(CITIES.Belgrade);
+        setIsOpen(false);
+      },
     },
     {
       label: tCities('NoviSad'),
-      onClick: () => handleSelect(CITIES.NoviSad),
+      onClick: () => {
+        onCityChange(CITIES.NoviSad);
+        setIsOpen(false);
+      },
     },
   ];
 
