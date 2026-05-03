@@ -10,6 +10,7 @@ interface CheckInManagerProps {
   onCodePopupOpenChange: (open: boolean) => void;
   handleQrCode: (result: string) => Promise<boolean>;
   handleCodeSubmit: (code: string) => Promise<void>;
+  codeDescription?: string;
 }
 
 export function CheckInManager({
@@ -19,6 +20,7 @@ export function CheckInManager({
   onCodePopupOpenChange,
   handleQrCode,
   handleCodeSubmit,
+  codeDescription,
 }: CheckInManagerProps) {
   return (
     <>
@@ -36,6 +38,7 @@ export function CheckInManager({
         isOpen={isCodePopupOpen}
         onClose={() => onCodePopupOpenChange(false)}
         onSubmit={handleCodeSubmit}
+        description={codeDescription}
       />
     </>
   );

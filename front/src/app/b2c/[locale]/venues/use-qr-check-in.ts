@@ -25,6 +25,7 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
   const [showCheckIn, setShowCheckIn] = useState(false);
   const [isCodePopupOpen, setIsCodePopupOpen] = useState(false);
   const [pendingQrCode, setPendingQrCode] = useState<string | null>(null);
+  const [codeDescription, setCodeDescription] = useState<string | undefined>();
 
   const executeCheckIn = useCallback(
     async (
@@ -78,6 +79,7 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
           toast.dismiss(toastId);
           // Location failed, show code popup
           setPendingQrCode(qrCode);
+          setCodeDescription(undefined);
           setIsCodePopupOpen(true);
           return false;
         }
@@ -166,5 +168,7 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
     performCodeCheckIn,
     handleCodeSubmit,
     setPendingQrCode,
+    codeDescription,
+    setCodeDescription,
   };
 }

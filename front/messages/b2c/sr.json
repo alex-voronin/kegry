@@ -556,6 +556,7 @@
     "checkInCodePopup": {
       "title": "Kod za prijavu",
       "description": "Lokacija nije dostupna. Molimo unesi 4-cifreni kod koji je prikazan u lokalu.",
+      "descriptionManual": "Možeš se prijaviti i bez korišćenja kamere. Samo unesi 4-cifreni kod koji je prikazan u lokalu ili ga potraži od osoblja.",
       "submit": "Prijava",
       "cancel": "Otkaži",
       "error": "Neispravan kod"

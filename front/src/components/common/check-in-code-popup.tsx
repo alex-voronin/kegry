@@ -11,12 +11,14 @@ interface CheckInCodePopupProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (code: string) => Promise<void>;
+  description?: string;
 }
 
 export function CheckInCodePopup({
   isOpen,
   onClose,
   onSubmit,
+  description,
 }: CheckInCodePopupProps) {
   const t = useTranslations('components.checkInCodePopup');
   const [code, setCode] = useState('');
@@ -53,7 +55,9 @@ export function CheckInCodePopup({
           </button>
         </div>
         <div className={styles.content}>
-          <p className={styles.description}>{t('description')}</p>
+          <p className={styles.description}>
+            {description || t('description')}
+          </p>
           <div className={styles.otpWrapper}>
             <InputOTP
               maxLength={4}

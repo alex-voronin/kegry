@@ -42,6 +42,7 @@ export default function VenueDetailScreen() {
   const searchParams = useSearchParams();
   const venueId = params.id as string;
   const t = useTranslations('screens.venueDetail');
+  const tPopup = useTranslations('components.checkInCodePopup');
 
   const { currentVenue, isLoading, fetchVenue } = useVenueStore();
   const [isInitializing, setIsInitializing] = useState(
@@ -74,6 +75,8 @@ export default function VenueDetailScreen() {
     handleQrCode,
     handleCodeSubmit,
     setPendingQrCode,
+    codeDescription,
+    setCodeDescription,
   } = useQrCheckIn({
     onSuccess: handleCheckInSuccess,
     onError: handleCheckInError,
@@ -176,6 +179,7 @@ export default function VenueDetailScreen() {
               <Icon
                 onClick={() => {
                   setPendingQrCode(venue.qrCode);
+                  setCodeDescription(tPopup('descriptionManual'));
                   setIsCodePopupOpen(true);
                 }}
               >
@@ -469,6 +473,7 @@ export default function VenueDetailScreen() {
         onCodePopupOpenChange={setIsCodePopupOpen}
         handleQrCode={handleQrCode}
         handleCodeSubmit={handleCodeSubmit}
+        codeDescription={codeDescription}
       />
 
       <ModalDialog

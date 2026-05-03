@@ -556,6 +556,7 @@
     "checkInCodePopup": {
       "title": "Check-in Code",
       "description": "Location is unavailable. Please enter the 4-digit code shown at the venue.",
+      "descriptionManual": "You can check in without using the camera. Just enter the 4-digit code shown at the venue or ask the personnel for it.",
       "submit": "Check-in",
       "cancel": "Cancel",
       "error": "Invalid code"
