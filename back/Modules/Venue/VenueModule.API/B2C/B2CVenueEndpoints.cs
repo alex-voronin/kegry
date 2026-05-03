@@ -169,6 +169,7 @@ public class B2CVenueEndpoints : IEndpoints
     {
         return new VenueDto(
             Id: venue.Id.ToString(),
+            QrCode: venue.QrCode.ToString(),
             Latitude: venue.Coordinates.Y,
             Longitude: venue.Coordinates.X,
             Address: venue.Address,

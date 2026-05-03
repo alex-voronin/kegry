@@ -125,6 +125,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         response.Success.ShouldBeTrue();
         var venue = response.Result.Venue;
+        venue.QrCode.ShouldBe(venue.Id);
         venue.Address.ShouldBe(venueRequest.Address);
         venue.WebsiteUrl.ShouldBe(venueRequest.WebsiteUrl);
         venue.InstagramUrl.ShouldBe(venueRequest.InstagramUrl);
