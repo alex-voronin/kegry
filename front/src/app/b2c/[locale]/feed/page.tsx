@@ -172,7 +172,14 @@ export default function FeedScreen() {
   const [isLocationDenied, setIsLocationDenied] = useState(false);
   const handleCheckInSuccess = useCallback(
     (venueId: string) => {
-      router.push(`${PAGE_ROUTES.VENUE_DETAIL(venueId)}?animate-check-in=true`);
+      // We use requestAnimationFrame() to avoid a race condition between the Feed's state update (closing scanner)
+      // and the router's push navigation. Without this delay, Next.js may perform a 'replace'
+      // instead of a 'push', leading to a shallow history stack where going 'back' fails.
+      requestAnimationFrame(() => {
+        router.push(
+          `${PAGE_ROUTES.VENUE_DETAIL(venueId)}?animate-check-in=true`,
+        );
+      });
     },
     [router],
   );
@@ -181,7 +188,12 @@ export default function FeedScreen() {
     (venueId: string | null) => {
       setIsScannerOpen(false);
       if (venueId) {
-        router.push(PAGE_ROUTES.VENUE_DETAIL(venueId));
+        // We use requestAnimationFrame() to avoid a race condition between the Feed's state update (closing scanner)
+        // and the router's push navigation. Without this delay, Next.js may perform a 'replace'
+        // instead of a 'push', leading to a shallow history stack where going 'back' fails.
+        requestAnimationFrame(() => {
+          router.push(PAGE_ROUTES.VENUE_DETAIL(venueId));
+        });
       } else {
         router.refresh();
       }
