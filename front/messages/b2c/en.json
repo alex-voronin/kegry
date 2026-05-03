@@ -459,8 +459,10 @@
       "description": "To provide you with the best experience, we need access to your location and notifications.",
       "locationTitle": "Location",
       "locationDesc": "Absolutely necessary to discover people and venues around. Without it, the feed won't work.",
+      "locationDescNotOnboarded": "Simplifies check-in via QR code. If a venue doesn't support PIN-code check-in, location access is required to complete your check-in.",
       "notificationsTitle": "Notifications",
       "notificationsDesc": "The app will work without notifications enabled, but you won't receive invitations or new message notifications. The user experience of some features will also be degraded.",
+      "tapToView": "Tap to view instructions",
       "status": {
         "location": "Location",
         "notifications": "Notifications"

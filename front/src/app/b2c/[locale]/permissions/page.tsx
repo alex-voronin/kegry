@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import { useSafeBack } from '@/hooks/use-safe-back';
@@ -13,6 +13,7 @@ import { SafariShareIcon } from '@/components/ui/safari-share-icon';
 import { TuneIcon } from '@/components/ui/tune-icon';
 import { SafariSiteSettingsIcon } from '@/components/ui/safari-site-settings-icon';
 import { getOS } from '@/lib/os-utils';
+import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import styles from './permissions.module.css';
 
 export default function PermissionsPage() {
@@ -25,6 +26,32 @@ export default function PermissionsPage() {
   });
   const [os, setOs] = useState<'ios' | 'android' | 'other' | null>(null);
   const [isIosTroubleExpanded, setIsIosTroubleExpanded] = useState(false);
+  const [activeGroup, setActiveGroup] = useState<'location' | 'notifications' | null>(null);
+  const { requiredAction } = useAuthStore();
+  const isOnboarded = requiredAction === RequiredAction.None;
+
+  const iosLocationRef = useRef<HTMLDivElement>(null);
+  const iosNotificationsRef = useRef<HTMLDivElement>(null);
+  const androidRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!activeGroup) return;
+
+    const scroll = () => {
+      if (os === 'ios') {
+        if (activeGroup === 'location') {
+          iosLocationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          iosNotificationsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      } else {
+        androidRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+
+    const timeout = setTimeout(scroll, 100);
+    return () => clearTimeout(timeout);
+  }, [activeGroup, os]);
 
   useEffect(() => {
     setOs(getOS());
@@ -56,10 +83,16 @@ export default function PermissionsPage() {
       />
       <div className={styles.content}>
         {/* Status Section */}
-        <div className={styles.section}>
+        <div
+          className={styles.section}
+          onClick={() => setActiveGroup('location')}
+        >
           <div className={styles.textWrapper}>
             <h3 className={styles.sectionTitle}>{t('locationTitle')}</h3>
-            <p className={styles.sectionDesc}>{t('locationDesc')}</p>
+            <p className={styles.sectionDesc}>
+              {isOnboarded ? t('locationDesc') : t('locationDescNotOnboarded')}
+            </p>
+            <p className={styles.tapInstruction}>{t('tapToView')}</p>
           </div>
           <div
             className={
@@ -76,10 +109,14 @@ export default function PermissionsPage() {
           </div>
         </div>
 
-        <div className={styles.section}>
+        <div
+          className={styles.section}
+          onClick={() => setActiveGroup('notifications')}
+        >
           <div className={styles.textWrapper}>
             <h3 className={styles.sectionTitle}>{t('notificationsTitle')}</h3>
             <p className={styles.sectionDesc}>{t('notificationsDesc')}</p>
+            <p className={styles.tapInstruction}>{t('tapToView')}</p>
           </div>
           <div
             className={
@@ -97,83 +134,87 @@ export default function PermissionsPage() {
         </div>
 
         {/* Instructions - iOS */}
-        {(os === 'ios' || os === 'other' || os === null) && (
+        {(os === 'ios' || os === 'other' || os === null) && activeGroup && (
           <div className={styles.platformSection}>
             <h2 className={styles.platformTitle}>{t('ios.title')}</h2>
 
-            <div className={styles.instructionGroup}>
-              <h4 className={styles.instructionSubtitle}>
-                {t('ios.location.title')}
-              </h4>
-              <p className={styles.instructionText}>
-                1. {t('ios.location.step1')}
-              </p>
-              <p className={styles.instructionText}>
-                2. {t('ios.location.step2')}
-              </p>
-              <p className={styles.instructionText}>
-                3. {t('ios.location.step3')}
-              </p>
-              <p className={styles.instructionText}>
-                4. {t('ios.location.step4')}
-              </p>
-              <div
-                className={styles.disclosureToggle}
-                onClick={() => setIsIosTroubleExpanded(!isIosTroubleExpanded)}
-              >
-                <span>{t('ios.location.trouble')}</span>
-                {isIosTroubleExpanded ? (
-                  <ChevronUp size={16} />
-                ) : (
-                  <ChevronDown size={16} />
+            {activeGroup === 'location' && (
+              <div className={styles.instructionGroup} ref={iosLocationRef}>
+                <h4 className={styles.instructionSubtitle}>
+                  {t('ios.location.title')}
+                </h4>
+                <p className={styles.instructionText}>
+                  1. {t('ios.location.step1')}
+                </p>
+                <p className={styles.instructionText}>
+                  2. {t('ios.location.step2')}
+                </p>
+                <p className={styles.instructionText}>
+                  3. {t('ios.location.step3')}
+                </p>
+                <p className={styles.instructionText}>
+                  4. {t('ios.location.step4')}
+                </p>
+                <div
+                  className={styles.disclosureToggle}
+                  onClick={() => setIsIosTroubleExpanded(!isIosTroubleExpanded)}
+                >
+                  <span>{t('ios.location.trouble')}</span>
+                  {isIosTroubleExpanded ? (
+                    <ChevronUp size={16} />
+                  ) : (
+                    <ChevronDown size={16} />
+                  )}
+                </div>
+                
+                {isIosTroubleExpanded && (
+                  <div className={styles.disclosureContent}>
+                    <p className={styles.instructionText}>
+                      5. {t('ios.location.step5')}
+                      <SafariSiteSettingsIcon className={styles.inlineIcon} />
+                    </p>
+                    <p className={styles.instructionText}>
+                      6. {t('ios.location.step6')}
+                    </p>
+                    <p className={styles.instructionText}>
+                      7. {t('ios.location.step7')}
+                    </p>
+                    <p className={styles.instructionText}>
+                      8. {t('ios.location.step8')}
+                    </p>
+                  </div>
                 )}
               </div>
-              
-              {isIosTroubleExpanded && (
-                <div className={styles.disclosureContent}>
-                  <p className={styles.instructionText}>
-                    5. {t('ios.location.step5')}
-                    <SafariSiteSettingsIcon className={styles.inlineIcon} />
-                  </p>
-                  <p className={styles.instructionText}>
-                    6. {t('ios.location.step6')}
-                  </p>
-                  <p className={styles.instructionText}>
-                    7. {t('ios.location.step7')}
-                  </p>
-                  <p className={styles.instructionText}>
-                    8. {t('ios.location.step8')}
-                  </p>
-                </div>
-              )}
-            </div>
+            )}
 
-            <div className={styles.instructionGroup}>
-              <h4 className={styles.instructionSubtitle}>
-                {t('ios.notifications.title')}
-              </h4>
-              <p className={styles.instructionText}>
-                {t('ios.notifications.desc')}
-              </p>
-              <p className={styles.instructionText}>
-                1. {t('ios.notifications.step1')}
-                <SafariShareIcon className={styles.inlineIcon} />
-              </p>
-              <p className={styles.instructionText}>
-                2. {t('ios.notifications.step2')}
-              </p>
-            </div>
+            {activeGroup === 'notifications' && (
+              <div className={styles.instructionGroup} ref={iosNotificationsRef}>
+                <h4 className={styles.instructionSubtitle}>
+                  {t('ios.notifications.title')}
+                </h4>
+                <p className={styles.instructionText}>
+                  {t('ios.notifications.desc')}
+                </p>
+                <p className={styles.instructionText}>
+                  1. {t('ios.notifications.step1')}
+                  <SafariShareIcon className={styles.inlineIcon} />
+                </p>
+                <p className={styles.instructionText}>
+                  2. {t('ios.notifications.step2')}
+                </p>
+              </div>
+            )}
           </div>
         )}
 
         {/* Instructions - Android & Desktop */}
-        {(os === 'android' || os === 'other' || os === null) && (
+        {(os === 'android' || os === 'other' || os === null) && activeGroup && (
           <div className={styles.platformSection}>
             <h2 className={styles.platformTitle}>
               {t('androidDesktop.title')}
             </h2>
 
-            <div className={styles.instructionGroup}>
+            <div className={styles.instructionGroup} ref={androidRef}>
               <h4 className={styles.instructionSubtitle}>
                 {t('androidDesktop.titleAll')}
               </h4>

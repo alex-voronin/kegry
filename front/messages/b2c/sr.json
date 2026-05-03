@@ -458,9 +458,11 @@
       "title": "Dozvole",
       "description": "Da bismo ti pružili najbolje iskustvo, potreban nam je pristup tvojoj lokaciji i obaveštenjima.",
       "locationTitle": "Lokacija",
-      "locationDesc": "Apsolutno neophodno za otkrivanje ljudi u blizini. Bez toga feed neće raditi",
+      "locationDesc": "Apsolutno neophodno za otkrivanje ljudi i lokala u blizini. Bez toga feed neće raditi.",
+      "locationDescNotOnboarded": "Olakšava prijavu putem QR koda. Ako lokal ne podržava prijavu pomoću PIN koda, pristup lokaciji je neophodan za prijavu.",
       "notificationsTitle": "Obaveštenja",
       "notificationsDesc": "Aplikacija će raditi bez omogućenih obaveštenja, ali nećete primati pozivnice ni obaveštenja o novim porukama. Korisničko iskustvo nekih funkcija će biti narušeno.",
+      "tapToView": "Dodirnite za uputstva",
       "status": {
         "location": "Lokacija",
         "notifications": "Obaveštenja"

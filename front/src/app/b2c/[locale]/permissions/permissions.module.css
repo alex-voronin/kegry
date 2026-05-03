@@ -9,7 +9,7 @@
 }
 
 .section {
-  @apply bg-form-element flex flex-row items-center justify-between gap-4 rounded-2xl p-4;
+  @apply bg-form-element flex flex-row items-center justify-between gap-4 rounded-2xl p-4 cursor-pointer transition-opacity active:opacity-80;
 }
 
 .textWrapper {
@@ -22,6 +22,10 @@
 
 .sectionDesc {
   @apply text-secondary text-sm;
+}
+
+.tapInstruction {
+  @apply text-white text-sm font-semibold mt-1;
 }
 
 .instructions {
