@@ -7,6 +7,7 @@ import { Camera } from 'lucide-react';
 import { ImageCropperModal } from '../image-cropper-modal';
 import { blobToBase64 } from '@/store/use-user-profile-store';
 import { AVATAR_MAX_LONG_SIDE } from '@/lib/constants';
+import { Spinner } from '../spinner';
 
 type AvatarSectionProps = {
   avatarBase64?: string | null;
@@ -21,6 +22,7 @@ export const AvatarSection = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [imageToCropSrc, setImageToCropSrc] = useState<string | null>(null);
   const [localAvatarUrl, setLocalAvatarUrl] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleClick = () => {
     // Pass click to invisible file input
@@ -30,11 +32,14 @@ export const AvatarSection = ({
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      setIsProcessing(true);
       try {
         const base64 = await blobToBase64(file);
         setImageToCropSrc(base64);
       } catch (error) {
         console.error('Failed to read file:', error);
+      } finally {
+        setIsProcessing(false);
       }
     }
     // Reset input so same file can be selected again
@@ -42,11 +47,16 @@ export const AvatarSection = ({
   };
 
   const handleCrop = async (blob: Blob) => {
-    // Convert blob to base64 for localStorage persistence
-    const base64 = await blobToBase64(blob);
-    setLocalAvatarUrl(base64);
-    setImageToCropSrc(null);
-    onAvatarChange?.(base64);
+    setIsProcessing(true);
+    try {
+      // Convert blob to base64 for localStorage persistence
+      const base64 = await blobToBase64(blob);
+      setLocalAvatarUrl(base64);
+      setImageToCropSrc(null);
+      onAvatarChange?.(base64);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const displayUrl = localAvatarUrl || avatarBase64;
@@ -60,6 +70,11 @@ export const AvatarSection = ({
           <div className={styles.avatarPlaceholderIcon}>
             <Camera size={40} className="text-secondary opacity-50" />
             <span className={styles.requiredAsterisk}>*</span>
+          </div>
+        )}
+        {isProcessing && (
+          <div className={styles.loadingOverlay}>
+            <Spinner />
           </div>
         )}
         <input

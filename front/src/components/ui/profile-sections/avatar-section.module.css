@@ -23,3 +23,8 @@
   @apply absolute -top-1.5 -right-1.5 text-lg font-bold;
   color: var(--color-primary);
 }
+
+.loadingOverlay {
+  @apply absolute inset-0 flex items-center justify-center bg-black/20;
+  z-index: 10;
+}

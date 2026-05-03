@@ -11,6 +11,7 @@ import {
   USER_COVER_MAX_LONG_SIDE,
   USER_COVER_MAX_SIZE_BYTES,
 } from '@/lib/constants';
+import { Spinner } from '../spinner';
 
 type CoverSectionProps = {
   coverBlob?: Blob | null;
@@ -26,6 +27,7 @@ export const CoverSection = ({
   const t = useTranslations('screens.onboarding');
   const inputRef = useRef<HTMLInputElement>(null);
   const [localBlob, setLocalBlob] = useState<Blob | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Create object URL for display
   const displayUrl = useMemo(() => {
@@ -52,6 +54,7 @@ export const CoverSection = ({
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      setIsProcessing(true);
       try {
         const compressed = await compressImageToBlob(
           file,
@@ -64,6 +67,8 @@ export const CoverSection = ({
       } catch (error) {
         console.error('Failed to process cover image:', error);
         toast.error(t('uploadFailed'));
+      } finally {
+        setIsProcessing(false);
       }
     }
     // Reset input so same file can be selected again
@@ -93,6 +98,11 @@ export const CoverSection = ({
         <div className={styles.placeholder}>
           <Camera size={48} className="text-secondary opacity-50" />
           <span className={styles.placeholderText}>{t('selectCover')}</span>
+        </div>
+      )}
+      {isProcessing && (
+        <div className={styles.loadingOverlay}>
+          <Spinner />
         </div>
       )}
     </div>

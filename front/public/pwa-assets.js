@@ -22,6 +22,7 @@ const STATIC_ASSETS = [
   "/assets/chat/cancel-icon.svg",
   "/assets/chat/send-icon.svg",
   "/assets/chat/smiley-icon.svg",
+  "/assets/common/avatar-incognito.webp",
   "/assets/common/avatar-placeholder.svg",
   "/assets/common/avatar-placeholder.webp",
   "/assets/common/beer-mug.webp",
