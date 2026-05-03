@@ -231,9 +231,13 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.B2B.Venue.Root);
 
         listResponse.Success.ShouldBeTrue();
-        listResponse.Result.Venues.Length.ShouldBeGreaterThanOrEqualTo(2);
+        listResponse.Result.Venues.Length.ShouldBe(2);
         listResponse.Result.Venues.ShouldContain(v => v.Address == "Venue 1");
         listResponse.Result.Venues.ShouldContain(v => v.Address == "Venue 2");
+
+        var first = listResponse.Result.Venues.First();
+        var last = listResponse.Result.Venues.Last();
+        first.PinCode.ShouldNotBe(last.PinCode);
     }
 
     [Fact]

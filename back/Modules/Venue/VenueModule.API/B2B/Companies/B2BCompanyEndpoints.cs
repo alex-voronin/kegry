@@ -90,6 +90,7 @@ public class B2BCompanyEndpoints : IEndpoints
         ICompanyRepository repository,
         ClaimsPrincipal user,
         IS3StorageService storageService,
+        ILoyaltyService loyaltyService,
         CancellationToken ct)
     {
         var company = await repository.GetByIdAsync(
@@ -107,7 +108,7 @@ public class B2BCompanyEndpoints : IEndpoints
 
         var companyDto = DomainCompanyToDto(storageService, company);
         var venuesDto = company.Venues
-            .Select(v => DomainVenueToListItemDto(storageService, v))
+            .Select(v => DomainVenueToListItemDto(storageService, loyaltyService, v))
             .ToArray();
 
         return ApiResult<GetCompanyResponse>.Build(
@@ -208,7 +209,10 @@ public class B2BCompanyEndpoints : IEndpoints
         );
     }
 
-    private static VenueListItemDto DomainVenueToListItemDto(IS3StorageService storageService, Venue venue)
+    private static VenueListItemDto DomainVenueToListItemDto(
+        IS3StorageService storageService,
+        ILoyaltyService loyaltyService,
+        Venue venue)
     {
         return new VenueListItemDto(
             Id: venue.Id,
@@ -216,7 +220,10 @@ public class B2BCompanyEndpoints : IEndpoints
             Address: venue.Address,
             CoverImageUrl: venue.CoverImageS3Key != null
                 ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.UpdatedAt)
-                : null
+                : null,
+            PinCode: string.IsNullOrEmpty(venue.PinCode)
+                ? loyaltyService.GenerateDailyTotpPinCode(venue)
+                : venue.PinCode
         );
     }
 

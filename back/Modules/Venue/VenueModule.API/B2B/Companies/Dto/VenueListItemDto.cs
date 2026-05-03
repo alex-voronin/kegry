@@ -4,4 +4,5 @@ public record VenueListItemDto(
     Guid Id,
     bool IsVerified,
     string? CoverImageUrl,
-    string Address);
+    string Address,
+    string PinCode);

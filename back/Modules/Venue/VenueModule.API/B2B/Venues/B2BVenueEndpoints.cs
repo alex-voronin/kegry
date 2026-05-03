@@ -92,6 +92,7 @@ public class B2BVenueEndpoints : IEndpoints
         ClaimsPrincipal user,
         IVenueRepository venueRepository,
         IS3StorageService storageService,
+        ILoyaltyService loyaltyService,
         CancellationToken ct)
     {
         var venues = await venueRepository.GetByUserIdAsync(user.GetId(), ct);
@@ -102,8 +103,9 @@ public class B2BVenueEndpoints : IEndpoints
                 CoverImageUrl: v.CoverImageS3Key != null
                     ? storageService.S3KeyToPublicFileUrl(v.CoverImageS3Key, v.UpdatedAt)
                     : null,
-                Address: v.Address
-                ))
+                Address: v.Address,
+                PinCode: string.IsNullOrEmpty(v.PinCode) ? loyaltyService.GenerateDailyTotpPinCode(v) : v.PinCode
+            ))
             .ToArray();
         return ApiResult<GetVenuesResponse>.Build(
             new GetVenuesResponse(dtos)
@@ -236,7 +238,9 @@ public class B2BVenueEndpoints : IEndpoints
             CoverImageUrl: venue.CoverImageS3Key != null
                 ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.UpdatedAt)
                 : null,
-            PinCode: string.IsNullOrEmpty(venue.PinCode) ? loyaltyService.GenerateDailyTotpPinCode(venue) : venue.PinCode,
+            PinCode: string.IsNullOrEmpty(venue.PinCode)
+                ? loyaltyService.GenerateDailyTotpPinCode(venue)
+                : venue.PinCode,
             IsGeneratedPinCode: string.IsNullOrEmpty(venue.PinCode),
             QrCode: venue.QrCode,
             Promos: venue.Promos
