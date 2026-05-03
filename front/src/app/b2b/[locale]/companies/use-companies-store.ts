@@ -23,6 +23,7 @@ export interface VenueListItemDto {
   address: string;
   coverImageUrl: string | null;
   isVerified: boolean;
+  pinCode: string | null;
 }
 
 export interface CompanyDetailDto extends CompanyDto {

@@ -30,6 +30,7 @@ import styles from './profile.module.css';
 
 export default function CompanyProfilePage() {
   const t = useTranslations('screens.companyProfile');
+  const tCommon = useTranslations('common');
   const router = useRouter();
   const { id } = useParams() as { id: string };
   const EXPANDED_SESSION_STORAGE_KEY = `loyalty_expanded_${id}`;
@@ -278,6 +279,7 @@ export default function CompanyProfilePage() {
                     }
                     imageAlt={venue.address}
                     title={venue.address}
+                    badge={venue.pinCode}
                     dimmed={!venue.isVerified}
                     rightEl={
                       <ChevronRight size={24} className="text-primary" />

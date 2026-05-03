@@ -24,6 +24,10 @@
   @apply overflow-hidden text-base leading-tight font-normal wrap-anywhere drop-shadow-md;
 }
 
+.badge {
+  @apply ml-4 inline-flex items-center gap-1 rounded-full border border-white/20 bg-black/40 px-2 py-0.5 align-middle text-sm font-medium whitespace-nowrap text-white backdrop-blur-md;
+}
+
 .itemRight {
   @apply flex items-center gap-2;
 }

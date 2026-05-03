@@ -16,6 +16,7 @@ import styles from '../companies/companies.module.css';
 export default function VenuesPage() {
   const router = useRouter();
   const t = useTranslations('screens.b2bVenues');
+  const tCommon = useTranslations('common');
   const { isOpen, open, close } = useSidebar();
 
   const { venues, isLoading, fetchVenues } = useVenuesStore();
@@ -58,6 +59,7 @@ export default function VenuesPage() {
                 imageUrl={venue.coverImageUrl || '/assets/b2b/venue-icon.svg'}
                 imageAlt={venue.address}
                 title={venue.address}
+                badge={venue.pinCode}
                 dimmed={!venue.isVerified}
                 rightEl={<ChevronRight size={24} className="text-primary" />}
               />

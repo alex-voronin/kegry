@@ -6,6 +6,7 @@ interface VenueListItemProps {
   imageUrl?: string;
   imageAlt?: string;
   title: React.ReactNode;
+  badge?: React.ReactNode;
   rightEl?: React.ReactNode;
   onClick?: () => void;
   className?: string;
@@ -16,6 +17,7 @@ export function VenueListItem({
   imageUrl,
   imageAlt = '',
   title,
+  badge,
   rightEl,
   onClick,
   className,
@@ -33,7 +35,10 @@ export function VenueListItem({
 
       <div className={styles.content}>
         <div className={styles.titleWrapper}>
-          <span className={styles.title}>{title}</span>
+          <span className={styles.title}>
+            {title}
+            {badge && <span className={styles.badge}>{badge}</span>}
+          </span>
         </div>
         {rightEl && <div className={styles.itemRight}>{rightEl}</div>}
       </div>
