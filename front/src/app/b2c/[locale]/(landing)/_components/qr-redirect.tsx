@@ -16,9 +16,18 @@ export function QrRedirect() {
   useEffect(() => {
     if (v) {
       localStorage.setItem('qr_code_to_check_in', v);
-    }
-    if (v && hasHydrated && accessToken) {
-      router.replace(`${PAGE_ROUTES.FEED}`);
+
+      if (hasHydrated && accessToken) {
+        router.replace(`${PAGE_ROUTES.FEED}`);
+      } else if (hasHydrated && !accessToken) {
+        // Wait a bit for components to mount properly
+        setTimeout(() => {
+          const element = document.getElementById('mobile-loyalty');
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      }
     }
   }, [v, hasHydrated, accessToken, router]);
 

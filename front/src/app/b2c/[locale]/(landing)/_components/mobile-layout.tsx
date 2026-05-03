@@ -332,6 +332,11 @@ export default function MobileLayout() {
           <p className={mobileStyles.mobileCardDescription}>
             {t.rich('loyalty.description')}
           </p>
+          <div className={mobileStyles.mobileLoginButtonWrapper}>
+            <Link href={PAGE_ROUTES.LOGIN(true)} className={styles.loginButton}>
+              {t('header.nav.login')}
+            </Link>
+          </div>
         </div>
       </section>
 
