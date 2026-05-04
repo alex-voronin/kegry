@@ -234,6 +234,7 @@ export default function FeedScreen() {
     null,
   );
   const [isReferralPromptOpen, setIsReferralPromptOpen] = useState(false);
+  const [isOnboardingWarningOpen, setIsOnboardingWarningOpen] = useState(false);
 
   const checkPermissions = useCallback(async () => {
     const isDenied = await checkIfPermissionsDenied();
@@ -516,6 +517,16 @@ export default function FeedScreen() {
     router.push(PAGE_ROUTES.USER_PROFILE(currentItem.profile.id));
   };
 
+  const handleOnboardingClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const isDenied = await checkIfPermissionsDenied();
+    if (isDenied) {
+      setIsOnboardingWarningOpen(true);
+    } else {
+      router.push(PAGE_ROUTES.ONBOARDING);
+    }
+  };
+
   // --- Render ---
 
   const renderBody = () => {
@@ -535,12 +546,12 @@ export default function FeedScreen() {
             <p className={styles.emptyStateText}>
               {tFeed.rich('onboardingPlaceholder', {
                 link: (chunks) => (
-                  <Link
-                    href={PAGE_ROUTES.ONBOARDING}
+                  <button
                     className={styles.emptyStateLink}
+                    onClick={handleOnboardingClick}
                   >
                     {chunks}
-                  </Link>
+                  </button>
                 ),
               })}
             </p>
@@ -726,6 +737,18 @@ export default function FeedScreen() {
           onPrimaryAction={handleCloseInvitePrompt}
           secondaryButtonText={tFeed('invitePrompt.letsGo')}
           onSecondaryAction={handleGoToInvite}
+        />
+        <ModalDialog
+          isOpen={isOnboardingWarningOpen}
+          onClose={() => setIsOnboardingWarningOpen(false)}
+          message={tFeed('onboardingWarningDialog.message')}
+          primaryButtonText={tFeed('onboardingWarningDialog.cancel')}
+          onPrimaryAction={() => setIsOnboardingWarningOpen(false)}
+          secondaryButtonText={tFeed('onboardingWarningDialog.continue')}
+          onSecondaryAction={() => {
+            setIsOnboardingWarningOpen(false);
+            router.push(PAGE_ROUTES.ONBOARDING);
+          }}
         />
         <CheckInManager
           isScannerOpen={isScannerOpen}

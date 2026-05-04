@@ -235,8 +235,12 @@
         "later": "Later",
         "letsGo": "Let's Go"
       },
+      "onboardingWarningDialog": {
+        "message": "To use Kegry's features after creating a profile, you'll need to enable location and notification permissions. If you're not comfortable with that, you can continue using the app in the current mode.",
+        "cancel": "Cancel",
+        "continue": "Create profile"
+      },
       "onboardingPlaceholder": "You're currently a mysterious stranger in the bar 😎\nYou can check in, but making friends is harder this way.\n<link>Create your profile and start finding company</link>",
-      "onboardingButton": "Create",
       "scanQr": "Check-in"
     },
     "chat": {

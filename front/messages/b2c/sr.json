@@ -235,8 +235,12 @@
         "later": "Kasnije",
         "letsGo": "Idemo"
       },
+      "onboardingWarningDialog": {
+        "message": "Da biste koristili funkcije Kegry nakon kreiranja profila, potrebno je da omogućite dozvole za lokaciju i notifikacije. Ako vam to ne odgovara, možete nastaviti da koristite aplikaciju u trenutnom režimu.",
+        "cancel": "Otkaži",
+        "continue": "Kreiraj profil"
+      },
       "onboardingPlaceholder": "Trenutno si misteriozni stranac u baru 😎\nMožeš da se prijaviš, ali je na ovaj način teže naći društvo.\n<link>Napravi profil i počni da pronalaziš društvo!</link>",
-      "onboardingButton": "Napravi",
       "scanQr": "Prijava"
     },
     "chat": {
