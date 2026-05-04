@@ -49,3 +49,29 @@ export async function checkIfPermissionsDenied(): Promise<boolean> {
 
   return !locationAllowed || !notificationAllowed;
 }
+
+export async function requestLocationPermission(): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (typeof navigator !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        () => resolve(true),
+        () => resolve(false)
+      );
+    } else {
+      resolve(false);
+    }
+  });
+}
+
+export async function requestNotificationPermission(): Promise<boolean> {
+  if (typeof Notification !== 'undefined') {
+    try {
+      const permission = await Notification.requestPermission();
+      return permission === 'granted';
+    } catch (e) {
+      console.warn('Failed to request notification permission', e);
+      return false;
+    }
+  }
+  return false;
+}

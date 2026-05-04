@@ -7,7 +7,11 @@ import { useSafeBack } from '@/hooks/use-safe-back';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
-import { checkPermissionStatus } from '@/lib/permissions';
+import {
+  checkPermissionStatus,
+  requestLocationPermission,
+  requestNotificationPermission,
+} from '@/lib/permissions';
 import { Check, CircleOff, ChevronDown, ChevronUp } from 'lucide-react';
 import { SafariShareIcon } from '@/components/ui/safari-share-icon';
 import { TuneIcon } from '@/components/ui/tune-icon';
@@ -26,7 +30,9 @@ export default function PermissionsPage() {
   });
   const [os, setOs] = useState<'ios' | 'android' | 'other' | null>(null);
   const [isIosTroubleExpanded, setIsIosTroubleExpanded] = useState(false);
-  const [activeGroup, setActiveGroup] = useState<'location' | 'notifications' | null>(null);
+  const [activeGroup, setActiveGroup] = useState<
+    'location' | 'notifications' | null
+  >(null);
   const { requiredAction } = useAuthStore();
   const isOnboarded = requiredAction === RequiredAction.None;
 
@@ -40,12 +46,21 @@ export default function PermissionsPage() {
     const scroll = () => {
       if (os === 'ios') {
         if (activeGroup === 'location') {
-          iosLocationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          iosLocationRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          });
         } else {
-          iosNotificationsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          iosNotificationsRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          });
         }
       } else {
-        androidRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        androidRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
       }
     };
 
@@ -85,7 +100,17 @@ export default function PermissionsPage() {
         {/* Status Section */}
         <div
           className={styles.section}
-          onClick={() => setActiveGroup('location')}
+          onClick={async () => {
+            if (!permissions.locationAllowed) {
+              await requestLocationPermission();
+              const status = await checkPermissionStatus();
+              setPermissions(status);
+              if (!status.locationAllowed) {
+                router.push(PAGE_ROUTES.FEED);
+              }
+            }
+            setTimeout(() => setActiveGroup('location'), 250);
+          }}
         >
           <div className={styles.textWrapper}>
             <h3 className={styles.sectionTitle}>{t('locationTitle')}</h3>
@@ -111,7 +136,14 @@ export default function PermissionsPage() {
 
         <div
           className={styles.section}
-          onClick={() => setActiveGroup('notifications')}
+          onClick={async () => {
+            if (!permissions.notificationAllowed) {
+              await requestNotificationPermission();
+              const status = await checkPermissionStatus();
+              setPermissions(status);
+            }
+            setTimeout(() => setActiveGroup('notifications'), 250);
+          }}
         >
           <div className={styles.textWrapper}>
             <h3 className={styles.sectionTitle}>{t('notificationsTitle')}</h3>
@@ -166,7 +198,7 @@ export default function PermissionsPage() {
                     <ChevronDown size={16} />
                   )}
                 </div>
-                
+
                 {isIosTroubleExpanded && (
                   <div className={styles.disclosureContent}>
                     <p className={styles.instructionText}>
@@ -188,7 +220,10 @@ export default function PermissionsPage() {
             )}
 
             {activeGroup === 'notifications' && (
-              <div className={styles.instructionGroup} ref={iosNotificationsRef}>
+              <div
+                className={styles.instructionGroup}
+                ref={iosNotificationsRef}
+              >
                 <h4 className={styles.instructionSubtitle}>
                   {t('ios.notifications.title')}
                 </h4>
