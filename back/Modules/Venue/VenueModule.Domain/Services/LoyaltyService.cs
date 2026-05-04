@@ -18,7 +18,7 @@ public record LoyaltyLevelWithDiscount(
     int VisitsCount,
     int VisitsLowerBound,
     int? VisitsUpperBound,
-    int Discount,
+    int? Discount,
     int? NextLevelDiscount);
 
 public interface ILoyaltyService
@@ -264,7 +264,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             var (currentLevelDiscount, nextLevelDiscount) = ComputeCurrentAndNextLevelDiscount(venue.Discounts,
                 dayOfWeek, currentLoyaltyLevel);
 
-            result[dayOfWeek] = new CurrentAndNextLevelDiscount(currentLevelDiscount, nextLevelDiscount);
+            result[dayOfWeek] = new CurrentAndNextLevelDiscount(currentLevelDiscount ?? 0, nextLevelDiscount);
         }
 
         return result;
@@ -289,9 +289,15 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         return pin.ToString("D4");
     }
 
-    private static (int currentLevelDiscount, int? nextLevelDiscount) ComputeCurrentAndNextLevelDiscount(
+    private static (int? currentLevelDiscount, int? nextLevelDiscount) ComputeCurrentAndNextLevelDiscount(
         IReadOnlyCollection<Discount> discounts, DayOfWeek dayOfWeek, int currentLoyaltyLevel)
     {
+        var hasCustomDiscounts = discounts.Any(d => d.Days.Any(day => day.DayOfWeek == dayOfWeek) && d.IsCustom);
+        if (hasCustomDiscounts)
+        {
+            return (null, null);
+        }
+
         var applicableDiscounts = discounts
             .Where(d => d.Percent != null)
             .Where(d => d.Days.Any(day => day.DayOfWeek == dayOfWeek))

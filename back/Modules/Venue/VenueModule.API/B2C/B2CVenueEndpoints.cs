@@ -139,7 +139,8 @@ public class B2CVenueEndpoints : IEndpoints
             VisitsLowerBound: loyaltyLevel.VisitsLowerBound,
             VisitsUpperBound: loyaltyLevel.VisitsUpperBound,
             Discount: loyaltyLevel.Discount,
-            NextLevelDiscount: loyaltyLevel.NextLevelDiscount
+            NextLevelDiscount: loyaltyLevel.NextLevelDiscount,
+            IsCustomDiscount: loyaltyLevel.Discount == null
         );
 
         return ApiResult<GetVenueResponse>.Build(

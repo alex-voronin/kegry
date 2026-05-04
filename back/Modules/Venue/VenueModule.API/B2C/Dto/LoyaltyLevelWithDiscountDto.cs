@@ -5,5 +5,6 @@ public record LoyaltyLevelWithDiscountDto(
     int VisitsCount,
     int VisitsLowerBound,
     int? VisitsUpperBound,
-    int Discount,
-    int? NextLevelDiscount);
+    int? Discount,
+    int? NextLevelDiscount,
+    bool IsCustomDiscount);
