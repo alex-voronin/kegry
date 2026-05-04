@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Security\SecurityModule.Infrastructure\SecurityModule.Infrastructure.csproj" />
+        <ProjectReference Include="..\..\UserProfile\UserProfileModule.Infrastructure\UserProfileModule.Infrastructure.csproj" />
         <ProjectReference Include="..\..\Venue\VenueModule.Infrastructure\VenueModule.Infrastructure.csproj" />
         <ProjectReference Include="..\..\Feed\FeedModule.Infrastructure\FeedModule.Infrastructure.csproj" />
         <ProjectReference Include="..\..\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />

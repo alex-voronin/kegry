@@ -44,6 +44,21 @@
                         </div>
                     </div>
                     <div class="detail-row">
+                        <div class="detail-label">Profile Privacy</div>
+                        <div class="detail-value text-sm">
+                            @if (Model.UserProfile != null)
+                            {
+                                <span class="badge @(Model.UserProfile.IsPublic ? "badge-green" : "badge-red")">
+                                    @(Model.UserProfile.IsPublic ? "Public" : "Private")
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">No Profile</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="detail-row">
                         <div class="detail-label">User ID</div>
                         <div class="detail-value text-sm">@Model.FoundUser.Id</div>
                     </div>
@@ -56,6 +71,16 @@
                             @(Model.FoundUser.IsBanned ? "Unban User" : "Ban User")
                         </button>
                     </form>
+
+                    @if (Model.UserProfile != null)
+                    {
+                        <form method="post" asp-page-handler="@(Model.UserProfile.IsPublic ? "MakePrivate" : "MakePublic")">
+                            <input type="hidden" name="userId" value="@Model.FoundUser.Id" />
+                            <button type="submit" class="btn @(Model.UserProfile.IsPublic ? "btn-warning" : "btn-primary") w-full">
+                                @(Model.UserProfile.IsPublic ? "Make Profile Private" : "Make Profile Public")
+                            </button>
+                        </form>
+                    }
 
                     @if (Model.FoundUser.Type == SecurityModule.Domain.ValueObjects.UserType.B2C)
                     {

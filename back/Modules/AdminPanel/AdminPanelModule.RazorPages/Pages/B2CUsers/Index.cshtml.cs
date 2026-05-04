@@ -4,22 +4,26 @@ using Microsoft.EntityFrameworkCore;
 using SecurityModule.Domain.Aggregates;
 using SecurityModule.Infrastructure.Persistence;
 using SecurityModule.Domain.ValueObjects;
+using UserProfileModule.Infrastructure.Persistence;
 
 namespace AdminPanelModule.RazorPages.Pages.B2CUsers;
 
 public class IndexModel : PageModel
 {
-    private readonly SecurityContext _security;
+    private readonly SecurityContext _securityContext;
+    private readonly UserProfileContext _userProfileContext;
 
-    public IndexModel(SecurityContext security)
+    public IndexModel(SecurityContext securityContext, UserProfileContext userProfileContext)
     {
-        _security = security;
+        _securityContext = securityContext;
+        _userProfileContext = userProfileContext;
     }
 
     [BindProperty(SupportsGet = true)]
     public string? SearchQuery { get; set; }
 
     public User? FoundUser { get; set; }
+    public UserProfileModule.Domain.Aggregates.User? UserProfile { get; set; }
     public string? Message { get; set; }
     public bool IsError { get; set; }
 
@@ -33,12 +37,12 @@ public class IndexModel : PageModel
         var query = SearchQuery.Trim();
         if (Guid.TryParse(query, out var userId))
         {
-            FoundUser = await _security.Users.FindAsync(userId);
+            FoundUser = await _securityContext.Users.FindAsync(userId);
         }
         else
         {
             var normalizedEmail = query.ToUpperInvariant();
-            FoundUser = await _security.Users
+            FoundUser = await _securityContext.Users
                 .FirstOrDefaultAsync(u => u.NormalizedEmail == normalizedEmail);
         }
 
@@ -47,11 +51,15 @@ public class IndexModel : PageModel
             Message = "User not found.";
             IsError = true;
         }
+        else
+        {
+            UserProfile = await _userProfileContext.Users.FindAsync(FoundUser.Id);
+        }
     }
 
     public async Task<IActionResult> OnPostBanAsync(Guid userId)
     {
-        var user = await _security.Users.FindAsync(userId);
+        var user = await _securityContext.Users.FindAsync(userId);
         if (user == null)
         {
             Message = "User not found.";
@@ -60,7 +68,7 @@ public class IndexModel : PageModel
         }
 
         user.IsBanned = true;
-        await _security.SaveChangesAsync();
+        await _securityContext.SaveChangesAsync();
 
         Message = $"User {user.Email} has been banned.";
         IsError = false;
@@ -72,7 +80,7 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnPostUnbanAsync(Guid userId)
     {
-        var user = await _security.Users.FindAsync(userId);
+        var user = await _securityContext.Users.FindAsync(userId);
         if (user == null)
         {
             Message = "User not found.";
@@ -81,7 +89,7 @@ public class IndexModel : PageModel
         }
 
         user.IsBanned = false;
-        await _security.SaveChangesAsync();
+        await _securityContext.SaveChangesAsync();
 
         Message = $"User {user.Email} has been un-banned.";
         IsError = false;
@@ -93,7 +101,7 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnPostConvertAsync(Guid userId)
     {
-        var user = await _security.Users.FindAsync(userId);
+        var user = await _securityContext.Users.FindAsync(userId);
         if (user == null)
         {
             Message = "User not found.";
@@ -108,12 +116,60 @@ public class IndexModel : PageModel
         }
 
         user.Type = UserType.B2B;
-        await _security.SaveChangesAsync();
+        await _securityContext.SaveChangesAsync();
 
         Message = $"User {user.Email} successfully converted to B2B!";
         IsError = false;
         FoundUser = user;
         SearchQuery = user.Email;
+
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostMakePublicAsync(Guid userId)
+    {
+        var profile = await _userProfileContext.Users.FindAsync(userId);
+        if (profile == null)
+        {
+            Message = "User profile not found.";
+            IsError = true;
+            return Page();
+        }
+
+        profile.IsPublic = true;
+        await _userProfileContext.SaveChangesAsync();
+
+        Message = "User profile is now public.";
+        IsError = false;
+
+        // Refresh data
+        FoundUser = await _securityContext.Users.FindAsync(userId);
+        UserProfile = profile;
+        SearchQuery = FoundUser?.Email;
+
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostMakePrivateAsync(Guid userId)
+    {
+        var profile = await _userProfileContext.Users.FindAsync(userId);
+        if (profile == null)
+        {
+            Message = "User profile not found.";
+            IsError = true;
+            return Page();
+        }
+
+        profile.IsPublic = false;
+        await _userProfileContext.SaveChangesAsync();
+
+        Message = "User profile is now private.";
+        IsError = false;
+
+        // Refresh data
+        FoundUser = await _securityContext.Users.FindAsync(userId);
+        UserProfile = profile;
+        SearchQuery = FoundUser?.Email;
 
         return Page();
     }
