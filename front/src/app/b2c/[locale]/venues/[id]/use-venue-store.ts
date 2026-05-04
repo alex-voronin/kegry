@@ -39,8 +39,9 @@ export interface LoyaltyLevelWithDiscountDto {
   visitsCount: number;
   visitsLowerBound: number;
   visitsUpperBound: number | null;
-  discount: number;
+  discount: number | null;
   nextLevelDiscount: number | null;
+  isCustomDiscount: boolean;
 }
 
 export interface GetVenueResponse {

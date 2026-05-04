@@ -98,7 +98,11 @@
 }
 
 .loyaltyCard {
-  @apply hover:bg-hover active:bg-active cursor-pointer flex-col items-stretch gap-3 py-4 transition-colors;
+  @apply flex-col items-stretch gap-3 py-4 transition-colors;
+}
+
+.loyaltyCardInteractive {
+  @apply hover:bg-hover active:bg-active cursor-pointer;
 }
 
 .loyaltyHeader {

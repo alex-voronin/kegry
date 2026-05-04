@@ -511,6 +511,7 @@
         "viewVenue": "View Venue",
         "openInMaps": "Open on Google Maps"
       },
+      "customDiscount": "Offer",
       "toast": {
         "loadFailed": "Failed to load your offers"
       }
@@ -535,6 +536,7 @@
       "promotions": "Promotions 🎉",
       "notFound": "Venue not found",
       "myDiscount": "My Discount",
+      "offerAtVenue": "Offer at venue",
       "level": "Level",
       "discount": "Discount: {percent}%",
       "nextDiscountLevelInfo": "Next discount level is: {percent}%",
@@ -542,6 +544,7 @@
       "maxLoyaltyLevelReached": "Max level reached",
       "visits": "{current}/{total} visits to next level",
       "helpDialog": "This discount applies only to this venue and today. Tap the card to view daily discounts. Scan the QR code to increase the number of visits.",
+      "helpDialogCustomDiscount": "You can find details about the offer or discount at the venue. Scan the QR code to increase your number of visits.",
       "ok": "OK",
       "menu": {
         "openInstagram": "Open Instagram",

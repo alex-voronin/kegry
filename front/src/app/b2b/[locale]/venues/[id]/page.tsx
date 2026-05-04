@@ -504,7 +504,7 @@ export default function VenueDetailPage() {
                       <div className="flex items-center gap-2">
                         <span className={styles.discountPercent}>
                           {discount.percent === null
-                            ? t('externalDiscount')
+                            ? t('customDiscount')
                             : `${discount.percent}%`}
                         </span>
                         {discount.loyaltyLevelId != null && (

@@ -511,6 +511,7 @@
         "viewVenue": "Pogledaj lokal",
         "openInMaps": "Otvori na Google Maps"
       },
+      "customDiscount": "Ponuda",
       "toast": {
         "loadFailed": "Učitavanje ponuda nije uspelo"
       }
@@ -535,6 +536,7 @@
       "promotions": "Promocije 🎉",
       "notFound": "Lokal nije pronađen",
       "myDiscount": "Moj popust",
+      "offerAtVenue": "Ponuda u lokalu",
       "level": "Nivo",
       "discount": "Popust: {percent}%",
       "nextDiscountLevelInfo": "Sledeći nivo popusta je: {percent}%",
@@ -542,6 +544,7 @@
       "maxLoyaltyLevelReached": "Dostignut je maksimalni nivo",
       "visits": "{current}/{total} poseta do sledećeg nivoa",
       "helpDialog": "Ovaj popust važi samo za ovaj lokal i danas. Tapni na karticu da pogledaš dnevne popuste. Skeniraj QR kod da povećaš broj poseta.",
+      "helpDialogCustomDiscount": "Detalje o ponudi ili popustu možeš pronaći u lokalu. Skeniraj QR kod da povećaš broj poseta.",
       "ok": "OK",
       "menu": {
         "openInstagram": "Otvori Instagram",

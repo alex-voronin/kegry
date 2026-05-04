@@ -11,7 +11,7 @@ export interface AvailableDiscountDto {
   venueId: string;
   venueAddress: string;
   googleMapsUrl: string | null;
-  percent: number;
+  percent: number | null;
 }
 
 interface OffersState {

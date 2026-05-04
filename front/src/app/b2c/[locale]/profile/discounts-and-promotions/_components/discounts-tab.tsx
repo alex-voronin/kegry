@@ -44,7 +44,8 @@ export function DiscountsTab({
     buffer: 4,
   });
 
-  const { offers, isLoading, hasMore, fetchOffers, reset } = useDiscountsStore();
+  const { offers, isLoading, hasMore, fetchOffers, reset } =
+    useDiscountsStore();
 
   const loadData = async (offset: number, cityOverride?: City | null) => {
     setIsGettingLocation(true);
@@ -164,8 +165,10 @@ export function DiscountsTab({
             subtitle={offer.venueAddress}
             rightEl={
               <div className="flex items-center gap-2">
-                <span className="text-primary text-base font-medium">
-                  {offer.percent}%
+                <span className="text-primary text-base font-semibold">
+                  {offer.percent === null
+                    ? t('customDiscount')
+                    : `${offer.percent}%`}
                 </span>
                 <Icon
                   src="/assets/common/more-icon.svg"

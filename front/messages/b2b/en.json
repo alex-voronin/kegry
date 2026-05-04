@@ -349,7 +349,7 @@
       "nonVerified": "Non-verified",
       "promotions": "Promotions",
       "discounts": "Discounts",
-      "externalDiscount": "External",
+      "customDiscount": "External",
       "notFound": "Venue not found",
       "menu": {
         "openInstagram": "Open Instagram",

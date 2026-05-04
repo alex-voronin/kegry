@@ -159,6 +159,11 @@ export default function VenueDetailScreen() {
 
   const { company, venue, loyaltyLevel } = currentVenue;
 
+  const noDiscountsAvailable =
+    loyaltyLevel.discount === 0 && loyaltyLevel.nextLevelDiscount === null;
+  const isLoyaltyCardInteractive =
+    !loyaltyLevel.isCustomDiscount && !noDiscountsAvailable;
+
   return (
     <div className={styles.wrapper}>
       {/* Cover Image */}
@@ -235,16 +240,23 @@ export default function VenueDetailScreen() {
             <h1 className={styles.companyName}>{company.name}</h1>
           </div>
 
-          {(loyaltyLevel.discount > 0 ||
+          {(loyaltyLevel.discount !== 0 ||
+            loyaltyLevel.isCustomDiscount ||
             loyaltyLevel.userLoyaltyLevel > 0 ||
             loyaltyLevel.visitsUpperBound != null) && (
             <div className={styles.section}>
               <FormSectionTitle>{t('myDiscount')}</FormSectionTitle>
               <div
-                className={cn(styles.field, styles.loyaltyCard)}
-                onClick={() =>
-                  router.push(PAGE_ROUTES.VENUE_DISCOUNTS(venueId))
-                }
+                className={cn(
+                  styles.field,
+                  styles.loyaltyCard,
+                  isLoyaltyCardInteractive && styles.loyaltyCardInteractive
+                )}
+                onClick={() => {
+                  if (isLoyaltyCardInteractive) {
+                    router.push(PAGE_ROUTES.VENUE_DISCOUNTS(venueId));
+                  }
+                }}
               >
                 <div className={styles.loyaltyHeader}>
                   <div className={styles.loyaltyLevelTitle}>
@@ -254,12 +266,16 @@ export default function VenueDetailScreen() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    {loyaltyLevel.discount > 0 && (
+                    {(loyaltyLevel.discount !== 0 || loyaltyLevel.isCustomDiscount) && (
                       <span className={styles.loyaltyDiscount}>
-                        {t('discount', { percent: loyaltyLevel.discount })}
+                        {loyaltyLevel.isCustomDiscount
+                          ? t('offerAtVenue')
+                          : t('discount', { percent: loyaltyLevel.discount })}
                       </span>
                     )}
-                    <ChevronRight size={24} className="text-primary" />
+                    {isLoyaltyCardInteractive && (
+                      <ChevronRight size={24} className="text-primary" />
+                    )}
                   </div>
                 </div>
                 {(loyaltyLevel.visitsUpperBound !== null ||
@@ -294,15 +310,17 @@ export default function VenueDetailScreen() {
                                 loyaltyLevel.visitsLowerBound,
                             })}
                       </div>
-                      <div
-                        className="text-secondary cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsHelpDialogOpen(true);
-                        }}
-                      >
-                        <HelpCircle size={14} />
-                      </div>
+                      {!noDiscountsAvailable && (
+                        <div
+                          className="text-secondary cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsHelpDialogOpen(true);
+                          }}
+                        >
+                          <HelpCircle size={14} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -481,7 +499,11 @@ export default function VenueDetailScreen() {
       <ModalDialog
         isOpen={isHelpDialogOpen}
         onClose={() => setIsHelpDialogOpen(false)}
-        message={t('helpDialog')}
+        message={
+          loyaltyLevel?.isCustomDiscount
+            ? t('helpDialogCustomDiscount')
+            : t('helpDialog')
+        }
         primaryButtonText={t('ok')}
         onPrimaryAction={() => setIsHelpDialogOpen(false)}
       />
