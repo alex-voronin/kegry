@@ -29,7 +29,7 @@ export async function generateMetadata({
       .split(',')
       .map((k) => k.trim()),
 
-    metadataBase: new URL('https://business.kegry.com'),
+    metadataBase: new URL('https://business.kegry.rs'),
 
     alternates: {
       canonical: locale === 'en' ? '/en' : '/',
@@ -38,7 +38,7 @@ export async function generateMetadata({
     openGraph: {
       title: t('title'),
       description: t('description'),
-      url: 'https://business.kegry.com',
+      url: 'https://business.kegry.rs',
       siteName: BRAND_NAME,
       images: [
         {
