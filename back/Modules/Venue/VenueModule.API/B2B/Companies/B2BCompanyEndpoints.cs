@@ -223,7 +223,8 @@ public class B2BCompanyEndpoints : IEndpoints
                 : null,
             PinCode: string.IsNullOrEmpty(venue.PinCode)
                 ? loyaltyService.GenerateDailyTotpPinCode(venue)
-                : venue.PinCode
+                : venue.PinCode,
+            IsPinCheckInAllowed: venue.IsPinCheckInAllowed
         );
     }
 

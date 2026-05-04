@@ -16,6 +16,8 @@ public interface IVenueRepository : IRepository<Venue>
 
     Task<Venue?> GetByIdWithAllRelationsAsync(Guid id, CancellationToken ct);
 
+    Task<Venue?> GetByQrCodeAsync(Guid qrCode, CancellationToken ct);
+
     Task<(Venue? venue, Visit? lastVisit, UserLoyalty? userLoyalty)> GetVenueWithLastVisitsAndUserLoyaltyAsync(
         Guid qrCode, Guid userId, CancellationToken ct);
 

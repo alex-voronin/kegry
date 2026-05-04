@@ -5,4 +5,5 @@ public record VenueListItemDto(
     bool IsVerified,
     string? CoverImageUrl,
     string Address,
-    string PinCode);
+    string PinCode,
+    bool IsPinCheckInAllowed);

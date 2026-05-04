@@ -755,4 +755,63 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         response.Result.LoyaltyLevel.UserLoyaltyLevel.ShouldBe(0);
         response.Result.LoyaltyLevel.Discount.ShouldBe(0);
     }
+
+    [Fact]
+    public async Task GivenVenue_WhenB2CUserGetsCheckInSettings_ThenReturnsValidData()
+    {
+        // 1. Create B2B user
+        var b2BAuth = await Factory.AuthManager
+            .CreateAndLoginUserAsync("b2b_detail@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        // 2. Create company and venue
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Detail Co", "det@example.com"))).Result.Id;
+
+        var venueRequest = new CreateVenueRequest(45, 13, "Detail Venue", "https://site.com", "https://google.com/mo",
+            "https://instagram.com/some-venue", "123", "9-5", TestConfig.S3.PublicUrl + "/cover.jpg");
+        var venueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+            ApiRoutes.B2B.Company.Venues(companyId), venueRequest);
+        venueResponse.Success.ShouldBeTrue();
+        var venueId = venueResponse.Result.Id;
+
+        // 3. Create B2C user
+        var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_detail@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(b2CAuth);
+
+        // 4. Get venues and check data
+        var disabledResponse = await Factory.ApiClient.GetAsync<ApiResult<GetCheckInSettingsResponse>>(
+            ApiRoutes.Venue.CheckInSetting(venueId));
+        disabledResponse.Success.ShouldBeTrue();
+        disabledResponse.Result.IsPinCheckInAllowed.ShouldBeFalse();
+
+        // 4. Update IsPinCheckInAllowed flag
+        Factory.ApiClient.SetAuth(b2BAuth);
+        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
+            ApiRoutes.B2B.Venue.Single(venueId),
+            new PatchVenueRequest(
+                Latitude: null,
+                Longitude: null,
+                Address: null,
+                WebsiteUrl: null,
+                GoogleMapsUrl: null,
+                InstagramUrl: null,
+                PhoneNumber: null,
+                WorkingHours: null,
+                CoverImageUrl: null,
+                PinCode: null,
+                IsPinCheckInAllowed: true,
+                QrCode: null
+            )
+        );
+        patchResponse.Success.ShouldBeTrue();
+
+        // 4. Get venues and check data
+        Factory.ApiClient.SetAuth(b2CAuth);
+        var enabledResponse = await Factory.ApiClient.GetAsync<ApiResult<GetCheckInSettingsResponse>>(
+            ApiRoutes.Venue.CheckInSetting(venueId));
+        enabledResponse.Success.ShouldBeTrue();
+        enabledResponse.Result.IsPinCheckInAllowed.ShouldBeTrue();
+
+    }
 }

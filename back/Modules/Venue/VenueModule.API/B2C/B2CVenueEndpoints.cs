@@ -30,6 +30,7 @@ public class B2CVenueEndpoints : IEndpoints
         usersApiGroup.MapGet("/api/v1/venue/{id:guid}", GetVenue);
         usersApiGroup.MapGet("/api/v1/venue/{id:guid}/discounts", GetDiscountsByWeekday);
         usersApiGroup.MapPost("/api/v1/venue/{qrCode:guid}/qr-check-in", CheckInToVenue);
+        usersApiGroup.MapGet("/api/v1/venue/{qrCode:guid}/qr-check-in/settings", GetCheckInSettings);
     }
 
     private static async Task<ApiResult<CheckInResponse>> CheckInToVenue(
@@ -60,6 +61,22 @@ public class B2CVenueEndpoints : IEndpoints
                     }
                 ]
                 : null
+        );
+    }
+
+    private static async Task<ApiResult<GetCheckInSettingsResponse>> GetCheckInSettings(
+        [FromRoute] Guid qrCode,
+        IVenueRepository venueRepository,
+        CancellationToken ct)
+    {
+        var venue = await venueRepository.GetByQrCodeAsync(qrCode, ct);
+        if (venue == null)
+        {
+            throw VenueExceptions.VenueNotFoundByQr(qrCode);
+        }
+
+        return ApiResult<GetCheckInSettingsResponse>.Build(
+            result: new GetCheckInSettingsResponse(venue.IsPinCheckInAllowed)
         );
     }
 

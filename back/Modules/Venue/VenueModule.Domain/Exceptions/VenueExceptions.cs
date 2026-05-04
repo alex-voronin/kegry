@@ -21,6 +21,11 @@ public static class VenueExceptions
         return new HttpCodeException($"Venue with id {id} not found", HttpStatusCode.NotFound, ErrorCode.NotFound);
     }
 
+    public static HttpCodeException VenueNotFoundByQr(Guid qrCode)
+    {
+        return new HttpCodeException($"Venue with QR-Code {qrCode} not found", HttpStatusCode.NotFound, ErrorCode.NotFound);
+    }
+
     public static HttpCodeException TooManyVenues(string companyName)
     {
         return new HttpCodeException($"You've reached the maximum number of venues for {companyName}.",

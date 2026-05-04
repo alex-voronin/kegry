@@ -84,6 +84,7 @@ public static class ApiRoutes
         public static string Single(Guid id) => $"/api/v1/venue/{id}";
         public static string Discounts(Guid id) => $"/api/v1/venue/{id}/discounts";
         public static string QrCheckIn(Guid qrCode) => $"/api/v1/venue/{qrCode}/qr-check-in";
+        public static string CheckInSetting(Guid qrCode) => $"/api/v1/venue/{qrCode}/qr-check-in/settings";
     }
 
     public static class Deals

@@ -31,6 +31,14 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
             .FirstOrDefaultAsync(ct);
     }
 
+    public Task<Venue?> GetByQrCodeAsync(Guid qrCode, CancellationToken ct)
+    {
+        return Context.Venues
+            .IgnoreQueryFilters([NamedFilters.Venue.Verified])
+            .Where(v => v.QrCode == qrCode)
+            .FirstOrDefaultAsync(ct);
+    }
+
     public async Task<(Venue? venue, Visit? lastVisit, UserLoyalty? userLoyalty)>
         GetVenueWithLastVisitsAndUserLoyaltyAsync(Guid qrCode, Guid userId, CancellationToken ct)
     {

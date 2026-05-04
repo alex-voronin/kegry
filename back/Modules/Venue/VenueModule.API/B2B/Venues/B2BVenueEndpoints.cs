@@ -104,7 +104,8 @@ public class B2BVenueEndpoints : IEndpoints
                     ? storageService.S3KeyToPublicFileUrl(v.CoverImageS3Key, v.UpdatedAt)
                     : null,
                 Address: v.Address,
-                PinCode: string.IsNullOrEmpty(v.PinCode) ? loyaltyService.GenerateDailyTotpPinCode(v) : v.PinCode
+                PinCode: string.IsNullOrEmpty(v.PinCode) ? loyaltyService.GenerateDailyTotpPinCode(v) : v.PinCode,
+                IsPinCheckInAllowed: v.IsPinCheckInAllowed
             ))
             .ToArray();
         return ApiResult<GetVenuesResponse>.Build(
@@ -165,6 +166,7 @@ public class B2BVenueEndpoints : IEndpoints
         venue.PhoneNumber = request.PhoneNumber ?? venue.PhoneNumber;
         venue.WorkingHours = request.WorkingHours ?? venue.WorkingHours;
         venue.PinCode = request.PinCode ?? venue.PinCode;
+        venue.IsPinCheckInAllowed = request.IsPinCheckInAllowed ?? venue.IsPinCheckInAllowed;
         venue.QrCode = request.QrCode ?? venue.QrCode;
         await venueRepository.SaveChangesAsync(ct);
 
