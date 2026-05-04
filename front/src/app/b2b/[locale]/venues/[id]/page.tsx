@@ -503,7 +503,9 @@ export default function VenueDetailPage() {
                     <div className={styles.discountHeader}>
                       <div className="flex items-center gap-2">
                         <span className={styles.discountPercent}>
-                          {discount.percent}%
+                          {discount.percent === null
+                            ? t('externalDiscount')
+                            : `${discount.percent}%`}
                         </span>
                         {discount.loyaltyLevelId != null && (
                           <span className="text-secondary text-sm">

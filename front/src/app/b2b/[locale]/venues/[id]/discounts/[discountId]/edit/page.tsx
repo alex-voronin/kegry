@@ -32,7 +32,7 @@ export default function EditDiscountPage() {
   const discount = currentVenue?.discounts.find((d) => d.id === discountId);
 
   const onSubmit = async (values: {
-    percent: number;
+    percent: number | null;
     days: string[];
     loyaltyLevelId: number | null;
   }) => {

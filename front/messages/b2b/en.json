@@ -78,6 +78,7 @@
         "loyaltyLevel": "Loyalty Level",
         "loyaltyLevelPlaceholder": "Select loyalty level",
         "percent": "Discount %",
+        "customDiscountMode": "External discount",
         "workDays": "Work days",
         "weekend": "Weekend",
         "when": "When",
@@ -348,6 +349,7 @@
       "nonVerified": "Non-verified",
       "promotions": "Promotions",
       "discounts": "Discounts",
+      "externalDiscount": "External",
       "notFound": "Venue not found",
       "menu": {
         "openInstagram": "Open Instagram",

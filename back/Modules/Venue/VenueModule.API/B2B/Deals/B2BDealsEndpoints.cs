@@ -265,7 +265,7 @@ public class B2BDealsEndpoints : IEndpoints
         }
 
         discount.LoyaltyLevelId = request.LoyaltyLevelId ?? discount.LoyaltyLevelId;
-        discount.Percent = request.Percent ?? discount.Percent;
+        discount.Percent = request.Percent;
 
         if (request.Days != null)
         {

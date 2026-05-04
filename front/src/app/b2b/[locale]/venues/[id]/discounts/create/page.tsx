@@ -29,7 +29,7 @@ export default function CreateDiscountPage() {
   }, [venueId, currentVenue?.id, fetchVenue]);
 
   const onSubmit = async (values: {
-    percent: number;
+    percent: number | null;
     days: string[];
     loyaltyLevelId: number | null;
   }) => {

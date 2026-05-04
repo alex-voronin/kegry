@@ -32,13 +32,13 @@ interface LoyaltyLevelOption {
 
 interface DiscountFormProps {
   initialValues?: {
-    percent: number;
+    percent: number | null;
     days: string[];
     loyaltyLevelId: number | null;
   };
   loyaltyLevels: { id: number; visitsUpperBound: number; isActive: boolean }[];
   onSubmit: (values: {
-    percent: number;
+    percent: number | null;
     days: string[];
     loyaltyLevelId: number | null;
   }) => Promise<void>;
@@ -60,18 +60,27 @@ export function DiscountForm({
   const tDiscountForm = useTranslations('components.forms.discount');
 
   const schema = z.object({
-    percent: z
-      .number()
-      .min(1, tDiscountForm('validation.percentRange'))
-      .max(100, tDiscountForm('validation.percentRange')),
+    isCustomDiscount: z.boolean(),
+    percent: z.number().nullable(),
     days: z.array(z.string()).min(1, tDiscountForm('validation.daysRequired')),
     loyaltyLevelId: z.number().nullable().refine((val) => val !== null, {
       message: tDiscountForm('validation.loyaltyLevelRequired'),
     }),
+  }).superRefine((data, ctx) => {
+    if (!data.isCustomDiscount) {
+      if (data.percent === null || data.percent < 1 || data.percent > 100) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: tDiscountForm('validation.percentRange'),
+          path: ['percent'],
+        });
+      }
+    }
   });
 
   type FormValues = {
-    percent: number;
+    isCustomDiscount: boolean;
+    percent: number | null;
     days: string[];
     loyaltyLevelId: number | null;
   };
@@ -85,6 +94,7 @@ export function DiscountForm({
   } = useForm<FormValues>({
     resolver: zodResolver(schema) as any,
     defaultValues: {
+      isCustomDiscount: initialValues?.percent === null,
       percent: initialValues?.percent ?? 0,
       days: initialValues?.days ?? [],
       loyaltyLevelId: initialValues?.loyaltyLevelId ?? (loyaltyLevels.find(l => l.isActive)?.id ?? null),
@@ -135,15 +145,40 @@ export function DiscountForm({
   return (
     <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
       <div className={stylesCommon.sectionContainer}>
-        <FormSectionTitle required>{tDiscountForm('percent')}</FormSectionTitle>
-        <Input
-          {...register('percent', { valueAsNumber: true })}
-          type="number"
-          placeholder="10"
-          className={stylesCommon.inputDark}
-        />
-        {errors.percent?.message && (
-          <p className={stylesCommon.errorMessage}>{errors.percent.message}</p>
+        <div className={`${styles.daysGrid} ${watch('isCustomDiscount') ? '' : 'mb-2'}`}>
+          <div className={styles.dayRow}>
+            <span className={styles.dayLabel}>
+              {tDiscountForm('customDiscountMode')}
+            </span>
+            <Toggle
+              checked={watch('isCustomDiscount')}
+              onChange={(checked) => {
+                setValue('isCustomDiscount', checked);
+                if (checked) {
+                  setValue('percent', null, { shouldValidate: true });
+                } else {
+                  setValue('percent', 0, { shouldValidate: true });
+                }
+              }}
+            />
+          </div>
+        </div>
+
+        {!watch('isCustomDiscount') && (
+          <>
+            <FormSectionTitle required>
+              {tDiscountForm('percent')}
+            </FormSectionTitle>
+            <Input
+              {...register('percent', { valueAsNumber: true })}
+              type="number"
+              placeholder="10"
+              className={stylesCommon.inputDark}
+            />
+            {errors.percent?.message && (
+              <p className={stylesCommon.errorMessage}>{errors.percent.message}</p>
+            )}
+          </>
         )}
       </div>
 

@@ -15,7 +15,7 @@ export interface DiscountDto {
   id: string;
   venueId: string;
   loyaltyLevelId: number | null;
-  percent: number;
+  percent: number | null;
   days: string[];
 }
 
@@ -58,14 +58,14 @@ interface VenueState {
   deletePromotion: (venueId: string, promoId: string) => Promise<void>;
   createDiscount: (
     venueId: string,
-    percent: number,
+    percent: number | null,
     days: string[],
     loyaltyLevelId?: number | null,
   ) => Promise<void>;
   updateDiscount: (
     venueId: string,
     discountId: string,
-    percent: number,
+    percent: number | null,
     days: string[],
     loyaltyLevelId?: number | null,
   ) => Promise<void>;
@@ -199,14 +199,14 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
   },
   createDiscount: async (
     venueId: string,
-    percent: number,
+    percent: number | null,
     days: string[],
     loyaltyLevelId?: number | null,
   ) => {
     const addNewDiscountToStore = (
       venue: VenueDto,
       id: string,
-      percent: number,
+      percent: number | null,
       days: string[],
       loyaltyLevelId: number | null,
     ): VenueDto => ({
@@ -241,14 +241,14 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
   updateDiscount: async (
     venueId: string,
     discountId: string,
-    percent: number,
+    percent: number | null,
     days: string[],
     loyaltyLevelId?: number | null,
   ) => {
     const updateDiscountInStore = (
       venue: VenueDto,
       discountId: string,
-      percent: number,
+      percent: number | null,
       days: string[],
       loyaltyLevelId: number | null,
     ): VenueDto => ({

@@ -78,6 +78,7 @@
         "loyaltyLevel": "Nivo lojalnosti",
         "loyaltyLevelPlaceholder": "Izaberite nivo lojalnosti",
         "percent": "Popust %",
+        "customDiscountMode": "Eksterni popust",
         "workDays": "Radni dani",
         "weekend": "Vikend",
         "when": "Kada",
@@ -348,6 +349,7 @@
       "nonVerified": "Nije verifikovan",
       "promotions": "Promocije",
       "discounts": "Popusti",
+      "externalDiscount": "Eksterni",
       "notFound": "Lokal nije pronađen",
       "menu": {
         "openInstagram": "Otvorite Instagram",
