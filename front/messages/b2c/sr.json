@@ -567,7 +567,8 @@
       "toast": {
         "invalidQr": "Neispravan QR kod",
         "gettingLocation": "Tražimo tvoju preciznu lokaciju...",
-        "checkInFailed": "Prijava nije uspela. Molimo pokušaj ponovo."
+        "checkInFailed": "Prijava nije uspela. Molimo pokušaj ponovo.",
+        "locationRequired": "Omogući pristup lokaciji za prijavu."
       }
     },
     "logo": {

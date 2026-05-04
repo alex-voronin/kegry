@@ -329,6 +329,7 @@
       "pinCode": "PIN Code",
       "pinCodePlaceholder": "Enter PIN Code",
       "generatePinEveryday": "Generate new pin code everyday",
+      "allowPinCheckIn": "Allow PIN check-in",
       "downloadHighContrastQr": "Download high contrast QR",
       "downloadDefaultQr": "Download default QR",
       "submit": "Save",

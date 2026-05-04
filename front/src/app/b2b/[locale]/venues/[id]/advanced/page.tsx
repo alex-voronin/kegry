@@ -31,6 +31,7 @@ export default function AdvancedSettingsPage() {
   const [qrCode, setQrCode] = useState('');
   const [pinCode, setPinCode] = useState('');
   const [isGeneratedPinCode, setIsGeneratedPinCode] = useState(false);
+  const [isPinCheckInAllowed, setIsPinCheckInAllowed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
@@ -46,6 +47,7 @@ export default function AdvancedSettingsPage() {
       setQrCode(currentVenue.qrCode || '');
       setPinCode(currentVenue.pinCode || '');
       setIsGeneratedPinCode(currentVenue.isGeneratedPinCode);
+      setIsPinCheckInAllowed(currentVenue.isPinCheckInAllowed);
     }
   }, [currentVenue]);
 
@@ -61,6 +63,7 @@ export default function AdvancedSettingsPage() {
       await patchVenue(venueId, {
         qrCode,
         pinCode: isGeneratedPinCode ? '' : pinCode,
+        isPinCheckInAllowed,
       });
       handleBack();
     } catch (err: any) {
@@ -173,6 +176,15 @@ export default function AdvancedSettingsPage() {
               />
               <div className="flex items-center justify-between">
                 <span className="text-secondary text-sm">
+                  {t('allowPinCheckIn')}
+                </span>
+                <Toggle
+                  checked={isPinCheckInAllowed}
+                  onChange={setIsPinCheckInAllowed}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-secondary text-sm">
                   {t('generatePinEveryday')}
                 </span>
                 <Toggle
@@ -192,6 +204,7 @@ export default function AdvancedSettingsPage() {
                 !qrCode.trim() ||
                 (qrCode === currentVenue.qrCode &&
                   isGeneratedPinCode === currentVenue.isGeneratedPinCode &&
+                  isPinCheckInAllowed === currentVenue.isPinCheckInAllowed &&
                   (isGeneratedPinCode || pinCode === currentVenue.pinCode))
               }
             >

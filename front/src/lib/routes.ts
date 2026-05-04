@@ -150,6 +150,8 @@ export const API_ENDPOINTS = {
   VENUES: {
     LIST: '/api/v1/venues',
     QR_CHECK_IN: (qrCode: string) => `/api/v1/venue/${qrCode}/qr-check-in`,
+    QR_CHECK_IN_SETTINGS: (qrCode: string) =>
+      `/api/v1/venue/${qrCode}/qr-check-in/settings`,
     DETAILS: (id: string) => `/api/v1/venue/${id}`,
     DISCOUNTS: (venueId: string) => `/api/v1/venue/${venueId}/discounts`,
   },

@@ -59,7 +59,7 @@ export default function VenuesPage() {
                 imageUrl={venue.coverImageUrl || '/assets/b2b/venue-icon.svg'}
                 imageAlt={venue.address}
                 title={venue.address}
-                badge={venue.pinCode}
+                badge={venue.isPinCheckInAllowed ? venue.pinCode : undefined}
                 dimmed={!venue.isVerified}
                 rightEl={<ChevronRight size={24} className="text-primary" />}
               />

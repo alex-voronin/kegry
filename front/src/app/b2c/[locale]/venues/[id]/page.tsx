@@ -176,15 +176,17 @@ export default function VenueDetailScreen() {
           }
           right={
             <div className="flex items-center gap-3">
-              <Icon
-                onClick={() => {
-                  setPendingQrCode(venue.qrCode);
-                  setCodeDescription(tPopup('descriptionManual'));
-                  setIsCodePopupOpen(true);
-                }}
-              >
-                <PinpadIcon size={24} className="text-white" />
-              </Icon>
+              {venue.isPinCheckInAllowed && (
+                <Icon
+                  onClick={() => {
+                    setPendingQrCode(venue.qrCode);
+                    setCodeDescription(tPopup('descriptionManual'));
+                    setIsCodePopupOpen(true);
+                  }}
+                >
+                  <PinpadIcon size={24} className="text-white" />
+                </Icon>
+              )}
               <Icon onClick={() => setIsScannerOpen(true)}>
                 <ScanQrCode size={24} className="text-white" />
               </Icon>

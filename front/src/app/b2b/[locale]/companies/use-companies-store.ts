@@ -24,6 +24,7 @@ export interface VenueListItemDto {
   coverImageUrl: string | null;
   isVerified: boolean;
   pinCode: string | null;
+  isPinCheckInAllowed: boolean;
 }
 
 export interface CompanyDetailDto extends CompanyDto {

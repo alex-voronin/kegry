@@ -567,7 +567,8 @@
       "toast": {
         "invalidQr": "Invalid QR code",
         "gettingLocation": "Finding your precise location...",
-        "checkInFailed": "Check-in failed. Please try again."
+        "checkInFailed": "Check-in failed. Please try again.",
+        "locationRequired": "Please enable location access to check in."
       }
     },
     "logo": {

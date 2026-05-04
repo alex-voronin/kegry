@@ -21,6 +21,7 @@ export interface PromoDto {
 export interface VenueDto {
   id: string;
   qrCode: string;
+  isPinCheckInAllowed: boolean;
   latitude: number;
   longitude: number;
   address: string;

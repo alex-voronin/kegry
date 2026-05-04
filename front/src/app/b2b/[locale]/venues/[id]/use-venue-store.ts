@@ -34,6 +34,7 @@ export interface VenueDto {
   qrCode: string;
   pinCode: string;
   isGeneratedPinCode: boolean;
+  isPinCheckInAllowed: boolean;
   promos: PromoDto[];
   discounts: DiscountDto[];
   loyaltyLevels: { id: number; visitsUpperBound: number; isActive: boolean }[];
@@ -102,6 +103,7 @@ export interface PatchVenueRequest {
   coverImageUrl?: string;
   qrCode?: string;
   pinCode?: string;
+  isPinCheckInAllowed?: boolean;
 }
 
 export const useVenueStore = create<VenueState>()((set, get) => ({

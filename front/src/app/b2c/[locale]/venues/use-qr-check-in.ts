@@ -77,10 +77,24 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
           );
         } catch (err) {
           toast.dismiss(toastId);
-          // Location failed, show code popup
-          setPendingQrCode(qrCode);
-          setCodeDescription(undefined);
-          setIsCodePopupOpen(true);
+          // Location failed, verify if PIN check-in is allowed before showing popup
+          try {
+            const settingsResponse = await apiClient.get<
+              ApiResult<{ isPinCheckInAllowed: boolean }>
+            >(API_ENDPOINTS.VENUES.QR_CHECK_IN_SETTINGS(qrCode));
+
+            if (settingsResponse.data.result.isPinCheckInAllowed) {
+              setPendingQrCode(qrCode);
+              setCodeDescription(undefined);
+              setIsCodePopupOpen(true);
+            } else {
+              toast.error(t('toast.locationRequired'));
+              onErrorCallback?.(null);
+            }
+          } catch (apiErr) {
+            toast.error(t('toast.checkInFailed'));
+            onErrorCallback?.(null);
+          }
           return false;
         }
       } catch (error: any) {

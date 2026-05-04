@@ -279,7 +279,7 @@ export default function CompanyProfilePage() {
                     }
                     imageAlt={venue.address}
                     title={venue.address}
-                    badge={venue.pinCode}
+                    badge={venue.isPinCheckInAllowed ? venue.pinCode : undefined}
                     dimmed={!venue.isVerified}
                     rightEl={
                       <ChevronRight size={24} className="text-primary" />
