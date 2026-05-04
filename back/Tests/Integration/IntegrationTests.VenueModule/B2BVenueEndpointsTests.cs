@@ -147,6 +147,7 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             WorkingHours: "10:00 - 20:00",
             CoverImageUrl: TestConfig.S3.PublicUrl + "/new_cover.jpg",
             PinCode: "1234",
+            IsPinCheckInAllowed: true,
             QrCode: Guid.NewGuid());
 
         var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
@@ -169,6 +170,7 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             v => v.WorkingHours.ShouldBe(patchRequest.WorkingHours),
             v => v.CoverImageUrl!.ShouldBeNewerOrTheSameS3Url(patchRequest.CoverImageUrl!),
             v => v.PinCode.ShouldBe(patchRequest.PinCode),
+            v => v.IsPinCheckInAllowed.ShouldBe(patchRequest.IsPinCheckInAllowed!.Value),
             v => v.QrCode.ShouldBe(patchRequest.QrCode!.Value)
         );
     }

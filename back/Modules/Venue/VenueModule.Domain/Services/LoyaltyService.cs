@@ -141,6 +141,11 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         string? error;
         if (pinCode != null)
         {
+            if (!venue.IsPinCheckInAllowed)
+            {
+                return (venue.Id, "PIN check-in is disabled");
+            }
+
             error = CheckInByPin(pinCode, venue);
         }
         else
@@ -288,18 +293,20 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         IReadOnlyCollection<Discount> discounts, DayOfWeek dayOfWeek, int currentLoyaltyLevel)
     {
         var applicableDiscounts = discounts
+            .Where(d => d.Percent != null)
             .Where(d => d.Days.Any(day => day.DayOfWeek == dayOfWeek))
             .Where(d => currentLoyaltyLevel >= d.LoyaltyLevelId)
             .Where(d => d.LoyaltyLevel.IsActive)
             .ToList();
 
         var nextLevelDiscount = discounts
+            .Where(d => d.Percent != null)
             .Where(d => d.Days.Any(day => day.DayOfWeek == dayOfWeek))
             .Where(d => d.LoyaltyLevelId == currentLoyaltyLevel + 1)
             .Where(d => d.LoyaltyLevel.IsActive)
             .FirstOrDefault();
         var currentDiscountPercent = applicableDiscounts.Count > 0 ? applicableDiscounts.Max(d => d.Percent) : 0;
-        return (currentDiscountPercent, nextLevelDiscount?.Percent);
+        return (currentDiscountPercent ?? 0, nextLevelDiscount?.Percent);
     }
 
     internal static (int currentLoyaltyLevel, int visitsLowerBound, int? visitsUpperBound) GetCurrentLoyaltyLevel(

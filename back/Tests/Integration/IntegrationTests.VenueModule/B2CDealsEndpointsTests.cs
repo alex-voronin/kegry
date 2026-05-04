@@ -5,7 +5,6 @@ using SharedCore.Api.Dto;
 using Shouldly;
 using VenueModule.API.B2B.Deals.Dto;
 using VenueModule.API.B2C.Dto;
-using GetVenueResponse = VenueModule.API.B2C.Dto.GetVenueResponse;
 
 namespace IntegrationTests.VenueModule;
 
@@ -65,6 +64,14 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var venueDId = await _testUtils.CreateVerifiedVenueAsync(companyDId, 0.05, 0.05, "Address D"); // ~7.8km
         await _testUtils.AddDiscountAsync(venueDId, companyDId, 10);
 
+        // Venue E: Company "Company D", Custom
+        var companyEId = await _testUtils.CreateCompanyAsync("Company E", "e@example.com");
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelRequest, ApiResult.EmptyResult>(
+            ApiRoutes.B2B.Company.LoyaltyLevels(companyEId),
+            new UpdateLoyaltyLevelRequest(new LoyaltyLevelDto(0, 1, true)));
+        var venueEId = await _testUtils.CreateVerifiedVenueAsync(companyEId, 0.05, 0.05, "Address E"); // ~7.8km
+        await _testUtils.AddDiscountAsync(venueEId, companyEId, null);
+
         // 3. Create B2C user at (0,0)
         var b2CAuth =
             await Factory.AuthManager.CreateAndLoginUserAsync("b2c_discounts_sort@example.com", "Password123!");
@@ -82,8 +89,9 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. Venue B (10%, dist 7.8km, "Company B")
         // 3. Venue D (10%, dist 7.8km, "Company D")
         // 4. Venue A (10%, dist 15km)
+        // 4. Venue E (Custom)
 
-        discounts.Length.ShouldBe(4);
+        discounts.Length.ShouldBe(5);
         discounts[0].VenueId.ShouldBe(venueCId);
         discounts[0].Percent.ShouldBe(20);
 
@@ -98,6 +106,10 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
         discounts[3].VenueId.ShouldBe(venueAId);
         discounts[3].Percent.ShouldBe(10);
         discounts[3].CompanyName.ShouldBe("Company A");
+
+        discounts[4].VenueId.ShouldBe(venueEId);
+        discounts[4].Percent.ShouldBeNull();
+        discounts[4].CompanyName.ShouldBe("Company E");
     }
 
     [Fact]

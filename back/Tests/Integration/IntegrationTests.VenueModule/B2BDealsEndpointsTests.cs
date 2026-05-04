@@ -189,20 +189,34 @@ public class B2BDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 ApiRoutes.B2B.Venue.Discounts(venueId), createRequestB);
         createResponseB.Success.ShouldBeTrue();
 
+        // 3. Create discount C
+        var createRequestC = new CreateDiscountRequest(levelId, null, [DayOfWeek.Saturday]);
+        var createResponseC =
+            await Factory.ApiClient.PostAsync<CreateDiscountRequest, ApiResult<CreateDiscountResponse>>(
+                ApiRoutes.B2B.Venue.Discounts(venueId), createRequestC);
+        createResponseC.Success.ShouldBeTrue();
+
         // 4. Verify discounts in list
         var getVenueResponse = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
             ApiRoutes.B2B.Venue.Single(venueId));
-        var discountA = getVenueResponse.Result.Venue.Discounts.FirstOrDefault();
+        getVenueResponse.Result.Venue.Discounts.Length.ShouldBe(3);
+        var discountA = getVenueResponse.Result.Venue.Discounts[0];
         discountA.ShouldNotBeNull();
         discountA.Percent.ShouldBe(createRequestB.Percent);
         discountA.LoyaltyLevelId.ShouldBe(createRequestB.LoyaltyLevelId);
         discountA.Days.ShouldBe(createRequestB.Days);
 
-        var discountB = getVenueResponse.Result.Venue.Discounts.LastOrDefault();
+        var discountB = getVenueResponse.Result.Venue.Discounts[1];
         discountB.ShouldNotBeNull();
         discountB.Percent.ShouldBe(createRequestA.Percent);
         discountB.LoyaltyLevelId.ShouldBe(createRequestA.LoyaltyLevelId);
         discountB.Days.ShouldBe(createRequestA.Days);
+
+        var discountC = getVenueResponse.Result.Venue.Discounts[2];
+        discountC.ShouldNotBeNull();
+        discountC.Percent.ShouldBe(createRequestC.Percent);
+        discountC.LoyaltyLevelId.ShouldBe(createRequestC.LoyaltyLevelId);
+        discountC.Days.ShouldBe(createRequestC.Days);
     }
 
     [Fact]

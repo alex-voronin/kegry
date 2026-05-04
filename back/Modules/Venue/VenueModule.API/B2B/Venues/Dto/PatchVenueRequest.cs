@@ -11,4 +11,5 @@ public record PatchVenueRequest(
     string? WorkingHours,
     string? CoverImageUrl,
     string? PinCode,
+    bool? IsPinCheckInAllowed,
     Guid? QrCode);

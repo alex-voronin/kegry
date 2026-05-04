@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using SharedCore.Interfaces;
 using SharedCore.Validation;
 
@@ -12,11 +13,14 @@ public class Discount : IAuditable
     public required int LoyaltyLevelId { get; set; }
     public LoyaltyLevel LoyaltyLevel { get; init; } = null!;
 
-    public required int Percent
+    public required int? Percent
     {
         get;
         set => field = ValidatePercent(nameof(Percent), value);
     }
+
+    [NotMapped]
+    public bool IsCustom => Percent == null;
 
     private readonly List<DiscountDay> _days = [];
 
@@ -63,9 +67,14 @@ public class Discount : IAuditable
         }
     }
 
-    private static int ValidatePercent(string fieldName, int value)
+    private static int? ValidatePercent(string fieldName, int? value)
     {
-        Validation.ThrowIfNotInRange(fieldName, value, 1, 100);
+        if (value is null)
+        {
+            return null;
+        }
+
+        Validation.ThrowIfNotInRange(fieldName, value.Value, 1, 100);
         return value;
     }
 }

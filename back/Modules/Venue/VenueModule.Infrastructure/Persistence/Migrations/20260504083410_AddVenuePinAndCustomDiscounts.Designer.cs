@@ -13,8 +13,8 @@ using VenueModule.Infrastructure.Persistence;
 namespace VenueModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(VenueContext))]
-    [Migration("20260502162545_AddVenuePinCode")]
-    partial class AddVenuePinCode
+    [Migration("20260504083410_AddVenuePinAndCustomDiscounts")]
+    partial class AddVenuePinAndCustomDiscounts
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,7 +96,7 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("loyalty_level_id");
 
-                    b.Property<int>("Percent")
+                    b.Property<int?>("Percent")
                         .HasColumnType("integer")
                         .HasColumnName("percent");
 
@@ -279,6 +279,10 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
+
+                    b.Property<bool>("IsPinCheckInAllowed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_pin_check_in_allowed");
 
                     b.Property<bool>("IsVerified")
                         .HasColumnType("boolean")

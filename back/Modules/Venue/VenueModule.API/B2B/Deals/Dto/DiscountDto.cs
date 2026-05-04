@@ -4,5 +4,6 @@ public record DiscountDto(
     string Id,
     string VenueId,
     int? LoyaltyLevelId,
-    int Percent,
+    int? Percent,
+    bool IsCustom,
     DayOfWeek[] Days);

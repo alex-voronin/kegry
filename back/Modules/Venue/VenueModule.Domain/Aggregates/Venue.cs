@@ -15,6 +15,8 @@ public class Venue : ISoftDeletable<Guid>, IAuditable
         set => field = ValidatePinCode(nameof(PinCode), value);
     } = "";
 
+    public bool IsPinCheckInAllowed { get; set; }
+
     public required Guid QrCode { get; set; }
     public required Guid CompanyId { get; init; }
     public Company Company { get; init; } = null!;

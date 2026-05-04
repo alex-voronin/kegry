@@ -93,7 +93,7 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("loyalty_level_id");
 
-                    b.Property<int>("Percent")
+                    b.Property<int?>("Percent")
                         .HasColumnType("integer")
                         .HasColumnName("percent");
 
@@ -276,6 +276,10 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
+
+                    b.Property<bool>("IsPinCheckInAllowed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_pin_check_in_allowed");
 
                     b.Property<bool>("IsVerified")
                         .HasColumnType("boolean")

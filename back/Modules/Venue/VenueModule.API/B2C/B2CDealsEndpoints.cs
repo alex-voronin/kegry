@@ -51,6 +51,7 @@ public class B2CDealsEndpoints : IEndpoints
                 VenueAddress: d.Discount.Venue.Address,
                 GoogleMapsUrl: d.Discount.Venue.GoogleMapsUrl,
                 Percent: d.Discount.Percent,
+                IsCustom: d.Discount.IsCustom,
                 DistanceMeters: (int)d.DistanceMeters
             ))
             .ToArray();

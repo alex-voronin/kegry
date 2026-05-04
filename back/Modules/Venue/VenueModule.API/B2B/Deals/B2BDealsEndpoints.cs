@@ -318,6 +318,7 @@ public class B2BDealsEndpoints : IEndpoints
         VenueId: d.VenueId.ToString(),
         LoyaltyLevelId: d.LoyaltyLevelId,
         Percent: d.Percent,
+        IsCustom: d.IsCustom,
         Days: d.Days
             .Select(day => day.DayOfWeek)
             .OrderBy(day => day == DayOfWeek.Sunday ? 7 : (int)day)

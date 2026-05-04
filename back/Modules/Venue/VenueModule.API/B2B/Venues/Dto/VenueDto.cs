@@ -16,6 +16,7 @@ public record VenueDto(
     string? CoverImageUrl,
     string PinCode,
     bool IsGeneratedPinCode,
+    bool IsPinCheckInAllowed,
     Guid QrCode,
     PromoDto[] Promos,
     DiscountDto[] Discounts,

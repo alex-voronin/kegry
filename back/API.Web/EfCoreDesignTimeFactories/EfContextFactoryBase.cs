@@ -11,7 +11,7 @@ public class EfContextFactoryBase<TContext> : IDesignTimeDbContextFactory<TConte
     {
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
+            .AddJsonFile("appsettings.Development.json")
             .Build();
 
         var connectionString = configuration.GetConnectionString(SharedConstants.DbName);

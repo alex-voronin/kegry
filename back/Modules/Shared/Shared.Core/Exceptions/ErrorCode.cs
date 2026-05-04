@@ -9,4 +9,5 @@ public enum ErrorCode
     ValidationError,
     TooManyEntities,
     TooManyRequests,
+    NotAllowed
 }

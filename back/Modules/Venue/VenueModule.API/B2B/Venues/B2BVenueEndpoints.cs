@@ -242,6 +242,7 @@ public class B2BVenueEndpoints : IEndpoints
                 ? loyaltyService.GenerateDailyTotpPinCode(venue)
                 : venue.PinCode,
             IsGeneratedPinCode: string.IsNullOrEmpty(venue.PinCode),
+            IsPinCheckInAllowed: venue.IsPinCheckInAllowed,
             QrCode: venue.QrCode,
             Promos: venue.Promos
                 .OrderBy(p => p.CreatedAt)
@@ -253,7 +254,7 @@ public class B2BVenueEndpoints : IEndpoints
                 .ToArray(),
             Discounts: venue.Discounts
                 .OrderBy(d => d.LoyaltyLevelId)
-                .ThenByDescending(d => d.Percent)
+                .ThenByDescending(d => d.Percent ?? 0)
                 .Select(B2BDealsEndpoints.DomainDiscountToDto)
                 .ToArray(),
             LoyaltyLevels: venue.Company.LoyaltyLevels

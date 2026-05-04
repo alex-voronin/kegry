@@ -73,7 +73,7 @@ public class EfCoreDiscountRepository : Repository<VenueContext, Discount>, IDis
                     .FirstOrDefault(),
 
                 // Pre-calculated values for sorting
-                MaxPercent = g.Max(x => x.Percent),
+                MaxPercent = g.Max(x => x.Percent ?? 0),
                 DistanceMeters = EF.Functions.Distance(
                     g.First().Venue.Coordinates,
                     userLocation,

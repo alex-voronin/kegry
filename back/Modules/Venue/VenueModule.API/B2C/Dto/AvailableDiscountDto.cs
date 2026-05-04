@@ -6,5 +6,6 @@ public record AvailableDiscountDto(
     Guid VenueId,
     string VenueAddress,
     string? GoogleMapsUrl,
-    int Percent,
+    int? Percent,
+    bool IsCustom,
     int DistanceMeters);

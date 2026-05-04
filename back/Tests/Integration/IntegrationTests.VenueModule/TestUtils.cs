@@ -51,7 +51,7 @@ public class TestUtils
         await venueRepository.SaveChangesAsync();
     }
 
-    public async Task AddDiscountAsync(Guid venueId, Guid companyId, int percent)
+    public async Task AddDiscountAsync(Guid venueId, Guid companyId, int? percent)
     {
         var levels = await _factory.ApiClient.GetAsync<ApiResult<LoyaltyLevelDto[]>>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyId));

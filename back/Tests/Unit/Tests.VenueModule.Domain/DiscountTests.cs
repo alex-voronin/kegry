@@ -28,6 +28,15 @@ public class DiscountTests
         discount.Percent.ShouldBe(validPercent);
     }
 
+    [Fact]
+    public void Percent_WhenPercentIsNull_ThenCustomIsSet()
+    {
+        var discount = CreateValidDiscount();
+        discount.Percent = null;
+        discount.Percent.ShouldBeNull();
+        discount.IsCustom.ShouldBeTrue();
+    }
+
     private static Discount CreateValidDiscount()
     {
         return new Discount()
