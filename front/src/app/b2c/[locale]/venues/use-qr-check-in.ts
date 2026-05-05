@@ -26,6 +26,7 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
   const [isCodePopupOpen, setIsCodePopupOpen] = useState(false);
   const [pendingQrCode, setPendingQrCode] = useState<string | null>(null);
   const [codeDescription, setCodeDescription] = useState<string | undefined>();
+  const [showLocationRequiredDialog, setShowLocationRequiredDialog] = useState(false);
 
   const executeCheckIn = useCallback(
     async (
@@ -88,7 +89,7 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
               setCodeDescription(undefined);
               setIsCodePopupOpen(true);
             } else {
-              toast.error(t('toast.locationRequired'));
+              setShowLocationRequiredDialog(true);
               onErrorCallback?.(null);
             }
           } catch (apiErr) {
@@ -184,5 +185,7 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
     setPendingQrCode,
     codeDescription,
     setCodeDescription,
+    showLocationRequiredDialog,
+    dismissLocationRequiredDialog: () => setShowLocationRequiredDialog(false),
   };
 }

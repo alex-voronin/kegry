@@ -224,6 +224,8 @@ export default function FeedScreen() {
     setIsCodePopupOpen,
     handleQrCode,
     handleCodeSubmit,
+    showLocationRequiredDialog,
+    dismissLocationRequiredDialog,
   } = useQrCheckIn({
     onSuccess: handleCheckInSuccess,
     onError: handleCheckInError,
@@ -781,6 +783,8 @@ export default function FeedScreen() {
           onCodePopupOpenChange={setIsCodePopupOpen}
           handleQrCode={handleQrCode}
           handleCodeSubmit={handleCodeSubmit}
+          showLocationRequiredDialog={showLocationRequiredDialog}
+          onDismissLocationRequiredDialog={dismissLocationRequiredDialog}
         />
       </div>
     </div>

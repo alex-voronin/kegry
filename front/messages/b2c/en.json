@@ -611,6 +611,13 @@
       "save": "Select",
       "cancel": "Cancel"
     },
+    "check-in-manager": {
+      "locationRequiredDialog": {
+        "message": "Location permission is required to check in. Please enable it in your browser settings.",
+        "later": "Later",
+        "setupPermissions": "Setup Permissions"
+      }
+    },
     "qrScannerPopup": {
       "title": "Scan QR to check-in",
       "cameraDenied": "Camera permission denied. Allow access in browser settings or scan with your system QR reader.",

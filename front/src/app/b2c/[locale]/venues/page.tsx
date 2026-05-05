@@ -70,6 +70,8 @@ export default function VenuesScreen() {
     setIsCodePopupOpen,
     handleQrCode,
     handleCodeSubmit,
+    showLocationRequiredDialog,
+    dismissLocationRequiredDialog,
   } = useQrCheckIn({
     onSuccess: handleCheckInSuccess,
     onError: handleCheckInError,
@@ -354,6 +356,8 @@ export default function VenuesScreen() {
         onCodePopupOpenChange={setIsCodePopupOpen}
         handleQrCode={handleQrCode}
         handleCodeSubmit={handleCodeSubmit}
+        showLocationRequiredDialog={showLocationRequiredDialog}
+        onDismissLocationRequiredDialog={dismissLocationRequiredDialog}
       />
     </div>
   );

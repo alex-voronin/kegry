@@ -611,6 +611,13 @@
       "save": "Izaberi",
       "cancel": "Otkaži"
     },
+    "check-in-manager": {
+      "locationRequiredDialog": {
+        "message": "Dozvola za lokaciju je neophodna za prijavu. Molimo omogući je u podešavanjima pregledača.",
+        "later": "Kasnije",
+        "setupPermissions": "Podesi dozvole"
+      }
+    },
     "qrScannerPopup": {
       "title": "Skeniraj QR za prijavu",
       "cameraDenied": "Dozvola za kameru odbijena. Dozvoli pristup u podešavanjima pregledača ili skeniraj QR kod sistemskim čitačem.",

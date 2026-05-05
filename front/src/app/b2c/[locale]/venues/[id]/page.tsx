@@ -74,6 +74,8 @@ export default function VenueDetailScreen() {
     setShowCheckIn,
     handleQrCode,
     handleCodeSubmit,
+    showLocationRequiredDialog,
+    dismissLocationRequiredDialog,
     setPendingQrCode,
     codeDescription,
     setCodeDescription,
@@ -494,6 +496,8 @@ export default function VenueDetailScreen() {
         handleQrCode={handleQrCode}
         handleCodeSubmit={handleCodeSubmit}
         codeDescription={codeDescription}
+        showLocationRequiredDialog={showLocationRequiredDialog}
+        onDismissLocationRequiredDialog={dismissLocationRequiredDialog}
       />
 
       <ModalDialog
