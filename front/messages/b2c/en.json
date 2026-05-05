@@ -241,7 +241,11 @@
         "continue": "Create profile"
       },
       "onboardingPlaceholder": "You're currently a mysterious stranger in the bar 😎\nYou can check in, but making friends is harder this way.\n<link>Create your profile and start finding company</link>",
-      "scanQr": "Check-in"
+      "scanQr": "Check-in",
+      "firstCheckInDialog": {
+        "message": "Every check-in increases your loyalty level, helping the venue offer you additional discounts and special deals.",
+        "ok": "OK"
+      }
     },
     "chat": {
       "messagePlaceholder": "Message {remaining}/{total}",

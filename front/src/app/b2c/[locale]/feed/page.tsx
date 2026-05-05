@@ -202,6 +202,23 @@ export default function FeedScreen() {
   );
 
   const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [isFirstCheckInDialogOpen, setIsFirstCheckInDialogOpen] = useState(false);
+
+  const handleQrScanClick = useCallback(() => {
+    const hasSeenDialog = localStorage.getItem('has_seen_first_checkin_dialog');
+    if (!hasSeenDialog) {
+      setIsFirstCheckInDialogOpen(true);
+    } else {
+      setIsScannerOpen(true);
+    }
+  }, []);
+
+  const handleFirstCheckInOk = useCallback(() => {
+    localStorage.setItem('has_seen_first_checkin_dialog', 'true');
+    setIsFirstCheckInDialogOpen(false);
+    setIsScannerOpen(true);
+  }, []);
+
   const {
     isCodePopupOpen,
     setIsCodePopupOpen,
@@ -217,12 +234,12 @@ export default function FeedScreen() {
     if (!locationAllowed) {
       // Trigger the native browser permission prompt if not granted yet
       navigator.geolocation.getCurrentPosition(
-        () => setIsScannerOpen(true),
-        () => setIsScannerOpen(true),
+        () => handleQrScanClick(),
+        () => handleQrScanClick(),
         { timeout: 500 },
       );
     } else {
-      setIsScannerOpen(true);
+      handleQrScanClick();
     }
   };
   const [when, setWhen] = useState<InviteExpiration>(InviteExpiration.Today);
@@ -707,7 +724,7 @@ export default function FeedScreen() {
               requiredAction === RequiredAction.OnboardingCompletion
             }
             showQrScan={requiredAction === RequiredAction.None}
-            onQrScanClick={() => setIsScannerOpen(true)}
+            onQrScanClick={handleQrScanClick}
           />
         </div>
         {renderBody()}
@@ -749,6 +766,13 @@ export default function FeedScreen() {
             setIsOnboardingWarningOpen(false);
             router.push(PAGE_ROUTES.ONBOARDING);
           }}
+        />
+        <ModalDialog
+          isOpen={isFirstCheckInDialogOpen}
+          onClose={handleFirstCheckInOk}
+          message={tFeed('firstCheckInDialog.message')}
+          primaryButtonText={tFeed('firstCheckInDialog.ok')}
+          onPrimaryAction={handleFirstCheckInOk}
         />
         <CheckInManager
           isScannerOpen={isScannerOpen}

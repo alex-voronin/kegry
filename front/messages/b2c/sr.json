@@ -241,7 +241,11 @@
         "continue": "Kreiraj profil"
       },
       "onboardingPlaceholder": "Trenutno si misteriozni stranac u baru 😎\nMožeš da se prijaviš, ali je na ovaj način teže naći društvo.\n<link>Napravi profil i počni da pronalaziš društvo!</link>",
-      "scanQr": "Prijava"
+      "scanQr": "Prijava",
+      "firstCheckInDialog": {
+        "message": "Svaka prijava povećava vaš nivo lojalnosti, što omogućava lokalu da vam ponudi dodatne popuste i posebne ponude.",
+        "ok": "OK"
+      }
     },
     "chat": {
       "messagePlaceholder": "Poruka {remaining}/{total}",
