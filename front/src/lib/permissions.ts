@@ -55,7 +55,12 @@ export async function requestLocationPermission(): Promise<boolean> {
     if (typeof navigator !== 'undefined' && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         () => resolve(true),
-        () => resolve(false)
+        () => resolve(false),
+        {
+          enableHighAccuracy: false,
+          timeout: 4000,
+          maximumAge: 60000,
+        },
       );
     } else {
       resolve(false);
