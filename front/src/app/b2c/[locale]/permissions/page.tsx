@@ -105,9 +105,6 @@ export default function PermissionsPage() {
               await requestLocationPermission();
               const status = await checkPermissionStatus();
               setPermissions(status);
-              if (!status.locationAllowed) {
-                router.push(PAGE_ROUTES.FEED);
-              }
             }
             setTimeout(() => setActiveGroup('location'), 250);
           }}
