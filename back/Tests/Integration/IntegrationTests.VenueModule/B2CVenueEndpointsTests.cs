@@ -427,6 +427,26 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .Result
             .Id;
         await _testUtils.VerifyVenueByIdAsync(venueId);
+        
+        // allow pin-code check-in
+        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
+            ApiRoutes.B2B.Venue.Single(venueId),
+            new PatchVenueRequest(
+                Latitude: null,
+                Longitude: null,
+                Address: null,
+                WebsiteUrl: null,
+                GoogleMapsUrl: null,
+                InstagramUrl: null,
+                PhoneNumber: null,
+                WorkingHours: null,
+                CoverImageUrl: null,
+                PinCode: null,
+                IsPinCheckInAllowed: true,
+                QrCode: null
+            )
+        );
+        patchResponse.Success.ShouldBeTrue();
 
         var getVenueResponse = await Factory.ApiClient.GetAsync<ApiResult<B2BGetVenueResponse>>(
             ApiRoutes.B2B.Venue.Single(venueId));
