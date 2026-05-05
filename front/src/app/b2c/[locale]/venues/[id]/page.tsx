@@ -270,7 +270,7 @@ export default function VenueDetailScreen() {
                       <span className={styles.loyaltyDiscount}>
                         {loyaltyLevel.isCustomDiscount
                           ? t('offerAtVenue')
-                          : t('discount', { percent: loyaltyLevel.discount })}
+                          : t('discount', { percent: loyaltyLevel.discount ?? 0 })}
                       </span>
                     )}
                     {isLoyaltyCardInteractive && (
