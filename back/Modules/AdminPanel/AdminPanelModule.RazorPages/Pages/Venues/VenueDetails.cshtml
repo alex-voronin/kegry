@@ -12,14 +12,60 @@
 <div class="card mb-16">
     <div class="card-header">Search Venue</div>
     <div class="card-body">
-        <form method="post" asp-page-handler="Search" class="flex items-center gap-8">
+        <form method="post" asp-page-handler="Search" class="flex items-center gap-8" style="margin-bottom: 12px;">
             <div style="flex: 1">
                 <input type="text" name="searchVenueId" class="form-control" placeholder="Enter Venue ID (Guid)..." required />
             </div>
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
+        <form method="post" asp-page-handler="SearchByName" class="flex items-center gap-8">
+            <div style="flex: 1">
+                <input type="text" name="searchName" class="form-control" placeholder="Search by address or company name..." value="@Model.SearchName" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
     </div>
 </div>
+
+@if (Model.NameSearchResults.Any())
+{
+    <div class="card mb-16">
+        <div class="card-header">Search Results (@Model.NameSearchResults.Count)</div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Address</th>
+                    <th>Company</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var v in Model.NameSearchResults)
+                {
+                    <tr>
+                        <td>@v.Address</td>
+                        <td>@v.CompanyName</td>
+                        <td>
+                            <span class="badge @(v.IsVerified ? "badge-green" : "badge-red")">
+                                @(v.IsVerified ? "Verified" : "Unverified")
+                            </span>
+                        </td>
+                        <td>
+                            <a asp-page="/Venues/VenueDetails" asp-route-VenueId="@v.Id" class="btn btn-primary btn-sm">View</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else if (!string.IsNullOrWhiteSpace(Model.SearchName))
+{
+    <div class="alert alert-danger">
+        No venues found matching "<strong>@Model.SearchName</strong>".
+    </div>
+}
 
 @if (Model.VenueId.HasValue && Model.Venue == null)
 {
@@ -31,11 +77,25 @@
 @if (Model.Venue != null)
 {
     <div class="card">
-        <div class="card-header">
+        <div class="card-header" style="display: flex; align-items: center; gap: 8px;">
             Venue Info
             <span class="badge @(Model.Venue.IsVerified ? "badge-green" : "badge-red")">
                 @(Model.Venue.IsVerified ? "Verified" : "Unverified")
             </span>
+            @if (Model.Venue.IsVerified)
+            {
+                <form method="post" asp-page-handler="Unverify" style="margin: 0; margin-left: auto;">
+                    <input type="hidden" name="venueId" value="@Model.Venue.Id" />
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to unverify this venue?')">Unverify</button>
+                </form>
+            }
+            else
+            {
+                <form method="post" asp-page-handler="Verify" style="margin: 0; margin-left: auto;">
+                    <input type="hidden" name="venueId" value="@Model.Venue.Id" />
+                    <button type="submit" class="btn btn-primary btn-sm">Verify</button>
+                </form>
+            }
         </div>
         <div class="detail-grid">
             <div class="detail-row">
@@ -99,5 +159,6 @@
                 </div>
             </form>
         </div>
+
     </div>
 }

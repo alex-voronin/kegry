@@ -17,7 +17,12 @@ public class VenueDetailsModel : PageModel
     [BindProperty(SupportsGet = true)]
     public Guid? VenueId { get; set; }
 
+    [BindProperty(SupportsGet = true)]
+    public string? SearchName { get; set; }
+
     public VenueDetailDto? Venue { get; set; }
+
+    public List<VenueDetailDto> NameSearchResults { get; set; } = [];
 
     [BindProperty]
     public Guid NewQrCode { get; set; }
@@ -28,11 +33,21 @@ public class VenueDetailsModel : PageModel
         {
             await LoadVenueAsync(VenueId.Value);
         }
+
+        if (!string.IsNullOrWhiteSpace(SearchName))
+        {
+            await SearchByNameAsync(SearchName);
+        }
     }
 
     public async Task<IActionResult> OnPostSearchAsync(Guid searchVenueId)
     {
         return RedirectToPage(new { VenueId = searchVenueId });
+    }
+
+    public async Task<IActionResult> OnPostSearchByNameAsync(string searchName)
+    {
+        return RedirectToPage(new { SearchName = searchName });
     }
 
     public async Task<IActionResult> OnPostUpdateQrAsync(Guid venueId)
@@ -50,6 +65,42 @@ public class VenueDetailsModel : PageModel
         await _venueContext.SaveChangesAsync();
 
         TempData["Success"] = "QR Code updated successfully.";
+        return RedirectToPage(new { VenueId = venueId });
+    }
+
+    public async Task<IActionResult> OnPostVerifyAsync(Guid venueId)
+    {
+        var venue = await _venueContext.Venues
+            .IgnoreQueryFilters([NamedFilters.Venue.Verified])
+            .FirstOrDefaultAsync(v => v.Id == venueId);
+
+        if (venue == null)
+        {
+            return NotFound();
+        }
+
+        venue.IsVerified = true;
+        await _venueContext.SaveChangesAsync();
+
+        TempData["Success"] = "Venue verified successfully.";
+        return RedirectToPage(new { VenueId = venueId });
+    }
+
+    public async Task<IActionResult> OnPostUnverifyAsync(Guid venueId)
+    {
+        var venue = await _venueContext.Venues
+            .IgnoreQueryFilters([NamedFilters.Venue.Verified])
+            .FirstOrDefaultAsync(v => v.Id == venueId);
+
+        if (venue == null)
+        {
+            return NotFound();
+        }
+
+        venue.IsVerified = false;
+        await _venueContext.SaveChangesAsync();
+
+        TempData["Success"] = "Venue unverified successfully.";
         return RedirectToPage(new { VenueId = venueId });
     }
 
@@ -75,6 +126,31 @@ public class VenueDetailsModel : PageModel
             };
             NewQrCode = venue.QrCode;
         }
+    }
+
+    private async Task SearchByNameAsync(string name)
+    {
+        var lowerName = name.ToLower();
+
+        var venues = await _venueContext.Venues
+            .IgnoreQueryFilters([NamedFilters.Venue.Verified])
+            .Include(v => v.Company)
+            .Where(v => v.Company.Name.ToLower().Contains(lowerName))
+            .OrderBy(v => v.Address)
+            .Take(20)
+            .ToListAsync();
+
+        NameSearchResults = venues.Select(v => new VenueDetailDto
+        {
+            Id = v.Id,
+            Address = v.Address,
+            CompanyName = v.Company.Name,
+            QrCode = v.QrCode,
+            InstagramUrl = v.InstagramUrl,
+            GoogleMapsUrl = v.GoogleMapsUrl,
+            IsVerified = v.IsVerified,
+            CreatedAt = v.CreatedAt
+        }).ToList();
     }
 
     public record VenueDetailDto
