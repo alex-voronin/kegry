@@ -3,7 +3,15 @@
 import React, { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
-import { X, User, Building2, MapPin, LogOut, Menu, MessageCircle } from 'lucide-react';
+import {
+  X,
+  User,
+  Building2,
+  MapPin,
+  LogOut,
+  Menu,
+  MessageCircle,
+} from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useAuthStore } from '@/lib/auth/use-auth-store';
 import { openTawkChat } from '@/components/tawk-messenger';
@@ -94,7 +102,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const handleLogout = async () => {
     onClose();
     await logout();
-    router.push(PAGE_ROUTES.B2B.HOME);
+    window.location.href = PAGE_ROUTES.B2B.HOME;
   };
 
   return (
@@ -116,19 +124,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         </div>
 
         <nav className={styles.drawerNav}>
-            {navItems.map((item, index) => {
-              const isActive = item.href ? pathname.endsWith(item.href) : false;
-              return (
-                <div
-                  key={item.href || index}
-                  className={`${styles.drawerNavLink} ${isActive ? styles.drawerNavLinkActive : ''}`}
-                  onClick={() => handleNavClick(item)}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </div>
-              );
-            })}
+          {navItems.map((item, index) => {
+            const isActive = item.href ? pathname.endsWith(item.href) : false;
+            return (
+              <div
+                key={item.href || index}
+                className={`${styles.drawerNavLink} ${isActive ? styles.drawerNavLinkActive : ''}`}
+                onClick={() => handleNavClick(item)}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </div>
+            );
+          })}
 
           <div className={styles.drawerNavBottom}>
             <div className={styles.drawerNavLink} onClick={handleLogout}>

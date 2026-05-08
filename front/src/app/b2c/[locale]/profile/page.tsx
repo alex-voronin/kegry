@@ -104,7 +104,7 @@ export default function ProfilePage() {
   const handleLogout = async () => {
     const deviceId = localStorage.getItem(DEVICE_ID_KEY) || undefined;
     await logout(deviceId);
-    window.location.href = PAGE_ROUTES.LOGIN();
+    window.location.href = PAGE_ROUTES.HOME;
   };
 
   const handleDeleteAccount = async () => {
@@ -114,7 +114,7 @@ export default function ProfilePage() {
       // there is no need to pass a device id here, as we deleted all devices
       // in deleteAccount endpoint
       await logout(undefined);
-      window.location.href = PAGE_ROUTES.LOGIN();
+      window.location.href = PAGE_ROUTES.HOME;
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete account');
     } finally {

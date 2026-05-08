@@ -8,6 +8,7 @@ import { QrRedirect } from './_components/qr-redirect';
 import { Suspense } from 'react';
 import { BRAND_NAME } from '@/lib/constants';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { AutoSignInRedirect } from '@/components/common/auto-signin-redirect';
 
 interface LandingPageProps {
   params: Promise<{
@@ -84,6 +85,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
       <Suspense>
         <ReferrerTracker />
         <QrRedirect />
+        <AutoSignInRedirect />
       </Suspense>
       <AgeVerification />
       <div className={styles.desktopOnly}>

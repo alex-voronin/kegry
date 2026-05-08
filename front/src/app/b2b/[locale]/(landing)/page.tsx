@@ -5,6 +5,7 @@ import MobileLayout from './_components/mobile-layout';
 import styles from './layout.module.css';
 import { BRAND_NAME } from '@/lib/constants';
 import { getTranslations } from 'next-intl/server';
+import { AutoSignInRedirect } from '@/components/common/auto-signin-redirect';
 
 interface B2BLandingPageProps {
   params: Promise<{
@@ -78,6 +79,7 @@ export default async function B2BLandingPage({ params }: B2BLandingPageProps) {
 
   return (
     <>
+      <AutoSignInRedirect isB2B={true} />
       <div className={styles.desktopOnly}>
         <DesktopLayout />
       </div>
