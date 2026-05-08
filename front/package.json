@@ -1,6 +1,6 @@
 {
   "name": "front",
-  "version": "0.9.10",
+  "version": "0.9.11",
   "private": true,
   "scripts": {
     "generate-firebase-config": "node scripts/generate-firebase-config.js",
