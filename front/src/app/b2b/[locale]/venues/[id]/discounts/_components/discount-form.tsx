@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useImperativeHandle, forwardRef } from 'react';
+
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -30,6 +32,10 @@ interface LoyaltyLevelOption {
   label: string;
 }
 
+export interface DiscountFormHandle {
+  submitForm: () => void;
+}
+
 interface DiscountFormProps {
   initialValues?: {
     percent: number | null;
@@ -45,16 +51,18 @@ interface DiscountFormProps {
   isSubmitting: boolean;
   submitLabel: string;
   translationNamespace: 'createDiscount' | 'editDiscount';
+  onDirtyChange?: (isDirty: boolean) => void;
 }
 
-export function DiscountForm({
+export const DiscountForm = forwardRef<DiscountFormHandle, DiscountFormProps>(function DiscountForm({
   initialValues,
   loyaltyLevels,
   onSubmit,
   isSubmitting,
   submitLabel,
   translationNamespace,
-}: DiscountFormProps) {
+  onDirtyChange,
+}, ref) {
   const t = useTranslations(`screens.${translationNamespace}`);
   const tCommon = useTranslations('common');
   const tDiscountForm = useTranslations('components.forms.discount');
@@ -90,7 +98,7 @@ export function DiscountForm({
     handleSubmit,
     setValue,
     watch,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<FormValues>({
     resolver: zodResolver(schema) as any,
     defaultValues: {
@@ -101,6 +109,16 @@ export function DiscountForm({
     },
   });
 
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  useImperativeHandle(ref, () => ({
+    submitForm: () => {
+      handleSubmit(onSubmit)();
+    },
+  }), [handleSubmit, onSubmit]);
+
   const selectedDays = watch('days');
 
   const handleDayToggle = (day: string) => {
@@ -108,10 +126,10 @@ export function DiscountForm({
       setValue(
         'days',
         selectedDays.filter((d) => d !== day),
-        { shouldValidate: true },
+        { shouldValidate: true, shouldDirty: true },
       );
     } else {
-      setValue('days', [...selectedDays, day], { shouldValidate: true });
+      setValue('days', [...selectedDays, day], { shouldValidate: true, shouldDirty: true });
     }
   };
 
@@ -129,7 +147,7 @@ export function DiscountForm({
     } else {
       newDays = newDays.filter((day) => !workDays.includes(day));
     }
-    setValue('days', newDays, { shouldValidate: true });
+    setValue('days', newDays, { shouldValidate: true, shouldDirty: true });
   };
 
   const handleWeekendToggle = (checked: boolean) => {
@@ -139,7 +157,7 @@ export function DiscountForm({
     } else {
       newDays = newDays.filter((day) => !weekendDays.includes(day));
     }
-    setValue('days', newDays, { shouldValidate: true });
+    setValue('days', newDays, { shouldValidate: true, shouldDirty: true });
   };
 
   return (
@@ -153,11 +171,11 @@ export function DiscountForm({
             <Toggle
               checked={watch('isCustomDiscount')}
               onChange={(checked) => {
-                setValue('isCustomDiscount', checked);
+                setValue('isCustomDiscount', checked, { shouldDirty: true });
                 if (checked) {
-                  setValue('percent', null, { shouldValidate: true });
+                  setValue('percent', null, { shouldValidate: true, shouldDirty: true });
                 } else {
-                  setValue('percent', 0, { shouldValidate: true });
+                  setValue('percent', 0, { shouldValidate: true, shouldDirty: true });
                 }
               }}
             />
@@ -208,7 +226,7 @@ export function DiscountForm({
               : null
           }
           onChange={(option: any) =>
-            setValue('loyaltyLevelId', option?.value ?? null)
+            setValue('loyaltyLevelId', option?.value ?? null, { shouldDirty: true })
           }
           placeholder={tDiscountForm('loyaltyLevelPlaceholder')}
           isSearchable={false}
@@ -268,4 +286,4 @@ export function DiscountForm({
       </div>
     </form>
   );
-}
+});

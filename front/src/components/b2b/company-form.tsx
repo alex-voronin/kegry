@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,6 +27,10 @@ export interface CompanyFormValues {
   email?: string;
 }
 
+export interface CompanyFormHandle {
+  submitForm: () => void;
+}
+
 export interface CompanyFormProps {
   title: string;
   submitText: string;
@@ -35,9 +39,10 @@ export interface CompanyFormProps {
   requireAvatar: boolean;
   onCancel: () => void;
   onSubmit: (values: CompanyFormValues, avatarBlob: Blob | null) => Promise<void>;
+  onDirtyChange?: (isDirty: boolean) => void;
 }
 
-export function CompanyForm({
+export const CompanyForm = forwardRef<CompanyFormHandle, CompanyFormProps>(function CompanyForm({
   title,
   submitText,
   isSubmitting,
@@ -45,7 +50,8 @@ export function CompanyForm({
   requireAvatar,
   onCancel,
   onSubmit,
-}: CompanyFormProps) {
+  onDirtyChange,
+}, ref) {
   const t = useTranslations('components.forms.company');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -141,6 +147,18 @@ export function CompanyForm({
   };
 
   const canSubmit = isDirty || !!avatarBlob;
+
+  const hasDirtyChanges = isDirty || !!avatarBlob;
+
+  useEffect(() => {
+    onDirtyChange?.(hasDirtyChanges);
+  }, [hasDirtyChanges, onDirtyChange]);
+
+  useImperativeHandle(ref, () => ({
+    submitForm: () => {
+      handleSubmit(handleFormSubmit)();
+    },
+  }), [handleSubmit, handleFormSubmit]);
 
   return (
     <>
@@ -245,4 +263,4 @@ export function CompanyForm({
       />
     </>
   );
-}
+});

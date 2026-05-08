@@ -1,25 +1,30 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
+import { ModalDialog } from '@/components/ui/modal-dialog';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { useVenueStore } from '../../../use-venue-store';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { DiscountForm } from '../../_components/discount-form';
+import { DiscountForm, DiscountFormHandle } from '../../_components/discount-form';
 import { toast } from 'react-toastify';
 import styles from '../../_components/discount-form.module.css';
 import { Spinner } from '@/components/ui/spinner';
 
 export default function EditDiscountPage() {
   const t = useTranslations('screens.editDiscount');
+  const tCommon = useTranslations('common');
   const params = useParams();
   const venueId = params.id as string;
   const discountId = params.discountId as string;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const formRef = useRef<DiscountFormHandle>(null);
   const { currentVenue, fetchVenue, updateDiscount, isLoading } = useVenueStore();
   const { safeBack } = useSafeBack();
 
@@ -30,6 +35,18 @@ export default function EditDiscountPage() {
   }, [venueId, currentVenue?.id, fetchVenue]);
 
   const discount = currentVenue?.discounts.find((d) => d.id === discountId);
+
+  const goBack = useCallback(() => {
+    safeBack(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId));
+  }, [safeBack, venueId]);
+
+  const handleBack = () => {
+    if (isDirty) {
+      setShowSaveDialog(true);
+    } else {
+      goBack();
+    }
+  };
 
   const onSubmit = async (values: {
     percent: number | null;
@@ -45,7 +62,7 @@ export default function EditDiscountPage() {
         values.days,
         values.loyaltyLevelId,
       );
-      safeBack(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId));
+      goBack();
     } catch (err: any) {
       toast.error(err.message || t('toast.updateFailed'));
     } finally {
@@ -71,12 +88,13 @@ export default function EditDiscountPage() {
             alt="back"
             width={14}
             height={27}
-            onClick={() => safeBack(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId))}
+            onClick={handleBack}
           />
         }
       />
       <div className={styles.wrapper}>
         <DiscountForm
+          ref={formRef}
           initialValues={{
             percent: discount.percent,
             days: discount.days,
@@ -87,8 +105,20 @@ export default function EditDiscountPage() {
           isSubmitting={isSubmitting}
           submitLabel={t('save')}
           translationNamespace="editDiscount"
+          onDirtyChange={setIsDirty}
         />
       </div>
+      <ModalDialog
+        isOpen={showSaveDialog}
+        onClose={() => setShowSaveDialog(false)}
+        message={tCommon('saveChangesDialog.message')}
+        primaryButtonText={tCommon('saveChangesDialog.no')}
+        secondaryButtonText={tCommon('saveChangesDialog.yes')}
+        onPrimaryAction={goBack}
+        onSecondaryAction={() => {
+          formRef.current?.submitForm();
+        }}
+      />
     </>
   );
 }

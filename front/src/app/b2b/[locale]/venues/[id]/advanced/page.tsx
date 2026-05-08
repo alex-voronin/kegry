@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { toast } from 'react-toastify';
@@ -11,6 +11,7 @@ import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ModalMenu } from '@/components/ui/modal-menu';
+import { ModalDialog } from '@/components/ui/modal-dialog';
 import { Toggle } from '@/components/ui/toggle';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { PAGE_ROUTES } from '@/lib/routes';
@@ -24,6 +25,7 @@ import styles from '../promotions/_components/promotion-form.module.css'; // Reu
 
 export default function AdvancedSettingsPage() {
   const t = useTranslations('screens.advancedSettings');
+  const tCommon = useTranslations('common');
   const { id: venueId } = useParams() as { id: string };
   const { safeBack } = useSafeBack();
   const { currentVenue, fetchVenue, patchVenue, isLoading } = useVenueStore();
@@ -35,6 +37,7 @@ export default function AdvancedSettingsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDownloadMenuOpen, setIsDownloadMenuOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
 
   useEffect(() => {
     if (venueId) {
@@ -51,8 +54,23 @@ export default function AdvancedSettingsPage() {
     }
   }, [currentVenue]);
 
-  const handleBack = () => {
+  const goBack = useCallback(() => {
     safeBack(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId));
+  }, [safeBack, venueId]);
+
+  const isDirty = currentVenue
+    ? qrCode !== (currentVenue.qrCode || '') ||
+      isGeneratedPinCode !== currentVenue.isGeneratedPinCode ||
+      isPinCheckInAllowed !== currentVenue.isPinCheckInAllowed ||
+      (!isGeneratedPinCode && pinCode !== (currentVenue.pinCode || ''))
+    : false;
+
+  const handleBack = () => {
+    if (isDirty) {
+      setShowSaveDialog(true);
+    } else {
+      goBack();
+    }
   };
 
   const handleSave = async () => {
@@ -65,7 +83,7 @@ export default function AdvancedSettingsPage() {
         pinCode: isGeneratedPinCode ? '' : pinCode,
         isPinCheckInAllowed,
       });
-      handleBack();
+      goBack();
     } catch (err: any) {
       toast.error(err.message || t('toast.updateFailed'));
     } finally {
@@ -200,13 +218,7 @@ export default function AdvancedSettingsPage() {
               onClick={handleSave}
               loading={isSubmitting}
               className="w-[280px]"
-              disabled={
-                !qrCode.trim() ||
-                (qrCode === currentVenue.qrCode &&
-                  isGeneratedPinCode === currentVenue.isGeneratedPinCode &&
-                  isPinCheckInAllowed === currentVenue.isPinCheckInAllowed &&
-                  (isGeneratedPinCode || pinCode === currentVenue.pinCode))
-              }
+              disabled={!qrCode.trim() || !isDirty}
             >
               {t('submit')}
             </Button>
@@ -225,6 +237,16 @@ export default function AdvancedSettingsPage() {
         onClose={() => setIsScannerOpen(false)}
         onScan={handleScan}
         checkLocation={false}
+      />
+
+      <ModalDialog
+        isOpen={showSaveDialog}
+        onClose={() => setShowSaveDialog(false)}
+        message={tCommon('saveChangesDialog.message')}
+        primaryButtonText={tCommon('saveChangesDialog.no')}
+        secondaryButtonText={tCommon('saveChangesDialog.yes')}
+        onPrimaryAction={goBack}
+        onSecondaryAction={handleSave}
       />
     </>
   );

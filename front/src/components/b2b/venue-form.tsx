@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -36,6 +36,10 @@ export interface VenueFormValues {
   longitude: number;
 }
 
+export interface VenueFormHandle {
+  submitForm: () => void;
+}
+
 export interface VenueFormProps {
   title: string;
   submitText: string;
@@ -44,9 +48,10 @@ export interface VenueFormProps {
   requireCover: boolean;
   onCancel: () => void;
   onSubmit: (values: VenueFormValues, coverBlob: Blob | null) => Promise<void>;
+  onDirtyChange?: (isDirty: boolean) => void;
 }
 
-export function VenueForm({
+export const VenueForm = forwardRef<VenueFormHandle, VenueFormProps>(function VenueForm({
   title,
   submitText,
   isSubmitting,
@@ -54,7 +59,8 @@ export function VenueForm({
   requireCover,
   onCancel,
   onSubmit,
-}: VenueFormProps) {
+  onDirtyChange,
+}, ref) {
   const t = useTranslations('components.forms.venue');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -193,6 +199,18 @@ export function VenueForm({
   };
 
   const canSubmit = isDirty || !!coverBlob;
+
+  const hasDirtyChanges = isDirty || !!coverBlob;
+
+  useEffect(() => {
+    onDirtyChange?.(hasDirtyChanges);
+  }, [hasDirtyChanges, onDirtyChange]);
+
+  useImperativeHandle(ref, () => ({
+    submitForm: () => {
+      handleSubmit(handleFormSubmit)();
+    },
+  }), [handleSubmit, handleFormSubmit]);
 
   return (
     <div className={styles.wrapper}>
@@ -429,4 +447,4 @@ export function VenueForm({
       />
     </div>
   );
-}
+});

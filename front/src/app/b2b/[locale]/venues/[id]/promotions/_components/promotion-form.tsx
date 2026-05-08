@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useImperativeHandle, forwardRef } from 'react';
+
 import { useTranslations } from 'next-intl';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,19 +20,25 @@ interface PromotionFormValues {
   body: string;
 }
 
+export interface PromotionFormHandle {
+  submitForm: () => void;
+}
+
 interface PromotionFormProps {
   initialValues?: PromotionFormValues;
   onSubmit: (values: PromotionFormValues) => Promise<void>;
   isSubmitting: boolean;
   submitLabel: string;
+  onDirtyChange?: (isDirty: boolean) => void;
 }
 
-export function PromotionForm({
+export const PromotionForm = forwardRef<PromotionFormHandle, PromotionFormProps>(function PromotionForm({
   initialValues,
   onSubmit,
   isSubmitting,
   submitLabel,
-}: PromotionFormProps) {
+  onDirtyChange,
+}, ref) {
   const tForm = useTranslations('components.forms.promotion');
   const tCommon = useTranslations('common');
 
@@ -45,7 +53,7 @@ export function PromotionForm({
     register,
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<PromotionFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -53,6 +61,16 @@ export function PromotionForm({
       body: initialValues?.body ?? '',
     },
   });
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  useImperativeHandle(ref, () => ({
+    submitForm: () => {
+      handleSubmit(onSubmit)();
+    },
+  }), [handleSubmit, onSubmit]);
 
   const typeOptions: SelectOption[] = Object.values(PromoType).map((type) => ({
     value: type,
@@ -110,4 +128,4 @@ export function PromotionForm({
       </div>
     </form>
   );
-}
+});

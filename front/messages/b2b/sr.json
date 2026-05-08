@@ -18,6 +18,11 @@
       "Friday": "Pet",
       "Saturday": "Sub",
       "Sunday": "Ned"
+    },
+    "saveChangesDialog": {
+      "message": "Sačuvaj izmene?",
+      "yes": "Da",
+      "no": "Ne"
     }
   },
   "components": {
