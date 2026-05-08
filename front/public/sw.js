@@ -11,8 +11,3 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
-
-// Just proxy all requests
-self.addEventListener('fetch', (event) => {
-  event.respondWith(fetch(event.request));
-});
