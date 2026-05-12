@@ -10,6 +10,7 @@ namespace VenueModule.Infrastructure.Repositories;
 public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepository
 {
     private const double SearchRadiusMeters = 25_000;
+    private readonly GeometryFactory _geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
     public EfCoreVenueRepository(VenueContext context) : base(context)
     {
@@ -162,7 +163,6 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
             .CountAsync(v => v.CompanyId == companyId, ct);
     }
 
-    private readonly GeometryFactory _geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
     public async Task<Venue[]> GetVenuesInBoundsAsync(
         double minLat, double maxLat,
         double minLng, double maxLng,
@@ -180,26 +180,4 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
             .Take(limit)
             .ToArrayAsync(ct);
     }
-    /*
-     *
-     * public async Task<Venue[]> GetVenuesInBoundsAsync(
-           double minLat, double maxLat,
-           double minLng, double maxLng,
-           int limit,
-           CancellationToken ct)
-       {
-           return await Context.Venues
-               .Include(v => v.Company)
-               .AsNoTracking()
-               .Where(v => v.Coordinates != null &&
-                           EF.Functions.Intersects(
-                               v.Coordinates, 
-                               EF.Functions.MakeEnvelope(minLng, minLat, maxLng, maxLat, 4326)))
-               .OrderBy(v => v.Company.Name)
-               .Take(limit)
-               .ToArrayAsync(ct);
-       }
-     */
-    
-    
 }

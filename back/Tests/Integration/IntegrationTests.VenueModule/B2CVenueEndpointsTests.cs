@@ -427,7 +427,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .Result
             .Id;
         await _testUtils.VerifyVenueByIdAsync(venueId);
-        
+
         // allow pin-code check-in
         var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
             ApiRoutes.B2B.Venue.Single(venueId),
@@ -832,6 +832,41 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.Venue.CheckInSetting(venueId));
         enabledResponse.Success.ShouldBeTrue();
         enabledResponse.Result.IsPinCheckInAllowed.ShouldBeTrue();
+    }
 
+    [Fact]
+    public async Task GivenVenues_WhenB2CUserGetsMap_ThenReturnsVenuesInBounds()
+    {
+        // 1. Create B2B user
+        var b2BAuth = await Factory.AuthManager
+            .CreateAndLoginUserAsync("b2b_map@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Map Co", "map@example.com"))).Result.Id;
+
+        // 2. Create venues in different locations
+        // Bounds for search: Lat [44.7, 44.9], Lng [20.4, 20.6]
+        await _testUtils.CreateVerifiedVenueAsync(companyId, 44.8, 20.5, "Inside Venue");
+        await _testUtils.CreateVerifiedVenueAsync(companyId, 45.0, 21.0, "Outside Venue");
+
+        // 3. Create B2C user
+        var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_map@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(b2CAuth);
+
+        // 4. Get venues for map and check results
+        var mapRequest = new GetVenuesMapRequest(
+            MinLat: 44.7,
+            MaxLat: 44.9,
+            MinLng: 20.4,
+            MaxLng: 20.6);
+
+        var response = await Factory.ApiClient.GetAsync<GetVenuesMapRequest, ApiResult<VenueMapItemDto[]>>(
+            ApiRoutes.Venue.Map, mapRequest);
+
+        response.Success.ShouldBeTrue();
+        response.Result.Length.ShouldBe(1);
+        response.Result[0].Address.ShouldBe("Inside Venue");
+        response.Result.ShouldNotContain(v => v.Address == "Outside Venue");
     }
 }

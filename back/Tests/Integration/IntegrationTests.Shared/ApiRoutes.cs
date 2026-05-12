@@ -81,6 +81,7 @@ public static class ApiRoutes
     public static class Venue
     {
         public const string Root = "/api/v1/venues";
+        public const string Map = "/api/v1/venues/map";
         public static string Single(Guid id) => $"/api/v1/venue/{id}";
         public static string Discounts(Guid id) => $"/api/v1/venue/{id}/discounts";
         public static string QrCheckIn(Guid qrCode) => $"/api/v1/venue/{qrCode}/qr-check-in";
