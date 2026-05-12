@@ -27,6 +27,7 @@ public class B2CVenueEndpoints : IEndpoints
             .WithTags("Venue User API")
             .RequireAuthorization();
         usersApiGroup.MapGet("/api/v1/venues", GetVenues);
+        usersApiGroup.MapGet("/api/v1/venues/map", GetVenuesMap);
         usersApiGroup.MapGet("/api/v1/venue/{id:guid}", GetVenue);
         usersApiGroup.MapGet("/api/v1/venue/{id:guid}/discounts", GetDiscountsByWeekday);
         usersApiGroup.MapPost("/api/v1/venue/{qrCode:guid}/qr-check-in", CheckInToVenue);
@@ -110,6 +111,32 @@ public class B2CVenueEndpoints : IEndpoints
         return ApiResult<PaginatedResponse<VenueListItemDto>>.Build(
             new PaginatedResponse<VenueListItemDto>(dtos, totalCount)
         );
+    }
+
+    private static async Task<ApiResult<VenueMapItemDto[]>> GetVenuesMap(
+        [AsParameters] GetVenuesMapRequest request,
+        IVenueRepository repository,
+        IS3StorageService storageService,
+        CancellationToken ct)
+    {
+        var venues = await repository.GetVenuesInBoundsAsync(
+            request.MinLat, request.MaxLat,
+            request.MinLng, request.MaxLng,
+            limit: 200,
+            ct: ct);
+
+        var dtos = venues.Select(v => new VenueMapItemDto(
+            Id: v.Id.ToString(),
+            CompanyName: v.Company.Name,
+            CompanyAvatarImageUrl: v.Company.AvatarImageS3Key != null
+                ? storageService.S3KeyToPublicFileUrl(v.Company.AvatarImageS3Key, v.Company.UpdatedAt)
+                : null,
+            Address: v.Address,
+            Latitude: v.Coordinates.Y,
+            Longitude: v.Coordinates.X
+        )).ToArray();
+
+        return ApiResult<VenueMapItemDto[]>.Build(dtos);
     }
 
     private static async Task<ApiResult<GetVenueResponse>> GetVenue(

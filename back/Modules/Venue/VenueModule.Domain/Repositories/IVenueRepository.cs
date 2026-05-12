@@ -32,4 +32,10 @@ public interface IVenueRepository : IRepository<Venue>
     Task<Venue[]> GetByUserIdAsync(Guid userId, CancellationToken ct);
 
     Task<int> CountByCompanyIdAsync(Guid companyId, CancellationToken ct);
+
+    Task<Venue[]> GetVenuesInBoundsAsync(
+        double minLat, double maxLat,
+        double minLng, double maxLng,
+        int limit,
+        CancellationToken ct);
 }
