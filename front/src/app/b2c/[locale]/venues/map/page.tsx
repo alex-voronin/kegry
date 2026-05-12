@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import { useSearchParams } from 'next/navigation';
@@ -51,7 +51,7 @@ export default function VenueMapPage() {
     }
   }, [isFresh]);
 
-  const savedViewport = (() => {
+  const [initialViewport] = useState(() => {
     if (isFresh) {
       sessionStorage.removeItem(MAP_VIEWPORT_KEY);
       return null;
@@ -64,18 +64,18 @@ export default function VenueMapPage() {
       }
     } catch {}
     return null;
-  })();
+  });
 
-  const mapCenter = {
+  const mapCenter = useMemo(() => ({
     lat:
-      savedViewport?.lat ?? selectedCity?.latitude ?? BELGRADE_COORDS.latitude,
+      initialViewport?.lat ?? selectedCity?.latitude ?? BELGRADE_COORDS.latitude,
     lng:
-      savedViewport?.lng ??
+      initialViewport?.lng ??
       selectedCity?.longitude ??
       BELGRADE_COORDS.longitude,
-  };
+  }), [initialViewport?.lat, initialViewport?.lng, selectedCity?.latitude, selectedCity?.longitude]);
 
-  const initialZoom = savedViewport?.zoom ?? 12;
+  const initialZoom = initialViewport?.zoom ?? 12;
 
   const fetchMapVenues = useCallback(
     async (bounds: {

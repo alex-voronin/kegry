@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback, useState, memo } from 'react';
 import {
   MapContainer,
   TileLayer,
@@ -140,6 +140,54 @@ function createClusterIcon(cluster: any) {
   });
 }
 
+const MemoizedMarker = memo(
+  function MemoizedMarker({
+    venue,
+    onVenueDetails,
+    detailsLabel,
+  }: {
+    venue: VenueMapItem;
+    onVenueDetails: (id: string) => void;
+    detailsLabel: string;
+  }) {
+    return (
+      <Marker
+        position={[venue.latitude, venue.longitude]}
+        icon={venueMarkerIcon}
+      >
+        <Popup>
+          <div className={styles.markerCard}>
+            <div className={styles.markerCardHeader}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={
+                  venue.companyAvatarImageUrl ||
+                  '/assets/common/venues-icon.svg'
+                }
+                alt={venue.companyName}
+                className={styles.markerAvatar}
+              />
+              <div className={styles.markerInfo}>
+                <div className={styles.markerName}>{venue.companyName}</div>
+                <div className={styles.markerAddress}>{venue.address}</div>
+              </div>
+            </div>
+            <button
+              className={styles.markerDetailsBtn}
+              onClick={() => onVenueDetails(venue.id)}
+            >
+              {detailsLabel}
+            </button>
+          </div>
+        </Popup>
+      </Marker>
+    );
+  },
+  (prevProps, nextProps) =>
+    prevProps.venue.id === nextProps.venue.id &&
+    prevProps.detailsLabel === nextProps.detailsLabel
+);
+
 const LOCATE_ZOOM = 15;
 
 function LocateMe() {
@@ -203,37 +251,12 @@ export default function VenueMapInternal({
         showCoverageOnHover={false}
       >
         {venues.map((venue) => (
-          <Marker
+          <MemoizedMarker
             key={venue.id}
-            position={[venue.latitude, venue.longitude]}
-            icon={venueMarkerIcon}
-          >
-            <Popup>
-              <div className={styles.markerCard}>
-                <div className={styles.markerCardHeader}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={
-                      venue.companyAvatarImageUrl ||
-                      '/assets/common/venues-icon.svg'
-                    }
-                    alt={venue.companyName}
-                    className={styles.markerAvatar}
-                  />
-                  <div className={styles.markerInfo}>
-                    <div className={styles.markerName}>{venue.companyName}</div>
-                    <div className={styles.markerAddress}>{venue.address}</div>
-                  </div>
-                </div>
-                <button
-                  className={styles.markerDetailsBtn}
-                  onClick={() => onVenueDetails(venue.id)}
-                >
-                  {detailsLabel}
-                </button>
-              </div>
-            </Popup>
-          </Marker>
+            venue={venue}
+            onVenueDetails={onVenueDetails}
+            detailsLabel={detailsLabel}
+          />
         ))}
       </MarkerClusterGroup>
 
