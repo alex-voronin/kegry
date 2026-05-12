@@ -192,7 +192,7 @@ export default function AdvancedSettingsPage() {
                 disabled={isGeneratedPinCode}
                 maxLength={4}
               />
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between px-2 sm:px-0">
                 <span className="text-secondary text-sm">
                   {t('allowPinCheckIn')}
                 </span>
@@ -201,7 +201,7 @@ export default function AdvancedSettingsPage() {
                   onChange={setIsPinCheckInAllowed}
                 />
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between px-2 sm:px-0">
                 <span className="text-secondary text-sm">
                   {t('generatePinEveryday')}
                 </span>
