@@ -28,7 +28,7 @@ internal class EfCoreTrackedUserPairRepository : RepositoryOutbox<LocationContex
 
     public Task DeleteExpired(CancellationToken ct = default)
     {
-        return Context.TrackedUsers.Where(tp => tp.ExpiresAt < DateTimeOffset.Now)
+        return Context.TrackedUsers.Where(tp => tp.ExpiresAt < DateTimeOffset.UtcNow)
             .ExecuteDeleteAsync(ct);
     }
 }
