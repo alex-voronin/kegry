@@ -9,6 +9,7 @@ export const PAGE_ROUTES = {
   FEED: '/feed',
   FEED_FILTERS: '/feed/filters',
   VENUES: '/venues',
+  VENUES_MAP: '/venues/map',
   VENUE_DETAIL: (id: string) => `/venues/${id}`,
   VENUE_DISCOUNTS: (id: string) => `/venues/${id}/discounts`,
   ONBOARDING: '/onboarding',
@@ -149,6 +150,7 @@ export const API_ENDPOINTS = {
   },
   VENUES: {
     LIST: '/api/v1/venues',
+    MAP: '/api/v1/venues/map',
     QR_CHECK_IN: (qrCode: string) => `/api/v1/venue/${qrCode}/qr-check-in`,
     QR_CHECK_IN_SETTINGS: (qrCode: string) =>
       `/api/v1/venue/${qrCode}/qr-check-in/settings`,

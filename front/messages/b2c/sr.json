@@ -537,6 +537,14 @@
         "loadFailed": "Učitavanje lokala nije uspelo"
       }
     },
+    "venueMap": {
+      "title": "Mapa",
+      "details": "Detalji",
+      "loading": "Učitavanje lokala...",
+      "toast": {
+        "loadFailed": "Učitavanje lokala na mapi nije uspelo"
+      }
+    },
     "venueDetail": {
       "contacts": "Kontakti",
       "address": "Adresa",

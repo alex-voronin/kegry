@@ -537,6 +537,14 @@
         "loadFailed": "Failed to load venues"
       }
     },
+    "venueMap": {
+      "title": "Map",
+      "details": "Details",
+      "loading": "Loading venues...",
+      "toast": {
+        "loadFailed": "Failed to load venues on map"
+      }
+    },
     "venueDetail": {
       "contacts": "Contacts",
       "address": "Address",

@@ -22,7 +22,7 @@ import { metersToKilometers, metersToMiles } from '@/lib/distance-utils';
 import { getLowAccuracyLocation } from '@/lib/geo-utils';
 import { CheckInManager } from '@/components/common/check-in-manager';
 import { useQrCheckIn } from './use-qr-check-in';
-import { ScanQrCode } from 'lucide-react';
+import { ScanQrCode, MapPinned } from 'lucide-react';
 import styles from './venues.module.css';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { City, BELGRADE_COORDS } from '@/lib/cities';
@@ -242,17 +242,30 @@ export default function VenuesScreen() {
           />
         }
         right={
-          <button
-            onClick={() => setIsScannerOpen(true)}
-            style={{
-              background: 'none',
-              border: 'none',
-              padding: 0,
-              cursor: 'pointer',
-            }}
-          >
-            <ScanQrCode size={24} className="text-foreground" />
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsScannerOpen(true)}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer',
+              }}
+            >
+              <ScanQrCode size={24} className="text-foreground" />
+            </button>
+            <button
+              onClick={() => router.push(`${PAGE_ROUTES.VENUES_MAP}?fresh`)}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer',
+              }}
+            >
+              <MapPinned size={24} className="text-foreground" />
+            </button>
+          </div>
         }
       />
 
