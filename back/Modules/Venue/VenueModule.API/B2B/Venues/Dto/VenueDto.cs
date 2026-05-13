@@ -18,6 +18,7 @@ public record VenueDto(
     bool IsGeneratedPinCode,
     bool IsPinCheckInAllowed,
     Guid QrCode,
+    TagDto[] Tags,
     PromoDto[] Promos,
     DiscountDto[] Discounts,
     LoyaltyLevelDto[] LoyaltyLevels);

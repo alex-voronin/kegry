@@ -87,6 +87,31 @@ public class Venue : ISoftDeletable<Guid>, IAuditable
     private readonly List<Discount> _discounts = [];
     public IReadOnlyCollection<Discount> Discounts => _discounts;
 
+    private readonly List<VenueTag> _venueTags = [];
+    public IReadOnlyCollection<VenueTag> VenueTags => _venueTags;
+
+    public void UpdateTags(Guid[] tagIds, Tag[] allTags)
+    {
+        var selectedTags = allTags.Where(t => tagIds.Contains(t.Id)).ToList();
+
+        var invalidCategories = selectedTags
+            .Where(t => t.IsSingleSelect)
+            .GroupBy(t => t.Category)
+            .Where(g => g.Count() > 1)
+            .Select(g => g.Key.ToString())
+            .ToList();
+
+        Validation.ThrowIfInvalid(nameof(VenueTags),
+            () => invalidCategories.Count == 0,
+            $"Multiple tags selected for single-select categories: {string.Join(", ", invalidCategories)}");
+
+        _venueTags.Clear();
+        foreach (var tagId in tagIds)
+        {
+            _venueTags.Add(new VenueTag { VenueId = Id, TagId = tagId });
+        }
+    }
+
     public bool IsVerified { get; set; }
     public bool IsDeleted { get; set; }
 

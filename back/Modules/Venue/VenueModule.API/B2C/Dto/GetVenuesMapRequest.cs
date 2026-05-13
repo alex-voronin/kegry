@@ -6,4 +6,5 @@ public record GetVenuesMapRequest(
     [FromQuery] double MinLat,
     [FromQuery] double MaxLat,
     [FromQuery] double MinLng,
-    [FromQuery] double MaxLng);
+    [FromQuery] double MaxLng,
+    [FromQuery] VenueFilterDto? Filter = null);

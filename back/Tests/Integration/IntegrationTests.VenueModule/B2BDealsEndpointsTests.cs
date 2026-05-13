@@ -71,7 +71,7 @@ public class B2BDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         var createVenueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyId),
-            new CreateVenueRequest(0, 0, "Promo Venue", null, null, null, null, null, null));
+            new CreateVenueRequest(0, 0, "Promo Venue", null, null, null, null, null, null, null));
         var venueId = createVenueResponse.Result.Id;
 
         // 2. Create promotion
@@ -102,7 +102,7 @@ public class B2BDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Promo Update Co", "pu@test.com"));
         var createVenueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(createCoResponse.Result.Id),
-            new CreateVenueRequest(0, 0, "PU Venue", null, null, null, null, null, null));
+            new CreateVenueRequest(0, 0, "PU Venue", null, null, null, null, null, null, null));
         var venueId = createVenueResponse.Result.Id;
 
         var createPromoResponse =
@@ -136,7 +136,7 @@ public class B2BDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Promo Del Co", "pd@test.com"));
         var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(createCoResponse.Result.Id),
-            new CreateVenueRequest(0, 0, "PD Venue", null, null, null, null, null, null))).Result.Id;
+            new CreateVenueRequest(0, 0, "PD Venue", null, null, null, null, null, null, null))).Result.Id;
 
         var promoId = (await Factory.ApiClient.PostAsync<CreatePromotionRequest, ApiResult<CreatePromotionResponse>>(
                 ApiRoutes.B2B.Venue.Promotions(venueId), new CreatePromotionRequest(PromoType.General, "To Delete")))
@@ -168,7 +168,7 @@ public class B2BDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var companyId = createCompanyResponse.Result.Id;
         var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyId),
-            new CreateVenueRequest(0, 0, "Disc Venue", null, null, null, null, null, null))).Result.Id;
+            new CreateVenueRequest(0, 0, "Disc Venue", null, null, null, null, null, null, null))).Result.Id;
 
         var loyaltyLevels =
             (await Factory.ApiClient.GetAsync<ApiResult<LoyaltyLevelDto[]>>(
@@ -231,7 +231,7 @@ public class B2BDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Disc Up Co", "du@test.com"))).Result.Id;
         var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyId),
-            new CreateVenueRequest(0, 0, "DU Venue", null, null, null, null, null, null))).Result.Id;
+            new CreateVenueRequest(0, 0, "DU Venue", null, null, null, null, null, null, null))).Result.Id;
         var levelId = (await Factory.ApiClient.GetAsync<ApiResult<LoyaltyLevelDto[]>>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyId))).Result[0].Id;
 
@@ -267,7 +267,7 @@ public class B2BDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Disc Del Co", "dd@test.com"))).Result.Id;
         var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyId),
-            new CreateVenueRequest(0, 0, "DD Venue", null, null, null, null, null, null))).Result.Id;
+            new CreateVenueRequest(0, 0, "DD Venue", null, null, null, null, null, null, null))).Result.Id;
         var levelId = (await Factory.ApiClient.GetAsync<ApiResult<LoyaltyLevelDto[]>>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyId))).Result[0].Id;
 

@@ -84,6 +84,7 @@ public class B2CVenueEndpoints : IEndpoints
     private static async Task<ApiResult<PaginatedResponse<VenueListItemDto>>> GetVenues(
         [AsParameters] GetVenuesRequest request,
         IVenueRepository repository,
+        ITagRepository tagRepository,
         IS3StorageService storageService,
         CancellationToken ct)
     {
@@ -92,6 +93,8 @@ public class B2CVenueEndpoints : IEndpoints
             longitude: request.Longitude,
             offset: request.Offset,
             limit: request.Limit,
+            tagIds: request.Filter?.TagIds,
+            companyName: request.Filter?.CompanyName,
             ct: ct);
         var dtos = venues
             .Select(v =>
@@ -116,6 +119,7 @@ public class B2CVenueEndpoints : IEndpoints
     private static async Task<ApiResult<VenueMapItemDto[]>> GetVenuesMap(
         [AsParameters] GetVenuesMapRequest request,
         IVenueRepository repository,
+        ITagRepository tagRepository,
         IS3StorageService storageService,
         CancellationToken ct)
     {
@@ -123,6 +127,8 @@ public class B2CVenueEndpoints : IEndpoints
             request.MinLat, request.MaxLat,
             request.MinLng, request.MaxLng,
             limit: 200,
+            tagIds: request.Filter?.TagIds,
+            companyName: request.Filter?.CompanyName,
             ct: ct);
 
         var dtos = venues.Select(v => new VenueMapItemDto(
@@ -227,6 +233,11 @@ public class B2CVenueEndpoints : IEndpoints
             CoverImageUrl: venue.CoverImageS3Key != null
                 ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.UpdatedAt)
                 : null,
+            Tags: venue.VenueTags.Select(vt =>
+                    // Parent value isn't required here
+                    new TagDto(Id: vt.Tag.Id, Value: vt.Tag.Value, ParentValue: null)
+                )
+                .ToArray(),
             Promos: venue.Promos
                 .Select(p => new PromoDto(Type: p.Type, Body: p.Body))
                 .ToArray()

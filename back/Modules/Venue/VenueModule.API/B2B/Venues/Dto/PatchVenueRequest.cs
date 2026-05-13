@@ -12,4 +12,5 @@ public record PatchVenueRequest(
     string? CoverImageUrl,
     string? PinCode,
     bool? IsPinCheckInAllowed,
-    Guid? QrCode);
+    Guid? QrCode,
+    Guid[]? TagIds);

@@ -42,6 +42,7 @@ public class B2BVenueEndpoints : IEndpoints
         ClaimsPrincipal user,
         ICompanyRepository companyRepository,
         IVenueRepository venueRepository,
+        ITagRepository tagRepository,
         IS3StorageService storageService,
         CancellationToken ct)
     {
@@ -79,6 +80,12 @@ public class B2BVenueEndpoints : IEndpoints
             WorkingHours = request.WorkingHours,
             IsVerified = false // venue can be verified only by the support team
         };
+
+        if (request.TagIds.Length > 0)
+        {
+            var allTags = await tagRepository.GetAllAsync(ct);
+            venue.UpdateTags(tagIds: request.TagIds, allTags: allTags);
+        }
 
         await venueRepository.AddAsync(venue, ct);
         await venueRepository.SaveChangesAsync(ct);
@@ -138,6 +145,7 @@ public class B2BVenueEndpoints : IEndpoints
         ClaimsPrincipal user,
         IVenueRepository venueRepository,
         ICompanyRepository companyRepository,
+        ITagRepository tagRepository,
         IS3StorageService storageService,
         CancellationToken ct)
     {
@@ -147,7 +155,15 @@ public class B2BVenueEndpoints : IEndpoints
             venueRepository: venueRepository,
             companyRepository: companyRepository,
             asNoTracking: false,
+            includes: [v => v.VenueTags],
             ct: ct);
+
+        if (request.TagIds != null)
+        {
+            var allTags = await tagRepository.GetAllAsync(ct);
+
+            venue.UpdateTags(tagIds: request.TagIds, allTags: allTags);
+        }
 
         if (request.CoverImageUrl != null)
         {
@@ -246,6 +262,11 @@ public class B2BVenueEndpoints : IEndpoints
             IsGeneratedPinCode: string.IsNullOrEmpty(venue.PinCode),
             IsPinCheckInAllowed: venue.IsPinCheckInAllowed,
             QrCode: venue.QrCode,
+            Tags: venue.VenueTags
+                .Select(vt =>
+                    new TagDto(Id: vt.TagId, Value: vt.Tag.Value)
+                )
+                .ToArray(),
             Promos: venue.Promos
                 .OrderBy(p => p.CreatedAt)
                 .Select(p => new PromoDto(

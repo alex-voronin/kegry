@@ -121,6 +121,8 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
         double longitude,
         int offset,
         int limit,
+        Guid[]? tagIds,
+        string? companyName,
         CancellationToken ct)
     {
         var userCoordinates = new Point(longitude, latitude) { SRID = 4326 };
@@ -133,6 +135,17 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
                 userCoordinates,
                 SearchRadiusMeters,
                 useSpheroid: false));
+
+        if (tagIds is { Length: > 0 })
+        {
+            baseQuery = baseQuery.Where(v =>
+                v.VenueTags.Count(vt => tagIds.Contains(vt.TagId)) == tagIds.Length);
+        }
+
+        if (!string.IsNullOrWhiteSpace(companyName))
+        {
+            baseQuery = baseQuery.Where(v => v.Company.Name.ToLower().Contains(companyName.ToLower()));
+        }
 
         var totalCount = await baseQuery.CountAsync(ct);
 
@@ -167,15 +180,30 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
         double minLat, double maxLat,
         double minLng, double maxLng,
         int limit,
+        Guid[]? tagIds,
+        string? companyName,
         CancellationToken ct)
     {
         var envelope = new Envelope(minLng, maxLng, minLat, maxLat);
         var boundingBox = _geometryFactory.ToGeometry(envelope);
 
-        return await Context.Venues
+        var baseQuery = Context.Venues
             .Include(v => v.Company)
             .AsNoTracking()
-            .Where(v => v.Coordinates.Intersects(boundingBox))
+            .Where(v => v.Coordinates.Intersects(boundingBox));
+
+        if (tagIds is { Length: > 0 })
+        {
+            baseQuery = baseQuery.Where(v =>
+                v.VenueTags.Count(vt => tagIds.Contains(vt.TagId)) == tagIds.Length);
+        }
+
+        if (!string.IsNullOrWhiteSpace(companyName))
+        {
+            baseQuery = baseQuery.Where(v => v.Company.Name.ToLower().Contains(companyName.ToLower()));
+        }
+
+        return await baseQuery
             .OrderBy(v => v.Company.Name)
             .Take(limit)
             .ToArrayAsync(ct);

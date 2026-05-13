@@ -1,5 +1,3 @@
-using VenueModule.API.B2B.Venues.Dto;
-
 namespace VenueModule.API.B2C.Dto;
 
 public record VenueDto(
@@ -15,4 +13,5 @@ public record VenueDto(
     string? PhoneNumber,
     string? WorkingHours,
     string? CoverImageUrl,
+    TagDto[] Tags,
     PromoDto[] Promos);

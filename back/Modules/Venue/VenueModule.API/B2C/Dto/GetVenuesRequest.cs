@@ -7,4 +7,5 @@ public record GetVenuesRequest(
     [FromQuery] double Latitude,
     [FromQuery] double Longitude,
     [FromQuery] int Offset = 0,
-    [FromQuery] int Limit = 20) : PaginatedRequest(Offset, Limit);
+    [FromQuery] int Limit = 20,
+    [FromQuery] VenueFilterDto? Filter = null) : PaginatedRequest(Offset, Limit);

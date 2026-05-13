@@ -12,6 +12,8 @@ public interface IVenueRepository : IRepository<Venue>
         double longitude,
         int offset,
         int limit,
+        Guid[]? tagIds,
+        string? companyName,
         CancellationToken ct);
 
     Task<Venue?> GetByIdWithAllRelationsAsync(Guid id, CancellationToken ct);
@@ -37,5 +39,7 @@ public interface IVenueRepository : IRepository<Venue>
         double minLat, double maxLat,
         double minLng, double maxLng,
         int limit,
+        Guid[]? tagIds,
+        string? companyName,
         CancellationToken ct);
 }

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using VenueModule.Domain.Aggregates;
+using VenueModule.Domain.ValueObjects;
 
 namespace VenueModule.Infrastructure.Persistence;
 
@@ -13,6 +14,8 @@ public class VenueContext : DbContext
     public DbSet<Discount> Discounts => Set<Discount>();
     public DbSet<DiscountDay> DiscountDays => Set<DiscountDay>();
     public DbSet<UserLoyalty> UserLoyalties => Set<UserLoyalty>();
+    public DbSet<Tag> Tags => Set<Tag>();
+    public DbSet<VenueTag> VenueTags => Set<VenueTag>();
 
     public VenueContext(DbContextOptions<VenueContext> options)
         : base(options)
@@ -30,6 +33,8 @@ public class VenueContext : DbContext
         ConfigureDiscountDay(modelBuilder);
         ConfigureUserLoyalty(modelBuilder);
         ConfigurePromo(modelBuilder);
+        ConfigureTag(modelBuilder);
+        ConfigureVenueTag(modelBuilder);
     }
 
     private static void ConfigureCompany(ModelBuilder modelBuilder)
@@ -222,6 +227,52 @@ public class VenueContext : DbContext
 
             entity.HasQueryFilter(NamedFilters.Venue.Verified, p => p.Venue.IsVerified);
             entity.HasQueryFilter(NamedFilters.Venue.SoftDeleted, p => !p.Venue.IsDeleted);
+        });
+    }
+
+    private static void ConfigureTag(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Tag>(entity =>
+        {
+            entity.ToTable("tags");
+            entity.HasKey(t => t.Id);
+            entity.Property(t => t.Id).ValueGeneratedNever();
+            
+            entity.Property(t => t.Value)
+                .IsRequired()
+                .HasMaxLength(100);
+            entity.HasIndex(t => t.Value).IsUnique();
+            
+            entity.Property(t => t.Category)
+                .HasConversion<string>()
+                .IsRequired();
+            entity.HasIndex(t => t.Category);
+
+            entity.HasOne(t => t.Parent)
+                .WithMany()
+                .HasForeignKey(t => t.ParentId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        VenueContextSeeder.SeedTags(modelBuilder);
+    }
+
+    private static void ConfigureVenueTag(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<VenueTag>(entity =>
+        {
+            entity.ToTable("venue_tags");
+            entity.HasKey(vt => new { vt.VenueId, vt.TagId });
+            
+            entity.HasOne(vt => vt.Venue)
+                .WithMany(v => v.VenueTags)
+                .HasForeignKey(vt => vt.VenueId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            entity.HasOne(vt => vt.Tag)
+                .WithMany()
+                .HasForeignKey(vt => vt.TagId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }
