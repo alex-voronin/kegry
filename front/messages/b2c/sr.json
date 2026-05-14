@@ -577,7 +577,7 @@
     "qr-code-reader": {
       "toast": {
         "invalidQr": "Neispravan QR kod",
-        "gettingLocation": "Tražimo tvoju preciznu lokaciju...",
+        "gettingLocation": "Tražimo tvoju lokaciju za prijavu...",
         "checkInFailed": "Prijava nije uspela. Molimo pokušaj ponovo.",
         "locationRequired": "Omogući pristup lokaciji za prijavu."
       }
