@@ -201,7 +201,7 @@
       "continue": "Continue",
       "createProfile": "Create profile",
       "uploadCoverTitle": "Choose your cover",
-      "selectCover": "Tap to select cover image",
+      "selectCover": "Tap to select cover image.\nIt's visible to other users in their feed.",
       "creating": "Creating profile...",
       "back": "Back",
       "legal": {

@@ -201,7 +201,7 @@
       "continue": "Nastavi",
       "createProfile": "Kreiraj profil",
       "uploadCoverTitle": "Izaberi naslovnu sliku",
-      "selectCover": "Tapni da izabereš naslovnu sliku",
+      "selectCover": "Dodirni da izabereš naslovnu sliku.\nVidljivo je drugim korisnicima u njihovom feedu.",
       "creating": "Kreiranje profila...",
       "back": "Nazad",
       "legal": {
