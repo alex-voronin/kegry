@@ -539,6 +539,14 @@ export default function FeedScreen() {
       router.push(PAGE_ROUTES.CHAT);
       return;
     }
+    if (currentItem?.kind === 'npc') {
+      if (monolog) {
+        handleSkip();
+      } else {
+        handleInvite();
+      }
+      return;
+    }
     if (currentItem?.kind !== 'user') return;
     router.push(PAGE_ROUTES.USER_PROFILE(currentItem.profile.id));
   };
