@@ -59,21 +59,21 @@ public static class VenueContextSeeder
             }
         }
 
-        AddTags(TagCategory.VenueStyle, [
-            "cocktail_bar", "wine_bar", "craft_beer_bar", "sports_bar", "speakeasy", "dive_bar", "taproom"
-        ], isSingleSelect: false);
-
         AddHierarchicalTags(TagCategory.DrinkCategory, new Dictionary<string, string[]>
         {
-            { "beer", ["lager", "ipa", "stout", "sour_beer", "wheat_beer"] },
-            { "wine", ["red_wine", "white_wine", "orange_wine", "sparkling_wine"] },
-            { "spirits", ["vodka", "whiskey", "gin", "rum", "tequila", "mezcal", "brandy"] },
-            { "cocktails", ["classic_cocktails", "signature_cocktails", "spritz"] },
-            { "other", ["cider", "mead", "sake", "coffee", "tea", "non_alcoholic_options"] }
+            { "beer", ["beer_lager", "beer_ipa", "beer_stout", "beer_sour", "beer_wheat", "beer_fruit"] },
+            { "cider", ["cider_apple", "cider_pear", "cider_dry", "cider_sweet"]  },
+            { "wine", ["wine_red", "wine_white", "wine_orange", "wine_sparkling"] },
+            { "spirit", ["spirit_vodka", "spirit_whiskey", "spirit_gin", "spirit_rum",
+                "spirit_tequila", "spirit_mezcal", "spirit_brandy"] },
+            { "cocktail", ["cocktail_classic", "cocktail_signature", "cocktail_spritz"] },
+            { "non_alcoholic", ["coffee", "tea", "beverages"] }
+
         }, isSingleSelect: false);
 
         AddTags(TagCategory.Specialty, [
-            "craft_beer", "wine", "agave_spirits", "whiskey", "classic_cocktails", "signature_cocktails"
+            "specialty_versatile", "specialty_craft_beer", "specialty_wine", "specialty_agave_spirits",
+            "specialty_whiskey", "specialty_classic_cocktails", "specialty_signature_cocktails"
         ], isSingleSelect: false);
 
         AddTags(TagCategory.HospitalityAndRules, [
@@ -81,7 +81,7 @@ public static class VenueContextSeeder
         ], isSingleSelect: false);
 
         AddTags(TagCategory.FoodAndKitchen, [
-            "kitchen_full", "kitchen_snacks_only", "kitchen_external_allowed", "vegan_options"
+            "kitchen_hot_meals", "kitchen_snacks", "kitchen_external_allowed", "vegan_options"
         ], isSingleSelect: false);
 
         AddTags(TagCategory.InfrastructureAndAmenities, [
@@ -89,11 +89,12 @@ public static class VenueContextSeeder
         ], isSingleSelect: false);
 
         AddTags(TagCategory.SmokingPolicy, [
-            "smoking_allowed_inside", "smoking_allowed_outside_only", "smoking_totally_forbidden", "smoking_dedicated_room_inside"
+            "smoking_allowed_inside", "smoking_allowed_outside_only", "smoking_totally_forbidden",
+            "smoking_dedicated_room_inside"
         ], isSingleSelect: true);
 
         AddTags(TagCategory.PriceLevel, [
-            "budget", "average", "premium"
+            "price_budget", "price_average", "price_premium"
         ], isSingleSelect: true);
 
         modelBuilder.Entity<Tag>().HasData(tags);

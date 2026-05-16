@@ -237,12 +237,12 @@ public class VenueContext : DbContext
             entity.ToTable("tags");
             entity.HasKey(t => t.Id);
             entity.Property(t => t.Id).ValueGeneratedNever();
-            
+
             entity.Property(t => t.Value)
                 .IsRequired()
                 .HasMaxLength(100);
             entity.HasIndex(t => t.Value).IsUnique();
-            
+
             entity.Property(t => t.Category)
                 .HasConversion<string>()
                 .IsRequired();
@@ -263,12 +263,12 @@ public class VenueContext : DbContext
         {
             entity.ToTable("venue_tags");
             entity.HasKey(vt => new { vt.VenueId, vt.TagId });
-            
+
             entity.HasOne(vt => vt.Venue)
                 .WithMany(v => v.VenueTags)
                 .HasForeignKey(vt => vt.VenueId)
                 .OnDelete(DeleteBehavior.Cascade);
-                
+
             entity.HasOne(vt => vt.Tag)
                 .WithMany()
                 .HasForeignKey(vt => vt.TagId)

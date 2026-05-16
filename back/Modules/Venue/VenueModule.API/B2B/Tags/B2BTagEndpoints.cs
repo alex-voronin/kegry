@@ -32,7 +32,7 @@ public class B2BTagEndpoints : IEndpoints
                 Category: g.Key.Category.ToString(),
                 IsSingleSelect: g.Key.IsSingleSelect,
                 Tags: g.OrderBy(t => t.SortOrder)
-                       .Select(t => new TagDto(Id: t.Id, Value:t.Value, ParentValue:t.Parent?.Value))
+                       .Select(t => new TagDto(Id: t.Id, Value: t.Value, ParentValue: t.Parent?.Value))
                        .ToArray()
             ))
             .ToArray();
