@@ -11,7 +11,7 @@ using VenueModule.Domain.Resources;
 
 namespace VenueModule.Domain.Services;
 
-public record CurrentAndNextLevelDiscount(int Discount, int? NextLevelDiscount);
+public record CurrentAndNextLevelDiscount(int? Discount, int? NextLevelDiscount, bool IsCustomDiscount);
 
 public record LoyaltyLevelWithDiscount(
     int UserLoyaltyLevel,
@@ -264,7 +264,10 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             var (currentLevelDiscount, nextLevelDiscount) = ComputeCurrentAndNextLevelDiscount(venue.Discounts,
                 dayOfWeek, currentLoyaltyLevel);
 
-            result[dayOfWeek] = new CurrentAndNextLevelDiscount(currentLevelDiscount ?? 0, nextLevelDiscount);
+            result[dayOfWeek] = new CurrentAndNextLevelDiscount(
+                Discount: currentLevelDiscount, 
+                NextLevelDiscount: nextLevelDiscount,
+                IsCustomDiscount: currentLevelDiscount == null);
         }
 
         return result;
