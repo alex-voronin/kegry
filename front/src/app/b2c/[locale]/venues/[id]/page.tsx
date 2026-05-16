@@ -161,11 +161,6 @@ export default function VenueDetailScreen() {
 
   const { company, venue, loyaltyLevel } = currentVenue;
 
-  const noDiscountsAvailable =
-    loyaltyLevel.discount === 0 && loyaltyLevel.nextLevelDiscount === null;
-  const isLoyaltyCardInteractive =
-    !loyaltyLevel.isCustomDiscount && !noDiscountsAvailable;
-
   return (
     <div className={styles.wrapper}>
       {/* Cover Image */}
@@ -252,12 +247,10 @@ export default function VenueDetailScreen() {
                 className={cn(
                   styles.field,
                   styles.loyaltyCard,
-                  isLoyaltyCardInteractive && styles.loyaltyCardInteractive
+                  styles.loyaltyCardInteractive,
                 )}
                 onClick={() => {
-                  if (isLoyaltyCardInteractive) {
-                    router.push(PAGE_ROUTES.VENUE_DISCOUNTS(venueId));
-                  }
+                  router.push(PAGE_ROUTES.VENUE_DISCOUNTS(venueId));
                 }}
               >
                 <div className={styles.loyaltyHeader}>
@@ -268,16 +261,17 @@ export default function VenueDetailScreen() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    {(loyaltyLevel.discount !== 0 || loyaltyLevel.isCustomDiscount) && (
+                    {(loyaltyLevel.discount !== 0 ||
+                      loyaltyLevel.isCustomDiscount) && (
                       <span className={styles.loyaltyDiscount}>
                         {loyaltyLevel.isCustomDiscount
                           ? t('offerAtVenue')
-                          : t('discount', { percent: loyaltyLevel.discount ?? 0 })}
+                          : t('discount', {
+                              percent: loyaltyLevel.discount ?? 0,
+                            })}
                       </span>
                     )}
-                    {isLoyaltyCardInteractive && (
-                      <ChevronRight size={24} className="text-primary" />
-                    )}
+                    <ChevronRight size={24} className="text-primary" />
                   </div>
                 </div>
                 {(loyaltyLevel.visitsUpperBound !== null ||
@@ -303,26 +297,36 @@ export default function VenueDetailScreen() {
                       <div className={styles.progressText}>
                         {loyaltyLevel.visitsUpperBound === null
                           ? t('maxLoyaltyLevelReached')
-                          : t('visits', {
-                              current:
-                                loyaltyLevel.visitsCount -
-                                loyaltyLevel.visitsLowerBound,
-                              total:
-                                loyaltyLevel.visitsUpperBound -
-                                loyaltyLevel.visitsLowerBound,
-                            })}
+                          : (() => {
+                              const visitsText = t('visits', {
+                                current:
+                                  loyaltyLevel.visitsCount -
+                                  loyaltyLevel.visitsLowerBound,
+                                total:
+                                  loyaltyLevel.visitsUpperBound -
+                                  loyaltyLevel.visitsLowerBound,
+                              });
+                              const nextLevelDiscount =
+                                loyaltyLevel.nextLevelDiscount;
+                              const showNextDiscount =
+                                nextLevelDiscount !== null &&
+                                nextLevelDiscount >
+                                  (loyaltyLevel.discount ?? 0);
+                              return showNextDiscount
+                                ? `${visitsText} → ${t('nextDiscountInline', { percent: nextLevelDiscount })}`
+                                : visitsText;
+                            })()}
                       </div>
-                      {!noDiscountsAvailable && (
-                        <div
-                          className="text-secondary cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsHelpDialogOpen(true);
-                          }}
-                        >
-                          <HelpCircle size={14} />
-                        </div>
-                      )}
+
+                      <div
+                        className="text-secondary cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsHelpDialogOpen(true);
+                        }}
+                      >
+                        <HelpCircle size={14} />
+                      </div>
                     </div>
                   </div>
                 )}

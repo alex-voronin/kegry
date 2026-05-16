@@ -556,6 +556,7 @@
       "maxDiscountLevelReached": "The maximum discount has been reached.",
       "maxLoyaltyLevelReached": "Max level reached",
       "visits": "{current}/{total} visits to next level",
+      "nextDiscountInline": "discount: {percent}%",
       "helpDialog": "This discount applies only to this venue and today. Tap the card to view daily discounts. Scan the QR code to increase the number of visits.",
       "helpDialogCustomDiscount": "You can find details about the offer or discount at the venue. Scan the QR code to increase your number of visits.",
       "ok": "OK",
