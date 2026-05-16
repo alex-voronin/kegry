@@ -3,6 +3,9 @@
     "errors": {
       "network": "Greška mreže. Molimo pokušajte ponovo."
     },
+    "toast": {
+      "linkCopied": "Link je kopiran u međuspremnik"
+    },
     "promoTypes": {
       "HappyHours": "Happy Hours",
       "TwoPlusOne": "2+1",
@@ -18,6 +21,11 @@
       "Friday": "Pet",
       "Saturday": "Sub",
       "Sunday": "Ned"
+    },
+    "inAppBrowser": {
+      "message": "Koristite ugrađeni pregledač u aplikaciji u kom geolokacija i obaveštenja možda neće raditi. Da biste ovo rešili, dodirnite ikonicu menija i izaberite \"Open in Browser\" ili kopirajte link ispod i zalepite ga u Chrome ili Safari.",
+      "copyLink": "Kopiraj link",
+      "dismiss": "Odbaci"
     },
     "saveChangesDialog": {
       "message": "Sačuvaj izmene?",

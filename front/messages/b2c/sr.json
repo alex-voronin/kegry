@@ -9,8 +9,13 @@
       "network": "Greška mreže. Molimo pokušaj ponovo."
     },
     "toast": {
-      "linkCopied": "Link kopiran u clipboard",
+      "linkCopied": "Link je kopiran u međuspremnik",
       "gettingLocation": "Tražimo tvoju lokaciju..."
+    },
+    "inAppBrowser": {
+      "message": "Koristite ugrađeni pregledač u aplikaciji u kom geolokacija i obaveštenja možda neće raditi. Da biste ovo rešili, dodirnite ikonicu menija i izaberite \"Open in Browser\" ili kopirajte link ispod i zalepite ga u Chrome ili Safari.",
+      "copyLink": "Kopiraj link",
+      "dismiss": "Odbaci"
     },
     "units": {
       "kilometers": "km",

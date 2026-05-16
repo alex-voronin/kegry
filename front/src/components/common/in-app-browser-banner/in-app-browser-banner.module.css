@@ -1,0 +1,50 @@
+@reference "../../../app/globals.css";
+
+.banner {
+  @apply flex flex-col gap-2 overflow-hidden px-4;
+  @apply bg-surface border-b border-hover;
+  @apply transition-[max-height,opacity,padding] duration-300 ease-[ease];
+  max-height: 0;
+  opacity: 0;
+}
+
+.visible {
+  max-height: 250px;
+  opacity: 1;
+  @apply py-3 px-4;
+}
+
+.exiting {
+  @apply px-4;
+  @apply transition-[max-height,opacity,padding] duration-200 ease-[ease];
+  max-height: 0;
+  opacity: 0;
+}
+
+.topRow {
+  @apply flex items-start gap-3;
+}
+
+.message {
+  @apply text-sm leading-[1.4] flex-1 min-w-0 break-words text-primary;
+}
+
+.dismissBtn {
+  @apply flex items-center justify-center shrink-0;
+  @apply border-none cursor-pointer bg-transparent p-0.5 text-secondary;
+}
+
+.copyBtn {
+  @apply flex items-center justify-center w-full h-9;
+  @apply border-none cursor-pointer rounded-[4px] bg-accent text-black;
+  @apply text-sm font-semibold font-sans whitespace-nowrap;
+  @apply transition-opacity duration-150;
+}
+
+.copyBtn:hover {
+  @apply opacity-90;
+}
+
+.copyBtn:active {
+  opacity: 1;
+}

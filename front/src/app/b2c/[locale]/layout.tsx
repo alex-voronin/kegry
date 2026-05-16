@@ -7,6 +7,7 @@ import { getMessages, getLocale } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import { ToastContainer } from 'react-toastify';
 import { BRAND_NAME } from '@/lib/constants';
+import { InAppBrowserBanner } from '@/components/common/in-app-browser-banner/in-app-browser-banner';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -91,6 +92,7 @@ export default async function RootLayout({
                 pauseOnFocusLoss
                 pauseOnHover
               />
+              <InAppBrowserBanner />
               {children}
             </main>
           </div>
