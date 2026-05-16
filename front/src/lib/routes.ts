@@ -88,6 +88,9 @@ export const API_ENDPOINTS = {
   HOBBIES: {
     LIST: '/api/v1/hobby',
   },
+  TAGS: {
+    LIST: '/api/v1/tags',
+  },
   FEED: {
     STATUS: '/api/v1/feed/status',
     LIST: '/api/v1/feed',

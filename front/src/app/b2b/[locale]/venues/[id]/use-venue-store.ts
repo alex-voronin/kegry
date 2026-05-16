@@ -5,6 +5,11 @@ import { API_ENDPOINTS } from '@/lib/routes';
 import { ApiResult } from '@/lib/api-types';
 import { PromoType } from '@/lib/promo-types';
 
+export interface TagDto {
+  id: string;
+  value: string;
+}
+
 export interface PromoDto {
   id: string;
   type: PromoType;
@@ -35,6 +40,7 @@ export interface VenueDto {
   pinCode: string;
   isGeneratedPinCode: boolean;
   isPinCheckInAllowed: boolean;
+  tags: TagDto[];
   promos: PromoDto[];
   discounts: DiscountDto[];
   loyaltyLevels: { id: number; visitsUpperBound: number; isActive: boolean }[];
@@ -89,6 +95,7 @@ export interface CreateVenueRequest {
   phoneNumber?: string;
   workingHours?: string;
   coverImageUrl?: string;
+  tagIds: string[];
 }
 
 export interface PatchVenueRequest {
@@ -104,6 +111,7 @@ export interface PatchVenueRequest {
   qrCode?: string;
   pinCode?: string;
   isPinCheckInAllowed?: boolean;
+  tagIds?: string[];
 }
 
 export const useVenueStore = create<VenueState>()((set, get) => ({
@@ -314,11 +322,7 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
   patchVenue: async (id: string, request: PatchVenueRequest) => {
     try {
       await apiClient.patch(API_ENDPOINTS.B2B.VENUES.DETAILS(id), request);
-      set((state) => ({
-        currentVenue: state.currentVenue
-          ? { ...state.currentVenue, ...request }
-          : state.currentVenue,
-      }));
+      await get().fetchVenue(id);
     } catch (error) {
       rethrowApiError(error, 'Failed to update venue');
     }

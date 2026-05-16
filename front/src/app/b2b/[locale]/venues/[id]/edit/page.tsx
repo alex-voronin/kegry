@@ -80,6 +80,7 @@ export default function VenueEditPage() {
     latitude: currentVenue?.latitude || 0,
     longitude: currentVenue?.longitude || 0,
     coverImageUrl: currentVenue?.coverImageUrl || null,
+    tagIds: currentVenue?.tags?.map(t => t.id) || [],
   }), [
     currentVenue?.address,
     currentVenue?.googleMapsUrl,
@@ -89,7 +90,8 @@ export default function VenueEditPage() {
     currentVenue?.workingHours,
     currentVenue?.latitude,
     currentVenue?.longitude,
-    currentVenue?.coverImageUrl
+    currentVenue?.coverImageUrl,
+    currentVenue?.tags
   ]);
 
   if (isLoading || !currentVenue) {
