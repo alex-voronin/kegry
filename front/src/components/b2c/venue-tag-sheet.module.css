@@ -121,7 +121,7 @@
 }
 
 .drinkChildrenContainer {
-  @apply flex flex-col gap-3;
+  @apply flex flex-col gap-6;
 }
 
 /* Tag chip overrides for category-aware colors */
@@ -147,70 +147,3 @@
   }
 }
 
-.spacer {
-  @apply w-8;
-}
-
-.title {
-  @apply absolute left-1/2 -translate-x-1/2 text-xl font-normal;
-}
-
-.closeButton {
-  @apply flex w-8 items-center justify-center px-2 py-1;
-}
-
-.dialogPanel {
-  @apply bg-surface flex max-h-[80dvh] w-full max-w-[500px] flex-col overflow-hidden rounded-t-[32px] shadow-lg transition-transform duration-300 ease-out;
-}
-
-.content {
-  @apply flex-1 overflow-y-auto px-4 pt-4 pb-8;
-}
-
-.skeletonContainer {
-  @apply flex flex-col gap-3;
-}
-
-.skeleton {
-  @apply bg-form-element h-12 animate-pulse rounded-xl;
-}
-
-.category {
-  @apply bg-form-element mb-3 rounded-xl p-3;
-}
-
-.categoryTitle {
-  @apply text-secondary mb-2 text-xs font-medium tracking-wide uppercase;
-}
-
-.accordionButton {
-  @apply hover:bg-hover bg-form-element flex w-full items-center justify-between rounded-xl px-3 py-3 transition-colors;
-}
-
-.accordionLabelContainer {
-  @apply flex items-center gap-2;
-}
-
-.accordionLabel {
-  @apply text-sm font-medium;
-}
-
-.accordionBadge {
-  @apply bg-active text-primary inline-flex h-5 min-w-5 items-center justify-center rounded-full border border-white/20 px-1.5 text-xs shadow-sm;
-}
-
-.accordionIcon {
-  @apply text-secondary transition-transform duration-200;
-}
-
-.accordionIconOpen {
-  @apply rotate-180;
-}
-
-.accordionContent {
-  @apply mt-2 ml-2 border-l border-white/10 pl-2;
-}
-
-.drinkChildrenContainer {
-  @apply flex flex-col gap-6;
-}

@@ -10,9 +10,6 @@ interface VenueFiltersState {
 
   setSearchQuery: (query: string) => void;
   setTagIds: (ids: string[]) => void;
-  clearSearch: () => void;
-  clearTags: () => void;
-  clearAll: () => void;
   setHasHydrated: (hydrated: boolean) => void;
 }
 
@@ -25,9 +22,6 @@ export const useVenueFiltersStore = create<VenueFiltersState>()(
 
       setSearchQuery: (query) => set({ searchQuery: query }),
       setTagIds: (ids) => set({ selectedTagIds: ids }),
-      clearSearch: () => set({ searchQuery: '' }),
-      clearTags: () => set({ selectedTagIds: [] }),
-      clearAll: () => set({ searchQuery: '', selectedTagIds: [] }),
       setHasHydrated: (hydrated) => set({ hasHydrated: hydrated }),
     }),
     {

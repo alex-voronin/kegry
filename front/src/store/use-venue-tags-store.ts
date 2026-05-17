@@ -105,6 +105,7 @@ export const useVenueTagsStore = create<VenueTagsState>()(
             isLoading: false,
           });
         } catch (error) {
+          fetchInitiated = false;
           set({ isLoading: false });
           rethrowApiError(error, 'Failed to fetch tags');
         }

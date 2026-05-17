@@ -196,14 +196,7 @@ export default function VenuesScreen() {
     window.addEventListener('focus', init);
     return () => window.removeEventListener('focus', init);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    limit,
-    venues.length,
-    selectedCity,
-    hasHydrated,
-    searchQuery,
-    selectedTagIds,
-  ]); // Fetch when limit is calculated, list is reset, city changes, filters change, or recovered
+  }, [limit, venues.length, selectedCity, hasHydrated]); // Fetch when limit is calculated, list is reset, city changes, or recovered
 
   useEffect(() => {
     if (

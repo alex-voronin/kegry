@@ -17,6 +17,7 @@ export function VenueFilters() {
 
   const [inputValue, setInputValue] = useState('');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [sheetKey, setSheetKey] = useState(0);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
@@ -82,7 +83,10 @@ export function VenueFilters() {
 
           <button
             type="button"
-            onClick={() => setIsSheetOpen(true)}
+            onClick={() => {
+              setSheetKey((k) => k + 1);
+              setIsSheetOpen(true);
+            }}
             className={styles.tagBtn}
           >
             <ListFilter size={18} className="text-foreground" />
@@ -128,6 +132,7 @@ export function VenueFilters() {
       </div>
 
       <VenueTagSheet
+        key={sheetKey}
         isOpen={isSheetOpen}
         onClose={() => setIsSheetOpen(false)}
       />

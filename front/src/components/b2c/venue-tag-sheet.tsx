@@ -43,13 +43,6 @@ export function VenueTagSheet({ isOpen, onClose }: VenueTagSheetProps) {
   const [showOptional, setShowOptional] = useState(false);
 
   useEffect(() => {
-    if (isOpen) {
-      setPendingTagIds(selectedTagIds);
-      setShowOptional(false);
-    }
-  }, [isOpen, selectedTagIds]);
-
-  useEffect(() => {
     if (hasHydrated) {
       fetchTags();
     }
@@ -179,11 +172,9 @@ export function VenueTagSheet({ isOpen, onClose }: VenueTagSheetProps) {
         onClose={handleClose}
       >
         <TransitionChild
-          enter="opacity-0"
           enterFrom="opacity-0"
           enterTo="opacity-100"
-          leave="opacity-100"
-          leaveFrom="opacity-0"
+          leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
           <DialogBackdrop className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-300" />

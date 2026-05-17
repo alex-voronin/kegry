@@ -1,7 +1,10 @@
 import type { AxiosRequestConfig } from 'axios';
 
 export function paramsForReq(
-  params: Record<string, unknown>,
+  params: Record<
+    string,
+    string | number | boolean | (string | number | boolean)[] | undefined | null
+  >,
 ): Pick<AxiosRequestConfig, 'params' | 'paramsSerializer'> {
   return {
     params,
