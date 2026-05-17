@@ -14,6 +14,9 @@ import { useCitySelection } from '@/hooks/use-city-selection';
 import { BELGRADE_COORDS } from '@/lib/cities';
 import { toast } from 'react-toastify';
 import apiClient from '@/lib/api-client';
+import { paramsForReq } from '@/lib/query-params';
+import { useVenueFiltersStore } from '@/store/use-venue-filters-store';
+import { VenueFilters } from '@/components/b2c/venue-filters';
 import styles from './map.module.css';
 import type { VenueMapItem } from './_components/venue-map-internal';
 import { MAP_VIEWPORT_KEY } from './_components/venue-map-internal';
@@ -40,6 +43,14 @@ export default function VenueMapPage() {
   const [venues, setVenues] = useState<VenueMapItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const lastBoundsRef = useRef<string | null>(null);
+  const currentBoundsRef = useRef<{
+    minLat: number;
+    maxLat: number;
+    minLng: number;
+    maxLng: number;
+  } | null>(null);
+
+  const { searchQuery, selectedTagIds } = useVenueFiltersStore();
 
   // Fresh open from venues list → clear saved viewport
   // Back from venue details → restore saved viewport
@@ -66,14 +77,24 @@ export default function VenueMapPage() {
     return null;
   });
 
-  const mapCenter = useMemo(() => ({
-    lat:
-      initialViewport?.lat ?? selectedCity?.latitude ?? BELGRADE_COORDS.latitude,
-    lng:
-      initialViewport?.lng ??
-      selectedCity?.longitude ??
-      BELGRADE_COORDS.longitude,
-  }), [initialViewport?.lat, initialViewport?.lng, selectedCity?.latitude, selectedCity?.longitude]);
+  const mapCenter = useMemo(
+    () => ({
+      lat:
+        initialViewport?.lat ??
+        selectedCity?.latitude ??
+        BELGRADE_COORDS.latitude,
+      lng:
+        initialViewport?.lng ??
+        selectedCity?.longitude ??
+        BELGRADE_COORDS.longitude,
+    }),
+    [
+      initialViewport?.lat,
+      initialViewport?.lng,
+      selectedCity?.latitude,
+      selectedCity?.longitude,
+    ],
+  );
 
   const initialZoom = initialViewport?.zoom ?? 12;
 
@@ -84,16 +105,21 @@ export default function VenueMapPage() {
       minLng: number;
       maxLng: number;
     }) => {
-      // Dedupe identical requests
-      const boundsKey = `${bounds.minLat.toFixed(5)},${bounds.maxLat.toFixed(5)},${bounds.minLng.toFixed(5)},${bounds.maxLng.toFixed(5)}`;
+      const filterKey = `${searchQuery}|${selectedTagIds.slice().sort().join(',')}`;
+      const boundsKey = `${bounds.minLat.toFixed(5)},${bounds.maxLat.toFixed(5)},${bounds.minLng.toFixed(5)},${bounds.maxLng.toFixed(5)}|${filterKey}`;
       if (lastBoundsRef.current === boundsKey) return;
       lastBoundsRef.current = boundsKey;
 
       setIsLoading(true);
       try {
-        const response = await apiClient.get(API_ENDPOINTS.VENUES.MAP, {
-          params: bounds,
-        });
+        const params: Record<string, unknown> = { ...bounds };
+        if (selectedTagIds?.length) params['Filter.TagIds'] = selectedTagIds;
+        if (searchQuery) params['Filter.CompanyName'] = searchQuery;
+
+        const response = await apiClient.get(
+          API_ENDPOINTS.VENUES.MAP,
+          paramsForReq(params),
+        );
         setVenues(response.data.result);
       } catch {
         toast.error(t('toast.loadFailed'));
@@ -101,7 +127,7 @@ export default function VenueMapPage() {
         setIsLoading(false);
       }
     },
-    [t],
+    [t, searchQuery, selectedTagIds],
   );
 
   const handleBoundsChange = useCallback(
@@ -111,10 +137,22 @@ export default function VenueMapPage() {
       minLng: number;
       maxLng: number;
     }) => {
+      currentBoundsRef.current = bounds;
       fetchMapVenues(bounds);
     },
     [fetchMapVenues],
   );
+
+  const fetchMapVenuesRef = useRef(fetchMapVenues);
+  fetchMapVenuesRef.current = fetchMapVenues;
+
+  // Re-fetch when filters change, using last known bounds
+  useEffect(() => {
+    if (currentBoundsRef.current) {
+      lastBoundsRef.current = null;
+      fetchMapVenuesRef.current(currentBoundsRef.current);
+    }
+  }, [searchQuery, selectedTagIds]);
 
   const handleVenueDetails = useCallback(
     (id: string) => {
@@ -149,6 +187,8 @@ export default function VenueMapPage() {
         }
         title={t('title')}
       />
+
+      <VenueFilters />
 
       <div className={styles.mapContainer}>
         <VenueMapInternal

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/routing';
 import Image from 'next/image';
@@ -12,6 +12,8 @@ import { ListItem } from '@/components/ui/list-item';
 import { useInView } from 'react-intersection-observer';
 import { useViewportItemCount } from '@/hooks/use-viewport-item-count';
 import { useVenuesStore, VenueListItemDto } from './use-venues-store';
+import { useVenueFiltersStore } from '@/store/use-venue-filters-store';
+import { VenueFilters } from '@/components/b2c/venue-filters';
 import { toast } from 'react-toastify';
 import { PAGE_ROUTES } from '@/lib/routes';
 import {
@@ -78,6 +80,7 @@ export default function VenuesScreen() {
   });
   const distanceUnits = useSettingsStore((state) => state.distanceUnits);
   const { safeBack } = useSafeBack();
+  const { searchQuery, selectedTagIds } = useVenueFiltersStore();
 
   const { ref: pageBottomRef, inView } = useInView({
     threshold: 0,
@@ -119,6 +122,19 @@ export default function VenuesScreen() {
     }
   }, [hasHydrated, isLocationDenied, selectedCity, setCity, tCities]);
 
+  const isFilterInitial = useRef(true);
+
+  // Re-fetch when filters change (skip initial mount — init effect handles that)
+  useEffect(() => {
+    if (isFilterInitial.current) {
+      isFilterInitial.current = false;
+      return;
+    }
+    reset();
+    loadData(0, selectedCity);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, selectedTagIds]);
+
   const loadData = async (offset: number, cityOverride?: City | null) => {
     setIsGettingLocation(true);
     const city = cityOverride !== undefined ? cityOverride : selectedCity;
@@ -137,7 +153,14 @@ export default function VenuesScreen() {
         lat = coords.latitude;
         lon = coords.longitude;
       }
-      await fetchVenues(lat, lon, offset, limit);
+      await fetchVenues(
+        lat,
+        lon,
+        offset,
+        limit,
+        selectedTagIds,
+        searchQuery || undefined,
+      );
     } catch (err: any) {
       if (err.code === 1) {
         // PERMISSION_DENIED
@@ -173,7 +196,14 @@ export default function VenuesScreen() {
     window.addEventListener('focus', init);
     return () => window.removeEventListener('focus', init);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [limit, venues.length, selectedCity, hasHydrated]); // Fetch when limit is calculated, list is reset, city changes, or recovered
+  }, [
+    limit,
+    venues.length,
+    selectedCity,
+    hasHydrated,
+    searchQuery,
+    selectedTagIds,
+  ]); // Fetch when limit is calculated, list is reset, city changes, filters change, or recovered
 
   useEffect(() => {
     if (
@@ -269,6 +299,8 @@ export default function VenuesScreen() {
         }
       />
 
+      <VenueFilters />
+
       <div className={styles.content}>
         {(isLoading || isGettingLocation) && venues.length === 0 ? (
           <div className={styles.emptyState}>
@@ -295,9 +327,17 @@ export default function VenuesScreen() {
               })}
             </span>
           </div>
-        ) : venues.length === 0 && !isLoading ? (
+        ) : venues.length === 0 &&
+          !isLoading &&
+          !(searchQuery || selectedTagIds.length > 0) ? (
           <div className={styles.emptyState}>
             <span className={styles.emptyText}>{t('noVenues')}</span>
+          </div>
+        ) : venues.length === 0 &&
+          !isLoading &&
+          (searchQuery || selectedTagIds.length > 0) ? (
+          <div className={styles.emptyState}>
+            <span className={styles.emptyText}>{t('noVenuesFiltered')}</span>
           </div>
         ) : (
           <div className={styles.venueList}>

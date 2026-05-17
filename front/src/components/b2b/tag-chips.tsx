@@ -10,6 +10,7 @@ interface TagChipsProps {
   selectedIds: string[];
   onToggle: (id: string) => void;
   className?: string;
+  category?: string;
 }
 
 export function TagChips({
@@ -17,6 +18,7 @@ export function TagChips({
   selectedIds,
   onToggle,
   className,
+  category,
 }: TagChipsProps) {
   return (
     <div className={cn('flex flex-wrap gap-2', className)}>
@@ -28,10 +30,14 @@ export function TagChips({
             type="button"
             onClick={() => onToggle(item.id)}
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm transition-colors',
-              isSelected
-                ? 'bg-active text-primary border-secondary border shadow-sm'
-                : 'border-secondary text-secondary hover:bg-hover border',
+              'tag-chip inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm transition-colors',
+              category
+                ? isSelected
+                  ? 'tag-chip--selected'
+                  : 'tag-chip--default'
+                : isSelected
+                  ? 'bg-active text-primary border-secondary border shadow-sm'
+                  : 'border-secondary text-secondary hover:bg-hover border',
             )}
           >
             {isSelected && (

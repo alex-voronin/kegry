@@ -1,0 +1,127 @@
+@reference "../../app/globals.css";
+
+/* Category theme colors — must match venue-tag-sheet.module.css */
+.chipCatDrinkCategory {
+  --chip-bg: rgba(134, 239, 172, 0.15);
+  --chip-border: rgba(134, 239, 172, 0.35);
+  --chip-text: #86efac;
+  --chip-remove: rgba(134, 239, 172, 0.6);
+}
+
+.chipCatPriceLevel {
+  --chip-bg: rgba(250, 204, 21, 0.15);
+  --chip-border: rgba(250, 204, 21, 0.35);
+  --chip-text: #facc15;
+  --chip-remove: rgba(250, 204, 21, 0.6);
+}
+
+.chipCatSpecialty {
+  --chip-bg: rgba(96, 165, 250, 0.15);
+  --chip-border: rgba(96, 165, 250, 0.35);
+  --chip-text: #60a5fa;
+  --chip-remove: rgba(96, 165, 250, 0.6);
+}
+
+.chipCatHospitalityAndRules {
+  --chip-bg: rgba(192, 132, 252, 0.15);
+  --chip-border: rgba(192, 132, 252, 0.35);
+  --chip-text: #c084fc;
+  --chip-remove: rgba(192, 132, 252, 0.6);
+}
+
+.chipCatSmokingPolicy {
+  --chip-bg: rgba(251, 146, 60, 0.15);
+  --chip-border: rgba(251, 146, 60, 0.35);
+  --chip-text: #fb923c;
+  --chip-remove: rgba(251, 146, 60, 0.6);
+}
+
+.chipCatFoodAndKitchen {
+  --chip-bg: rgba(45, 212, 191, 0.15);
+  --chip-border: rgba(45, 212, 191, 0.35);
+  --chip-text: #2dd4bf;
+  --chip-remove: rgba(45, 212, 191, 0.6);
+}
+
+.chipCatInfrastructureAndAmenities {
+  --chip-bg: rgba(244, 114, 182, 0.15);
+  --chip-border: rgba(244, 114, 182, 0.35);
+  --chip-text: #f472b6;
+  --chip-remove: rgba(244, 114, 182, 0.6);
+}
+
+.wrapper {
+  @apply top-0 z-10 flex flex-col gap-1 px-4 pt-2 pb-2;
+}
+
+.searchRow {
+  @apply flex items-center gap-2;
+}
+
+.searchInputContainer {
+  @apply bg-form-element flex flex-1 items-center gap-2 rounded-xl px-3 py-2;
+}
+
+.searchInput {
+  @apply flex-1 bg-transparent text-sm outline-none placeholder:text-zinc-500;
+}
+
+.clearBtn {
+  @apply text-secondary flex items-center justify-center p-1;
+}
+
+.tagBtn {
+  @apply bg-form-element relative flex items-center justify-center rounded-xl px-3 py-2 transition-colors hover:bg-white/10;
+}
+
+.tagBtnBadge {
+  @apply bg-active text-primary absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-semibold shadow-sm;
+}
+
+.chipsRow {
+  @apply flex flex-wrap items-center gap-1.5;
+}
+
+.chip {
+  @apply border-secondary text-secondary hover:bg-hover inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs transition-colors;
+}
+
+.chipSelected {
+  @apply bg-active text-primary border-secondary border;
+}
+
+/* Category-themed selected chip overrides */
+.chipSelected.chipCatDrinkCategory,
+.chipSelected.chipCatPriceLevel,
+.chipSelected.chipCatSpecialty,
+.chipSelected.chipCatHospitalityAndRules,
+.chipSelected.chipCatSmokingPolicy,
+.chipSelected.chipCatFoodAndKitchen,
+.chipSelected.chipCatInfrastructureAndAmenities {
+  background: var(--chip-bg);
+  color: var(--chip-text);
+  border-color: var(--chip-border);
+}
+
+.chipRemove {
+  @apply ml-0.5 flex items-center justify-center opacity-60 hover:opacity-100;
+}
+
+/* Category-themed remove button */
+.chipCatDrinkCategory .chipRemove,
+.chipCatPriceLevel .chipRemove,
+.chipCatSpecialty .chipRemove,
+.chipCatHospitalityAndRules .chipRemove,
+.chipCatSmokingPolicy .chipRemove,
+.chipCatFoodAndKitchen .chipRemove,
+.chipCatInfrastructureAndAmenities .chipRemove {
+  color: var(--chip-remove);
+}
+
+.chipLabel {
+  @apply max-w-[120px] truncate;
+}
+
+.clearAllBtn {
+  @apply text-primary ml-1 cursor-pointer text-xs underline-offset-2 hover:underline;
+}

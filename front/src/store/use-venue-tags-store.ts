@@ -33,6 +33,7 @@ interface VenueTagsState {
   fetchTags: () => Promise<void>;
   getGroupedTags: (category: TagCategoryDto) => TagGroup[];
   getTagLabel: (tagId: string) => string;
+  getTagCategory: (tagId: string) => string | null;
   setHasHydrated: (hydrated: boolean) => void;
   reset: () => void;
 }
@@ -148,6 +149,14 @@ export const useVenueTagsStore = create<VenueTagsState>()(
           if (tag) return tag.value;
         }
         return tagId;
+      },
+
+      getTagCategory: (tagId: string): string | null => {
+        const state = get();
+        for (const cat of state.categories) {
+          if (cat.tags.some((t) => t.id === tagId)) return cat.category;
+        }
+        return null;
       },
 
       setHasHydrated: (hydrated) => set({ hasHydrated: hydrated }),

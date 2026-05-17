@@ -26,7 +26,7 @@ export function B2CUserLoginAttemptDialog({
       : hostname;
 
     // Go to B2C root with current locale
-    let pathname = window.location.pathname;
+    const pathname = window.location.pathname;
     const localeMatch = pathname.match(/^\/(en|sr)/);
     const localePrefix = localeMatch ? localeMatch[0] : '';
 

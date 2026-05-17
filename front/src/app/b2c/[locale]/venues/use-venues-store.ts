@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS } from '@/lib/routes';
+import { paramsForReq } from '@/lib/query-params';
 
 export interface VenueListItemDto {
   id: string;
@@ -23,6 +24,8 @@ interface VenuesState {
     lon: number,
     offset: number,
     limit: number,
+    tagIds?: string[],
+    companyName?: string,
   ) => Promise<void>;
   reset: () => void;
 }
@@ -33,17 +36,22 @@ export const useVenuesStore = create<VenuesState>()((set) => ({
   isLoading: false,
   hasMore: true,
   hasError: false,
-  fetchVenues: async (lat, lon, offset, limit) => {
+  fetchVenues: async (lat, lon, offset, limit, tagIds?, companyName?) => {
     set({ isLoading: true, hasError: false });
     try {
-      const response = await apiClient.get(API_ENDPOINTS.VENUES.LIST, {
-        params: {
-          latitude: lat,
-          longitude: lon,
-          offset,
-          limit,
-        },
-      });
+      const params: Record<string, unknown> = {
+        latitude: lat,
+        longitude: lon,
+        offset,
+        limit,
+      };
+      if (tagIds?.length) params['Filter.TagIds'] = tagIds;
+      if (companyName) params['Filter.CompanyName'] = companyName;
+
+      const response = await apiClient.get(
+        API_ENDPOINTS.VENUES.LIST,
+        paramsForReq(params),
+      );
       const { data, totalCount } = response.data.result;
 
       set((state) => ({
