@@ -103,7 +103,7 @@ export const DiscountForm = forwardRef<DiscountFormHandle, DiscountFormProps>(fu
     resolver: zodResolver(schema) as any,
     defaultValues: {
       isCustomDiscount: initialValues?.percent === null,
-      percent: initialValues?.percent ?? 0,
+      percent: initialValues?.percent !== undefined ? initialValues.percent : 0,
       days: initialValues?.days ?? [],
       loyaltyLevelId: initialValues?.loyaltyLevelId ?? (loyaltyLevels.find(l => l.isActive)?.id ?? null),
     },

@@ -93,6 +93,7 @@ export default function VenueDiscountsPage() {
               const discountData = discounts[dayKey];
               const currentDiscount = discountData?.currentLevelDiscount ?? 0;
               const nextDiscount = discountData?.nextLevelDiscount;
+              const isCustomDiscount = discountData?.isCustomDiscount ?? false;
 
               return (
                 <div key={day} className={styles.field}>
@@ -101,15 +102,21 @@ export default function VenueDiscountsPage() {
                       {tCommon(`days.${day}`)}
                     </span>
                     <span className={styles.loyaltyDiscount}>
-                      {t('discount', { percent: currentDiscount })}
+                      {isCustomDiscount
+                        ? t('offerAtVenue')
+                        : t('discount', { percent: currentDiscount })}
                     </span>
                   </div>
 
-                  <div className={styles.progressText}>
-                    {nextDiscount != null
-                      ? t('nextDiscountLevelInfo', { percent: nextDiscount })
-                      : t('maxDiscountLevelReached')}
-                  </div>
+                  {!isCustomDiscount && (
+                    <div className={styles.progressText}>
+                      {nextDiscount != null
+                        ? t('nextDiscountLevelInfo', {
+                            percent: nextDiscount,
+                          })
+                        : t('maxDiscountLevelReached')}
+                    </div>
+                  )}
                 </div>
               );
             })}

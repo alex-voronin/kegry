@@ -1,7 +1,7 @@
 export const BRAND_NAME = 'Kegry';
 export const B2B_SUBDOMAIN = 'business.';
 
-export const FEED_VISITS_TO_SHOW_REFERRAL_PROMPT = 4;
+export const FEED_VISITS_TO_SHOW_REFERRAL_PROMPT = 8;
 
 export const AVATAR_MAX_SIZE_BYTES = 256 * 1024;
 export const AVATAR_MAX_LONG_SIDE = 512;

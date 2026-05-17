@@ -17,7 +17,7 @@
 }
 
 .placeholderText {
-  @apply text-sm text-gray-400;
+  @apply px-4 text-center text-sm whitespace-pre-line text-gray-400;
 }
 
 .loadingOverlay {

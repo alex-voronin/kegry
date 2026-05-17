@@ -193,8 +193,9 @@ public class B2CVenueEndpoints : IEndpoints
     {
         var discountToDto = (CurrentAndNextLevelDiscount? domainDiscount) =>
             new CurrentAndNextLevelDiscountDto(
-                CurrentLevelDiscount: domainDiscount?.Discount ?? 0,
-                NextLevelDiscount: domainDiscount?.NextLevelDiscount
+                CurrentLevelDiscount: domainDiscount?.Discount,
+                NextLevelDiscount: domainDiscount?.NextLevelDiscount,
+                IsCustomDiscount: domainDiscount?.IsCustomDiscount ?? false
             );
 
         var userId = user.GetId();

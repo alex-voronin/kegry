@@ -1,6 +1,6 @@
 namespace VenueModule.API.B2C.Dto;
 
-public record CurrentAndNextLevelDiscountDto(int CurrentLevelDiscount, int? NextLevelDiscount);
+public record CurrentAndNextLevelDiscountDto(int? CurrentLevelDiscount, int? NextLevelDiscount, bool IsCustomDiscount);
 
 public record GetDiscountsByWeekdayResponse
 (

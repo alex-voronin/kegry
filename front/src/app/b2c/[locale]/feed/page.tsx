@@ -202,7 +202,8 @@ export default function FeedScreen() {
   );
 
   const [isScannerOpen, setIsScannerOpen] = useState(false);
-  const [isFirstCheckInDialogOpen, setIsFirstCheckInDialogOpen] = useState(false);
+  const [isFirstCheckInDialogOpen, setIsFirstCheckInDialogOpen] =
+    useState(false);
 
   const handleQrScanClick = useCallback(() => {
     const hasSeenDialog = localStorage.getItem('has_seen_first_checkin_dialog');
@@ -307,7 +308,7 @@ export default function FeedScreen() {
         return;
       }
 
-      if (requiredAction === RequiredAction.OnboardingCompletion) {
+      if (requiredAction !== RequiredAction.None) {
         return;
       }
 
@@ -336,6 +337,12 @@ export default function FeedScreen() {
         if (locationResult === 'denied') {
           setIsLocationDenied(true);
           return;
+        } else if (locationResult === 'error') {
+          const { locationAllowed } = await checkPermissionStatus();
+          if (!locationAllowed) {
+            setIsLocationDenied(true);
+            return;
+          }
         }
         setIsLocationDenied(false);
 
@@ -530,6 +537,14 @@ export default function FeedScreen() {
   const handleProfileClick = () => {
     if (isInMeeting) {
       router.push(PAGE_ROUTES.CHAT);
+      return;
+    }
+    if (currentItem?.kind === 'npc') {
+      if (monolog) {
+        handleSkip();
+      } else {
+        handleInvite();
+      }
       return;
     }
     if (currentItem?.kind !== 'user') return;

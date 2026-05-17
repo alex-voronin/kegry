@@ -8,6 +8,7 @@ import { rethrowApiError } from '@/lib/api-error';
 export interface CurrentAndNextLevelDiscountDto {
   currentLevelDiscount: number;
   nextLevelDiscount: number | null;
+  isCustomDiscount: boolean;
 }
 
 export interface GetDiscountsByWeekdayResponse {

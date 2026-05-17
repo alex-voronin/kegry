@@ -9,8 +9,13 @@
       "network": "Greška mreže. Molimo pokušaj ponovo."
     },
     "toast": {
-      "linkCopied": "Link kopiran u clipboard",
+      "linkCopied": "Link je kopiran u međuspremnik",
       "gettingLocation": "Tražimo tvoju lokaciju..."
+    },
+    "inAppBrowser": {
+      "message": "Koristite ugrađeni pregledač u aplikaciji u kom geolokacija i obaveštenja možda neće raditi. Da biste ovo rešili, dodirnite ikonicu menija i izaberite \"Open in Browser\" ili kopirajte link ispod i zalepite ga u Chrome ili Safari.",
+      "copyLink": "Kopiraj link",
+      "dismiss": "Odbaci"
     },
     "units": {
       "kilometers": "km",
@@ -66,7 +71,7 @@
       },
       "loyalty": {
         "title": "Programi lojalnosti",
-        "description": "Naši partnerski lokali mogu nuditi programe lojalnosti s popustima kroz naš servis. Što češće posećuješ i prijavljuješ se u lokalu, više štediš! 😊\nUvek možeš proveriti trenutno dostupne popuste u svom profilu."
+        "description": "Naši partnerski lokali mogu nuditi programe lojalnosti s popustima kroz naš servis. Bilo da dolaziš sam ili sa prijateljima, što se češće prijavljuješ, više štediš! 😊 Uvek možeš proveriti trenutno dostupne popuste u svom profilu."
       },
       "contactUs": {
         "title": "Kontaktirajte nas",
@@ -196,7 +201,7 @@
       "continue": "Nastavi",
       "createProfile": "Kreiraj profil",
       "uploadCoverTitle": "Izaberi naslovnu sliku",
-      "selectCover": "Tapni da izabereš naslovnu sliku",
+      "selectCover": "Dodirni da izabereš naslovnu sliku.\nVidljivo je drugim korisnicima u njihovom feedu.",
       "creating": "Kreiranje profila...",
       "back": "Nazad",
       "legal": {
@@ -559,6 +564,7 @@
       "maxDiscountLevelReached": "Dostignuta je maksimalna vrednost popusta.",
       "maxLoyaltyLevelReached": "Dostignut je maksimalni nivo",
       "visits": "{current}/{total} poseta do sledećeg nivoa",
+      "nextDiscountInline": "popust: {percent}%",
       "helpDialog": "Ovaj popust važi samo za ovaj lokal i danas. Tapni na karticu da pogledaš dnevne popuste. Skeniraj QR kod da povećaš broj poseta.",
       "helpDialogCustomDiscount": "Detalje o ponudi ili popustu možeš pronaći u lokalu. Skeniraj QR kod da povećaš broj poseta.",
       "ok": "OK",
@@ -585,7 +591,7 @@
     "qr-code-reader": {
       "toast": {
         "invalidQr": "Neispravan QR kod",
-        "gettingLocation": "Tražimo tvoju preciznu lokaciju...",
+        "gettingLocation": "Tražimo tvoju lokaciju za prijavu...",
         "checkInFailed": "Prijava nije uspela. Molimo pokušaj ponovo.",
         "locationRequired": "Omogući pristup lokaciji za prijavu."
       }

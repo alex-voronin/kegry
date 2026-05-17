@@ -9,10 +9,7 @@ import { PAGE_ROUTES } from '@/lib/routes';
 import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import styles from './how-it-works.module.css';
 import { getOS } from '@/lib/os-utils';
-import { checkPermissionStatus } from '@/lib/permissions';
 import { useCallback } from 'react';
-import { ModalDialog } from '@/components/ui/modal-dialog';
-import { ButtonVariant } from '@/components/ui/button';
 import { SafariShareIcon } from '@/components/ui/safari-share-icon';
 
 const TOTAL_SLIDES = 3;
@@ -33,18 +30,16 @@ export default function HowItWorksPage() {
 
   const hasRequestedPrompts = useRef(false);
 
-  useEffect(() => {
-    setOs(getOS());
-  }, []);
-
-  useEffect(() => {
-    if (currentSlide === 2 && !hasRequestedPrompts.current) {
-      hasRequestedPrompts.current = true;
-      requestPrompts();
-    }
-  }, [currentSlide]);
-
   const requestPrompts = async () => {
+    // Trigger notification prompt
+    if ('Notification' in window) {
+      try {
+        await window.Notification.requestPermission();
+      } catch (e) {
+        console.warn('Notification request failed or denied', e);
+      }
+    }
+
     // Trigger location prompt
     try {
       await new Promise((resolve, reject) => {
@@ -55,16 +50,18 @@ export default function HowItWorksPage() {
     } catch (e) {
       console.warn('Location request failed or denied', e);
     }
-
-    // Trigger notification prompt
-    if ('Notification' in window) {
-      try {
-        await window.Notification.requestPermission();
-      } catch (e) {
-        console.warn('Notification request failed or denied', e);
-      }
-    }
   };
+
+  useEffect(() => {
+    setOs(getOS());
+  }, []);
+
+  useEffect(() => {
+    if (currentSlide === 2 && !hasRequestedPrompts.current) {
+      hasRequestedPrompts.current = true;
+      requestPrompts();
+    }
+  }, [currentSlide]);
 
   const finishOnboarding = useCallback(() => {
     setRequiredAction(RequiredAction.None);
@@ -257,7 +254,7 @@ export default function HowItWorksPage() {
                         ),
                       })}
                     </p>
-                    <p className="mt-4 text-sm text-secondary">
+                    <p className="text-secondary mt-4 text-sm">
                       {t('slidePWA.recommendBrowserReg')}
                     </p>
                   </div>
@@ -296,8 +293,6 @@ export default function HowItWorksPage() {
                 : t('next')}
           </Button>
         </div>
-
-
       </div>
     </div>
   );

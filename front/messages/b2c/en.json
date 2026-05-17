@@ -12,6 +12,11 @@
       "linkCopied": "Link copied to clipboard",
       "gettingLocation": "Finding your location..."
     },
+    "inAppBrowser": {
+      "message": "You are using an in-app browser where geolocation and notifications may not work. To fix this, tap the menu icon and select \"Open in Browser,\" or copy the link below and paste it in Chrome or Safari.",
+      "copyLink": "Copy Link",
+      "dismiss": "Dismiss"
+    },
     "units": {
       "kilometers": "km",
       "miles": "mi"
@@ -66,7 +71,7 @@
       },
       "loyalty": {
         "title": "Loyalty Programs",
-        "description": "Our partner venues can offer loyalty programs with discounts through our service. The more often you visit and check in at venues, the more you save! 😊\nYou can always check the currently available discounts in your profile."
+        "description": "Our partner venues can offer loyalty programs and discounts through our service. Whether you visit alone or with friends, the more often you check in, the more you save! 😊 All available discounts are always visible in your profile."
       },
       "contactUs": {
         "title": "Contact Us",
@@ -196,7 +201,7 @@
       "continue": "Continue",
       "createProfile": "Create profile",
       "uploadCoverTitle": "Choose your cover",
-      "selectCover": "Tap to select cover image",
+      "selectCover": "Tap to select cover image.\nIt's visible to other users in their feed.",
       "creating": "Creating profile...",
       "back": "Back",
       "legal": {
@@ -559,6 +564,7 @@
       "maxDiscountLevelReached": "The maximum discount has been reached.",
       "maxLoyaltyLevelReached": "Max level reached",
       "visits": "{current}/{total} visits to next level",
+      "nextDiscountInline": "discount: {percent}%",
       "helpDialog": "This discount applies only to this venue and today. Tap the card to view daily discounts. Scan the QR code to increase the number of visits.",
       "helpDialogCustomDiscount": "You can find details about the offer or discount at the venue. Scan the QR code to increase your number of visits.",
       "ok": "OK",
@@ -585,7 +591,7 @@
     "qr-code-reader": {
       "toast": {
         "invalidQr": "Invalid QR code",
-        "gettingLocation": "Finding your precise location...",
+        "gettingLocation": "Finding your location for check-in...",
         "checkInFailed": "Check-in failed. Please try again.",
         "locationRequired": "Please enable location access to check in."
       }

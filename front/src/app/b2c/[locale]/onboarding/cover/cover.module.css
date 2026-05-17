@@ -9,7 +9,7 @@
 }
 
 .contentLayer {
-  @apply pointer-events-none relative z-10 flex h-full w-full flex-col justify-between p-4;
+  @apply pointer-events-none relative z-10 flex h-full w-full flex-col justify-between;
 }
 
 /* Allow pointer events on interactive elements specifically */
@@ -30,7 +30,7 @@
 }
 
 .footer {
-  @apply mb-6 flex w-full flex-col items-center gap-4;
+  @apply mb-6 flex w-full flex-col items-center gap-4 px-4;
 }
 
 .createProfileButton {
