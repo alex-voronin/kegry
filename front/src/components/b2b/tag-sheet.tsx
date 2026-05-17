@@ -43,7 +43,7 @@ export function TagSheet({
 
   return (
     <Transition show={isOpen}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+      <Dialog as="div" className="relative z-50" open={isOpen} onClose={onClose}>
         <TransitionChild
           enter="opacity-0"
           enterFrom="opacity-0"
