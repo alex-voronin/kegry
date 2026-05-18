@@ -1,11 +1,15 @@
 'use client';
 
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { X } from 'lucide-react';
 import { Scanner } from '@yudiel/react-qr-scanner';
-import type { IDetectedBarcode } from '@yudiel/react-qr-scanner';
+import type {
+  IDetectedBarcode,
+  IScannerError,
+  IScannerHandle,
+} from '@yudiel/react-qr-scanner';
 import { checkPermissionStatus } from '@/lib/permissions';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from './qr-scanner-popup.module.css';
@@ -26,6 +30,7 @@ export function QrScannerPopup({
   const t = useTranslations('components.qrScannerPopup');
   const [cameraError, setCameraError] = useState(false);
   const [isLocationAllowed, setIsLocationAllowed] = useState(true);
+  const scannerRef = useRef<IScannerHandle>(null);
 
   useEffect(() => {
     if (isOpen && checkLocation) {
@@ -36,6 +41,32 @@ export function QrScannerPopup({
       setIsLocationAllowed(true);
     }
   }, [isOpen, checkLocation]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const video = scannerRef.current?.getVideoElement();
+    if (!video) return;
+
+    const applyZoom = () => {
+      const stream = video.srcObject as MediaStream | null;
+      if (!stream) return;
+      const track = stream.getVideoTracks()[0];
+      if ((track?.getCapabilities() as Record<string, unknown>)?.zoom) {
+        track
+          .applyConstraints({ advanced: [{ zoom: 1.8 }] } as unknown as MediaTrackConstraints)
+          .catch(() => {});
+      }
+    };
+
+    video.addEventListener('loadedmetadata', applyZoom);
+    video.addEventListener('playing', applyZoom);
+
+    return () => {
+      video.removeEventListener('loadedmetadata', applyZoom);
+      video.removeEventListener('playing', applyZoom);
+    };
+  }, [isOpen]);
 
   const handleScan = useCallback(
     (detectedCodes: IDetectedBarcode[]) => {
@@ -92,21 +123,23 @@ export function QrScannerPopup({
         </div>
         <div className={styles.scannerWrapper}>
           <Scanner
+            ref={scannerRef}
             components={{
               torch: true,
               finder: true,
+              zoom: true,
             }}
             onScan={handleScan}
             onError={(err) => {
-              const name = (err as Error)?.name ?? '';
-              if (
-                name === 'NotAllowedError' ||
-                name === 'PermissionDeniedError'
-              ) {
+              if ((err as IScannerError).kind === 'permission-denied') {
                 setCameraError(true);
               }
             }}
-            constraints={{ facingMode: 'environment' }}
+            constraints={{
+              facingMode: 'environment',
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
+            }}
             formats={['qr_code']}
             scanDelay={300}
             sound={false}
