@@ -237,6 +237,7 @@ export default function AdvancedSettingsPage() {
         onClose={() => setIsScannerOpen(false)}
         onScan={handleScan}
         checkLocation={false}
+        showHelpBanner={false}
       />
 
       <ModalDialog

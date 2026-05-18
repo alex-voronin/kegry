@@ -19,6 +19,7 @@ interface QrScannerPopupProps {
   onClose: () => void;
   onScan: (url: string) => void;
   checkLocation?: boolean;
+  showHelpBanner?: boolean;
 }
 
 export function QrScannerPopup({
@@ -26,11 +27,13 @@ export function QrScannerPopup({
   onClose,
   onScan,
   checkLocation = false,
+  showHelpBanner = true,
 }: QrScannerPopupProps) {
   const t = useTranslations('components.qrScannerPopup');
   const [cameraError, setCameraError] = useState(false);
   const [isLocationAllowed, setIsLocationAllowed] = useState(true);
   const scannerRef = useRef<IScannerHandle>(null);
+  const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
     if (isOpen && checkLocation) {
@@ -66,6 +69,16 @@ export function QrScannerPopup({
       video.removeEventListener('loadedmetadata', applyZoom);
       video.removeEventListener('playing', applyZoom);
     };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setShowBanner(false);
+      return;
+    }
+
+    const id = setTimeout(() => setShowBanner(true), 8000);
+    return () => clearTimeout(id);
   }, [isOpen]);
 
   const handleScan = useCallback(
@@ -145,6 +158,9 @@ export function QrScannerPopup({
             sound={false}
           />
         </div>
+        {showHelpBanner && showBanner && (
+          <p className={styles.banner}>{t('helpBanner')}</p>
+        )}
       </div>
     </div>
   );

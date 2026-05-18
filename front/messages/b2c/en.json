@@ -627,7 +627,8 @@
     "qrScannerPopup": {
       "title": "Scan QR to check-in",
       "cameraDenied": "Camera permission denied. Allow access in browser settings or scan with your system QR reader.",
-      "locationDenied": "Location access is required for scanning. Please enable location in your browser settings. <link>View instructions</link>"
+      "locationDenied": "Location access is required for scanning. Please enable location in your browser settings. <link>View instructions</link>",
+      "helpBanner": "Having trouble? Try your phone’s default camera app."
     },
     "profile-sections": {
       "name": {
