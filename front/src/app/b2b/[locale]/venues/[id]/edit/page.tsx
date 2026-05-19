@@ -12,7 +12,11 @@ import { ModalDialog } from '@/components/ui/modal-dialog';
 import { useVenueStore } from '../use-venue-store';
 import { API_ENDPOINTS, PAGE_ROUTES } from '@/lib/routes';
 import { uploadImage } from '@/lib/image-utils';
-import { VenueForm, VenueFormValues, VenueFormHandle } from '@/components/b2b/venue-form';
+import {
+  VenueForm,
+  VenueFormValues,
+  VenueFormHandle,
+} from '@/components/b2b/venue-form';
 
 export default function VenueEditPage() {
   const t = useTranslations('screens.editVenue');
@@ -46,7 +50,10 @@ export default function VenueEditPage() {
     }
   };
 
-  const handleSubmit = async (values: VenueFormValues, coverBlob: Blob | null) => {
+  const handleSubmit = async (
+    values: VenueFormValues,
+    coverBlob: Blob | null,
+  ) => {
     setIsSubmitting(true);
     try {
       let coverImageUrl: string | undefined;
@@ -70,29 +77,32 @@ export default function VenueEditPage() {
     }
   };
 
-  const initialValues = useMemo(() => ({
-    address: currentVenue?.address || '',
-    googleMapsUrl: currentVenue?.googleMapsUrl || '',
-    websiteUrl: currentVenue?.websiteUrl || '',
-    instagramUrl: currentVenue?.instagramUrl || '',
-    phoneNumber: currentVenue?.phoneNumber || '',
-    workingHours: currentVenue?.workingHours || '',
-    latitude: currentVenue?.latitude || 0,
-    longitude: currentVenue?.longitude || 0,
-    coverImageUrl: currentVenue?.coverImageUrl || null,
-    tagIds: currentVenue?.tags?.map(t => t.id) || [],
-  }), [
-    currentVenue?.address,
-    currentVenue?.googleMapsUrl,
-    currentVenue?.websiteUrl,
-    currentVenue?.instagramUrl,
-    currentVenue?.phoneNumber,
-    currentVenue?.workingHours,
-    currentVenue?.latitude,
-    currentVenue?.longitude,
-    currentVenue?.coverImageUrl,
-    currentVenue?.tags
-  ]);
+  const initialValues = useMemo(
+    () => ({
+      address: currentVenue?.address || '',
+      googleMapsUrl: currentVenue?.googleMapsUrl || '',
+      websiteUrl: currentVenue?.websiteUrl || '',
+      instagramUrl: currentVenue?.instagramUrl || '',
+      phoneNumber: currentVenue?.phoneNumber || '',
+      workingHours: currentVenue?.workingHours || '',
+      latitude: currentVenue?.latitude || 0,
+      longitude: currentVenue?.longitude || 0,
+      coverImageUrl: currentVenue?.coverImageUrl || null,
+      tagIds: currentVenue?.tags?.map((t) => t.id) || [],
+    }),
+    [
+      currentVenue?.address,
+      currentVenue?.googleMapsUrl,
+      currentVenue?.websiteUrl,
+      currentVenue?.instagramUrl,
+      currentVenue?.phoneNumber,
+      currentVenue?.workingHours,
+      currentVenue?.latitude,
+      currentVenue?.longitude,
+      currentVenue?.coverImageUrl,
+      currentVenue?.tags,
+    ],
+  );
 
   if (isLoading || !currentVenue) {
     return (

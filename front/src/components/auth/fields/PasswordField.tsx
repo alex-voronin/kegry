@@ -45,7 +45,7 @@ export function PasswordField({
         {...inputProps}
       />
       {extra ? (
-        <div className="absolute top-1/2 right-0 -translate-y-1/2 flex items-center justify-end gap-2 pr-2">
+        <div className="absolute top-1/2 right-0 flex -translate-y-1/2 items-center justify-end gap-2 pr-2">
           <button
             type="button"
             className={eyeButtonClassName}
@@ -72,5 +72,3 @@ export function PasswordField({
     </>
   );
 }
-
-

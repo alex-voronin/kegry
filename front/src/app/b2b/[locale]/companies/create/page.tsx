@@ -23,7 +23,10 @@ export default function CompanyCreatePage() {
     safeBack(PAGE_ROUTES.B2B.COMPANIES);
   };
 
-  const handleSubmit = async (values: CompanyFormValues, avatarBlob: Blob | null) => {
+  const handleSubmit = async (
+    values: CompanyFormValues,
+    avatarBlob: Blob | null,
+  ) => {
     if (!avatarBlob) return; // Guaranteed by requireAvatar=true
 
     setIsSubmitting(true);

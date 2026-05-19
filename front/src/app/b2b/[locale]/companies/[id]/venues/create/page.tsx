@@ -26,7 +26,10 @@ export default function VenueCreatePage() {
     safeBack(PAGE_ROUTES.B2B.COMPANIES_DETAIL(companyId));
   };
 
-  const handleSubmit = async (values: VenueFormValues, coverBlob: Blob | null) => {
+  const handleSubmit = async (
+    values: VenueFormValues,
+    coverBlob: Blob | null,
+  ) => {
     if (!coverBlob) return; // VenueForm ensures this is present if requireCover=true
 
     setIsSubmitting(true);

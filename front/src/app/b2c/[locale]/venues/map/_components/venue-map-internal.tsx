@@ -77,7 +77,11 @@ function BoundsWatcher({
         // Persist viewport for back-navigation
         sessionStorage.setItem(
           MAP_VIEWPORT_KEY,
-          JSON.stringify({ lat: center.lat, lng: center.lng, zoom: map.getZoom() }),
+          JSON.stringify({
+            lat: center.lat,
+            lng: center.lng,
+            zoom: map.getZoom(),
+          }),
         );
         onBoundsChangeRef.current({
           minLat: bounds.getSouth(),
@@ -185,7 +189,7 @@ const MemoizedMarker = memo(
   },
   (prevProps, nextProps) =>
     prevProps.venue.id === nextProps.venue.id &&
-    prevProps.detailsLabel === nextProps.detailsLabel
+    prevProps.detailsLabel === nextProps.detailsLabel,
 );
 
 const LOCATE_ZOOM = 15;

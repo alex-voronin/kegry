@@ -273,7 +273,10 @@ export const useAuthStore = create<AuthState>()(
 
       logout: async (deviceId?: string) => {
         try {
-          await authClient.post(API_ENDPOINTS.AUTH.LOGOUT, deviceId ? { deviceId } : {});
+          await authClient.post(
+            API_ENDPOINTS.AUTH.LOGOUT,
+            deviceId ? { deviceId } : {},
+          );
         } finally {
           if (typeof window === 'undefined') return;
           resetAllStores();

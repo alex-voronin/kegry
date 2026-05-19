@@ -178,7 +178,9 @@ export default function LoyaltyLevelEditPage() {
         <div className="flex-1 overflow-y-auto py-4 sm:px-4">
           <div className="flex flex-col gap-4">
             <div className={stylesCommon.sectionContainer}>
-              <FormSectionTitle className="px-4 sm:px-0">{t('isActive')}</FormSectionTitle>
+              <FormSectionTitle className="px-4 sm:px-0">
+                {t('isActive')}
+              </FormSectionTitle>
               <div className="bg-form-element flex h-[44px] items-center justify-between rounded-none px-4 sm:rounded-xl">
                 <span className="text-secondary text-sm">
                   {t('loyaltyLevelItemTitle', { level: level.id })}
@@ -194,7 +196,9 @@ export default function LoyaltyLevelEditPage() {
             </div>
 
             <div className={stylesCommon.sectionContainer}>
-              <FormSectionTitle className="px-4 sm:px-0">{t('visitsUpperBound')}</FormSectionTitle>
+              <FormSectionTitle className="px-4 sm:px-0">
+                {t('visitsUpperBound')}
+              </FormSectionTitle>
               <Input
                 type="number"
                 {...register('visitsUpperBound', { valueAsNumber: true })}

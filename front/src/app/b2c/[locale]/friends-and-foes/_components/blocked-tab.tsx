@@ -51,7 +51,13 @@ export function BlockedTab({ onSelectUser }: BlockedTabProps) {
   ]);
 
   useEffect(() => {
-    if (inView && hasMore && !isLoading && !hasError && blockedUsers.length > 0) {
+    if (
+      inView &&
+      hasMore &&
+      !isLoading &&
+      !hasError &&
+      blockedUsers.length > 0
+    ) {
       const loadNextPage = async () => {
         try {
           await fetchBlockedUsers(blockedUsers.length, limit);

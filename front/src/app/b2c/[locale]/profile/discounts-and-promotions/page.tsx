@@ -59,7 +59,6 @@ export default function DiscountsAndPromotionsScreen() {
     }
   }, [hasHydrated, isLocationDenied, selectedCity, handleCityChange, tCities]);
 
-
   const renderTabContent = () => {
     if (!hasHydrated) return null;
 

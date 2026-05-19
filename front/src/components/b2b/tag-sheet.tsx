@@ -9,7 +9,10 @@ import {
 } from '@headlessui/react';
 
 import { useTranslations } from 'next-intl';
-import { TagCategoryDto, useVenueTagsStore } from '@/store/use-venue-tags-store';
+import {
+  TagCategoryDto,
+  useVenueTagsStore,
+} from '@/store/use-venue-tags-store';
 import { TagChips } from './tag-chips';
 import { Header } from '@/components/ui/header';
 
@@ -43,7 +46,12 @@ export function TagSheet({
 
   return (
     <Transition show={isOpen}>
-      <Dialog as="div" className="relative z-50" open={isOpen} onClose={onClose}>
+      <Dialog
+        as="div"
+        className="relative z-50"
+        open={isOpen}
+        onClose={onClose}
+      >
         <TransitionChild
           enter="opacity-0"
           enterFrom="opacity-0"
@@ -65,39 +73,39 @@ export function TagSheet({
             leaveTo="translate-y-full"
           >
             <DialogPanel className="bg-form-element flex max-h-[80vh] w-full max-w-[500px] flex-col overflow-hidden rounded-t-[32px] shadow-lg transition-transform duration-300 ease-out">
-                <Header
-                  title={categoryTitle}
-                  right={
-                    <button
-                      type="button"
-                      onClick={onClose}
-                      className="flex items-center justify-center px-2 py-1"
-                      aria-label="Close"
+              <Header
+                title={categoryTitle}
+                right={
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="flex items-center justify-center px-2 py-1"
+                    aria-label="Close"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     >
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                      </svg>
-                    </button>
-                  }
-                />
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+                }
+              />
 
-                <div className="flex-1 overflow-y-auto px-4 pb-8 pt-4">
-                  {hasGroups ? (
+              <div className="flex-1 overflow-y-auto px-4 pt-4 pb-8">
+                {hasGroups ? (
                   <div className="flex flex-col gap-6">
                     {groups.map((group, idx) => (
                       <div key={idx}>
                         {group.parent && (
-                          <p className="text-secondary mb-2 text-xs font-medium uppercase tracking-wide">
+                          <p className="text-secondary mb-2 text-xs font-medium tracking-wide uppercase">
                             {tagLabel(group.parent.value)}
                           </p>
                         )}

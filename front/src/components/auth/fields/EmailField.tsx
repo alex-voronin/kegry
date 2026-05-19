@@ -5,7 +5,10 @@ export interface EmailFieldProps {
   placeholder: string;
   disabled?: boolean;
   className?: string;
-  inputProps?: Omit<React.ComponentProps<typeof Input>, 'type' | 'placeholder' | 'disabled' | 'className'>;
+  inputProps?: Omit<
+    React.ComponentProps<typeof Input>,
+    'type' | 'placeholder' | 'disabled' | 'className'
+  >;
 }
 
 export function EmailField({
@@ -24,5 +27,3 @@ export function EmailField({
     />
   );
 }
-
-

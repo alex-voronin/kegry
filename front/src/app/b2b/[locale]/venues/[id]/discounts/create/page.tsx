@@ -19,7 +19,8 @@ export default function CreateDiscountPage() {
   const venueId = params.id as string;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { currentVenue, fetchVenue, createDiscount, isLoading } = useVenueStore();
+  const { currentVenue, fetchVenue, createDiscount, isLoading } =
+    useVenueStore();
   const { safeBack } = useSafeBack();
 
   useEffect(() => {
@@ -35,7 +36,12 @@ export default function CreateDiscountPage() {
   }) => {
     setIsSubmitting(true);
     try {
-      await createDiscount(venueId, values.percent, values.days, values.loyaltyLevelId);
+      await createDiscount(
+        venueId,
+        values.percent,
+        values.days,
+        values.loyaltyLevelId,
+      );
       safeBack(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId));
     } catch (err: any) {
       toast.error(err.message || t('toast.createFailed'));
@@ -46,7 +52,7 @@ export default function CreateDiscountPage() {
 
   if (isLoading || !currentVenue) {
     return (
-      <div className="flex flex-1 items-center justify-center h-screen bg-background">
+      <div className="bg-background flex h-screen flex-1 items-center justify-center">
         <Spinner />
       </div>
     );

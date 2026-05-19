@@ -36,7 +36,9 @@ let activeRequest: Promise<LocationResult> | null = null;
  * Requests location and sends to server if rate limit allows.
  * Returns a promise with the result status.
  */
-export function SendLocationWithRateLimit(timeout: number = 15000): Promise<LocationResult> {
+export function SendLocationWithRateLimit(
+  timeout: number = 15000,
+): Promise<LocationResult> {
   if (activeRequest) {
     return activeRequest.finally(() => {
       activeRequest = null;

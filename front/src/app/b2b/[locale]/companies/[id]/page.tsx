@@ -209,13 +209,15 @@ export default function CompanyProfilePage() {
               className={styles.accordionTrigger}
             >
               <div className={styles.accordionTitle}>
-                <span className={styles.accordionTitleText}>{t('loyaltyLevelsTitle')}</span>
+                <span className={styles.accordionTitleText}>
+                  {t('loyaltyLevelsTitle')}
+                </span>
                 {(() => {
-                  const activeCount = selectedCompany.loyaltyLevels.filter((l) => l.isActive).length;
+                  const activeCount = selectedCompany.loyaltyLevels.filter(
+                    (l) => l.isActive,
+                  ).length;
                   return activeCount > 0 ? (
-                    <span className={styles.badge}>
-                      {activeCount}
-                    </span>
+                    <span className={styles.badge}>{activeCount}</span>
                   ) : null;
                 })()}
               </div>
@@ -245,7 +247,9 @@ export default function CompanyProfilePage() {
                       key={level.id}
                       className="cursor-pointer"
                       onClick={() => handleLoyaltyLevelClick(level.id)}
-                      avatarAlt={t('loyaltyLevelItemTitle', { level: level.id })}
+                      avatarAlt={t('loyaltyLevelItemTitle', {
+                        level: level.id,
+                      })}
                       title={t('loyaltyLevelItemTitle', { level: level.id })}
                       subtitle={t('loyaltyLevelSubtitle', {
                         visitsUpperBound: level.visitsUpperBound,
@@ -293,7 +297,9 @@ export default function CompanyProfilePage() {
                     }
                     imageAlt={venue.address}
                     title={venue.address}
-                    badge={venue.isPinCheckInAllowed ? venue.pinCode : undefined}
+                    badge={
+                      venue.isPinCheckInAllowed ? venue.pinCode : undefined
+                    }
                     dimmed={!venue.isVerified}
                     rightEl={
                       <ChevronRight size={24} className="text-primary" />

@@ -9,7 +9,10 @@ import { ModalDialog } from '@/components/ui/modal-dialog';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { useVenueStore } from '../../../use-venue-store';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { DiscountForm, DiscountFormHandle } from '../../_components/discount-form';
+import {
+  DiscountForm,
+  DiscountFormHandle,
+} from '../../_components/discount-form';
 import { toast } from 'react-toastify';
 import styles from '../../_components/discount-form.module.css';
 import { Spinner } from '@/components/ui/spinner';
@@ -25,7 +28,8 @@ export default function EditDiscountPage() {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const formRef = useRef<DiscountFormHandle>(null);
-  const { currentVenue, fetchVenue, updateDiscount, isLoading } = useVenueStore();
+  const { currentVenue, fetchVenue, updateDiscount, isLoading } =
+    useVenueStore();
   const { safeBack } = useSafeBack();
 
   useEffect(() => {
@@ -72,7 +76,7 @@ export default function EditDiscountPage() {
 
   if (isLoading || !currentVenue || !discount) {
     return (
-      <div className="flex flex-1 items-center justify-center h-screen bg-background">
+      <div className="bg-background flex h-screen flex-1 items-center justify-center">
         <Spinner />
       </div>
     );

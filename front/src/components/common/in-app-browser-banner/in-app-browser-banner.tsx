@@ -76,11 +76,7 @@ export function InAppBrowserBanner() {
           <X size={20} />
         </button>
       </div>
-      <button
-        type="button"
-        className={styles.copyBtn}
-        onClick={handleCopy}
-      >
+      <button type="button" className={styles.copyBtn} onClick={handleCopy}>
         {t('inAppBrowser.copyLink')}
       </button>
     </div>

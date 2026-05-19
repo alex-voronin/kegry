@@ -46,7 +46,9 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   serverSettings: null,
   isLoading: false,
 
-  fetchSettings: async (fetchType: SettingsFetchType = SettingsFetchType.All) => {
+  fetchSettings: async (
+    fetchType: SettingsFetchType = SettingsFetchType.All,
+  ) => {
     set({ isLoading: true });
     try {
       const fetchFeed = fetchType === SettingsFetchType.All;

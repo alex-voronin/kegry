@@ -54,7 +54,11 @@ interface VenueState {
   currentVenue: VenueDto | null;
   isLoading: boolean;
   fetchVenue: (id: string) => Promise<void>;
-  createPromotion: (venueId: string, type: PromoType, body: string) => Promise<void>;
+  createPromotion: (
+    venueId: string,
+    type: PromoType,
+    body: string,
+  ) => Promise<void>;
   updatePromotion: (
     venueId: string,
     promoId: string,
@@ -156,7 +160,12 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
       rethrowApiError(error, 'Failed to create promotion');
     }
   },
-  updatePromotion: async (venueId: string, promoId: string, type: PromoType, body: string) => {
+  updatePromotion: async (
+    venueId: string,
+    promoId: string,
+    type: PromoType,
+    body: string,
+  ) => {
     const updatePromoInStore = (
       venue: VenueDto,
       promoId: string,

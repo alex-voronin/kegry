@@ -9,7 +9,10 @@ import { ModalDialog } from '@/components/ui/modal-dialog';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { useVenueStore } from '../../../use-venue-store';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { PromotionForm, PromotionFormHandle } from '../../_components/promotion-form';
+import {
+  PromotionForm,
+  PromotionFormHandle,
+} from '../../_components/promotion-form';
 import { toast } from 'react-toastify';
 import styles from '../../_components/promotion-form.module.css';
 import { PromoType } from '@/lib/promo-types';

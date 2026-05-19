@@ -13,5 +13,3 @@ export function createRegisterSchema(t: TFunction) {
       path: ['confirmPassword'],
     });
 }
-
-

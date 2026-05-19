@@ -92,7 +92,10 @@ export const AvatarSection = ({
         imageSrc={imageToCropSrc}
         onCropComplete={handleCrop}
         cropShape="round"
-        outputSize={{ width: AVATAR_MAX_LONG_SIDE, height: AVATAR_MAX_LONG_SIDE }}
+        outputSize={{
+          width: AVATAR_MAX_LONG_SIDE,
+          height: AVATAR_MAX_LONG_SIDE,
+        }}
       />
     </div>
   );

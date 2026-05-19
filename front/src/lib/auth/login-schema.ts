@@ -9,10 +9,11 @@ export function createLoginSchema(t: TFunction) {
       .string()
       .min(1, t('errors.passwordRequired'))
       .min(10, t('errors.passwordShort'))
-      .refine((pw) => /[A-Z]/.test(pw) && /[a-z]/.test(pw) && /[0-9]/.test(pw), {
-        message: t('errors.passwordComplexity'),
-      }),
+      .refine(
+        (pw) => /[A-Z]/.test(pw) && /[a-z]/.test(pw) && /[0-9]/.test(pw),
+        {
+          message: t('errors.passwordComplexity'),
+        },
+      ),
   });
 }
-
-

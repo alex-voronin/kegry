@@ -32,13 +32,13 @@ interface PromotionFormProps {
   onDirtyChange?: (isDirty: boolean) => void;
 }
 
-export const PromotionForm = forwardRef<PromotionFormHandle, PromotionFormProps>(function PromotionForm({
-  initialValues,
-  onSubmit,
-  isSubmitting,
-  submitLabel,
-  onDirtyChange,
-}, ref) {
+export const PromotionForm = forwardRef<
+  PromotionFormHandle,
+  PromotionFormProps
+>(function PromotionForm(
+  { initialValues, onSubmit, isSubmitting, submitLabel, onDirtyChange },
+  ref,
+) {
   const tForm = useTranslations('components.forms.promotion');
   const tCommon = useTranslations('common');
 
@@ -66,11 +66,15 @@ export const PromotionForm = forwardRef<PromotionFormHandle, PromotionFormProps>
     onDirtyChange?.(isDirty);
   }, [isDirty, onDirtyChange]);
 
-  useImperativeHandle(ref, () => ({
-    submitForm: () => {
-      handleSubmit(onSubmit)();
-    },
-  }), [handleSubmit, onSubmit]);
+  useImperativeHandle(
+    ref,
+    () => ({
+      submitForm: () => {
+        handleSubmit(onSubmit)();
+      },
+    }),
+    [handleSubmit, onSubmit],
+  );
 
   const typeOptions: SelectOption[] = Object.values(PromoType).map((type) => ({
     value: type,

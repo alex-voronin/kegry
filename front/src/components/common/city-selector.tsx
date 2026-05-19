@@ -4,7 +4,12 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { ChevronDown } from 'lucide-react';
 import { ModalMenu } from '@/components/ui/modal-menu';
-import { City, BELGRADE_COORDS, NOVI_SAD_COORDS, LAST_CITY_KEY } from '@/lib/cities';
+import {
+  City,
+  BELGRADE_COORDS,
+  NOVI_SAD_COORDS,
+  LAST_CITY_KEY,
+} from '@/lib/cities';
 
 interface CitySelectorProps {
   selectedCity: City | null;

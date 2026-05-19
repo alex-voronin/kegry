@@ -11,7 +11,11 @@ import { ModalDialog } from '@/components/ui/modal-dialog';
 import { useCompaniesStore } from '../../use-companies-store';
 import { API_ENDPOINTS, PAGE_ROUTES } from '@/lib/routes';
 import { uploadImage } from '@/lib/image-utils';
-import { CompanyForm, CompanyFormValues, CompanyFormHandle } from '@/components/b2b/company-form';
+import {
+  CompanyForm,
+  CompanyFormValues,
+  CompanyFormHandle,
+} from '@/components/b2b/company-form';
 
 export default function CompanyEditPage() {
   const t = useTranslations('screens.editCompany');
@@ -75,15 +79,18 @@ export default function CompanyEditPage() {
     }
   };
 
-  const initialValues = useMemo(() => ({
-    name: selectedCompany?.name || '',
-    email: selectedCompany?.email || '',
-    avatarImageUrl: selectedCompany?.avatarImageUrl || null,
-  }), [
-    selectedCompany?.name, 
-    selectedCompany?.email, 
-    selectedCompany?.avatarImageUrl
-  ]);
+  const initialValues = useMemo(
+    () => ({
+      name: selectedCompany?.name || '',
+      email: selectedCompany?.email || '',
+      avatarImageUrl: selectedCompany?.avatarImageUrl || null,
+    }),
+    [
+      selectedCompany?.name,
+      selectedCompany?.email,
+      selectedCompany?.avatarImageUrl,
+    ],
+  );
 
   if (isLoading || !selectedCompany) {
     return (

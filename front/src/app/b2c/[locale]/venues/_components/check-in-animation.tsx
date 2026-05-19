@@ -31,7 +31,9 @@ export function CheckInAnimation({ visible, onDone }: CheckInAnimationProps) {
   if (!phase) return null;
 
   return (
-    <div className={`${styles.overlay} ${phase === 'exit' ? styles.fadeOut : ''}`}>
+    <div
+      className={`${styles.overlay} ${phase === 'exit' ? styles.fadeOut : ''}`}
+    >
       <div className={styles.content}>
         <span className={styles.emoji}>🎉</span>
         <span className={styles.plusOne}>+1</span>

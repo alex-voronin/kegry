@@ -26,7 +26,8 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
   const [isCodePopupOpen, setIsCodePopupOpen] = useState(false);
   const [pendingQrCode, setPendingQrCode] = useState<string | null>(null);
   const [codeDescription, setCodeDescription] = useState<string | undefined>();
-  const [showLocationRequiredDialog, setShowLocationRequiredDialog] = useState(false);
+  const [showLocationRequiredDialog, setShowLocationRequiredDialog] =
+    useState(false);
 
   const executeCheckIn = useCallback(
     async (
