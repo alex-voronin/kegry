@@ -10,7 +10,8 @@
     },
     "toast": {
       "linkCopied": "Link je kopiran u međuspremnik",
-      "gettingLocation": "Tražimo tvoju lokaciju..."
+      "gettingLocation": "Tražimo tvoju lokaciju...",
+      "qrScanned": "QR kod je skeniran! Prijavi se da završiš prijavu."
     },
     "inAppBrowser": {
       "message": "Koristite ugrađeni pregledač u aplikaciji u kom geolokacija i obaveštenja možda neće raditi. Da biste ovo rešili, dodirnite ikonicu menija i izaberite \"Open in Browser\" ili kopirajte link ispod i zalepite ga u Chrome ili Safari.",
