@@ -766,7 +766,6 @@
       "notSet": "Not set",
       "categories": {
         "DrinkCategory": "Drinks",
-        "Specialty": "Specialties",
         "HospitalityAndRules": "Rules",
         "FoodAndKitchen": "Kitchen",
         "InfrastructureAndAmenities": "Amenities",
@@ -775,13 +774,7 @@
       },
       "tags": {
         "wine": "Wine",
-        "specialty_versatile": "Versatile",
-        "specialty_craft_beer": "Craft Beer",
-        "specialty_wine": "Wine",
-        "specialty_agave_spirits": "Agave Spirits",
-        "specialty_whiskey": "Whiskey",
-        "specialty_classic_cocktails": "Classic Cocktails",
-        "specialty_signature_cocktails": "Signature Cocktails",
+        "beer_craft": "Craft Beer",
         "price_budget": "Budget",
         "price_average": "Average",
         "price_premium": "Premium",

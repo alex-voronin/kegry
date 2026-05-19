@@ -120,7 +120,6 @@
       "notSet": "Nije postavljeno",
       "categories": {
         "DrinkCategory": "Pića",
-        "Specialty": "Specijaliteti",
         "HospitalityAndRules": "Pravila",
         "FoodAndKitchen": "Kuhinja",
         "InfrastructureAndAmenities": "Sadržaji",
@@ -129,13 +128,7 @@
       },
       "tags": {
         "wine": "Vino",
-        "specialty_versatile": "Svestran",
-        "specialty_craft_beer": "Craft pivo",
-        "specialty_wine": "Vino",
-        "specialty_agave_spirits": "Agave žestina",
-        "specialty_whiskey": "Viski",
-        "specialty_classic_cocktails": "Klasični kokteli",
-        "specialty_signature_cocktails": "Autorski kokteli",
+        "beer_craft": "Kraft pivo",
         "price_budget": "Jeftino",
         "price_average": "Srednje",
         "price_premium": "Premium",

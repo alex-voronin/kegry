@@ -2,7 +2,10 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { useVenueTagsStore, TagCategoryDto } from '@/store/use-venue-tags-store';
+import {
+  useVenueTagsStore,
+  TagCategoryDto,
+} from '@/store/use-venue-tags-store';
 import { TagSheet } from './tag-sheet';
 import { cn } from '@/lib/utils';
 
@@ -11,17 +14,13 @@ interface TagSectionsProps {
   onTagIdsChange: (ids: string[]) => void;
 }
 
-const CATEGORY_META: Record<
-  string,
-  { order: number; essential: boolean }
-> = {
-  Specialty: { order: 1, essential: true },
-  PriceLevel: { order: 2, essential: true },
-  FoodAndKitchen: { order: 3, essential: true },
-  SmokingPolicy: { order: 4, essential: true },
-  DrinkCategory: { order: 5, essential: false },
-  HospitalityAndRules: { order: 6, essential: false },
-  InfrastructureAndAmenities: { order: 7, essential: false },
+const CATEGORY_META: Record<string, { order: number; essential: boolean }> = {
+  PriceLevel: { order: 1, essential: true },
+  FoodAndKitchen: { order: 2, essential: true },
+  SmokingPolicy: { order: 3, essential: true },
+  DrinkCategory: { order: 4, essential: false },
+  HospitalityAndRules: { order: 5, essential: false },
+  InfrastructureAndAmenities: { order: 6, essential: false },
 };
 
 export function TagSections({
@@ -39,7 +38,9 @@ export function TagSections({
     getGroupedTags,
   } = useVenueTagsStore();
 
-  const [sheetCategory, setSheetCategory] = useState<TagCategoryDto | null>(null);
+  const [sheetCategory, setSheetCategory] = useState<TagCategoryDto | null>(
+    null,
+  );
   const [showOptional, setShowOptional] = useState(false);
 
   useEffect(() => {
@@ -57,7 +58,10 @@ export function TagSections({
     const parentToChildren = new Map<string, string[]>();
     for (const g of groups) {
       if (!g.parent) continue;
-      parentToChildren.set(g.parent.id, g.children.map((c) => c.id));
+      parentToChildren.set(
+        g.parent.id,
+        g.children.map((c) => c.id),
+      );
       for (const c of g.children) {
         childToParent.set(c.id, g.parent.id);
       }
@@ -107,7 +111,10 @@ export function TagSections({
       return (
         <div className="flex flex-col gap-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-form-element h-12 animate-pulse rounded-xl" />
+            <div
+              key={i}
+              className="bg-form-element h-12 animate-pulse rounded-xl"
+            />
           ))}
         </div>
       );
@@ -148,7 +155,7 @@ export function TagSections({
                     {selected.map((id) => (
                       <span
                         key={id}
-                        className="bg-active text-primary border border-white/20 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs shadow-sm"
+                        className="bg-active text-primary inline-flex items-center rounded-full border border-white/20 px-2.5 py-0.5 text-xs shadow-sm"
                       >
                         {tTag(getTagLabel(id))}
                       </span>
@@ -184,7 +191,7 @@ export function TagSections({
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium">{t('optional')}</span>
               {optionalSelectedCount > 0 && (
-                <span className="bg-active text-primary border border-white/20 inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs shadow-sm">
+                <span className="bg-active text-primary inline-flex h-5 min-w-5 items-center justify-center rounded-full border border-white/20 px-1.5 text-xs shadow-sm">
                   {optionalSelectedCount}
                 </span>
               )}
@@ -208,7 +215,7 @@ export function TagSections({
           </button>
 
           {showOptional && (
-            <div className="ml-2 mt-2 border-l border-white/10 pl-2">
+            <div className="mt-2 ml-2 border-l border-white/10 pl-2">
               {optionalCategories.map((cat) => (
                 <div className="mb-3" key={cat.category}>
                   <button
@@ -225,7 +232,7 @@ export function TagSections({
                           {selectedInCategory(cat).map((id) => (
                             <span
                               key={id}
-                              className="bg-active text-primary border border-white/20 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs shadow-sm"
+                              className="bg-active text-primary inline-flex items-center rounded-full border border-white/20 px-2.5 py-0.5 text-xs shadow-sm"
                             >
                               {tTag(getTagLabel(id))}
                             </span>

@@ -26,11 +26,10 @@ const CATEGORY_ORDER: Record<
 > = {
   DrinkCategory: { priority: 1, alwaysVisible: true },
   PriceLevel: { priority: 2, alwaysVisible: true },
-  Specialty: { priority: 3, alwaysVisible: false },
-  HospitalityAndRules: { priority: 4, alwaysVisible: false },
-  SmokingPolicy: { priority: 5, alwaysVisible: false },
-  FoodAndKitchen: { priority: 6, alwaysVisible: false },
-  InfrastructureAndAmenities: { priority: 7, alwaysVisible: false },
+  HospitalityAndRules: { priority: 3, alwaysVisible: false },
+  SmokingPolicy: { priority: 4, alwaysVisible: false },
+  FoodAndKitchen: { priority: 5, alwaysVisible: false },
+  InfrastructureAndAmenities: { priority: 6, alwaysVisible: false },
 };
 
 export function VenueTagSheet({ isOpen, onClose }: VenueTagSheetProps) {
@@ -109,7 +108,10 @@ export function VenueTagSheet({ isOpen, onClose }: VenueTagSheetProps) {
   const renderFlatCategory = (cat: (typeof categories)[number]) => {
     const rootTags = cat.tags.filter((t) => !t.parentValue);
     return (
-      <div key={cat.category} className={`${styles.category} ${styles[`category${cat.category}`]}`}>
+      <div
+        key={cat.category}
+        className={`${styles.category} ${styles[`category${cat.category}`]}`}
+      >
         <p className={styles.categoryTitle}>
           {tCat(`categories.${cat.category}`)}
         </p>
@@ -125,7 +127,10 @@ export function VenueTagSheet({ isOpen, onClose }: VenueTagSheetProps) {
 
   const renderCategory = (cat: (typeof categories)[number]) => {
     return (
-      <div key={cat.category} className={`${styles.category} ${styles[`category${cat.category}`]}`}>
+      <div
+        key={cat.category}
+        className={`${styles.category} ${styles[`category${cat.category}`]}`}
+      >
         <p className={styles.categoryTitle}>
           {tCat(`categories.${cat.category}`)}
         </p>
@@ -266,7 +271,9 @@ export function VenueTagSheet({ isOpen, onClose }: VenueTagSheetProps) {
                           <div className={styles.accordionContent}>
                             {optional.map(renderCategory)}
                             {drinkCategory && (
-                              <div className={`${styles.category} ${styles.categoryDrinkCategory}`}>
+                              <div
+                                className={`${styles.category} ${styles.categoryDrinkCategory}`}
+                              >
                                 <div className={styles.drinkChildrenContainer}>
                                   {renderDrinkChildren(drinkCategory)}
                                 </div>
