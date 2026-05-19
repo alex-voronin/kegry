@@ -61,7 +61,7 @@ public static class VenueContextSeeder
 
         AddHierarchicalTags(TagCategory.DrinkCategory, new Dictionary<string, string[]>
         {
-            { "beer", ["beer_lager", "beer_ipa", "beer_stout", "beer_sour", "beer_wheat", "beer_fruit"] },
+            { "beer", ["beer_craft", "beer_lager", "beer_ipa", "beer_stout", "beer_sour", "beer_wheat", "beer_fruit"] },
             { "cider", ["cider_apple", "cider_pear", "cider_dry", "cider_sweet"]  },
             { "wine", ["wine_red", "wine_white", "wine_orange", "wine_sparkling"] },
             { "spirit", ["spirit_vodka", "spirit_whiskey", "spirit_gin", "spirit_rum",
@@ -70,11 +70,6 @@ public static class VenueContextSeeder
             { "non_alcoholic", ["coffee", "tea", "beverages"] }
 
         }, isSingleSelect: false);
-
-        AddTags(TagCategory.Specialty, [
-            "specialty_versatile", "specialty_craft_beer", "specialty_wine", "specialty_agave_spirits",
-            "specialty_whiskey", "specialty_classic_cocktails", "specialty_signature_cocktails"
-        ], isSingleSelect: false);
 
         AddTags(TagCategory.HospitalityAndRules, [
             "pet_friendly", "kids_friendly", "coworking_friendly"
