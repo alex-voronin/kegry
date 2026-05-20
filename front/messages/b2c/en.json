@@ -775,9 +775,9 @@
       "tags": {
         "wine": "Wine",
         "beer_craft": "Craft Beer",
-        "price_budget": "Budget",
-        "price_average": "Average",
-        "price_premium": "Premium",
+        "price_budget": "$",
+        "price_average": "$$",
+        "price_premium": "$$$",
         "kitchen_hot_meals": "Hot Meals",
         "kitchen_snacks": "Snacks",
         "kitchen_external_allowed": "External Food Allowed",

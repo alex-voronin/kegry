@@ -129,9 +129,9 @@
       "tags": {
         "wine": "Vino",
         "beer_craft": "Kraft pivo",
-        "price_budget": "Jeftino",
-        "price_average": "Srednje",
-        "price_premium": "Premium",
+        "price_budget": "$",
+        "price_average": "$$",
+        "price_premium": "$$$",
         "kitchen_hot_meals": "Topla jela",
         "kitchen_snacks": "Grickalice",
         "kitchen_external_allowed": "Dozvoljena spoljna hrana",
