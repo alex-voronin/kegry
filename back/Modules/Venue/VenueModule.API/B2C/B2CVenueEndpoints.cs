@@ -2,6 +2,7 @@ using Shared.Infrastructure.Storage;
 using SharedCore.Exceptions;
 using VenueModule.API.B2C.Dto;
 using VenueModule.API.Shared;
+using VenueModule.Domain.ValueObjects;
 using GetVenueResponse = VenueModule.API.B2C.Dto.GetVenueResponse;
 
 namespace VenueModule.API.B2C;
@@ -107,7 +108,8 @@ public class B2CVenueEndpoints : IEndpoints
                         : null,
                     Address: v.Venue.Address,
                     DistanceMeters: (int)v.DistanceMeters,
-                    GoogleMapsUrl: v.Venue.GoogleMapsUrl
+                    GoogleMapsUrl: v.Venue.GoogleMapsUrl,
+                    TagIds: GetMainTagIds(v.Venue)
                 )
             )
             .ToArray();
@@ -139,7 +141,8 @@ public class B2CVenueEndpoints : IEndpoints
                 : null,
             Address: v.Address,
             Latitude: v.Coordinates.Y,
-            Longitude: v.Coordinates.X
+            Longitude: v.Coordinates.X,
+            TagIds: GetMainTagIds(v)
         )).ToArray();
 
         return ApiResult<VenueMapItemDto[]>.Build(dtos);
@@ -217,6 +220,28 @@ public class B2CVenueEndpoints : IEndpoints
         );
     }
 
+    private static string[] GetMainTagIds(Venue venue)
+    {
+        return venue.VenueTagLinks
+            .Where(vt => vt.Tag.Category switch
+            {
+                TagCategory.DrinkCategory => vt.Tag.ParentId == null,
+                TagCategory.PriceLevel => true,
+                TagCategory.HospitalityAndRules => true,
+                _ => false
+            })
+            .OrderBy(vt => vt.Tag.Category switch
+            {
+                TagCategory.PriceLevel => 0,
+                TagCategory.DrinkCategory => 1,
+                TagCategory.HospitalityAndRules => 2,
+                _ => 99
+            })
+            .ThenBy(vt => vt.Tag.SortOrder)
+            .Select(vt => vt.Tag.Id.ToString())
+            .ToArray();
+    }
+
     private static VenueDto DomainVenueToDto(IS3StorageService storageService, Venue venue)
     {
         return new VenueDto(
@@ -234,7 +259,7 @@ public class B2CVenueEndpoints : IEndpoints
             CoverImageUrl: venue.CoverImageS3Key != null
                 ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.UpdatedAt)
                 : null,
-            Tags: venue.VenueTags.Select(vt =>
+            Tags: venue.VenueTagLinks.Select(vt =>
                     // Parent value isn't required here
                     new TagDto(Id: vt.Tag.Id, Value: vt.Tag.Value, ParentValue: null)
                 )

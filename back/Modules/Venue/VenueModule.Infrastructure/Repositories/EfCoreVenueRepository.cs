@@ -27,6 +27,8 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
             .Include(v => v.Discounts)
             .ThenInclude(d => d.LoyaltyLevel)
             .Include(v => v.Promos)
+            .Include(v => v.VenueTagLinks)
+            .ThenInclude(vt  => vt.Tag)
             .AsNoTracking()
             .Where(v => v.Id == id)
             .FirstOrDefaultAsync(ct);
@@ -129,6 +131,8 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
 
         var baseQuery = Context.Venues
             .Include(v => v.Company)
+            .Include(v => v.VenueTagLinks)
+            .ThenInclude(vt => vt.Tag)
             .AsNoTracking()
             .Where(v => EF.Functions.IsWithinDistance(
                 v.Coordinates,
@@ -139,7 +143,7 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
         if (tagIds is { Length: > 0 })
         {
             baseQuery = baseQuery.Where(v =>
-                v.VenueTags.Count(vt => tagIds.Contains(vt.TagId)) == tagIds.Length);
+                v.VenueTagLinks.Count(vt => tagIds.Contains(vt.TagId)) == tagIds.Length);
         }
 
         if (!string.IsNullOrWhiteSpace(companyName))
@@ -189,13 +193,15 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
 
         var baseQuery = Context.Venues
             .Include(v => v.Company)
+            .Include(v => v.VenueTagLinks)
+            .ThenInclude(vt => vt.Tag)
             .AsNoTracking()
             .Where(v => v.Coordinates.Intersects(boundingBox));
 
         if (tagIds is { Length: > 0 })
         {
             baseQuery = baseQuery.Where(v =>
-                v.VenueTags.Count(vt => tagIds.Contains(vt.TagId)) == tagIds.Length);
+                v.VenueTagLinks.Count(vt => tagIds.Contains(vt.TagId)) == tagIds.Length);
         }
 
         if (!string.IsNullOrWhiteSpace(companyName))

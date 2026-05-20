@@ -6,5 +6,6 @@ public record VenueListItemDto(
     string CompanyName,
     string Address,
     int DistanceMeters,
-    string? GoogleMapsUrl
+    string? GoogleMapsUrl,
+    string[] TagIds
 );

@@ -6,4 +6,5 @@ public record VenueMapItemDto(
     string? CompanyAvatarImageUrl,
     string Address,
     double Latitude,
-    double Longitude);
+    double Longitude,
+    string[] TagIds);

@@ -155,7 +155,7 @@ public class B2BVenueEndpoints : IEndpoints
             venueRepository: venueRepository,
             companyRepository: companyRepository,
             asNoTracking: false,
-            includes: [v => v.VenueTags],
+            includes: [v => v.VenueTagLinks],
             ct: ct);
 
         if (request.TagIds != null)
@@ -262,7 +262,7 @@ public class B2BVenueEndpoints : IEndpoints
             IsGeneratedPinCode: string.IsNullOrEmpty(venue.PinCode),
             IsPinCheckInAllowed: venue.IsPinCheckInAllowed,
             QrCode: venue.QrCode,
-            Tags: venue.VenueTags
+            Tags: venue.VenueTagLinks
                 .Select(vt =>
                     new TagDto(Id: vt.TagId, Value: vt.Tag.Value)
                 )

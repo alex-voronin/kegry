@@ -110,7 +110,8 @@ public class ContainerManager : IAsyncLifetime
             [
                 new Table(schema: "user_profile", name: "hobby_categories"),
                 new Table(schema: "user_profile", name: "hobbies"),
-                new Table(schema: "engagement", name: "npcs")
+                new Table(schema: "engagement", name: "npcs"),
+                new Table(schema: "venue", name: "tags")
             ]
         });
     }

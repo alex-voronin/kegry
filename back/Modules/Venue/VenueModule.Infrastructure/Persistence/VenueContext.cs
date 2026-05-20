@@ -15,7 +15,7 @@ public class VenueContext : DbContext
     public DbSet<DiscountDay> DiscountDays => Set<DiscountDay>();
     public DbSet<UserLoyalty> UserLoyalties => Set<UserLoyalty>();
     public DbSet<Tag> Tags => Set<Tag>();
-    public DbSet<VenueTag> VenueTags => Set<VenueTag>();
+    public DbSet<VenueTagLink> VenueTagLinks => Set<VenueTagLink>();
 
     public VenueContext(DbContextOptions<VenueContext> options)
         : base(options)
@@ -34,7 +34,7 @@ public class VenueContext : DbContext
         ConfigureUserLoyalty(modelBuilder);
         ConfigurePromo(modelBuilder);
         ConfigureTag(modelBuilder);
-        ConfigureVenueTag(modelBuilder);
+        ConfigureVenueTagLink(modelBuilder);
     }
 
     private static void ConfigureCompany(ModelBuilder modelBuilder)
@@ -257,15 +257,15 @@ public class VenueContext : DbContext
         VenueContextSeeder.SeedTags(modelBuilder);
     }
 
-    private static void ConfigureVenueTag(ModelBuilder modelBuilder)
+    private static void ConfigureVenueTagLink(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<VenueTag>(entity =>
+        modelBuilder.Entity<VenueTagLink>(entity =>
         {
-            entity.ToTable("venue_tags");
+            entity.ToTable("venue_tag_links");
             entity.HasKey(vt => new { vt.VenueId, vt.TagId });
 
             entity.HasOne(vt => vt.Venue)
-                .WithMany(v => v.VenueTags)
+                .WithMany(v => v.VenueTagLinks)
                 .HasForeignKey(vt => vt.VenueId)
                 .OnDelete(DeleteBehavior.Cascade);
 

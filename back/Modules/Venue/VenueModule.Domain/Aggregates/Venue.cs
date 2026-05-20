@@ -87,8 +87,8 @@ public class Venue : ISoftDeletable<Guid>, IAuditable
     private readonly List<Discount> _discounts = [];
     public IReadOnlyCollection<Discount> Discounts => _discounts;
 
-    private readonly List<VenueTag> _venueTags = [];
-    public IReadOnlyCollection<VenueTag> VenueTags => _venueTags;
+    private readonly List<VenueTagLink> _venueTagLinks = [];
+    public IReadOnlyCollection<VenueTagLink> VenueTagLinks => _venueTagLinks;
 
     public void UpdateTags(Guid[] tagIds, Tag[] allTags)
     {
@@ -101,14 +101,14 @@ public class Venue : ISoftDeletable<Guid>, IAuditable
             .Select(g => g.Key.ToString())
             .ToList();
 
-        Validation.ThrowIfInvalid(nameof(VenueTags),
+        Validation.ThrowIfInvalid(nameof(VenueTagLinks),
             () => invalidCategories.Count == 0,
             $"Multiple tags selected for single-select categories: {string.Join(", ", invalidCategories)}");
 
-        _venueTags.Clear();
+        _venueTagLinks.Clear();
         foreach (var tagId in tagIds)
         {
-            _venueTags.Add(new VenueTag { VenueId = Id, TagId = tagId });
+            _venueTagLinks.Add(new VenueTagLink { VenueId = Id, TagId = tagId });
         }
     }
 

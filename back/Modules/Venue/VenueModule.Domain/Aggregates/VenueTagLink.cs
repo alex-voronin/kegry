@@ -1,6 +1,6 @@
 namespace VenueModule.Domain.Aggregates;
 
-public class VenueTag
+public class VenueTagLink
 {
     public required Guid VenueId { get; init; }
     public Venue Venue { get; init; } = null!;

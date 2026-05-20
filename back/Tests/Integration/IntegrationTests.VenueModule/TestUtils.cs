@@ -34,7 +34,7 @@ public class TestUtils
     {
         var response = await _factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyId),
-            new CreateVenueRequest(lat, lon, address, null, null, null, null, null, null, null));
+            new CreateVenueRequest(lat, lon, address, null, null, null, null, null, null, []));
         response.Success.ShouldBeTrue();
         var venueId = response.Result.Id;
 

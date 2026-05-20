@@ -3,6 +3,7 @@ using IntegrationTests.Shared.Extensions;
 using SecurityModule.Domain.ValueObjects;
 using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
+using SharedCore.Extensions;
 using Shouldly;
 using VenueModule.API.B2B.Companies.Dto;
 using VenueModule.API.B2B.Deals.Dto;
@@ -81,7 +82,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // Non-verified venue
         await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyId),
-            new CreateVenueRequest(0.1, 0.1, "Non-Verified Venue", null, null, null, null, null, null, null));
+            new CreateVenueRequest(0.1, 0.1, "Non-Verified Venue", null, null, null, null, null, null, []));
 
         // 3. Create B2C user
         var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_visibility@example.com", "Password123!");
@@ -109,7 +110,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Detail Co", "det@example.com"))).Result.Id;
 
         var venueRequest = new CreateVenueRequest(45, 13, "Detail Venue", "https://site.com", "https://google.com/mo",
-            "https://instagram.com/some-venue", "123", "9-5", TestConfig.S3.PublicUrl + "/cover.jpg", null);
+            "https://instagram.com/some-venue", "123", "9-5", TestConfig.S3.PublicUrl + "/cover.jpg", []);
         var venueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyId), venueRequest);
         venueResponse.Success.ShouldBeTrue();
@@ -149,7 +150,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         createCompanyResponse.Success.ShouldBeTrue();
         var companyId = createCompanyResponse.Result.Id;
 
-        var createVenueRequest = new CreateVenueRequest(0, 0, "Deals Venue", null, null, null, null, null, null, null);
+        var createVenueRequest = new CreateVenueRequest(0, 0, "Deals Venue", null, null, null, null, null, null, []);
         var createVenueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyId), createVenueRequest);
         createVenueResponse.Success.ShouldBeTrue();
@@ -202,7 +203,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         createCompanyResponse.Success.ShouldBeTrue();
         var companyId = createCompanyResponse.Result.Id;
 
-        var createVenueRequest = new CreateVenueRequest(0, 0, "Deals Venue", null, null, null, null, null, null, null);
+        var createVenueRequest = new CreateVenueRequest(0, 0, "Deals Venue", null, null, null, null, null, null, []);
         var createVenueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyId), createVenueRequest);
         createVenueResponse.Success.ShouldBeTrue();
@@ -296,7 +297,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
                 ApiRoutes.B2B.Company.Venues(companyId),
-                new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, null)))
+                new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, [])))
             .Result
             .Id;
 
@@ -328,7 +329,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
                 ApiRoutes.B2B.Company.Venues(companyId),
-                new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, null)))
+                new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, [])))
             .Result
             .Id;
 
@@ -365,7 +366,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var createVenueResponse = await Factory.ApiClient
             .PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
                 ApiRoutes.B2B.Company.Venues(companyId),
-                new CreateVenueRequest(0, 0, "Qr Venue", null, null, null, null, null, null, null));
+                new CreateVenueRequest(0, 0, "Qr Venue", null, null, null, null, null, null, []));
         var venueId = createVenueResponse.Result.Id;
 
         // 3. Update QR Code
@@ -424,7 +425,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
                 ApiRoutes.B2B.Company.Venues(companyId),
-                new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, null)))
+                new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, [])))
             .Result
             .Id;
         await _testUtils.VerifyVenueByIdAsync(venueId);
@@ -480,7 +481,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
                 ApiRoutes.B2B.Company.Venues(companyId),
-                new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, null)))
+                new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, [])))
             .Result
             .Id;
 
@@ -533,7 +534,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
                 ApiRoutes.B2B.Company.Venues(companyId),
-                new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, null)))
+                new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, [])))
             .Result
             .Id;
 
@@ -586,7 +587,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
                 ApiRoutes.B2B.Company.Venues(companyId),
-                new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, null)))
+                new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, [])))
             .Result
             .Id;
 
@@ -640,7 +641,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         var venueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyId),
-            new CreateVenueRequest(0, 0, "Promos Venue", null, null, null, null, null, null, null));
+            new CreateVenueRequest(0, 0, "Promos Venue", null, null, null, null, null, null, []));
         var venueId = venueResponse.Result.Id;
 
         // 3. Add promotions
@@ -794,7 +795,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Detail Co", "det@example.com"))).Result.Id;
 
         var venueRequest = new CreateVenueRequest(45, 13, "Detail Venue", "https://site.com", "https://google.com/mo",
-            "https://instagram.com/some-venue", "123", "9-5", TestConfig.S3.PublicUrl + "/cover.jpg", null);
+            "https://instagram.com/some-venue", "123", "9-5", TestConfig.S3.PublicUrl + "/cover.jpg", []);
         var venueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyId), venueRequest);
         venueResponse.Success.ShouldBeTrue();
@@ -838,6 +839,201 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.Venue.CheckInSetting(venueId));
         enabledResponse.Success.ShouldBeTrue();
         enabledResponse.Result.IsPinCheckInAllowed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task GivenVenueWithTags_WhenB2CUserListsVenues_ThenTagIdsReturnedAndFiltered()
+    {
+        var b2BAuth = await Factory.AuthManager
+            .CreateAndLoginUserAsync("b2b_tags@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Tags Co", "tags@example.com"))).Result.Id;
+
+        var priceTagId = "price_average".ToDeterministicGuid();
+        var beerRootTagId = "beer".ToDeterministicGuid();
+        var beerChildTagId = "beer_craft".ToDeterministicGuid();
+        var petFriendlyTagId = "pet_friendly".ToDeterministicGuid();
+        var foodTagId = "kitchen_hot_meals".ToDeterministicGuid();
+        var smokingTagId = "smoking_allowed_inside".ToDeterministicGuid();
+
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+            ApiRoutes.B2B.Company.Venues(companyId),
+            new CreateVenueRequest(0.05, 0.05, "Tagged Venue", null, null, null, null, null, null,
+                [priceTagId, beerRootTagId, beerChildTagId, petFriendlyTagId, foodTagId, smokingTagId])
+        )).Result.Id;
+
+        await _testUtils.VerifyVenueByIdAsync(venueId);
+
+        var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_tags@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(b2CAuth);
+
+        var result = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<VenueListItemDto>>>(
+            $"{ApiRoutes.Venue.Root}?Latitude=0&Longitude=0&Offset=0&Limit=20");
+
+        result.Success.ShouldBeTrue();
+        var venue = result.Result.Data.First(v => v.Id == venueId.ToString());
+
+        venue.TagIds.ShouldContain(priceTagId.ToString());
+        venue.TagIds.ShouldContain(beerRootTagId.ToString());
+        venue.TagIds.ShouldContain(petFriendlyTagId.ToString());
+
+        venue.TagIds.ShouldNotContain(beerChildTagId.ToString());
+        venue.TagIds.ShouldNotContain(foodTagId.ToString());
+        venue.TagIds.ShouldNotContain(smokingTagId.ToString());
+    }
+
+    [Fact]
+    public async Task GivenVenueWithTags_WhenB2CUserListsVenues_ThenTagIdsOrderedCorrectly()
+    {
+        var b2BAuth = await Factory.AuthManager
+            .CreateAndLoginUserAsync("b2b_tags_order@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Tags Order Co", "tags_order@example.com"))).Result.Id;
+
+        var priceBudgetId = "price_budget".ToDeterministicGuid();
+        var nonAlcoholicId = "non_alcoholic".ToDeterministicGuid();
+        var coworkingId = "coworking_friendly".ToDeterministicGuid();
+
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+            ApiRoutes.B2B.Company.Venues(companyId),
+            new CreateVenueRequest(0.05, 0.05, "Ordered Venue", null, null, null, null, null, null,
+                [coworkingId, nonAlcoholicId, priceBudgetId])
+        )).Result.Id;
+
+        await _testUtils.VerifyVenueByIdAsync(venueId);
+
+        var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_tags_order@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(b2CAuth);
+
+        var result = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<VenueListItemDto>>>(
+            $"{ApiRoutes.Venue.Root}?Latitude=0&Longitude=0&Offset=0&Limit=20");
+
+        result.Success.ShouldBeTrue();
+        var venue = result.Result.Data.First(v => v.Id == venueId.ToString());
+
+        venue.TagIds.Length.ShouldBe(3);
+        venue.TagIds[0].ShouldBe(priceBudgetId.ToString());
+        venue.TagIds[1].ShouldBe(nonAlcoholicId.ToString());
+        venue.TagIds[2].ShouldBe(coworkingId.ToString());
+    }
+
+    [Fact]
+    public async Task GivenVenuesWithDifferentTags_WhenB2CUserFiltersByTagIds_ThenOnlyMatchingVenuesReturned()
+    {
+        var b2BAuth = await Factory.AuthManager
+            .CreateAndLoginUserAsync("b2b_filter@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Filter Co", "filter@example.com"))).Result.Id;
+
+        var petFriendlyId = "pet_friendly".ToDeterministicGuid();
+        var kidsFriendlyId = "kids_friendly".ToDeterministicGuid();
+
+        var petVenueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+            ApiRoutes.B2B.Company.Venues(companyId),
+            new CreateVenueRequest(0.05, 0.05, "Pet Friendly Venue", null, null, null, null, null, null,
+                [petFriendlyId])
+        )).Result.Id;
+
+        var kidsVenueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+            ApiRoutes.B2B.Company.Venues(companyId),
+            new CreateVenueRequest(0.06, 0.06, "Kids Friendly Venue", null, null, null, null, null, null,
+                [kidsFriendlyId])
+        )).Result.Id;
+
+        await _testUtils.VerifyVenueByIdAsync(petVenueId);
+        await _testUtils.VerifyVenueByIdAsync(kidsVenueId);
+
+        var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_filter@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(b2CAuth);
+
+        var url = $"{ApiRoutes.Venue.Root}?Latitude=0&Longitude=0&Offset=0&Limit=20&Filter.TagIds={petFriendlyId}";
+        var result = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<VenueListItemDto>>>(url);
+
+        result.Success.ShouldBeTrue();
+        result.Result.Data.Count.ShouldBe(1);
+        result.Result.Data.First().Address.ShouldBe("Pet Friendly Venue");
+    }
+
+    [Fact]
+    public async Task GivenVenueWithTags_WhenB2CUserGetsMap_ThenTagIdsInResponse()
+    {
+        var b2BAuth = await Factory.AuthManager
+            .CreateAndLoginUserAsync("b2b_map_tags@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Map Tags Co", "map_tags@example.com"))).Result.Id;
+
+        var priceBudgetId = "price_budget".ToDeterministicGuid();
+        var beerRootId = "beer".ToDeterministicGuid();
+        var petFriendlyId = "pet_friendly".ToDeterministicGuid();
+
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+            ApiRoutes.B2B.Company.Venues(companyId),
+            new CreateVenueRequest(44.8, 20.5, "Map Tagged Venue", null, null, null, null, null, null,
+                [priceBudgetId, beerRootId, petFriendlyId])
+        )).Result.Id;
+
+        await _testUtils.VerifyVenueByIdAsync(venueId);
+
+        var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_map_tags@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(b2CAuth);
+
+        var mapUrl = $"{ApiRoutes.Venue.Map}?MinLat=44.7&MaxLat=44.9&MinLng=20.4&MaxLng=20.6";
+        var response = await Factory.ApiClient.GetAsync<ApiResult<VenueMapItemDto[]>>(mapUrl);
+
+        response.Success.ShouldBeTrue();
+        var mapVenue = response.Result.First(v => v.Id == venueId.ToString());
+
+        mapVenue.TagIds.ShouldContain(priceBudgetId.ToString());
+        mapVenue.TagIds.ShouldContain(beerRootId.ToString());
+        mapVenue.TagIds.ShouldContain(petFriendlyId.ToString());
+        mapVenue.TagIds.Length.ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task GivenVenues_WhenB2CUserFiltersMapByTagIds_ThenOnlyMatchingVenuesReturned()
+    {
+        var b2BAuth = await Factory.AuthManager
+            .CreateAndLoginUserAsync("b2b_map_filter@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Map Filter Co", "map_filter@example.com"))).Result.Id;
+
+        var petFriendlyId = "pet_friendly".ToDeterministicGuid();
+        var kidsFriendlyId = "kids_friendly".ToDeterministicGuid();
+
+        var petVenueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+            ApiRoutes.B2B.Company.Venues(companyId),
+            new CreateVenueRequest(44.8, 20.5, "Pet Friendly Map", null, null, null, null, null, null,
+                [petFriendlyId])
+        )).Result.Id;
+
+        var kidsVenueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+            ApiRoutes.B2B.Company.Venues(companyId),
+            new CreateVenueRequest(44.8, 20.5, "Kids Friendly Map", null, null, null, null, null, null,
+                [kidsFriendlyId])
+        )).Result.Id;
+
+        await _testUtils.VerifyVenueByIdAsync(petVenueId);
+        await _testUtils.VerifyVenueByIdAsync(kidsVenueId);
+
+        var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_map_filter@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(b2CAuth);
+
+        var mapUrl = $"{ApiRoutes.Venue.Map}?MinLat=44.7&MaxLat=44.9&MinLng=20.4&MaxLng=20.6&Filter.TagIds={petFriendlyId}";
+        var result = await Factory.ApiClient.GetAsync<ApiResult<VenueMapItemDto[]>>(mapUrl);
+
+        result.Success.ShouldBeTrue();
+        result.Result.Length.ShouldBe(1);
+        result.Result[0].Address.ShouldBe("Pet Friendly Map");
     }
 
     [Fact]
