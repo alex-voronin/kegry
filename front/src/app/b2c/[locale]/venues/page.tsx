@@ -25,6 +25,7 @@ import { getLowAccuracyLocation } from '@/lib/geo-utils';
 import { CheckInManager } from '@/components/common/check-in-manager';
 import { useQrCheckIn } from './use-qr-check-in';
 import { ScanQrCode, MapPinned } from 'lucide-react';
+import { VenueDisplayTags } from '@/components/b2c/venue-display-tags';
 import styles from './venues.module.css';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { City, BELGRADE_COORDS } from '@/lib/cities';
@@ -346,26 +347,29 @@ export default function VenuesScreen() {
                 avatarAlt={venue.companyName}
                 title={venue.companyName}
                 subtitle={
-                  <>
-                    {!selectedCity && (
-                      <>
-                        <span>
-                          {t('distance', {
-                            distance:
-                              distanceUnits === DistanceUnits.Miles
-                                ? metersToMiles(venue.distanceMeters)
-                                : metersToKilometers(venue.distanceMeters),
-                            units:
-                              distanceUnits === DistanceUnits.Miles
-                                ? tCommon('units.miles')
-                                : tCommon('units.kilometers'),
-                          })}
-                        </span>
-                        <span>•</span>
-                      </>
-                    )}
-                    <span>{venue.address}</span>
-                  </>
+                  <div>
+                    <div className="flex items-center gap-1">
+                      {!selectedCity && (
+                        <>
+                          <span>
+                            {t('distance', {
+                              distance:
+                                distanceUnits === DistanceUnits.Miles
+                                  ? metersToMiles(venue.distanceMeters)
+                                  : metersToKilometers(venue.distanceMeters),
+                              units:
+                                distanceUnits === DistanceUnits.Miles
+                                  ? tCommon('units.miles')
+                                  : tCommon('units.kilometers'),
+                            })}
+                          </span>
+                          <span>•</span>
+                        </>
+                      )}
+                      <span>{venue.address}</span>
+                    </div>
+                    <VenueDisplayTags tagIds={venue.tagIds} />
+                  </div>
                 }
                 rightEl={
                   <Icon

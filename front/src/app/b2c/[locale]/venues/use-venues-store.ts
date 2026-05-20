@@ -11,6 +11,7 @@ export interface VenueListItemDto {
   address: string;
   distanceMeters: number;
   googleMapsUrl: string;
+  tagIds: string[];
 }
 
 interface VenuesState {

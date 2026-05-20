@@ -13,6 +13,7 @@ import L from 'leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import { LocateFixed } from 'lucide-react';
 import { getLowAccuracyLocation } from '@/lib/geo-utils';
+import { VenueDisplayTags } from '@/components/b2c/venue-display-tags';
 import 'leaflet/dist/leaflet.css';
 import styles from '../map.module.css';
 
@@ -41,6 +42,7 @@ export interface VenueMapItem {
   address: string;
   latitude: number;
   longitude: number;
+  tagIds: string[];
 }
 
 interface VenueMapInternalProps {
@@ -106,7 +108,7 @@ function BoundsWatcher({
       });
     }, 300);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [map]);
 
   return null;
@@ -176,6 +178,9 @@ const MemoizedMarker = memo(
                 <div className={styles.markerAddress}>{venue.address}</div>
               </div>
             </div>
+            {venue.tagIds?.length > 0 && (
+              <VenueDisplayTags tagIds={venue.tagIds} />
+            )}
             <button
               className={styles.markerDetailsBtn}
               onClick={() => onVenueDetails(venue.id)}
@@ -189,7 +194,8 @@ const MemoizedMarker = memo(
   },
   (prevProps, nextProps) =>
     prevProps.venue.id === nextProps.venue.id &&
-    prevProps.detailsLabel === nextProps.detailsLabel,
+    prevProps.detailsLabel === nextProps.detailsLabel &&
+    prevProps.venue.tagIds === nextProps.venue.tagIds,
 );
 
 const LOCATE_ZOOM = 15;

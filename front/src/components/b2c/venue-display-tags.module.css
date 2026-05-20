@@ -1,0 +1,32 @@
+@reference "../../app/globals.css";
+
+.row {
+  @apply flex flex-wrap gap-1 mt-1;
+}
+
+.chip {
+  @apply inline-flex items-center rounded-full border px-2 py-0.5 text-xs leading-tight;
+  color: var(--chip-text, var(--color-secondary));
+  border-color: var(--chip-border, var(--color-secondary));
+}
+
+.chipDrinkCategory {
+  --chip-text: #86efac;
+  --chip-bg: rgba(134, 239, 172, 0.15);
+  --chip-border: rgba(134, 239, 172, 0.35);
+  background: var(--chip-bg);
+}
+
+.chipPriceLevel {
+  --chip-text: #facc15;
+  --chip-bg: rgba(250, 204, 21, 0.15);
+  --chip-border: rgba(250, 204, 21, 0.35);
+  background: var(--chip-bg);
+}
+
+.chipHospitalityAndRules {
+  --chip-text: #c084fc;
+  --chip-bg: rgba(192, 132, 252, 0.15);
+  --chip-border: rgba(192, 132, 252, 0.35);
+  background: var(--chip-bg);
+}
