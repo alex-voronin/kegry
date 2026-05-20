@@ -144,7 +144,7 @@ export function TagSections({
             <button
               type="button"
               onClick={() => setSheetCategory(cat)}
-              className="hover:bg-hover bg-form-element flex w-full items-center justify-between rounded-xl px-3 py-3 transition-colors"
+              className={`hover:bg-hover bg-form-element flex w-full items-center justify-between rounded-xl px-3 py-3 transition-colors chipCat${cat.category}`}
             >
               <div className="flex flex-col items-start gap-0.5">
                 <span className="text-sm font-medium">
@@ -155,7 +155,7 @@ export function TagSections({
                     {selected.map((id) => (
                       <span
                         key={id}
-                        className="bg-active text-primary inline-flex items-center rounded-full border border-white/20 px-2.5 py-0.5 text-xs shadow-sm"
+                        className="tag-chip--selected inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs"
                       >
                         {tTag(getTagLabel(id))}
                       </span>
@@ -221,7 +221,7 @@ export function TagSections({
                   <button
                     type="button"
                     onClick={() => setSheetCategory(cat)}
-                    className="hover:bg-hover bg-form-element flex w-full items-center justify-between rounded-xl px-3 py-3 transition-colors"
+                    className={`hover:bg-hover bg-form-element flex w-full items-center justify-between rounded-xl px-3 py-3 transition-colors chipCat${cat.category}`}
                   >
                     <div className="flex flex-col items-start gap-0.5">
                       <span className="text-sm font-medium">
@@ -232,7 +232,7 @@ export function TagSections({
                           {selectedInCategory(cat).map((id) => (
                             <span
                               key={id}
-                              className="bg-active text-primary inline-flex items-center rounded-full border border-white/20 px-2.5 py-0.5 text-xs shadow-sm"
+                              className="tag-chip--selected inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs"
                             >
                               {tTag(getTagLabel(id))}
                             </span>

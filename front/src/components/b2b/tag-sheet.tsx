@@ -129,6 +129,7 @@ export function TagSheet({
                           }
                           selectedIds={selectedTagIds}
                           onToggle={onToggleTag}
+                          category={category.category}
                         />
                       </div>
                     ))}
@@ -141,6 +142,7 @@ export function TagSheet({
                     }))}
                     selectedIds={selectedTagIds}
                     onToggle={onToggleTag}
+                    category={category.category}
                   />
                 )}
               </div>

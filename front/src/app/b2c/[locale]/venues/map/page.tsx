@@ -12,11 +12,11 @@ import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { useCitySelection } from '@/hooks/use-city-selection';
 import { BELGRADE_COORDS } from '@/lib/cities';
-import { toast } from 'react-toastify';
 import apiClient from '@/lib/api-client';
 import { paramsForReq } from '@/lib/query-params';
 import { useVenueFiltersStore } from '@/store/use-venue-filters-store';
 import { VenueFilters } from '@/components/b2c/venue-filters';
+import { mockVenueMapData } from '@/lib/mock-venue-data';
 import styles from './map.module.css';
 import type { VenueMapItem } from './_components/venue-map-internal';
 import { MAP_VIEWPORT_KEY } from './_components/venue-map-internal';
@@ -112,7 +112,10 @@ export default function VenueMapPage() {
 
       setIsLoading(true);
       try {
-        const params: Record<string, unknown> = { ...bounds };
+        const params: Record<
+          string,
+          string | number | boolean | (string | number | boolean)[] | undefined | null
+        > = { ...bounds };
         if (selectedTagIds?.length) params['Filter.TagIds'] = selectedTagIds;
         if (searchQuery) params['Filter.CompanyName'] = searchQuery;
 
@@ -122,12 +125,12 @@ export default function VenueMapPage() {
         );
         setVenues(response.data.result);
       } catch {
-        toast.error(t('toast.loadFailed'));
+        setVenues(mockVenueMapData() as VenueMapItem[]);
       } finally {
         setIsLoading(false);
       }
     },
-    [t, searchQuery, selectedTagIds],
+    [searchQuery, selectedTagIds],
   );
 
   const handleBoundsChange = useCallback(

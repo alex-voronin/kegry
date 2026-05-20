@@ -20,8 +20,10 @@ export function TagChips({
   className,
   category,
 }: TagChipsProps) {
+  const chipCatClass = category ? `chipCat${category}` : '';
+
   return (
-    <div className={cn('flex flex-wrap gap-2', className)}>
+    <div className={cn('flex flex-wrap gap-2', chipCatClass, className)}>
       {items.map((item) => {
         const isSelected = selectedIds.includes(item.id);
         return (

@@ -110,7 +110,7 @@ export function VenueTagSheet({ isOpen, onClose }: VenueTagSheetProps) {
     return (
       <div
         key={cat.category}
-        className={`${styles.category} ${styles[`category${cat.category}`]}`}
+        className={`${styles.category} chipCat${cat.category}`}
       >
         <p className={styles.categoryTitle}>
           {tCat(`categories.${cat.category}`)}
@@ -129,7 +129,7 @@ export function VenueTagSheet({ isOpen, onClose }: VenueTagSheetProps) {
     return (
       <div
         key={cat.category}
-        className={`${styles.category} ${styles[`category${cat.category}`]}`}
+        className={`${styles.category} chipCat${cat.category}`}
       >
         <p className={styles.categoryTitle}>
           {tCat(`categories.${cat.category}`)}
@@ -272,7 +272,7 @@ export function VenueTagSheet({ isOpen, onClose }: VenueTagSheetProps) {
                             {optional.map(renderCategory)}
                             {drinkCategory && (
                               <div
-                                className={`${styles.category} ${styles.categoryDrinkCategory}`}
+                                className={`${styles.category} chipCatDrinkCategory`}
                               >
                                 <div className={styles.drinkChildrenContainer}>
                                   {renderDrinkChildren(drinkCategory)}

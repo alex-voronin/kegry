@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono, Fondamento } from 'next/font/google';
 import '../../globals.css';
+import '@/components/common/venue-chip-base.css';
 import { Providers } from '@/components/providers';
 import { getMessages, getLocale } from 'next-intl/server';
 import { routing } from '@/i18n/routing';

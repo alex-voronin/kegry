@@ -1,47 +1,5 @@
 @reference "../../app/globals.css";
-
-/* Category theme colors — calm variations */
-.categoryDrinkCategory {
-  --cat-bg: rgba(134, 239, 172, 0.08);
-  --cat-border: rgba(134, 239, 172, 0.25);
-  --cat-text: #86efac;
-  --cat-selected-bg: rgba(134, 239, 172, 0.15);
-}
-
-.categoryPriceLevel {
-  --cat-bg: rgba(250, 204, 21, 0.08);
-  --cat-border: rgba(250, 204, 21, 0.25);
-  --cat-text: #facc15;
-  --cat-selected-bg: rgba(250, 204, 21, 0.15);
-}
-
-.categoryHospitalityAndRules {
-  --cat-bg: rgba(192, 132, 252, 0.08);
-  --cat-border: rgba(192, 132, 252, 0.25);
-  --cat-text: #c084fc;
-  --cat-selected-bg: rgba(192, 132, 252, 0.15);
-}
-
-.categorySmokingPolicy {
-  --cat-bg: rgba(251, 146, 60, 0.08);
-  --cat-border: rgba(251, 146, 60, 0.25);
-  --cat-text: #fb923c;
-  --cat-selected-bg: rgba(251, 146, 60, 0.15);
-}
-
-.categoryFoodAndKitchen {
-  --cat-bg: rgba(96, 165, 250, 0.08);
-  --cat-border: rgba(96, 165, 250, 0.25);
-  --cat-text: #60a5fa;
-  --cat-selected-bg: rgba(96, 165, 250, 0.15);
-}
-
-.categoryInfrastructureAndAmenities {
-  --cat-bg: rgba(244, 114, 182, 0.08);
-  --cat-border: rgba(244, 114, 182, 0.25);
-  --cat-text: #f472b6;
-  --cat-selected-bg: rgba(244, 114, 182, 0.15);
-}
+@import "../common/venue-chip-base.css";
 
 .header {
   @apply relative flex items-center justify-between px-4 py-3;
@@ -77,12 +35,12 @@
 
 .category {
   @apply mb-3 rounded-xl p-3;
-  background: var(--cat-bg, var(--color-form-element));
+  background: var(--chip-bg, var(--color-form-element));
 }
 
 .categoryTitle {
   @apply mb-2 text-xs font-medium tracking-wide uppercase;
-  color: var(--cat-text, var(--color-secondary));
+  color: var(--chip-text, var(--color-secondary));
 }
 
 .accordionButton {
@@ -117,25 +75,4 @@
   @apply flex flex-col gap-6;
 }
 
-/* Tag chip overrides for category-aware colors */
-.category {
-  & :global(.tag-chip) {
-    color: var(--cat-text, var(--color-secondary));
-    border-color: var(--cat-border, var(--color-secondary));
-  }
 
-  & :global(.tag-chip:hover) {
-    background: var(--cat-bg, var(--color-hover));
-  }
-
-  & :global(.tag-chip--selected) {
-    background: var(--cat-selected-bg, var(--color-active));
-    color: var(--cat-text, var(--color-primary));
-    border-color: var(--cat-border, var(--color-secondary));
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-  }
-
-  & :global(.tag-chip--default) {
-    border-width: 1px;
-  }
-}

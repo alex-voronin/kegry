@@ -10,9 +10,9 @@ interface VenueDisplayTagsProps {
 }
 
 const CATEGORY_CLASS: Record<string, string | undefined> = {
-  DrinkCategory: styles.chipDrinkCategory,
-  PriceLevel: styles.chipPriceLevel,
-  HospitalityAndRules: styles.chipHospitalityAndRules,
+  DrinkCategory: styles.chipCatDrinkCategory,
+  PriceLevel: styles.chipCatPriceLevel,
+  HospitalityAndRules: styles.chipCatHospitalityAndRules,
 };
 
 export function VenueDisplayTags({ tagIds }: VenueDisplayTagsProps) {

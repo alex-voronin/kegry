@@ -37,7 +37,7 @@ export function VenueFilters() {
     const v = e.target.value;
     setInputValue(v);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => setSearchQuery(v), 300);
+    debounceRef.current = setTimeout(() => setSearchQuery(v), 600);
   };
 
   const handleClearInput = () => {
