@@ -233,8 +233,8 @@ public class B2CVenueEndpoints : IEndpoints
             .OrderBy(vt => vt.Tag.Category switch
             {
                 TagCategory.PriceLevel => 0,
-                TagCategory.DrinkCategory => 1,
-                TagCategory.HospitalityAndRules => 2,
+                TagCategory.HospitalityAndRules => 1,
+                TagCategory.DrinkCategory => 2,
                 _ => 99
             })
             .ThenBy(vt => vt.Tag.SortOrder)
