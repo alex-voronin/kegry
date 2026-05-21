@@ -116,7 +116,7 @@
     },
     "tagSections": {
       "title": "Tags",
-      "optional": "More (optional)",
+      "optional": "More",
       "notSet": "Not set",
       "categories": {
         "DrinkCategory": "Drinks",
