@@ -109,7 +109,7 @@ public class B2CVenueEndpoints : IEndpoints
                     Address: v.Venue.Address,
                     DistanceMeters: (int)v.DistanceMeters,
                     GoogleMapsUrl: v.Venue.GoogleMapsUrl,
-                    TagIds: GetMainTagIds(v.Venue)
+                    TagIds: GetSortedTagIds(v.Venue)
                 )
             )
             .ToArray();
@@ -142,7 +142,7 @@ public class B2CVenueEndpoints : IEndpoints
             Address: v.Address,
             Latitude: v.Coordinates.Y,
             Longitude: v.Coordinates.X,
-            TagIds: GetMainTagIds(v)
+            TagIds: GetSortedTagIds(v)
         )).ToArray();
 
         return ApiResult<VenueMapItemDto[]>.Build(dtos);
@@ -220,21 +220,17 @@ public class B2CVenueEndpoints : IEndpoints
         );
     }
 
-    private static string[] GetMainTagIds(Venue venue)
+    private static string[] GetSortedTagIds(Venue venue)
     {
         return venue.VenueTagLinks
-            .Where(vt => vt.Tag.Category switch
-            {
-                TagCategory.DrinkCategory => vt.Tag.ParentId == null,
-                TagCategory.PriceLevel => true,
-                TagCategory.HospitalityAndRules => true,
-                _ => false
-            })
             .OrderBy(vt => vt.Tag.Category switch
             {
                 TagCategory.PriceLevel => 0,
                 TagCategory.HospitalityAndRules => 1,
-                TagCategory.DrinkCategory => 2,
+                TagCategory.SmokingPolicy => 2,
+                TagCategory.FoodAndKitchen => 3,
+                TagCategory.InfrastructureAndAmenities => 4,
+                TagCategory.DrinkCategory => 5,
                 _ => 99
             })
             .ThenBy(vt => vt.Tag.SortOrder)

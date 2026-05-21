@@ -1,49 +1,30 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useTranslations } from 'next-intl';
-import { useVenueTagsStore } from '@/store/use-venue-tags-store';
+import { useVenueTagChips } from '@/components/common/use-venue-tag-chips';
 import styles from './venue-display-tags.module.css';
 
 interface VenueDisplayTagsProps {
   tagIds: string[] | undefined;
+  tagsEndpoint?: string;
 }
 
 const CATEGORY_CLASS: Record<string, string | undefined> = {
   DrinkCategory: styles.chipCatDrinkCategory,
   PriceLevel: styles.chipCatPriceLevel,
   HospitalityAndRules: styles.chipCatHospitalityAndRules,
+  SmokingPolicy: styles.chipCatSmokingPolicy,
+  FoodAndKitchen: styles.chipCatFoodAndKitchen,
+  InfrastructureAndAmenities: styles.chipCatInfrastructureAndAmenities,
 };
 
-export function VenueDisplayTags({ tagIds }: VenueDisplayTagsProps) {
-  const tTag = useTranslations('components.tagSections.tags');
-  const { hasHydrated, fetchTags, getTagLabel, getTagCategory } =
-    useVenueTagsStore();
+export function VenueDisplayTags({ tagIds, tagsEndpoint }: VenueDisplayTagsProps) {
+  const { visible, remaining, isEmpty } = useVenueTagChips(tagIds ?? [], tagsEndpoint, 4);
 
-  useEffect(() => {
-    if (hasHydrated) fetchTags();
-  }, [hasHydrated, fetchTags]);
-
-  if (!tagIds?.length) return null;
-
-  const resolved: { id: string; category: string; label: string }[] = [];
-
-  for (const id of tagIds) {
-    const category = getTagCategory(id);
-    if (!category) continue;
-
-    const raw = getTagLabel(id);
-    const translated = tTag(raw);
-    const label = translated !== raw ? translated : raw;
-
-    resolved.push({ id, category, label });
-  }
-
-  if (!resolved.length) return null;
+  if (isEmpty) return null;
 
   return (
     <div className={styles.row}>
-      {resolved.map(({ id, category, label }) => (
+      {visible.map(({ id, category, label }) => (
         <span
           key={id}
           className={`${styles.chip} ${CATEGORY_CLASS[category] ?? ''}`}
@@ -51,6 +32,7 @@ export function VenueDisplayTags({ tagIds }: VenueDisplayTagsProps) {
           {label}
         </span>
       ))}
+      {remaining > 0 && <span className={styles.moreBadge}>+{remaining}</span>}
     </div>
   );
 }

@@ -842,49 +842,6 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
     }
 
     [Fact]
-    public async Task GivenVenueWithTags_WhenB2CUserListsVenues_ThenTagIdsReturnedAndFiltered()
-    {
-        var b2BAuth = await Factory.AuthManager
-            .CreateAndLoginUserAsync("b2b_tags@example.com", "Password123!", UserType.B2B);
-        Factory.ApiClient.SetAuth(b2BAuth);
-
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Tags Co", "tags@example.com"))).Result.Id;
-
-        var priceTagId = "price_average".ToDeterministicGuid();
-        var beerRootTagId = "beer".ToDeterministicGuid();
-        var beerChildTagId = "beer_craft".ToDeterministicGuid();
-        var petFriendlyTagId = "pet_friendly".ToDeterministicGuid();
-        var foodTagId = "kitchen_hot_meals".ToDeterministicGuid();
-        var smokingTagId = "smoking_allowed_inside".ToDeterministicGuid();
-
-        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
-            ApiRoutes.B2B.Company.Venues(companyId),
-            new CreateVenueRequest(0.05, 0.05, "Tagged Venue", null, null, null, null, null, null,
-                [priceTagId, beerRootTagId, beerChildTagId, petFriendlyTagId, foodTagId, smokingTagId])
-        )).Result.Id;
-
-        await _testUtils.VerifyVenueByIdAsync(venueId);
-
-        var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_tags@example.com", "Password123!");
-        Factory.ApiClient.SetAuth(b2CAuth);
-
-        var result = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<VenueListItemDto>>>(
-            $"{ApiRoutes.Venue.Root}?Latitude=0&Longitude=0&Offset=0&Limit=20");
-
-        result.Success.ShouldBeTrue();
-        var venue = result.Result.Data.First(v => v.Id == venueId.ToString());
-
-        venue.TagIds.ShouldContain(priceTagId.ToString());
-        venue.TagIds.ShouldContain(beerRootTagId.ToString());
-        venue.TagIds.ShouldContain(petFriendlyTagId.ToString());
-
-        venue.TagIds.ShouldNotContain(beerChildTagId.ToString());
-        venue.TagIds.ShouldNotContain(foodTagId.ToString());
-        venue.TagIds.ShouldNotContain(smokingTagId.ToString());
-    }
-
-    [Fact]
     public async Task GivenVenueWithTags_WhenB2CUserListsVenues_ThenTagIdsOrderedCorrectly()
     {
         var b2BAuth = await Factory.AuthManager

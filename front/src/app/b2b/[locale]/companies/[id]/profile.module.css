@@ -44,7 +44,7 @@
 }
 
 .accordionTrigger {
-  @apply hover:bg-hover bg-form-element flex w-full items-center justify-between rounded-xl px-3 py-3 transition-colors;
+  @apply hover:bg-hover bg-form-element flex w-full items-center justify-between rounded-none sm:rounded-xl px-3 py-3 transition-colors;
 }
 
 .accordionTitle {

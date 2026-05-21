@@ -13,7 +13,7 @@ using VenueModule.Infrastructure.Persistence;
 namespace VenueModule.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(VenueContext))]
-    [Migration("20260520201037_AddVenueTags")]
+    [Migration("20260521220533_AddVenueTags")]
     partial class AddVenueTags
     {
         /// <inheritdoc />
@@ -684,18 +684,10 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("931e314f-23a7-bd93-015e-6f26569ed5f1"),
-                            Category = "SmokingPolicy",
-                            IsSingleSelect = true,
-                            SortOrder = 1,
-                            Value = "smoking_allowed_outside_only"
-                        },
-                        new
-                        {
                             Id = new Guid("963d1448-9929-bbb4-b460-563e7fcf9097"),
                             Category = "SmokingPolicy",
                             IsSingleSelect = true,
-                            SortOrder = 2,
+                            SortOrder = 1,
                             Value = "smoking_totally_forbidden"
                         },
                         new
@@ -703,7 +695,7 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                             Id = new Guid("acb2386a-23fd-abc9-a854-caa70ecdccd6"),
                             Category = "SmokingPolicy",
                             IsSingleSelect = true,
-                            SortOrder = 3,
+                            SortOrder = 2,
                             Value = "smoking_dedicated_room_inside"
                         },
                         new

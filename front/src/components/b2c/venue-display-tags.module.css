@@ -11,3 +11,7 @@
   border-color: var(--chip-border, var(--color-secondary));
   background: var(--chip-bg, transparent);
 }
+
+.moreBadge {
+  @apply inline-flex items-center rounded-full border border-white/20 px-2 py-0.5 text-xs leading-tight text-zinc-400;
+}

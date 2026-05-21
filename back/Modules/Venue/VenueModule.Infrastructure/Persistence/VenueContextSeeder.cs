@@ -87,7 +87,7 @@ public static class VenueContextSeeder
         ], isSingleSelect: false);
 
         AddTags(TagCategory.SmokingPolicy, [
-            "smoking_allowed_inside", "smoking_allowed_outside_only", "smoking_totally_forbidden",
+            "smoking_allowed_inside", "smoking_totally_forbidden",
             "smoking_dedicated_room_inside"
         ], isSingleSelect: true);
 

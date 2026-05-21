@@ -2,7 +2,7 @@
 @import "./venue-chip-base.css";
 
 .accordionButton {
-  @apply bg-form-element hover:bg-hover flex w-full items-stretch rounded-xl px-3 py-3 transition-colors;
+  @apply bg-form-element hover:bg-hover flex w-full items-stretch rounded-none sm:rounded-xl px-3 py-3 transition-colors;
 }
 
 .accordionBody {
@@ -26,7 +26,7 @@
 }
 
 .category {
-  @apply rounded-xl p-3;
+  @apply rounded-none sm:rounded-xl p-3;
   background: var(--chip-bg, var(--color-form-element));
 }
 
