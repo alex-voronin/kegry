@@ -96,7 +96,7 @@ export function VenueTagSheet({ isOpen, onClose }: VenueTagSheetProps) {
     ) +
     (drinkCategory
       ? pendingTagIds.filter((id) =>
-          drinkCategory.tags.some((t) => t.id === id && t.parentValue),
+          drinkCategory.tags.some((t) => t.id === id && t.parentId),
         ).length
       : 0);
 
@@ -106,7 +106,7 @@ export function VenueTagSheet({ isOpen, onClose }: VenueTagSheetProps) {
   };
 
   const renderFlatCategory = (cat: (typeof categories)[number]) => {
-    const rootTags = cat.tags.filter((t) => !t.parentValue);
+    const rootTags = cat.tags.filter((t) => !t.parentId);
     return (
       <div
         key={cat.category}
@@ -145,11 +145,11 @@ export function VenueTagSheet({ isOpen, onClose }: VenueTagSheetProps) {
   };
 
   const renderDrinkChildren = (cat: (typeof categories)[number]) => {
-    const rootTags = cat.tags.filter((t) => !t.parentValue);
-    const childTags = cat.tags.filter((t) => t.parentValue);
+    const rootTags = cat.tags.filter((t) => !t.parentId);
+    const childTags = cat.tags.filter((t) => t.parentId);
 
     return rootTags.map((parent) => {
-      const children = childTags.filter((c) => c.parentValue === parent.value);
+      const children = childTags.filter((c) => c.parentId === parent.id);
       if (children.length === 0) return null;
       return (
         <div key={parent.id}>

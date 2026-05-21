@@ -13,6 +13,7 @@ using VenueModule.API.B2B.Companies.Dto;
 using VenueModule.API.B2B.Deals;
 using VenueModule.API.B2B.Deals.Dto;
 using VenueModule.API.B2B.Shared;
+using VenueModule.API.B2B.Tags.Dto;
 using VenueModule.API.B2B.Venues.Dto;
 using VenueModule.Domain.Aggregates;
 using VenueModule.Domain.Exceptions;
@@ -264,7 +265,7 @@ public class B2BVenueEndpoints : IEndpoints
             QrCode: venue.QrCode,
             Tags: venue.VenueTagLinks
                 .Select(vt =>
-                    new TagDto(Id: vt.TagId, Value: vt.Tag.Value)
+                    new TagDto(Id: vt.TagId, Value: vt.Tag.Value, ParentId: vt.Tag.ParentId)
                 )
                 .ToArray(),
             Promos: venue.Promos

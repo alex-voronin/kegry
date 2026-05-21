@@ -10,6 +10,7 @@ import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { VenueTagAccordion } from '@/components/common/venue-tag-accordion';
+import { API_ENDPOINTS } from '@/lib/routes';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { ButtonVariant } from '@/components/ui/button';
@@ -360,7 +361,7 @@ export default function VenueDetailPage() {
         <div className={styles.content}>
           {currentVenue.tags?.length > 0 && (
             <div className={styles.section}>
-              <VenueTagAccordion tagIds={currentVenue.tags.map(t => t.id)} />
+              <VenueTagAccordion tagIds={currentVenue.tags.map(t => t.id)} tagsEndpoint={API_ENDPOINTS.B2B.TAGS.LIST} />
             </div>
           )}
 

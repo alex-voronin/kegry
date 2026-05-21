@@ -9,5 +9,5 @@ public record TagCategoryDto(
 public record TagDto(
     Guid Id,
     string Value,
-    string? ParentValue
+    Guid? ParentId
 );

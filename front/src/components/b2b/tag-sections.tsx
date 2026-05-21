@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
+import { API_ENDPOINTS } from '@/lib/routes';
 import {
   useVenueTagsStore,
   TagCategoryDto,
@@ -45,7 +46,7 @@ export function TagSections({
 
   useEffect(() => {
     if (hasHydrated) {
-      fetchTags();
+      fetchTags(API_ENDPOINTS.B2B.TAGS.LIST);
     }
   }, [hasHydrated, fetchTags]);
 

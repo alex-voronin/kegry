@@ -10,7 +10,8 @@
 }
 
 .searchInputContainer {
-  @apply bg-form-element flex flex-1 items-center gap-2 rounded-xl px-3 py-2;
+  @apply bg-form-element flex flex-1 items-center gap-2 rounded-xl px-3;
+  min-height: 40px;
 }
 
 .searchInput {

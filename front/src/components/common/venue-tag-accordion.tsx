@@ -8,45 +8,61 @@ import styles from './venue-tag-accordion.module.css';
 
 interface VenueTagAccordionProps {
   tagIds: string[];
+  tagsEndpoint?: string;
 }
 
-const CATEGORY_PRIORITY: Record<string, number> = {
+const CATEGORY_ORDER: Record<string, number> = {
   PriceLevel: 0,
   HospitalityAndRules: 1,
-  DrinkCategory: 2,
+  SmokingPolicy: 2,
+  FoodAndKitchen: 3,
+  InfrastructureAndAmenities: 4,
+  DrinkCategory: 5,
 };
 
-const SHOW_LIMIT = 3;
+const MAIN_CATEGORIES = new Set(['PriceLevel', 'HospitalityAndRules', 'DrinkCategory']);
 
-export function VenueTagAccordion({ tagIds }: VenueTagAccordionProps) {
+export function VenueTagAccordion({ tagIds, tagsEndpoint }: VenueTagAccordionProps) {
   const t = useTranslations('components.tagSections');
   const tTag = useTranslations('components.tagSections.tags');
-  const { fetchTags, hasHydrated, getTagLabel, getTagCategory } =
+  const { fetchTags, hasHydrated, getTagLabel, getTagCategory, getTagParentId } =
     useVenueTagsStore();
   const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     if (hasHydrated) {
-      fetchTags();
+      fetchTags(tagsEndpoint);
     }
-  }, [hasHydrated, fetchTags]);
+  }, [hasHydrated, fetchTags, tagsEndpoint]);
 
   const resolved = useMemo(() => {
-    const items: { id: string; category: string; label: string }[] = [];
+    const items: { id: string; category: string; label: string; isRoot: boolean }[] = [];
     for (const id of tagIds) {
       const category = getTagCategory(id);
       if (!category) continue;
       const raw = getTagLabel(id);
       const translated = tTag(raw);
-      items.push({ id, category, label: translated !== raw ? translated : raw });
+      const parentId = getTagParentId(id);
+      items.push({
+        id,
+        category,
+        label: translated !== raw ? translated : raw,
+        isRoot: parentId === null,
+      });
     }
     items.sort(
       (a, b) =>
-        (CATEGORY_PRIORITY[a.category] ?? 99) -
-        (CATEGORY_PRIORITY[b.category] ?? 99),
+        (CATEGORY_ORDER[a.category] ?? 99) -
+        (CATEGORY_ORDER[b.category] ?? 99),
     );
     return items;
-  }, [tagIds, getTagCategory, getTagLabel, tTag]);
+  }, [tagIds, getTagCategory, getTagLabel, getTagParentId, tTag]);
+
+  const collapsedTags = useMemo(
+    () => resolved.filter((t) => t.isRoot && MAIN_CATEGORIES.has(t.category)),
+    [resolved],
+  );
+  const hasRemaining = resolved.length > collapsedTags.length;
 
   const tagsByCategory = useMemo(() => {
     const map = new Map<string, { id: string; label: string }[]>();
@@ -67,7 +83,7 @@ export function VenueTagAccordion({ tagIds }: VenueTagAccordionProps) {
         className={styles.accordionButton}
       >
         <div className={styles.chipsRow}>
-          {resolved.slice(0, SHOW_LIMIT).map(({ id, category, label }) => (
+          {collapsedTags.map(({ id, category, label }) => (
             <span
               key={id}
               className={`chipCat${category} inline-flex items-center rounded-full border px-2 py-0.5 text-xs leading-tight`}
@@ -80,9 +96,9 @@ export function VenueTagAccordion({ tagIds }: VenueTagAccordionProps) {
               {label}
             </span>
           ))}
-          {resolved.length > SHOW_LIMIT && (
+          {hasRemaining && (
             <span className={styles.moreBadge}>
-              +{resolved.length - SHOW_LIMIT}
+              +{resolved.length - collapsedTags.length}
             </span>
           )}
         </div>

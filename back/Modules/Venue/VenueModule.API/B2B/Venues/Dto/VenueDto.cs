@@ -1,4 +1,5 @@
 using VenueModule.API.B2B.Deals.Dto;
+using VenueModule.API.B2B.Tags.Dto;
 
 namespace VenueModule.API.B2B.Venues.Dto;
 

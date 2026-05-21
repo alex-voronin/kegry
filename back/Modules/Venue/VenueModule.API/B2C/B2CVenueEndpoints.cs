@@ -260,8 +260,7 @@ public class B2CVenueEndpoints : IEndpoints
                 ? storageService.S3KeyToPublicFileUrl(venue.CoverImageS3Key, venue.UpdatedAt)
                 : null,
             Tags: venue.VenueTagLinks.Select(vt =>
-                    // Parent value isn't required here
-                    new TagDto(Id: vt.Tag.Id, Value: vt.Tag.Value, ParentValue: null)
+                    new TagDto(Id: vt.Tag.Id, Value: vt.Tag.Value, ParentId: vt.Tag.ParentId)
                 )
                 .ToArray(),
             Promos: venue.Promos

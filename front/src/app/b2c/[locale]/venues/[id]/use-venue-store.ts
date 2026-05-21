@@ -21,7 +21,7 @@ export interface PromoDto {
 export interface TagDto {
   id: string;
   value: string;
-  parentValue: string | null;
+  parentId: string | null;
 }
 
 export interface VenueDto {

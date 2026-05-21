@@ -17,7 +17,7 @@ public class B2BTagEndpoints : IEndpoints
             .WithTags("Venue Tags Management API")
             .RequireAuthorization(AuthPolicies.B2BAdmin);
 
-        tagsApiGroup.MapGet("/api/v1/tags", GetTags);
+        tagsApiGroup.MapGet("/api/v1/b2b/tags", GetTags);
     }
 
     private static async Task<ApiResult<TagCategoryDto[]>> GetTags(
@@ -32,7 +32,7 @@ public class B2BTagEndpoints : IEndpoints
                 Category: g.Key.Category.ToString(),
                 IsSingleSelect: g.Key.IsSingleSelect,
                 Tags: g.OrderBy(t => t.SortOrder)
-                       .Select(t => new TagDto(Id: t.Id, Value: t.Value, ParentValue: t.Parent?.Value))
+                       .Select(t => new TagDto(Id: t.Id, Value: t.Value, ParentId: t.ParentId))
                        .ToArray()
             ))
             .ToArray();

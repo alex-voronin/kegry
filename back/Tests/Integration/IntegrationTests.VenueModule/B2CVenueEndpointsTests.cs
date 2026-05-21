@@ -917,8 +917,8 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         venue.TagIds.Length.ShouldBe(3);
         venue.TagIds[0].ShouldBe(priceBudgetId.ToString());
-        venue.TagIds[1].ShouldBe(nonAlcoholicId.ToString());
-        venue.TagIds[2].ShouldBe(coworkingId.ToString());
+        venue.TagIds[1].ShouldBe(coworkingId.ToString());
+        venue.TagIds[2].ShouldBe(nonAlcoholicId.ToString());
     }
 
     [Fact]

@@ -150,6 +150,9 @@ export const API_ENDPOINTS = {
       BY_COMPANY_ID: (companyId: string) =>
         `/api/v1/b2b/company/${companyId}/loyalty-levels`,
     },
+    TAGS: {
+      LIST: '/api/v1/b2b/tags',
+    },
   },
   VENUES: {
     LIST: '/api/v1/venues',
