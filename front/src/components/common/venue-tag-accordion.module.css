@@ -2,11 +2,19 @@
 @import "./venue-chip-base.css";
 
 .accordionButton {
-  @apply bg-form-element hover:bg-hover flex w-full items-center justify-between rounded-xl px-3 py-3 transition-colors;
+  @apply bg-form-element hover:bg-hover flex w-full items-stretch rounded-xl px-3 py-3 transition-colors;
+}
+
+.accordionBody {
+  @apply flex-1;
+}
+
+.accordionChevron {
+  @apply flex items-center justify-center;
 }
 
 .accordionIcon {
-  @apply text-secondary transition-transform duration-200;
+  @apply text-secondary shrink-0 transition-transform duration-200;
 }
 
 .accordionIconOpen {
