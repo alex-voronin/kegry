@@ -27,6 +27,8 @@ import { CheckInAnimation } from '../_components/check-in-animation';
 import { useQrCheckIn } from '../use-qr-check-in';
 import { parseInstagramHandle } from '@/lib/url-utils';
 
+const PIN_CODE_ONLY_CHECKIN_ENABLED = false;
+
 function calculateProgressPercentage(
   count: number,
   lower: number,
@@ -179,7 +181,7 @@ export default function VenueDetailScreen() {
           }
           right={
             <div className="flex items-center gap-3">
-              {venue.isPinCheckInAllowed && (
+              {PIN_CODE_ONLY_CHECKIN_ENABLED && venue.isPinCheckInAllowed && (
                 <Icon
                   onClick={() => {
                     setPendingQrCode(venue.qrCode);
