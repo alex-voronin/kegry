@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter, usePathname } from '@/i18n/routing';
 import { useParams, useSearchParams } from 'next/navigation';
 import { Header } from '@/components/ui/header';
+import { VenueTagAccordion } from '@/components/common/venue-tag-accordion';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
@@ -236,6 +237,12 @@ export default function VenueDetailScreen() {
           <div className={styles.section}>
             <h1 className={styles.companyName}>{company.name}</h1>
           </div>
+
+          {venue.tags?.length > 0 && (
+            <div className={styles.section}>
+              <VenueTagAccordion tagIds={venue.tags.map(t => t.id)} />
+            </div>
+          )}
 
           {(loyaltyLevel.discount !== 0 ||
             loyaltyLevel.isCustomDiscount ||

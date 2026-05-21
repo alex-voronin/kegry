@@ -9,6 +9,7 @@ import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
+import { VenueTagAccordion } from '@/components/common/venue-tag-accordion';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { ButtonVariant } from '@/components/ui/button';
@@ -357,6 +358,12 @@ export default function VenueDetailPage() {
 
       <div className={styles.mainContent}>
         <div className={styles.content}>
+          {currentVenue.tags?.length > 0 && (
+            <div className={styles.section}>
+              <VenueTagAccordion tagIds={currentVenue.tags.map(t => t.id)} />
+            </div>
+          )}
+
           <div className={styles.section}>
             <FormSectionTitle>{t('address')}</FormSectionTitle>
             <div

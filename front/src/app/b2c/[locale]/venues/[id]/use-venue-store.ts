@@ -18,6 +18,12 @@ export interface PromoDto {
   body: string;
 }
 
+export interface TagDto {
+  id: string;
+  value: string;
+  parentValue: string | null;
+}
+
 export interface VenueDto {
   id: string;
   qrCode: string;
@@ -31,6 +37,7 @@ export interface VenueDto {
   phoneNumber: string | null;
   workingHours: string | null;
   coverImageUrl: string | null;
+  tags: TagDto[];
   promos: PromoDto[];
 }
 

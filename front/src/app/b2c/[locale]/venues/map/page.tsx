@@ -16,7 +16,6 @@ import apiClient from '@/lib/api-client';
 import { paramsForReq } from '@/lib/query-params';
 import { useVenueFiltersStore } from '@/store/use-venue-filters-store';
 import { VenueFilters } from '@/components/b2c/venue-filters';
-import { mockVenueMapData } from '@/lib/mock-venue-data';
 import styles from './map.module.css';
 import type { VenueMapItem } from './_components/venue-map-internal';
 import { MAP_VIEWPORT_KEY } from './_components/venue-map-internal';
@@ -114,7 +113,12 @@ export default function VenueMapPage() {
       try {
         const params: Record<
           string,
-          string | number | boolean | (string | number | boolean)[] | undefined | null
+          | string
+          | number
+          | boolean
+          | (string | number | boolean)[]
+          | undefined
+          | null
         > = { ...bounds };
         if (selectedTagIds?.length) params['Filter.TagIds'] = selectedTagIds;
         if (searchQuery) params['Filter.CompanyName'] = searchQuery;
