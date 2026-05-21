@@ -377,6 +377,7 @@
       "noVenues": "Nema pronađenih lokala.",
       "addVenue": "Dodaj lokal",
       "menu": {
+        "addVenue": "Kreiraj lokal",
         "edit": "Uredite",
         "delete": "Obrišite kompaniju"
       },

@@ -61,6 +61,14 @@ export default function CompanyProfilePage() {
 
   const menuOptions = [
     {
+      icon: <Plus size={24} className="text-primary" />,
+      label: t('menu.addVenue'),
+      onClick: () => {
+        setIsMenuOpen(false);
+        handleAddVenue();
+      },
+    },
+    {
       icon: <SquarePen size={24} className="text-primary" />,
       label: t('menu.edit'),
       onClick: () => {

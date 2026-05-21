@@ -377,6 +377,7 @@
       "noVenues": "No venues found.",
       "addVenue": "Add Venue",
       "menu": {
+        "addVenue": "Create Venue",
         "edit": "Edit",
         "delete": "Delete Company"
       },
