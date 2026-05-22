@@ -40,7 +40,10 @@ export const useVenuesStore = create<VenuesState>()((set) => ({
   fetchVenues: async (lat, lon, offset, limit, tagIds?, companyName?) => {
     set({ isLoading: true, hasError: false });
     try {
-      const params: Record<string, unknown> = {
+      const params: Record<
+        string,
+        string | number | boolean | (string | number | boolean)[] | undefined | null
+      > = {
         latitude: lat,
         longitude: lon,
         offset,

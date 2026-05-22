@@ -23,7 +23,8 @@
 }
 
 .tagBtn {
-  @apply bg-form-element relative flex items-center justify-center rounded-xl px-3 py-2 transition-colors hover:bg-white/10;
+  @apply bg-form-element relative flex items-center justify-center rounded-xl px-3 transition-colors hover:bg-white/10;
+  min-height: 40px;
 }
 
 .tagBtnBadge {

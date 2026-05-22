@@ -128,8 +128,6 @@ export default function VenueMapPage() {
           paramsForReq(params),
         );
         setVenues(response.data.result);
-      } catch {
-        setVenues(mockVenueMapData() as VenueMapItem[]);
       } finally {
         setIsLoading(false);
       }

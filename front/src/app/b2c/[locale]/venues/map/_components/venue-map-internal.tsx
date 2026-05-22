@@ -19,20 +19,16 @@ import styles from '../map.module.css';
 
 // Custom dark marker icon as inline SVG
 const darkMarkerSvg = encodeURIComponent(
-  `<svg xmlns="http://www.w3.org/2000/svg" width="25" height="41" viewBox="0 0 25 41">` +
-    `<path d="M12.5 0C5.6 0 0 5.6 0 12.5C0 21.9 12.5 41 12.5 41S25 21.9 25 12.5C25 5.6 19.4 0 12.5 0z" fill="#333333" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>` +
-    `<circle cx="12.5" cy="12.5" r="5" fill="#f0f0f0"/>` +
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="50" height="50">` +
+    `<path d="M4 1l5.6 45.18c.175 1.409 1.399 2.82 2.801 2.82h25.198c1.401 0 2.627-1.411 2.799-2.82l5.602-45.18h-42zm6.3 5.646h29.399l-1.312 11.295h-26.774l-1.313-11.295z" fill="#333333" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>` +
     `</svg>`,
 );
 
 const venueMarkerIcon = L.icon({
   iconUrl: `data:image/svg+xml,${darkMarkerSvg}`,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowUrl:
-    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-  shadowSize: [41, 41],
+  iconSize: [30, 30],
+  iconAnchor: [15, 30],
+  popupAnchor: [1, -30],
 });
 
 export interface VenueMapItem {
