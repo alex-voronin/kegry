@@ -104,8 +104,12 @@ export function TagSections({
     [categories],
   );
 
-  const selectedInCategory = (cat: TagCategoryDto) =>
-    selectedTagIds.filter((id) => cat.tags.some((t) => t.id === id));
+  const selectedInCategory = (cat: TagCategoryDto) => {
+    const sortIndex = new Map(cat.tags.map((t, i) => [t.id, i]));
+    return selectedTagIds
+      .filter((id) => sortIndex.has(id))
+      .sort((a, b) => (sortIndex.get(a) ?? 99) - (sortIndex.get(b) ?? 99));
+  };
 
   if (categories.length === 0) {
     if (isLoading) {
