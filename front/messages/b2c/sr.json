@@ -258,7 +258,7 @@
       "timer": "{minutes}:{seconds}",
       "noActiveChat": "Nema aktivnog chata",
       "timerInfoDialog": {
-        "title": "Tajmer odbrojava do kraja chata. Kada vreme istekne (ili ako neko završi pre), moći ćete ponovo da pozivate ljude na susrete 😊",
+        "title": "Tajmer prikazuje preostale sate i minute do kraja chata. Kada vreme istekne (ili ako se chat završi ranije), moći ćete ponovo da pozivate ljude na susrete 😊",
         "okButton": "OK"
       },
       "menu": {

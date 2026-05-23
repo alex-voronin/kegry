@@ -258,7 +258,7 @@
       "timer": "{minutes}:{seconds}",
       "noActiveChat": "No active chat",
       "timerInfoDialog": {
-        "title": "The timer is counting down until the chat ends. Once the time's up (or if someone ends it early), you'll be able to invite people to meetups again 😊",
+        "title": "The countdown shows the remaining hours and minutes until the chat ends. Once the time runs out (or if the chat is ended early), you’ll be able to invite people to meetups again 😊",
         "okButton": "OK"
       },
       "menu": {
