@@ -74,6 +74,10 @@ body {
   background: #272727;
 }
 
+.Toastify__toast--qr-scanned {
+  background: #1a1a1a;
+}
+
 .EmojiPickerReact {
   --epr-horizontal-padding: 4px !important;
   --epr-header-padding: 4px !important;

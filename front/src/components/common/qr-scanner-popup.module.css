@@ -47,3 +47,7 @@
 .inlineLink {
   @apply text-primary font-semibold underline decoration-1 underline-offset-4 transition-opacity hover:opacity-80;
 }
+
+.banner {
+  @apply px-4 py-3 text-center text-xs leading-relaxed text-white/70;
+}

@@ -10,7 +10,8 @@
     },
     "toast": {
       "linkCopied": "Link je kopiran u međuspremnik",
-      "gettingLocation": "Tražimo tvoju lokaciju..."
+      "gettingLocation": "Tražimo tvoju lokaciju...",
+      "qrScanned": "QR kod je skeniran! Prijavi se da završiš prijavu."
     },
     "inAppBrowser": {
       "message": "Koristite ugrađeni pregledač u aplikaciji u kom geolokacija i obaveštenja možda neće raditi. Da biste ovo rešili, dodirnite ikonicu menija i izaberite \"Open in Browser\" ili kopirajte link ispod i zalepite ga u Chrome ili Safari.",
@@ -348,7 +349,7 @@
       "title": "Moj profil",
       "blockedUsers": "Blokirani korisnici",
       "friendsAndFoes": "Prijatelji i neprijatelji",
-      "discountsAndPromotions": "Ponude",
+      "discountsAndPromotions": "Moje današnje ponude",
       "coverImage": "Naslovna slika",
       "settings": "Podešavanja",
       "permissions": "Dozvole",
@@ -640,7 +641,8 @@
     "qrScannerPopup": {
       "title": "Skeniraj QR za prijavu",
       "cameraDenied": "Dozvola za kameru odbijena. Dozvoli pristup u podešavanjima pregledača ili skeniraj QR kod sistemskim čitačem.",
-      "locationDenied": "Pristup lokaciji je neophodan za skeniranje. Omogući ga u podešavanjima svog pregledača. <link>Pogledaj uputstvo</link>"
+      "locationDenied": "Pristup lokaciji je neophodan za skeniranje. Omogući ga u podešavanjima svog pregledača. <link>Pogledaj uputstvo</link>",
+      "helpBanner": "Imate problema? Probajte standardnu aplikaciju kamere na telefonu."
     },
     "profile-sections": {
       "name": {

@@ -1,6 +1,6 @@
 {
   "name": "front",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "private": true,
   "scripts": {
     "generate-firebase-config": "node scripts/generate-firebase-config.js",
@@ -16,7 +16,7 @@
   "dependencies": {
     "@headlessui/react": "^2.2.9",
     "@hookform/resolvers": "^5.2.2",
-    "@yudiel/react-qr-scanner": "^2.5.1",
+    "@yudiel/react-qr-scanner": "^2.6.0",
     "axios": "^1.13.2",
     "browser-image-compression": "^2.0.2",
     "class-variance-authority": "^0.7.1",

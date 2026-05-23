@@ -5,6 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/lib/auth/use-auth-store';
 import { useRouter } from '@/i18n/routing';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { toast } from 'react-toastify';
+import { useTranslations } from 'next-intl';
 
 export function QrRedirect() {
   const searchParams = useSearchParams();
@@ -12,6 +14,7 @@ export function QrRedirect() {
   const accessToken = useAuthStore((state) => state.accessToken);
   const hasHydrated = useAuthStore((state) => state.hasHydrated);
   const router = useRouter();
+  const t = useTranslations('common');
 
   useEffect(() => {
     if (v) {
@@ -20,7 +23,7 @@ export function QrRedirect() {
       if (hasHydrated && accessToken) {
         router.replace(`${PAGE_ROUTES.FEED}`);
       } else if (hasHydrated && !accessToken) {
-        // Wait a bit for components to mount properly
+        toast.success(t('toast.qrScanned'), { className: 'Toastify__toast--qr-scanned' });
         setTimeout(() => {
           const element = document.getElementById('mobile-loyalty');
           if (element) {
@@ -29,7 +32,7 @@ export function QrRedirect() {
         }, 100);
       }
     }
-  }, [v, hasHydrated, accessToken, router]);
+  }, [v, hasHydrated, accessToken, router, t]);
 
   return null;
 }

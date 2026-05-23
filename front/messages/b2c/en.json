@@ -10,7 +10,8 @@
     },
     "toast": {
       "linkCopied": "Link copied to clipboard",
-      "gettingLocation": "Finding your location..."
+      "gettingLocation": "Finding your location...",
+      "qrScanned": "QR scanned! Sign in to complete your check-in."
     },
     "inAppBrowser": {
       "message": "You are using an in-app browser where geolocation and notifications may not work. To fix this, tap the menu icon and select \"Open in Browser,\" or copy the link below and paste it in Chrome or Safari.",
@@ -348,7 +349,7 @@
       "title": "My Profile",
       "blockedUsers": "Blocked Users",
       "friendsAndFoes": "Friends & Foes",
-      "discountsAndPromotions": "Deals",
+      "discountsAndPromotions": "My Deals Today",
       "coverImage": "Cover Image",
       "settings": "Settings",
       "permissions": "Permissions",
@@ -640,7 +641,8 @@
     "qrScannerPopup": {
       "title": "Scan QR to check-in",
       "cameraDenied": "Camera permission denied. Allow access in browser settings or scan with your system QR reader.",
-      "locationDenied": "Location access is required for scanning. Please enable location in your browser settings. <link>View instructions</link>"
+      "locationDenied": "Location access is required for scanning. Please enable location in your browser settings. <link>View instructions</link>",
+      "helpBanner": "Having trouble? Try your phone’s default camera app."
     },
     "profile-sections": {
       "name": {
