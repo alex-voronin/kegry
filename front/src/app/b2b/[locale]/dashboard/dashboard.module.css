@@ -1,7 +1,7 @@
 @reference "../../../globals.css";
 
 .content {
-  @apply flex flex-1 flex-col gap-4 p-4;
+  @apply flex flex-1 flex-col gap-4 p-0 sm:p-4;
 }
 
 .modeTabs {
@@ -19,7 +19,7 @@
 }
 
 .venueCard {
-  @apply bg-form-element rounded-xl p-4;
+  @apply bg-form-element sm:rounded-xl p-4;
 }
 
 .venueAddress {
@@ -44,11 +44,11 @@
 }
 
 .retryButton {
-  @apply bg-form-element text-primary rounded-xl px-4 py-2 text-sm cursor-pointer;
+  @apply bg-form-element text-primary sm:rounded-xl px-4 py-2 text-sm cursor-pointer;
 }
 
 .visitsCard {
-  @apply bg-form-element rounded-xl p-4;
+  @apply bg-form-element sm:rounded-xl p-4;
 }
 
 .visitsCardTitle {
