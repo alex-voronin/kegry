@@ -347,7 +347,8 @@
       "title": "Lokali",
       "noVenues": "Nema pronađenih lokala.\nNajpre kreirajte kompaniju da biste dodali lokale.\n\nDodirnite bilo gde za upravljanje kompanijama.",
       "toast": {
-        "loadFailed": "Učitavanje lokala nije uspelo"
+        "loadFailed": "Učitavanje lokala nije uspelo",
+        "noCompanies": "Nema kompanija"
       }
     },
     "createCompany": {

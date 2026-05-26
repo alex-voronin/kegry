@@ -347,7 +347,8 @@
       "title": "Venues",
       "noVenues": "No venues found.\nCreate a company first to add venues.\n\nTap anywhere to manage companies.",
       "toast": {
-        "loadFailed": "Failed to load venues"
+        "loadFailed": "Failed to load venues",
+        "noCompanies": "No companies found"
       }
     },
     "createCompany": {
