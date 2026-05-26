@@ -406,7 +406,8 @@
       "companies": "Kompanije",
       "venues": "Lokali",
       "logout": "Odjavi se",
-      "contactUs": "Kontaktirajte nas"
+      "contactUs": "Kontaktirajte nas",
+      "dashboard": "Kontrolna tabla"
     },
     "advancedSettings": {
       "title": "Napredna podešavanja",
@@ -504,6 +505,19 @@
       "toast": {
         "createFailed": "Kreiranje popusta nije uspelo"
       }
+    },
+    "dashboard": {
+      "title": "Pregled poseta",
+      "daily": "Dnevno",
+      "weekly": "Nedeljno",
+      "monthly": "Mesečno",
+      "noCompanies": "Još uvek nemate nijednu kompaniju",
+      "noCompaniesHint": "Dodirnite za upravljanje kompanijama.",
+      "createCompanyLink": "Napravite prvu kompaniju",
+      "selectCompanyPrompt": "Izaberite kompaniju",
+      "noVenues": "Ova kompanija još uvek nema lokale",
+      "noVisits": "Nema zabeleženih poseta",
+      "error": "Učitavanje podataka nije uspelo"
     },
     "editDiscount": {
       "title": "Uredi popust",

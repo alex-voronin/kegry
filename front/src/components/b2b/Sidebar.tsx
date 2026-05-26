@@ -8,6 +8,7 @@ import {
   User,
   Building2,
   MapPin,
+  LayoutDashboard,
   LogOut,
   Menu,
   MessageCircle,
@@ -69,6 +70,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       label: t('profile'),
       href: PAGE_ROUTES.B2B.PROFILE,
       icon: <User size={24} />,
+    },
+    {
+      label: t('dashboard'),
+      href: PAGE_ROUTES.B2B.DASHBOARD,
+      icon: <LayoutDashboard size={24} />,
     },
     {
       label: t('companies'),

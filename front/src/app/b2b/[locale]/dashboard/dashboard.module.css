@@ -1,0 +1,56 @@
+@reference "../../../globals.css";
+
+.content {
+  @apply flex flex-1 flex-col gap-4 p-4;
+}
+
+.modeTabs {
+  @apply mb-4 flex gap-2 rounded-xl p-1;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.modeTab {
+  @apply flex-1 rounded-[10px] px-4 py-1.5 text-center text-sm font-medium text-secondary transition-colors cursor-pointer;
+}
+
+.modeTabActive {
+  @apply text-primary;
+  background: var(--color-form-element);
+}
+
+.venueCard {
+  @apply bg-form-element rounded-xl p-4;
+}
+
+.venueAddress {
+  @apply text-sm font-medium mb-3;
+}
+
+.emptyState {
+  @apply flex flex-1 flex-col items-center justify-center p-8 text-center;
+}
+
+.emptyStateText {
+  @apply text-secondary mt-4 text-base whitespace-pre-line;
+}
+
+.errorState {
+  @apply flex flex-col items-center gap-3 py-16;
+}
+
+.errorText {
+  @apply text-sm;
+  color: var(--color-error);
+}
+
+.retryButton {
+  @apply bg-form-element text-primary rounded-xl px-4 py-2 text-sm cursor-pointer;
+}
+
+.visitsCard {
+  @apply bg-form-element rounded-xl p-4;
+}
+
+.visitsCardTitle {
+  @apply mb-4 text-base font-semibold;
+}

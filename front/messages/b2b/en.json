@@ -406,7 +406,8 @@
       "companies": "Companies",
       "venues": "Venues",
       "logout": "Logout",
-      "contactUs": "Contact us"
+      "contactUs": "Contact us",
+      "dashboard": "Dashboard"
     },
     "advancedSettings": {
       "title": "Advanced Settings",
@@ -504,6 +505,19 @@
       "toast": {
         "createFailed": "Failed to create discount"
       }
+    },
+    "dashboard": {
+      "title": "Visits Overview",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "noCompanies": "You don't have any companies yet",
+      "noCompaniesHint": "Tap anywhere to manage companies.",
+      "createCompanyLink": "Create your first company",
+      "selectCompanyPrompt": "Select a company",
+      "noVenues": "This company has no venues yet",
+      "noVisits": "No visits recorded",
+      "error": "Failed to load visit data"
     },
     "editDiscount": {
       "title": "Edit Discount",

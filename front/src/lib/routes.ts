@@ -61,6 +61,7 @@ export const PAGE_ROUTES = {
       `/companies/${companyId}/venues/create`,
     VENUES_EDIT: (id: string) => `/venues/${id}/edit`,
     VENUES_DETAILS_ADVANCED: (venueId: string) => `/venues/${venueId}/advanced`,
+    DASHBOARD: '/dashboard',
     PROFILE: '/profile',
   },
 } as const;
@@ -152,6 +153,9 @@ export const API_ENDPOINTS = {
     },
     TAGS: {
       LIST: '/api/v1/b2b/tags',
+    },
+    DASHBOARD: {
+      VISITS: '/api/v1/b2b/dashboard/visits',
     },
   },
   VENUES: {
