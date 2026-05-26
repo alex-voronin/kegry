@@ -902,8 +902,8 @@ namespace VenueModule.Infrastructure.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_visits");
 
-                    b.HasIndex("VenueId")
-                        .HasDatabaseName("ix_visits_venue_id");
+                    b.HasIndex("VenueId", "CheckedInAt")
+                        .HasDatabaseName("ix_visits_venue_id_checked_in_at");
 
                     b.ToTable("visits", "venue");
                 });

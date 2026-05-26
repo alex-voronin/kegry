@@ -140,6 +140,8 @@ public class VenueContext : DbContext
                 .WithMany()
                 .HasForeignKey(v => v.VenueId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(v => new { v.VenueId, v.CheckedInAt });
         });
     }
 
