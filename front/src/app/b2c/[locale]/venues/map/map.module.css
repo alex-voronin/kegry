@@ -47,7 +47,7 @@
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid var(--color-accent);
+  border: 2px solid var(--color-background);
   flex-shrink: 0;
 }
 
