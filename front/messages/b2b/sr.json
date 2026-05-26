@@ -371,10 +371,11 @@
       "emailPlaceholder": "Email kompanije (opciono)",
       "loyaltyLevelsTitle": "Nivoi lojalnosti",
       "loyaltyLevelItemTitle": "Nivo {level}",
-      "loyaltyLevelSubtitle": "Posete ispod: {visitsUpperBound}",
+      "levelsLabel": "Nivoi",
+      "visitsLabel": "Posete",
+      "noActiveLevels": "Nema aktivnih nivoa lojalnosti",
       "venuesTitle": "Lokali",
       "noVenues": "Nema pronađenih lokala.",
-      "addVenue": "Dodaj lokal",
       "menu": {
         "addVenue": "Kreiraj lokal",
         "edit": "Uredite",

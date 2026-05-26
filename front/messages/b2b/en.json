@@ -371,10 +371,11 @@
       "emailPlaceholder": "Company Email (Optional)",
       "loyaltyLevelsTitle": "Loyalty levels",
       "loyaltyLevelItemTitle": "Level {level}",
-      "loyaltyLevelSubtitle": "Visits under: {visitsUpperBound}",
+      "levelsLabel": "Levels",
+      "visitsLabel": "Visits",
+      "noActiveLevels": "No active loyalty levels",
       "venuesTitle": "Venues",
       "noVenues": "No venues found.",
-      "addVenue": "Add Venue",
       "menu": {
         "addVenue": "Create Venue",
         "edit": "Edit",

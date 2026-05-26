@@ -43,30 +43,4 @@
   @apply flex flex-col gap-2;
 }
 
-.accordionTrigger {
-  @apply hover:bg-hover bg-form-element flex w-full items-center justify-between rounded-none sm:rounded-xl px-3 py-3 transition-colors;
-}
 
-.accordionTitle {
-  @apply flex items-center gap-2;
-}
-
-.accordionTitleText {
-  @apply text-sm font-medium;
-}
-
-.badge {
-  @apply bg-active text-primary inline-flex h-5 min-w-5 items-center justify-center rounded-full border border-white/20 px-1.5 text-xs shadow-sm;
-}
-
-.accordionContent {
-  @apply mt-2 flex flex-col gap-2;
-}
-
-.accordionChevron {
-  @apply text-secondary transition-transform duration-200;
-}
-
-.loyaltyList {
-  @apply flex flex-col gap-2;
-}

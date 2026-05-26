@@ -3,13 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter, useParams } from 'next/navigation';
-import { ChevronRight, Plus, Medal, SquarePen, Trash2 } from 'lucide-react';
+import { ChevronRight, Plus, SquarePen, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
-import { ListItem } from '@/components/ui/list-item';
 import { VenueListItem } from '@/components/b2b/venue-list-item';
+import { LoyaltyLevelsTimeline } from '@/components/b2b/loyalty-levels-timeline';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
@@ -18,17 +18,13 @@ import { useSafeBack } from '@/hooks/use-safe-back';
 import stylesCommon from '@/components/ui/common.module.css';
 import { Input } from '@/components/ui/input';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { cn } from '@/lib/utils';
 import { useCompaniesStore, VenueListItemDto } from '../use-companies-store';
 import styles from './profile.module.css';
 
 export default function CompanyProfilePage() {
   const t = useTranslations('screens.companyProfile');
-  const tCommon = useTranslations('common');
   const router = useRouter();
   const { id } = useParams() as { id: string };
-  const EXPANDED_SESSION_STORAGE_KEY = `loyalty_expanded_${id}`;
-  const [isLoyaltyExpanded, setIsLoyaltyExpanded] = useState(false);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -99,13 +95,6 @@ export default function CompanyProfilePage() {
       setIsDeleteModalOpen(false);
     }
   };
-
-  useEffect(() => {
-    const expanded = sessionStorage.getItem(EXPANDED_SESSION_STORAGE_KEY);
-    if (expanded !== null) {
-      setIsLoyaltyExpanded(expanded === 'true');
-    }
-  }, [EXPANDED_SESSION_STORAGE_KEY]);
 
   useEffect(() => {
     if (id) {
@@ -203,82 +192,14 @@ export default function CompanyProfilePage() {
             />
           </div>
 
-          <div>
-            <button
-              type="button"
-              onClick={() => {
-                const nextValue = !isLoyaltyExpanded;
-                setIsLoyaltyExpanded(nextValue);
-                sessionStorage.setItem(
-                  EXPANDED_SESSION_STORAGE_KEY,
-                  String(nextValue),
-                );
-              }}
-              className={styles.accordionTrigger}
-            >
-              <div className={styles.accordionTitle}>
-                <span className={styles.accordionTitleText}>
-                  {t('loyaltyLevelsTitle')}
-                </span>
-                {(() => {
-                  const activeCount = selectedCompany.loyaltyLevels.filter(
-                    (l) => l.isActive,
-                  ).length;
-                  return activeCount > 0 ? (
-                    <span className={styles.badge}>{activeCount}</span>
-                  ) : null;
-                })()}
-              </div>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={cn(
-                  styles.accordionChevron,
-                  isLoyaltyExpanded && 'rotate-180',
-                )}
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </button>
-
-            {isLoyaltyExpanded && (
-              <div className={styles.accordionContent}>
-                <div className={styles.loyaltyList}>
-                  {selectedCompany.loyaltyLevels.map((level) => (
-                    <ListItem
-                      key={level.id}
-                      className="cursor-pointer"
-                      onClick={() => handleLoyaltyLevelClick(level.id)}
-                      avatarAlt={t('loyaltyLevelItemTitle', {
-                        level: level.id,
-                      })}
-                      title={t('loyaltyLevelItemTitle', { level: level.id })}
-                      subtitle={t('loyaltyLevelSubtitle', {
-                        visitsUpperBound: level.visitsUpperBound,
-                      })}
-                      dimmed={!level.isActive}
-                      leadingIcon={
-                        <Medal
-                          size={24}
-                          className={
-                            level.isActive ? 'text-primary' : 'text-secondary'
-                          }
-                        />
-                      }
-                      rightEl={
-                        <ChevronRight size={24} className="text-secondary" />
-                      }
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
+          <div className={stylesCommon.sectionContainer}>
+            <FormSectionTitle>{t('loyaltyLevelsTitle')}</FormSectionTitle>
+            <LoyaltyLevelsTimeline
+              levels={selectedCompany.loyaltyLevels
+                .filter((l) => l.isActive)
+                .sort((a, b) => a.id - b.id)}
+              onClick={() => handleLoyaltyLevelClick(-1)}
+            />
           </div>
 
           <div className={styles.listSection}>
