@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter, useParams } from 'next/navigation';
-import { ChevronRight, Plus, SquarePen, Trash2 } from 'lucide-react';
+import { ChevronRight, Crown, Plus, SquarePen, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
@@ -51,8 +51,8 @@ export default function CompanyProfilePage() {
     router.push(PAGE_ROUTES.B2B.VENUES_DETAIL(venueId));
   };
 
-  const handleLoyaltyLevelClick = (levelId: number) => {
-    router.push(PAGE_ROUTES.B2B.COMPANY_LOYALTY_LEVEL(id, levelId));
+  const handleLoyaltyLevelClick = () => {
+    router.push(PAGE_ROUTES.B2B.COMPANY_LOYALTY_LEVELS(id));
   };
 
   const menuOptions = [
@@ -62,6 +62,14 @@ export default function CompanyProfilePage() {
       onClick: () => {
         setIsMenuOpen(false);
         handleAddVenue();
+      },
+    },
+    {
+      icon: <Crown size={24} className="text-primary" />,
+      label: t('menu.setupLoyaltyLevels'),
+      onClick: () => {
+        setIsMenuOpen(false);
+        router.push(PAGE_ROUTES.B2B.COMPANY_LOYALTY_LEVELS(id));
       },
     },
     {
@@ -198,7 +206,7 @@ export default function CompanyProfilePage() {
               levels={selectedCompany.loyaltyLevels
                 .filter((l) => l.isActive)
                 .sort((a, b) => a.id - b.id)}
-              onClick={() => handleLoyaltyLevelClick(-1)}
+              onClick={handleLoyaltyLevelClick}
             />
           </div>
 

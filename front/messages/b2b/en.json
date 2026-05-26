@@ -373,12 +373,22 @@
       "loyaltyLevelItemTitle": "Level {level}",
       "levelsLabel": "Levels",
       "visitsLabel": "Visits",
-      "noActiveLevels": "No active loyalty levels",
+      "noActiveLevels": "No active loyalty levels.",
+      "tapToAdd": "Tap to add.",
+      "activeLevels": "Active levels",
+      "levelNumber": "Level {level}",
+      "boundsMustIncrease": "Bound values must increase",
+      "save": "Save",
+      "toast": {
+        "saveSuccess": "Loyalty levels updated",
+        "saveFailed": "Failed to update loyalty levels"
+      },
       "venuesTitle": "Venues",
       "noVenues": "No venues found.",
       "menu": {
         "addVenue": "Create Venue",
         "edit": "Edit",
+        "setupLoyaltyLevels": "Setup loyalty levels",
         "delete": "Delete Company"
       },
       "deleteDialog": {

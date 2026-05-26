@@ -82,20 +82,19 @@ public class TestUtils
         var venueId = await CreateVerifiedVenueAsync(companyId, 0, 0, "Address");
 
         // 2. Configure Loyalty Levels
-        foreach (var level in levels)
-        {
-            var response = await _factory.ApiClient.PutAsync<UpdateLoyaltyLevelRequest, ApiResult.EmptyResult>(
+        var loyaltyLevelsResponse = await _factory.ApiClient
+            .PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
                 ApiRoutes.B2B.Company.LoyaltyLevels(companyId),
-                new UpdateLoyaltyLevelRequest(level));
-            response.Success.ShouldBeTrue();
-        }
+                new UpdateLoyaltyLevelsRequest(levels));
+        loyaltyLevelsResponse.Success.ShouldBeTrue();
 
         // 3. Create discounts
         foreach (var discount in discounts)
         {
-            var response = await _factory.ApiClient.PostAsync<CreateDiscountRequest, ApiResult<CreateDiscountResponse>>(
-                ApiRoutes.B2B.Venue.Discounts(venueId), discount);
-            response.Success.ShouldBeTrue();
+            var discountResponse = await _factory.ApiClient
+                .PostAsync<CreateDiscountRequest, ApiResult<CreateDiscountResponse>>(
+                    ApiRoutes.B2B.Venue.Discounts(venueId), discount);
+            discountResponse.Success.ShouldBeTrue();
         }
 
         return (companyId, venueId);

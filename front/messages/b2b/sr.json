@@ -335,7 +335,7 @@
     },
     "companies": {
       "title": "Kompanije",
-      "noCompanies": "Nema pronađenih kompanija. Tapnite bilo gde da biste kreirali kompaniju.",
+      "noCompanies": "Nema pronađenih kompanija. Dodirnite bilo gde da biste kreirali kompaniju.",
       "toast": {
         "loadFailed": "Učitavanje kompanija nije uspelo"
       },
@@ -345,7 +345,7 @@
     },
     "b2bVenues": {
       "title": "Lokali",
-      "noVenues": "Nema pronađenih lokala.\nNajpre kreirajte kompaniju da biste dodali lokale.\n\nTapnite bilo gde za upravljanje kompanijama.",
+      "noVenues": "Nema pronađenih lokala.\nNajpre kreirajte kompaniju da biste dodali lokale.\n\nDodirnite bilo gde za upravljanje kompanijama.",
       "toast": {
         "loadFailed": "Učitavanje lokala nije uspelo"
       }
@@ -373,12 +373,22 @@
       "loyaltyLevelItemTitle": "Nivo {level}",
       "levelsLabel": "Nivoi",
       "visitsLabel": "Posete",
-      "noActiveLevels": "Nema aktivnih nivoa lojalnosti",
+      "noActiveLevels": "Nema aktivnih nivoa lojalnosti.",
+      "tapToAdd": "Dodirnite za dodavanje.",
+      "activeLevels": "Aktivni nivoi",
+      "levelNumber": "Nivo {level}",
+      "boundsMustIncrease": "Granične vrednosti moraju rasti",
+      "save": "Sačuvaj",
+      "toast": {
+        "saveSuccess": "Nivoi lojalnosti ažurirani",
+        "saveFailed": "Ažuriranje nivoa lojalnosti nije uspelo"
+      },
       "venuesTitle": "Lokali",
       "noVenues": "Nema pronađenih lokala.",
       "menu": {
-        "addVenue": "Kreiraj lokal",
+        "addVenue": "Kreirajte lokal",
         "edit": "Uredite",
+        "setupLoyaltyLevels": "Podesite nivoe lojalnosti",
         "delete": "Obrišite kompaniju"
       },
       "deleteDialog": {

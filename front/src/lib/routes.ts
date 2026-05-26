@@ -45,6 +45,8 @@ export const PAGE_ROUTES = {
     COMPANIES_CREATE: '/companies/create',
     COMPANIES_DETAIL: (id: string) => `/companies/${id}`,
     COMPANIES_EDIT: (id: string) => `/companies/${id}/edit`,
+    COMPANY_LOYALTY_LEVELS: (companyId: string) =>
+      `/companies/${companyId}/loyalty-levels`,
     COMPANY_LOYALTY_LEVEL: (companyId: string, levelId: number) =>
       `/companies/${companyId}/loyalty-levels/${levelId}`,
     VENUES: '/venues',

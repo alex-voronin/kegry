@@ -11,11 +11,13 @@ interface LoyaltyLevelData {
 interface LoyaltyLevelsTimelineProps {
   levels: LoyaltyLevelData[];
   onClick?: () => void;
+  showTapHint?: boolean;
 }
 
 export function LoyaltyLevelsTimeline({
   levels,
   onClick,
+  showTapHint = true,
 }: LoyaltyLevelsTimelineProps) {
   const t = useTranslations('screens.companyProfile');
 
@@ -23,9 +25,14 @@ export function LoyaltyLevelsTimeline({
     return (
       <div
         onClick={onClick}
-        className="bg-form-element hover:bg-hover cursor-pointer rounded-xl px-4 py-6 text-center text-sm text-secondary transition-colors"
+        className="bg-form-element hover:bg-hover cursor-pointer sm:rounded-xl px-4 py-6 text-center text-sm text-secondary transition-colors"
       >
         {t('noActiveLevels')}
+        {showTapHint && (
+          <span className="font-medium">
+            {' '}{t('tapToAdd')}
+          </span>
+        )}
       </div>
     );
   }
@@ -35,7 +42,7 @@ export function LoyaltyLevelsTimeline({
   return (
     <div
       onClick={onClick}
-      className="bg-form-element hover:bg-hover cursor-pointer rounded-xl px-4 py-3 transition-colors"
+      className="bg-form-element hover:bg-hover cursor-pointer sm:rounded-xl px-4 py-3 transition-colors"
     >
       <div className="flex items-start gap-3">
         {/* Left labels */}
