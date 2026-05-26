@@ -157,9 +157,9 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var venueId = createVenueResponse.Result.Id;
 
         // 3. Enable 0 loyalty level
-        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyId),
-            new UpdateLoyaltyLevelRequest(new LoyaltyLevelDto(0, 1, true)));
+            new UpdateLoyaltyLevelsRequest(new[] { new LoyaltyLevelDto(0, 1, true) }));
 
         // 3. Create discounts
         var loyaltyLevelsResponse = await Factory.ApiClient.GetAsync<ApiResult<LoyaltyLevelDto[]>>(
@@ -218,12 +218,9 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             new LoyaltyLevelDto(3, 100, false)
         };
 
-        foreach (var level in levels)
-        {
-            await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelRequest, ApiResult.EmptyResult>(
-                ApiRoutes.B2B.Company.LoyaltyLevels(companyId),
-                new UpdateLoyaltyLevelRequest(level));
-        }
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
+            ApiRoutes.B2B.Company.LoyaltyLevels(companyId),
+            new UpdateLoyaltyLevelsRequest(levels));
 
         // 3. Create Discounts (0%, 5%, 10% for levels 0, 1, 2) except Friday
         var workDaysExceptFriday = Enum.GetValues<DayOfWeek>().Where(d => d != DayOfWeek.Friday).ToArray();
@@ -704,9 +701,9 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 3. Disable 3rd loyalty level
         Factory.ApiClient.SetAuth(b2BAuth);
-        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyId),
-            new UpdateLoyaltyLevelRequest(new LoyaltyLevelDto(3, 4, false)));
+            new UpdateLoyaltyLevelsRequest(new[] { new LoyaltyLevelDto(3, 4, false) }));
 
         // 4. Ensure Level 2 discount is applied
         Factory.ApiClient.SetAuth(b2CAuth);

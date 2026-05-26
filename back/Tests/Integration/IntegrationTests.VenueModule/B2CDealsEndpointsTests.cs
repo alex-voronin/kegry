@@ -34,41 +34,41 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // Venue A: Company "Company A", Dist 10 (approx), Percent 10
         var companyAId = await _testUtils.CreateCompanyAsync("Company A", "a@example.com");
-        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyAId),
-            new UpdateLoyaltyLevelRequest(new LoyaltyLevelDto(0, 1, true)));
+            new UpdateLoyaltyLevelsRequest(new[] { new LoyaltyLevelDto(0, 1, true) }));
         var venueAId = await _testUtils.CreateVerifiedVenueAsync(companyAId, 0.1, 0.1, "Address A"); // ~15km
         await _testUtils.AddDiscountAsync(venueAId, companyAId, 10);
 
         // Venue B: Company "Company B", Dist 5 (approx), Percent 10
         var companyBId = await _testUtils.CreateCompanyAsync("Company B", "b@example.com");
-        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyBId),
-            new UpdateLoyaltyLevelRequest(new LoyaltyLevelDto(0, 1, true)));
+            new UpdateLoyaltyLevelsRequest(new[] { new LoyaltyLevelDto(0, 1, true) }));
         var venueBId = await _testUtils.CreateVerifiedVenueAsync(companyBId, 0.05, 0.05, "Address B"); // ~7.8km
         await _testUtils.AddDiscountAsync(venueBId, companyBId, 10);
 
         // Venue C: Company "Company C", Dist 5 (approx), Percent 20
         var companyCId = await _testUtils.CreateCompanyAsync("Company C", "c@example.com");
-        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyCId),
-            new UpdateLoyaltyLevelRequest(new LoyaltyLevelDto(0, 1, true)));
+            new UpdateLoyaltyLevelsRequest(new[] { new LoyaltyLevelDto(0, 1, true) }));
         var venueCId = await _testUtils.CreateVerifiedVenueAsync(companyCId, 0.051, 0.051, "Address C"); // ~8km
         await _testUtils.AddDiscountAsync(venueCId, companyCId, 20);
 
         // Venue D: Company "Company D", Dist 5 (approx), Percent 10
         var companyDId = await _testUtils.CreateCompanyAsync("Company D", "d@example.com");
-        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyDId),
-            new UpdateLoyaltyLevelRequest(new LoyaltyLevelDto(0, 1, true)));
+            new UpdateLoyaltyLevelsRequest(new[] { new LoyaltyLevelDto(0, 1, true) }));
         var venueDId = await _testUtils.CreateVerifiedVenueAsync(companyDId, 0.05, 0.05, "Address D"); // ~7.8km
         await _testUtils.AddDiscountAsync(venueDId, companyDId, 10);
 
         // Venue E: Company "Company D", Custom
         var companyEId = await _testUtils.CreateCompanyAsync("Company E", "e@example.com");
-        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyEId),
-            new UpdateLoyaltyLevelRequest(new LoyaltyLevelDto(0, 1, true)));
+            new UpdateLoyaltyLevelsRequest(new[] { new LoyaltyLevelDto(0, 1, true) }));
         var venueEId = await _testUtils.CreateVerifiedVenueAsync(companyEId, 0.05, 0.05, "Address E"); // ~7.8km
         await _testUtils.AddDiscountAsync(venueEId, companyEId, null);
 
@@ -239,9 +239,9 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Disable 3rd loyalty level
         Factory.ApiClient.SetAuth(b2BAuth);
-        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyId),
-            new UpdateLoyaltyLevelRequest(new LoyaltyLevelDto(3, 4, false)));
+            new UpdateLoyaltyLevelsRequest(new[] { new LoyaltyLevelDto(3, 4, false) }));
 
         // 3. Ensure Level 2 discount is applied
         Factory.ApiClient.SetAuth(b2CAuth);

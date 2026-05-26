@@ -42,10 +42,10 @@ public class B2BDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var firstLevel = getLevelsResponse.Result[0];
 
         // 3. Update one loyalty level
-        var updateRequest = new UpdateLoyaltyLevelRequest(
-            new LoyaltyLevelDto(firstLevel.Id, 15, true));
+        var updateRequest = new UpdateLoyaltyLevelsRequest(
+            new[] { new LoyaltyLevelDto(firstLevel.Id, 15, true) });
 
-        var updateResponse = await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelRequest, ApiResult.EmptyResult>(
+        var updateResponse = await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyId), updateRequest);
         updateResponse.Success.ShouldBeTrue();
 
@@ -307,7 +307,7 @@ public class B2BDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         var loyaltyResponse = await Factory.HttpClient.PutAsJsonAsync(
             ApiRoutes.B2B.Company.LoyaltyLevels(dummyId),
-            new UpdateLoyaltyLevelRequest(new LoyaltyLevelDto(0, 1, true)));
+            new UpdateLoyaltyLevelsRequest(new[] { new LoyaltyLevelDto(0, 1, true) }));
         loyaltyResponse.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
     }
 }

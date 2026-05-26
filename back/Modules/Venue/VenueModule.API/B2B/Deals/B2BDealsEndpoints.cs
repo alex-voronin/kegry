@@ -56,7 +56,7 @@ public class B2BDealsEndpoints : IEndpoints
 
     private static async Task<ApiResult.EmptyResult> UpdateLoyaltyLevels(
         [FromRoute] Guid companyId,
-        [FromBody] UpdateLoyaltyLevelRequest request,
+        [FromBody] UpdateLoyaltyLevelsRequest request,
         ClaimsPrincipal user,
         ICompanyRepository companyRepository,
         CancellationToken ct)
@@ -74,11 +74,14 @@ public class B2BDealsEndpoints : IEndpoints
             throw VenueExceptions.CompanyNotFound();
         }
 
-        var loyaltyLevel = company.LoyaltyLevels.FirstOrDefault(l => l.Id == request.LoyaltyLevel.Id);
-        if (loyaltyLevel != null)
+        foreach (var dto in request.LoyaltyLevels)
         {
-            loyaltyLevel.VisitsUpperBound = request.LoyaltyLevel.VisitsUpperBound;
-            loyaltyLevel.IsActive = request.LoyaltyLevel.IsActive;
+            var loyaltyLevel = company.LoyaltyLevels.FirstOrDefault(l => l.Id == dto.Id);
+            if (loyaltyLevel != null)
+            {
+                loyaltyLevel.VisitsUpperBound = dto.VisitsUpperBound;
+                loyaltyLevel.IsActive = dto.IsActive;
+            }
         }
 
         LoyaltyLevel.ValidateLevelsCountAndOrder(company.LoyaltyLevels);
