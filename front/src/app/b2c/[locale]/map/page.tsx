@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import { ScanQrCode } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { Header } from '@/components/ui/header';
+
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { ModalDialog } from '@/components/ui/modal-dialog';
@@ -37,8 +37,11 @@ const VenueMapInternal = dynamic(
 export default function MapScreen() {
   const router = useRouter();
   const t = useTranslations('screens.map');
-  const { selectedCity, hasHydrated, handleCityChange: setCity } =
-    useCitySelection();
+  const {
+    selectedCity,
+    hasHydrated,
+    handleCityChange: setCity,
+  } = useCitySelection();
 
   const [venues, setVenues] = useState<VenueMapItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -208,51 +211,49 @@ export default function MapScreen() {
           initialZoom={12}
         />
 
-        <div className={styles.gradientOverlay} />
+        <div className="absolute top-2 right-0 left-0 z-50 flex items-center justify-between px-2">
+          <div className="bg-surface/85 rounded-full p-2">
+            <Icon
+              src="/assets/common/profile-icon.svg"
+              alt="profile"
+              width={30}
+              height={32}
+              priority
+              onClick={() => router.push(PAGE_ROUTES.PROFILE)}
+            />
+          </div>
 
-        <div className={styles.header}>
-          <Header
-            left={
+          <div className="bg-surface/85 rounded-full px-4 py-2 backdrop-blur-md">
+            <CitySelector
+              selectedCity={selectedCity}
+              onCityChange={setCity}
+              isLocationDenied={false}
+            />
+          </div>
+
+          <div className="bg-surface/85 rounded-full px-3 py-2 backdrop-blur-md">
+            <div className="flex items-center gap-2">
+              <Icon width={32} height={32} onClick={handleQrScanClick}>
+                <ScanQrCode className="text-primary h-full w-full" />
+              </Icon>
               <Icon
-                src="/assets/common/profile-icon.svg"
-                alt="profile"
+                src="/assets/venue/venue-icon.svg"
+                alt="venues"
                 width={30}
-                height={32}
+                height={30}
                 priority
-                onClick={() => router.push(PAGE_ROUTES.PROFILE)}
+                onClick={() => router.push(PAGE_ROUTES.VENUES)}
               />
-            }
-            title={
-              <CitySelector
-                selectedCity={selectedCity}
-                onCityChange={setCity}
-                isLocationDenied={false}
+              <Icon
+                src="/assets/feed/notifications-icon.svg"
+                alt="notifications"
+                width={28}
+                height={30}
+                priority
+                onClick={() => router.push(PAGE_ROUTES.NOTIFICATIONS)}
               />
-            }
-            right={
-              <div className="flex items-center gap-2">
-                <Icon width={32} height={32} onClick={handleQrScanClick}>
-                  <ScanQrCode className="text-primary h-full w-full" />
-                </Icon>
-                <Icon
-                  src="/assets/venue/venue-icon.svg"
-                  alt="venues"
-                  width={30}
-                  height={30}
-                  priority
-                  onClick={() => router.push(PAGE_ROUTES.VENUES)}
-                />
-                <Icon
-                  src="/assets/feed/notifications-icon.svg"
-                  alt="notifications"
-                  width={28}
-                  height={30}
-                  priority
-                  onClick={() => router.push(PAGE_ROUTES.NOTIFICATIONS)}
-                />
-              </div>
-            }
-          />
+            </div>
+          </div>
         </div>
 
         <div className={styles.topRightControls}>
