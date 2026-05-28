@@ -12,20 +12,8 @@
   @apply absolute top-16 right-2 z-[45] flex items-center gap-2;
 }
 
-.pillToggle {
-  @apply bg-surface/85 flex items-center rounded-full p-0.5;
-}
-
 .loadingSpinner {
   @apply bg-surface/85 flex items-center justify-center rounded-full p-2;
-}
-
-.pillOption {
-  @apply rounded-full px-4 py-1.5 text-sm font-medium text-white/60 transition-colors;
-}
-
-.pillOptionActive {
-  @apply bg-white/20 text-white;
 }
 
 .sheetDragging {

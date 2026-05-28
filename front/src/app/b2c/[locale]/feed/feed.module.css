@@ -155,3 +155,7 @@
 .qrScanText {
   @apply text-primary text-sm font-semibold tracking-wider uppercase;
 }
+
+.topRightControls {
+  @apply absolute top-16 right-2 z-[45] flex items-center gap-2;
+}

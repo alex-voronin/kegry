@@ -17,6 +17,7 @@ import { CitySelector } from '@/components/common/city-selector';
 import apiClient from '@/lib/api-client';
 import { paramsForReq } from '@/lib/query-params';
 import { useVenueFiltersStore } from '@/store/use-venue-filters-store';
+import { MapFeedToggle } from '@/components/common/map-feed-toggle';
 import { useQrCheckIn } from '../venues/use-qr-check-in';
 import { VenueBottomSheet } from './_components/venue-bottom-sheet';
 import styles from './map.module.css';
@@ -266,20 +267,7 @@ export default function MapScreen() {
             </div>
           )}
 
-          <div className={styles.pillToggle}>
-            <button
-              className={`${styles.pillOption} ${styles.pillOptionActive}`}
-              onClick={() => router.push(PAGE_ROUTES.MAP)}
-            >
-              {t('mapLabel')}
-            </button>
-            <button
-              className={styles.pillOption}
-              onClick={() => router.push(PAGE_ROUTES.FEED)}
-            >
-              {t('feed')}
-            </button>
-          </div>
+          <MapFeedToggle activeView="map" />
         </div>
 
         <VenueBottomSheet venues={venues} isLoading={isLoading} />

@@ -1,0 +1,13 @@
+@reference "../../app/globals.css";
+
+.pillToggle {
+  @apply border border-white/10 bg-surface/85 flex items-center rounded-full p-0.5;
+}
+
+.pillOption {
+  @apply rounded-full px-4 py-1.5 text-sm font-medium text-white/60 transition-colors cursor-pointer;
+}
+
+.pillOptionActive {
+  @apply bg-white/20 text-white;
+}

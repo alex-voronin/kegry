@@ -13,6 +13,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { CheckInManager } from '@/components/common/check-in-manager';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { MapFeedToggle } from '@/components/common/map-feed-toggle';
 import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import { useFeedStore, UserProfileDto } from './use-feed-store';
 import { useNpcStore, NpcDto } from './use-npc-store';
@@ -744,6 +745,9 @@ export default function FeedScreen() {
             onQrScanClick={handleQrScanClick}
           />
         </div>
+
+        <MapFeedToggle activeView="feed" className={styles.topRightControls} />
+
         {renderBody()}
         {renderFooter()}
         <ModalDialog
