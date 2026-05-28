@@ -17,7 +17,7 @@ public interface IDashboardService
 public class DashboardService : IDashboardService, IScoped
 {
     private const int DataPointsCount = 12;
-    
+
     private readonly IVisitRepository _visitRepository;
 
     public DashboardService(IVisitRepository visitRepository)

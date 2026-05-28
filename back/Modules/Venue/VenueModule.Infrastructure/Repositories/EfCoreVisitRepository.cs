@@ -20,7 +20,7 @@ public class EfCoreVisitRepository : Repository<VenueContext, Visit>, IVisitRepo
         [Column("count")]
         public int Count { get; init; }
     }
-    
+
     public EfCoreVisitRepository(VenueContext context) : base(context)
     {
     }
@@ -40,7 +40,7 @@ public class EfCoreVisitRepository : Repository<VenueContext, Visit>, IVisitRepo
     {
         if (venueIds.Count == 0)
             return [];
-        
+
         var truncUnit = grouping switch
         {
             VisitsGrouping.Daily => "day",

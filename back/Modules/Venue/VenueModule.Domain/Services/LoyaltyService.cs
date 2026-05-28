@@ -265,7 +265,7 @@ internal class LoyaltyService : ILoyaltyService, IScoped
                 dayOfWeek, currentLoyaltyLevel);
 
             result[dayOfWeek] = new CurrentAndNextLevelDiscount(
-                Discount: currentLevelDiscount, 
+                Discount: currentLevelDiscount,
                 NextLevelDiscount: nextLevelDiscount,
                 IsCustomDiscount: currentLevelDiscount == null);
         }

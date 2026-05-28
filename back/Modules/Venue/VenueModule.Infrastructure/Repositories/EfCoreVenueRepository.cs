@@ -28,7 +28,7 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
             .ThenInclude(d => d.LoyaltyLevel)
             .Include(v => v.Promos)
             .Include(v => v.VenueTagLinks)
-            .ThenInclude(vt  => vt.Tag)
+            .ThenInclude(vt => vt.Tag)
             .AsNoTracking()
             .Where(v => v.Id == id)
             .FirstOrDefaultAsync(ct);
