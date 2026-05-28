@@ -556,6 +556,22 @@
         "loadFailed": "Failed to load venues on map"
       }
     },
+    "map": {
+      "title": "Map",
+      "venuesCount": "{count} venues nearby",
+      "details": "Details",
+      "loading": "Loading venues...",
+      "feed": "Feed",
+      "mapLabel": "Map",
+      "nothingFound": "Nothing interesting here yet",
+      "firstCheckInDialog": {
+        "message": "Open the scanner and point it at the venue's QR code to check in.",
+        "ok": "Got it"
+      },
+      "toast": {
+        "loadFailed": "Failed to load venues on map"
+      }
+    },
     "venueDetail": {
       "contacts": "Contacts",
       "address": "Address",

@@ -556,6 +556,22 @@
         "loadFailed": "Učitavanje lokala na mapi nije uspelo"
       }
     },
+    "map": {
+      "title": "Mapa",
+      "venuesCount": "{count} lokala u blizini",
+      "details": "Detalji",
+      "loading": "Učitavanje lokala...",
+      "feed": "Feed",
+      "mapLabel": "Mapa",
+      "nothingFound": "Ovde još ništa interesantno",
+      "firstCheckInDialog": {
+        "message": "Otvorite skener i usmerite ga ka QR kodu lokala da biste se prijavili.",
+        "ok": "Razumem"
+      },
+      "toast": {
+        "loadFailed": "Učitavanje lokala na mapi nije uspelo"
+      }
+    },
     "venueDetail": {
       "contacts": "Kontakti",
       "address": "Adresa",

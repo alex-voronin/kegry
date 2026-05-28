@@ -1,0 +1,116 @@
+@reference "../../../../app/globals.css";
+
+.wrapper {
+  @apply relative h-dvh;
+}
+
+.mapArea {
+  @apply absolute inset-0 overflow-hidden;
+}
+
+.gradientOverlay {
+  @apply pointer-events-none absolute top-0 right-0 left-0 z-40 h-28;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.85) 0%,
+    transparent 100%
+  );
+}
+
+.header {
+  @apply absolute top-0 right-0 left-0 z-50;
+}
+
+.topRightControls {
+  @apply absolute top-16 right-4 z-[45] flex items-center gap-2;
+}
+
+.pillToggle {
+  @apply flex items-center rounded-full bg-black/60 p-0.5 backdrop-blur-md;
+}
+
+.loadingSpinner {
+  @apply flex items-center justify-center rounded-full bg-black/60 p-2 backdrop-blur-md;
+}
+
+.pillOption {
+  @apply rounded-full px-4 py-1.5 text-sm font-medium text-white/60 transition-colors;
+}
+
+.pillOptionActive {
+  @apply bg-white/20 text-white;
+}
+
+.sheetDragging {
+  transition: none !important;
+}
+
+.sheet {
+  @apply bg-surface absolute right-0 bottom-0 left-0 z-30 flex flex-col rounded-t-2xl will-change-transform;
+  height: 100%;
+}
+
+.dragHandle {
+  @apply flex shrink-0 justify-center pt-2 pb-1;
+}
+
+.dragHandleBar {
+  @apply h-1 w-10 rounded-full bg-white/20;
+}
+
+.sheetHeader {
+  @apply flex shrink-0 items-center justify-between px-4 py-2;
+}
+
+.sheetTitle {
+  @apply text-sm font-semibold text-white/80;
+}
+
+.chevron {
+  @apply text-white/60 transition-transform duration-300;
+}
+
+.chevronUp {
+  @apply rotate-180;
+}
+
+.peekWrapper {
+  @apply flex flex-col gap-1 px-4 pb-2;
+}
+
+.scrollArea {
+  @apply flex flex-1 flex-col gap-0.5 overflow-y-auto px-4 pb-4;
+}
+
+.compactCard {
+  @apply flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 transition-colors hover:bg-white/5 active:bg-white/10;
+}
+
+.compactCardAvatar {
+  @apply h-10 w-10 shrink-0 rounded-full object-cover;
+}
+
+.compactCardInfo {
+  @apply flex min-w-0 flex-1 flex-col;
+}
+
+.compactCardName {
+  @apply truncate text-sm font-medium text-white;
+}
+
+.compactCardAddress {
+  @apply truncate text-xs text-white/50;
+}
+
+.emptyText {
+  @apply px-4 py-6 text-center text-sm text-white/50;
+}
+
+:global(.leaflet-control-zoom) {
+  margin: 58px 10px 10px 14px !important;
+}
+
+:global(.leaflet-container > button[aria-label='Center on my location']) {
+  top: 122px !important;
+  left: 16px !important;
+}

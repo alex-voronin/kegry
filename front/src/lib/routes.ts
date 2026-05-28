@@ -8,6 +8,7 @@ export const PAGE_ROUTES = {
   PASSWORD_RESET: '/password-reset',
   FEED: '/feed',
   FEED_FILTERS: '/feed/filters',
+  MAP: '/map',
   VENUES: '/venues',
   VENUES_MAP: '/venues/map',
   VENUE_DETAIL: (id: string) => `/venues/${id}`,
