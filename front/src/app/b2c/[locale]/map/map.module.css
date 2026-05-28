@@ -37,6 +37,10 @@
   height: 100%;
 }
 
+.dragArea {
+  @apply flex shrink-0 cursor-grab flex-col active:cursor-grabbing;
+}
+
 .dragHandle {
   @apply flex shrink-0 justify-center pt-2 pb-1;
 }
@@ -98,18 +102,30 @@
 }
 
 :global(.leaflet-control-zoom.leaflet-bar a) {
-  background-color: color-mix(in srgb, var(--color-surface) 85%, transparent) !important;
+  background-color: color-mix(
+    in srgb,
+    var(--color-surface) 85%,
+    transparent
+  ) !important;
   color: #fff !important;
   border-bottom-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 :global(.leaflet-control-zoom.leaflet-bar a:hover),
 :global(.leaflet-control-zoom.leaflet-bar a:focus) {
-  background-color: color-mix(in srgb, var(--color-surface) 85%, transparent) !important;
+  background-color: color-mix(
+    in srgb,
+    var(--color-surface) 85%,
+    transparent
+  ) !important;
 }
 
 :global(.leaflet-control-zoom.leaflet-bar a.leaflet-disabled) {
-  background-color: color-mix(in srgb, var(--color-surface) 85%, transparent) !important;
+  background-color: color-mix(
+    in srgb,
+    var(--color-surface) 85%,
+    transparent
+  ) !important;
 }
 
 :global(.leaflet-touch .leaflet-control-zoom.leaflet-bar) {
@@ -119,7 +135,11 @@
 :global(.leaflet-container > button[aria-label='Center on my location']) {
   top: 124px !important;
   left: 16px !important;
-  background-color: color-mix(in srgb, var(--color-surface) 85%, transparent) !important;
+  background-color: color-mix(
+    in srgb,
+    var(--color-surface) 85%,
+    transparent
+  ) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   color: #fff !important;
 }

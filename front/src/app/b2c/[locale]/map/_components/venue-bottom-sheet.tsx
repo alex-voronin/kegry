@@ -1,6 +1,12 @@
 'use client';
 
-import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react';
+import {
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+} from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import Image from 'next/image';
@@ -13,8 +19,7 @@ import type { VenueMapItem } from '../../venues/map/_components/venue-map-intern
 
 const PEEK_HEIGHT = 160;
 const EXPANDED_TOP = 190;
-const VELOCITY_THRESHOLD = 0.3;
-const TAP_MOVE_THRESHOLD = 8;
+const TAP_MOVE_THRESHOLD = 50;
 
 interface VenueBottomSheetProps {
   venues: VenueMapItem[];
@@ -35,12 +40,20 @@ export function VenueBottomSheet({ venues, isLoading }: VenueBottomSheetProps) {
   const [isDragging, setIsDragging] = useState(false);
 
   const sheetRef = useRef<HTMLDivElement>(null);
+  const dragAreaRef = useRef<HTMLDivElement>(null);
   const startYRef = useRef(0);
   const startTranslateRef = useRef(0);
   const rafRef = useRef<number | null>(null);
   const velocityRef = useRef<{ y: number; t: number }[]>([]);
   const hasMovedRef = useRef(false);
+  const totalDragRef = useRef(0);
+  const currentTranslateRef = useRef(0);
   const transitionEnabledRef = useRef(false);
+  const touchInProgressRef = useRef(false);
+  const endDragRef = useRef<() => void>(() => {});
+  const handlePointerDownRef = useRef<(clientY: number) => void>(() => {});
+  const clampTranslateRef = useRef<(clientY: number) => void>(() => {});
+  const recordVelocityRef = useRef<(clientY: number) => void>(() => {});
 
   const getSnapTranslate = useCallback((s: SheetState) => {
     const el = sheetRef.current;
@@ -63,17 +76,22 @@ export function VenueBottomSheet({ venues, isLoading }: VenueBottomSheetProps) {
     return Math.max(el.clientHeight - PEEK_HEIGHT, EXPANDED_TOP);
   }, []);
 
-  const clampTranslate = useCallback((clientY: number) => {
-    const dy = clientY - startYRef.current;
-    const raw = startTranslateRef.current + dy;
-    const maxTranslate = getMaxTranslate();
-    const clamped = Math.max(EXPANDED_TOP, Math.min(maxTranslate, raw));
+  const clampTranslate = useCallback(
+    (clientY: number) => {
+      const dy = clientY - startYRef.current;
+      const raw = startTranslateRef.current + dy;
+      const maxTranslate = getMaxTranslate();
+      const clamped = Math.max(EXPANDED_TOP, Math.min(maxTranslate, raw));
 
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
-      setTranslateY(clamped);
-    });
-  }, [getMaxTranslate]);
+      currentTranslateRef.current = clamped;
+
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        setTranslateY(clamped);
+      });
+    },
+    [getMaxTranslate],
+  );
 
   const recordVelocity = useCallback((clientY: number) => {
     const now = performance.now();
@@ -101,91 +119,136 @@ export function VenueBottomSheet({ venues, isLoading }: VenueBottomSheetProps) {
     velocityRef.current = [];
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
 
-    if (!hasMovedRef.current) {
+    const totalDrag = totalDragRef.current;
+
+    console.log('[sheet] endDrag', {
+      hasMoved: hasMovedRef.current,
+      totalDrag,
+    });
+
+    if (hasMovedRef.current || totalDrag === 0) {
       toggle();
-      return;
     }
+  }, [toggle]);
 
-    const maxTranslate = getMaxTranslate();
-    const midPoint = (maxTranslate + EXPANDED_TOP) / 2;
-    const velocity = getVelocity();
+  const startDrag = useCallback(
+    (clientY: number) => {
+      console.log('[sheet] startDrag', {
+        clientY,
+        translateY,
+        startTranslateRef: translateY,
+      });
+      setIsDragging(true);
+      hasMovedRef.current = false;
+      totalDragRef.current = 0;
+      startYRef.current = clientY;
+      startTranslateRef.current = translateY;
+      currentTranslateRef.current = translateY;
+      velocityRef.current = [];
+    },
+    [translateY],
+  );
 
-    let next: SheetState;
-    if (Math.abs(velocity) > VELOCITY_THRESHOLD) {
-      next = velocity > 0 ? 'collapsed' : 'expanded';
-    } else {
-      next = translateY < midPoint ? 'expanded' : 'collapsed';
-    }
-    setState(next);
-  }, [translateY, getMaxTranslate, getVelocity, toggle]);
+  const handlePointerDown = useCallback(
+    (clientY: number) => {
+      startDrag(clientY);
+    },
+    [startDrag],
+  );
 
-  const startDrag = useCallback((clientY: number) => {
-    setIsDragging(true);
-    hasMovedRef.current = false;
-    startYRef.current = clientY;
-    startTranslateRef.current = translateY;
-    velocityRef.current = [];
-  }, [translateY]);
-
-  const handlePointerDown = useCallback((clientY: number) => {
-    startDrag(clientY);
-  }, [startDrag]);
-
-  const handlePointerMove = useCallback((clientY: number) => {
-    if (!isDragging) return;
-    if (Math.abs(clientY - startYRef.current) > TAP_MOVE_THRESHOLD) {
-      hasMovedRef.current = true;
-    }
-    if (!hasMovedRef.current) return;
-    clampTranslate(clientY);
-    recordVelocity(clientY);
-  }, [isDragging, clampTranslate, recordVelocity]);
+  const handlePointerMove = useCallback(
+    (clientY: number) => {
+      const dy = Math.abs(clientY - startYRef.current);
+      totalDragRef.current = Math.max(totalDragRef.current, dy);
+      if (dy > TAP_MOVE_THRESHOLD) {
+        hasMovedRef.current = true;
+      }
+      clampTranslate(clientY);
+      recordVelocity(clientY);
+    },
+    [clampTranslate, recordVelocity],
+  );
 
   const handlePointerUp = useCallback(() => {
-    if (!isDragging) return;
     endDrag();
-  }, [isDragging, endDrag]);
+  }, [endDrag]);
 
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    handlePointerDown(e.touches[0].clientY);
-  }, [handlePointerDown]);
-
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    e.preventDefault();
-    handlePointerMove(e.touches[0].clientY);
-  }, [handlePointerMove]);
-
-  const handleTouchEnd = useCallback(() => {
-    handlePointerUp();
-  }, [handlePointerUp]);
-
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    handlePointerDown(e.clientY);
-  }, [handlePointerDown]);
+  const handlePointerMoveRef = useRef(handlePointerMove);
+  handlePointerMoveRef.current = handlePointerMove;
+  const handlePointerUpRef = useRef(handlePointerUp);
+  handlePointerUpRef.current = handlePointerUp;
 
   useEffect(() => {
-    if (!isDragging) return;
+    endDragRef.current = endDrag;
+    handlePointerDownRef.current = handlePointerDown;
+    clampTranslateRef.current = clampTranslate;
+    recordVelocityRef.current = recordVelocity;
+  });
 
-    const onMouseMove = (e: MouseEvent) => {
-      e.preventDefault();
-      handlePointerMove(e.clientY);
-    };
-    const onMouseUp = () => {
-      handlePointerUp();
-    };
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (touchInProgressRef.current) return;
+      handlePointerDown(e.clientY);
 
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
-    return () => {
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
-    };
-  }, [isDragging, handlePointerMove, handlePointerUp]);
+      const onMouseMove = (e: MouseEvent) => {
+        e.preventDefault();
+        handlePointerMoveRef.current(e.clientY);
+      };
+      const onMouseUp = () => {
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mouseup', onMouseUp);
+        handlePointerUpRef.current();
+      };
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+    },
+    [handlePointerDown],
+  );
 
   const handleVenueClick = useCallback(
     (id: string) => router.push(PAGE_ROUTES.VENUE_DETAIL(id)),
     [router],
   );
+
+  useEffect(() => {
+    const el = dragAreaRef.current;
+    if (!el) return;
+
+    const onTouchStart = (e: TouchEvent) => {
+      e.preventDefault();
+      touchInProgressRef.current = true;
+      handlePointerDownRef.current(e.touches[0].clientY);
+
+      const onEnd = () => {
+        window.removeEventListener('touchend', onEnd);
+        window.removeEventListener('touchcancel', onEnd);
+        endDragRef.current();
+        setTimeout(() => {
+          touchInProgressRef.current = false;
+        }, 400);
+      };
+      window.addEventListener('touchend', onEnd);
+      window.addEventListener('touchcancel', onEnd);
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      const dy = Math.abs(e.touches[0].clientY - startYRef.current);
+      totalDragRef.current = Math.max(totalDragRef.current, dy);
+      if (dy > TAP_MOVE_THRESHOLD) {
+        hasMovedRef.current = true;
+      }
+      clampTranslateRef.current(e.touches[0].clientY);
+      recordVelocityRef.current(e.touches[0].clientY);
+    };
+
+    el.addEventListener('touchstart', onTouchStart, { passive: false });
+    el.addEventListener('touchmove', onTouchMove, { passive: false });
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchmove', onTouchMove);
+    };
+  }, []);
 
   return (
     <div
@@ -196,14 +259,14 @@ export function VenueBottomSheet({ venues, isLoading }: VenueBottomSheetProps) {
         transition: transitionEnabledRef.current
           ? 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)'
           : 'none',
+        overscrollBehavior: 'contain',
       }}
     >
       <div
+        ref={dragAreaRef}
         className={styles.dragArea}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
         onMouseDown={handleMouseDown}
+        style={{ touchAction: 'none' }}
       >
         <div className={styles.dragHandle}>
           <div className={styles.dragHandleBar} />
@@ -220,58 +283,63 @@ export function VenueBottomSheet({ venues, isLoading }: VenueBottomSheetProps) {
         </div>
       </div>
 
-      <div className={state === 'collapsed' ? styles.peekWrapper : styles.scrollArea}>
-        {venues.length === 0
-          ? <p className={styles.emptyText}>{t('nothingFound')}</p>
-          : state === 'collapsed'
-            ? venues.slice(0, 2).map((venue) => (
-                <div
-                  key={venue.id}
-                  className={styles.compactCard}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleVenueClick(venue.id);
-                  }}
-                >
-                  <Image
-                    src={
-                      venue.companyAvatarImageUrl ||
-                      '/assets/common/venues-icon.svg'
-                    }
-                    alt={venue.companyName}
-                    width={40}
-                    height={40}
-                    className={styles.compactCardAvatar}
-                  />
-                  <div className={styles.compactCardInfo}>
-                    <span className={styles.compactCardName}>
-                      {venue.companyName}
-                    </span>
-                    <span className={styles.compactCardAddress}>
-                      {venue.address}
-                    </span>
-                  </div>
+      <div
+        className={
+          state === 'collapsed' ? styles.peekWrapper : styles.scrollArea
+        }
+      >
+        {venues.length === 0 ? (
+          <p className={styles.emptyText}>{t('nothingFound')}</p>
+        ) : state === 'collapsed' ? (
+          venues.slice(0, 2).map((venue) => (
+            <div
+              key={venue.id}
+              className={styles.compactCard}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleVenueClick(venue.id);
+              }}
+            >
+              <Image
+                src={
+                  venue.companyAvatarImageUrl ||
+                  '/assets/common/venues-icon.svg'
+                }
+                alt={venue.companyName}
+                width={40}
+                height={40}
+                className={styles.compactCardAvatar}
+              />
+              <div className={styles.compactCardInfo}>
+                <span className={styles.compactCardName}>
+                  {venue.companyName}
+                </span>
+                <span className={styles.compactCardAddress}>
+                  {venue.address}
+                </span>
+              </div>
+            </div>
+          ))
+        ) : (
+          venues.map((venue) => (
+            <ListItem
+              key={venue.id}
+              className="cursor-pointer"
+              onClick={() => handleVenueClick(venue.id)}
+              avatarUrl={
+                venue.companyAvatarImageUrl || '/assets/common/venues-icon.svg'
+              }
+              avatarAlt={venue.companyName}
+              title={venue.companyName}
+              subtitle={
+                <div>
+                  <div className="text-xs text-white/60">{venue.address}</div>
+                  <VenueDisplayTags tagIds={venue.tagIds} />
                 </div>
-              ))
-            : venues.map((venue) => (
-                <ListItem
-                  key={venue.id}
-                  className="cursor-pointer"
-                  onClick={() => handleVenueClick(venue.id)}
-                  avatarUrl={
-                    venue.companyAvatarImageUrl ||
-                    '/assets/common/venues-icon.svg'
-                  }
-                  avatarAlt={venue.companyName}
-                  title={venue.companyName}
-                  subtitle={
-                    <div>
-                      <div className="text-xs text-white/60">{venue.address}</div>
-                      <VenueDisplayTags tagIds={venue.tagIds} />
-                    </div>
-                  }
-                />
-              ))}
+              }
+            />
+          ))
+        )}
       </div>
     </div>
   );
