@@ -559,6 +559,9 @@
     "map": {
       "title": "Mapa",
       "venuesCount": "{count} lokala u blizini",
+      "tabVenues": "Lokali",
+      "tabEvents": "Događaji",
+      "eventsPlaceholder": "Događaji će uskoro biti dostupni",
       "details": "Detalji",
       "loading": "Učitavanje lokala...",
       "feed": "Feed",

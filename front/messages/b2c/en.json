@@ -559,6 +559,9 @@
     "map": {
       "title": "Map",
       "venuesCount": "{count} venues nearby",
+      "tabVenues": "Venues",
+      "tabEvents": "Events",
+      "eventsPlaceholder": "Events coming soon",
       "details": "Details",
       "loading": "Loading venues...",
       "feed": "Feed",

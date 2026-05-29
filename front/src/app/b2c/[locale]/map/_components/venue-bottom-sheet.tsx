@@ -28,11 +28,14 @@ interface VenueBottomSheetProps {
 
 type SheetState = 'collapsed' | 'expanded';
 
+type Tab = 'venues' | 'events';
+
 export function VenueBottomSheet({ venues, isLoading }: VenueBottomSheetProps) {
   const t = useTranslations('screens.map');
   const router = useRouter();
 
   const [state, setState] = useState<SheetState>('collapsed');
+  const [tab, setTab] = useState<Tab>('venues');
   const [translateY, setTranslateY] = useState(() => {
     if (typeof window === 'undefined') return 0;
     return Math.max(window.innerHeight - 60 - PEEK_HEIGHT, EXPANDED_TOP);
@@ -276,10 +279,26 @@ export function VenueBottomSheet({ venues, isLoading }: VenueBottomSheetProps) {
           <span className={styles.sheetTitle}>
             {t('venuesCount', { count: venues.length })}
           </span>
-          <ChevronDown
-            size={18}
-            className={`${styles.chevron} ${state === 'expanded' ? styles.chevronUp : ''}`}
-          />
+          <div className="flex items-center gap-2">
+            <div className={styles.tabPillToggle}>
+              <button
+                className={`${styles.tabPillOption} ${tab === 'venues' ? styles.tabPillOptionActive : ''}`}
+                onClick={(e) => { e.stopPropagation(); setTab('venues'); toggle(); }}
+              >
+                {t('tabVenues')}
+              </button>
+              <button
+                className={`${styles.tabPillOption} ${tab === 'events' ? styles.tabPillOptionActive : ''}`}
+                onClick={(e) => { e.stopPropagation(); setTab('events'); toggle(); }}
+              >
+                {t('tabEvents')}
+              </button>
+            </div>
+            <ChevronDown
+              size={18}
+              className={`${styles.chevron} ${state === 'expanded' ? styles.chevronUp : ''}`}
+            />
+          </div>
         </div>
       </div>
 
@@ -288,7 +307,11 @@ export function VenueBottomSheet({ venues, isLoading }: VenueBottomSheetProps) {
           state === 'collapsed' ? styles.peekWrapper : styles.scrollArea
         }
       >
-        {venues.length === 0 ? (
+        {tab === 'events' ? (
+          <p className={styles.eventsPlaceholderText}>
+            {t('eventsPlaceholder')}
+          </p>
+        ) : venues.length === 0 ? (
           <p className={styles.emptyText}>{t('nothingFound')}</p>
         ) : state === 'collapsed' ? (
           venues.slice(0, 2).map((venue) => (
