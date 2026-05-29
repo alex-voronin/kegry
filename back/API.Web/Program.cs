@@ -1,6 +1,7 @@
 using AnalyticsModule.Setup;
 using API.Web.Extensions;
 using API.Web.Startup;
+using EventModule.Setup;
 using JasperFx;
 using LocationModule.Setup;
 using FeedModule.Setup;
@@ -36,6 +37,7 @@ IFeatureStartup[] startups =
     new ChatModuleStartup(configuration),
     new EngagementModuleStartup(configuration),
     new VenueModuleStartup(configuration),
+    new EventModuleStartup(configuration),
     new AdminPanelModuleStartup(configuration),
     new AnalyticsModuleStartup(),
     new HttpSerializationStartup(),

@@ -35,6 +35,7 @@
       <ProjectReference Include="..\Modules\Chat\ChatModule.Setup\ChatModule.Setup.csproj" />
       <ProjectReference Include="..\Modules\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
       <ProjectReference Include="..\Modules\Shared\Shared.Setup\Shared.Setup.csproj" />
+      <ProjectReference Include="..\Modules\Event\EventModule.Setup\EventModule.Setup.csproj" />
       <ProjectReference Include="..\Modules\Venue\VenueModule.Setup\VenueModule.Setup.csproj" />
       <ProjectReference Include="..\Modules\AdminPanel\AdminPanelModule.Setup\AdminPanelModule.Setup.csproj" />
     </ItemGroup>
