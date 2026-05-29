@@ -112,6 +112,38 @@
           "typeRequired": "Type is required",
           "bodyRequired": "Promotion body is required"
         }
+      },
+      "event": {
+        "title": "Event Details",
+        "createTitle": "Create Event",
+        "editTitle": "Edit Event",
+        "coverImage": "Cover Image",
+        "titleField": "Title",
+        "description": "Description",
+        "startDateTime": "Date & Time",
+        "type": "Type",
+        "venue": "Venue",
+        "visibleOnMap": "Show on map",
+        "maxParticipants": "Max participants",
+        "requiresApproval": "Requires approval",
+        "contacts": "Contacts",
+        "contactType": "Type",
+        "contactValue": "Contact",
+        "contactIsPublic": "Public",
+        "addContact": "Add contact",
+        "hobbies": "Interests",
+        "delete": "Delete event",
+        "deleteConfirm": "Are you sure you want to delete this event?",
+        "eventType": "Event",
+        "meetupType": "Meetup",
+        "validation": {
+          "titleRequired": "Title is required",
+          "titleMaxLength": "Title must be 200 characters or less",
+          "descriptionRequired": "Description is required",
+          "descriptionMaxLength": "Description must be 2000 characters or less",
+          "startDateTimeRequired": "Date and time is required",
+          "coverRequired": "Cover image is required"
+        }
       }
     },
     "tagSections": {
@@ -419,7 +451,8 @@
       "venues": "Venues",
       "logout": "Logout",
       "contactUs": "Contact us",
-      "dashboard": "Dashboard"
+      "dashboard": "Dashboard",
+      "events": "Events"
     },
     "advancedSettings": {
       "title": "Advanced Settings",
@@ -461,7 +494,9 @@
         "qrCode": "QR Code",
         "deleteVenue": "Delete Venue",
         "advanced": "Advanced",
-        "verifyVenue": "Verify Venue"
+        "verifyVenue": "Verify Venue",
+        "editEvent": "Edit event",
+        "deleteEvent": "Delete event"
       },
       "deleteDialog": {
         "title": "Are you sure you want to delete this venue?",
@@ -481,6 +516,13 @@
       },
       "toast": {
         "deleteFailed": "Failed to delete the object"
+      },
+      "events": "Events",
+      "deals": "Deals",
+      "venue": "Details",
+      "noVenueEvents": "No events for this venue yet",
+      "deleteEventDialog": {
+        "title": "Are you sure you want to delete this event?"
       }
     },
     "editVenue": {
@@ -536,6 +578,17 @@
       "save": "Save",
       "toast": {
         "updateFailed": "Failed to update discount"
+      }
+    },
+    "events": {
+      "title": "Events",
+      "noEvents": "No events yet.\nCreate your first event!",
+      "toast": {
+        "loadFailed": "Failed to load events",
+        "createSuccess": "Event created",
+        "updateSuccess": "Event updated",
+        "deleteSuccess": "Event deleted",
+        "deleteFailed": "Failed to delete event"
       }
     }
   }

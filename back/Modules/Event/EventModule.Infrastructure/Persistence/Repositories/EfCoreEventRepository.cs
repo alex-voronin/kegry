@@ -127,4 +127,44 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
             .OrderBy(e => e.StartDateTime)
             .ToArray();
     }
+
+    public async Task<(Event[] Events, int TotalCount)> GetOwnEventsPaginatedAsync(
+        Guid userId,
+        Guid? venueId = null,
+        EventType? type = null,
+        DateTimeOffset? dateFrom = null,
+        DateTimeOffset? dateTo = null,
+        int offset = 0,
+        int limit = 20,
+        CancellationToken ct = default)
+    {
+        var query = Context.Events
+            .Include(e => e.EventContacts)
+            .Include(e => e.EventHobbyLinks)
+            .Include(e => e.EventParticipants)
+            .Where(e => e.CreatorId == userId)
+            .AsQueryable();
+
+        if (venueId.HasValue)
+            query = query.Where(e => e.VenueId == venueId.Value);
+
+        if (type.HasValue)
+            query = query.Where(e => e.Type == type.Value);
+
+        if (dateFrom.HasValue)
+            query = query.Where(e => e.StartDateTime >= dateFrom.Value);
+
+        if (dateTo.HasValue)
+            query = query.Where(e => e.StartDateTime <= dateTo.Value);
+
+        var totalCount = await query.CountAsync(ct);
+
+        var events = await query
+            .OrderBy(e => e.StartDateTime)
+            .Skip(offset)
+            .Take(limit)
+            .ToArrayAsync(ct);
+
+        return (events, totalCount);
+    }
 }

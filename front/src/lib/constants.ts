@@ -11,3 +11,5 @@ export const USER_COVER_MAX_LONG_SIDE = 1920;
 
 export const VENUE_COVER_MAX_SIZE_BYTES = 512 * 1024;
 export const VENUE_COVER_MAX_LONG_SIDE = 1280;
+
+export const EVENT_COVER_MAX_SIZE_BYTES = 512 * 1024;

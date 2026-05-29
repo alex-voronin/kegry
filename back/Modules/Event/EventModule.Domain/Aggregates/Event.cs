@@ -16,16 +16,7 @@ public class Event : IAuditable
     public string? CoverImageS3Key
     {
         get;
-        set
-        {
-            if (Type == EventType.Event)
-            {
-                Validation.ThrowIfInvalid(nameof(CoverImageS3Key),
-                    () => !string.IsNullOrWhiteSpace(value),
-                    "Cover image is required for events of type 'Event'");
-            }
-            field = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
-        }
+        set => field = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
     }
 
     public required string Title

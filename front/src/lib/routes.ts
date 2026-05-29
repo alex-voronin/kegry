@@ -64,6 +64,11 @@ export const PAGE_ROUTES = {
       `/companies/${companyId}/venues/create`,
     VENUES_EDIT: (id: string) => `/venues/${id}/edit`,
     VENUES_DETAILS_ADVANCED: (venueId: string) => `/venues/${venueId}/advanced`,
+    EVENTS: '/events',
+    EVENTS_CREATE: (venueId?: string) =>
+        venueId ? `/events/create?venueId=${venueId}` : '/events/create',
+    EVENTS_DETAIL: (id: string) => `/events/${id}`,
+    EVENTS_EDIT: (id: string) => `/events/${id}/edit`,
     DASHBOARD: '/dashboard',
     PROFILE: '/profile',
   },
@@ -159,6 +164,12 @@ export const API_ENDPOINTS = {
     },
     DASHBOARD: {
       VISITS: '/api/v1/b2b/dashboard/visits',
+    },
+    EVENTS: {
+      BASE: '/api/v1/b2b/events',
+      DETAILS: (id: string) => `/api/v1/b2b/event/${id}`,
+      COVER_UPLOAD_URL: (id: string) => `/api/v1/b2b/event/${id}/cover/upload-url`,
+      PARTICIPANTS: (id: string) => `/api/v1/b2b/event/${id}/participants`,
     },
   },
   VENUES: {

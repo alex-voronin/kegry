@@ -7,9 +7,6 @@ public record B2BCreateEventRequest(
     string Title,
     string Description,
     DateTimeOffset StartDateTime,
-    Domain.Enums.EventType Type,
     Guid VenueId,
-    int? MaxParticipants = null,
-    bool RequiresApproval = false,
     CreateEventContactDto[]? Contacts = null,
     Guid[]? HobbyIds = null);

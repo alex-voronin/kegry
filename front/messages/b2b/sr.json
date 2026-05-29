@@ -112,6 +112,38 @@
           "typeRequired": "Tip je obavezan",
           "bodyRequired": "Opis promocije je obavezan"
         }
+      },
+      "event": {
+        "title": "Detalji događaja",
+        "createTitle": "Kreiraj događaj",
+        "editTitle": "Uredi događaj",
+        "coverImage": "Naslovna slika",
+        "titleField": "Naslov",
+        "description": "Opis",
+        "startDateTime": "Datum i vreme",
+        "type": "Tip",
+        "venue": "Mesto",
+        "visibleOnMap": "Prikaži na mapi",
+        "maxParticipants": "Maks. učesnika",
+        "requiresApproval": "Zahteva odobrenje",
+        "contacts": "Kontakti",
+        "contactType": "Tip",
+        "contactValue": "Kontakt",
+        "contactIsPublic": "Javno",
+        "addContact": "Dodaj kontakt",
+        "hobbies": "Interesovanja",
+        "delete": "Obriši događaj",
+        "deleteConfirm": "Da li ste sigurni da želite da obrišete ovaj događaj?",
+        "eventType": "Događaj",
+        "meetupType": "Okupljanje",
+        "validation": {
+          "titleRequired": "Naslov je obavezan",
+          "titleMaxLength": "Naslov mora imati najviše 200 karaktera",
+          "descriptionRequired": "Opis je obavezan",
+          "descriptionMaxLength": "Opis mora imati najviše 2000 karaktera",
+          "startDateTimeRequired": "Datum i vreme su obavezni",
+          "coverRequired": "Naslovna slika je obavezna"
+        }
       }
     },
     "tagSections": {
@@ -419,7 +451,8 @@
       "venues": "Lokali",
       "logout": "Odjavi se",
       "contactUs": "Kontaktirajte nas",
-      "dashboard": "Kontrolna tabla"
+      "dashboard": "Kontrolna tabla",
+      "events": "Događaji"
     },
     "advancedSettings": {
       "title": "Napredna podešavanja",
@@ -461,7 +494,9 @@
         "qrCode": "QR kod",
         "deleteVenue": "Obrišite lokal",
         "advanced": "Napredno",
-        "verifyVenue": "Verifikujte lokal"
+        "verifyVenue": "Verifikujte lokal",
+        "editEvent": "Uredi događaj",
+        "deleteEvent": "Obriši događaj"
       },
       "deleteDialog": {
         "title": "Da li ste sigurni da želite da obrišete ovaj lokal?",
@@ -481,6 +516,13 @@
       },
       "toast": {
         "deleteFailed": "Brisanje lokala nije uspelo"
+      },
+      "events": "Događaji",
+      "deals": "Ponude",
+      "venue": "Detalji",
+      "noVenueEvents": "Još nema događaja za ovo mesto",
+      "deleteEventDialog": {
+        "title": "Da li ste sigurni da želite da obrišete ovaj događaj?"
       }
     },
     "editVenue": {
@@ -536,6 +578,17 @@
       "save": "Sačuvaj",
       "toast": {
         "updateFailed": "Ažuriranje popusta nije uspelo"
+      }
+    },
+    "events": {
+      "title": "Događaji",
+      "noEvents": "Još nema događaja.\nKreirajte prvi događaj!",
+      "toast": {
+        "loadFailed": "Greška pri učitavanju događaja",
+        "createSuccess": "Događaj kreiran",
+        "updateSuccess": "Događaj ažuriran",
+        "deleteSuccess": "Događaj obrisan",
+        "deleteFailed": "Greška pri brisanju događaja"
       }
     }
   }

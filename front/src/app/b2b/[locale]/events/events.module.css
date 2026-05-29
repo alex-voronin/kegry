@@ -1,0 +1,49 @@
+@reference "../../../globals.css";
+
+.card {
+  @apply relative flex min-h-[64px] w-full cursor-pointer items-center overflow-hidden bg-[#1e1e1e] sm:rounded-xl;
+}
+
+.cardImage {
+  @apply absolute inset-0 h-full w-full object-cover;
+}
+
+.cardOverlay {
+  @apply absolute inset-0 bg-black/60;
+}
+
+.cardContent {
+  @apply relative z-10 flex w-full items-center justify-between gap-2 px-4 py-3;
+}
+
+.cardInfo {
+  @apply min-w-0 flex-1;
+}
+
+.cardRow {
+  @apply flex items-baseline gap-2;
+}
+
+.cardTime {
+  @apply text-primary shrink-0 text-xs font-medium drop-shadow-md;
+}
+
+.cardTitle {
+  @apply text-primary truncate text-sm font-bold drop-shadow-md;
+}
+
+.cardMeta {
+  @apply text-primary mt-0.5 flex items-center gap-3 text-xs drop-shadow-md;
+}
+
+.cardMenuButton {
+  @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-white/10;
+}
+
+.dateSeparator {
+  @apply text-secondary px-4 pt-4 pb-1 text-xs font-semibold tracking-wider uppercase;
+}
+
+.eventList {
+  @apply flex flex-col;
+}

@@ -31,4 +31,14 @@ public interface IEventRepository : IRepository<Event>
         DateTimeOffset? dateFrom = null,
         DateTimeOffset? dateTo = null,
         CancellationToken ct = default);
+
+    Task<(Event[] Events, int TotalCount)> GetOwnEventsPaginatedAsync(
+        Guid userId,
+        Guid? venueId = null,
+        EventType? type = null,
+        DateTimeOffset? dateFrom = null,
+        DateTimeOffset? dateTo = null,
+        int offset = 0,
+        int limit = 20,
+        CancellationToken ct = default);
 }

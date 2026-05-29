@@ -29,11 +29,105 @@ public class B2BEventEndpoints : IEndpoints
             .WithTags("Event Management API")
             .RequireAuthorization(AuthPolicies.B2BAdmin);
 
+        managementApiGroup.MapGet("/api/v1/b2b/events", GetEvents);
+        managementApiGroup.MapGet("/api/v1/b2b/event/{id:guid}", GetEvent);
         managementApiGroup.MapPost("/api/v1/b2b/events", CreateEvent);
-        managementApiGroup.MapPatch("/api/v1/b2b/events/{id:guid}", UpdateEvent);
-        managementApiGroup.MapDelete("/api/v1/b2b/events/{id:guid}", DeleteEvent);
-        managementApiGroup.MapPost("/api/v1/b2b/events/{id:guid}/cover/upload-url", GetCoverUploadUrl);
-        managementApiGroup.MapGet("/api/v1/b2b/events/{id:guid}/participants", GetParticipants);
+        managementApiGroup.MapPatch("/api/v1/b2b/event/{id:guid}", UpdateEvent);
+        managementApiGroup.MapDelete("/api/v1/b2b/event/{id:guid}", DeleteEvent);
+        managementApiGroup.MapPost("/api/v1/b2b/event/{id:guid}/cover/upload-url", GetCoverUploadUrl);
+        managementApiGroup.MapGet("/api/v1/b2b/event/{id:guid}/participants", GetParticipants);
+    }
+
+    private static async Task<ApiResult<PaginatedResponse<B2BEventListItemDto>>> GetEvents(
+        [AsParameters] B2BGetEventsRequest request,
+        ClaimsPrincipal user,
+        IEventRepository eventRepository,
+        EventContext dbContext,
+        IS3StorageService storageService,
+        CancellationToken ct)
+    {
+        var userId = user.GetId();
+        var (events, totalCount) = await eventRepository.GetOwnEventsPaginatedAsync(
+            userId, request.VenueId, request.Type,
+            request.DateFrom, request.DateTo,
+            request.Offset, request.Limit, ct);
+
+        var venueIds = events.Select(e => e.VenueId).Distinct().ToArray();
+        var venues = await dbContext.Venues
+            .Where(v => venueIds.Contains(v.Id))
+            .ToDictionaryAsync(v => v.Id, ct);
+
+        var dtos = events.Select(e => new B2BEventListItemDto(
+            Id: e.Id.ToString(),
+            CoverImageUrl: e.CoverImageS3Key != null
+                ? storageService.S3KeyToPublicFileUrl(e.CoverImageS3Key, e.UpdatedAt)
+                : null,
+            Title: e.Title,
+            Type: e.Type,
+            StartDateTime: e.StartDateTime,
+            VenueId: e.VenueId.ToString(),
+            VenueAddress: venues.GetValueOrDefault(e.VenueId)?.Address ?? "",
+            IsVisibleOnMap: e.IsVisibleOnMap,
+            MaxParticipants: e.MaxParticipants,
+            RequiresApproval: e.RequiresApproval,
+            ParticipantsCount: e.EventParticipants.Count)).ToArray();
+
+        return ApiResult<PaginatedResponse<B2BEventListItemDto>>.Build(
+            new PaginatedResponse<B2BEventListItemDto>(dtos, totalCount));
+    }
+
+    private static async Task<ApiResult<EventDto>> GetEvent(
+        [FromRoute] Guid id,
+        ClaimsPrincipal user,
+        IEventRepository eventRepository,
+        EventContext dbContext,
+        IS3StorageService storageService,
+        CancellationToken ct)
+    {
+        var userId = user.GetId();
+        var ev = await eventRepository.GetByIdWithRelationsAsync(id, ct);
+        if (ev == null)
+            throw EventExceptions.EventNotFound(id);
+        if (ev.CreatorId != userId)
+            throw EventExceptions.NotEventCreator();
+
+        var venue = await dbContext.Venues.FirstOrDefaultAsync(v => v.Id == ev.VenueId, ct);
+        var creatorUser = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == ev.CreatorId, ct);
+
+        var contacts = ev.EventContacts
+            .Select(c => new EventContactDto(c.Id, c.Type, c.Value, c.IsPublic))
+            .ToArray();
+
+        var isJoined = ev.EventParticipants.Any(p => p.UserId == userId);
+        var dto = new EventDto(
+            Id: ev.Id.ToString(),
+            CoverImageUrl: ev.CoverImageS3Key != null
+                ? storageService.S3KeyToPublicFileUrl(ev.CoverImageS3Key, ev.UpdatedAt)
+                : null,
+            Title: ev.Title,
+            Description: ev.Description,
+            StartDateTime: ev.StartDateTime,
+            Type: ev.Type,
+            VenueId: ev.VenueId.ToString(),
+            VenueAddress: venue?.Address ?? "",
+            VenueLatitude: venue?.Coordinates.Y ?? 0,
+            VenueLongitude: venue?.Coordinates.X ?? 0,
+            CreatorId: ev.CreatorId.ToString(),
+            CreatorFirstName: creatorUser?.FirstName,
+            CreatorLastName: creatorUser?.LastName,
+            CreatorAvatarUrl: creatorUser?.AvatarImageS3Key != null
+                ? storageService.S3KeyToPublicFileUrl(creatorUser.AvatarImageS3Key, null)
+                : null,
+            IsVisibleOnMap: ev.IsVisibleOnMap,
+            MaxParticipants: ev.MaxParticipants,
+            RequiresApproval: ev.RequiresApproval,
+            ParticipantsCount: ev.EventParticipants.Count,
+            Contacts: contacts,
+            HobbyIds: ev.EventHobbyLinks.Select(h => h.HobbyId).ToArray(),
+            IsJoined: isJoined,
+            IsCreator: true);
+
+        return ApiResult<EventDto>.Build(dto);
     }
 
     private static async Task<ApiResult<EventDto>> CreateEvent(
@@ -57,11 +151,12 @@ public class B2BEventEndpoints : IEndpoints
             title: request.Title,
             description: request.Description,
             startDateTime: request.StartDateTime,
-            type: request.Type,
+            type: Domain.Enums.EventType.Event,
             venueId: request.VenueId,
             creatorId: userId,
-            maxParticipants: request.MaxParticipants,
-            requiresApproval: request.RequiresApproval);
+            maxParticipants: null,
+            requiresApproval: false);
+        ev.IsVisibleOnMap = true;
 
         if (request.Contacts is { Length: > 0 })
         {
@@ -101,8 +196,6 @@ public class B2BEventEndpoints : IEndpoints
         if (request.Title != null) ev.Title = request.Title;
         if (request.Description != null) ev.Description = request.Description;
         if (request.StartDateTime.HasValue) ev.StartDateTime = request.StartDateTime.Value;
-        if (request.MaxParticipants.HasValue) ev.MaxParticipants = request.MaxParticipants;
-        if (request.RequiresApproval.HasValue) ev.RequiresApproval = request.RequiresApproval.Value;
 
         if (request.Contacts != null)
         {
