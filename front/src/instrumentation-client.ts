@@ -5,14 +5,20 @@ if (typeof window === 'undefined') {
   throw new Error('This file should only run on client');
 }
 
+const hostname = window.location.hostname;
+const isProd =
+  hostname === 'kegry.rs' ||
+  hostname === 'kegry.com' ||
+  hostname.endsWith('.kegry.rs') ||
+  hostname.endsWith('.kegry.com');
+
 posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
   api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
   defaults: '2025-11-30',
-  debug: window.location.hostname === 'localhost',
-  disable_session_recording: window.location.hostname === 'localhost',
+  debug: !isProd,
+  disable_session_recording: !isProd,
   loaded: (ph) => {
-    const env = window.location.hostname === 'localhost' ? 'dev' : 'prod';
-    ph.register({ environment: env });
+    ph.register({ environment: isProd ? 'prod' : 'dev' });
   },
 });
 
