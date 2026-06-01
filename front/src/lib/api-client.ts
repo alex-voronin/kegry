@@ -7,6 +7,14 @@ import { useAuthStore } from './auth/use-auth-store';
 import authClient from './auth-client';
 import { API_ENDPOINTS, PAGE_ROUTES } from './routes';
 
+const captureEvent = (event: string, props: Record<string, unknown>) => {
+  if (typeof window !== 'undefined') {
+    import('posthog-js')
+      .then(({ default: posthog }) => posthog.capture(event, props))
+      .catch(() => {});
+  }
+};
+
 // --- Configuration ---
 
 const MAX_RETRIES = 2;
@@ -27,7 +35,20 @@ const apiClient: AxiosInstance = axios.create({
 
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const { accessToken } = useAuthStore.getState();
+    const { accessToken, userId } = useAuthStore.getState();
+
+    if (!accessToken && userId) {
+      console.warn('[api-client] Request with userId but no accessToken', {
+        userId,
+        url: config.url,
+      });
+      captureEvent('auth_inconsistent_state', {
+        userId,
+        url: config.url,
+        method: config.method,
+      });
+    }
+
     if (accessToken && config.headers) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -90,6 +111,16 @@ apiClient.interceptors.response.use(
 
       // Early exit if no refresh token - logout immediately
       if (!refreshToken) {
+        console.warn('[api-client] 401 with no refreshToken — redirecting to login', {
+          userId,
+          url: originalRequest.url,
+        });
+        captureEvent('auth_no_refresh_token', {
+          userId,
+          url: originalRequest.url,
+          method: originalRequest.method,
+        });
+
         useAuthStore.setState({
           userId: null,
           accessToken: null,
@@ -129,9 +160,21 @@ apiClient.interceptors.response.use(
         const { accessToken, refreshToken: newRefreshToken } =
           response.data.result;
 
+        if (!accessToken || !newRefreshToken) {
+          throw new Error(
+            `Refresh returned incomplete tokens: access=${!!accessToken} refresh=${!!newRefreshToken}`,
+          );
+        }
+
         useAuthStore.setState({
           accessToken,
           refreshToken: newRefreshToken,
+        });
+
+        captureEvent('auth_tokens_refreshed', {
+          userId,
+          hasAccessToken: !!accessToken,
+          hasRefreshToken: !!newRefreshToken,
         });
 
         processQueue(null, accessToken);
@@ -141,6 +184,18 @@ apiClient.interceptors.response.use(
         }
         return apiClient(originalRequest);
       } catch (refreshError) {
+        const errorMsg =
+          refreshError instanceof Error
+            ? refreshError.message
+            : String(refreshError);
+        console.error('[api-client] Refresh/retry failed', {
+          userId,
+          error: errorMsg,
+        });
+        captureEvent('auth_refresh_failed', {
+          userId,
+          error: errorMsg,
+        });
         logRefreshFailure(refreshError, userId);
         processQueue(refreshError);
         useAuthStore.setState({

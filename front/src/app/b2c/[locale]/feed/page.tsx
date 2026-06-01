@@ -12,7 +12,8 @@ import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { CheckInManager } from '@/components/common/check-in-manager';
-import { PAGE_ROUTES } from '@/lib/routes';
+import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
+import authClient from '@/lib/auth-client';
 import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import { useFeedStore, UserProfileDto } from './use-feed-store';
 import { useNpcStore, NpcDto } from './use-npc-store';
@@ -39,6 +40,14 @@ import { NpcFeedBody, NpcFeedFooter } from './_components/npc-feed-card';
 import { useQrCheckIn } from '@/app/b2c/[locale]/venues/use-qr-check-in';
 import { FEED_VISITS_TO_SHOW_REFERRAL_PROMPT } from '@/lib/constants';
 import { buildQrUrl } from '@/lib/qr-utils';
+
+const captureEvent = (event: string, props: Record<string, unknown>) => {
+  if (typeof window !== 'undefined') {
+    import('posthog-js')
+      .then(({ default: posthog }) => posthog.capture(event, props))
+      .catch(() => {});
+  }
+};
 
 // --- Discriminated union for feed items ---
 
@@ -346,7 +355,55 @@ export default function FeedScreen() {
         }
         setIsLocationDenied(false);
 
-        // 3. Fetch feed data and status
+        // 3. Log store state + guard before fetching.
+        // Read the store once — used for both the PostHog capture and the
+        // defensive consistency check below.
+        const preFetchAuth = useAuthStore.getState();
+        captureEvent('feed_before_fetch', {
+          userId: preFetchAuth.userId,
+          hasAccessToken: !!preFetchAuth.accessToken,
+          hasRefreshToken: !!preFetchAuth.refreshToken,
+          requiredAction: preFetchAuth.requiredAction,
+        });
+
+        // 4. Defensive guard: in rare edge cases the store's accessToken can go
+        // missing between refresh and feed requests (e.g. persist sync timing,
+        // store reversion). If refreshToken is still present, attempt an emergency
+        // recovery via renew-tokens instead of letting every feed request fail
+        // with 401 and redirecting to login.
+        if (!preFetchAuth.accessToken && preFetchAuth.refreshToken) {
+          console.warn(
+            '[feed] Inconsistent auth state before feed fetch — attempting emergency refresh',
+            {
+              userId: preFetchAuth.userId,
+              hasRefreshToken: !!preFetchAuth.refreshToken,
+            },
+          );
+          captureEvent('feed_emergency_refresh', {
+            userId: preFetchAuth.userId,
+          });
+          try {
+            const res = await authClient.post(
+              API_ENDPOINTS.AUTH.RENEW_TOKENS,
+              { refreshToken: preFetchAuth.refreshToken },
+            );
+            const { accessToken: recoveredAccess, refreshToken: recoveredRefresh } =
+              res.data.result;
+            if (!recoveredAccess || !recoveredRefresh) {
+              router.push(PAGE_ROUTES.LOGIN());
+              return;
+            }
+            useAuthStore.setState({
+              accessToken: recoveredAccess,
+              refreshToken: recoveredRefresh,
+            });
+          } catch {
+            router.push(PAGE_ROUTES.LOGIN());
+            return;
+          }
+        }
+
+        // 5. Fetch feed data and status
         const [status] = await Promise.all([
           fetchFeedStatus(),
           fetchFeed(),
@@ -356,7 +413,7 @@ export default function FeedScreen() {
 
         if (!isMounted) return;
 
-        // 4. Handle redirects (Check-in/Meeting/Rating)
+        // 6. Handle redirects (Check-in/Meeting/Rating)
         if (status.isInMeeting) {
           useFeedStore.setState({ isInMeeting: true });
           if (autoChatRedirect !== 'false') {
@@ -370,7 +427,7 @@ export default function FeedScreen() {
           return;
         }
 
-        // 5. If we reached here, it's a "true" feed display. Count the visit.
+        // 7. If we reached here, it's a "true" feed display. Count the visit.
         const referralShown = localStorage.getItem('referral_prompt_shown');
 
         if (!referralShown) {
@@ -387,7 +444,7 @@ export default function FeedScreen() {
             localStorage.removeItem('feed_visit_count');
           }
         }
-        // 6. Handle NPC logic
+        // 8. Handle NPC logic
         const currentNpc = useNpcStore.getState().npc;
         const currentFeed = useFeedStore.getState().feed;
         if (currentNpc && currentFeed.length > 0) {

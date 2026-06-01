@@ -5,6 +5,7 @@ import { persist } from 'zustand/middleware';
 import authClient from '../auth-client';
 import { API_ENDPOINTS, PAGE_ROUTES } from '../routes';
 import { rethrowApiError, ApiRequestError } from '../api-error';
+import { reRegisterServiceWorker } from '../service-worker';
 
 // Note: Auth endpoints use raw axios to avoid token interceptor issues during login/signup.
 // For other API calls, use apiClient from '../api-client' for automatic token handling and retries.
@@ -171,6 +172,9 @@ export const useAuthStore = create<AuthState>()(
           }
 
           if (allowedUserTypes.includes(auth.userType)) {
+            await reRegisterServiceWorker().catch((err) =>
+              console.error('[auth] SW re-registration failed:', err),
+            );
             get().setAuth(auth);
           }
 
@@ -192,6 +196,9 @@ export const useAuthStore = create<AuthState>()(
           }
 
           const auth = signupRes.data.result;
+          await reRegisterServiceWorker().catch((err) =>
+            console.error('[auth] SW re-registration failed:', err),
+          );
           get().setAuth(auth);
           return auth;
         } catch (error) {
@@ -215,6 +222,9 @@ export const useAuthStore = create<AuthState>()(
           const auth = res.data.result;
 
           if (allowedUserTypes.includes(auth.userType)) {
+            await reRegisterServiceWorker().catch((err) =>
+              console.error('[auth] SW re-registration failed:', err),
+            );
             get().setAuth(auth);
           }
 
