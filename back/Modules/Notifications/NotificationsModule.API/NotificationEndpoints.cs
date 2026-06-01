@@ -19,7 +19,7 @@ public class NotificationEndpoints : IEndpoints
     {
         var apiGroup = builder.MapGroup("")
             .WithTags("Notifications API")
-            .AllowAnonymous();
+            .RequireAuthorization();
 
         apiGroup.MapPost("/api/v1/notifications/device/token", UpdateFcmToken);
         apiGroup.MapDelete("/api/v1/notifications/device/token", DeleteDevice);
