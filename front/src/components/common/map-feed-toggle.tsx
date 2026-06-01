@@ -25,7 +25,9 @@ export function MapFeedToggle({ activeView, className }: Props) {
         </button>
         <button
           className={`${styles.pillOption} ${activeView === 'feed' ? styles.pillOptionActive : ''}`}
-          onClick={() => router.push(PAGE_ROUTES.FEED)}
+          onClick={() =>
+            router.push(`${PAGE_ROUTES.FEED}?auto-chat-redirect=false`)
+          }
         >
           {t('feed')}
         </button>
