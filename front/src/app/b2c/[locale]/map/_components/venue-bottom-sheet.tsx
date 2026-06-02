@@ -6,6 +6,7 @@ import {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
 } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
@@ -16,6 +17,7 @@ import { VenueDisplayTags } from '@/components/b2c/venue-display-tags';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from '../map.module.css';
 import type { VenueMapItem } from '../../venues/map/_components/venue-map-internal';
+import type { EventMapItem } from '../_components/types';
 
 const PEEK_HEIGHT = 160;
 const EXPANDED_TOP = 190;
@@ -23,14 +25,16 @@ const TAP_MOVE_THRESHOLD = 50;
 
 interface VenueBottomSheetProps {
   venues: VenueMapItem[];
+  events: EventMapItem[];
   isLoading: boolean;
+  onFlyTo?: (lat: number, lng: number, venue?: VenueMapItem) => void;
 }
 
 type SheetState = 'collapsed' | 'expanded';
 
 type Tab = 'venues' | 'events';
 
-export function VenueBottomSheet({ venues, isLoading }: VenueBottomSheetProps) {
+export function VenueBottomSheet({ venues, events, isLoading, onFlyTo }: VenueBottomSheetProps) {
   const t = useTranslations('screens.map');
   const router = useRouter();
 
@@ -208,9 +212,44 @@ export function VenueBottomSheet({ venues, isLoading }: VenueBottomSheetProps) {
     [handlePointerDown],
   );
 
+  const venueLookup = useMemo(
+    () =>
+      venues.reduce<Record<string, { name: string; address: string }>>(
+        (acc, v) => {
+          acc[v.id] = { name: v.companyName, address: v.address };
+          return acc;
+        },
+        {},
+      ),
+    [venues],
+  );
+
   const handleVenueClick = useCallback(
-    (id: string) => router.push(PAGE_ROUTES.VENUE_DETAIL(id)),
-    [router],
+    (id: string) => {
+      if (state === 'collapsed') {
+        const venue = venues.find((v) => v.id === id);
+        if (venue) onFlyTo?.(venue.latitude, venue.longitude, venue);
+      } else {
+        router.push(PAGE_ROUTES.VENUE_DETAIL(id));
+      }
+    },
+    [state, venues, onFlyTo, router],
+  );
+
+  const handleEventClick = useCallback(
+    (eventId: string) => {
+      if (state === 'collapsed') {
+        const event = events.find((e) => e.id === eventId);
+        if (event) {
+          const venue = venues.find((v) => v.id === event.venueId);
+          onFlyTo?.(event.latitude, event.longitude, venue);
+        }
+      } else {
+        const event = events.find((e) => e.id === eventId);
+        if (event) router.push(PAGE_ROUTES.VENUE_DETAIL(event.venueId));
+      }
+    },
+    [state, events, venues, onFlyTo, router],
   );
 
   useEffect(() => {
@@ -277,7 +316,9 @@ export function VenueBottomSheet({ venues, isLoading }: VenueBottomSheetProps) {
 
         <div className={styles.sheetHeader}>
           <span className={styles.sheetTitle}>
-            {t('venuesCount', { count: venues.length })}
+            {tab === 'events'
+              ? t('eventsCount', { count: events.length })
+              : t('venuesCount', { count: venues.length })}
           </span>
           <div className="flex items-center gap-2">
             <div className={styles.tabPillToggle}>
@@ -308,9 +349,83 @@ export function VenueBottomSheet({ venues, isLoading }: VenueBottomSheetProps) {
         }
       >
         {tab === 'events' ? (
-          <p className={styles.eventsPlaceholderText}>
-            {t('eventsPlaceholder')}
-          </p>
+          events.length === 0 ? (
+            <p className={styles.emptyText}>{t('nothingFound')}</p>
+          ) : state === 'collapsed' ? (
+            events.slice(0, 2).map((event) => (
+              <div
+                key={event.id}
+                className={styles.compactCard}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEventClick(event.id);
+
+                }}
+              >
+                <div className={styles.eventCompactInfo}>
+                  <span className={styles.compactCardName}>
+                    {event.title}
+                  </span>
+                  <span className={styles.eventCompactMeta}>
+                    {new Date(event.startDateTime).toLocaleDateString(undefined, {
+                      month: 'short',
+                      day: 'numeric',
+                    })}{' '}
+                    {new Date(event.startDateTime).toLocaleTimeString(undefined, {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                    {' • '}
+                    {event.type === 'Meetup' ? t('meetup') : t('event')}
+                  </span>
+                </div>
+              </div>
+            ))
+          ) : (
+            events.map((event) => {
+              const venue = venueLookup[event.venueId];
+              const formattedDate = new Date(event.startDateTime).toLocaleDateString(undefined, {
+                month: 'short',
+                day: 'numeric',
+              });
+              const formattedTime = new Date(event.startDateTime).toLocaleTimeString(undefined, {
+                hour: '2-digit',
+                minute: '2-digit',
+              });
+              return (
+                <div
+                  key={event.id}
+                  className={styles.eventCard}
+                  onClick={() => handleEventClick(event.id)}
+                >
+                  {event.coverImageUrl ? (
+                    <img
+                      src={event.coverImageUrl}
+                      alt={event.title}
+                      className={styles.eventCardImage}
+                    />
+                  ) : null}
+                  <div className={styles.eventCardOverlay} />
+                  <div className={styles.eventCardContent}>
+                    <div className={styles.eventCardInfo}>
+                      <div className={styles.eventCardTime}>
+                        {formattedDate} {formattedTime}
+                      </div>
+                      <div className={styles.eventCardTitle}>{event.title}</div>
+                      <div className={styles.eventCardMeta}>
+                        <span>{venue?.address ?? ''}</span>
+                        {event.type === 'Meetup' ? (
+                          <span className="text-primary">{t('meetup')}</span>
+                        ) : (
+                          <span className="text-primary">{t('event')}</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )
         ) : venues.length === 0 ? (
           <p className={styles.emptyText}>{t('nothingFound')}</p>
         ) : state === 'collapsed' ? (

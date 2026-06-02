@@ -97,6 +97,46 @@
   @apply truncate text-xs text-white/50;
 }
 
+.eventCompactInfo {
+  @apply flex min-w-0 flex-1 flex-col;
+}
+
+.eventCompactMeta {
+  @apply truncate text-xs text-white/50;
+}
+
+.eventCard {
+  @apply relative flex min-h-[64px] w-full cursor-pointer items-center overflow-hidden rounded-xl bg-[#1e1e1e];
+}
+
+.eventCardImage {
+  @apply absolute inset-0 h-full w-full object-cover;
+}
+
+.eventCardOverlay {
+  @apply absolute inset-0 bg-black/60;
+}
+
+.eventCardContent {
+  @apply relative z-10 flex w-full items-center px-4 py-3;
+}
+
+.eventCardInfo {
+  @apply min-w-0 flex-1;
+}
+
+.eventCardTime {
+  @apply text-primary text-xs font-medium drop-shadow-md;
+}
+
+.eventCardTitle {
+  @apply text-primary truncate text-sm font-bold drop-shadow-md;
+}
+
+.eventCardMeta {
+  @apply text-primary mt-0.5 flex items-center gap-3 text-xs drop-shadow-md;
+}
+
 .emptyText {
   @apply px-4 py-6 text-center text-sm text-white/50;
 }

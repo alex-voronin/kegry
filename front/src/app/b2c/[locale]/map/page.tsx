@@ -22,6 +22,7 @@ import { useQrCheckIn } from '../venues/use-qr-check-in';
 import { VenueBottomSheet } from './_components/venue-bottom-sheet';
 import styles from './map.module.css';
 import type { VenueMapItem } from '../venues/map/_components/venue-map-internal';
+import type { EventMapItem, EventCountMap } from './_components/types';
 
 const VenueMapInternal = dynamic(
   () => import('../venues/map/_components/venue-map-internal'),
@@ -45,7 +46,10 @@ export default function MapScreen() {
   } = useCitySelection();
 
   const [venues, setVenues] = useState<VenueMapItem[]>([]);
+  const [events, setEvents] = useState<EventMapItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [flyToCoord, setFlyToCoord] = useState<{ lat: number; lng: number; key: number } | null>(null);
+  const [focusedVenue, setFocusedVenue] = useState<VenueMapItem | null>(null);
   const lastBoundsRef = useRef<string | null>(null);
   const currentBoundsRef = useRef<{
     minLat: number;
@@ -78,7 +82,7 @@ export default function MapScreen() {
 
       setIsLoading(true);
       try {
-        const params: Record<
+        const venueParams: Record<
           string,
           | string
           | number
@@ -87,14 +91,16 @@ export default function MapScreen() {
           | undefined
           | null
         > = { ...bounds };
-        if (selectedTagIds?.length) params['Filter.TagIds'] = selectedTagIds;
-        if (searchQuery) params['Filter.CompanyName'] = searchQuery;
+        if (selectedTagIds?.length) venueParams['Filter.TagIds'] = selectedTagIds;
+        if (searchQuery) venueParams['Filter.CompanyName'] = searchQuery;
 
-        const response = await apiClient.get(
-          API_ENDPOINTS.VENUES.MAP,
-          paramsForReq(params),
-        );
-        setVenues(response.data.result);
+        const [venuesRes, eventsRes] = await Promise.all([
+          apiClient.get(API_ENDPOINTS.VENUES.MAP, paramsForReq(venueParams)),
+          apiClient.get(API_ENDPOINTS.EVENTS.MAP, paramsForReq(bounds)),
+        ]);
+
+        setVenues(venuesRes.data.result);
+        setEvents(eventsRes.data.result);
       } finally {
         setIsLoading(false);
       }
@@ -124,6 +130,23 @@ export default function MapScreen() {
       fetchMapVenuesRef.current(currentBoundsRef.current);
     }
   }, [searchQuery, selectedTagIds]);
+
+  const eventCountByVenueId = useMemo<EventCountMap>(() => {
+    const counts: EventCountMap = {};
+    for (const event of events) {
+      counts[event.venueId] = (counts[event.venueId] || 0) + 1;
+    }
+    return counts;
+  }, [events]);
+
+  const handleFlyTo = useCallback((lat: number, lng: number, venue?: VenueMapItem) => {
+    setFlyToCoord((prev) => ({ lat, lng, key: (prev?.key ?? 0) + 1 }));
+    if (venue) setFocusedVenue(venue);
+  }, []);
+
+  const handleClearFocus = useCallback(() => {
+    setFocusedVenue(null);
+  }, []);
 
   const handleVenueDetails = useCallback(
     (id: string) => {
@@ -206,6 +229,10 @@ export default function MapScreen() {
         <VenueMapInternal
           center={mapCenter}
           venues={venues}
+          eventCountByVenueId={eventCountByVenueId}
+          flyToCoord={flyToCoord}
+          focusedVenue={focusedVenue}
+          onClearFocus={handleClearFocus}
           onBoundsChange={handleBoundsChange}
           onVenueDetails={handleVenueDetails}
           detailsLabel={t('details')}
@@ -270,7 +297,12 @@ export default function MapScreen() {
           <MapFeedToggle activeView="map" />
         </div>
 
-        <VenueBottomSheet venues={venues} isLoading={isLoading} />
+        <VenueBottomSheet
+          venues={venues}
+          events={events}
+          isLoading={isLoading}
+          onFlyTo={handleFlyTo}
+        />
       </div>
 
       <ModalDialog

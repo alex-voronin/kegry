@@ -172,6 +172,9 @@ export const API_ENDPOINTS = {
       PARTICIPANTS: (id: string) => `/api/v1/b2b/event/${id}/participants`,
     },
   },
+  EVENTS: {
+    MAP: '/api/v1/events/map',
+  },
   VENUES: {
     LIST: '/api/v1/venues',
     MAP: '/api/v1/venues/map',

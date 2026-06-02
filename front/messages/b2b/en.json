@@ -136,6 +136,7 @@
         "deleteConfirm": "Are you sure you want to delete this event?",
         "eventType": "Event",
         "meetupType": "Meetup",
+        "save": "Save",
         "validation": {
           "titleRequired": "Title is required",
           "titleMaxLength": "Title must be 200 characters or less",
