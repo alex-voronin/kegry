@@ -675,7 +675,7 @@ export default function VenueDetailPage() {
                             {ev.title}
                           </span>
                           <div className="mt-0.5 flex items-center gap-2 text-xs text-white/70 drop-shadow-md">
-                            <span>{new Date(ev.startDateTime).toLocaleDateString()}</span>
+                            <span>{new Date(ev.startDateTime).toLocaleDateString()} {new Date(ev.startDateTime).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}</span>
                             <span className="flex items-center gap-1">
                               <Users size={12} />
                               {ev.participantsCount}

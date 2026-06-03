@@ -10,19 +10,18 @@ import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { CheckInManager } from '@/components/common/check-in-manager';
-import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
+import { PAGE_ROUTES } from '@/lib/routes';
 import { useCitySelection } from '@/hooks/use-city-selection';
 import { BELGRADE_COORDS } from '@/lib/cities';
 import { CitySelector } from '@/components/common/city-selector';
-import apiClient from '@/lib/api-client';
-import { paramsForReq } from '@/lib/query-params';
 import { useVenueFiltersStore } from '@/store/use-venue-filters-store';
 import { MapFeedToggle } from '@/components/common/map-feed-toggle';
 import { useQrCheckIn } from '../venues/use-qr-check-in';
 import { VenueBottomSheet } from './_components/venue-bottom-sheet';
+import { useMapStore } from './use-map-store';
 import styles from './map.module.css';
 import type { VenueMapItem } from '../venues/map/_components/venue-map-internal';
-import type { EventMapItem, EventCountMap } from './_components/types';
+import type { EventCountMap } from './_components/types';
 
 const VenueMapInternal = dynamic(
   () => import('../venues/map/_components/venue-map-internal'),
@@ -45,11 +44,18 @@ export default function MapScreen() {
     handleCityChange: setCity,
   } = useCitySelection();
 
-  const [venues, setVenues] = useState<VenueMapItem[]>([]);
-  const [events, setEvents] = useState<EventMapItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [flyToCoord, setFlyToCoord] = useState<{ lat: number; lng: number; key: number } | null>(null);
-  const [focusedVenue, setFocusedVenue] = useState<VenueMapItem | null>(null);
+  const {
+    venues,
+    venueEvents,
+    isLoading,
+    flyToCoord,
+    focusedVenue,
+    fetchMapData,
+    setFlyToCoord,
+    setFocusedVenue,
+    clearFocus: handleClearFocus,
+  } = useMapStore();
+
   const lastBoundsRef = useRef<string | null>(null);
   const currentBoundsRef = useRef<{
     minLat: number;
@@ -68,89 +74,62 @@ export default function MapScreen() {
     [selectedCity?.latitude, selectedCity?.longitude],
   );
 
-  const fetchMapVenues = useCallback(
+  const fetchMapDataRef = useRef(fetchMapData);
+  fetchMapDataRef.current = fetchMapData;
+
+  const handleBoundsChange = useCallback(
     async (bounds: {
       minLat: number;
       maxLat: number;
       minLng: number;
       maxLng: number;
     }) => {
-      const filterKey = `${searchQuery}|${selectedTagIds.slice().sort().join(',')}`;
-      const boundsKey = `${bounds.minLat.toFixed(5)},${bounds.maxLat.toFixed(5)},${bounds.minLng.toFixed(5)},${bounds.maxLng.toFixed(5)}|${filterKey}`;
-      if (lastBoundsRef.current === boundsKey) return;
-      lastBoundsRef.current = boundsKey;
-
-      setIsLoading(true);
-      try {
-        const venueParams: Record<
-          string,
-          | string
-          | number
-          | boolean
-          | (string | number | boolean)[]
-          | undefined
-          | null
-        > = { ...bounds };
-        if (selectedTagIds?.length) venueParams['Filter.TagIds'] = selectedTagIds;
-        if (searchQuery) venueParams['Filter.CompanyName'] = searchQuery;
-
-        const [venuesRes, eventsRes] = await Promise.all([
-          apiClient.get(API_ENDPOINTS.VENUES.MAP, paramsForReq(venueParams)),
-          apiClient.get(API_ENDPOINTS.EVENTS.MAP, paramsForReq(bounds)),
-        ]);
-
-        setVenues(venuesRes.data.result);
-        setEvents(eventsRes.data.result);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [searchQuery, selectedTagIds],
-  );
-
-  const handleBoundsChange = useCallback(
-    (bounds: {
-      minLat: number;
-      maxLat: number;
-      minLng: number;
-      maxLng: number;
-    }) => {
       currentBoundsRef.current = bounds;
-      fetchMapVenues(bounds);
+      const boundsKey = await fetchMapData(bounds, searchQuery, selectedTagIds);
+      if (boundsKey !== null) lastBoundsRef.current = boundsKey;
     },
-    [fetchMapVenues],
+    [fetchMapData, searchQuery, selectedTagIds],
   );
-
-  const fetchMapVenuesRef = useRef(fetchMapVenues);
-  fetchMapVenuesRef.current = fetchMapVenues;
 
   useEffect(() => {
     if (currentBoundsRef.current) {
       lastBoundsRef.current = null;
-      fetchMapVenuesRef.current(currentBoundsRef.current);
+      const bounds = currentBoundsRef.current;
+      fetchMapDataRef.current(bounds, searchQuery, selectedTagIds);
     }
   }, [searchQuery, selectedTagIds]);
 
+  const allEvents = useMemo(
+    () => venueEvents.flatMap((v) => v.events),
+    [venueEvents],
+  );
+
   const eventCountByVenueId = useMemo<EventCountMap>(() => {
     const counts: EventCountMap = {};
-    for (const event of events) {
-      counts[event.venueId] = (counts[event.venueId] || 0) + 1;
+    for (const v of venueEvents) {
+      counts[v.venueId] = v.totalCount;
     }
     return counts;
-  }, [events]);
+  }, [venueEvents]);
+
+  const flyToKeyRef = useRef(0);
 
   const handleFlyTo = useCallback((lat: number, lng: number, venue?: VenueMapItem) => {
-    setFlyToCoord((prev) => ({ lat, lng, key: (prev?.key ?? 0) + 1 }));
+    flyToKeyRef.current += 1;
+    setFlyToCoord({ lat, lng, key: flyToKeyRef.current });
     if (venue) setFocusedVenue(venue);
-  }, []);
-
-  const handleClearFocus = useCallback(() => {
-    setFocusedVenue(null);
-  }, []);
+  }, [setFlyToCoord, setFocusedVenue]);
 
   const handleVenueDetails = useCallback(
     (id: string) => {
       router.push(PAGE_ROUTES.VENUE_DETAIL(id));
+    },
+    [router],
+  );
+
+  const handleVenueEvents = useCallback(
+    (id: string) => {
+      router.push(`${PAGE_ROUTES.VENUE_DETAIL(id)}?tab=events`);
     },
     [router],
   );
@@ -235,7 +214,9 @@ export default function MapScreen() {
           onClearFocus={handleClearFocus}
           onBoundsChange={handleBoundsChange}
           onVenueDetails={handleVenueDetails}
+          onVenueEvents={handleVenueEvents}
           detailsLabel={t('details')}
+          eventsLabel={t('eventsLabel')}
           initialZoom={12}
         />
 
@@ -299,7 +280,7 @@ export default function MapScreen() {
 
         <VenueBottomSheet
           venues={venues}
-          events={events}
+          events={allEvents}
           isLoading={isLoading}
           onFlyTo={handleFlyTo}
         />

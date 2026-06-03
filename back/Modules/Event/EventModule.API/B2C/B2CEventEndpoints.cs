@@ -26,8 +26,8 @@ public class B2CEventEndpoints : IEndpoints
             .WithTags("Event User API")
             .RequireAuthorization();
 
-        usersApiGroup.MapGet("/api/v1/events", GetEvents);
         usersApiGroup.MapGet("/api/v1/events/map", GetEventsMap);
+        usersApiGroup.MapGet("/api/v1/venues/{venueId:guid}/events", GetVenueEvents);
         usersApiGroup.MapGet("/api/v1/events/{id:guid}", GetEvent);
         usersApiGroup.MapPost("/api/v1/events", CreateEvent);
         usersApiGroup.MapPatch("/api/v1/events/{id:guid}", UpdateEvent);
@@ -40,71 +40,19 @@ public class B2CEventEndpoints : IEndpoints
         usersApiGroup.MapPatch("/api/v1/events/{id:guid}/participants/{userId:guid}/reject", RejectParticipant);
     }
 
-    private static async Task<ApiResult<PaginatedResponse<EventListItemDto>>> GetEvents(
-        [AsParameters] GetEventsRequest request,
-        ClaimsPrincipal user,
-        IEventRepository eventRepository,
-        EventContext dbContext,
-        IS3StorageService storageService,
-        CancellationToken ct)
-    {
-        var userId = user.GetId();
-        var (eventsWithDistance, totalCount) = await eventRepository.GetEventsPaginatedAsync(
-            request.Latitude, request.Longitude,
-            request.Offset, request.Limit,
-            request.Type, request.VenueId,
-            request.DateFrom, request.DateTo,
-            request.HobbyIds, ct);
-
-        var venueIds = eventsWithDistance.Select(e => e.Event.VenueId).Distinct().ToArray();
-        var venues = await dbContext.Venues
-            .Where(v => venueIds.Contains(v.Id))
-            .ToDictionaryAsync(v => v.Id, ct);
-
-        var dtos = eventsWithDistance.Select(ewd =>
-        {
-            var e = ewd.Event;
-            var venue = venues.GetValueOrDefault(e.VenueId);
-
-            return new EventListItemDto(
-                Id: e.Id.ToString(),
-                CoverImageUrl: e.CoverImageS3Key != null
-                    ? storageService.S3KeyToPublicFileUrl(e.CoverImageS3Key, e.UpdatedAt)
-                    : null,
-                Title: e.Title,
-                Type: e.Type,
-                StartDateTime: e.StartDateTime,
-                VenueId: e.VenueId.ToString(),
-                VenueAddress: venue?.Address ?? "",
-                DistanceMeters: (int)ewd.DistanceMeters,
-                ParticipantsCount: e.EventParticipants.Count,
-                IsJoined: e.EventParticipants.Any(p => p.UserId == userId));
-        }).ToArray();
-
-        return ApiResult<PaginatedResponse<EventListItemDto>>.Build(
-            new PaginatedResponse<EventListItemDto>(dtos, totalCount));
-    }
-
-    private static async Task<ApiResult<EventMapItemDto[]>> GetEventsMap(
+    private static async Task<ApiResult<VenueEventsDto[]>> GetEventsMap(
         [AsParameters] GetEventsMapRequest request,
         IEventRepository eventRepository,
-        EventContext dbContext,
         IS3StorageService storageService,
         CancellationToken ct)
     {
-        var events = await eventRepository.GetEventsInBoundsAsync(
+        var result = await eventRepository.GetEventsInBoundsAsync(
             request.MinLat, request.MaxLat,
             request.MinLng, request.MaxLng,
-            request.Type, request.DateFrom, request.DateTo, ct);
+            request.Type, request.DateFrom, request.DateTo, 20, ct);
 
-        var venueIds = events.Select(e => e.VenueId).Distinct().ToArray();
-        var venues = await dbContext.Venues
-            .Where(v => venueIds.Contains(v.Id))
-            .ToDictionaryAsync(v => v.Id, ct);
-
-        var dtos = events.Select(e =>
+        EventMapItemDto MapEvent(Event e)
         {
-            var venue = venues.GetValueOrDefault(e.VenueId);
             return new EventMapItemDto(
                 Id: e.Id.ToString(),
                 CoverImageUrl: e.CoverImageS3Key != null
@@ -113,12 +61,16 @@ public class B2CEventEndpoints : IEndpoints
                 Title: e.Title,
                 Type: e.Type,
                 StartDateTime: e.StartDateTime,
-                VenueId: e.VenueId.ToString(),
-                Latitude: venue?.Coordinates.Y ?? 0,
-                Longitude: venue?.Coordinates.X ?? 0);
-        }).ToArray();
+                VenueId: e.VenueId.ToString());
+        }
 
-        return ApiResult<EventMapItemDto[]>.Build(dtos);
+        var dtos = result.Select(r => new VenueEventsDto(
+            VenueId: r.VenueId.ToString(),
+            TotalCount: r.TotalCount,
+            Events: r.Events.Select(MapEvent).ToArray()
+        )).ToArray();
+
+        return ApiResult<VenueEventsDto[]>.Build(dtos);
     }
 
     private static async Task<ApiResult<EventDto>> GetEvent(
@@ -174,6 +126,36 @@ public class B2CEventEndpoints : IEndpoints
             IsCreator: isCreator);
 
         return ApiResult<EventDto>.Build(dto);
+    }
+
+    private static async Task<ApiResult<PaginatedResponse<EventListItemDto>>> GetVenueEvents(
+        [AsParameters] GetVenueEventsRequest request,
+        ClaimsPrincipal user,
+        IEventRepository eventRepository,
+        IS3StorageService storageService,
+        CancellationToken ct)
+    {
+        var userId = user.GetId();
+        var (events, totalCount) = await eventRepository.GetVenueEventsAsync(
+            request.VenueId, request.Offset, request.Limit, ct);
+
+        var dtos = events.Select(e =>
+        {
+            return new EventListItemDto(
+                Id: e.Id.ToString(),
+                VenueId: e.VenueId.ToString(),
+                CoverImageUrl: e.CoverImageS3Key != null
+                    ? storageService.S3KeyToPublicFileUrl(e.CoverImageS3Key, e.UpdatedAt)
+                    : null,
+                Title: e.Title,
+                Type: e.Type,
+                StartDateTime: e.StartDateTime,
+                ParticipantsCount: e.EventParticipants.Count,
+                IsJoined: e.EventParticipants.Any(p => p.UserId == userId));
+        }).ToArray();
+
+        return ApiResult<PaginatedResponse<EventListItemDto>>.Build(
+            new PaginatedResponse<EventListItemDto>(dtos, totalCount));
     }
 
     private static async Task<ApiResult<EventDto>> CreateEvent(

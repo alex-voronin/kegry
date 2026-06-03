@@ -5,6 +5,8 @@ import { API_ENDPOINTS } from '@/lib/routes';
 import { ApiResult } from '@/lib/api-types';
 import { PromoType } from '@/lib/promo-types';
 import { rethrowApiError } from '@/lib/api-error';
+import { paramsForReq } from '@/lib/query-params';
+import type { EventListItem } from '../../map/_components/types';
 
 export interface CompanyDto {
   id: string;
@@ -60,14 +62,23 @@ export interface GetVenueResponse {
 interface VenueState {
   currentVenue: GetVenueResponse | null;
   isLoading: boolean;
+  venueEvents: EventListItem[];
+  totalEventCount: number;
+  isEventsLoading: boolean;
   fetchVenue: (id: string) => Promise<void>;
+  fetchVenueEvents: (venueId: string, offset: number) => Promise<void>;
+  updateEventParticipation: (eventId: string, isJoined: boolean) => void;
   reset: () => void;
 }
 
 export const useVenueStore = create<VenueState>()(
-  devtools((set) => ({
+  devtools((set, get) => ({
     currentVenue: null,
     isLoading: false,
+    venueEvents: [],
+    totalEventCount: 0,
+    isEventsLoading: false,
+
     fetchVenue: async (id: string) => {
       set({ isLoading: true });
       try {
@@ -86,6 +97,51 @@ export const useVenueStore = create<VenueState>()(
         set({ isLoading: false });
       }
     },
-    reset: () => set({ currentVenue: null, isLoading: false }),
+
+    fetchVenueEvents: async (venueId: string, offset: number) => {
+      set({ isEventsLoading: true });
+      try {
+        const response = await apiClient.get(
+          API_ENDPOINTS.VENUES.EVENTS(venueId),
+          paramsForReq({ offset, limit: 20 }),
+        );
+        const data: EventListItem[] = response.data.result.data ?? [];
+        const total: number = response.data.result.totalCount ?? 0;
+        set((state) => ({
+          venueEvents: offset === 0 ? data : [...state.venueEvents, ...data],
+          totalEventCount: total,
+        }));
+      } catch {
+        // silently fail
+      } finally {
+        set({ isEventsLoading: false });
+      }
+    },
+
+    updateEventParticipation: (eventId: string, isJoined: boolean) => {
+      set((state) => ({
+        venueEvents: state.venueEvents.map((e) =>
+          e.id === eventId
+            ? {
+                ...e,
+                isJoined,
+                participantsCount: Math.max(
+                  0,
+                  e.participantsCount + (isJoined ? 1 : -1),
+                ),
+              }
+            : e,
+        ),
+      }));
+    },
+
+    reset: () =>
+      set({
+        currentVenue: null,
+        isLoading: false,
+        venueEvents: [],
+        totalEventCount: 0,
+        isEventsLoading: false,
+      }),
   })),
 );

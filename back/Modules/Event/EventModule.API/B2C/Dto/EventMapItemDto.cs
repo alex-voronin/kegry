@@ -8,6 +8,4 @@ public record EventMapItemDto(
     string Title,
     EventType Type,
     DateTimeOffset StartDateTime,
-    string VenueId,
-    double Latitude,
-    double Longitude);
+    string VenueId);

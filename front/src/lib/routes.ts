@@ -173,11 +173,15 @@ export const API_ENDPOINTS = {
     },
   },
   EVENTS: {
+    LIST: '/api/v1/events',
     MAP: '/api/v1/events/map',
+    JOIN: (id: string) => `/api/v1/events/${id}/join`,
+    LEAVE: (id: string) => `/api/v1/events/${id}/leave`,
   },
   VENUES: {
     LIST: '/api/v1/venues',
     MAP: '/api/v1/venues/map',
+    EVENTS: (venueId: string) => `/api/v1/venues/${venueId}/events`,
     QR_CHECK_IN: (qrCode: string) => `/api/v1/venue/${qrCode}/qr-check-in`,
     QR_CHECK_IN_SETTINGS: (qrCode: string) =>
       `/api/v1/venue/${qrCode}/qr-check-in/settings`,

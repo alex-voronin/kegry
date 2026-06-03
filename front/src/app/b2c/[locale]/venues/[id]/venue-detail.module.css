@@ -49,6 +49,10 @@
   @apply -mt-3 flex w-full flex-col gap-0.5 px-0 sm:px-4;
 }
 
+.segmentedControlWrapper {
+  @apply pb-2 pt-3;
+}
+
 .section {
   @apply mt-2 flex flex-col gap-1;
 }
@@ -131,4 +135,52 @@
 
 .progressText {
   @apply text-secondary text-right text-xs;
+}
+
+.eventList {
+  @apply flex flex-col;
+}
+
+.eventCard {
+  @apply relative flex min-h-[64px] w-full cursor-pointer items-center overflow-hidden bg-[#1e1e1e] rounded-xl;
+}
+
+.eventCardJoined {
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+
+.eventCardImage {
+  @apply absolute inset-0 h-full w-full object-cover;
+}
+
+.eventCardOverlay {
+  @apply absolute inset-0 bg-black/60;
+}
+
+.eventCardContent {
+  @apply relative z-10 flex w-full items-center justify-between gap-2 px-4 py-3;
+}
+
+.eventCardInfo {
+  @apply min-w-0 flex-1;
+}
+
+.eventCardRow {
+  @apply flex items-baseline gap-2;
+}
+
+.eventCardTime {
+  @apply text-primary shrink-0 text-xs font-medium drop-shadow-md;
+}
+
+.eventCardTitle {
+  @apply text-primary truncate text-sm font-bold drop-shadow-md;
+}
+
+.eventCardMeta {
+  @apply text-primary mt-0.5 flex items-center gap-3 text-xs drop-shadow-md;
+}
+
+.dateSeparator {
+  @apply text-secondary px-4 pt-4 pb-1 text-xs font-semibold tracking-wider uppercase;
 }

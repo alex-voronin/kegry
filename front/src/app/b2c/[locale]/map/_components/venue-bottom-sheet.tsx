@@ -9,12 +9,10 @@ import {
   useMemo,
 } from 'react';
 import { useTranslations } from 'next-intl';
-import { useRouter } from '@/i18n/routing';
 import Image from 'next/image';
 import { ChevronDown } from 'lucide-react';
 import { ListItem } from '@/components/ui/list-item';
 import { VenueDisplayTags } from '@/components/b2c/venue-display-tags';
-import { PAGE_ROUTES } from '@/lib/routes';
 import styles from '../map.module.css';
 import type { VenueMapItem } from '../../venues/map/_components/venue-map-internal';
 import type { EventMapItem } from '../_components/types';
@@ -34,9 +32,13 @@ type SheetState = 'collapsed' | 'expanded';
 
 type Tab = 'venues' | 'events';
 
-export function VenueBottomSheet({ venues, events, isLoading, onFlyTo }: VenueBottomSheetProps) {
+export function VenueBottomSheet({
+  venues,
+  events,
+  isLoading,
+  onFlyTo,
+}: VenueBottomSheetProps) {
   const t = useTranslations('screens.map');
-  const router = useRouter();
 
   const [state, setState] = useState<SheetState>('collapsed');
   const [tab, setTab] = useState<Tab>('venues');
@@ -226,30 +228,24 @@ export function VenueBottomSheet({ venues, events, isLoading, onFlyTo }: VenueBo
 
   const handleVenueClick = useCallback(
     (id: string) => {
-      if (state === 'collapsed') {
-        const venue = venues.find((v) => v.id === id);
-        if (venue) onFlyTo?.(venue.latitude, venue.longitude, venue);
-      } else {
-        router.push(PAGE_ROUTES.VENUE_DETAIL(id));
-      }
+      const venue = venues.find((v) => v.id === id);
+      if (venue) onFlyTo?.(venue.latitude, venue.longitude, venue);
+      setState('collapsed');
     },
-    [state, venues, onFlyTo, router],
+    [venues, onFlyTo],
   );
 
   const handleEventClick = useCallback(
     (eventId: string) => {
-      if (state === 'collapsed') {
-        const event = events.find((e) => e.id === eventId);
-        if (event) {
-          const venue = venues.find((v) => v.id === event.venueId);
-          onFlyTo?.(event.latitude, event.longitude, venue);
-        }
-      } else {
-        const event = events.find((e) => e.id === eventId);
-        if (event) router.push(PAGE_ROUTES.VENUE_DETAIL(event.venueId));
+      const event = events.find((e) => e.id === eventId);
+      if (event) {
+        const venue = venues.find((v) => v.id === event.venueId);
+        if (!venue) return;
+        onFlyTo?.(venue.latitude, venue.longitude, venue);
       }
+      setState('collapsed');
     },
-    [state, events, venues, onFlyTo, router],
+    [events, venues, onFlyTo],
   );
 
   useEffect(() => {
@@ -324,13 +320,21 @@ export function VenueBottomSheet({ venues, events, isLoading, onFlyTo }: VenueBo
             <div className={styles.tabPillToggle}>
               <button
                 className={`${styles.tabPillOption} ${tab === 'venues' ? styles.tabPillOptionActive : ''}`}
-                onClick={(e) => { e.stopPropagation(); setTab('venues'); toggle(); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setTab('venues');
+                  toggle();
+                }}
               >
                 {t('tabVenues')}
               </button>
               <button
                 className={`${styles.tabPillOption} ${tab === 'events' ? styles.tabPillOptionActive : ''}`}
-                onClick={(e) => { e.stopPropagation(); setTab('events'); toggle(); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setTab('events');
+                  toggle();
+                }}
               >
                 {t('tabEvents')}
               </button>
@@ -359,22 +363,25 @@ export function VenueBottomSheet({ venues, events, isLoading, onFlyTo }: VenueBo
                 onClick={(e) => {
                   e.stopPropagation();
                   handleEventClick(event.id);
-
                 }}
               >
                 <div className={styles.eventCompactInfo}>
-                  <span className={styles.compactCardName}>
-                    {event.title}
-                  </span>
+                  <span className={styles.compactCardName}>{event.title}</span>
                   <span className={styles.eventCompactMeta}>
-                    {new Date(event.startDateTime).toLocaleDateString(undefined, {
-                      month: 'short',
-                      day: 'numeric',
-                    })}{' '}
-                    {new Date(event.startDateTime).toLocaleTimeString(undefined, {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
+                    {new Date(event.startDateTime).toLocaleDateString(
+                      undefined,
+                      {
+                        month: 'short',
+                        day: 'numeric',
+                      },
+                    )}{' '}
+                    {new Date(event.startDateTime).toLocaleTimeString(
+                      undefined,
+                      {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      },
+                    )}
                     {' • '}
                     {event.type === 'Meetup' ? t('meetup') : t('event')}
                   </span>
@@ -384,11 +391,15 @@ export function VenueBottomSheet({ venues, events, isLoading, onFlyTo }: VenueBo
           ) : (
             events.map((event) => {
               const venue = venueLookup[event.venueId];
-              const formattedDate = new Date(event.startDateTime).toLocaleDateString(undefined, {
+              const formattedDate = new Date(
+                event.startDateTime,
+              ).toLocaleDateString(undefined, {
                 month: 'short',
                 day: 'numeric',
               });
-              const formattedTime = new Date(event.startDateTime).toLocaleTimeString(undefined, {
+              const formattedTime = new Date(
+                event.startDateTime,
+              ).toLocaleTimeString(undefined, {
                 hour: '2-digit',
                 minute: '2-digit',
               });

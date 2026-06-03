@@ -6,37 +6,27 @@ import { useTranslations } from 'next-intl';
 import { useRouter, usePathname } from '@/i18n/routing';
 import { useParams, useSearchParams } from 'next/navigation';
 import { Header } from '@/components/ui/header';
-import { VenueTagAccordion } from '@/components/common/venue-tag-accordion';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
-import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
+import { SegmentedControl } from '@/components/ui/segmented-control';
 import { useVenueStore } from './use-venue-store';
-import { PAGE_ROUTES } from '@/lib/routes';
-import { cn } from '@/lib/utils';
+import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { toast } from 'react-toastify';
-import { HelpCircle, ChevronRight, ScanQrCode, Link } from 'lucide-react';
+import { ScanQrCode, Link } from 'lucide-react';
 import styles from './venue-detail.module.css';
-import { InstagramIcon } from './_components/instagram-icon';
 import { PinpadIcon } from '@/components/icons/pinpad-icon';
-import { PromoIcon } from '@/lib/promo-types';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { CheckInManager } from '@/components/common/check-in-manager';
 import { CheckInAnimation } from '../_components/check-in-animation';
 import { useQrCheckIn } from '../use-qr-check-in';
-import { parseInstagramHandle } from '@/lib/url-utils';
+import { DetailsTab } from './_components/details-tab';
+import { EventsTab } from './_components/events-tab';
+import { InstagramIcon } from './_components/instagram-icon';
+import apiClient from '@/lib/api-client';
 
 const PIN_CODE_ONLY_CHECKIN_ENABLED = false;
-
-function calculateProgressPercentage(
-  count: number,
-  lower: number,
-  upper: number,
-) {
-  if (upper <= lower) return 100;
-  return Math.max(0, Math.min(100, ((count - lower) / (upper - lower)) * 100));
-}
 
 export default function VenueDetailScreen() {
   const router = useRouter();
@@ -47,13 +37,26 @@ export default function VenueDetailScreen() {
   const t = useTranslations('screens.venueDetail');
   const tPopup = useTranslations('components.checkInCodePopup');
 
-  const { currentVenue, isLoading, fetchVenue } = useVenueStore();
+  const {
+    currentVenue,
+    isLoading,
+    venueEvents,
+    totalEventCount,
+    isEventsLoading,
+    fetchVenue,
+    fetchVenueEvents: fetchVenueEventsStore,
+    updateEventParticipation,
+  } = useVenueStore();
   const [isInitializing, setIsInitializing] = useState(
     () => currentVenue?.venue.id !== venueId,
   );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isHelpDialogOpen, setIsHelpDialogOpen] = useState(false);
   const [checkInVenueId, setCheckInVenueId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('details');
+  const [isEventMenuOpen, setIsEventMenuOpen] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const hasMoreEvents = venueEvents.length < totalEventCount;
 
   const handleCheckInSuccess = useCallback((id: string) => {
     setCheckInVenueId(id);
@@ -94,6 +97,11 @@ export default function VenueDetailScreen() {
       setShowCheckIn(true);
       router.replace(pathname);
     }
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'events') {
+      setActiveTab('events');
+      router.replace(pathname);
+    }
   }, [searchParams, router, pathname]);
 
   useEffect(() => {
@@ -104,6 +112,7 @@ export default function VenueDetailScreen() {
       }
       try {
         await fetchVenue(venueId);
+        fetchVenueEventsStore(venueId, 0);
       } catch (error) {
         toast.error(t('notFound'));
       } finally {
@@ -119,6 +128,43 @@ export default function VenueDetailScreen() {
   const handleBack = () => {
     safeBack(PAGE_ROUTES.VENUES);
   };
+
+  const handleEventMenuOpen = useCallback((eventId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedEventId(eventId);
+    setIsEventMenuOpen(true);
+  }, []);
+
+  const handleJoinEvent = useCallback(async () => {
+    if (!selectedEventId) return;
+    setIsEventMenuOpen(false);
+    try {
+      await apiClient.post(API_ENDPOINTS.EVENTS.JOIN(selectedEventId));
+      updateEventParticipation(selectedEventId, true);
+    } catch {
+      toast.error('Failed to join event');
+    }
+  }, [selectedEventId, updateEventParticipation]);
+
+  const handleLeaveEvent = useCallback(async () => {
+    if (!selectedEventId) return;
+    setIsEventMenuOpen(false);
+    try {
+      await apiClient.post(API_ENDPOINTS.EVENTS.LEAVE(selectedEventId));
+      updateEventParticipation(selectedEventId, false);
+    } catch {
+      toast.error('Failed to leave event');
+    }
+  }, [selectedEventId, updateEventParticipation]);
+
+  const handleViewEvent = useCallback(() => {
+    if (!selectedEventId) return;
+    setIsEventMenuOpen(false);
+    const event = venueEvents.find((e) => e.id === selectedEventId);
+    if (event) {
+      router.push(`${PAGE_ROUTES.VENUE_DETAIL(event.venueId)}?tab=events`);
+    }
+  }, [selectedEventId, venueEvents, router]);
 
   if ((isInitializing || isLoading) && currentVenue?.venue.id !== venueId) {
     return (
@@ -240,222 +286,40 @@ export default function VenueDetailScreen() {
             <h1 className={styles.companyName}>{company.name}</h1>
           </div>
 
-          {venue.tags?.length > 0 && (
-            <div className={styles.section}>
-              <VenueTagAccordion tagIds={venue.tags.map(t => t.id)} />
-            </div>
-          )}
-
-          {(loyaltyLevel.discount !== 0 ||
-            loyaltyLevel.isCustomDiscount ||
-            loyaltyLevel.userLoyaltyLevel > 0 ||
-            loyaltyLevel.visitsUpperBound != null) && (
-            <div className={styles.section}>
-              <FormSectionTitle>{t('myDiscount')}</FormSectionTitle>
-              <div
-                className={cn(
-                  styles.field,
-                  styles.loyaltyCard,
-                  styles.loyaltyCardInteractive,
-                )}
-                onClick={() => {
-                  router.push(PAGE_ROUTES.VENUE_DISCOUNTS(venueId));
-                }}
-              >
-                <div className={styles.loyaltyHeader}>
-                  <div className={styles.loyaltyLevelTitle}>
-                    <span>
-                      {t('level')} {loyaltyLevel.userLoyaltyLevel}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    {(loyaltyLevel.discount !== 0 ||
-                      loyaltyLevel.isCustomDiscount) && (
-                      <span className={styles.loyaltyDiscount}>
-                        {loyaltyLevel.isCustomDiscount
-                          ? t('offerAtVenue')
-                          : t('discount', {
-                              percent: loyaltyLevel.discount ?? 0,
-                            })}
-                      </span>
-                    )}
-                    <ChevronRight size={24} className="text-primary" />
-                  </div>
-                </div>
-                {(loyaltyLevel.visitsUpperBound !== null ||
-                  loyaltyLevel.userLoyaltyLevel > 0) && (
-                  <div className={styles.progressContainer}>
-                    <div className={styles.progressBarBg}>
-                      <div
-                        className={styles.progressBarFill}
-                        style={{
-                          width: `${
-                            loyaltyLevel.visitsUpperBound === null
-                              ? 100
-                              : calculateProgressPercentage(
-                                  loyaltyLevel.visitsCount,
-                                  loyaltyLevel.visitsLowerBound,
-                                  loyaltyLevel.visitsUpperBound,
-                                )
-                          }%`,
-                        }}
-                      />
-                    </div>
-                    <div className="flex items-center gap-1.5 self-end">
-                      <div className={styles.progressText}>
-                        {loyaltyLevel.visitsUpperBound === null
-                          ? t('maxLoyaltyLevelReached')
-                          : (() => {
-                              const visitsText = t('visits', {
-                                current:
-                                  loyaltyLevel.visitsCount -
-                                  loyaltyLevel.visitsLowerBound,
-                                total:
-                                  loyaltyLevel.visitsUpperBound -
-                                  loyaltyLevel.visitsLowerBound,
-                              });
-                              const nextLevelDiscount =
-                                loyaltyLevel.nextLevelDiscount;
-                              const showNextDiscount =
-                                nextLevelDiscount !== null &&
-                                nextLevelDiscount >
-                                  (loyaltyLevel.discount ?? 0);
-                              return showNextDiscount
-                                ? `${visitsText} → ${t('nextDiscountInline', { percent: nextLevelDiscount })}`
-                                : visitsText;
-                            })()}
-                      </div>
-
-                      <div
-                        className="text-secondary cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsHelpDialogOpen(true);
-                        }}
-                      >
-                        <HelpCircle size={14} />
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          <div className={styles.section}>
-            <FormSectionTitle>{t('address')}</FormSectionTitle>
-            <div
-              className={cn(styles.field, styles.actionField)}
-              onClick={() => window.open(venue.googleMapsUrl, '_blank')}
-            >
-              <div className={styles.actionLabel}>
-                <div className={styles.fieldIcon}>
-                  <Image
-                    src="/assets/venue/google-maps-icon.svg"
-                    alt="Maps"
-                    width={24}
-                    height={24}
-                  />
-                </div>
-                <span className={styles.fieldText}>{venue.address}</span>
-              </div>
-            </div>
+          <div className={styles.segmentedControlWrapper}>
+            <SegmentedControl
+              options={[
+                { value: 'details', label: t('tabDetails'), width: 'auto' },
+                { value: 'events', label: t('tabEvents'), width: 'auto' },
+              ]}
+              value={activeTab}
+              onChange={setActiveTab}
+              stretchItems
+            />
           </div>
 
-          {(venue.phoneNumber || venue.websiteUrl || venue.instagramUrl) && (
-            <div className={styles.section}>
-              <FormSectionTitle>{t('contacts')}</FormSectionTitle>
-
-              {/* Phone Number */}
-              {venue.phoneNumber && (
-                <div className={styles.field}>
-                  <div className={styles.actionLabel}>
-                    <div className={styles.fieldIcon}>
-                      <Image
-                        src="/assets/venue/phone-icon.svg"
-                        alt="Phone"
-                        width={24}
-                        height={24}
-                      />
-                    </div>
-                    <span>{venue.phoneNumber}</span>
-                  </div>
-                </div>
-              )}
-
-              {/* Website */}
-              {venue.websiteUrl && (
-                <div
-                  className={cn(styles.field, styles.actionField)}
-                  onClick={() =>
-                    window.open(venue.websiteUrl as string, '_blank')
-                  }
-                >
-                  <div className={styles.actionLabel}>
-                    <div className={styles.fieldIcon}>
-                      <Image
-                        src="/assets/venue/website-icon.svg"
-                        alt="Website"
-                        width={24}
-                        height={24}
-                      />
-                    </div>
-                    <span className={styles.fieldText}>{venue.websiteUrl}</span>
-                  </div>
-                </div>
-              )}
-
-              {/* Instagram */}
-              {venue.instagramUrl && (
-                <div
-                  className={cn(styles.field, styles.actionField)}
-                  onClick={() =>
-                    window.open(venue.instagramUrl as string, '_blank')
-                  }
-                >
-                  <div className={styles.actionLabel}>
-                    <div className={styles.fieldIcon}>
-                      <InstagramIcon />
-                    </div>
-                    <span className={styles.fieldText}>
-                      {parseInstagramHandle(venue.instagramUrl)}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
+          {/* Details Tab */}
+          {activeTab === 'details' && (
+            <DetailsTab
+              venue={venue}
+              company={company}
+              loyaltyLevel={loyaltyLevel}
+              venueId={venueId}
+              t={t}
+              onHelpOpen={() => setIsHelpDialogOpen(true)}
+            />
           )}
 
-          {venue.workingHours && (
-            <div className={styles.section}>
-              <FormSectionTitle>{t('workingHours')}</FormSectionTitle>
-              <div className={styles.field}>
-                <div className={styles.workingHoursText}>
-                  {venue.workingHours}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {venue.promos && venue.promos.length > 0 && (
-            <div className={styles.section}>
-              <FormSectionTitle>{t('promotions')}</FormSectionTitle>
-              <div className={styles.promoList}>
-                {venue.promos.map((promo, idx) => (
-                  <div key={idx} className={styles.promoItem}>
-                    <div className="flex items-center gap-3">
-                      <PromoIcon
-                        type={promo.type}
-                        className="text-primary shrink-0"
-                        size={24}
-                      />
-                      <div className={styles.promoBody}>{promo.body}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+          {/* Events Tab */}
+          {activeTab === 'events' && (
+            <EventsTab
+              venueEvents={venueEvents}
+              isEventsLoading={isEventsLoading}
+              hasMoreEvents={hasMoreEvents}
+              onLoadMore={() => fetchVenueEventsStore(venueId, venueEvents.length)}
+              onEventMenuOpen={handleEventMenuOpen}
+              onEmpty={() => t('noVenueEvents')}
+            />
           )}
         </div>
       </div>
@@ -499,6 +363,24 @@ export default function VenueDetailScreen() {
               ]
             : []),
         ]}
+      />
+
+      <ModalMenu
+        isOpen={isEventMenuOpen}
+        onClose={() => setIsEventMenuOpen(false)}
+        options={(() => {
+          const ev = venueEvents.find((e) => e.id === selectedEventId);
+          return [
+            {
+              label: ev?.isJoined ? 'Leave' : 'Join',
+              onClick: ev?.isJoined ? handleLeaveEvent : handleJoinEvent,
+            },
+            {
+              label: 'View',
+              onClick: handleViewEvent,
+            },
+          ];
+        })()}
       />
 
       <CheckInManager

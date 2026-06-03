@@ -11,9 +11,11 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
 {
     private const double SearchRadiusMeters = 25_000;
     private readonly GeometryFactory _geometryFactory = new(new PrecisionModel(), 4326);
+    private readonly TimeProvider _timeProvider;
 
-    public EfCoreEventRepository(EventContext context) : base(context)
+    public EfCoreEventRepository(EventContext context, TimeProvider timeProvider) : base(context)
     {
+        _timeProvider = timeProvider;
     }
 
     public async Task<Event?> GetByIdWithRelationsAsync(Guid id, CancellationToken ct = default)
@@ -38,11 +40,15 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
         CancellationToken ct = default)
     {
         var userPoint = new Point(longitude, latitude) { SRID = 4326 };
+        var now = _timeProvider.GetUtcNow();
+        var oneMonthFromNow = now.AddDays(30);
 
         var venueJoinQuery = Context.Events
             .Join(Context.Venues, e => e.VenueId, v => v.Id, (e, v) => new { e, v })
             .Where(x => EF.Functions.IsWithinDistance(
-                x.v.Coordinates, userPoint, SearchRadiusMeters, useSpheroid: false));
+                x.v.Coordinates, userPoint, SearchRadiusMeters, useSpheroid: false))
+            .Where(x => x.e.StartDateTime >= now)
+            .Where(x => x.e.Type != EventType.Meetup || x.e.StartDateTime <= oneMonthFromNow);
 
         if (type.HasValue)
             venueJoinQuery = venueJoinQuery.Where(x => x.e.Type == type.Value);
@@ -62,7 +68,8 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
         var totalCount = await venueJoinQuery.CountAsync(ct);
 
         var pagedIds = await venueJoinQuery
-            .Select(x => new { x.e.Id, Distance = EF.Functions.Distance(x.v.Coordinates, userPoint, useSpheroid: false) })
+            .Select(x => new
+                { x.e.Id, Distance = EF.Functions.Distance(x.v.Coordinates, userPoint, useSpheroid: false) })
             .OrderBy(x => x.Distance)
             .Skip(offset)
             .Take(limit)
@@ -85,7 +92,35 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
         return (result, totalCount);
     }
 
-    public async Task<Event[]> GetEventsInBoundsAsync(
+    public async Task<(Event[] Events, int TotalCount)> GetVenueEventsAsync(
+        Guid venueId,
+        int offset = 0,
+        int limit = 20,
+        CancellationToken ct = default)
+    {
+        var now = _timeProvider.GetUtcNow();
+        var oneMonthFromNow = now.AddDays(30);
+
+        var query = Context.Events
+            .Where(e =>
+                e.VenueId == venueId &&
+                e.IsVisibleOnMap &&
+                e.StartDateTime >= now &&
+                (e.Type != EventType.Meetup || e.StartDateTime <= oneMonthFromNow));
+
+        var totalCount = await query.CountAsync(ct);
+
+        var events = await query
+            .Include(e => e.EventParticipants)
+            .OrderBy(e => e.StartDateTime)
+            .Skip(offset)
+            .Take(limit)
+            .ToArrayAsync(ct);
+
+        return (events, totalCount);
+    }
+
+    public async Task<List<(Guid VenueId, int TotalCount, Event[] Events)>> GetEventsInBoundsAsync(
         double minLat,
         double maxLat,
         double minLng,
@@ -93,39 +128,61 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
         EventType? type = null,
         DateTimeOffset? dateFrom = null,
         DateTimeOffset? dateTo = null,
+        int maxPerVenue = 20,
         CancellationToken ct = default)
     {
         var envelope = new Envelope(minLng, maxLng, minLat, maxLat);
         var boundingBox = _geometryFactory.ToGeometry(envelope);
-
-        var query = Context.Events
-            .Include(e => e.EventContacts)
-            .Include(e => e.EventHobbyLinks)
-            .Include(e => e.EventParticipants)
-            .Where(e => e.IsVisibleOnMap)
-            .AsQueryable();
+        var now = _timeProvider.GetUtcNow();
+        var oneMonthFromNow = now.AddDays(30);
+        
+        var baseQuery = Context.Events
+            .Join(Context.Venues,
+                e => e.VenueId,
+                v => v.Id,
+                (e, v) => new { Event = e, Venue = v })
+            .Where(x =>
+                x.Event.IsVisibleOnMap &&
+                x.Event.StartDateTime >= now &&
+                (x.Event.Type != EventType.Meetup || x.Event.StartDateTime <= oneMonthFromNow) &&
+                x.Venue.Coordinates.Intersects(boundingBox))
+            .Select(x => x.Event);
 
         if (type.HasValue)
-            query = query.Where(e => e.Type == type.Value);
-
+            baseQuery = baseQuery.Where(e => e.Type == type.Value);
         if (dateFrom.HasValue)
-            query = query.Where(e => e.StartDateTime >= dateFrom.Value);
-
+            baseQuery = baseQuery.Where(e => e.StartDateTime >= dateFrom.Value);
         if (dateTo.HasValue)
-            query = query.Where(e => e.StartDateTime <= dateTo.Value);
+            baseQuery = baseQuery.Where(e => e.StartDateTime <= dateTo.Value);
 
-        var events = await query.ToArrayAsync(ct);
+        var venueCounts = await baseQuery
+            .GroupBy(e => e.VenueId)
+            .Select(g => new { VenueId = g.Key, TotalCount = g.Count() })
+            .ToDictionaryAsync(x => x.VenueId, x => x.TotalCount, ct);
 
-        var venueIds = events.Select(e => e.VenueId).Distinct().ToArray();
-        var venues = await Context.Venues
-            .Where(v => venueIds.Contains(v.Id))
-            .ToDictionaryAsync(v => v.Id, ct);
+        var allData = await baseQuery
+            .OrderBy(e => e.Type == EventType.Event ? 0 : 1)
+            .ThenBy(e => e.StartDateTime)
+            .Take(2 * maxPerVenue)
+            .ToArrayAsync(ct);
 
-        return events
-            .Where(e => venues.TryGetValue(e.VenueId, out var venue) &&
-                        venue.Coordinates.Intersects(boundingBox))
-            .OrderBy(e => e.StartDateTime)
-            .ToArray();
+        var result = allData
+            .GroupBy(e => e.VenueId)
+            .Select(g =>
+            {
+                var regularEvents = g.Where(e => e.Type == EventType.Event)
+                    .OrderBy(e => e.StartDateTime).ToArray();
+                var meetups = g.Where(e => e.Type == EventType.Meetup)
+                    .OrderBy(e => e.StartDateTime).ToArray();
+                var limited = regularEvents.Take(maxPerVenue).ToList();
+                var remaining = maxPerVenue - limited.Count;
+                if (remaining > 0)
+                    limited.AddRange(meetups.Take(remaining));
+                return (VenueId: g.Key, TotalCount: venueCounts.GetValueOrDefault(g.Key), Events: limited.ToArray());
+            })
+            .ToList();
+
+        return result;
     }
 
     public async Task<(Event[] Events, int TotalCount)> GetOwnEventsPaginatedAsync(

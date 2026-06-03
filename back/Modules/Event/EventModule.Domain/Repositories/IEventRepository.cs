@@ -22,7 +22,13 @@ public interface IEventRepository : IRepository<Event>
         Guid[]? hobbyIds = null,
         CancellationToken ct = default);
 
-    Task<Event[]> GetEventsInBoundsAsync(
+    Task<(Event[] Events, int TotalCount)> GetVenueEventsAsync(
+        Guid venueId,
+        int offset = 0,
+        int limit = 20,
+        CancellationToken ct = default);
+
+    Task<List<(Guid VenueId, int TotalCount, Event[] Events)>> GetEventsInBoundsAsync(
         double minLat,
         double maxLat,
         double minLng,
@@ -30,6 +36,7 @@ public interface IEventRepository : IRepository<Event>
         EventType? type = null,
         DateTimeOffset? dateFrom = null,
         DateTimeOffset? dateTo = null,
+        int maxPerVenue = 20,
         CancellationToken ct = default);
 
     Task<(Event[] Events, int TotalCount)> GetOwnEventsPaginatedAsync(

@@ -55,7 +55,9 @@ interface VenueMapInternalProps {
     maxLng: number;
   }) => void;
   onVenueDetails: (id: string) => void;
+  onVenueEvents?: (id: string) => void;
   detailsLabel: string;
+  eventsLabel?: string;
   initialZoom: number;
 }
 
@@ -186,13 +188,17 @@ const MemoizedMarker = memo(
     venue,
     eventCount,
     onVenueDetails,
+    onVenueEvents,
     detailsLabel,
+    eventsLabel,
     onMarkerReady,
   }: {
     venue: VenueMapItem;
     eventCount: number;
     onVenueDetails: (id: string) => void;
+    onVenueEvents?: (id: string) => void;
     detailsLabel: string;
+    eventsLabel?: string;
     onMarkerReady?: (id: string, marker: L.Marker) => void;
   }) {
     return (
@@ -233,9 +239,9 @@ const MemoizedMarker = memo(
                 </button>
                 <button
                   className={styles.markerEventsBtn}
-                  onClick={() => onVenueDetails(venue.id)}
+                  onClick={() => onVenueEvents?.(venue.id)}
                 >
-                  Events: {eventCount}
+                  {`${eventsLabel ?? 'Events'}: ${eventCount}`}
                 </button>
               </div>
             ) : (
@@ -254,6 +260,7 @@ const MemoizedMarker = memo(
   (prevProps, nextProps) =>
     prevProps.venue.id === nextProps.venue.id &&
     prevProps.detailsLabel === nextProps.detailsLabel &&
+    prevProps.eventsLabel === nextProps.eventsLabel &&
     prevProps.eventCount === nextProps.eventCount &&
     prevProps.venue.tagIds === nextProps.venue.tagIds,
 );
@@ -322,7 +329,9 @@ export default function VenueMapInternal({
   onClearFocus,
   onBoundsChange,
   onVenueDetails,
+  onVenueEvents,
   detailsLabel,
+  eventsLabel,
   initialZoom,
 }: VenueMapInternalProps) {
   const markerRefs = useRef<Map<string, L.Marker>>(new Map());
@@ -356,7 +365,9 @@ export default function VenueMapInternal({
             venue={venue}
             eventCount={eventCountByVenueId?.[venue.id] ?? 0}
             onVenueDetails={onVenueDetails}
+            onVenueEvents={onVenueEvents}
             detailsLabel={detailsLabel}
+            eventsLabel={eventsLabel}
             onMarkerReady={handleMarkerReady}
           />
         ))}
