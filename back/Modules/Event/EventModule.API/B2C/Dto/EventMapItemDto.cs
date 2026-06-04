@@ -8,4 +8,5 @@ public record EventMapItemDto(
     string Title,
     EventType Type,
     DateTimeOffset StartDateTime,
-    string VenueId);
+    string VenueId,
+    bool IsJoined);

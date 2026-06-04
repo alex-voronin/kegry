@@ -42,26 +42,29 @@ public class B2CEventEndpoints : IEndpoints
 
     private static async Task<ApiResult<VenueEventsDto[]>> GetEventsMap(
         [AsParameters] GetEventsMapRequest request,
+        ClaimsPrincipal user,
         IEventRepository eventRepository,
         IS3StorageService storageService,
         CancellationToken ct)
     {
+        var userId = user.GetId();
         var result = await eventRepository.GetEventsInBoundsAsync(
             request.MinLat, request.MaxLat,
             request.MinLng, request.MaxLng,
-            request.Type, request.DateFrom, request.DateTo, 20, ct);
+            request.Type, request.DateFrom, request.DateTo, 20, userId, ct);
 
-        EventMapItemDto MapEvent(Event e)
+        EventMapItemDto MapEvent(EventWithIsJoined ewj)
         {
             return new EventMapItemDto(
-                Id: e.Id.ToString(),
-                CoverImageUrl: e.CoverImageS3Key != null
-                    ? storageService.S3KeyToPublicFileUrl(e.CoverImageS3Key, e.UpdatedAt)
+                Id: ewj.Event.Id.ToString(),
+                CoverImageUrl: ewj.Event.CoverImageS3Key != null
+                    ? storageService.S3KeyToPublicFileUrl(ewj.Event.CoverImageS3Key, ewj.Event.UpdatedAt)
                     : null,
-                Title: e.Title,
-                Type: e.Type,
-                StartDateTime: e.StartDateTime,
-                VenueId: e.VenueId.ToString());
+                Title: ewj.Event.Title,
+                Type: ewj.Event.Type,
+                StartDateTime: ewj.Event.StartDateTime,
+                VenueId: ewj.Event.VenueId.ToString(),
+                IsJoined: ewj.IsJoined);
         }
 
         var dtos = result.Select(r => new VenueEventsDto(

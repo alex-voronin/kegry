@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback, useState, memo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, memo } from 'react';
 import {
   MapContainer,
   TileLayer,
@@ -14,6 +14,7 @@ import MarkerClusterGroup from 'react-leaflet-cluster';
 import { VenueDisplayTags } from '@/components/b2c/venue-display-tags';
 import { LocateFixed } from 'lucide-react';
 import { getLowAccuracyLocation } from '@/lib/geo-utils';
+import { useMapStore } from '@/app/b2c/[locale]/map/use-map-store';
 import 'leaflet/dist/leaflet.css';
 import styles from '../map.module.css';
 
@@ -47,7 +48,6 @@ interface VenueMapInternalProps {
   eventCountByVenueId?: Record<string, number>;
   flyToCoord?: { lat: number; lng: number; key: number } | null;
   focusedVenue?: VenueMapItem | null;
-  onClearFocus?: () => void;
   onBoundsChange: (bounds: {
     minLat: number;
     maxLat: number;
@@ -97,10 +97,18 @@ function BoundsWatcher({
     },
   });
 
-  // Fire initial bounds on mount only
+  return null;
+}
+
+function RestoreViewport({ onBoundsChange }: { onBoundsChange: VenueMapInternalProps['onBoundsChange'] }) {
+  const map = useMap();
+  const onBoundsChangeRef = useRef(onBoundsChange);
+  onBoundsChangeRef.current = onBoundsChange;
+
   useEffect(() => {
     const timer = setTimeout(() => {
       map.invalidateSize();
+
       const bounds = map.getBounds();
       onBoundsChangeRef.current({
         minLat: bounds.getSouth(),
@@ -110,15 +118,16 @@ function BoundsWatcher({
       });
     }, 300);
     return () => clearTimeout(timer);
-     
   }, [map]);
 
   return null;
 }
 
-function FlyToTarget({ coord }: { coord: { lat: number; lng: number; key: number } }) {
+function FlyToTarget({ coord, mcgRef }: { coord: { lat: number; lng: number; key: number }; mcgRef: { current: any } }) {
   const map = useMap();
   useEffect(() => {
+    mcgRef.current?.unspiderfy();
+
     const center = map.getCenter();
     const dz = Math.abs(map.getZoom() - (map.getMaxZoom() - 2));
     const dl = Math.abs(center.lat - coord.lat) + Math.abs(center.lng - coord.lng);
@@ -135,27 +144,65 @@ function FlyToTarget({ coord }: { coord: { lat: number; lng: number; key: number
 
 function FocusedVenuePopup({
   venue,
-  onClearFocus,
+  hasFlyTo,
   markerRefs,
+  mcgRef,
 }: {
   venue: VenueMapItem;
-  onClearFocus: () => void;
+  hasFlyTo: boolean;
   markerRefs: { current: Map<string, L.Marker> };
+  mcgRef: { current: any };
 }) {
   const map = useMap();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const marker = markerRefs.current.get(venue.id);
-      if (marker) {
+    let cancelled = false;
+    let done = false;
+
+    const dz = Math.abs(map.getZoom() - (map.getMaxZoom() - 2));
+    const needsFlyTo = hasFlyTo && dz > 1;
+
+    const finish = (marker: L.Marker) => {
+      if (cancelled || done) return;
+      done = true;
+      const parent = mcgRef.current?.getVisibleParent(marker);
+
+      if (parent && parent !== marker) {
+        parent.spiderfy();
+        setTimeout(() => {
+          if (cancelled) return;
+          marker.openPopup();
+        }, 250);
+      } else if (parent === marker) {
         marker.openPopup();
       }
-      onClearFocus();
-    }, 600);
+    };
 
-    return () => clearTimeout(timer);
+    const doOpen = () => {
+      if (cancelled || done) return;
+      const marker = markerRefs.current.get(venue.id);
+      const mcg = mcgRef.current;
+      if (!marker || !mcg) {
+        setTimeout(doOpen, 100);
+        return;
+      }
+      if (needsFlyTo) {
+        setTimeout(() => {
+          useMapStore.getState().setFlyToCoord(null);
+          finish(marker);
+        }, 600);
+      } else {
+        useMapStore.getState().setFlyToCoord(null);
+        finish(marker);
+      }
+    };
+    doOpen();
+
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [venue.id, onClearFocus, map]);
+  }, [venue.id, hasFlyTo, map, markerRefs, mcgRef]);
 
   return null;
 }
@@ -326,7 +373,6 @@ export default function VenueMapInternal({
   eventCountByVenueId,
   flyToCoord,
   focusedVenue,
-  onClearFocus,
   onBoundsChange,
   onVenueDetails,
   onVenueEvents,
@@ -335,14 +381,33 @@ export default function VenueMapInternal({
   initialZoom,
 }: VenueMapInternalProps) {
   const markerRefs = useRef<Map<string, L.Marker>>(new Map());
+  const mcgRef = useRef<any>(null);
+  const focusCountRef = useRef(0);
   const handleMarkerReady = useCallback((id: string, marker: L.Marker) => {
     markerRefs.current.set(id, marker);
   }, []);
 
+  useEffect(() => {
+    focusCountRef.current += 1;
+  }, [focusedVenue?.id]);
+
+  const initialView = useMemo(() => {
+    const saved = sessionStorage.getItem(MAP_VIEWPORT_KEY);
+    if (saved) {
+      try {
+        const { lat, lng, zoom } = JSON.parse(saved);
+        return { center: { lat, lng }, zoom };
+      } catch {
+        // ignore
+      }
+    }
+    return { center, zoom: initialZoom };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <MapContainer
-      center={[center.lat, center.lng]}
-      zoom={initialZoom}
+      center={[initialView.center.lat, initialView.center.lng]}
+      zoom={initialView.zoom}
       style={{ height: '100%', width: '100%', zIndex: 0 }}
       zoomControl={true}
       attributionControl={false}
@@ -353,6 +418,7 @@ export default function VenueMapInternal({
       />
 
       <MarkerClusterGroup
+        ref={mcgRef}
         chunkedLoading
         iconCreateFunction={createClusterIcon}
         maxClusterRadius={50}
@@ -374,15 +440,18 @@ export default function VenueMapInternal({
       </MarkerClusterGroup>
 
       <FlyToCenter center={center} />
-      {flyToCoord && <FlyToTarget coord={flyToCoord} />}
+      {flyToCoord && <FlyToTarget coord={flyToCoord} mcgRef={mcgRef} />}
       {focusedVenue && (
         <FocusedVenuePopup
+          key={focusCountRef.current}
           venue={focusedVenue}
-          onClearFocus={onClearFocus ?? (() => {})}
+          hasFlyTo={!!flyToCoord}
           markerRefs={markerRefs}
+          mcgRef={mcgRef}
         />
       )}
       <BoundsWatcher onBoundsChange={onBoundsChange} />
+      <RestoreViewport onBoundsChange={onBoundsChange} />
       <LocateMe />
 
       <div className={styles.attribution}>© OpenStreetMap contributors</div>

@@ -120,7 +120,7 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
         return (events, totalCount);
     }
 
-    public async Task<List<(Guid VenueId, int TotalCount, Event[] Events)>> GetEventsInBoundsAsync(
+    public async Task<List<(Guid VenueId, int TotalCount, EventWithIsJoined[] Events)>> GetEventsInBoundsAsync(
         double minLat,
         double maxLat,
         double minLng,
@@ -129,13 +129,14 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
         DateTimeOffset? dateFrom = null,
         DateTimeOffset? dateTo = null,
         int maxPerVenue = 20,
+        Guid? currentUserId = null,
         CancellationToken ct = default)
     {
         var envelope = new Envelope(minLng, maxLng, minLat, maxLat);
         var boundingBox = _geometryFactory.ToGeometry(envelope);
         var now = _timeProvider.GetUtcNow();
         var oneMonthFromNow = now.AddDays(30);
-        
+
         var baseQuery = Context.Events
             .Join(Context.Venues,
                 e => e.VenueId,
@@ -166,6 +167,14 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
             .Take(2 * maxPerVenue)
             .ToArrayAsync(ct);
 
+        var allEventIds = allData.Select(e => e.Id).ToArray();
+        var joinedEventIds = currentUserId.HasValue
+            ? await Context.EventParticipants
+                .Where(ep => ep.UserId == currentUserId.Value && allEventIds.Contains(ep.EventId))
+                .Select(ep => ep.EventId)
+                .ToHashSetAsync(ct)
+            : new HashSet<Guid>();
+
         var result = allData
             .GroupBy(e => e.VenueId)
             .Select(g =>
@@ -178,7 +187,10 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
                 var remaining = maxPerVenue - limited.Count;
                 if (remaining > 0)
                     limited.AddRange(meetups.Take(remaining));
-                return (VenueId: g.Key, TotalCount: venueCounts.GetValueOrDefault(g.Key), Events: limited.ToArray());
+                var events = limited
+                    .Select(e => new EventWithIsJoined(e, joinedEventIds.Contains(e.Id)))
+                    .ToArray();
+                return (VenueId: g.Key, TotalCount: venueCounts.GetValueOrDefault(g.Key), Events: events);
             })
             .ToList();
 

@@ -19,6 +19,9 @@ import { MapFeedToggle } from '@/components/common/map-feed-toggle';
 import { useQrCheckIn } from '../venues/use-qr-check-in';
 import { VenueBottomSheet } from './_components/venue-bottom-sheet';
 import { useMapStore } from './use-map-store';
+import apiClient from '@/lib/api-client';
+import { API_ENDPOINTS } from '@/lib/routes';
+import { toast } from 'react-toastify';
 import styles from './map.module.css';
 import type { VenueMapItem } from '../venues/map/_components/venue-map-internal';
 import type { EventCountMap } from './_components/types';
@@ -53,7 +56,8 @@ export default function MapScreen() {
     fetchMapData,
     setFlyToCoord,
     setFocusedVenue,
-    clearFocus: handleClearFocus,
+    clearFocus,
+    flyTo,
   } = useMapStore();
 
   const lastBoundsRef = useRef<string | null>(null);
@@ -65,6 +69,12 @@ export default function MapScreen() {
   } | null>(null);
 
   const { searchQuery, selectedTagIds } = useVenueFiltersStore();
+  const focusSuppressUntilRef = useRef(0);
+
+  useEffect(() => {
+    setFlyToCoord(null);
+    clearFocus();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const mapCenter = useMemo(
     () => ({
@@ -84,6 +94,7 @@ export default function MapScreen() {
       minLng: number;
       maxLng: number;
     }) => {
+      if (Date.now() < focusSuppressUntilRef.current) return;
       currentBoundsRef.current = bounds;
       const boundsKey = await fetchMapData(bounds, searchQuery, selectedTagIds);
       if (boundsKey !== null) lastBoundsRef.current = boundsKey;
@@ -112,13 +123,34 @@ export default function MapScreen() {
     return counts;
   }, [venueEvents]);
 
-  const flyToKeyRef = useRef(0);
-
   const handleFlyTo = useCallback((lat: number, lng: number, venue?: VenueMapItem) => {
-    flyToKeyRef.current += 1;
-    setFlyToCoord({ lat, lng, key: flyToKeyRef.current });
-    if (venue) setFocusedVenue(venue);
-  }, [setFlyToCoord, setFocusedVenue]);
+    focusSuppressUntilRef.current = Date.now() + 4000;
+    if (venue) {
+      setFocusedVenue(null);
+      requestAnimationFrame(() => setFocusedVenue(venue));
+    }
+  }, [setFocusedVenue]);
+
+  const handleCenter = useCallback((lat: number, lng: number, venue?: VenueMapItem) => {
+    focusSuppressUntilRef.current = Date.now() + 2000;
+    flyTo(lat, lng, venue);
+  }, [flyTo]);
+
+  const handleJoinEvent = useCallback(async (eventId: string) => {
+    try {
+      await apiClient.post(API_ENDPOINTS.EVENTS.JOIN(eventId));
+    } catch {
+      toast.error('Failed to join event');
+    }
+  }, []);
+
+  const handleLeaveEvent = useCallback(async (eventId: string) => {
+    try {
+      await apiClient.post(API_ENDPOINTS.EVENTS.LEAVE(eventId));
+    } catch {
+      toast.error('Failed to leave event');
+    }
+  }, []);
 
   const handleVenueDetails = useCallback(
     (id: string) => {
@@ -211,7 +243,6 @@ export default function MapScreen() {
           eventCountByVenueId={eventCountByVenueId}
           flyToCoord={flyToCoord}
           focusedVenue={focusedVenue}
-          onClearFocus={handleClearFocus}
           onBoundsChange={handleBoundsChange}
           onVenueDetails={handleVenueDetails}
           onVenueEvents={handleVenueEvents}
@@ -283,6 +314,9 @@ export default function MapScreen() {
           events={allEvents}
           isLoading={isLoading}
           onFlyTo={handleFlyTo}
+          onCenter={handleCenter}
+          onJoinEvent={handleJoinEvent}
+          onLeaveEvent={handleLeaveEvent}
         />
       </div>
 

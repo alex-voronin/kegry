@@ -5,6 +5,7 @@ export interface EventMapItem {
   type: 'Event' | 'Meetup';
   startDateTime: string;
   venueId: string;
+  isJoined: boolean;
 }
 
 export interface VenueEventsDto {

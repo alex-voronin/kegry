@@ -10,8 +10,9 @@ import {
 } from 'react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, MoreHorizontal } from 'lucide-react';
 import { ListItem } from '@/components/ui/list-item';
+import { ModalMenu } from '@/components/ui/modal-menu';
 import { VenueDisplayTags } from '@/components/b2c/venue-display-tags';
 import styles from '../map.module.css';
 import type { VenueMapItem } from '../../venues/map/_components/venue-map-internal';
@@ -26,6 +27,9 @@ interface VenueBottomSheetProps {
   events: EventMapItem[];
   isLoading: boolean;
   onFlyTo?: (lat: number, lng: number, venue?: VenueMapItem) => void;
+  onCenter?: (lat: number, lng: number, venue?: VenueMapItem) => void;
+  onJoinEvent?: (eventId: string) => void;
+  onLeaveEvent?: (eventId: string) => void;
 }
 
 type SheetState = 'collapsed' | 'expanded';
@@ -37,11 +41,21 @@ export function VenueBottomSheet({
   events,
   isLoading,
   onFlyTo,
+  onCenter,
+  onJoinEvent,
+  onLeaveEvent,
 }: VenueBottomSheetProps) {
   const t = useTranslations('screens.map');
 
   const [state, setState] = useState<SheetState>('collapsed');
   const [tab, setTab] = useState<Tab>('venues');
+  const [menuTarget, setMenuTarget] = useState<{
+    lat: number;
+    lng: number;
+    venue?: VenueMapItem;
+    eventId?: string;
+    isJoined?: boolean;
+  } | null>(null);
   const [translateY, setTranslateY] = useState(() => {
     if (typeof window === 'undefined') return 0;
     return Math.max(window.innerHeight - 60 - PEEK_HEIGHT, EXPANDED_TOP);
@@ -216,9 +230,9 @@ export function VenueBottomSheet({
 
   const venueLookup = useMemo(
     () =>
-      venues.reduce<Record<string, { name: string; address: string }>>(
+      venues.reduce<Record<string, { name: string; address: string; latitude: number; longitude: number }>>(
         (acc, v) => {
-          acc[v.id] = { name: v.companyName, address: v.address };
+          acc[v.id] = { name: v.companyName, address: v.address, latitude: v.latitude, longitude: v.longitude };
           return acc;
         },
         {},
@@ -247,6 +261,23 @@ export function VenueBottomSheet({
     },
     [events, venues, onFlyTo],
   );
+
+  const handleMenuCenter = useCallback(() => {
+    if (!menuTarget) return;
+    onCenter?.(menuTarget.lat, menuTarget.lng, menuTarget.venue);
+    setMenuTarget(null);
+    setState('collapsed');
+  }, [menuTarget, onCenter]);
+
+  const handleMenuJoinLeave = useCallback(() => {
+    if (!menuTarget || !menuTarget.eventId) return;
+    if (menuTarget.isJoined) {
+      onLeaveEvent?.(menuTarget.eventId);
+    } else {
+      onJoinEvent?.(menuTarget.eventId);
+    }
+    setMenuTarget(null);
+  }, [menuTarget, onJoinEvent, onLeaveEvent]);
 
   useEffect(() => {
     const el = dragAreaRef.current;
@@ -289,6 +320,7 @@ export function VenueBottomSheet({
   }, []);
 
   return (
+    <>
     <div
       ref={sheetRef}
       className={`${styles.sheet} ${isDragging ? styles.sheetDragging : ''}`}
@@ -356,7 +388,9 @@ export function VenueBottomSheet({
           events.length === 0 ? (
             <p className={styles.emptyText}>{t('nothingFound')}</p>
           ) : state === 'collapsed' ? (
-            events.slice(0, 2).map((event) => (
+            events.slice(0, 2).map((event) => {
+              const v = venueLookup[event.venueId];
+              return (
               <div
                 key={event.id}
                 className={styles.compactCard}
@@ -386,8 +420,18 @@ export function VenueBottomSheet({
                     {event.type === 'Meetup' ? t('meetup') : t('event')}
                   </span>
                 </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMenuTarget({ lat: v?.latitude ?? 0, lng: v?.longitude ?? 0, eventId: event.id, isJoined: event.isJoined });
+                  }}
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-white/10"
+                >
+                  <MoreHorizontal size={16} className="text-white/70" />
+                </button>
               </div>
-            ))
+              );
+            })
           ) : (
             events.map((event) => {
               const venue = venueLookup[event.venueId];
@@ -430,9 +474,18 @@ export function VenueBottomSheet({
                         ) : (
                           <span className="text-primary">{t('event')}</span>
                         )}
-                      </div>
                     </div>
                   </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMenuTarget({ lat: venue?.latitude ?? 0, lng: venue?.longitude ?? 0, eventId: event.id, isJoined: event.isJoined });
+                    }}
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-white/10"
+                  >
+                    <MoreHorizontal size={16} className="text-white/70" />
+                  </button>
+                </div>
                 </div>
               );
             })
@@ -459,15 +512,24 @@ export function VenueBottomSheet({
                 height={40}
                 className={styles.compactCardAvatar}
               />
-              <div className={styles.compactCardInfo}>
-                <span className={styles.compactCardName}>
-                  {venue.companyName}
-                </span>
-                <span className={styles.compactCardAddress}>
-                  {venue.address}
-                </span>
-              </div>
+            <div className={styles.compactCardInfo}>
+              <span className={styles.compactCardName}>
+                {venue.companyName}
+              </span>
+              <span className={styles.compactCardAddress}>
+                {venue.address}
+              </span>
             </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setMenuTarget({ lat: venue.latitude, lng: venue.longitude, venue });
+              }}
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-white/10"
+            >
+              <MoreHorizontal size={16} className="text-white/70" />
+            </button>
+          </div>
           ))
         ) : (
           venues.map((venue) => (
@@ -486,10 +548,42 @@ export function VenueBottomSheet({
                   <VenueDisplayTags tagIds={venue.tagIds} />
                 </div>
               }
+              rightEl={
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMenuTarget({ lat: venue.latitude, lng: venue.longitude, venue });
+                  }}
+                  className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-white/10"
+                >
+                  <MoreHorizontal size={16} className="text-white/70" />
+                </button>
+              }
             />
           ))
         )}
       </div>
     </div>
+
+    <ModalMenu
+      isOpen={!!menuTarget}
+      onClose={() => setMenuTarget(null)}
+      options={(() => {
+        const items = [
+          {
+            label: 'Center',
+            onClick: handleMenuCenter,
+          },
+        ];
+        if (menuTarget?.eventId) {
+          items.push({
+            label: menuTarget.isJoined ? 'Leave' : 'Join',
+            onClick: handleMenuJoinLeave,
+          });
+        }
+        return items;
+      })()}
+    />
+    </>
   );
 }

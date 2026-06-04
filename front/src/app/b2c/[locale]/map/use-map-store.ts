@@ -21,12 +21,13 @@ interface MapState {
     selectedTagIds: string[],
   ) => Promise<string | null>;
   setFlyToCoord: (coord: FlyToCoord | null) => void;
+  flyTo: (lat: number, lng: number, venue?: VenueMapItem | null) => void;
   setFocusedVenue: (venue: VenueMapItem | null) => void;
   clearFocus: () => void;
 }
 
 export const useMapStore = create<MapState>()(
-  devtools((set) => ({
+  devtools((set, get) => ({
     venues: [],
     venueEvents: [],
     isLoading: false,
@@ -60,6 +61,12 @@ export const useMapStore = create<MapState>()(
     },
 
     setFlyToCoord: (coord) => set({ flyToCoord: coord }),
+    flyTo: (lat, lng, venue) => {
+      set((state) => ({
+        flyToCoord: { lat, lng, key: (state.flyToCoord?.key ?? 0) + 1 },
+        focusedVenue: venue ?? state.focusedVenue,
+      }));
+    },
     setFocusedVenue: (venue) => set({ focusedVenue: venue }),
     clearFocus: () => set({ focusedVenue: null }),
   })),
