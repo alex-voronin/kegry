@@ -125,13 +125,19 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
         double maxLat,
         double minLng,
         double maxLng,
-        EventType? type = null,
+        EventType[]? eventTypes = null,
         DateTimeOffset? dateFrom = null,
         DateTimeOffset? dateTo = null,
+        Guid[]? venueIds = null,
         int maxPerVenue = 20,
         Guid? currentUserId = null,
         CancellationToken ct = default)
     {
+        if (eventTypes != null && eventTypes.Length == 0)
+        {
+            return [];
+        }
+        
         var envelope = new Envelope(minLng, maxLng, minLat, maxLat);
         var boundingBox = _geometryFactory.ToGeometry(envelope);
         var now = _timeProvider.GetUtcNow();
@@ -149,12 +155,14 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
                 x.Venue.Coordinates.Intersects(boundingBox))
             .Select(x => x.Event);
 
-        if (type.HasValue)
-            baseQuery = baseQuery.Where(e => e.Type == type.Value);
+        if (eventTypes is { Length: > 0 })
+            baseQuery = baseQuery.Where(e => eventTypes.Contains(e.Type));
         if (dateFrom.HasValue)
             baseQuery = baseQuery.Where(e => e.StartDateTime >= dateFrom.Value);
         if (dateTo.HasValue)
             baseQuery = baseQuery.Where(e => e.StartDateTime <= dateTo.Value);
+        if (venueIds is { Length: > 0 })
+            baseQuery = baseQuery.Where(e => venueIds.Contains(e.VenueId));
 
         var venueCounts = await baseQuery
             .GroupBy(e => e.VenueId)
@@ -162,9 +170,8 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
             .ToDictionaryAsync(x => x.VenueId, x => x.TotalCount, ct);
 
         var allData = await baseQuery
-            .OrderBy(e => e.Type == EventType.Event ? 0 : 1)
-            .ThenBy(e => e.StartDateTime)
-            .Take(2 * maxPerVenue)
+            .OrderBy(e => e.StartDateTime)
+            .Take(maxPerVenue)
             .ToArrayAsync(ct);
 
         var allEventIds = allData.Select(e => e.Id).ToArray();
@@ -177,21 +184,14 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
 
         var result = allData
             .GroupBy(e => e.VenueId)
-            .Select(g =>
-            {
-                var regularEvents = g.Where(e => e.Type == EventType.Event)
-                    .OrderBy(e => e.StartDateTime).ToArray();
-                var meetups = g.Where(e => e.Type == EventType.Meetup)
-                    .OrderBy(e => e.StartDateTime).ToArray();
-                var limited = regularEvents.Take(maxPerVenue).ToList();
-                var remaining = maxPerVenue - limited.Count;
-                if (remaining > 0)
-                    limited.AddRange(meetups.Take(remaining));
-                var events = limited
+            .Select(g => (
+                VenueId: g.Key,
+                TotalCount: venueCounts.GetValueOrDefault(g.Key),
+                Events: g
+                    .OrderBy(e => e.StartDateTime)
                     .Select(e => new EventWithIsJoined(e, joinedEventIds.Contains(e.Id)))
-                    .ToArray();
-                return (VenueId: g.Key, TotalCount: venueCounts.GetValueOrDefault(g.Key), Events: events);
-            })
+                    .ToArray()
+            ))
             .ToList();
 
         return result;

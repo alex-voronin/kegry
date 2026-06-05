@@ -31,7 +31,7 @@ const VenueMapInternal = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-full w-full items-center justify-center bg-[#1A1A1A]">
+      <div className={styles.mapLoading}>
         <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
       </div>
     ),
@@ -85,6 +85,13 @@ export default function MapScreen() {
     [selectedCity?.latitude, selectedCity?.longitude],
   );
 
+  const [enabledEventTypes, setEnabledEventTypes] = useState<('Event' | 'Meetup')[]>(['Event', 'Meetup']);
+  const toggleEventType = useCallback((type: 'Event' | 'Meetup') => {
+    setEnabledEventTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
+    );
+  }, []);
+
   const fetchMapDataRef = useRef(fetchMapData);
   fetchMapDataRef.current = fetchMapData;
 
@@ -97,19 +104,19 @@ export default function MapScreen() {
     }) => {
       if (Date.now() < focusSuppressUntilRef.current) return;
       currentBoundsRef.current = bounds;
-      const boundsKey = await fetchMapData(bounds, searchQuery, selectedTagIds);
+      const boundsKey = await fetchMapData(bounds, searchQuery, selectedTagIds, enabledEventTypes);
       if (boundsKey !== null) lastBoundsRef.current = boundsKey;
     },
-    [fetchMapData, searchQuery, selectedTagIds],
+    [fetchMapData, searchQuery, selectedTagIds, enabledEventTypes],
   );
 
   useEffect(() => {
     if (currentBoundsRef.current) {
       lastBoundsRef.current = null;
       const bounds = currentBoundsRef.current;
-      fetchMapDataRef.current(bounds, searchQuery, selectedTagIds);
+      fetchMapDataRef.current(bounds, searchQuery, selectedTagIds, enabledEventTypes);
     }
-  }, [searchQuery, selectedTagIds]);
+  }, [searchQuery, selectedTagIds, enabledEventTypes]);
 
   const allEvents = useMemo(
     () => venueEvents.flatMap((v) => v.events),
@@ -196,6 +203,8 @@ export default function MapScreen() {
     [router],
   );
 
+  const [sheetState, setSheetState] = useState<'collapsed' | 'expanded'>('collapsed');
+
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isFirstCheckInDialogOpen, setIsFirstCheckInDialogOpen] =
     useState(false);
@@ -230,7 +239,7 @@ export default function MapScreen() {
   if (!hasHydrated) {
     return (
       <div className={styles.wrapper}>
-        <div className="flex h-dvh items-center justify-center">
+        <div className={styles.mapLoadingScreen}>
           <Spinner />
         </div>
       </div>
@@ -247,6 +256,7 @@ export default function MapScreen() {
           flyToCoord={flyToCoord}
           focusedVenue={focusedVenue}
           onBoundsChange={handleBoundsChange}
+          onMapDragStart={() => setSheetState('collapsed')}
           onVenueDetails={handleVenueDetails}
           onVenueEvents={handleVenueEvents}
           detailsLabel={t('details')}
@@ -254,8 +264,8 @@ export default function MapScreen() {
           initialZoom={12}
         />
 
-        <div className="absolute top-2 right-0 left-0 z-50 flex items-center justify-between px-2">
-          <div className="bg-surface/85 rounded-full p-2">
+        <div className={styles.topBar}>
+          <div className={styles.topBarItem}>
             <Icon
               src="/assets/common/profile-icon.svg"
               alt="profile"
@@ -266,7 +276,7 @@ export default function MapScreen() {
             />
           </div>
 
-          <div className="bg-surface/85 rounded-full px-4 py-2 backdrop-blur-md">
+          <div className={styles.topBarPill}>
             <CitySelector
               selectedCity={selectedCity}
               onCityChange={setCity}
@@ -274,8 +284,8 @@ export default function MapScreen() {
             />
           </div>
 
-          <div className="bg-surface/85 rounded-full px-3 py-2 backdrop-blur-md">
-            <div className="flex items-center gap-2">
+          <div className={styles.topBarIconPill}>
+            <div className={styles.topBarIcons}>
               <Icon width={32} height={32} onClick={handleQrScanClick}>
                 <ScanQrCode className="text-primary h-full w-full" />
               </Icon>
@@ -302,10 +312,7 @@ export default function MapScreen() {
         <div className={styles.topRightControls}>
           {isLoading && (
             <div className={styles.loadingSpinner}>
-              <div
-                className="h-4 w-4 animate-spin rounded-full border-2 border-white/30"
-                style={{ borderTopColor: '#fff' }}
-              />
+              <div className={styles.mapSpinner} />
             </div>
           )}
 
@@ -320,6 +327,10 @@ export default function MapScreen() {
           onCenter={handleCenter}
           onJoinEvent={handleJoinEvent}
           onLeaveEvent={handleLeaveEvent}
+          sheetState={sheetState}
+          onSheetStateChange={setSheetState}
+          enabledEventTypes={enabledEventTypes}
+          onToggleEventType={toggleEventType}
         />
       </div>
 

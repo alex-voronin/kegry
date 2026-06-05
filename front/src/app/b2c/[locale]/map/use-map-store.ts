@@ -19,6 +19,7 @@ interface MapState {
     bounds: { minLat: number; maxLat: number; minLng: number; maxLng: number },
     searchQuery: string,
     selectedTagIds: string[],
+    eventTypes?: string[],
   ) => Promise<string | null>;
   setFlyToCoord: (coord: FlyToCoord | null) => void;
   flyTo: (lat: number, lng: number, venue?: VenueMapItem | null) => void;
@@ -35,9 +36,18 @@ export const useMapStore = create<MapState>()(
     flyToCoord: null,
     focusedVenue: null,
 
-    fetchMapData: async (bounds, searchQuery, selectedTagIds) => {
+    fetchMapData: async (bounds, searchQuery, selectedTagIds, eventTypes) => {
       const filterKey = `${searchQuery}|${selectedTagIds.slice().sort().join(',')}`;
       const boundsKey = `${bounds.minLat.toFixed(5)},${bounds.maxLat.toFixed(5)},${bounds.minLng.toFixed(5)},${bounds.maxLng.toFixed(5)}|${filterKey}`;
+      const hasFilters = !!(searchQuery || selectedTagIds?.length);
+
+      const eventsBody: Record<string, unknown> = {
+        minLat: bounds.minLat,
+        maxLat: bounds.maxLat,
+        minLng: bounds.minLng,
+        maxLng: bounds.maxLng,
+      };
+      eventsBody.eventTypes = eventTypes ?? ['Event', 'Meetup'];
 
       set({ isLoading: true });
       try {
@@ -45,15 +55,25 @@ export const useMapStore = create<MapState>()(
         if (selectedTagIds?.length) venueParams['Filter.TagIds'] = selectedTagIds;
         if (searchQuery) venueParams['Filter.CompanyName'] = searchQuery;
 
-        const [venuesRes, eventsRes] = await Promise.all([
-          apiClient.get(API_ENDPOINTS.VENUES.MAP, paramsForReq(venueParams)),
-          apiClient.get(API_ENDPOINTS.EVENTS.MAP, paramsForReq(bounds)),
-        ]);
+        if (hasFilters) {
+          const venuesRes = await apiClient.get(API_ENDPOINTS.VENUES.MAP, paramsForReq(venueParams));
+          const venues: VenueMapItem[] = venuesRes.data.result;
+          eventsBody.venueIds = venues.map((v) => v.id);
 
-        set({
-          venues: venuesRes.data.result,
-          venueEvents: eventsRes.data.result as VenueEventsDto[],
-        });
+          const eventsRes = await apiClient.post(API_ENDPOINTS.EVENTS.MAP, eventsBody);
+
+          set({ venues, venueEvents: eventsRes.data.result as VenueEventsDto[] });
+        } else {
+          const [venuesRes, eventsRes] = await Promise.all([
+            apiClient.get(API_ENDPOINTS.VENUES.MAP, paramsForReq(venueParams)),
+            apiClient.post(API_ENDPOINTS.EVENTS.MAP, eventsBody),
+          ]);
+
+          set({
+            venues: venuesRes.data.result,
+            venueEvents: eventsRes.data.result as VenueEventsDto[],
+          });
+        }
       } finally {
         set({ isLoading: false });
       }

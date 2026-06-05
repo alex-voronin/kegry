@@ -26,7 +26,7 @@ public class B2CEventEndpoints : IEndpoints
             .WithTags("Event User API")
             .RequireAuthorization();
 
-        usersApiGroup.MapGet("/api/v1/events/map", GetEventsMap);
+        usersApiGroup.MapPost("/api/v1/events/map", GetEventsMap);
         usersApiGroup.MapGet("/api/v1/venues/{venueId:guid}/events", GetVenueEvents);
         usersApiGroup.MapGet("/api/v1/events/{id:guid}", GetEvent);
         usersApiGroup.MapPost("/api/v1/events", CreateEvent);
@@ -41,7 +41,7 @@ public class B2CEventEndpoints : IEndpoints
     }
 
     private static async Task<ApiResult<VenueEventsDto[]>> GetEventsMap(
-        [AsParameters] GetEventsMapRequest request,
+        [FromBody] GetEventsMapRequest request,
         ClaimsPrincipal user,
         IEventRepository eventRepository,
         IS3StorageService storageService,
@@ -51,7 +51,8 @@ public class B2CEventEndpoints : IEndpoints
         var result = await eventRepository.GetEventsInBoundsAsync(
             request.MinLat, request.MaxLat,
             request.MinLng, request.MaxLng,
-            request.Type, request.DateFrom, request.DateTo, 20, userId, ct);
+            request.EventTypes, request.DateFrom, request.DateTo,
+            request.VenueIds, 20, userId, ct);
 
         EventMapItemDto MapEvent(EventWithIsJoined ewj)
         {

@@ -12,6 +12,10 @@
   @apply absolute top-16 right-2 z-[45] flex items-center gap-2;
 }
 
+.mapLoadingScreen {
+  @apply flex h-dvh items-center justify-center;
+}
+
 .loadingSpinner {
   @apply bg-surface/85 flex items-center justify-center rounded-full p-2;
 }
@@ -26,7 +30,11 @@
 }
 
 .dragArea {
-  @apply flex shrink-0 cursor-grab flex-col active:cursor-grabbing;
+  @apply flex shrink-0 cursor-grab touch-none flex-col active:cursor-grabbing;
+}
+
+.sheetHeaderCompact {
+  @apply px-0;
 }
 
 .dragHandle {
@@ -49,52 +57,16 @@
   @apply text-white/60 transition-transform duration-300;
 }
 
-.tabPillToggle {
-  @apply border border-white/10 bg-white/10 flex items-center rounded-full p-0.5;
-}
-
-.tabPillOption {
-  @apply rounded-full px-3 py-1 text-xs font-medium text-white/60 transition-colors cursor-pointer;
-}
-
-.tabPillOptionActive {
-  @apply bg-white/20 text-white;
-}
-
-.eventsPlaceholderText {
-  @apply px-4 py-6 text-center text-sm text-white/50;
-}
-
-.chevronUp {
-  @apply rotate-180;
-}
-
 .peekWrapper {
-  @apply flex flex-col gap-1 px-4 pb-2;
+  @apply flex flex-col gap-1 pb-2 sm:px-4;
 }
 
 .scrollArea {
-  @apply flex flex-1 flex-col gap-0.5 overflow-y-auto px-4 pb-4;
+  @apply flex flex-1 flex-col gap-0.5 overflow-y-auto pb-4 sm:px-4;
 }
 
 .compactCard {
-  @apply bg-form-element hover:bg-hover relative flex min-h-[60px] cursor-pointer items-center gap-3 overflow-hidden rounded-xl px-3 py-2;
-}
-
-.compactCardNoImage {
-  background: #1e1e1e;
-}
-
-.compactCardImage {
-  @apply absolute inset-0 h-full w-full object-cover;
-}
-
-.compactCardOverlay {
-  @apply absolute inset-0 bg-black/60;
-}
-
-.compactCardBody {
-  @apply relative z-10 flex w-full items-center gap-3;
+  @apply bg-form-element hover:bg-hover relative flex min-h-[60px] cursor-pointer items-center gap-3 overflow-hidden px-3 py-2 sm:rounded-xl;
 }
 
 .compactCardAvatar {
@@ -110,14 +82,6 @@
 }
 
 .compactCardAddress {
-  @apply truncate text-xs text-white/50;
-}
-
-.eventCompactInfo {
-  @apply flex min-w-0 flex-1 flex-col;
-}
-
-.eventCompactMeta {
   @apply truncate text-xs text-white/50;
 }
 
@@ -149,25 +113,69 @@
   @apply text-primary flex items-center gap-1 text-sm font-bold drop-shadow-md;
 }
 
-.eventCardMeta {
-  @apply text-primary mt-0.5 flex items-center gap-3 text-xs drop-shadow-md;
+.eventCardNested {
+  @apply ml-4;
+  width: calc(100% - 1rem);
+}
+
+@media (max-width: 480px) {
+  .eventCardCollapsed {
+    @apply rounded-none;
+  }
 }
 
 .eventCardJoined {
   box-shadow: inset 0 0 0 1px var(--color-accent);
 }
 
-.eventCompactCardJoined {
-  box-shadow: inset 0 0 0 1px var(--color-accent);
-  border-radius: 0.75rem;
-}
-
-.joinedBadge {
-  @apply text-accent flex items-center gap-1 text-xs font-medium;
-}
-
 .emptyText {
   @apply px-4 py-6 text-center text-sm text-white/50;
+}
+
+/* --- Map page layout --- */
+
+.topBar {
+  @apply absolute top-2 right-0 left-0 z-50 flex items-center justify-between px-2;
+}
+
+.topBarItem {
+  @apply bg-surface/85 rounded-full p-2;
+}
+
+.topBarPill {
+  @apply bg-surface/85 rounded-full px-4 py-2 backdrop-blur-md;
+}
+
+.topBarIcons {
+  @apply flex items-center gap-2;
+}
+
+.topBarIconPill {
+  @apply bg-surface/85 rounded-full px-3 py-2 backdrop-blur-md;
+}
+
+.mapSpinner {
+  @apply h-4 w-4 animate-spin rounded-full border-2 border-white/30;
+  border-top-color: #fff;
+}
+
+.mapLoading {
+  @apply flex h-full w-full items-center justify-center bg-[#1A1A1A];
+}
+
+.venueListItem {
+  @apply px-0;
+}
+
+@media (max-width: 480px) {
+  .compactCard {
+    @apply px-0;
+  }
+
+  .venueListItem {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
 }
 
 :global(.leaflet-control-zoom) {

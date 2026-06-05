@@ -35,9 +35,10 @@ public interface IEventRepository : IRepository<Event>
         double maxLat,
         double minLng,
         double maxLng,
-        EventType? type = null,
+        EventType[]? eventTypes = null,
         DateTimeOffset? dateFrom = null,
         DateTimeOffset? dateTo = null,
+        Guid[]? venueIds = null,
         int maxPerVenue = 20,
         Guid? currentUserId = null,
         CancellationToken ct = default);
