@@ -577,6 +577,11 @@
       },
       "toast": {
         "loadFailed": "Učitavanje lokala na mapi nije uspelo"
+      },
+      "menu": {
+        "center": "Centriraj",
+        "join": "Pridruži se",
+        "leave": "Napusti"
       }
     },
     "venueDetail": {

@@ -577,6 +577,11 @@
       },
       "toast": {
         "loadFailed": "Failed to load venues on map"
+      },
+      "menu": {
+        "center": "Center",
+        "join": "Join",
+        "leave": "Leave"
       }
     },
     "venueDetail": {

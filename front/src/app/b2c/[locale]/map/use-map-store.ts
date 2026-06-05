@@ -24,6 +24,7 @@ interface MapState {
   flyTo: (lat: number, lng: number, venue?: VenueMapItem | null) => void;
   setFocusedVenue: (venue: VenueMapItem | null) => void;
   clearFocus: () => void;
+  updateEventParticipation: (eventId: string, isJoined: boolean) => void;
 }
 
 export const useMapStore = create<MapState>()(
@@ -69,5 +70,16 @@ export const useMapStore = create<MapState>()(
     },
     setFocusedVenue: (venue) => set({ focusedVenue: venue }),
     clearFocus: () => set({ focusedVenue: null }),
+
+    updateEventParticipation: (eventId: string, isJoined: boolean) => {
+      set((state) => ({
+        venueEvents: state.venueEvents.map((v) => ({
+          ...v,
+          events: v.events.map((e) =>
+            e.id === eventId ? { ...e, isJoined } : e,
+          ),
+        })),
+      }));
+    },
   })),
 );

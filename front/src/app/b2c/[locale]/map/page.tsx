@@ -58,6 +58,7 @@ export default function MapScreen() {
     setFocusedVenue,
     clearFocus,
     flyTo,
+    updateEventParticipation,
   } = useMapStore();
 
   const lastBoundsRef = useRef<string | null>(null);
@@ -139,18 +140,20 @@ export default function MapScreen() {
   const handleJoinEvent = useCallback(async (eventId: string) => {
     try {
       await apiClient.post(API_ENDPOINTS.EVENTS.JOIN(eventId));
+      updateEventParticipation(eventId, true);
     } catch {
       toast.error('Failed to join event');
     }
-  }, []);
+  }, [updateEventParticipation]);
 
   const handleLeaveEvent = useCallback(async (eventId: string) => {
     try {
       await apiClient.post(API_ENDPOINTS.EVENTS.LEAVE(eventId));
+      updateEventParticipation(eventId, false);
     } catch {
       toast.error('Failed to leave event');
     }
-  }, []);
+  }, [updateEventParticipation]);
 
   const handleVenueDetails = useCallback(
     (id: string) => {

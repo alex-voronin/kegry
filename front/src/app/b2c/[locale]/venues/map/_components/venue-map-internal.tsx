@@ -201,7 +201,7 @@ function FocusedVenuePopup({
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [venue.id, hasFlyTo, map, markerRefs, mcgRef]);
 
   return null;

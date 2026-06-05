@@ -10,7 +10,7 @@ import {
 } from 'react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { ChevronDown, MoreHorizontal } from 'lucide-react';
+import { ChevronDown, MoreHorizontal, CheckCircle } from 'lucide-react';
 import { ListItem } from '@/components/ui/list-item';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { VenueDisplayTags } from '@/components/b2c/venue-display-tags';
@@ -393,42 +393,57 @@ export function VenueBottomSheet({
               return (
               <div
                 key={event.id}
-                className={styles.compactCard}
+                className={`${styles.compactCard} ${!event.coverImageUrl ? styles.compactCardNoImage : ''} ${event.isJoined ? styles.eventCompactCardJoined : ''}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   handleEventClick(event.id);
                 }}
               >
-                <div className={styles.eventCompactInfo}>
-                  <span className={styles.compactCardName}>{event.title}</span>
-                  <span className={styles.eventCompactMeta}>
-                    {new Date(event.startDateTime).toLocaleDateString(
-                      undefined,
-                      {
-                        month: 'short',
-                        day: 'numeric',
-                      },
-                    )}{' '}
-                    {new Date(event.startDateTime).toLocaleTimeString(
-                      undefined,
-                      {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      },
-                    )}
-                    {' • '}
-                    {event.type === 'Meetup' ? t('meetup') : t('event')}
-                  </span>
+                {event.coverImageUrl && (
+                  <img
+                    src={event.coverImageUrl}
+                    alt=""
+                    className={styles.compactCardImage}
+                  />
+                )}
+                {event.coverImageUrl && <div className={styles.compactCardOverlay} />}
+                <div className={styles.compactCardBody}>
+                  <div className={styles.eventCompactInfo}>
+                    <span className={styles.compactCardName}>
+                      {event.isJoined && (
+                        <CheckCircle size={12} className="text-accent shrink-0" />
+                      )}
+                      <span className="truncate min-w-0">{event.title}</span>
+                    </span>
+                    <span className={styles.eventCompactMeta}>
+                      {new Date(event.startDateTime).toLocaleDateString(
+                        undefined,
+                        {
+                          month: 'short',
+                          day: 'numeric',
+                        },
+                      )}{' '}
+                      {new Date(event.startDateTime).toLocaleTimeString(
+                        undefined,
+                        {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        },
+                      )}
+                      {' • '}
+                      {event.type === 'Meetup' ? t('meetup') : t('event')}
+                    </span>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMenuTarget({ lat: v?.latitude ?? 0, lng: v?.longitude ?? 0, eventId: event.id, isJoined: event.isJoined });
+                    }}
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-white/10"
+                  >
+                    <MoreHorizontal size={16} className="text-white/70" />
+                  </button>
                 </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setMenuTarget({ lat: v?.latitude ?? 0, lng: v?.longitude ?? 0, eventId: event.id, isJoined: event.isJoined });
-                  }}
-                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-white/10"
-                >
-                  <MoreHorizontal size={16} className="text-white/70" />
-                </button>
               </div>
               );
             })
@@ -450,7 +465,7 @@ export function VenueBottomSheet({
               return (
                 <div
                   key={event.id}
-                  className={styles.eventCard}
+                  className={`${styles.eventCard} ${event.isJoined ? styles.eventCardJoined : ''}`}
                   onClick={() => handleEventClick(event.id)}
                 >
                   {event.coverImageUrl ? (
@@ -466,7 +481,12 @@ export function VenueBottomSheet({
                       <div className={styles.eventCardTime}>
                         {formattedDate} {formattedTime}
                       </div>
-                      <div className={styles.eventCardTitle}>{event.title}</div>
+                      <div className={styles.eventCardTitle}>
+                        {event.isJoined && (
+                          <CheckCircle size={14} className="text-accent shrink-0" />
+                        )}
+                        <span className="truncate min-w-0">{event.title}</span>
+                      </div>
                       <div className={styles.eventCardMeta}>
                         <span>{venue?.address ?? ''}</span>
                         {event.type === 'Meetup' ? (
@@ -571,13 +591,13 @@ export function VenueBottomSheet({
       options={(() => {
         const items = [
           {
-            label: 'Center',
+            label: t('menu.center'),
             onClick: handleMenuCenter,
           },
         ];
         if (menuTarget?.eventId) {
           items.push({
-            label: menuTarget.isJoined ? 'Leave' : 'Join',
+            label: menuTarget.isJoined ? t('menu.leave') : t('menu.join'),
             onClick: handleMenuJoinLeave,
           });
         }
