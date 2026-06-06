@@ -582,6 +582,11 @@
         "center": "Center",
         "join": "Join",
         "leave": "Leave"
+      },
+      "venueSelector": {
+        "title": "Choose a venue for your meetup",
+        "searchPlaceholder": "Search venues...",
+        "typeToSearch": "Type to search venues"
       }
     },
     "venueDetail": {
@@ -861,6 +866,32 @@
         "coffee": "Coffee",
         "tea": "Tea",
         "beverages": "Beverages"
+      }
+    },
+    "forms": {
+      "event": {
+        "createTitle": "Create Meetup",
+        "meetupTitle": "Meetup with {name}",
+        "titleField": "Title",
+        "description": "Description",
+        "startDateTime": "Date & Time",
+        "group": "Group",
+        "participants": "Participants",
+        "maxParticipants": "Max participants",
+        "maxParticipantsPlaceholder": "No limit",
+        "requiresApproval": "Requires approval to join",
+        "contacts": "Contacts",
+        "contactValue": "Contact",
+        "contactIsPublic": "Public",
+        "save": "Save",
+        "validation": {
+          "titleRequired": "Title is required",
+          "titleMaxLength": "Title must be 200 characters or less",
+          "descriptionRequired": "Description is required",
+          "descriptionMaxLength": "Description must be 2000 characters or less",
+          "startDateTimeRequired": "Date and time is required",
+          "coverRequired": "Cover image is required"
+        }
       }
     }
   }

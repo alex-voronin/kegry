@@ -17,6 +17,7 @@ import {
   Search,
   ListFilter,
   X,
+  Plus,
 } from 'lucide-react';
 import { ListItem } from '@/components/ui/list-item';
 import { ModalMenu } from '@/components/ui/modal-menu';
@@ -45,6 +46,7 @@ interface VenueBottomSheetProps {
   onSheetStateChange: (state: 'collapsed' | 'expanded') => void;
   enabledEventTypes: ('Event' | 'Meetup')[];
   onToggleEventType: (type: 'Event' | 'Meetup') => void;
+  onAddMeetup?: () => void;
 }
 
 type SheetState = 'collapsed' | 'expanded';
@@ -61,6 +63,7 @@ export function VenueBottomSheet({
   onSheetStateChange,
   enabledEventTypes,
   onToggleEventType,
+  onAddMeetup,
 }: VenueBottomSheetProps) {
   const t = useTranslations('screens.map');
 
@@ -433,6 +436,16 @@ export function VenueBottomSheet({
           overscrollBehavior: 'contain',
         }}
       >
+        <div className={styles.fab}>
+          <button
+            className={styles.fabButton}
+            onClick={onAddMeetup}
+            aria-label="Add meetup"
+          >
+            <Plus className="h-6 w-6" />
+          </button>
+        </div>
+
         <div
           ref={dragAreaRef}
           className={styles.dragArea}

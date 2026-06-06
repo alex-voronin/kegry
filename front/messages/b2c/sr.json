@@ -582,6 +582,11 @@
         "center": "Centriraj",
         "join": "Pridruži se",
         "leave": "Napusti"
+      },
+      "venueSelector": {
+        "title": "Izaberi lokal za svoj susret",
+        "searchPlaceholder": "Pretraži lokale...",
+        "typeToSearch": "Kucaj da pretražiš lokale"
       }
     },
     "venueDetail": {
@@ -861,6 +866,32 @@
         "coffee": "Kafa",
         "tea": "Čaj",
         "beverages": "Osvežavajuća pića"
+      }
+    },
+    "forms": {
+      "event": {
+        "createTitle": "Kreiraj susret",
+        "meetupTitle": "Susret sa {name}",
+        "titleField": "Naziv",
+        "description": "Opis",
+        "startDateTime": "Datum i vreme",
+        "group": "Grupa",
+        "participants": "Učesnici",
+        "maxParticipants": "Maksimalno učesnika",
+        "maxParticipantsPlaceholder": "Bez ograničenja",
+        "requiresApproval": "Potrebno odobrenje za pridruživanje",
+        "contacts": "Kontakti",
+        "contactValue": "Kontakt",
+        "contactIsPublic": "Javno",
+        "save": "Sačuvaj",
+        "validation": {
+          "titleRequired": "Naziv je obavezan",
+          "titleMaxLength": "Naziv mora imati najviše 200 karaktera",
+          "descriptionRequired": "Opis je obavezan",
+          "descriptionMaxLength": "Opis mora imati najviše 2000 karaktera",
+          "startDateTimeRequired": "Datum i vreme su obavezni",
+          "coverRequired": "Naslovna slika je obavezna"
+        }
       }
     }
   }

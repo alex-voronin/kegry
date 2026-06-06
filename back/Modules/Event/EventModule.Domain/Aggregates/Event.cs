@@ -176,7 +176,7 @@ public class Event : IAuditable
 
     private static string ValidateDescription(string value)
     {
-        Validation.ThrowIfNullOrWhiteSpace(nameof(Description), value);
+        Validation.ThrowIfNull(nameof(Description), value);
         Validation.ThrowIfLengthExceeded(nameof(Description), value, 2000);
         return value.Trim();
     }

@@ -9,6 +9,8 @@ export const PAGE_ROUTES = {
   FEED: '/feed',
   FEED_FILTERS: '/feed/filters',
   MAP: '/map',
+  MEETUP_CREATE: (venueId?: string) =>
+    venueId ? `/meetups/create?venueId=${venueId}` : '/meetups/create',
   VENUES: '/venues',
   VENUES_MAP: '/venues/map',
   VENUE_DETAIL: (id: string) => `/venues/${id}`,
@@ -174,9 +176,12 @@ export const API_ENDPOINTS = {
   },
   EVENTS: {
     LIST: '/api/v1/events',
+    CREATE: '/api/v1/events',
+    UPDATE: (id: string) => `/api/v1/events/${id}`,
     MAP: '/api/v1/events/map',
     JOIN: (id: string) => `/api/v1/events/${id}/join`,
     LEAVE: (id: string) => `/api/v1/events/${id}/leave`,
+    COVER_UPLOAD_URL: (id: string) => `/api/v1/events/${id}/cover/upload-url`,
   },
   VENUES: {
     LIST: '/api/v1/venues',

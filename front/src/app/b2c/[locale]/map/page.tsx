@@ -18,6 +18,7 @@ import { useVenueFiltersStore } from '@/store/use-venue-filters-store';
 import { MapFeedToggle } from '@/components/common/map-feed-toggle';
 import { useQrCheckIn } from '../venues/use-qr-check-in';
 import { VenueBottomSheet } from './_components/venue-bottom-sheet';
+import { VenueSelectorSheet } from './_components/venue-selector-sheet';
 import { useMapStore } from './use-map-store';
 import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS } from '@/lib/routes';
@@ -208,6 +209,18 @@ export default function MapScreen() {
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isFirstCheckInDialogOpen, setIsFirstCheckInDialogOpen] =
     useState(false);
+  const [isVenueSelectorOpen, setIsVenueSelectorOpen] = useState(false);
+
+  const handleAddMeetupClick = useCallback(() => {
+    setIsVenueSelectorOpen(true);
+  }, []);
+
+  const handleSelectVenue = useCallback(
+    (venueId: string, _venueName: string) => {
+      router.push(PAGE_ROUTES.MEETUP_CREATE(venueId));
+    },
+    [router],
+  );
 
   const handleQrScanClick = useCallback(() => {
     const hasSeenDialog = localStorage.getItem('has_seen_first_checkin_dialog');
@@ -331,8 +344,16 @@ export default function MapScreen() {
           onSheetStateChange={setSheetState}
           enabledEventTypes={enabledEventTypes}
           onToggleEventType={toggleEventType}
+          onAddMeetup={handleAddMeetupClick}
         />
       </div>
+
+      <VenueSelectorSheet
+        isOpen={isVenueSelectorOpen}
+        onClose={() => setIsVenueSelectorOpen(false)}
+        onSelectVenue={handleSelectVenue}
+        initialVenues={venues}
+      />
 
       <ModalDialog
         isOpen={isFirstCheckInDialogOpen}

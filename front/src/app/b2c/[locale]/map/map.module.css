@@ -154,9 +154,13 @@
   @apply bg-surface/85 rounded-full px-3 py-2 backdrop-blur-md;
 }
 
-.mapSpinner {
-  @apply h-4 w-4 animate-spin rounded-full border-2 border-white/30;
-  border-top-color: #fff;
+.fab {
+  @apply absolute right-3 z-10;
+  top: -34px;
+}
+
+.fabButton {
+  @apply bg-surface/85 flex h-12 w-12 items-center justify-center rounded-full text-white shadow-lg backdrop-blur-md transition-transform active:scale-95;
 }
 
 .mapLoading {
@@ -211,6 +215,41 @@
 
 :global(.leaflet-touch .leaflet-control-zoom.leaflet-bar) {
   border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* --- Venue Selector --- */
+
+.selectorBackdrop {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-300;
+}
+
+.selectorPanel {
+  @apply bg-form-element flex w-full max-w-[500px] flex-col overflow-hidden rounded-2xl transition-transform duration-300 ease-out;
+  max-height: 80vh;
+}
+
+.selectorTitle {
+  @apply px-4 pt-4 pb-2 text-base font-semibold text-white;
+}
+
+.selectorSearchContainer {
+  @apply bg-surface mx-4 mb-2 flex items-center gap-2 rounded-xl px-3 py-2.5;
+}
+
+.selectorSearchInput {
+  @apply flex-1 bg-transparent text-sm text-white outline-none placeholder:text-zinc-500;
+}
+
+.selectorList {
+  @apply flex-1 overflow-y-auto px-4 pb-4;
+}
+
+.selectorItem {
+  @apply flex w-full items-center gap-3 rounded-xl px-2 py-3 transition-colors hover:bg-white/5;
+}
+
+.selectorEmpty {
+  @apply py-8 text-center text-sm text-white/40;
 }
 
 :global(.leaflet-container > button[aria-label='Center on my location']) {
