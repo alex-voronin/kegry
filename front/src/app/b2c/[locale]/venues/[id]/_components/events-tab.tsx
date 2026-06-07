@@ -17,8 +17,18 @@ type DateGroup = {
 function formatDateLabel(dateKey: string): string {
   const [, month, day] = dateKey.split('-');
   const monthNames = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   return `${monthNames[parseInt(month, 10) - 1]} ${parseInt(day, 10)}`;
 }
@@ -79,7 +89,10 @@ export function EventsTab({
   onEmpty,
 }: EventsTabProps) {
   const dateGroups = useMemo(() => groupByDate(venueEvents), [venueEvents]);
-  const { ref: eventsBottomRef, inView: eventsInView } = useInView({ threshold: 0, rootMargin: '200px' });
+  const { ref: eventsBottomRef, inView: eventsInView } = useInView({
+    threshold: 0,
+    rootMargin: '200px',
+  });
 
   useEffect(() => {
     if (eventsInView && hasMoreEvents && !isEventsLoading) {
@@ -100,7 +113,9 @@ export function EventsTab({
   if (venueEvents.length === 0) {
     return (
       <div className={styles.section}>
-        <div className="py-8 text-center text-sm text-secondary">{onEmpty()}</div>
+        <div className="text-secondary py-8 text-center text-sm">
+          {onEmpty()}
+        </div>
       </div>
     );
   }
@@ -115,7 +130,10 @@ export function EventsTab({
               {group.events.map((ev) => (
                 <div
                   key={ev.id}
-                  className={cn(styles.eventCard, ev.isJoined && styles.eventCardJoined)}
+                  className={cn(
+                    styles.eventCard,
+                    ev.isJoined && styles.eventCardJoined,
+                  )}
                   onClick={(e) => onEventMenuOpen(ev.id, e)}
                 >
                   {ev.coverImageUrl ? (
@@ -124,7 +142,13 @@ export function EventsTab({
                       alt={ev.title}
                       className={styles.eventCardImage}
                     />
-                  ) : null}
+                  ) : (
+                    <img
+                      src="/assets/event/cover-default.webp"
+                      alt={ev.title}
+                      className={styles.eventCardImage}
+                    />
+                  )}
                   <div className={styles.eventCardOverlay} />
                   <div className={styles.eventCardContent}>
                     <div className={styles.eventCardInfo}>

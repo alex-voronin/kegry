@@ -458,7 +458,10 @@ export function VenueBottomSheet({
           {sheetState === 'expanded' ? (
             <div className="my-2 flex flex-col gap-2 px-4">
               <div className="flex items-center gap-2">
-                <div className={filtersStyles.searchInputContainer} onMouseDown={(e) => e.stopPropagation()}>
+                <div
+                  className={filtersStyles.searchInputContainer}
+                  onMouseDown={(e) => e.stopPropagation()}
+                >
                   <Search size={16} className="shrink-0 text-zinc-500" />
                   <input
                     type="text"
@@ -495,7 +498,10 @@ export function VenueBottomSheet({
                 </button>
               </div>
 
-              <div className="flex flex-wrap items-center gap-1" onMouseDown={(e) => e.stopPropagation()}>
+              <div
+                className="flex flex-wrap items-center gap-1"
+                onMouseDown={(e) => e.stopPropagation()}
+              >
                 <button
                   onClick={() => onToggleEventType('Event')}
                   className={`rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors ${
@@ -632,7 +638,13 @@ export function VenueBottomSheet({
                           alt={event.title}
                           className={styles.eventCardImage}
                         />
-                      ) : null}
+                      ) : (
+                        <img
+                          src="/assets/event/cover-default.webp"
+                          alt={event.title}
+                          className={styles.eventCardImage}
+                        />
+                      )}
                       <div className={styles.eventCardOverlay} />
                       <div className={styles.eventCardContent}>
                         <div className={styles.eventCardInfo}>
@@ -778,7 +790,13 @@ export function VenueBottomSheet({
                             alt={event.title}
                             className={styles.eventCardImage}
                           />
-                        ) : null}
+                        ) : (
+                          <img
+                            src="/assets/event/cover-default.webp"
+                            alt={event.title}
+                            className={styles.eventCardImage}
+                          />
+                        )}
                         <div className={styles.eventCardOverlay} />
                         <div className={styles.eventCardContent}>
                           <div className={styles.eventCardInfo}>
