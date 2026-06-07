@@ -582,6 +582,7 @@
         "center": "Centriraj",
         "join": "Pridruži se",
         "leave": "Napusti",
+        "edit": "Uredi",
         "delete": "Obriši"
       },
       "deleteMeetupDialog": {
@@ -877,6 +878,7 @@
     "forms": {
       "event": {
         "createTitle": "Kreiraj susret",
+        "editTitle": "Uredi susret",
         "meetupTitle": "Susret sa {name}",
         "titleField": "Naziv",
         "description": "Opis",

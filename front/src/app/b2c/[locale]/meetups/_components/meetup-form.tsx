@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import { Camera, Plus, X, Users } from 'lucide-react';
 
 import { Toggle } from '@/components/ui/toggle';
+import { ModalMenu } from '@/components/ui/modal-menu';
 
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -41,6 +42,7 @@ interface MeetupFormProps {
   pageTitle: string;
   userName: string;
   onCancel: () => void;
+  initialIsSimple?: boolean;
   initialValues?: {
     title: string;
     description: string;
@@ -77,6 +79,7 @@ export function MeetupForm({
   pageTitle,
   userName,
   onCancel,
+  initialIsSimple,
   initialValues,
   onSubmit,
   isSubmitting,
@@ -84,7 +87,7 @@ export function MeetupForm({
 }: MeetupFormProps) {
   const t = useTranslations('components.forms.event');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isSimple, setIsSimple] = useState(true);
+  const [isSimple, setIsSimple] = useState(initialIsSimple ?? true);
   const [participantMode, setParticipantMode] = useState<'tete' | 'custom'>(
     'tete',
   );
@@ -111,6 +114,7 @@ export function MeetupForm({
   const [coverBlob, setCoverBlob] = useState<Blob | null>(null);
   const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
   const [isCropperOpen, setIsCropperOpen] = useState(false);
+  const [contactTypeMenuId, setContactTypeMenuId] = useState<string | null>(null);
   const [contacts, setContacts] = useState<EventContactForm[]>(
     initialValues?.contacts ?? [],
   );
@@ -189,11 +193,48 @@ export function MeetupForm({
     ]);
   };
 
+  const getContactPlaceholder = (type: string): string => {
+    switch (type) {
+      case 'Telegram':
+        return 'username';
+      case 'Viber':
+      case 'WhatsApp':
+      case 'Phone':
+        return '+38160123456';
+      case 'Email':
+        return 'email@example.com';
+      default:
+        return t('contactValue');
+    }
+  };
+
+  const normalizeContactValue = (type: string, value: string): string => {
+    switch (type) {
+      case 'Telegram':
+        return value
+          .replace(/^@/, '')
+          .replace(/^https?:\/\/t\.me\//, '')
+          .replace(/\/$/, '')
+          .trim();
+      case 'Viber':
+      case 'WhatsApp':
+        return value.replace(/[^\d+]/g, '');
+      default:
+        return value;
+    }
+  };
+
   const updateContact = (
     id: string,
     field: keyof EventContactForm,
     value: string | boolean,
   ) => {
+    if (field === 'value' && typeof value === 'string') {
+      const contact = contacts.find((c) => c.id === id);
+      if (contact) {
+        value = normalizeContactValue(contact.type, value);
+      }
+    }
     setContacts((prev) =>
       prev.map((c) => (c.id === id ? { ...c, [field]: value } : c)),
     );
@@ -434,7 +475,7 @@ export function MeetupForm({
 
         {/* Requires Approval */}
         <div className={`${stylesCommon.sectionContainer} px-0 sm:px-4`}>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between px-2 sm:px-0">
               <span className="text-sm text-white/80">
                 {t('requiresApproval')}
               </span>
@@ -456,7 +497,7 @@ export function MeetupForm({
           {contacts.map((contact) => (
             <div
               key={contact.id}
-              className="bg-surface-dark mt-2 flex items-start gap-2 rounded-xl p-3"
+              className="bg-surface-dark mt-2 flex rounded-xl p-3"
             >
               <div className="flex flex-1 flex-col gap-2">
                 <div className="flex items-center gap-5">
@@ -469,26 +510,26 @@ export function MeetupForm({
                       onChange={(v) => updateContact(contact.id, 'isPublic', v)}
                     />
                   </div>
-                  <select
-                    value={contact.type}
-                    onChange={(e) =>
-                      updateContact(contact.id, 'type', e.target.value)
-                    }
-                    className="bg-form-element h-10 flex-1 rounded-xl px-3 text-sm outline-none"
+                  <div
+                    className="bg-form-element flex h-10 flex-1 cursor-pointer items-center rounded-xl px-3 text-sm"
+                    onClick={() => setContactTypeMenuId(contact.id)}
                   >
-                    {contactTypes.map((ct) => (
-                      <option key={ct} value={ct}>
-                        {ct}
-                      </option>
-                    ))}
-                  </select>
+                    {contact.type}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeContact(contact.id)}
+                    className="flex h-10 items-center px-1"
+                  >
+                    <X size={18} className="text-error" />
+                  </button>
                 </div>
                 <input
                   value={contact.value}
                   onChange={(e) =>
                     updateContact(contact.id, 'value', e.target.value)
                   }
-                  placeholder={t('contactValue')}
+                  placeholder={getContactPlaceholder(contact.type)}
                   className="bg-form-element placeholder:text-secondary h-[44px] w-full rounded-xl px-3 text-base outline-none"
                 />
                 <p className="text-[11px] leading-tight text-white/40">
@@ -497,15 +538,22 @@ export function MeetupForm({
                     : 'Only joined users can see this contact information (after approval if enabled)'}
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() => removeContact(contact.id)}
-                className="p-1"
-              >
-                <X size={18} className="text-error" />
-              </button>
             </div>
           ))}
+
+          <ModalMenu
+            isOpen={!!contactTypeMenuId}
+            onClose={() => setContactTypeMenuId(null)}
+            options={contactTypes.map((ct) => ({
+              label: ct,
+              onClick: () => {
+                if (contactTypeMenuId) {
+                  updateContact(contactTypeMenuId, 'type', ct);
+                }
+                setContactTypeMenuId(null);
+              },
+            }))}
+          />
         </div>
 
         <div className="mb-10 flex justify-center px-0 sm:px-4">

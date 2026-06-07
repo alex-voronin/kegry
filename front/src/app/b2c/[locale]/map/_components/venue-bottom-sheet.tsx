@@ -910,6 +910,13 @@ export function VenueBottomSheet({
           if (menuTarget?.eventId) {
             if (menuTarget.isCreator) {
               items.push({
+                label: t('menu.edit'),
+                onClick: () => {
+                  router.push(PAGE_ROUTES.MEETUP_EDIT(menuTarget.eventId!));
+                  setMenuTarget(null);
+                },
+              });
+              items.push({
                 label: t('menu.delete'),
                 onClick: () => {
                   setDeleteEventId(menuTarget.eventId!);

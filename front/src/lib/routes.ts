@@ -11,6 +11,7 @@ export const PAGE_ROUTES = {
   MAP: '/map',
   MEETUP_CREATE: (venueId?: string) =>
     venueId ? `/meetups/create?venueId=${venueId}` : '/meetups/create',
+  MEETUP_EDIT: (eventId: string) => `/meetups/edit?eventId=${eventId}`,
   VENUES: '/venues',
   VENUES_MAP: '/venues/map',
   VENUE_DETAIL: (id: string) => `/venues/${id}`,

@@ -582,6 +582,7 @@
         "center": "Center",
         "join": "Join",
         "leave": "Leave",
+        "edit": "Edit",
         "delete": "Delete"
       },
       "deleteMeetupDialog": {
@@ -877,6 +878,7 @@
     "forms": {
       "event": {
         "createTitle": "Create Meetup",
+        "editTitle": "Edit Meetup",
         "meetupTitle": "Meetup with {name}",
         "titleField": "Title",
         "description": "Description",
