@@ -8,6 +8,7 @@ public record CreateEventContactDto(
     bool IsPublic = false);
 
 public record CreateEventRequest(
+    string? CreatorAvatarUrl,
     string? CoverImageUrl,
     string Title,
     string Description,

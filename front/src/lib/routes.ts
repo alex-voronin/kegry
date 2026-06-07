@@ -178,6 +178,7 @@ export const API_ENDPOINTS = {
     LIST: '/api/v1/events',
     CREATE: '/api/v1/events',
     UPDATE: (id: string) => `/api/v1/events/${id}`,
+    DELETE: (id: string) => `/api/v1/events/${id}`,
     MAP: '/api/v1/events/map',
     JOIN: (id: string) => `/api/v1/events/${id}/join`,
     LEAVE: (id: string) => `/api/v1/events/${id}/leave`,

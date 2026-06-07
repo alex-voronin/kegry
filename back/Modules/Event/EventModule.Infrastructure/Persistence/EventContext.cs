@@ -57,6 +57,9 @@ public class EventContext : DbContext
             builder.Property(e => e.Id)
                 .ValueGeneratedNever();
 
+            builder.Property(e => e.CreatorAvatarS3Key)
+                .HasMaxLength(500);
+            
             builder.Property(e => e.CoverImageS3Key)
                 .HasMaxLength(500);
 

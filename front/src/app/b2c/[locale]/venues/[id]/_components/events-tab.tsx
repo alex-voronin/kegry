@@ -2,9 +2,11 @@
 
 import { useEffect, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { useRouter } from '@/i18n/routing';
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
 import { Users, MoreHorizontal, CheckCircle } from 'lucide-react';
+import { PAGE_ROUTES } from '@/lib/routes';
 import styles from '../venue-detail.module.css';
 import type { EventListItem } from '../../../map/_components/types';
 
@@ -88,6 +90,7 @@ export function EventsTab({
   onEventMenuOpen,
   onEmpty,
 }: EventsTabProps) {
+  const router = useRouter();
   const dateGroups = useMemo(() => groupByDate(venueEvents), [venueEvents]);
   const { ref: eventsBottomRef, inView: eventsInView } = useInView({
     threshold: 0,
@@ -162,6 +165,22 @@ export function EventsTab({
                       </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
+                      {ev.type === 'Meetup' && ev.creatorAvatarUrl && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(PAGE_ROUTES.USER_PROFILE(ev.creatorId));
+                          }}
+                          className="h-7 w-7 shrink-0 overflow-hidden rounded-full border border-white/20"
+                        >
+                          <img
+                            src={ev.creatorAvatarUrl}
+                            alt=""
+                            className="h-full w-full object-cover"
+                          />
+                        </button>
+                      )}
                       <span className="flex items-center gap-1">
                         {ev.isJoined && (
                           <CheckCircle size={12} className="text-accent" />

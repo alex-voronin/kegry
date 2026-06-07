@@ -65,7 +65,11 @@ public class B2CEventEndpoints : IEndpoints
                 Type: ewj.Event.Type,
                 StartDateTime: ewj.Event.StartDateTime,
                 VenueId: ewj.Event.VenueId.ToString(),
-                IsJoined: ewj.IsJoined);
+                IsJoined: ewj.IsJoined,
+                CreatorId: ewj.Event.CreatorId.ToString(),
+                CreatorAvatarUrl: ewj.Event.CreatorAvatarS3Key != null
+                    ? storageService.S3KeyToPublicFileUrl(ewj.Event.CreatorAvatarS3Key, null)
+                    : null);
         }
 
         var dtos = result.Select(r => new VenueEventsDto(
@@ -81,7 +85,6 @@ public class B2CEventEndpoints : IEndpoints
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         IEventRepository eventRepository,
-        EventContext dbContext,
         IS3StorageService storageService,
         CancellationToken ct)
     {
@@ -92,9 +95,6 @@ public class B2CEventEndpoints : IEndpoints
         var userId = user.GetId();
         var isCreator = ev.CreatorId == userId;
         var isJoined = ev.EventParticipants.Any(p => p.UserId == userId);
-
-        var venue = await dbContext.Venues.FirstOrDefaultAsync(v => v.Id == ev.VenueId, ct);
-        var creatorUser = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == ev.CreatorId, ct);
 
         var contacts = ev.EventContacts
             .Where(c => c.IsPublic || isCreator || isJoined)
@@ -111,14 +111,9 @@ public class B2CEventEndpoints : IEndpoints
             StartDateTime: ev.StartDateTime,
             Type: ev.Type,
             VenueId: ev.VenueId.ToString(),
-            VenueAddress: venue?.Address ?? "",
-            VenueLatitude: venue?.Coordinates.Y ?? 0,
-            VenueLongitude: venue?.Coordinates.X ?? 0,
             CreatorId: ev.CreatorId.ToString(),
-            CreatorFirstName: creatorUser?.FirstName,
-            CreatorLastName: creatorUser?.LastName,
-            CreatorAvatarUrl: creatorUser?.AvatarImageS3Key != null
-                ? storageService.S3KeyToPublicFileUrl(creatorUser.AvatarImageS3Key, null)
+            CreatorAvatarUrl: ev.CreatorAvatarS3Key != null
+                ? storageService.S3KeyToPublicFileUrl(ev.CreatorAvatarS3Key, ev.UpdatedAt)
                 : null,
             IsVisibleOnMap: ev.IsVisibleOnMap,
             MaxParticipants: ev.MaxParticipants,
@@ -155,7 +150,11 @@ public class B2CEventEndpoints : IEndpoints
                 Type: e.Type,
                 StartDateTime: e.StartDateTime,
                 ParticipantsCount: e.EventParticipants.Count,
-                IsJoined: e.EventParticipants.Any(p => p.UserId == userId));
+                IsJoined: e.EventParticipants.Any(p => p.UserId == userId),
+                CreatorId: e.CreatorId.ToString(),
+                CreatorAvatarUrl: e.CreatorAvatarS3Key != null
+                    ? storageService.S3KeyToPublicFileUrl(e.CreatorAvatarS3Key, null)
+                    : null);
         }).ToArray();
 
         return ApiResult<PaginatedResponse<EventListItemDto>>.Build(
@@ -166,7 +165,6 @@ public class B2CEventEndpoints : IEndpoints
         [FromBody] CreateEventRequest request,
         ClaimsPrincipal user,
         IEventRepository eventRepository,
-        EventContext dbContext,
         IS3StorageService storageService,
         CancellationToken ct)
     {
@@ -184,6 +182,7 @@ public class B2CEventEndpoints : IEndpoints
             type: EventType.Meetup,
             venueId: request.VenueId,
             creatorId: userId,
+            creatorAvatarS3Key: request.CreatorAvatarUrl != null ? storageService.PublicFileUrlToS3Key(request.CreatorAvatarUrl) : null,
             maxParticipants: request.MaxParticipants,
             requiresApproval: request.RequiresApproval);
 
@@ -201,7 +200,7 @@ public class B2CEventEndpoints : IEndpoints
         await eventRepository.AddAsync(ev, ct);
         await eventRepository.SaveChangesAsync(ct);
 
-        return await GetEvent(eventId, user, eventRepository, dbContext, storageService, ct);
+        return await GetEvent(eventId, user, eventRepository, storageService, ct);
     }
 
     private static async Task<ApiResult<EventDto>> UpdateEvent(
@@ -243,7 +242,7 @@ public class B2CEventEndpoints : IEndpoints
 
         await eventRepository.SaveChangesAsync(ct);
 
-        return await GetEvent(id, user, eventRepository, dbContext, storageService, ct);
+        return await GetEvent(id, user, eventRepository, storageService, ct);
     }
 
     private static async Task<ApiResult.EmptyResult> DeleteEvent(

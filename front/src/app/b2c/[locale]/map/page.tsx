@@ -60,6 +60,7 @@ export default function MapScreen() {
     clearFocus,
     flyTo,
     updateEventParticipation,
+    deleteEvent,
   } = useMapStore();
 
   const lastBoundsRef = useRef<string | null>(null);
@@ -162,6 +163,17 @@ export default function MapScreen() {
       toast.error('Failed to leave event');
     }
   }, [updateEventParticipation]);
+
+  const handleDeleteEvent = useCallback(
+    async (eventId: string) => {
+      try {
+        await deleteEvent(eventId);
+      } catch {
+        toast.error(t('toast.loadFailed'));
+      }
+    },
+    [deleteEvent, t],
+  );
 
   const handleVenueDetails = useCallback(
     (id: string) => {
@@ -340,6 +352,7 @@ export default function MapScreen() {
           onCenter={handleCenter}
           onJoinEvent={handleJoinEvent}
           onLeaveEvent={handleLeaveEvent}
+          onDeleteEvent={handleDeleteEvent}
           sheetState={sheetState}
           onSheetStateChange={setSheetState}
           enabledEventTypes={enabledEventTypes}

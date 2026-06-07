@@ -154,11 +154,26 @@
 }
 
 .eventCardOverlay {
-  @apply absolute inset-0 bg-black/60;
+  @apply absolute inset-0 z-10 bg-black/60;
+}
+
+.eventCardMeetupAvatar {
+  @apply absolute z-20 flex items-center justify-center;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+}
+
+.eventCardAvatarImg {
+  @apply h-10 w-10 rounded-full border-2 border-white/30 object-cover;
 }
 
 .eventCardContent {
   @apply relative z-10 flex w-full items-center justify-between gap-2 px-4 py-3;
+}
+
+.eventCardContentWithAvatar {
+  padding-left: 64px;
 }
 
 .eventCardInfo {

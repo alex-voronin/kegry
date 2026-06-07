@@ -581,7 +581,13 @@
       "menu": {
         "center": "Center",
         "join": "Join",
-        "leave": "Leave"
+        "leave": "Leave",
+        "delete": "Delete"
+      },
+      "deleteMeetupDialog": {
+        "title": "Are you sure you want to delete this meetup?",
+        "buttonYes": "Yes",
+        "buttonNo": "No"
       },
       "venueSelector": {
         "title": "Choose a venue for your meetup",

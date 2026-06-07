@@ -40,6 +40,11 @@ namespace EventModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<string>("CreatorAvatarS3Key")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("creator_avatar_s3key");
+
                     b.Property<Guid>("CreatorId")
                         .HasColumnType("uuid")
                         .HasColumnName("creator_id");
@@ -83,6 +88,7 @@ namespace EventModule.Infrastructure.Persistence.Migrations
                         .HasColumnName("type");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
+                        .IsConcurrencyToken()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
@@ -179,6 +185,35 @@ namespace EventModule.Infrastructure.Persistence.Migrations
                     b.ToTable("event_participants", "event");
                 });
 
+            modelBuilder.Entity("EventModule.Domain.Aggregates.ReadOnly.Company", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_companies");
+
+                    b.ToTable("companies", "venue", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
             modelBuilder.Entity("EventModule.Domain.Aggregates.ReadOnly.Hobby", b =>
                 {
                     b.Property<Guid>("Id")
@@ -249,6 +284,10 @@ namespace EventModule.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("address");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
 
                     b.Property<Point>("Coordinates")
                         .IsRequired()

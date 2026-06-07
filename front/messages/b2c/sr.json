@@ -581,7 +581,13 @@
       "menu": {
         "center": "Centriraj",
         "join": "Pridruži se",
-        "leave": "Napusti"
+        "leave": "Napusti",
+        "delete": "Obriši"
+      },
+      "deleteMeetupDialog": {
+        "title": "Da li si siguran da želiš da obrišeš ovaj susret?",
+        "buttonYes": "Da",
+        "buttonNo": "Ne"
       },
       "venueSelector": {
         "title": "Izaberi lokal za svoj susret",

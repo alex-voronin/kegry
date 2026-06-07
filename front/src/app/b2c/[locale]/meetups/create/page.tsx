@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
@@ -10,6 +10,7 @@ import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
 import { uploadImage } from '@/lib/image-utils';
 import { useUserProfileStore } from '@/store/use-user-profile-store';
+import { useAuthStore } from '@/lib/auth/use-auth-store';
 import { MeetupForm, EventContactForm } from '../_components/meetup-form';
 
 export default function CreateMeetupPage() {
@@ -19,6 +20,17 @@ export default function CreateMeetupPage() {
 
   const venueId = searchParams.get('venueId');
   const firstName = useUserProfileStore((s) => s.firstName);
+  const serverProfile = useUserProfileStore((s) => s.serverProfile);
+  const fetchMyProfile = useUserProfileStore((s) => s.fetchMyProfile);
+  const avatarUrl = serverProfile?.avatarImageUrl ?? null;
+  const isAuthenticated = useAuthStore((s) => !!s.accessToken);
+
+  useEffect(() => {
+    if (isAuthenticated && !serverProfile) {
+      fetchMyProfile();
+    }
+  }, [isAuthenticated, serverProfile, fetchMyProfile]);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleCancel = () => {
@@ -38,6 +50,7 @@ export default function CreateMeetupPage() {
     setIsSubmitting(true);
     try {
       const response = await apiClient.post(API_ENDPOINTS.EVENTS.CREATE, {
+        creatorAvatarUrl: avatarUrl,
         title: data.title,
         description: data.description,
         startDateTime: new Date(data.startDateTime).toISOString(),

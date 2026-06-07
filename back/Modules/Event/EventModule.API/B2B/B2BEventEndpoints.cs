@@ -12,7 +12,6 @@ using SharedCore.Policies;
 using EventModule.API.B2B.Dto;
 using EventModule.API.B2C.Dto;
 using EventModule.Domain.Aggregates;
-using EventModule.Domain.Aggregates.ReadOnly;
 using EventModule.Domain.Enums;
 using EventModule.Domain.Exceptions;
 using EventModule.Domain.Repositories;
@@ -91,9 +90,6 @@ public class B2BEventEndpoints : IEndpoints
         if (ev.CreatorId != userId)
             throw EventExceptions.NotEventCreator();
 
-        var venue = await dbContext.Venues.FirstOrDefaultAsync(v => v.Id == ev.VenueId, ct);
-        var creatorUser = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == ev.CreatorId, ct);
-
         var contacts = ev.EventContacts
             .Select(c => new EventContactDto(c.Id, c.Type, c.Value, c.IsPublic))
             .ToArray();
@@ -109,14 +105,9 @@ public class B2BEventEndpoints : IEndpoints
             StartDateTime: ev.StartDateTime,
             Type: ev.Type,
             VenueId: ev.VenueId.ToString(),
-            VenueAddress: venue?.Address ?? "",
-            VenueLatitude: venue?.Coordinates.Y ?? 0,
-            VenueLongitude: venue?.Coordinates.X ?? 0,
             CreatorId: ev.CreatorId.ToString(),
-            CreatorFirstName: creatorUser?.FirstName,
-            CreatorLastName: creatorUser?.LastName,
-            CreatorAvatarUrl: creatorUser?.AvatarImageS3Key != null
-                ? storageService.S3KeyToPublicFileUrl(creatorUser.AvatarImageS3Key, null)
+            CreatorAvatarUrl: ev.CreatorAvatarS3Key != null
+                ? storageService.S3KeyToPublicFileUrl(ev.CreatorAvatarS3Key, ev.UpdatedAt)
                 : null,
             IsVisibleOnMap: ev.IsVisibleOnMap,
             MaxParticipants: ev.MaxParticipants,
@@ -151,9 +142,10 @@ public class B2BEventEndpoints : IEndpoints
             title: request.Title,
             description: request.Description,
             startDateTime: request.StartDateTime,
-            type: Domain.Enums.EventType.Event,
+            type: EventType.Event,
             venueId: request.VenueId,
             creatorId: userId,
+            creatorAvatarS3Key: null,
             maxParticipants: null,
             requiresApproval: false);
         ev.IsVisibleOnMap = true;
@@ -172,7 +164,7 @@ public class B2BEventEndpoints : IEndpoints
         await eventRepository.AddAsync(ev, ct);
         await eventRepository.SaveChangesAsync(ct);
 
-        return await BuildEventDetail(eventId, userId, eventRepository, dbContext, storageService, ct);
+        return await BuildEventDetail(eventId, userId, eventRepository, storageService, ct);
     }
 
     private static async Task<ApiResult<EventDto>> UpdateEvent(
@@ -210,7 +202,7 @@ public class B2BEventEndpoints : IEndpoints
 
         await eventRepository.SaveChangesAsync(ct);
 
-        return await BuildEventDetail(id, user.GetId(), eventRepository, dbContext, storageService, ct);
+        return await BuildEventDetail(id, user.GetId(), eventRepository, storageService, ct);
     }
 
     private static async Task<ApiResult.EmptyResult>
@@ -294,7 +286,6 @@ public class B2BEventEndpoints : IEndpoints
         Guid eventId,
         Guid userId,
         IEventRepository eventRepository,
-        EventContext dbContext,
         IS3StorageService storageService,
         CancellationToken ct)
     {
@@ -304,9 +295,6 @@ public class B2BEventEndpoints : IEndpoints
 
         var isCreator = ev.CreatorId == userId;
         var isJoined = ev.EventParticipants.Any(p => p.UserId == userId);
-
-        var venue = await dbContext.Venues.FirstOrDefaultAsync(v => v.Id == ev.VenueId, ct);
-        var creatorUser = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == ev.CreatorId, ct);
 
         var contacts = ev.EventContacts
             .Where(c => c.IsPublic || isCreator || isJoined)
@@ -323,14 +311,9 @@ public class B2BEventEndpoints : IEndpoints
             StartDateTime: ev.StartDateTime,
             Type: ev.Type,
             VenueId: ev.VenueId.ToString(),
-            VenueAddress: venue?.Address ?? "",
-            VenueLatitude: venue?.Coordinates.Y ?? 0,
-            VenueLongitude: venue?.Coordinates.X ?? 0,
             CreatorId: ev.CreatorId.ToString(),
-            CreatorFirstName: creatorUser?.FirstName,
-            CreatorLastName: creatorUser?.LastName,
-            CreatorAvatarUrl: creatorUser?.AvatarImageS3Key != null
-                ? storageService.S3KeyToPublicFileUrl(creatorUser.AvatarImageS3Key, null)
+            CreatorAvatarUrl: ev.CreatorAvatarS3Key != null
+                ? storageService.S3KeyToPublicFileUrl(ev.CreatorAvatarS3Key, null)
                 : null,
             IsVisibleOnMap: ev.IsVisibleOnMap,
             MaxParticipants: ev.MaxParticipants,

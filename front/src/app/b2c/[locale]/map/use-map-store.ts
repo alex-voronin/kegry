@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
+import { rethrowApiError } from '@/lib/api-error';
 import { API_ENDPOINTS } from '@/lib/routes';
 import { paramsForReq } from '@/lib/query-params';
 import type { VenueMapItem } from '../venues/map/_components/venue-map-internal';
@@ -26,6 +27,7 @@ interface MapState {
   setFocusedVenue: (venue: VenueMapItem | null) => void;
   clearFocus: () => void;
   updateEventParticipation: (eventId: string, isJoined: boolean) => void;
+  deleteEvent: (eventId: string) => void;
 }
 
 export const useMapStore = create<MapState>()(
@@ -100,6 +102,23 @@ export const useMapStore = create<MapState>()(
           ),
         })),
       }));
+    },
+
+    deleteEvent: async (eventId: string) => {
+      try {
+        await apiClient.delete(API_ENDPOINTS.EVENTS.DELETE(eventId));
+        set((state) => ({
+          venueEvents: state.venueEvents
+            .map((v) => ({
+              ...v,
+              events: v.events.filter((e) => e.id !== eventId),
+              totalCount: v.events.filter((e) => e.id !== eventId).length,
+            }))
+            .filter((v) => v.events.length > 0),
+        }));
+      } catch (error) {
+        rethrowApiError(error, 'Failed to delete event');
+      }
     },
   })),
 );

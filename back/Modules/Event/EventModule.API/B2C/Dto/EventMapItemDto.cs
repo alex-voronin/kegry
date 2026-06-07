@@ -9,4 +9,6 @@ public record EventMapItemDto(
     EventType Type,
     DateTimeOffset StartDateTime,
     string VenueId,
-    bool IsJoined);
+    bool IsJoined,
+    string CreatorId,
+    string? CreatorAvatarUrl);

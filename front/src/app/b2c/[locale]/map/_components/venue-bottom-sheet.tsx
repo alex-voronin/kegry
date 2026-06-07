@@ -9,7 +9,13 @@ import {
   useMemo,
 } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/routing';
 import Image from 'next/image';
+
+import { PAGE_ROUTES } from '@/lib/routes';
+
+import { useAuthStore } from '@/lib/auth/use-auth-store';
+import { ModalDialog } from '@/components/ui/modal-dialog';
 import {
   ChevronDown,
   MoreHorizontal,
@@ -42,6 +48,7 @@ interface VenueBottomSheetProps {
   onCenter?: (lat: number, lng: number, venue?: VenueMapItem) => void;
   onJoinEvent?: (eventId: string) => void;
   onLeaveEvent?: (eventId: string) => void;
+  onDeleteEvent?: (eventId: string) => void;
   sheetState: 'collapsed' | 'expanded';
   onSheetStateChange: (state: 'collapsed' | 'expanded') => void;
   enabledEventTypes: ('Event' | 'Meetup')[];
@@ -64,7 +71,10 @@ export function VenueBottomSheet({
   enabledEventTypes,
   onToggleEventType,
   onAddMeetup,
+  onDeleteEvent,
 }: VenueBottomSheetProps) {
+  const router = useRouter();
+  const currentUserId = useAuthStore((s) => s.userId);
   const t = useTranslations('screens.map');
 
   const [menuTarget, setMenuTarget] = useState<{
@@ -73,7 +83,10 @@ export function VenueBottomSheet({
     venue?: VenueMapItem;
     eventId?: string;
     isJoined?: boolean;
+    isCreator?: boolean;
   } | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deleteEventId, setDeleteEventId] = useState<string | null>(null);
   const [translateY, setTranslateY] = useState(() => {
     if (typeof window === 'undefined') return 0;
     return Math.max(window.innerHeight - 60 - PEEK_HEIGHT, EXPANDED_TOP);
@@ -383,6 +396,13 @@ export function VenueBottomSheet({
     setMenuTarget(null);
   }, [menuTarget, onJoinEvent, onLeaveEvent]);
 
+  const handleDeleteEvent = useCallback(() => {
+    if (!deleteEventId) return;
+    onDeleteEvent?.(deleteEventId);
+    setDeleteEventId(null);
+    setIsDeleteDialogOpen(false);
+  }, [deleteEventId, onDeleteEvent]);
+
   useEffect(() => {
     const el = dragAreaRef.current;
     if (!el) return;
@@ -663,6 +683,22 @@ export function VenueBottomSheet({
                             </span>
                           </div>
                         </div>
+                        {event.type === 'Meetup' && event.creatorAvatarUrl && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push(PAGE_ROUTES.USER_PROFILE(event.creatorId));
+                            }}
+                            className="h-7 w-7 shrink-0 overflow-hidden rounded-full border border-white/20"
+                          >
+                            <img
+                              src={event.creatorAvatarUrl}
+                              alt=""
+                              className="h-full w-full object-cover"
+                            />
+                          </button>
+                        )}
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -671,6 +707,7 @@ export function VenueBottomSheet({
                               lng: v?.longitude ?? 0,
                               eventId: event.id,
                               isJoined: event.isJoined,
+                              isCreator: event.creatorId === currentUserId,
                             });
                           }}
                           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-white/10"
@@ -815,6 +852,22 @@ export function VenueBottomSheet({
                               </span>
                             </div>
                           </div>
+                          {event.type === 'Meetup' && event.creatorAvatarUrl && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                router.push(PAGE_ROUTES.USER_PROFILE(event.creatorId));
+                              }}
+                              className="h-7 w-7 shrink-0 overflow-hidden rounded-full border border-white/20"
+                            >
+                              <img
+                                src={event.creatorAvatarUrl}
+                                alt=""
+                                className="h-full w-full object-cover"
+                              />
+                            </button>
+                          )}
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -823,6 +876,7 @@ export function VenueBottomSheet({
                                 lng: venue.longitude,
                                 eventId: event.id,
                                 isJoined: event.isJoined,
+                                isCreator: event.creatorId === currentUserId,
                               });
                             }}
                             className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-white/10"
@@ -854,13 +908,34 @@ export function VenueBottomSheet({
             },
           ];
           if (menuTarget?.eventId) {
-            items.push({
-              label: menuTarget.isJoined ? t('menu.leave') : t('menu.join'),
-              onClick: handleMenuJoinLeave,
-            });
+            if (menuTarget.isCreator) {
+              items.push({
+                label: t('menu.delete'),
+                onClick: () => {
+                  setDeleteEventId(menuTarget.eventId!);
+                  setIsDeleteDialogOpen(true);
+                },
+                isDestructive: true,
+              });
+            } else {
+              items.push({
+                label: menuTarget.isJoined ? t('menu.leave') : t('menu.join'),
+                onClick: handleMenuJoinLeave,
+              });
+            }
           }
           return items;
         })()}
+      />
+
+      <ModalDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        message={t('deleteMeetupDialog.title')}
+        primaryButtonText={t('deleteMeetupDialog.buttonNo')}
+        secondaryButtonText={t('deleteMeetupDialog.buttonYes')}
+        onPrimaryAction={() => setIsDeleteDialogOpen(false)}
+        onSecondaryAction={handleDeleteEvent}
       />
 
       <VenueTagSheet

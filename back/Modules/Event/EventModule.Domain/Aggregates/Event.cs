@@ -41,6 +41,8 @@ public class Event : IAuditable
 
     public bool IsVisibleOnMap { get; set; }
 
+    public string? CreatorAvatarS3Key { get; init; }
+
     public int? MaxParticipants { get; set; }
 
     public bool RequiresApproval
@@ -79,6 +81,7 @@ public class Event : IAuditable
         EventType type,
         Guid venueId,
         Guid creatorId,
+        string? creatorAvatarS3Key,
         int? maxParticipants,
         bool requiresApproval)
     {
@@ -94,6 +97,7 @@ public class Event : IAuditable
         StartDateTime = startDateTime;
         VenueId = venueId;
         CreatorId = creatorId;
+        CreatorAvatarS3Key = creatorAvatarS3Key;
         IsVisibleOnMap = true;
         MaxParticipants = maxParticipants;
 

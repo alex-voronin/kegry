@@ -6,6 +6,8 @@ export interface EventMapItem {
   startDateTime: string;
   venueId: string;
   isJoined: boolean;
+  creatorId: string;
+  creatorAvatarUrl?: string | null;
 }
 
 export interface VenueEventsDto {
@@ -25,4 +27,6 @@ export interface EventListItem {
   venueId: string;
   participantsCount: number;
   isJoined: boolean;
+  creatorId: string;
+  creatorAvatarUrl?: string | null;
 }
