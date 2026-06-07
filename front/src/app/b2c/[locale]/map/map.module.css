@@ -16,9 +16,6 @@
   @apply flex h-dvh items-center justify-center;
 }
 
-.loadingSpinner {
-  @apply bg-surface/85 flex items-center justify-center rounded-full p-2;
-}
 
 .sheetDragging {
   transition: none !important;
@@ -148,6 +145,14 @@
 }
 
 /* --- Map page layout --- */
+
+.loadingIndicator {
+  @apply flex items-center justify-center rounded-full bg-black/50 p-2 backdrop-blur-sm;
+}
+
+.smallSpinner {
+  @apply h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white;
+}
 
 .topBar {
   @apply absolute top-2 right-0 left-0 z-50 flex items-center justify-between px-2;

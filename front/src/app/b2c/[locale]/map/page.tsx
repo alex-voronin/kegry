@@ -336,8 +336,8 @@ export default function MapScreen() {
 
         <div className={styles.topRightControls}>
           {isLoading && (
-            <div className={styles.loadingSpinner}>
-              <div className={styles.mapSpinner} />
+            <div className={styles.loadingIndicator}>
+              <div className={styles.smallSpinner} />
             </div>
           )}
 
