@@ -14,7 +14,7 @@ import { SegmentedControl } from '@/components/ui/segmented-control';
 import { useVenueStore } from './use-venue-store';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { toast } from 'react-toastify';
-import { ScanQrCode, Link } from 'lucide-react';
+import { ScanQrCode, Link, Eye, UserPlus, UserMinus } from 'lucide-react';
 import styles from './venue-detail.module.css';
 import { PinpadIcon } from '@/components/icons/pinpad-icon';
 import { useSafeBack } from '@/hooks/use-safe-back';
@@ -371,10 +371,16 @@ export default function VenueDetailScreen() {
             {
               label: ev?.isJoined ? 'Leave' : 'Join',
               onClick: ev?.isJoined ? handleLeaveEvent : handleJoinEvent,
+              icon: ev?.isJoined ? (
+                <UserMinus size={24} />
+              ) : (
+                <UserPlus size={24} />
+              ),
             },
             {
               label: 'View',
               onClick: handleViewEvent,
+              icon: <Eye size={24} />,
             },
           ];
         })()}

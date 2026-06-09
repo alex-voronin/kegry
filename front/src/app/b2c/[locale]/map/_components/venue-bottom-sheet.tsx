@@ -24,6 +24,12 @@ import {
   ListFilter,
   X,
   Plus,
+  LocateFixed,
+  Eye,
+  Pencil,
+  Trash2,
+  UserPlus,
+  UserMinus,
 } from 'lucide-react';
 import { ListItem } from '@/components/ui/list-item';
 import { ModalMenu } from '@/components/ui/modal-menu';
@@ -905,6 +911,7 @@ export function VenueBottomSheet({
             {
               label: t('menu.center'),
               onClick: handleMenuCenter,
+              icon: <LocateFixed className="text-primary h-5 w-5" />,
             },
           ];
           if (menuTarget?.eventId) {
@@ -914,6 +921,7 @@ export function VenueBottomSheet({
                 router.push(PAGE_ROUTES.MEETUP_DETAIL(menuTarget.eventId!));
                 setMenuTarget(null);
               },
+              icon: <Eye className="text-primary h-5 w-5" />,
             });
             if (menuTarget.isCreator) {
               items.push({
@@ -922,6 +930,7 @@ export function VenueBottomSheet({
                   router.push(PAGE_ROUTES.MEETUP_EDIT(menuTarget.eventId!));
                   setMenuTarget(null);
                 },
+                icon: <Pencil className="text-primary h-5 w-5" />,
               });
               items.push({
                 label: t('menu.delete'),
@@ -930,13 +939,28 @@ export function VenueBottomSheet({
                   setIsDeleteDialogOpen(true);
                 },
                 isDestructive: true,
+                icon: <Trash2 className="text-destructive h-5 w-5" />,
               });
             } else {
               items.push({
                 label: menuTarget.isJoined ? t('menu.leave') : t('menu.join'),
                 onClick: handleMenuJoinLeave,
+                icon: menuTarget.isJoined ? (
+                  <UserMinus className="text-primary h-5 w-5" />
+                ) : (
+                  <UserPlus className="text-primary h-5 w-5" />
+                ),
               });
             }
+          } else if (menuTarget?.venue) {
+            items.push({
+              label: t('menu.view'),
+              onClick: () => {
+                router.push(PAGE_ROUTES.VENUE_DETAIL(menuTarget.venue!.id));
+                setMenuTarget(null);
+              },
+              icon: <Eye className="text-primary h-5 w-5" />,
+            });
           }
           return items;
         })()}

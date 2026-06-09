@@ -11,7 +11,7 @@ import { Button, ButtonVariant } from '@/components/ui/button';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { toast } from 'react-toastify';
-import { MapPin, Clock, Users, CheckCircle, Globe, Phone, Mail } from 'lucide-react';
+import { MapPin, Clock, Users, CheckCircle, Globe, Phone, Mail, Pencil, UserPlus, UserMinus } from 'lucide-react';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { useMeetupDetailStore } from './use-meetup-detail-store';
 import { calculateAge } from '@/lib/date';
@@ -358,6 +358,7 @@ export default function MeetupDetailPage() {
                     setIsMenuOpen(false);
                     handleEdit();
                   },
+                  icon: <Pencil size={24} />,
                 },
               ]
             : [
@@ -367,6 +368,11 @@ export default function MeetupDetailPage() {
                     setIsMenuOpen(false);
                     handleJoinLeave();
                   },
+                  icon: event.isJoined ? (
+                    <UserMinus size={24} />
+                  ) : (
+                    <UserPlus size={24} />
+                  ),
                 },
               ]),
         ]}
