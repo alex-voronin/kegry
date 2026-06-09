@@ -9,6 +9,7 @@ export enum ButtonVariant {
   Secondary = 'secondary',
   Destructive = 'destructive',
   Accent = 'accent',
+  Solid = 'solid',
 }
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -32,6 +33,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             [styles.variantSecondary]: variant === ButtonVariant.Secondary,
             [styles.variantDestructive]: variant === ButtonVariant.Destructive,
             [styles.variantAccent]: variant === ButtonVariant.Accent,
+            [styles.variantSolid]: variant === ButtonVariant.Solid,
           },
           className,
         )}

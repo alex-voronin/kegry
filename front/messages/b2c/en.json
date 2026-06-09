@@ -636,6 +636,7 @@
       "description": "Description",
       "participants": "Participants",
       "requiresApproval": "Approval required to join",
+      "noApprovalRequired": "No approval required to join",
       "contacts": "Contacts",
       "private": "Private",
       "hobbies": "Hobbies",

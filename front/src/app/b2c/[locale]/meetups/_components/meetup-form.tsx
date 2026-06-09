@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import { Camera, Plus, X, Users } from 'lucide-react';
 
 import { Toggle } from '@/components/ui/toggle';
+import { FormSegmentedControl } from '@/components/ui/form-segmented-control';
 import { ModalMenu } from '@/components/ui/modal-menu';
 
 import { Button, ButtonVariant } from '@/components/ui/button';
@@ -390,30 +391,15 @@ export function MeetupForm({
         )}
 
         {/* Mode toggle */}
-        <div className="flex overflow-hidden rounded-xl border border-white/10 bg-surface-dark sm:mx-4">
-          <button
-            type="button"
-            onClick={() => setIsSimple(true)}
-            className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
-              isSimple
-                ? 'border-r border-white/10 bg-white/15 text-white'
-                : 'text-white/50'
-            }`}
-          >
-            Simple
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsSimple(false)}
-            className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
-              !isSimple
-                ? 'border-l border-white/10 bg-white/15 text-white'
-                : 'text-white/50'
-            }`}
-          >
-            Advanced
-          </button>
-        </div>
+        <FormSegmentedControl
+          options={[
+            { value: 'simple', label: 'Simple' },
+            { value: 'advanced', label: 'Advanced' },
+          ]}
+          value={isSimple ? 'simple' : 'advanced'}
+          onChange={(v) => setIsSimple(v === 'simple')}
+          className="sm:mx-4"
+        />
 
         {/* Title */}
         <div className={`${stylesCommon.sectionContainer} px-0 sm:px-4`}>
@@ -465,35 +451,34 @@ export function MeetupForm({
         {isSimple && (
           <div className={`${stylesCommon.sectionContainer} px-0 sm:px-4`}>
             <FormSectionTitle>{t('participants')}</FormSectionTitle>
-            <div className="flex overflow-hidden rounded-xl border border-white/10 bg-surface-dark">
-              <button
-                type="button"
-                onClick={() => setParticipantMode('tete')}
-                className={`flex flex-1 items-center justify-center gap-2 py-3 text-sm font-medium transition-colors ${
-                  participantMode === 'tete'
-                    ? 'border-r border-white/10 bg-white/15 text-white'
-                    : 'text-white/50'
-                }`}
-              >
-                <Users size={16} />
-                Tête-à-tête
-              </button>
-              <button
-                type="button"
-                onClick={() => setParticipantMode('custom')}
-                className={`flex flex-1 items-center justify-center gap-1 py-3 text-sm font-medium transition-colors ${
-                  participantMode === 'custom'
-                    ? 'border-l border-white/10 bg-white/15 text-white'
-                    : 'text-white/50'
-                }`}
-              >
-                <span className="flex">
-                  <Users size={16} />
-                  <Users size={16} />
-                </span>
-                {t('group')}
-              </button>
-            </div>
+            <FormSegmentedControl
+              size="md"
+              options={[
+                {
+                  value: 'tete',
+                  label: (
+                    <>
+                      <Users size={16} />
+                      Tête-à-tête
+                    </>
+                  ),
+                },
+                {
+                  value: 'custom',
+                  label: (
+                    <>
+                      <span className="flex">
+                        <Users size={16} />
+                        <Users size={16} />
+                      </span>
+                      {t('group')}
+                    </>
+                  ),
+                },
+              ]}
+              value={participantMode}
+              onChange={(v) => setParticipantMode(v as 'tete' | 'custom')}
+            />
           </div>
         )}
 

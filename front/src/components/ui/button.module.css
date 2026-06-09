@@ -24,3 +24,7 @@
 .variantAccent {
   @apply bg-accent h-[36px] rounded-[4px] px-8 py-2 font-sans text-sm font-semibold text-black select-none hover:opacity-90 active:opacity-100;
 }
+
+.variantSolid {
+  @apply h-[40px] rounded-[16px] bg-form-active-element px-4 py-2 font-sans text-sm font-semibold text-white select-none hover:opacity-90 active:opacity-100;
+}

@@ -1,0 +1,33 @@
+@reference "../../app/globals.css";
+
+.container {
+  @apply flex overflow-hidden rounded-xl border border-white/10;
+}
+
+.option {
+  @apply flex flex-1 items-center justify-center gap-2 text-sm font-medium transition-colors;
+}
+
+.optionSm {
+  @apply py-2.5;
+}
+
+.optionMd {
+  @apply py-3;
+}
+
+.optionActive {
+  @apply bg-form-active-element text-white;
+}
+
+.optionInactive {
+  @apply text-white/50;
+}
+
+.borderRight {
+  @apply border-r border-white/10;
+}
+
+.borderLeft {
+  @apply border-l border-white/10;
+}

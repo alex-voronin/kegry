@@ -34,6 +34,7 @@ input[type='number']::-webkit-inner-spin-button {
   /* Interactive Colors */
   --color-hover: rgba(255, 255, 255, 0.1);
   --color-active: rgba(255, 255, 255, 0.1);
+  --color-form-active-element: #494949;
 }
 
 @theme inline {
@@ -50,6 +51,7 @@ input[type='number']::-webkit-inner-spin-button {
   --color-hover: var(--color-hover);
   --color-active: var(--color-active);
   --color-alert-vibrant: var(--color-alert-vibrant);
+  --color-form-active-element: var(--color-form-active-element);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-fundamento: var(--font-fundamento);
