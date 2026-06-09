@@ -1,0 +1,181 @@
+@reference "../../../../globals.css";
+
+.wrapper {
+  @apply relative flex min-h-screen flex-col overflow-hidden sm:rounded-[16px];
+}
+
+.coverContainer {
+  @apply relative h-[130px] w-full shrink-0 overflow-hidden;
+}
+
+.coverImage {
+  @apply absolute inset-0 h-full w-full object-cover;
+}
+
+.coverOverlay {
+  @apply absolute inset-0 bg-black/60;
+}
+
+.coverTitle {
+  @apply absolute inset-x-12 top-[20px] z-20 text-center;
+}
+
+.coverTitleText {
+  @apply line-clamp-2 text-xl font-bold text-white drop-shadow-lg;
+}
+
+.coverBottomOverlay {
+  @apply absolute inset-0 z-10 flex flex-col justify-end px-4 pb-4;
+}
+
+.coverInfoRow {
+  @apply flex items-center justify-between text-sm text-white/80 drop-shadow-md;
+}
+
+.coverInfoLeft {
+  @apply flex items-center gap-1.5;
+}
+
+.coverInfoRight {
+  @apply flex items-center gap-1;
+}
+
+.avatarSmall {
+  @apply h-5 w-5 shrink-0 overflow-hidden rounded-full border border-white/30;
+}
+
+.avatarSmallImg {
+  @apply h-full w-full object-cover;
+}
+
+.contentWrapper {
+  @apply -mt-10 flex flex-1 flex-col rounded-t-3xl pt-14;
+}
+
+.sectionList {
+  @apply flex flex-col gap-3 sm:px-4;
+}
+
+.sectionCard {
+  @apply bg-form-element sm:rounded-xl px-4 py-3;
+}
+
+.clickable {
+  @apply hover:bg-hover active:bg-active cursor-pointer;
+}
+
+.fieldIcon {
+  @apply shrink-0 text-secondary;
+}
+
+.fieldValue {
+  @apply text-sm text-primary;
+}
+
+.fieldValueSecondary {
+  @apply text-xs text-secondary;
+}
+
+.creatorSection {
+  @apply sm:rounded-xl px-4 py-3;
+}
+
+.creatorRow {
+  @apply flex items-center gap-3;
+}
+
+.creatorAvatar {
+  @apply h-10 w-10 shrink-0 overflow-hidden rounded-full border border-white/20;
+}
+
+.creatorAvatarImg {
+  @apply h-full w-full object-cover;
+}
+
+.creatorAvatarFallback {
+  @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm text-secondary;
+}
+
+.creatorName {
+  @apply text-sm text-primary;
+}
+
+.creatorAge {
+  @apply text-xs text-secondary;
+}
+
+.creatorHobbies {
+  @apply mt-2 flex flex-wrap gap-1;
+}
+
+.creatorHobbyTag {
+  @apply flex h-7 items-center rounded-full border border-primary px-2.5 text-xs;
+}
+
+.venueRow {
+  @apply bg-form-element sm:rounded-xl flex cursor-pointer items-center gap-3 px-4 py-3;
+}
+
+.venueName {
+  @apply text-sm text-primary;
+}
+
+.venueAddress {
+  @apply text-xs text-secondary;
+}
+
+.approvalRow {
+  @apply bg-form-element sm:rounded-xl flex items-center gap-3 px-4 py-3;
+}
+
+.sectionTitle {
+  @apply mb-2 block text-sm text-secondary;
+}
+
+.contactList {
+  @apply flex flex-col;
+}
+
+.contactItem {
+  @apply hover:bg-hover active:bg-active -mx-4 flex cursor-pointer items-center gap-2 px-4 py-1.5;
+}
+
+.contactIcon {
+  @apply text-secondary;
+}
+
+.contactValue {
+  @apply text-sm text-primary;
+}
+
+.hobbyTags {
+  @apply flex flex-wrap gap-1;
+}
+
+.hobbyTag {
+  @apply rounded-full border border-primary/10 bg-primary/5 px-2.5 py-0.5 text-xs text-secondary;
+}
+
+.footer {
+  @apply mt-8 flex justify-center;
+}
+
+.footerButton {
+  @apply w-full max-w-[200px];
+}
+
+.emptyState {
+  @apply flex h-screen flex-1 flex-col;
+}
+
+.emptyStateContent {
+  @apply flex flex-1 items-center justify-center text-sm text-white/50;
+}
+
+.loadingContainer {
+  @apply flex h-screen flex-1 flex-col;
+}
+
+.loadingSpinner {
+  @apply flex flex-1 items-center justify-center;
+}

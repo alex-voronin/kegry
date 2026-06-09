@@ -23,6 +23,14 @@ landing-stub/  Static fallback landing page
 - **Dev:** `make run-front` (runs `cd front && npm run dev`)
 - **Format:** `make format` — runs `eslint --fix` then `prettier --write` (single quotes, semicolons, prettier-plugin-tailwindcss)
 - **No frontend tests** — only lint/format validation
+- **Content sections pattern** (desktop vs mobile):
+  - Outer wrapper: `sm:px-4` (no horizontal padding on mobile, items go edge-to-edge)
+  - Item cards: `bg-form-element px-4 py-3 sm:rounded-xl` (rounded corners only on desktop)
+  - Clickable items: add `hover:bg-hover active:bg-active`
+  - Labels: `text-secondary text-sm`
+  - Values: `text-primary`
+  - Section titles: `text-secondary text-sm` with left margin
+  - Grouped items: wrap in `bg-form-element overflow-hidden sm:rounded-xl` container, child items separated by `border-b border-surface`
 
 ## Backend
 

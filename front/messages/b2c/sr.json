@@ -583,7 +583,8 @@
         "join": "Pridruži se",
         "leave": "Napusti",
         "edit": "Uredi",
-        "delete": "Obriši"
+        "delete": "Obriši",
+        "view": "Pogledaj"
       },
       "deleteMeetupDialog": {
         "title": "Da li si siguran da želiš da obrišeš ovaj susret?",
@@ -626,6 +627,25 @@
       "toast": {
         "linkCopied": "Link je kopiran"
       }
+    },
+    "meetupDetail": {
+      "createdBy": "od",
+      "you": "Tebe",
+      "dateTime": "Datum i vreme",
+      "venue": "Lokal",
+      "description": "Opis",
+      "participants": "Učesnici",
+      "requiresApproval": "Potrebno odobrenje za pridruživanje",
+      "contacts": "Kontakti",
+      "private": "Privatno",
+      "hobbies": "Interesovanja",
+      "age": "Godine",
+      "join": "Pridruži se",
+      "leave": "Napusti",
+      "joined": "Pridružen/a!",
+      "left": "Napustio/la!",
+      "actionFailed": "Akcija nije uspela",
+      "edit": "Uredi"
     }
   },
   "components": {
@@ -898,7 +918,11 @@
           "descriptionRequired": "Opis je obavezan",
           "descriptionMaxLength": "Opis mora imati najviše 2000 karaktera",
           "startDateTimeRequired": "Datum i vreme su obavezni",
-          "coverRequired": "Naslovna slika je obavezna"
+          "coverRequired": "Naslovna slika je obavezna",
+          "contactRequired": "Vrednost kontakta je obavezna",
+          "contactTelegramInvalid": "Neispravno Telegram korisničko ime",
+          "contactPhoneInvalid": "Neispravan broj telefona",
+          "contactEmailInvalid": "Neispravna email adresa"
         }
       }
     }

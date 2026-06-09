@@ -908,6 +908,13 @@ export function VenueBottomSheet({
             },
           ];
           if (menuTarget?.eventId) {
+            items.push({
+              label: t('menu.view'),
+              onClick: () => {
+                router.push(PAGE_ROUTES.MEETUP_DETAIL(menuTarget.eventId!));
+                setMenuTarget(null);
+              },
+            });
             if (menuTarget.isCreator) {
               items.push({
                 label: t('menu.edit'),

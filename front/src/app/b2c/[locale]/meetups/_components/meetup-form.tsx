@@ -118,6 +118,7 @@ export function MeetupForm({
   const [contacts, setContacts] = useState<EventContactForm[]>(
     initialValues?.contacts ?? [],
   );
+  const [contactErrors, setContactErrors] = useState<Record<string, string>>({});
   const [hobbyIds] = useState<string[]>(initialValues?.hobbyIds ?? []);
 
   const now = new Date();
@@ -193,6 +194,34 @@ export function MeetupForm({
     ]);
   };
 
+  const validateContact = (type: string, value: string): string | null => {
+    if (!value.trim()) return null;
+    switch (type) {
+      case 'Telegram':
+        if (!/^[a-zA-Z0-9_]{3,32}$/.test(value)) return t('validation.contactTelegramInvalid');
+        return null;
+      case 'WhatsApp':
+      case 'Viber':
+      case 'Phone':
+        if (!/^\+?\d{6,15}$/.test(value)) return t('validation.contactPhoneInvalid');
+        return null;
+      case 'Email':
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return t('validation.contactEmailInvalid');
+        return null;
+    }
+    return null;
+  };
+
+  const validateAllContacts = (): boolean => {
+    const errors: Record<string, string> = {};
+    for (const c of contacts) {
+      const err = validateContact(c.type, c.value);
+      if (err) errors[c.id] = err;
+    }
+    setContactErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const getContactPlaceholder = (type: string): string => {
     switch (type) {
       case 'Telegram':
@@ -234,6 +263,11 @@ export function MeetupForm({
       if (contact) {
         value = normalizeContactValue(contact.type, value);
       }
+      setContactErrors((prev) => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
     }
     setContacts((prev) =>
       prev.map((c) => (c.id === id ? { ...c, [field]: value } : c)),
@@ -247,6 +281,10 @@ export function MeetupForm({
   const onFormSubmit = async (values: MeetupFormValues) => {
     if (!isSimple && !coverBlob && !initialValues?.coverImageUrl) {
       toast.error(t('validation.coverRequired'));
+      return;
+    }
+
+    if (!validateAllContacts()) {
       return;
     }
 
@@ -532,6 +570,9 @@ export function MeetupForm({
                   placeholder={getContactPlaceholder(contact.type)}
                   className="bg-form-element placeholder:text-secondary h-[44px] w-full rounded-xl px-3 text-base outline-none"
                 />
+                {contactErrors[contact.id] && (
+                  <p className="text-xs text-error">{contactErrors[contact.id]}</p>
+                )}
                 <p className="text-[11px] leading-tight text-white/40">
                   {contact.isPublic
                     ? 'Any user on a platform can see this contact information'

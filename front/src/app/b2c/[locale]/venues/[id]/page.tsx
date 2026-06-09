@@ -160,11 +160,8 @@ export default function VenueDetailScreen() {
   const handleViewEvent = useCallback(() => {
     if (!selectedEventId) return;
     setIsEventMenuOpen(false);
-    const event = venueEvents.find((e) => e.id === selectedEventId);
-    if (event) {
-      router.push(`${PAGE_ROUTES.VENUE_DETAIL(event.venueId)}?tab=events`);
-    }
-  }, [selectedEventId, venueEvents, router]);
+    router.push(PAGE_ROUTES.MEETUP_DETAIL(selectedEventId));
+  }, [selectedEventId, router]);
 
   if ((isInitializing || isLoading) && currentVenue?.venue.id !== venueId) {
     return (
