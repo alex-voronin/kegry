@@ -5,7 +5,7 @@ import { useInView } from 'react-intersection-observer';
 import { useRouter } from '@/i18n/routing';
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
-import { Users, MoreHorizontal, CheckCircle } from 'lucide-react';
+import { Users, MoreHorizontal, CalendarCheck } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from '../venue-detail.module.css';
 import type { EventListItem } from '../../../map/_components/types';
@@ -135,7 +135,8 @@ export function EventsTab({
                   key={ev.id}
                   className={cn(
                     styles.eventCard,
-                    ev.isJoined && styles.eventCardJoined,
+                    ev.participationStatus === 'Approved' &&
+                      styles.eventCardJoined,
                   )}
                   onClick={(e) => onEventMenuOpen(ev.id, e)}
                 >
@@ -182,8 +183,8 @@ export function EventsTab({
                         </button>
                       )}
                       <span className="flex items-center gap-1">
-                        {ev.isJoined && (
-                          <CheckCircle size={12} className="text-accent" />
+                        {ev.participationStatus === 'Approved' && (
+                          <CalendarCheck size={12} className="text-accent" />
                         )}
                         <Users size={12} />
                         {ev.participantsCount}

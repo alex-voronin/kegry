@@ -129,18 +129,21 @@ export default function VenueDetailScreen() {
     safeBack(PAGE_ROUTES.VENUES);
   };
 
-  const handleEventMenuOpen = useCallback((eventId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setSelectedEventId(eventId);
-    setIsEventMenuOpen(true);
-  }, []);
+  const handleEventMenuOpen = useCallback(
+    (eventId: string, e: React.MouseEvent) => {
+      e.stopPropagation();
+      setSelectedEventId(eventId);
+      setIsEventMenuOpen(true);
+    },
+    [],
+  );
 
   const handleJoinEvent = useCallback(async () => {
     if (!selectedEventId) return;
     setIsEventMenuOpen(false);
     try {
       await apiClient.post(API_ENDPOINTS.EVENTS.JOIN(selectedEventId));
-      updateEventParticipation(selectedEventId, true);
+      updateEventParticipation(selectedEventId, 'Approved');
     } catch {
       toast.error('Failed to join event');
     }
@@ -151,7 +154,7 @@ export default function VenueDetailScreen() {
     setIsEventMenuOpen(false);
     try {
       await apiClient.post(API_ENDPOINTS.EVENTS.LEAVE(selectedEventId));
-      updateEventParticipation(selectedEventId, false);
+      updateEventParticipation(selectedEventId, undefined);
     } catch {
       toast.error('Failed to leave event');
     }
@@ -313,7 +316,9 @@ export default function VenueDetailScreen() {
               venueEvents={venueEvents}
               isEventsLoading={isEventsLoading}
               hasMoreEvents={hasMoreEvents}
-              onLoadMore={() => fetchVenueEventsStore(venueId, venueEvents.length)}
+              onLoadMore={() =>
+                fetchVenueEventsStore(venueId, venueEvents.length)
+              }
               onEventMenuOpen={handleEventMenuOpen}
               onEmpty={() => t('noVenueEvents')}
             />
@@ -369,13 +374,17 @@ export default function VenueDetailScreen() {
           const ev = venueEvents.find((e) => e.id === selectedEventId);
           return [
             {
-              label: ev?.isJoined ? 'Leave' : 'Join',
-              onClick: ev?.isJoined ? handleLeaveEvent : handleJoinEvent,
-              icon: ev?.isJoined ? (
-                <UserMinus size={24} />
-              ) : (
-                <UserPlus size={24} />
-              ),
+              label: ev?.participationStatus === 'Approved' ? 'Leave' : 'Join',
+              onClick:
+                ev?.participationStatus === 'Approved'
+                  ? handleLeaveEvent
+                  : handleJoinEvent,
+              icon:
+                ev?.participationStatus === 'Approved' ? (
+                  <UserMinus size={24} />
+                ) : (
+                  <UserPlus size={24} />
+                ),
             },
             {
               label: 'View',

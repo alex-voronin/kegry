@@ -54,21 +54,21 @@ public class B2CEventEndpoints : IEndpoints
             request.EventTypes, request.DateFrom, request.DateTo,
             request.VenueIds, 20, userId, ct);
 
-        EventMapItemDto MapEvent(EventWithIsJoined ewj)
+        EventMapItemDto MapEvent(EventWithParticipantStatus ewps)
         {
             return new EventMapItemDto(
-                Id: ewj.Event.Id.ToString(),
-                CoverImageUrl: ewj.Event.CoverImageS3Key != null
-                    ? storageService.S3KeyToPublicFileUrl(ewj.Event.CoverImageS3Key, ewj.Event.UpdatedAt)
+                Id: ewps.Event.Id.ToString(),
+                CoverImageUrl: ewps.Event.CoverImageS3Key != null
+                    ? storageService.S3KeyToPublicFileUrl(ewps.Event.CoverImageS3Key, ewps.Event.UpdatedAt)
                     : null,
-                Title: ewj.Event.Title,
-                Type: ewj.Event.Type,
-                StartDateTime: ewj.Event.StartDateTime,
-                VenueId: ewj.Event.VenueId.ToString(),
-                IsJoined: ewj.IsJoined,
-                CreatorId: ewj.Event.CreatorId.ToString(),
-                CreatorAvatarUrl: ewj.Event.CreatorAvatarS3Key != null
-                    ? storageService.S3KeyToPublicFileUrl(ewj.Event.CreatorAvatarS3Key, null)
+                Title: ewps.Event.Title,
+                Type: ewps.Event.Type,
+                StartDateTime: ewps.Event.StartDateTime,
+                VenueId: ewps.Event.VenueId.ToString(),
+                ParticipationStatus: ewps.Status?.ToString(),
+                CreatorId: ewps.Event.CreatorId.ToString(),
+                CreatorAvatarUrl: ewps.Event.CreatorAvatarS3Key != null
+                    ? storageService.S3KeyToPublicFileUrl(ewps.Event.CreatorAvatarS3Key, null)
                     : null);
         }
 
@@ -86,7 +86,8 @@ public class B2CEventEndpoints : IEndpoints
         ClaimsPrincipal user,
         IEventRepository eventRepository,
         IS3StorageService storageService,
-        CancellationToken ct)
+        [FromQuery] int participantsLimit = 50,
+        CancellationToken ct = default)
     {
         var ev = await eventRepository.GetByIdWithRelationsAsync(id, ct);
         if (ev == null)
@@ -94,10 +95,11 @@ public class B2CEventEndpoints : IEndpoints
 
         var userId = user.GetId();
         var isCreator = ev.CreatorId == userId;
-        var isJoined = ev.EventParticipants.Any(p => p.UserId == userId);
+        var participationStatus = ev.EventParticipants
+            .FirstOrDefault(p => p.UserId == userId)?.Status;
 
         var contacts = ev.EventContacts
-            .Where(c => c.IsPublic || isCreator || isJoined)
+            .Where(c => c.IsPublic || isCreator || participationStatus == ParticipantStatus.Approved)
             .Select(c => new EventContactDto(c.Id, c.Type, c.Value, c.IsPublic))
             .ToArray();
 
@@ -118,10 +120,17 @@ public class B2CEventEndpoints : IEndpoints
             IsVisibleOnMap: ev.IsVisibleOnMap,
             MaxParticipants: ev.MaxParticipants,
             RequiresApproval: ev.RequiresApproval,
-            ParticipantsCount: ev.EventParticipants.Count,
+            ParticipantsCount: ev.EventParticipants.Count(p => p.Status == ParticipantStatus.Approved),
+            PendingApprovalsCount: ev.EventParticipants.Count(p => p.Status == ParticipantStatus.Pending),
+            PendingParticipantIds: isCreator
+                ? ev.EventParticipants.Where(p => p.Status == ParticipantStatus.Pending).Select(p => p.UserId).Take(participantsLimit).ToArray()
+                : [],
+            ApprovedParticipantIds: isCreator
+                ? ev.EventParticipants.Where(p => p.Status == ParticipantStatus.Approved).Select(p => p.UserId).Take(participantsLimit).ToArray()
+                : [],
             Contacts: contacts,
             HobbyIds: ev.EventHobbyLinks.Select(h => h.HobbyId).ToArray(),
-            IsJoined: isJoined,
+            ParticipationStatus: participationStatus?.ToString(),
             IsCreator: isCreator);
 
         return ApiResult<EventDto>.Build(dto);
@@ -149,8 +158,8 @@ public class B2CEventEndpoints : IEndpoints
                 Title: e.Title,
                 Type: e.Type,
                 StartDateTime: e.StartDateTime,
-                ParticipantsCount: e.EventParticipants.Count,
-                IsJoined: e.EventParticipants.Any(p => p.UserId == userId),
+                ParticipantsCount: e.EventParticipants.Count(p => p.Status == ParticipantStatus.Approved),
+                ParticipationStatus: e.EventParticipants.Where(p => p.UserId == userId).Select(p => (ParticipantStatus?)p.Status).FirstOrDefault()?.ToString(),
                 CreatorId: e.CreatorId.ToString(),
                 CreatorAvatarUrl: e.CreatorAvatarS3Key != null
                     ? storageService.S3KeyToPublicFileUrl(e.CreatorAvatarS3Key, null)
@@ -200,7 +209,7 @@ public class B2CEventEndpoints : IEndpoints
         await eventRepository.AddAsync(ev, ct);
         await eventRepository.SaveChangesAsync(ct);
 
-        return await GetEvent(eventId, user, eventRepository, storageService, ct);
+        return await GetEvent(eventId, user, eventRepository, storageService, ct: ct);
     }
 
     private static async Task<ApiResult<EventDto>> UpdateEvent(
@@ -242,7 +251,7 @@ public class B2CEventEndpoints : IEndpoints
 
         await eventRepository.SaveChangesAsync(ct);
 
-        return await GetEvent(id, user, eventRepository, storageService, ct);
+        return await GetEvent(id, user, eventRepository, storageService, ct: ct);
     }
 
     private static async Task<ApiResult.EmptyResult> DeleteEvent(

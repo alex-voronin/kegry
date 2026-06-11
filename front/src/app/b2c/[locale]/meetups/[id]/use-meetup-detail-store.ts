@@ -25,10 +25,22 @@ export interface EventDetail {
   maxParticipants: number | null;
   requiresApproval: boolean;
   participantsCount: number;
+  pendingApprovalsCount: number;
+  pendingParticipantIds: string[];
+  approvedParticipantIds: string[];
   contacts: EventContact[];
   hobbyIds: string[];
-  isJoined: boolean;
+  participationStatus?: string;
   isCreator: boolean;
+}
+
+export interface PendingUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  avatarImageUrl: string | null;
+  birthday: string | null;
+  hobbies: { id: string; name: string }[];
 }
 
 export interface VenueInfo {
@@ -39,47 +51,39 @@ export interface VenueInfo {
 interface MeetupDetailState {
   event: EventDetail | null;
   venue: VenueInfo | null;
-  creatorName: string | null;
-  creatorHobbies: string[];
-  creatorBirthday: string | null;
+  pendingUsers: PendingUser[];
+  approvedUsers: PendingUser[];
   isLoading: boolean;
   isJoining: boolean;
   fetchEvent: (eventId: string) => Promise<void>;
   joinEvent: (eventId: string) => Promise<void>;
   leaveEvent: (eventId: string) => Promise<void>;
+  fetchPendingUsers: (eventId: string) => Promise<void>;
+  fetchApprovedUsers: (eventId: string, extraIds?: string[]) => Promise<void>;
   reset: () => void;
 }
 
 export const useMeetupDetailStore = create<MeetupDetailState>()(
-  devtools((set) => ({
+  devtools((set, get) => ({
     event: null,
     venue: null,
-    creatorName: null,
-    creatorHobbies: [],
-    creatorBirthday: null,
+    pendingUsers: [],
+    approvedUsers: [],
     isLoading: false,
     isJoining: false,
 
     fetchEvent: async (eventId: string) => {
       set({ isLoading: true });
       try {
-        const eventRes = await apiClient.get(API_ENDPOINTS.EVENTS.UPDATE(eventId));
+        const eventRes = await apiClient.get(
+          API_ENDPOINTS.EVENTS.UPDATE(eventId),
+        );
         const ev = eventRes.data.result as EventDetail;
         set({ event: ev });
 
-        const [venueRes] = await Promise.all([
-          apiClient.get(API_ENDPOINTS.VENUES.DETAILS(ev.venueId)),
-          ev.type === 'Meetup'
-            ? apiClient.get(API_ENDPOINTS.USER_PROFILE.PROFILE + '/' + ev.creatorId).then(r => {
-                const p = r.data.result.userProfile;
-                set({
-                  creatorName: p.firstName + ' ' + p.lastName,
-                  creatorHobbies: (p.hobbies ?? []).map((h: { id: string; name: string }) => h.name),
-                  creatorBirthday: p.birthday ?? null,
-                });
-              }).catch(() => {})
-            : Promise.resolve(),
-        ]);
+        const venueRes = await apiClient.get(
+          API_ENDPOINTS.VENUES.DETAILS(ev.venueId),
+        );
         const venueData = venueRes.data.result;
         set({
           venue: {
@@ -98,12 +102,10 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
       set({ isJoining: true });
       try {
         await apiClient.post(API_ENDPOINTS.EVENTS.JOIN(eventId));
-        set((state) => ({
-          event: state.event
-            ? { ...state.event, isJoined: true, participantsCount: state.event.participantsCount + 1 }
-            : null,
-          isJoining: false,
-        }));
+        const eventRes = await apiClient.get(
+          API_ENDPOINTS.EVENTS.UPDATE(eventId),
+        );
+        set({ event: eventRes.data.result as EventDetail, isJoining: false });
       } catch {
         set({ isJoining: false });
         throw new Error('Failed to join');
@@ -116,7 +118,14 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
         await apiClient.post(API_ENDPOINTS.EVENTS.LEAVE(eventId));
         set((state) => ({
           event: state.event
-            ? { ...state.event, isJoined: false, participantsCount: state.event.participantsCount - 1 }
+            ? {
+                ...state.event,
+                participationStatus: undefined,
+                participantsCount: Math.max(
+                  0,
+                  state.event.participantsCount - 1,
+                ),
+              }
             : null,
           isJoining: false,
         }));
@@ -126,13 +135,47 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
       }
     },
 
+    fetchPendingUsers: async (eventId: string) => {
+      const { event } = get();
+      if (!event?.pendingParticipantIds?.length) {
+        set({ pendingUsers: [] });
+        return;
+      }
+      try {
+        const res = await apiClient.post(
+          API_ENDPOINTS.USER_PROFILE.PROFILES_BATCH,
+          event.pendingParticipantIds,
+        );
+        set({ pendingUsers: (res.data.result ?? []) as PendingUser[] });
+      } catch {
+        set({ pendingUsers: [] });
+      }
+    },
+
+    fetchApprovedUsers: async (eventId: string, extraIds?: string[]) => {
+      const { event } = get();
+      const ids = [...(event?.approvedParticipantIds ?? []), ...(extraIds ?? [])];
+      if (!ids.length) {
+        set({ approvedUsers: [] });
+        return;
+      }
+      try {
+        const res = await apiClient.post(
+          API_ENDPOINTS.USER_PROFILE.PROFILES_BATCH,
+          ids,
+        );
+        set({ approvedUsers: (res.data.result ?? []) as PendingUser[] });
+      } catch {
+        set({ approvedUsers: [] });
+      }
+    },
+
     reset: () =>
       set({
         event: null,
         venue: null,
-        creatorName: null,
-        creatorHobbies: [],
-        creatorBirthday: null,
+        pendingUsers: [],
+        approvedUsers: [],
         isLoading: false,
         isJoining: false,
       }),

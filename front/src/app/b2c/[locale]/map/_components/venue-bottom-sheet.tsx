@@ -19,7 +19,8 @@ import { ModalDialog } from '@/components/ui/modal-dialog';
 import {
   ChevronDown,
   MoreHorizontal,
-  CheckCircle,
+  CalendarCheck,
+  Clock,
   Search,
   ListFilter,
   X,
@@ -88,7 +89,7 @@ export function VenueBottomSheet({
     lng: number;
     venue?: VenueMapItem;
     eventId?: string;
-    isJoined?: boolean;
+    participationStatus?: string;
     isCreator?: boolean;
   } | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -394,7 +395,7 @@ export function VenueBottomSheet({
 
   const handleMenuJoinLeave = useCallback(() => {
     if (!menuTarget || !menuTarget.eventId) return;
-    if (menuTarget.isJoined) {
+    if (menuTarget.participationStatus === 'Approved') {
       onLeaveEvent?.(menuTarget.eventId);
     } else {
       onJoinEvent?.(menuTarget.eventId);
@@ -652,7 +653,7 @@ export function VenueBottomSheet({
                   return (
                     <div
                       key={event.id}
-                      className={`${styles.eventCard} ${styles.eventCardCollapsed} ${event.isJoined ? styles.eventCardJoined : ''}`}
+                      className={`${styles.eventCard} ${styles.eventCardCollapsed} ${event.participationStatus === 'Approved' ? styles.eventCardJoined : ''}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleEventClick(event.id);
@@ -678,8 +679,14 @@ export function VenueBottomSheet({
                             {formattedDate} {formattedTime}
                           </div>
                           <div className={styles.eventCardTitle}>
-                            {event.isJoined && (
-                              <CheckCircle
+                            {event.participationStatus === 'Approved' && (
+                              <CalendarCheck
+                                size={14}
+                                className="text-accent shrink-0"
+                              />
+                            )}
+                            {event.participationStatus === 'Pending' && (
+                              <Clock
                                 size={14}
                                 className="text-accent shrink-0"
                               />
@@ -694,7 +701,9 @@ export function VenueBottomSheet({
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              router.push(PAGE_ROUTES.USER_PROFILE(event.creatorId));
+                              router.push(
+                                PAGE_ROUTES.USER_PROFILE(event.creatorId),
+                              );
                             }}
                             className="h-7 w-7 shrink-0 overflow-hidden rounded-full border border-white/20"
                           >
@@ -712,7 +721,7 @@ export function VenueBottomSheet({
                               lat: v?.latitude ?? 0,
                               lng: v?.longitude ?? 0,
                               eventId: event.id,
-                              isJoined: event.isJoined,
+                              participationStatus: event.participationStatus,
                               isCreator: event.creatorId === currentUserId,
                             });
                           }}
@@ -824,7 +833,7 @@ export function VenueBottomSheet({
                     return (
                       <div
                         key={event.id}
-                        className={`${styles.eventCard} ${styles.eventCardNested} ${event.isJoined ? styles.eventCardJoined : ''}`}
+                        className={`${styles.eventCard} ${styles.eventCardNested} ${event.participationStatus === 'Approved' ? styles.eventCardJoined : ''}`}
                         onClick={() => handleEventClick(event.id)}
                       >
                         {event.coverImageUrl ? (
@@ -847,8 +856,14 @@ export function VenueBottomSheet({
                               {formattedDate} {formattedTime}
                             </div>
                             <div className={styles.eventCardTitle}>
-                              {event.isJoined && (
-                                <CheckCircle
+                              {event.participationStatus === 'Approved' && (
+                                <CalendarCheck
+                                  size={14}
+                                  className="text-accent shrink-0"
+                                />
+                              )}
+                              {event.participationStatus === 'Pending' && (
+                                <Clock
                                   size={14}
                                   className="text-accent shrink-0"
                                 />
@@ -858,22 +873,25 @@ export function VenueBottomSheet({
                               </span>
                             </div>
                           </div>
-                          {event.type === 'Meetup' && event.creatorAvatarUrl && (
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                router.push(PAGE_ROUTES.USER_PROFILE(event.creatorId));
-                              }}
-                              className="h-7 w-7 shrink-0 overflow-hidden rounded-full border border-white/20"
-                            >
-                              <img
-                                src={event.creatorAvatarUrl}
-                                alt=""
-                                className="h-full w-full object-cover"
-                              />
-                            </button>
-                          )}
+                          {event.type === 'Meetup' &&
+                            event.creatorAvatarUrl && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  router.push(
+                                    PAGE_ROUTES.USER_PROFILE(event.creatorId),
+                                  );
+                                }}
+                                className="h-7 w-7 shrink-0 overflow-hidden rounded-full border border-white/20"
+                              >
+                                <img
+                                  src={event.creatorAvatarUrl}
+                                  alt=""
+                                  className="h-full w-full object-cover"
+                                />
+                              </button>
+                            )}
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -881,7 +899,7 @@ export function VenueBottomSheet({
                                 lat: venue.latitude,
                                 lng: venue.longitude,
                                 eventId: event.id,
-                                isJoined: event.isJoined,
+                                participationStatus: event.participationStatus,
                                 isCreator: event.creatorId === currentUserId,
                               });
                             }}
@@ -942,15 +960,28 @@ export function VenueBottomSheet({
                 icon: <Trash2 className="text-destructive h-5 w-5" />,
               });
             } else {
-              items.push({
-                label: menuTarget.isJoined ? t('menu.leave') : t('menu.join'),
-                onClick: handleMenuJoinLeave,
-                icon: menuTarget.isJoined ? (
-                  <UserMinus className="text-primary h-5 w-5" />
-                ) : (
-                  <UserPlus className="text-primary h-5 w-5" />
-                ),
-              });
+              if (menuTarget.participationStatus === 'Pending') {
+                items.push({
+                  label: t('menu.cancelRequest'),
+                  onClick: () => {
+                    onLeaveEvent?.(menuTarget.eventId!);
+                    setMenuTarget(null);
+                  },
+                  icon: <UserMinus className="text-primary h-5 w-5" />,
+                });
+              } else if (menuTarget.participationStatus === 'Approved') {
+                items.push({
+                  label: t('menu.leave'),
+                  onClick: handleMenuJoinLeave,
+                  icon: <UserMinus className="text-primary h-5 w-5" />,
+                });
+              } else {
+                items.push({
+                  label: t('menu.join'),
+                  onClick: handleMenuJoinLeave,
+                  icon: <UserPlus className="text-primary h-5 w-5" />,
+                });
+              }
             }
           } else if (menuTarget?.venue) {
             items.push({

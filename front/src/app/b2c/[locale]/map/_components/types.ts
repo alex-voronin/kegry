@@ -5,7 +5,7 @@ export interface EventMapItem {
   type: 'Event' | 'Meetup';
   startDateTime: string;
   venueId: string;
-  isJoined: boolean;
+  participationStatus?: string;
   creatorId: string;
   creatorAvatarUrl?: string | null;
 }
@@ -26,7 +26,7 @@ export interface EventListItem {
   startDateTime: string;
   venueId: string;
   participantsCount: number;
-  isJoined: boolean;
+  participationStatus?: string;
   creatorId: string;
   creatorAvatarUrl?: string | null;
 }

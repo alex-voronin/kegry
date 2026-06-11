@@ -69,7 +69,7 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
 
         var pagedIds = await venueJoinQuery
             .Select(x => new
-            { x.e.Id, Distance = EF.Functions.Distance(x.v.Coordinates, userPoint, useSpheroid: false) })
+                { x.e.Id, Distance = EF.Functions.Distance(x.v.Coordinates, userPoint, useSpheroid: false) })
             .OrderBy(x => x.Distance)
             .Skip(offset)
             .Take(limit)
@@ -120,7 +120,7 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
         return (events, totalCount);
     }
 
-    public async Task<List<(Guid VenueId, int TotalCount, EventWithIsJoined[] Events)>> GetEventsInBoundsAsync(
+    public async Task<List<(Guid VenueId, int TotalCount, EventWithParticipantStatus[] Events)>> GetEventsInBoundsAsync(
         double minLat,
         double maxLat,
         double minLng,
@@ -175,12 +175,12 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
             .ToArrayAsync(ct);
 
         var allEventIds = allData.Select(e => e.Id).ToArray();
-        var joinedEventIds = currentUserId.HasValue
+        var participationStatusMap = currentUserId.HasValue
             ? await Context.EventParticipants
                 .Where(ep => ep.UserId == currentUserId.Value && allEventIds.Contains(ep.EventId))
-                .Select(ep => ep.EventId)
-                .ToHashSetAsync(ct)
-            : new HashSet<Guid>();
+                .Select(ep => new { ep.EventId, ep.Status })
+                .ToDictionaryAsync(ep => ep.EventId, ep => ep.Status, ct)
+            : new Dictionary<Guid, ParticipantStatus>();
 
         var result = allData
             .GroupBy(e => e.VenueId)
@@ -189,7 +189,12 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
                 TotalCount: venueCounts.GetValueOrDefault(g.Key),
                 Events: g
                     .OrderBy(e => e.StartDateTime)
-                    .Select(e => new EventWithIsJoined(e, joinedEventIds.Contains(e.Id)))
+                    .Select(e =>
+                        new EventWithParticipantStatus(e,
+                            participationStatusMap.ContainsKey(e.Id)
+                                ? participationStatusMap.GetValueOrDefault(e.Id)
+                                : null)
+                    )
                     .ToArray()
             ))
             .ToList();

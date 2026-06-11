@@ -87,7 +87,9 @@ export default function MapScreen() {
     [selectedCity?.latitude, selectedCity?.longitude],
   );
 
-  const [enabledEventTypes, setEnabledEventTypes] = useState<('Event' | 'Meetup')[]>(['Event', 'Meetup']);
+  const [enabledEventTypes, setEnabledEventTypes] = useState<
+    ('Event' | 'Meetup')[]
+  >(['Event', 'Meetup']);
   const toggleEventType = useCallback((type: 'Event' | 'Meetup') => {
     setEnabledEventTypes((prev) =>
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
@@ -106,7 +108,12 @@ export default function MapScreen() {
     }) => {
       if (Date.now() < focusSuppressUntilRef.current) return;
       currentBoundsRef.current = bounds;
-      const boundsKey = await fetchMapData(bounds, searchQuery, selectedTagIds, enabledEventTypes);
+      const boundsKey = await fetchMapData(
+        bounds,
+        searchQuery,
+        selectedTagIds,
+        enabledEventTypes,
+      );
       if (boundsKey !== null) lastBoundsRef.current = boundsKey;
     },
     [fetchMapData, searchQuery, selectedTagIds, enabledEventTypes],
@@ -116,7 +123,12 @@ export default function MapScreen() {
     if (currentBoundsRef.current) {
       lastBoundsRef.current = null;
       const bounds = currentBoundsRef.current;
-      fetchMapDataRef.current(bounds, searchQuery, selectedTagIds, enabledEventTypes);
+      fetchMapDataRef.current(
+        bounds,
+        searchQuery,
+        selectedTagIds,
+        enabledEventTypes,
+      );
     }
   }, [searchQuery, selectedTagIds, enabledEventTypes]);
 
@@ -133,36 +145,62 @@ export default function MapScreen() {
     return counts;
   }, [venueEvents]);
 
-  const handleFlyTo = useCallback((lat: number, lng: number, venue?: VenueMapItem) => {
-    focusSuppressUntilRef.current = Date.now() + 4000;
-    if (venue) {
-      setFocusedVenue(null);
-      requestAnimationFrame(() => setFocusedVenue(venue));
-    }
-  }, [setFocusedVenue]);
+  const handleFlyTo = useCallback(
+    (lat: number, lng: number, venue?: VenueMapItem) => {
+      focusSuppressUntilRef.current = Date.now() + 4000;
+      if (venue) {
+        setFocusedVenue(null);
+        requestAnimationFrame(() => setFocusedVenue(venue));
+      }
+    },
+    [setFocusedVenue],
+  );
 
-  const handleCenter = useCallback((lat: number, lng: number, venue?: VenueMapItem) => {
-    focusSuppressUntilRef.current = Date.now() + 2000;
-    flyTo(lat, lng, venue);
-  }, [flyTo]);
+  const handleCenter = useCallback(
+    (lat: number, lng: number, venue?: VenueMapItem) => {
+      focusSuppressUntilRef.current = Date.now() + 2000;
+      flyTo(lat, lng, venue);
+    },
+    [flyTo],
+  );
 
-  const handleJoinEvent = useCallback(async (eventId: string) => {
-    try {
-      await apiClient.post(API_ENDPOINTS.EVENTS.JOIN(eventId));
-      updateEventParticipation(eventId, true);
-    } catch {
-      toast.error('Failed to join event');
-    }
-  }, [updateEventParticipation]);
+  const handleJoinEvent = useCallback(
+    async (eventId: string) => {
+      try {
+        await apiClient.post(API_ENDPOINTS.EVENTS.JOIN(eventId));
+        if (currentBoundsRef.current) {
+          await fetchMapData(
+            currentBoundsRef.current,
+            searchQuery,
+            selectedTagIds,
+            enabledEventTypes,
+          );
+        }
+      } catch {
+        toast.error('Failed to join event');
+      }
+    },
+    [fetchMapData, searchQuery, selectedTagIds, enabledEventTypes],
+  );
 
-  const handleLeaveEvent = useCallback(async (eventId: string) => {
-    try {
-      await apiClient.post(API_ENDPOINTS.EVENTS.LEAVE(eventId));
-      updateEventParticipation(eventId, false);
-    } catch {
-      toast.error('Failed to leave event');
-    }
-  }, [updateEventParticipation]);
+  const handleLeaveEvent = useCallback(
+    async (eventId: string) => {
+      try {
+        await apiClient.post(API_ENDPOINTS.EVENTS.LEAVE(eventId));
+        if (currentBoundsRef.current) {
+          await fetchMapData(
+            currentBoundsRef.current,
+            searchQuery,
+            selectedTagIds,
+            enabledEventTypes,
+          );
+        }
+      } catch {
+        toast.error('Failed to leave event');
+      }
+    },
+    [fetchMapData, searchQuery, selectedTagIds, enabledEventTypes],
+  );
 
   const handleDeleteEvent = useCallback(
     async (eventId: string) => {
@@ -216,7 +254,9 @@ export default function MapScreen() {
     [router],
   );
 
-  const [sheetState, setSheetState] = useState<'collapsed' | 'expanded'>('collapsed');
+  const [sheetState, setSheetState] = useState<'collapsed' | 'expanded'>(
+    'collapsed',
+  );
 
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isFirstCheckInDialogOpen, setIsFirstCheckInDialogOpen] =

@@ -13,6 +13,8 @@ export const PAGE_ROUTES = {
     venueId ? `/meetups/create?venueId=${venueId}` : '/meetups/create',
   MEETUP_EDIT: (eventId: string) => `/meetups/edit?eventId=${eventId}`,
   MEETUP_DETAIL: (id: string) => `/meetups/${id}`,
+  APPROVALS: (eventId: string) => `/meetups/${eventId}/approvals`,
+  PARTICIPANTS: (eventId: string) => `/meetups/${eventId}/participants`,
   VENUES: '/venues',
   VENUES_MAP: '/venues/map',
   VENUE_DETAIL: (id: string) => `/venues/${id}`,
@@ -70,7 +72,7 @@ export const PAGE_ROUTES = {
     VENUES_DETAILS_ADVANCED: (venueId: string) => `/venues/${venueId}/advanced`,
     EVENTS: '/events',
     EVENTS_CREATE: (venueId?: string) =>
-        venueId ? `/events/create?venueId=${venueId}` : '/events/create',
+      venueId ? `/events/create?venueId=${venueId}` : '/events/create',
     EVENTS_DETAIL: (id: string) => `/events/${id}`,
     EVENTS_EDIT: (id: string) => `/events/${id}/edit`,
     DASHBOARD: '/dashboard',
@@ -97,6 +99,7 @@ export const API_ENDPOINTS = {
     PRIVACY: '/api/v1/user-profile/privacy',
     AVATAR_UPLOAD_URL: '/api/v1/user-profile/avatar/upload-url',
     COVER_UPLOAD_URL: '/api/v1/user-profile/cover/upload-url',
+    PROFILES_BATCH: '/api/v1/user-profiles',
   },
   HOBBIES: {
     LIST: '/api/v1/hobby',
@@ -172,7 +175,8 @@ export const API_ENDPOINTS = {
     EVENTS: {
       BASE: '/api/v1/b2b/events',
       DETAILS: (id: string) => `/api/v1/b2b/event/${id}`,
-      COVER_UPLOAD_URL: (id: string) => `/api/v1/b2b/event/${id}/cover/upload-url`,
+      COVER_UPLOAD_URL: (id: string) =>
+        `/api/v1/b2b/event/${id}/cover/upload-url`,
       PARTICIPANTS: (id: string) => `/api/v1/b2b/event/${id}/participants`,
     },
   },
@@ -185,6 +189,11 @@ export const API_ENDPOINTS = {
     JOIN: (id: string) => `/api/v1/events/${id}/join`,
     LEAVE: (id: string) => `/api/v1/events/${id}/leave`,
     COVER_UPLOAD_URL: (id: string) => `/api/v1/events/${id}/cover/upload-url`,
+    PARTICIPANTS: (id: string) => `/api/v1/events/${id}/participants`,
+    APPROVE_PARTICIPANT: (eventId: string, userId: string) =>
+      `/api/v1/events/${eventId}/participants/${userId}/approve`,
+    REJECT_PARTICIPANT: (eventId: string, userId: string) =>
+      `/api/v1/events/${eventId}/participants/${userId}/reject`,
   },
   VENUES: {
     LIST: '/api/v1/venues',

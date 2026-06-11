@@ -33,6 +33,7 @@ public class UserProfileEndpoints : IEndpoints
         // and it helps avoid caching at the browser and CDN levels.
         apiGroup.MapPost("/api/v1/user-profile/avatar/upload-url", GetAvatarUploadUrl);
         apiGroup.MapPost("/api/v1/user-profile/cover/upload-url", GetCoverUploadUrl);
+        apiGroup.MapPost("/api/v1/user-profiles", GetUserProfilesBatch);
     }
 
     private static async Task<ApiResult.EmptyResult> CreateUserProfile(
@@ -164,6 +165,37 @@ public class UserProfileEndpoints : IEndpoints
         );
 
         return ApiResult<GetUserProfileResponse>.Build(new GetUserProfileResponse(dto));
+    }
+
+    private static async Task<ApiResult<UserProfileDto[]>> GetUserProfilesBatch(
+        [FromBody] Guid[] ids,
+        IUserRepository repository,
+        IS3StorageService storageService,
+        CancellationToken ct)
+    {
+        var users = await repository.GetUsersByIdsAsync(ids, ct);
+
+        var dtos = users.Select(u => new UserProfileDto(
+            Id: u.Id.ToString(),
+            IsPublic: u.IsPublic,
+            FirstName: u.FirstName,
+            LastName: u.LastName,
+            Bio: u.Bio,
+            AvatarImageUrl: u.AvatarImageS3Key != null
+                ? storageService.S3KeyToPublicFileUrl(u.AvatarImageS3Key, u.UpdatedAt)
+                : null,
+            CoverImageUrl: u.CoverImageS3Key != null
+                ? storageService.S3KeyToPublicFileUrl(u.CoverImageS3Key, u.UpdatedAt)
+                : null,
+            Birthday: u.Birthday,
+            Gender: u.Gender,
+            Hobbies: u.Hobbies
+                .OrderBy(h => h.Name)
+                .Select(h => new HobbyDto(Id: h.Id, Name: h.Name))
+                .ToArray()
+        )).ToArray();
+
+        return ApiResult<UserProfileDto[]>.Build(dtos);
     }
 
     private static async Task<ApiResult.EmptyResult> UpdatePrivacy(

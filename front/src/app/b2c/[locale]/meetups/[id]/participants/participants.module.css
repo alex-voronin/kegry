@@ -1,0 +1,29 @@
+@reference "../../../../../globals.css";
+
+.card {
+  @apply bg-form-element overflow-hidden sm:rounded-xl;
+}
+
+.cardItem {
+  @apply border-surface border-b;
+}
+
+.cardItemLast {
+  @apply border-b-0;
+}
+
+.emptyState {
+  @apply bg-form-element overflow-hidden sm:rounded-xl;
+}
+
+.emptyStateInner {
+  @apply flex items-center gap-3 px-4 py-3;
+}
+
+.emptyStateIcon {
+  @apply text-accent shrink-0;
+}
+
+.emptyStateText {
+  @apply text-primary text-sm;
+}

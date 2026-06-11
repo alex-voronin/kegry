@@ -1,0 +1,41 @@
+@reference "../../../../globals.css";
+
+.root {
+  @apply bg-form-element px-4 py-3;
+}
+
+.rootClickable {
+  @apply cursor-pointer hover:bg-hover active:bg-active;
+}
+
+.row {
+  @apply flex items-center gap-3;
+}
+
+.avatar {
+  @apply h-10 w-10 shrink-0 rounded-full object-cover;
+}
+
+.avatarFallback {
+  @apply bg-hover flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-medium;
+}
+
+.nameArea {
+  @apply min-w-0 flex-1;
+}
+
+.name {
+  @apply text-primary truncate text-sm font-medium;
+}
+
+.actions {
+  @apply flex shrink-0 gap-2;
+}
+
+.hobbies {
+  @apply mt-2 flex flex-wrap gap-1;
+}
+
+.hobbyTag {
+  @apply border-primary flex h-7 items-center rounded-full border px-2.5 text-xs;
+}

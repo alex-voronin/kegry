@@ -26,7 +26,10 @@ interface MapState {
   flyTo: (lat: number, lng: number, venue?: VenueMapItem | null) => void;
   setFocusedVenue: (venue: VenueMapItem | null) => void;
   clearFocus: () => void;
-  updateEventParticipation: (eventId: string, isJoined: boolean) => void;
+  updateEventParticipation: (
+    eventId: string,
+    participationStatus: string | undefined,
+  ) => void;
   deleteEvent: (eventId: string) => void;
 }
 
@@ -53,18 +56,36 @@ export const useMapStore = create<MapState>()(
 
       set({ isLoading: true });
       try {
-        const venueParams: Record<string, string | number | boolean | (string | number | boolean)[] | undefined | null> = { ...bounds };
-        if (selectedTagIds?.length) venueParams['Filter.TagIds'] = selectedTagIds;
+        const venueParams: Record<
+          string,
+          | string
+          | number
+          | boolean
+          | (string | number | boolean)[]
+          | undefined
+          | null
+        > = { ...bounds };
+        if (selectedTagIds?.length)
+          venueParams['Filter.TagIds'] = selectedTagIds;
         if (searchQuery) venueParams['Filter.CompanyName'] = searchQuery;
 
         if (hasFilters) {
-          const venuesRes = await apiClient.get(API_ENDPOINTS.VENUES.MAP, paramsForReq(venueParams));
+          const venuesRes = await apiClient.get(
+            API_ENDPOINTS.VENUES.MAP,
+            paramsForReq(venueParams),
+          );
           const venues: VenueMapItem[] = venuesRes.data.result;
           eventsBody.venueIds = venues.map((v) => v.id);
 
-          const eventsRes = await apiClient.post(API_ENDPOINTS.EVENTS.MAP, eventsBody);
+          const eventsRes = await apiClient.post(
+            API_ENDPOINTS.EVENTS.MAP,
+            eventsBody,
+          );
 
-          set({ venues, venueEvents: eventsRes.data.result as VenueEventsDto[] });
+          set({
+            venues,
+            venueEvents: eventsRes.data.result as VenueEventsDto[],
+          });
         } else {
           const [venuesRes, eventsRes] = await Promise.all([
             apiClient.get(API_ENDPOINTS.VENUES.MAP, paramsForReq(venueParams)),
@@ -93,12 +114,15 @@ export const useMapStore = create<MapState>()(
     setFocusedVenue: (venue) => set({ focusedVenue: venue }),
     clearFocus: () => set({ focusedVenue: null }),
 
-    updateEventParticipation: (eventId: string, isJoined: boolean) => {
+    updateEventParticipation: (
+      eventId: string,
+      participationStatus: string | undefined,
+    ) => {
       set((state) => ({
         venueEvents: state.venueEvents.map((v) => ({
           ...v,
           events: v.events.map((e) =>
-            e.id === eventId ? { ...e, isJoined } : e,
+            e.id === eventId ? { ...e, participationStatus } : e,
           ),
         })),
       }));

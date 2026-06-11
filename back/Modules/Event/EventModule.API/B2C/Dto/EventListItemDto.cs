@@ -10,6 +10,6 @@ public record EventListItemDto(
     EventType Type,
     DateTimeOffset StartDateTime,
     int ParticipantsCount,
-    bool IsJoined,
+    string? ParticipationStatus,
     string CreatorId,
     string? CreatorAvatarUrl);

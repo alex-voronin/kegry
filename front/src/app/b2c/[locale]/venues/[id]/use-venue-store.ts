@@ -67,7 +67,10 @@ interface VenueState {
   isEventsLoading: boolean;
   fetchVenue: (id: string) => Promise<void>;
   fetchVenueEvents: (venueId: string, offset: number) => Promise<void>;
-  updateEventParticipation: (eventId: string, isJoined: boolean) => void;
+  updateEventParticipation: (
+    eventId: string,
+    participationStatus: string | undefined,
+  ) => void;
   reset: () => void;
 }
 
@@ -118,16 +121,20 @@ export const useVenueStore = create<VenueState>()(
       }
     },
 
-    updateEventParticipation: (eventId: string, isJoined: boolean) => {
+    updateEventParticipation: (
+      eventId: string,
+      participationStatus: string | undefined,
+    ) => {
       set((state) => ({
         venueEvents: state.venueEvents.map((e) =>
           e.id === eventId
             ? {
                 ...e,
-                isJoined,
+                participationStatus,
                 participantsCount: Math.max(
                   0,
-                  e.participantsCount + (isJoined ? 1 : -1),
+                  e.participantsCount +
+                    (participationStatus === 'Approved' ? 1 : -1),
                 ),
               }
             : e,

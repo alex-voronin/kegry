@@ -582,6 +582,7 @@
         "center": "Center",
         "join": "Join",
         "leave": "Leave",
+        "cancelRequest": "Cancel request",
         "edit": "Edit",
         "delete": "Delete",
         "view": "View"
@@ -646,7 +647,28 @@
       "joined": "Joined!",
       "left": "Left!",
       "actionFailed": "Action failed",
-      "edit": "Edit"
+      "edit": "Edit",
+      "awaitingApproval": "Awaiting approval",
+      "cancelRequest": "Cancel request",
+      "pendingApprovals": "Pending approvals"
+    },
+    "participants": {
+      "title": "Participants",
+      "rejected": "Rejected",
+      "actionFailed": "Action failed",
+      "noParticipants": "No approved participants",
+      "allProcessed": "All participants"
+    },
+    "approvals": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "noPending": "No pending approvals",
+      "approvedLabel": "Approved",
+      "rejectedLabel": "Rejected",
+      "actionFailed": "Action failed",
+      "allApproved": "All requests have been processed",
+      "pendingApprovalsTitle": "Pending approval"
     }
   },
   "components": {

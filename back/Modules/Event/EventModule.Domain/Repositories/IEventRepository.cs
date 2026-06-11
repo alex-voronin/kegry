@@ -6,7 +6,7 @@ namespace EventModule.Domain.Repositories;
 
 public record EventWithDistance(Event Event, double DistanceMeters);
 
-public record EventWithIsJoined(Event Event, bool IsJoined);
+public record EventWithParticipantStatus(Event Event, ParticipantStatus? Status);
 
 public interface IEventRepository : IRepository<Event>
 {
@@ -30,7 +30,7 @@ public interface IEventRepository : IRepository<Event>
         int limit = 20,
         CancellationToken ct = default);
 
-    Task<List<(Guid VenueId, int TotalCount, EventWithIsJoined[] Events)>> GetEventsInBoundsAsync(
+    Task<List<(Guid VenueId, int TotalCount, EventWithParticipantStatus[] Events)>> GetEventsInBoundsAsync(
         double minLat,
         double maxLat,
         double minLng,

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Shared.Infrastructure.Persistence;
 using UserProfileModule.Domain.Aggregates;
 using UserProfileModule.Domain.Repositories;
@@ -19,5 +20,13 @@ internal class EfCoreUserRepository : RepositoryOutbox<UserProfileContext, User>
     public Task SoftDeleteAsync(Guid id, CancellationToken ct = default)
     {
         return _softDeleteImplementer.SoftDeleteAsync(id, ct);
+    }
+
+    public async Task<User[]> GetUsersByIdsAsync(Guid[] ids, CancellationToken ct = default)
+    {
+        return await Context.Users
+            .Include(u => u.Hobbies)
+            .Where(u => ids.Contains(u.Id))
+            .ToArrayAsync(ct);
     }
 }

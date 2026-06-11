@@ -582,9 +582,10 @@
         "center": "Centriraj",
         "join": "Pridruži se",
         "leave": "Napusti",
+        "cancelRequest": "Otkaži zahtev",
         "edit": "Uredi",
         "delete": "Obriši",
-        "view": "Pogledaj"
+        "view": "Prikaži"
       },
       "deleteMeetupDialog": {
         "title": "Da li si siguran da želiš da obrišeš ovaj susret?",
@@ -645,7 +646,28 @@
       "joined": "Pridružen/a!",
       "left": "Napustio/la!",
       "actionFailed": "Akcija nije uspela",
-      "edit": "Uredi"
+      "edit": "Uredi",
+      "awaitingApproval": "Čeka odobrenje",
+      "cancelRequest": "Otkaži zahtev",
+      "pendingApprovals": "Zahtevi na čekanju"
+    },
+    "participants": {
+      "title": "Učesnici",
+      "rejected": "Odbačen",
+      "actionFailed": "Akcija nije uspela",
+      "noParticipants": "Nema odobrenih učesnika",
+      "allProcessed": "Svi učesnici"
+    },
+    "approvals": {
+      "pending": "Na čekanju",
+      "approved": "Odobreni",
+      "rejected": "Odbijeni",
+      "noPending": "Nema zahteva na čekanju",
+      "approvedLabel": "Odobren",
+      "rejectedLabel": "Odbačen",
+      "actionFailed": "Akcija nije uspela",
+      "allApproved": "Svi zahtevi su obrađeni",
+      "pendingApprovalsTitle": "Čeka odobrenje"
     }
   },
   "components": {
@@ -907,8 +929,8 @@
         "participants": "Učesnici",
         "maxParticipants": "Maksimalno učesnika",
         "maxParticipantsPlaceholder": "Bez ograničenja",
-      "requiresApproval": "Potrebno odobrenje za pridruživanje",
-      "noApprovalRequired": "Odobrenje nije potrebno za pridruživanje",
+        "requiresApproval": "Potrebno odobrenje za pridruživanje",
+        "noApprovalRequired": "Odobrenje nije potrebno za pridruživanje",
         "contacts": "Kontakti",
         "contactValue": "Kontakt",
         "contactIsPublic": "Javno",

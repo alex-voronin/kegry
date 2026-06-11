@@ -22,7 +22,10 @@ public record EventDto(
     int? MaxParticipants,
     bool RequiresApproval,
     int ParticipantsCount,
+    int PendingApprovalsCount,
+    Guid[] PendingParticipantIds,
+    Guid[] ApprovedParticipantIds,
     EventContactDto[] Contacts,
     Guid[] HobbyIds,
-    bool IsJoined,
+    string? ParticipationStatus,
     bool IsCreator);

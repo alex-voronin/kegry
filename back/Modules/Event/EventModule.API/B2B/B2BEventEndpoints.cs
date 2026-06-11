@@ -69,7 +69,7 @@ public class B2BEventEndpoints : IEndpoints
             IsVisibleOnMap: e.IsVisibleOnMap,
             MaxParticipants: e.MaxParticipants,
             RequiresApproval: e.RequiresApproval,
-            ParticipantsCount: e.EventParticipants.Count)).ToArray();
+            ParticipantsCount: e.EventParticipants.Count(p => p.Status == ParticipantStatus.Approved))).ToArray();
 
         return ApiResult<PaginatedResponse<B2BEventListItemDto>>.Build(
             new PaginatedResponse<B2BEventListItemDto>(dtos, totalCount));
@@ -94,7 +94,8 @@ public class B2BEventEndpoints : IEndpoints
             .Select(c => new EventContactDto(c.Id, c.Type, c.Value, c.IsPublic))
             .ToArray();
 
-        var isJoined = ev.EventParticipants.Any(p => p.UserId == userId);
+        var participationStatus = ev.EventParticipants
+            .FirstOrDefault(p => p.UserId == userId)?.Status;
         var dto = new EventDto(
             Id: ev.Id.ToString(),
             CoverImageUrl: ev.CoverImageS3Key != null
@@ -112,10 +113,13 @@ public class B2BEventEndpoints : IEndpoints
             IsVisibleOnMap: ev.IsVisibleOnMap,
             MaxParticipants: ev.MaxParticipants,
             RequiresApproval: ev.RequiresApproval,
-            ParticipantsCount: ev.EventParticipants.Count,
+            ParticipantsCount: ev.EventParticipants.Count(p => p.Status == ParticipantStatus.Approved),
+            PendingApprovalsCount: ev.EventParticipants.Count(p => p.Status == ParticipantStatus.Pending),
+            PendingParticipantIds: [],
+            ApprovedParticipantIds: [],
             Contacts: contacts,
             HobbyIds: ev.EventHobbyLinks.Select(h => h.HobbyId).ToArray(),
-            IsJoined: isJoined,
+            ParticipationStatus: participationStatus?.ToString(),
             IsCreator: true);
 
         return ApiResult<EventDto>.Build(dto);
@@ -294,10 +298,11 @@ public class B2BEventEndpoints : IEndpoints
             throw EventExceptions.EventNotFound(eventId);
 
         var isCreator = ev.CreatorId == userId;
-        var isJoined = ev.EventParticipants.Any(p => p.UserId == userId);
+        var participationStatus = ev.EventParticipants
+            .FirstOrDefault(p => p.UserId == userId)?.Status;
 
         var contacts = ev.EventContacts
-            .Where(c => c.IsPublic || isCreator || isJoined)
+            .Where(c => c.IsPublic || isCreator || participationStatus == ParticipantStatus.Approved)
             .Select(c => new EventContactDto(c.Id, c.Type, c.Value, c.IsPublic))
             .ToArray();
 
@@ -318,10 +323,13 @@ public class B2BEventEndpoints : IEndpoints
             IsVisibleOnMap: ev.IsVisibleOnMap,
             MaxParticipants: ev.MaxParticipants,
             RequiresApproval: ev.RequiresApproval,
-            ParticipantsCount: ev.EventParticipants.Count,
+            ParticipantsCount: ev.EventParticipants.Count(p => p.Status == ParticipantStatus.Approved),
+            PendingApprovalsCount: ev.EventParticipants.Count(p => p.Status == ParticipantStatus.Pending),
+            PendingParticipantIds: ev.EventParticipants.Where(p => p.Status == ParticipantStatus.Pending).Select(p => p.UserId).Take(50).ToArray(),
+            ApprovedParticipantIds: ev.EventParticipants.Where(p => p.Status == ParticipantStatus.Approved).Select(p => p.UserId).Take(50).ToArray(),
             Contacts: contacts,
             HobbyIds: ev.EventHobbyLinks.Select(h => h.HobbyId).ToArray(),
-            IsJoined: isJoined,
+            ParticipationStatus: participationStatus?.ToString(),
             IsCreator: isCreator);
 
         return ApiResult<EventDto>.Build(dto);

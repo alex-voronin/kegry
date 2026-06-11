@@ -37,8 +37,7 @@ internal class EventActionService : IEventActionService, IScoped
                 throw EventExceptions.AlreadyParticipant();
 
             if (ev.MaxParticipants.HasValue &&
-                ev.EventParticipants.Count(p =>
-                    p.Status is ParticipantStatus.Approved or ParticipantStatus.Pending) >= ev.MaxParticipants.Value)
+                ev.EventParticipants.Count(p => p.Status == ParticipantStatus.Approved) >= ev.MaxParticipants.Value)
                 throw EventExceptions.EventFull();
 
             var status = ev.RequiresApproval ? ParticipantStatus.Pending : ParticipantStatus.Approved;

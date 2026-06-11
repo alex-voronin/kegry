@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
@@ -15,17 +15,23 @@ import {
   MapPin,
   Clock,
   Users,
+  UserCheck,
   CheckCircle,
+  CalendarCheck,
   Globe,
   Phone,
   Mail,
   Pencil,
   UserPlus,
   UserMinus,
+  UserX,
 } from 'lucide-react';
 import { useSafeBack } from '@/hooks/use-safe-back';
-import { useMeetupDetailStore } from './use-meetup-detail-store';
+import { useMeetupDetailStore, PendingUser } from './use-meetup-detail-store';
 import { calculateAge } from '@/lib/date';
+import apiClient from '@/lib/api-client';
+import { API_ENDPOINTS } from '@/lib/routes';
+import { ParticipantListItem } from '../_components/participant-list-item';
 import styles from './meetup-detail.module.css';
 
 function openContact(type: string, value: string) {
@@ -91,6 +97,7 @@ export default function MeetupDetailPage() {
   const router = useRouter();
   const t = useTranslations('screens.meetupDetail');
   const tHobbies = useTranslations('components.profile-sections.hobbies');
+  const [isInlineApprovedLoading, setIsInlineApprovedLoading] = useState(false);
   const locale = useLocale();
   const { safeBack } = useSafeBack();
   const eventId = params.id as string;
@@ -99,14 +106,13 @@ export default function MeetupDetailPage() {
   const {
     event,
     venue,
-    creatorName,
-    creatorHobbies,
-    creatorBirthday,
     isLoading,
     isJoining,
     fetchEvent,
     joinEvent,
     leaveEvent,
+    approvedUsers,
+    fetchApprovedUsers,
     reset,
   } = useMeetupDetailStore();
 
@@ -126,7 +132,10 @@ export default function MeetupDetailPage() {
   const handleJoinLeave = async () => {
     if (!event) return;
     try {
-      if (event.isJoined) {
+      if (
+        event.participationStatus === 'Approved' ||
+        event.participationStatus
+      ) {
         await leaveEvent(event.id);
       } else {
         await joinEvent(event.id);
@@ -135,6 +144,35 @@ export default function MeetupDetailPage() {
       toast.error(t('actionFailed'));
     }
   };
+
+  const showInlineParticipants = !event
+    ? false
+    : event.maxParticipants !== null &&
+      event.maxParticipants <= 2 &&
+      event.participantsCount > 0;
+
+  useEffect(() => {
+    if (showInlineParticipants && eventId) {
+      setIsInlineApprovedLoading(true);
+      fetchApprovedUsers(eventId, [event!.creatorId]).finally(() =>
+        setIsInlineApprovedLoading(false),
+      );
+    }
+  }, [showInlineParticipants, eventId, fetchApprovedUsers]);
+
+  const handleInlineReject = useCallback(
+    async (userId: string) => {
+      try {
+        await apiClient.patch(
+          API_ENDPOINTS.EVENTS.REJECT_PARTICIPANT(eventId, userId),
+        );
+        fetchApprovedUsers(eventId);
+      } catch {
+        toast.error(t('actionFailed'));
+      }
+    },
+    [eventId, fetchApprovedUsers, t],
+  );
 
   const handleEdit = () => {
     router.push(PAGE_ROUTES.MEETUP_EDIT(eventId));
@@ -253,8 +291,9 @@ export default function MeetupDetailPage() {
               </span>
             </div>
             <div className={styles.coverInfoRight}>
-              {(event.isJoined || event.isCreator) && (
-                <CheckCircle size={14} className="text-accent" />
+              {(event.participationStatus === 'Approved' ||
+                event.isCreator) && (
+                <CalendarCheck size={14} className="text-accent" />
               )}
               <Users size={14} />
               <span>
@@ -279,50 +318,142 @@ export default function MeetupDetailPage() {
             </p>
           )}
 
-          {/* Creator — meetups only */}
-          {event.type === 'Meetup' && (
-            <div
-              className={`${styles.sectionCard} ${styles.clickable}`}
-              onClick={() =>
-                router.push(PAGE_ROUTES.USER_PROFILE(event.creatorId))
-              }
-            >
-              <div className={styles.creatorRow}>
-                {event.creatorAvatarUrl ? (
-                  <div className={styles.creatorAvatar}>
-                    <img
-                      src={event.creatorAvatarUrl}
-                      alt=""
-                      className={styles.creatorAvatarImg}
+          {/* Creator + Participants */}
+          {(() => {
+            const creatorProfile =
+              event.type === 'Meetup'
+                ? approvedUsers.find(
+                    (p: PendingUser) => p.id === event.creatorId,
+                  )
+                : null;
+
+            if (showInlineParticipants) {
+              const nonCreatorParticipants = approvedUsers.filter(
+                (p: PendingUser) => p.id !== event.creatorId,
+              );
+              const hasItems =
+                (creatorProfile ? 1 : 0) + nonCreatorParticipants.length > 0;
+
+              if (!hasItems) return null;
+
+              return (
+                <div className="flex flex-col gap-1 overflow-hidden sm:rounded-xl">
+                  {creatorProfile && (
+                    <ParticipantListItem
+                      onClick={() =>
+                        router.push(PAGE_ROUTES.USER_PROFILE(event.creatorId))
+                      }
+                      avatarUrl={creatorProfile.avatarImageUrl}
+                      firstName={creatorProfile.firstName}
+                      lastName={creatorProfile.lastName}
+                      userId={creatorProfile.id}
+                      hobbies={creatorProfile.hobbies}
+                      translateHobby={(key) => tHobbies(key as 'gym')}
+                      subtitle={
+                        creatorProfile.birthday && (
+                          <span className="text-secondary text-xs">
+                            {t('age')}: {calculateAge(creatorProfile.birthday)}
+                          </span>
+                        )
+                      }
                     />
-                  </div>
-                ) : (
-                  <div className={styles.creatorAvatarFallback}>
-                    {(creatorName ?? event.creatorId).charAt(0).toUpperCase()}
-                  </div>
-                )}
-                <div className="flex flex-col">
-                  <span className={styles.creatorName}>
-                    {creatorName ?? event.creatorId.slice(0, 8)}
-                  </span>
-                  {creatorBirthday && (
-                    <span className={styles.creatorAge}>
-                      {t('age')}: {calculateAge(creatorBirthday)}
-                    </span>
+                  )}
+                  {nonCreatorParticipants.map((p: PendingUser) => (
+                    <ParticipantListItem
+                      key={p.id}
+                      avatarUrl={p.avatarImageUrl}
+                      firstName={p.firstName}
+                      lastName={p.lastName}
+                      userId={p.id}
+                      hobbies={p.hobbies}
+                      translateHobby={(key) => tHobbies(key as 'gym')}
+                      onClick={() =>
+                        router.push(PAGE_ROUTES.USER_PROFILE(p.id))
+                      }
+                      subtitle={
+                        p.birthday && (
+                          <span className="text-secondary text-xs">
+                            {t('age')}: {calculateAge(p.birthday)}
+                          </span>
+                        )
+                      }
+                      rightEl={
+                        event.isCreator ? (
+                          <Button
+                            variant={ButtonVariant.Destructive}
+                            className="shrink-0"
+                            onClick={() => handleInlineReject(p.id)}
+                          >
+                            <UserX size={16} />
+                          </Button>
+                        ) : undefined
+                      }
+                    />
+                  ))}
+                  {isInlineApprovedLoading && approvedUsers.length === 0 && (
+                    <div className="flex items-center justify-center px-4 py-3">
+                      <Spinner />
+                    </div>
                   )}
                 </div>
-              </div>
-              {creatorHobbies.length > 0 && (
-                <div className={styles.creatorHobbies}>
-                  {creatorHobbies.map((h, i) => (
-                    <span key={i} className={styles.creatorHobbyTag}>
-                      {tHobbies(h as 'gym') || h}
-                    </span>
-                  ))}
+              );
+            }
+
+            // Creator card (non-inline, e.g. large meetup or standalone)
+            if (creatorProfile) {
+              return (
+                <div className="bg-form-element overflow-hidden sm:rounded-xl">
+                  <ParticipantListItem
+                    onClick={() =>
+                      router.push(PAGE_ROUTES.USER_PROFILE(event.creatorId))
+                    }
+                    avatarUrl={creatorProfile.avatarImageUrl}
+                    firstName={creatorProfile.firstName}
+                    lastName={creatorProfile.lastName}
+                    userId={creatorProfile.id}
+                    hobbies={creatorProfile.hobbies}
+                    translateHobby={(key) => tHobbies(key as 'gym')}
+                    subtitle={
+                      creatorProfile.birthday && (
+                        <span className="text-secondary text-xs">
+                          {t('age')}: {calculateAge(creatorProfile.birthday)}
+                        </span>
+                      )
+                    }
+                  />
                 </div>
-              )}
-            </div>
-          )}
+              );
+            }
+
+            // Participants nav link (creator only, large meetup)
+            if (event.isCreator && event.participantsCount > 0) {
+              return (
+                <div
+                  className={`${styles.sectionCard} ${styles.clickable}`}
+                  onClick={() =>
+                    router.push(PAGE_ROUTES.PARTICIPANTS(event.id))
+                  }
+                >
+                  <div className="flex items-center gap-2">
+                    <CalendarCheck
+                      size={20}
+                      className="text-secondary shrink-0"
+                    />
+                    <span className="text-primary text-sm">
+                      {t('participants')}
+                    </span>
+                    {event.participantsCount > 0 && (
+                      <span className="bg-accent text-background ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-bold">
+                        {event.participantsCount}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            }
+
+            return null;
+          })()}
 
           {/* Venue */}
           {venue && (
@@ -340,21 +471,35 @@ export default function MeetupDetailPage() {
             </div>
           )}
 
-          {/* Requires Approval */}
+          {/* Participation Status */}
           <div className={styles.approvalRow}>
-            <CheckCircle
-              size={20}
-              className={
-                event.requiresApproval
-                  ? 'text-accent shrink-0'
-                  : 'text-secondary shrink-0'
-              }
-            />
-            <span className={styles.fieldValue}>
-              {event.requiresApproval
-                ? t('requiresApproval')
-                : t('noApprovalRequired')}
-            </span>
+            {event.participationStatus === 'Approved' ? (
+              <>
+                <CalendarCheck size={20} className="text-accent shrink-0" />
+                <span className={styles.fieldValue}>{t('joined')}</span>
+              </>
+            ) : event.participationStatus ? (
+              <>
+                <Clock size={20} className="text-accent shrink-0" />
+                <span className={styles.fieldValue}>
+                  {t('awaitingApproval')}
+                </span>
+              </>
+            ) : event.requiresApproval ? (
+              <>
+                <CalendarCheck size={20} className="text-secondary shrink-0" />
+                <span className={styles.fieldValue}>
+                  {t('requiresApproval')}
+                </span>
+              </>
+            ) : (
+              <>
+                <CalendarCheck size={20} className="text-accent shrink-0" />
+                <span className={styles.fieldValue}>
+                  {t('noApprovalRequired')}
+                </span>
+              </>
+            )}
             {!event.isCreator && (
               <Button
                 variant={ButtonVariant.Solid}
@@ -364,14 +509,36 @@ export default function MeetupDetailPage() {
               >
                 {isJoining ? (
                   <Spinner />
-                ) : event.isJoined ? (
+                ) : event.participationStatus === 'Approved' ? (
                   t('leave')
+                ) : event.participationStatus ? (
+                  t('cancelRequest')
                 ) : (
                   t('join')
                 )}
               </Button>
             )}
           </div>
+
+          {/* Pending Approvals — creator only */}
+          {event.isCreator && event.requiresApproval && (
+            <div
+              className={`${styles.sectionCard} ${styles.clickable}`}
+              onClick={() => router.push(PAGE_ROUTES.APPROVALS(event.id))}
+            >
+              <div className="flex items-center gap-2">
+                <UserCheck size={20} className="text-secondary shrink-0" />
+                <span className="text-primary text-sm">
+                  {t('pendingApprovals')}
+                </span>
+                {event.pendingApprovalsCount > 0 && (
+                  <span className="bg-accent text-background ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-bold">
+                    {event.pendingApprovalsCount}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Contacts */}
           {event.contacts.length > 0 && (
@@ -427,12 +594,17 @@ export default function MeetupDetailPage() {
               ]
             : [
                 {
-                  label: event.isJoined ? t('leave') : t('join'),
+                  label:
+                    event.participationStatus === 'Approved'
+                      ? t('leave')
+                      : event.participationStatus
+                        ? t('cancelRequest')
+                        : t('join'),
                   onClick: () => {
                     setIsMenuOpen(false);
                     handleJoinLeave();
                   },
-                  icon: event.isJoined ? (
+                  icon: event.participationStatus ? (
                     <UserMinus size={24} />
                   ) : (
                     <UserPlus size={24} />
