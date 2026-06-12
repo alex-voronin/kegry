@@ -106,8 +106,8 @@ export default function MapScreen() {
       minLng: number;
       maxLng: number;
     }) => {
-      if (Date.now() < focusSuppressUntilRef.current) return;
       currentBoundsRef.current = bounds;
+      if (Date.now() < focusSuppressUntilRef.current) return;
       const boundsKey = await fetchMapData(
         bounds,
         searchQuery,
@@ -156,12 +156,25 @@ export default function MapScreen() {
     [setFocusedVenue],
   );
 
+  const CENTER_FLY_SUPPRESS_MS = 2000;
+
   const handleCenter = useCallback(
     (lat: number, lng: number, venue?: VenueMapItem) => {
-      focusSuppressUntilRef.current = Date.now() + 2000;
+      focusSuppressUntilRef.current = Date.now() + CENTER_FLY_SUPPRESS_MS;
       flyTo(lat, lng, venue);
+      setTimeout(() => {
+        focusSuppressUntilRef.current = 0;
+        if (currentBoundsRef.current) {
+          fetchMapData(
+            currentBoundsRef.current,
+            searchQuery,
+            selectedTagIds,
+            enabledEventTypes,
+          );
+        }
+      }, CENTER_FLY_SUPPRESS_MS + 100);
     },
-    [flyTo],
+    [flyTo, fetchMapData, searchQuery, selectedTagIds, enabledEventTypes],
   );
 
   const handleJoinEvent = useCallback(

@@ -101,6 +101,14 @@ export function VenueBottomSheet({
   const [isDragging, setIsDragging] = useState(false);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
 
+  const sheetHeight = useMemo(
+    () =>
+      sheetState === 'expanded'
+        ? `calc(100dvh - ${EXPANDED_TOP}px)`
+        : '100%',
+    [sheetState],
+  );
+
   const tVenues = useTranslations('screens.venues');
   const tTag = useTranslations('components.tagSections.tags');
   const { searchQuery, selectedTagIds, setSearchQuery, setTagIds } =
@@ -175,11 +183,8 @@ export function VenueBottomSheet({
   const recordVelocityRef = useRef<(clientY: number) => void>(() => {});
 
   const getSnapTranslate = useCallback((s: SheetState) => {
-    const el = sheetRef.current;
-    if (!el) return s === 'collapsed' ? PEEK_HEIGHT : EXPANDED_TOP;
-    const h = el.clientHeight;
-    if (s === 'collapsed') return Math.max(h - PEEK_HEIGHT, EXPANDED_TOP);
-    return EXPANDED_TOP;
+    if (s === 'expanded') return 0;
+    return Math.max(window.innerHeight - PEEK_HEIGHT, EXPANDED_TOP);
   }, []);
 
   useLayoutEffect(() => {
@@ -188,6 +193,20 @@ export function VenueBottomSheet({
     setTranslateY(getSnapTranslate(sheetState));
     transitionEnabledRef.current = true;
   }, [sheetState, getSnapTranslate, isDragging]);
+
+  useEffect(() => {
+    if (isDragging) {
+      document.body.style.userSelect = 'none';
+      document.body.style.webkitUserSelect = 'none';
+    } else {
+      document.body.style.userSelect = '';
+      document.body.style.webkitUserSelect = '';
+    }
+    return () => {
+      document.body.style.userSelect = '';
+      document.body.style.webkitUserSelect = '';
+    };
+  }, [isDragging]);
 
   const getMaxTranslate = useCallback(() => {
     const el = sheetRef.current;
@@ -200,7 +219,8 @@ export function VenueBottomSheet({
       const dy = clientY - startYRef.current;
       const raw = startTranslateRef.current + dy;
       const maxTranslate = getMaxTranslate();
-      const clamped = Math.max(EXPANDED_TOP, Math.min(maxTranslate, raw));
+      const minTranslate = sheetState === 'expanded' ? 0 : EXPANDED_TOP;
+      const clamped = Math.max(minTranslate, Math.min(maxTranslate, raw));
 
       currentTranslateRef.current = clamped;
 
@@ -209,7 +229,7 @@ export function VenueBottomSheet({
         setTranslateY(clamped);
       });
     },
-    [getMaxTranslate],
+    [getMaxTranslate, sheetState],
   );
 
   const recordVelocity = useCallback((clientY: number) => {
@@ -458,8 +478,9 @@ export function VenueBottomSheet({
         style={{
           transform: `translateY(${translateY}px)`,
           transition: transitionEnabledRef.current
-            ? 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)'
+            ? 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), height 0.35s cubic-bezier(0.32, 0.72, 0, 1)'
             : 'none',
+          height: sheetHeight,
           overscrollBehavior: 'contain',
         }}
       >
@@ -720,6 +741,7 @@ export function VenueBottomSheet({
                             setMenuTarget({
                               lat: v?.latitude ?? 0,
                               lng: v?.longitude ?? 0,
+                              venue: venues.find((vv) => vv.id === event.venueId),
                               eventId: event.id,
                               participationStatus: event.participationStatus,
                               isCreator: event.creatorId === currentUserId,
@@ -898,6 +920,7 @@ export function VenueBottomSheet({
                               setMenuTarget({
                                 lat: venue.latitude,
                                 lng: venue.longitude,
+                                venue,
                                 eventId: event.id,
                                 participationStatus: event.participationStatus,
                                 isCreator: event.creatorId === currentUserId,
