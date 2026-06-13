@@ -342,8 +342,8 @@ export default function MapScreen() {
           initialZoom={12}
         />
 
-        <div className={styles.topBar}>
-          <div className={styles.topBarItem}>
+        <div className={styles.leftControls}>
+          <div className={styles.profileBtn}>
             <Icon
               src="/assets/common/profile-icon.svg"
               alt="profile"
@@ -353,6 +353,11 @@ export default function MapScreen() {
               onClick={() => router.push(PAGE_ROUTES.PROFILE)}
             />
           </div>
+          <MapFeedToggle activeView="map" />
+        </div>
+
+        <div className={styles.topBar}>
+          <div className={styles.topBarItem} /> {/* spacer to preserve layout balance */}
 
           <div className={styles.topBarPill}>
             <CitySelector
@@ -387,15 +392,13 @@ export default function MapScreen() {
           </div>
         </div>
 
-        <div className={styles.topRightControls}>
-          {isLoading && (
+        {isLoading && (
+          <div className={styles.topRightControls}>
             <div className={styles.loadingIndicator}>
               <div className={styles.smallSpinner} />
             </div>
-          )}
-
-          <MapFeedToggle activeView="map" />
-        </div>
+          </div>
+        )}
 
         <VenueBottomSheet
           venues={venues}

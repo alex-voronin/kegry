@@ -746,7 +746,7 @@ export default function FeedScreen() {
           />
         </div>
 
-        <MapFeedToggle activeView="feed" className={styles.topRightControls} />
+        <MapFeedToggle activeView="feed" className={styles.leftControls} />
 
         {renderBody()}
         {renderFooter()}

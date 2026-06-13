@@ -16,7 +16,6 @@
   @apply flex h-dvh items-center justify-center;
 }
 
-
 .sheetDragging {
   transition: none !important;
   user-select: none !important;
@@ -161,11 +160,13 @@
 }
 
 .topBarItem {
-  @apply bg-surface/85 rounded-full p-2;
+  @apply bg-surface/85 invisible rounded-full p-2;
+  width: 46px;
+  height: 48px;
 }
 
 .topBarPill {
-  @apply bg-surface/85 rounded-full px-4 py-2 backdrop-blur-md;
+  @apply bg-surface/85 min-h-[48px] rounded-full px-4 py-2.5 backdrop-blur-md;
 }
 
 .topBarIcons {
@@ -174,6 +175,21 @@
 
 .topBarIconPill {
   @apply bg-surface/85 rounded-full px-3 py-2 backdrop-blur-md;
+}
+
+.profileBtn {
+  @apply bg-surface/85 rounded-full p-2;
+  width: 46px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.leftControls {
+  @apply absolute left-2 z-50 flex flex-col items-center gap-2;
+  top: 8px;
+  width: fit-content;
 }
 
 .fab {
@@ -205,38 +221,64 @@
 }
 
 :global(.leaflet-control-zoom) {
-  margin: 60px 10px 10px 14px !important;
-}
-
-:global(.leaflet-control-zoom.leaflet-bar a) {
-  background-color: color-mix(
+  margin: 140px 10px 10px 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: color-mix(
     in srgb,
     var(--color-surface) 85%,
     transparent
   ) !important;
-  color: #fff !important;
-  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
+  padding: 2px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  box-sizing: border-box !important;
+  width: fit-content !important;
+}
+
+:global(.leaflet-control-zoom.leaflet-bar) {
+  box-shadow: none !important;
+}
+
+:global(.leaflet-control-zoom.leaflet-bar a) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 14px !important;
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  border: none !important;
+  text-decoration: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
 }
 
 :global(.leaflet-control-zoom.leaflet-bar a:hover),
 :global(.leaflet-control-zoom.leaflet-bar a:focus) {
-  background-color: color-mix(
-    in srgb,
-    var(--color-surface) 85%,
-    transparent
-  ) !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
 }
 
 :global(.leaflet-control-zoom.leaflet-bar a.leaflet-disabled) {
-  background-color: color-mix(
-    in srgb,
-    var(--color-surface) 85%,
-    transparent
-  ) !important;
+  color: rgba(255, 255, 255, 0.2) !important;
+  background: transparent !important;
 }
 
 :global(.leaflet-touch .leaflet-control-zoom.leaflet-bar) {
-  border-color: rgba(255, 255, 255, 0.1) !important;
+  border: none !important;
+}
+
+:global(.leaflet-touch .leaflet-control-zoom a) {
+  width: 34px !important;
+  height: 32px !important;
+  line-height: 32px !important;
 }
 
 /* --- Venue Selector --- */
@@ -275,13 +317,28 @@
 }
 
 :global(.leaflet-container > button[aria-label='Center on my location']) {
-  top: 124px !important;
-  left: 16px !important;
-  background-color: color-mix(
+  top: 214px !important;
+  left: 14px !important;
+  width: 34px !important;
+  height: 34px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
+  background: color-mix(
     in srgb,
     var(--color-surface) 85%,
     transparent
   ) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+}
+
+:global(.leaflet-container > button[aria-label='Center on my location']:hover) {
+  background: rgba(106, 106, 106, 1) !important;
   color: #fff !important;
 }

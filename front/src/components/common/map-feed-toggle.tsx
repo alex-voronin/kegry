@@ -1,8 +1,8 @@
 'use client';
 
 import { useRouter } from '@/i18n/routing';
-import { useTranslations } from 'next-intl';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { MapPinned, Sticker } from 'lucide-react';
 import styles from './map-feed-toggle.module.css';
 
 type Props = {
@@ -12,7 +12,6 @@ type Props = {
 
 export function MapFeedToggle({ activeView, className }: Props) {
   const router = useRouter();
-  const t = useTranslations('screens.map');
 
   return (
     <div className={className} onClick={(e) => e.stopPropagation()}>
@@ -21,7 +20,7 @@ export function MapFeedToggle({ activeView, className }: Props) {
           className={`${styles.pillOption} ${activeView === 'map' ? styles.pillOptionActive : ''}`}
           onClick={() => router.push(PAGE_ROUTES.MAP)}
         >
-          {t('mapLabel')}
+          <MapPinned size={20} />
         </button>
         <button
           className={`${styles.pillOption} ${activeView === 'feed' ? styles.pillOptionActive : ''}`}
@@ -29,7 +28,7 @@ export function MapFeedToggle({ activeView, className }: Props) {
             router.push(`${PAGE_ROUTES.FEED}?auto-chat-redirect=false`)
           }
         >
-          {t('feed')}
+          <Sticker size={20} />
         </button>
       </div>
     </div>

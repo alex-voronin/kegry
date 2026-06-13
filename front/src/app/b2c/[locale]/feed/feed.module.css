@@ -159,3 +159,7 @@
 .topRightControls {
   @apply absolute top-16 right-2 z-[45] flex items-center gap-2;
 }
+
+.leftControls {
+  @apply absolute top-16 left-3 z-50 flex w-fit flex-col items-center gap-0.5;
+}
