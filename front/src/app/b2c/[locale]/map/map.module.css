@@ -157,12 +157,20 @@
 
 .topBar {
   @apply absolute top-2 right-0 left-0 z-50 flex items-center justify-between px-2;
+  touch-action: manipulation;
+  pointer-events: none;
 }
 
 .topBarItem {
   @apply bg-surface/85 invisible rounded-full p-2;
   width: 46px;
   height: 48px;
+  pointer-events: none;
+}
+
+.topBarPill,
+.topBarIconPill {
+  pointer-events: auto;
 }
 
 .topBarPill {
@@ -175,21 +183,24 @@
 
 .topBarIconPill {
   @apply bg-surface/85 rounded-full px-3 py-2 backdrop-blur-md;
+  touch-action: manipulation;
 }
 
 .profileBtn {
-  @apply bg-surface/85 rounded-full p-2;
+  @apply bg-surface/85 rounded-full p-2 cursor-pointer;
   width: 46px;
   height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
+  touch-action: manipulation;
 }
 
 .leftControls {
   @apply absolute left-2 z-50 flex flex-col items-center gap-2;
   top: 8px;
   width: fit-content;
+  touch-action: manipulation;
 }
 
 .fab {
