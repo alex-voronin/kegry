@@ -7,7 +7,6 @@ import { Link, useRouter } from '@/i18n/routing';
 import { AlertCircle, ScanQrCode } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import styles from './feed.module.css';
-import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { ModalDialog } from '@/components/ui/modal-dialog';
@@ -50,44 +49,24 @@ type FeedItem =
 // --- Sub-components ---
 
 function FeedHeader({
-  router,
   unseenCount,
-  showPermissionsBadge,
   isInMeeting,
   onboardingRequired,
   showQrScan,
   onQrScanClick,
 }: {
-  router: ReturnType<typeof useRouter>;
   unseenCount: number;
-  showPermissionsBadge: boolean;
   isInMeeting: boolean;
   onboardingRequired: boolean;
   showQrScan: boolean;
   onQrScanClick: () => void;
 }) {
+  const router = useRouter();
   return (
-    <Header
-      left={
-        <Icon
-          src="/assets/common/profile-icon.svg"
-          alt="profile"
-          width={30}
-          height={32}
-          priority
-          onClick={() => router.push(PAGE_ROUTES.PROFILE)}
-        >
-          {showPermissionsBadge && !onboardingRequired && (
-            <AlertCircle
-              size={16}
-              strokeWidth={3}
-              className={styles.permissionsIcon}
-            />
-          )}
-        </Icon>
-      }
-      right={
-        <div className={styles.headerRightSideIconsWrapper}>
+    <div className={styles.feedTopBar}>
+      <div className={styles.feedTopBarItem} />
+      <div className={styles.feedIconPill}>
+        <div className={styles.feedIconPillIcons}>
           {showQrScan && (
             <Icon width={32} height={32} onClick={onQrScanClick}>
               <ScanQrCode className="text-primary h-full w-full" />
@@ -137,8 +116,8 @@ function FeedHeader({
             </Icon>
           )}
         </div>
-      }
-    />
+      </div>
+    </div>
   );
 }
 
@@ -731,12 +710,9 @@ export default function FeedScreen() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.content} onClick={handleProfileClick}>
-        { }
         <div onClick={(e) => e.stopPropagation()}>
           <FeedHeader
-            router={router}
             unseenCount={unseenNotificationCount}
-            showPermissionsBadge={showPermissionsBadge}
             isInMeeting={isInMeeting}
             onboardingRequired={
               requiredAction === RequiredAction.OnboardingCompletion
@@ -746,7 +722,30 @@ export default function FeedScreen() {
           />
         </div>
 
-        <MapFeedToggle activeView="feed" className={styles.leftControls} />
+        <div onClick={(e) => e.stopPropagation()}>
+          <div className={styles.leftControls}>
+            <div className={styles.feedProfilePill}>
+              <Icon
+                src="/assets/common/profile-icon.svg"
+                alt="profile"
+                width={30}
+                height={32}
+                priority
+                onClick={() => router.push(PAGE_ROUTES.PROFILE)}
+              >
+                {showPermissionsBadge &&
+                  requiredAction !== RequiredAction.OnboardingCompletion && (
+                    <AlertCircle
+                      size={16}
+                      strokeWidth={3}
+                      className={styles.permissionsIcon}
+                    />
+                  )}
+              </Icon>
+            </div>
+            <MapFeedToggle activeView="feed" />
+          </div>
+        </div>
 
         {renderBody()}
         {renderFooter()}
