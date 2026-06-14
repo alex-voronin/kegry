@@ -106,7 +106,7 @@ export default function OnboardingPage() {
   };
 
   const handleBack = () => {
-    safeBack(PAGE_ROUTES.FEED);
+    safeBack(PAGE_ROUTES.MAP);
   };
 
   return (

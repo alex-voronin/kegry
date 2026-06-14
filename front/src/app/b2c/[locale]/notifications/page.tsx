@@ -20,6 +20,7 @@ import { formatNotificationDate } from '@/lib/date';
 import { toast } from 'react-toastify';
 import styles from './notifications.module.css';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { useSafeBack } from '@/hooks/use-safe-back';
 
 export default function NotificationsScreen() {
   const router = useRouter();
@@ -28,6 +29,7 @@ export default function NotificationsScreen() {
     useState<NotificationDto | null>(null);
   const [notificationToReport, setNotificationToReport] =
     useState<NotificationDto | null>(null);
+  const { safeBack } = useSafeBack();
 
   const { ref: pageBottomRef, inView } = useInView({
     threshold: 0,
@@ -194,7 +196,7 @@ export default function NotificationsScreen() {
             alt="back"
             width={14}
             height={27}
-            onClick={() => router.replace(PAGE_ROUTES.FEED)}
+            onClick={() => safeBack(PAGE_ROUTES.MAP)}
             priority
           />
         }

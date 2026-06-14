@@ -254,7 +254,7 @@ export default function VenuesScreen() {
             alt="back"
             width={14}
             height={27}
-            onClick={() => safeBack(PAGE_ROUTES.FEED)}
+            onClick={() => safeBack(PAGE_ROUTES.MAP)}
             priority
           />
         }

@@ -65,7 +65,7 @@ export default function HowItWorksPage() {
 
   const finishOnboarding = useCallback(() => {
     setRequiredAction(RequiredAction.None);
-    router.push(PAGE_ROUTES.FEED);
+    router.push(PAGE_ROUTES.MAP);
   }, [router, setRequiredAction]);
 
   useLayoutEffect(() => {

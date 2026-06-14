@@ -59,9 +59,9 @@ export default function RegisterPage() {
       } else if (
         result.requiredAction === RequiredAction.OnboardingCompletion
       ) {
-        router.push(PAGE_ROUTES.FEED);
+        router.push(PAGE_ROUTES.MAP);
       } else {
-        router.push(PAGE_ROUTES.FEED);
+        router.push(PAGE_ROUTES.MAP);
       }
     } catch (err: any) {
       toast.error(err.message || tCommonErrors('network'));
@@ -79,9 +79,9 @@ export default function RegisterPage() {
       ]);
 
       if (result.requiredAction === RequiredAction.OnboardingCompletion) {
-        router.push(PAGE_ROUTES.FEED);
+        router.push(PAGE_ROUTES.MAP);
       } else {
-        router.push(PAGE_ROUTES.FEED);
+        router.push(PAGE_ROUTES.MAP);
       }
     } catch (err: any) {
       toast.error(err.message || tCommonErrors('network'));

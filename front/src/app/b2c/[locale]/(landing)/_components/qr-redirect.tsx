@@ -22,9 +22,11 @@ export function QrRedirect() {
       storeQrCode(v);
 
       if (hasHydrated && accessToken) {
-        router.replace(`${PAGE_ROUTES.FEED}`);
+        router.replace(`${PAGE_ROUTES.MAP}`);
       } else if (hasHydrated && !accessToken) {
-        toast.success(t('toast.qrScanned'), { className: 'Toastify__toast--qr-scanned' });
+        toast.success(t('toast.qrScanned'), {
+          className: 'Toastify__toast--qr-scanned',
+        });
         setTimeout(() => {
           const element = document.getElementById('mobile-loyalty');
           if (element) {

@@ -207,7 +207,7 @@ export default function ProfilePage() {
   };
 
   const handleBack = () => {
-    safeBack(`${PAGE_ROUTES.FEED}?auto-chat-redirect=false`);
+    safeBack(PAGE_ROUTES.MAP);
   };
 
   const handleAvatarClick = () => {

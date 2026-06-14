@@ -14,7 +14,7 @@ export default function NotFound() {
 
   const handleGoHome = () => {
     if (accessToken && userId) {
-      router.push(PAGE_ROUTES.FEED);
+      router.push(PAGE_ROUTES.MAP);
     } else {
       router.push(PAGE_ROUTES.HOME);
     }

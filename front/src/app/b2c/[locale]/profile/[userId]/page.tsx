@@ -57,14 +57,14 @@ export default function UserProfilePage() {
   }, [userId, fetchUserProfile]);
 
   const handleBack = () => {
-    safeBack(PAGE_ROUTES.FEED);
+    safeBack(PAGE_ROUTES.MAP);
   };
 
   const handleBlockConfirm = async (message: string) => {
     try {
       await blockUser(userId, message);
       toast.success(t('toast.blocked'));
-      router.push(PAGE_ROUTES.FEED);
+      router.push(PAGE_ROUTES.MAP);
     } catch (error) {
       toast.error(t('toast.blockFailed'));
     }
