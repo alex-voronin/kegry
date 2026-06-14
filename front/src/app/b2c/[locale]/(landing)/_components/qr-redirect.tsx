@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/lib/auth/use-auth-store';
 import { useRouter } from '@/i18n/routing';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { storeQrCode } from '@/lib/qr-utils';
 import { toast } from 'react-toastify';
 import { useTranslations } from 'next-intl';
 
@@ -18,7 +19,7 @@ export function QrRedirect() {
 
   useEffect(() => {
     if (v) {
-      localStorage.setItem('qr_code_to_check_in', v);
+      storeQrCode(v);
 
       if (hasHydrated && accessToken) {
         router.replace(`${PAGE_ROUTES.FEED}`);

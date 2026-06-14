@@ -7,6 +7,7 @@ import { ScanQrCode, Menu } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { checkIfPermissionsDenied } from '@/lib/permissions';
 
+import { processStoredQrCode } from '@/lib/qr-utils';
 import { useSidebar, Sidebar } from '@/components/b2c/Sidebar';
 
 import { Icon } from '@/components/ui/icon';
@@ -93,6 +94,10 @@ export default function MapScreen() {
     window.addEventListener('focus', check);
     return () => window.removeEventListener('focus', check);
   }, []);
+
+  useEffect(() => {
+    processStoredQrCode(handleQrCode);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setFlyToCoord(null);

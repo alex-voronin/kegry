@@ -39,7 +39,7 @@ import { NpcFeedBody, NpcFeedFooter } from './_components/npc-feed-card';
 import { useSidebar, Sidebar } from '@/components/b2c/Sidebar';
 import { useQrCheckIn } from '@/app/b2c/[locale]/venues/use-qr-check-in';
 import { FEED_VISITS_TO_SHOW_REFERRAL_PROMPT } from '@/lib/constants';
-import { buildQrUrl } from '@/lib/qr-utils';
+import { processStoredQrCode } from '@/lib/qr-utils';
 
 // --- Discriminated union for feed items ---
 
@@ -151,8 +151,11 @@ export default function FeedScreen() {
   const { npc, monolog, fetchNpc, inviteNpc, dismissNpc } = useNpcStore();
   const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
-  const { isOpen: isSidebarOpen, open: openSidebar, close: closeSidebar } =
-    useSidebar();
+  const {
+    isOpen: isSidebarOpen,
+    open: openSidebar,
+    close: closeSidebar,
+  } = useSidebar();
   const handleCheckInSuccess = useCallback(
     (venueId: string) => {
       // We use requestAnimationFrame() to avoid a race condition between the Feed's state update (closing scanner)
@@ -282,14 +285,7 @@ export default function FeedScreen() {
     const initializeFeed = async () => {
       if (!hasHydrated) return;
 
-      // 1. Handle QR code from local storage early
-      const qrCode = localStorage.getItem('qr_code_to_check_in');
-      if (qrCode) {
-        localStorage.removeItem('qr_code_to_check_in');
-        const qrUrl = buildQrUrl(qrCode);
-        await handleQrCode(qrUrl);
-        return;
-      }
+      if (await processStoredQrCode(handleQrCode)) return;
 
       if (requiredAction !== RequiredAction.None) {
         return;
@@ -804,7 +800,10 @@ export default function FeedScreen() {
           isOpen={isSidebarOpen}
           onClose={closeSidebar}
           onCheckIn={handleQrScanClick}
-          showPermissionsBadge={showPermissionsBadge && requiredAction !== RequiredAction.OnboardingCompletion}
+          showPermissionsBadge={
+            showPermissionsBadge &&
+            requiredAction !== RequiredAction.OnboardingCompletion
+          }
         />
       </div>
     </div>

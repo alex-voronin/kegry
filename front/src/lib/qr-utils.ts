@@ -1,3 +1,7 @@
+export function storeQrCode(value: string): void {
+  localStorage.setItem(QR_CODE_STORAGE_KEY, value);
+}
+
 export function isOurDomain(url: URL): boolean {
   const { hostname } = window.location;
   const parts = hostname.split('.');
@@ -24,6 +28,19 @@ export function buildQrUrl(qrCode: string = ''): string {
 
   const portStr = port ? `:${port}` : '';
   return `${protocol}//${rootDomain}${portStr}?v=${qrCode}`;
+}
+
+const QR_CODE_STORAGE_KEY = 'qr_code_to_check_in';
+
+export async function processStoredQrCode(
+  handleQrCode: (url: string) => Promise<boolean>,
+): Promise<boolean> {
+  const qrCode = localStorage.getItem(QR_CODE_STORAGE_KEY);
+  if (!qrCode) return false;
+  localStorage.removeItem(QR_CODE_STORAGE_KEY);
+  const qrUrl = buildQrUrl(qrCode);
+  await handleQrCode(qrUrl);
+  return true;
 }
 
 export async function downloadQrCode(url: string, style: 'default' | 'bw') {
