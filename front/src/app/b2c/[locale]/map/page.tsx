@@ -3,8 +3,11 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
-import { ScanQrCode } from 'lucide-react';
+import { ScanQrCode, Menu } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import { checkIfPermissionsDenied } from '@/lib/permissions';
+
+import { useSidebar, Sidebar } from '@/components/b2c/Sidebar';
 
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
@@ -73,6 +76,23 @@ export default function MapScreen() {
 
   const { searchQuery, selectedTagIds } = useVenueFiltersStore();
   const focusSuppressUntilRef = useRef(0);
+
+  const {
+    isOpen: isSidebarOpen,
+    open: openSidebar,
+    close: closeSidebar,
+  } = useSidebar();
+  const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
+
+  useEffect(() => {
+    const check = async () => {
+      setShowPermissionsBadge(await checkIfPermissionsDenied());
+    };
+    check();
+
+    window.addEventListener('focus', check);
+    return () => window.removeEventListener('focus', check);
+  }, []);
 
   useEffect(() => {
     setFlyToCoord(null);
@@ -344,21 +364,14 @@ export default function MapScreen() {
 
         <div className={styles.leftControls}>
           <div className={styles.profileBtn}>
-            <Icon
-              src="/assets/common/profile-icon.svg"
-              alt="profile"
-              width={30}
-              height={32}
-              priority
-              onClick={() => router.push(PAGE_ROUTES.PROFILE)}
-            />
+            <Menu size={28} className="text-primary" onClick={openSidebar} />
           </div>
           <MapFeedToggle activeView="map" />
         </div>
 
         <div className={styles.topBar}>
-          <div className={styles.topBarItem} /> {/* spacer to preserve layout balance */}
-
+          <div className={styles.topBarItem} />{' '}
+          {/* spacer to preserve layout balance */}
           <div className={styles.topBarPill}>
             <CitySelector
               selectedCity={selectedCity}
@@ -366,7 +379,6 @@ export default function MapScreen() {
               isLocationDenied={false}
             />
           </div>
-
           <div className={styles.topBarIconPill}>
             <div className={styles.topBarIcons}>
               <Icon width={32} height={32} onClick={handleQrScanClick}>
@@ -441,6 +453,13 @@ export default function MapScreen() {
         handleCodeSubmit={handleCodeSubmit}
         showLocationRequiredDialog={showLocationRequiredDialog}
         onDismissLocationRequiredDialog={dismissLocationRequiredDialog}
+      />
+
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={closeSidebar}
+        onCheckIn={handleQrScanClick}
+        showPermissionsBadge={showPermissionsBadge}
       />
     </div>
   );

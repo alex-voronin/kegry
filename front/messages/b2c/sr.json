@@ -598,6 +598,15 @@
         "typeToSearch": "Kucaj da pretražiš lokale"
       }
     },
+    "sidebar": {
+      "profile": "Profil",
+      "myEvents": "Moji susreti",
+      "map": "Mapa",
+      "feed": "Feed",
+      "venues": "Lokali",
+      "notifications": "Obaveštenja",
+      "checkIn": "Prijava"
+    },
     "venueDetail": {
       "contacts": "Kontakti",
       "address": "Adresa",

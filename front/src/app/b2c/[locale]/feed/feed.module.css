@@ -24,7 +24,7 @@
 }
 
 .feedProfilePill {
-  @apply bg-surface/85 cursor-pointer rounded-full;
+  @apply bg-surface/85 relative cursor-pointer rounded-full;
   width: 46px;
   height: 48px;
   display: flex;
@@ -48,7 +48,7 @@
 }
 
 .permissionsIcon {
-  @apply text-alert-vibrant absolute -top-1 -right-2;
+  @apply text-alert-vibrant absolute top-1 -right-px;
 }
 
 .profileImage {
@@ -56,7 +56,7 @@
 }
 
 .imageOverlay {
-  @apply absolute inset-0 bg-black/10;
+  @apply absolute inset-0 bg-black/15;
 }
 
 .userInfo {

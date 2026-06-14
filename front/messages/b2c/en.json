@@ -598,6 +598,15 @@
         "typeToSearch": "Type to search venues"
       }
     },
+    "sidebar": {
+      "profile": "Profile",
+      "myEvents": "My Events",
+      "map": "Map",
+      "feed": "Feed",
+      "venues": "Venues",
+      "notifications": "Notifications",
+      "checkIn": "Check-in"
+    },
     "venueDetail": {
       "contacts": "Contacts",
       "address": "Address",

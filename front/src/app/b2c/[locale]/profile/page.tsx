@@ -35,6 +35,7 @@ import { DEVICE_ID_KEY } from '@/lib/fcm/use-fcm';
 import SocialLinks from '../(landing)/_components/social-links';
 import styles from './profile.module.css';
 import { useFeedStore } from '@/app/b2c/[locale]/feed/use-feed-store';
+import { useSafeBack } from '@/hooks/use-safe-back';
 
 export default function ProfilePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -52,6 +53,7 @@ export default function ProfilePage() {
   const tHobbies = useTranslations('components.profile-sections.hobbies');
   const tAge = useTranslations('components.profile-sections.age');
   const router = useRouter();
+  const { safeBack } = useSafeBack();
 
   const {
     serverProfile: profile,
@@ -205,7 +207,7 @@ export default function ProfilePage() {
   };
 
   const handleBack = () => {
-    router.replace(`${PAGE_ROUTES.FEED}?auto-chat-redirect=false`);
+    safeBack(`${PAGE_ROUTES.FEED}?auto-chat-redirect=false`);
   };
 
   const handleAvatarClick = () => {
