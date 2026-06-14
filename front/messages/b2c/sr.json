@@ -221,7 +221,7 @@
     },
     "feed": {
       "distance": "Udaljenost: {distance} {units}",
-      "noProfiles": "Nema pronađenih profila. Pokušaj da promeniš <link>filtere</link>.",
+      "noProfiles": "Nema pronađenih profila u blizini. Pokušaj da promeniš <link>filtere</link>.",
       "locationRequired": "Pristup lokaciji je isključen. Da bi video profile u blizini, uključi lokaciju u podešavanjima pregledača. <link>Pogledaj uputstvo</link>",
       "inMeeting": "Ne možeš pozivati dok planiraš susret, prvo ga završi 😊 Tapni bilo gde da otvoriš chat.",
       "inviteExpirationDialog": {

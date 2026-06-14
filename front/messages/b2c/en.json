@@ -221,7 +221,7 @@
     },
     "feed": {
       "distance": "Distance: {distance} {units}",
-      "noProfiles": "No profiles found. Try changing the <link>filters</link>.",
+      "noProfiles": "No profiles found nearby. Try changing the <link>filters</link>.",
       "locationRequired": "Location access is off. To see local profiles, please enable it in your browser settings. <link>View instructions</link>",
       "inMeeting": "Can't invite anyone while you're planning a meetup, finish it first 😊 Tap anywhere to open the chat.",
       "inviteExpirationDialog": {
