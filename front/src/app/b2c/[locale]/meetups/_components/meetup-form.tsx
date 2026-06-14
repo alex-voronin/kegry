@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'react-toastify';
-import { Camera, Plus, X, Users } from 'lucide-react';
+import { Camera, Plus, X, Users, Phone, Mail, Globe } from 'lucide-react';
 
 import { Toggle } from '@/components/ui/toggle';
 import { FormSegmentedControl } from '@/components/ui/form-segmented-control';
@@ -19,6 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
+import { messengerIcons } from '@/components/ui/messenger-icons';
 import { ImageCropperModal } from '@/components/ui/image-cropper-modal';
 import { compressImageToBlob } from '@/lib/image-utils';
 import { VENUE_COVER_MAX_SIZE_BYTES } from '@/lib/constants';
@@ -534,9 +535,12 @@ export function MeetupForm({
                     />
                   </div>
                   <div
-                    className="bg-form-element flex h-10 flex-1 cursor-pointer items-center rounded-xl px-3 text-sm"
+                    className="bg-form-element flex h-10 flex-1 cursor-pointer items-center gap-2 rounded-xl px-3 text-sm"
                     onClick={() => setContactTypeMenuId(contact.id)}
                   >
+                    <span style={{ width: 18, height: 18, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }} className="shrink-0">
+                      {messengerIcons[contact.type] ?? (contact.type === 'Phone' ? <Phone size={18} /> : contact.type === 'Email' ? <Mail size={18} /> : <Globe size={18} />)}
+                    </span>
                     {contact.type}
                   </div>
                   <button
@@ -572,6 +576,9 @@ export function MeetupForm({
             onClose={() => setContactTypeMenuId(null)}
             options={contactTypes.map((ct) => ({
               label: ct,
+              icon: <span style={{ width: 24, height: 24, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                {messengerIcons[ct] ?? (ct === 'Phone' ? <Phone size={24} /> : ct === 'Email' ? <Mail size={24} /> : <Globe size={24} />)}
+              </span>,
               onClick: () => {
                 if (contactTypeMenuId) {
                   updateContact(contactTypeMenuId, 'type', ct);
