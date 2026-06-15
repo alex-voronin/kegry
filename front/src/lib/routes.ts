@@ -11,7 +11,7 @@ export const PAGE_ROUTES = {
   MAP: '/map',
   MEETUP_CREATE: (venueId?: string) =>
     venueId ? `/meetups/create?venueId=${venueId}` : '/meetups/create',
-  MEETUP_EDIT: (eventId: string) => `/meetups/edit?eventId=${eventId}`,
+  MEETUP_EDIT: (eventId: string) => `/meetups/${eventId}/edit`,
   MEETUP_DETAIL: (id: string) => `/meetups/${id}`,
   APPROVALS: (eventId: string) => `/meetups/${eventId}/approvals`,
   PARTICIPANTS: (eventId: string) => `/meetups/${eventId}/participants`,
@@ -30,6 +30,7 @@ export const PAGE_ROUTES = {
   EDIT_PROFILE: '/edit-profile',
   NOTIFICATIONS: '/notifications',
   CHAT: '/chat',
+  MY_EVENTS: '/my-events',
   SETTINGS: '/settings',
   FRIENDS_AND_FOES: '/friends-and-foes',
   RATE_USER: (userId: string) => `/rate-user/${userId}`,
@@ -194,6 +195,8 @@ export const API_ENDPOINTS = {
       `/api/v1/events/${eventId}/participants/${userId}/approve`,
     REJECT_PARTICIPANT: (eventId: string, userId: string) =>
       `/api/v1/events/${eventId}/participants/${userId}/reject`,
+    MY_CREATED: '/api/v1/events/my/created',
+    MY_PARTICIPATED: '/api/v1/events/my/participated',
   },
   VENUES: {
     LIST: '/api/v1/venues',
@@ -204,6 +207,7 @@ export const API_ENDPOINTS = {
       `/api/v1/venue/${qrCode}/qr-check-in/settings`,
     DETAILS: (id: string) => `/api/v1/venue/${id}`,
     DISCOUNTS: (venueId: string) => `/api/v1/venue/${venueId}/discounts`,
+    BATCH: '/api/v1/venues/batch',
   },
   DEALS: {
     DISCOUNTS: '/api/v1/discounts',

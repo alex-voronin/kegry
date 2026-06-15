@@ -13,6 +13,7 @@ import { useUserProfileStore } from '@/store/use-user-profile-store';
 import { useAuthStore } from '@/lib/auth/use-auth-store';
 import { Spinner } from '@/components/ui/spinner';
 import { MeetupForm, EventContactForm } from '../_components/meetup-form';
+import { useSafeBack } from '@/hooks/use-safe-back';
 
 interface EventDetail {
   id: string;
@@ -38,6 +39,7 @@ export default function EditMeetupPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const t = useTranslations('components.forms.event');
+  const { safeBack } = useSafeBack();
 
   const eventId = searchParams.get('eventId');
   const firstName = useUserProfileStore((s) => s.firstName);
@@ -71,7 +73,7 @@ export default function EditMeetupPage() {
   }, [eventId, isAuthenticated]);
 
   const handleCancel = () => {
-    router.push(PAGE_ROUTES.MAP);
+    safeBack(PAGE_ROUTES.MAP);
   };
 
   const handleSubmit = async (data: {
@@ -144,10 +146,7 @@ export default function EditMeetupPage() {
     );
   }
 
-  const hasAdvancedFields = !!(
-    event.description ||
-    event.coverImageUrl
-  );
+  const hasAdvancedFields = !!(event.description || event.coverImageUrl);
   const initialIsSimple = !hasAdvancedFields;
 
   return (
@@ -161,7 +160,9 @@ export default function EditMeetupPage() {
         description: event.description,
         startDateTime: (() => {
           const d = new Date(event.startDateTime);
-          return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+          return new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+            .toISOString()
+            .slice(0, 16);
         })(),
         coverImageUrl: event.coverImageUrl,
         contacts: event.contacts.map((c) => ({

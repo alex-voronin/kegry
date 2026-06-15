@@ -93,7 +93,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       label: t('myEvents'),
-      href: PAGE_ROUTES.CHAT,
+      href: PAGE_ROUTES.MY_EVENTS,
       icon: <CalendarSync size={24} />,
     },
     {

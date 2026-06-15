@@ -336,6 +336,29 @@
         "deleteFailed": "Brisanje obaveštenja nije uspelo"
       }
     },
+    "myEvents": {
+      "title": "Moji događaji",
+      "ownerTab": "Vlasnik",
+      "participantTab": "Učesnik",
+      "emptyOwner": "Još uvek nemaš nijedan događaj",
+      "emptyParticipant": "Još uvek ne učestvuješ ni na jednom događaju.",
+      "cancel": "Otkaži",
+      "delete": "Obriši",
+      "deleting": "Brisanje...",
+      "deleteConfirm": "Želiš li da obrišeš ovaj događaj?",
+      "menu": {
+        "edit": "Uredi",
+        "delete": "Obriši",
+        "leave": "Napusti"
+      },
+      "toast": {
+        "loadFailed": "Učitavanje događaja nije uspelo",
+        "deleted": "Događaj obrisan",
+        "deleteFailed": "Brisanje događaja nije uspelo",
+        "left": "Događaj je napušten",
+        "leaveFailed": "Napuštanje događaja nije uspelo"
+      }
+    },
     "rateUser": {
       "howWasIt": "Kako je prošao vaš susret?",
       "submit": "Pošalji",

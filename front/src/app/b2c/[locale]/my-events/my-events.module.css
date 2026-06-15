@@ -1,0 +1,69 @@
+@reference "../../../../app/globals.css";
+
+.tabBar {
+  @apply px-4 pt-3 pb-1;
+}
+
+.content {
+  @apply flex flex-1 flex-col;
+}
+
+.eventList {
+  @apply flex flex-col gap-0.5 sm:px-4;
+}
+
+.emptyState {
+  @apply text-secondary flex flex-1 flex-col items-center justify-center gap-4 text-center px-8;
+}
+
+.dateSeparator {
+  @apply text-secondary px-4 pt-4 pb-1 text-xs font-semibold tracking-wider uppercase;
+}
+
+.eventCard {
+  @apply relative flex min-h-[64px] w-full cursor-pointer items-center overflow-hidden rounded-xl bg-[#1e1e1e];
+}
+
+.eventCardImage {
+  @apply absolute inset-0 h-full w-full object-cover;
+}
+
+.eventCardOverlay {
+  @apply absolute inset-0 z-10 bg-black/60;
+}
+
+.eventCardContent {
+  @apply relative z-10 flex w-full items-center gap-2 px-4 py-3;
+}
+
+.eventCardInfo {
+  @apply min-w-0 flex-1;
+}
+
+.eventCardTime {
+  @apply text-primary text-xs font-medium drop-shadow-md;
+}
+
+.eventCardTitle {
+  @apply text-primary flex items-center gap-1 text-sm font-bold drop-shadow-md;
+}
+
+.eventCardVenueRow {
+  @apply text-primary mt-0.5 flex items-center gap-1 text-xs drop-shadow-md;
+}
+
+.eventCardVenueAvatar {
+  @apply h-4 w-4 shrink-0 rounded-full object-cover;
+}
+
+.eventCardMetaDot {
+  @apply text-primary/40;
+}
+
+.eventCardJoined {
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+
+.eventCardExpired {
+  @apply opacity-50 grayscale;
+}
