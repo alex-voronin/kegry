@@ -14,7 +14,7 @@ import { toast } from 'react-toastify';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
-import { FormSegmentedControl } from '@/components/ui/form-segmented-control';
+import { TabControl } from '@/components/ui/tab-control';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { useInView } from 'react-intersection-observer';
@@ -259,7 +259,7 @@ export default function MyEventsScreen() {
       />
 
       <div className={styles.tabBar}>
-        <FormSegmentedControl
+        <TabControl
           options={[
             { value: 'owner', label: t('ownerTab') },
             { value: 'participant', label: t('participantTab') },

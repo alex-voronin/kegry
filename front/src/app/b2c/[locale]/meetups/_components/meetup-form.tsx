@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 import { Camera, Plus, X, Users, Phone, Mail, Globe } from 'lucide-react';
 
 import { Toggle } from '@/components/ui/toggle';
-import { FormSegmentedControl } from '@/components/ui/form-segmented-control';
+import { TabControl } from '@/components/ui/tab-control';
 import { ModalMenu } from '@/components/ui/modal-menu';
 
 import { Button, ButtonVariant } from '@/components/ui/button';
@@ -27,9 +27,9 @@ import stylesCommon from '@/components/ui/common.module.css';
 
 export type MeetupFormValues = {
   title: string;
-  description: string;
+  description: string | undefined;
   startDateTime: string;
-  maxParticipants: string;
+  maxParticipants?: string;
   requiresApproval: boolean;
 };
 
@@ -304,7 +304,7 @@ export function MeetupForm({
 
     await onSubmit({
       title: values.title,
-      description: isSimple ? '' : values.description,
+      description: isSimple ? '' : (values.description ?? ''),
       startDateTime: values.startDateTime,
       coverBlob: isSimple ? null : coverBlob,
       contacts,
@@ -392,7 +392,7 @@ export function MeetupForm({
         )}
 
         {/* Mode toggle */}
-        <FormSegmentedControl
+        <TabControl
           options={[
             { value: 'simple', label: 'Simple' },
             { value: 'advanced', label: 'Advanced' },
@@ -452,7 +452,7 @@ export function MeetupForm({
         {isSimple && (
           <div className={`${stylesCommon.sectionContainer} px-0 sm:px-4`}>
             <FormSectionTitle>{t('participants')}</FormSectionTitle>
-            <FormSegmentedControl
+            <TabControl
               size="md"
               options={[
                 {

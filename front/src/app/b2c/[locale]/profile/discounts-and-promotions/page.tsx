@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
-import { SegmentedControl } from '@/components/ui/segmented-control';
+import { TabControl } from '@/components/ui/tab-control';
 import { useDiscountsStore } from './use-discounts-store';
 import { usePromotionsStore } from './use-promotions-store';
 import { PAGE_ROUTES } from '@/lib/routes';
@@ -25,8 +25,8 @@ export default function DiscountsAndPromotionsScreen() {
   const tCities = useTranslations('common.cities');
 
   const TAB_OPTIONS = [
-    { value: 'discounts', label: t('tabs.discounts'), width: '50%' },
-    { value: 'promotions', label: t('tabs.promotions'), width: '50%' },
+    { value: 'discounts', label: t('tabs.discounts') },
+    { value: 'promotions', label: t('tabs.promotions') },
   ];
 
   const [activeTab, setActiveTab] = useState<Tab>('discounts');
@@ -101,7 +101,7 @@ export default function DiscountsAndPromotionsScreen() {
       />
 
       <div className={styles.tabBar}>
-        <SegmentedControl
+        <TabControl
           options={TAB_OPTIONS}
           value={activeTab}
           onChange={(v) => setActiveTab(v as Tab)}

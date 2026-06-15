@@ -1,26 +1,27 @@
 import { cn } from '@/lib/utils';
-import styles from './form-segmented-control.module.css';
+import styles from './tab-control.module.css';
 
-export interface FormSegmentedOption {
+export interface TabOption {
   value: string;
   label: React.ReactNode;
 }
 
-interface FormSegmentedControlProps {
-  options: FormSegmentedOption[];
+interface TabControlProps {
+  options: TabOption[];
   value: string;
   onChange: (value: string) => void;
   size?: 'sm' | 'md';
   className?: string;
 }
 
-export function FormSegmentedControl({
+export function TabControl({
   options,
   value,
   onChange,
   size = 'sm',
   className,
-}: FormSegmentedControlProps) {
+}: TabControlProps) {
+  const hasSeparators = options.length > 2;
   return (
     <div className={cn(styles.container, className)}>
       {options.map((option, index) => {
@@ -38,6 +39,7 @@ export function FormSegmentedControl({
               isActive ? styles.optionActive : styles.optionInactive,
               isActive && !isFirst && styles.borderLeft,
               isActive && !isLast && styles.borderRight,
+              hasSeparators && !isLast && styles.separator,
             )}
           >
             {option.label}

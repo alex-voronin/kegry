@@ -31,3 +31,7 @@
 .borderLeft {
   @apply border-l border-white/10;
 }
+
+.separator {
+  @apply border-r border-white/10;
+}

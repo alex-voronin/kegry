@@ -10,7 +10,7 @@ import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
-import { SegmentedControl } from '@/components/ui/segmented-control';
+import { TabControl } from '@/components/ui/tab-control';
 import { useVenueStore } from './use-venue-store';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { toast } from 'react-toastify';
@@ -287,14 +287,13 @@ export default function VenueDetailScreen() {
           </div>
 
           <div className={styles.segmentedControlWrapper}>
-            <SegmentedControl
+            <TabControl
               options={[
-                { value: 'details', label: t('tabDetails'), width: 'auto' },
-                { value: 'events', label: t('tabEvents'), width: 'auto' },
+                { value: 'details', label: t('tabDetails') },
+                { value: 'events', label: t('tabEvents') },
               ]}
               value={activeTab}
               onChange={setActiveTab}
-              stretchItems
             />
           </div>
 

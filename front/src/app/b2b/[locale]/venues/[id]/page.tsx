@@ -10,7 +10,7 @@ import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { VenueTagAccordion } from '@/components/common/venue-tag-accordion';
-import { SegmentedControl } from '@/components/ui/segmented-control';
+import { TabControl } from '@/components/ui/tab-control';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { ButtonVariant } from '@/components/ui/button';
@@ -425,16 +425,15 @@ export default function VenueDetailPage() {
         )}
       </div>
 
-      <div className="px-4 pb-2 pt-2">
-        <SegmentedControl
+      <div className="sm:px-4 pb-2 pt-2">
+        <TabControl
           options={[
-            { value: 'venue', label: t('venue'), width: 'auto' },
-            { value: 'deals', label: t('deals'), width: 'auto' },
-            { value: 'events', label: t('events'), width: 'auto' },
+            { value: 'venue', label: t('venue') },
+            { value: 'deals', label: t('deals') },
+            { value: 'events', label: t('events') },
           ]}
           value={activeTab}
           onChange={setActiveTab}
-          stretchItems
         />
       </div>
 

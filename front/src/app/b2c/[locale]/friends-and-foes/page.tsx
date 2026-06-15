@@ -9,7 +9,7 @@ import { useSearchParams } from 'next/navigation';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { ModalMenu } from '@/components/ui/modal-menu';
-import { SegmentedControl } from '@/components/ui/segmented-control';
+import { TabControl } from '@/components/ui/tab-control';
 import { ReportDialog } from '@/components/ui/report-dialog';
 import { InviteDialog } from '@/components/ui/invite-dialog';
 import { useBlockedUsersStore } from './use-blocked-users-store';
@@ -37,9 +37,9 @@ export default function FriendsAndFoesPage() {
   const tBlocked = useTranslations('screens.blockedUsers');
 
   const TAB_OPTIONS = [
-    { value: 'friends', label: t('tabs.friends'), width: '33%' },
-    { value: 'imaginary', label: t('tabs.imaginary'), width: '34%' },
-    { value: 'blocked', label: t('tabs.blocked'), width: '33%' },
+    { value: 'friends', label: t('tabs.friends') },
+    { value: 'imaginary', label: t('tabs.imaginary') },
+    { value: 'blocked', label: t('tabs.blocked') },
   ];
   const [activeTab, setActiveTab] = useState<Tab>(() => {
     const tabParam = searchParams.get('tab');
@@ -298,7 +298,7 @@ export default function FriendsAndFoesPage() {
 
       <div className="flex flex-1 flex-col">
         <div className={styles.tabBar}>
-          <SegmentedControl
+          <TabControl
             options={TAB_OPTIONS}
             value={activeTab}
             onChange={(v) => setActiveTab(v as Tab)}

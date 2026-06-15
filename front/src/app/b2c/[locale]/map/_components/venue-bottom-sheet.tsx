@@ -103,9 +103,7 @@ export function VenueBottomSheet({
 
   const sheetHeight = useMemo(
     () =>
-      sheetState === 'expanded'
-        ? `calc(100dvh - ${EXPANDED_TOP}px)`
-        : '100%',
+      sheetState === 'expanded' ? `calc(100dvh - ${EXPANDED_TOP}px)` : '100%',
     [sheetState],
   );
 
@@ -741,7 +739,9 @@ export function VenueBottomSheet({
                             setMenuTarget({
                               lat: v?.latitude ?? 0,
                               lng: v?.longitude ?? 0,
-                              venue: venues.find((vv) => vv.id === event.venueId),
+                              venue: venues.find(
+                                (vv) => vv.id === event.venueId,
+                              ),
                               eventId: event.id,
                               participationStatus: event.participationStatus,
                               isCreator: event.creatorId === currentUserId,
@@ -953,6 +953,7 @@ export function VenueBottomSheet({
               label: t('menu.center'),
               onClick: handleMenuCenter,
               icon: <LocateFixed className="text-primary h-5 w-5" />,
+              isDestructive: false,
             },
           ];
           if (menuTarget?.eventId) {
@@ -963,6 +964,7 @@ export function VenueBottomSheet({
                 setMenuTarget(null);
               },
               icon: <Eye className="text-primary h-5 w-5" />,
+              isDestructive: false,
             });
             if (menuTarget.isCreator) {
               items.push({
@@ -972,6 +974,7 @@ export function VenueBottomSheet({
                   setMenuTarget(null);
                 },
                 icon: <Pencil className="text-primary h-5 w-5" />,
+                isDestructive: false,
               });
               items.push({
                 label: t('menu.delete'),
@@ -991,18 +994,21 @@ export function VenueBottomSheet({
                     setMenuTarget(null);
                   },
                   icon: <UserMinus className="text-primary h-5 w-5" />,
+                  isDestructive: false,
                 });
               } else if (menuTarget.participationStatus === 'Approved') {
                 items.push({
                   label: t('menu.leave'),
                   onClick: handleMenuJoinLeave,
                   icon: <UserMinus className="text-primary h-5 w-5" />,
+                  isDestructive: false,
                 });
               } else {
                 items.push({
                   label: t('menu.join'),
                   onClick: handleMenuJoinLeave,
                   icon: <UserPlus className="text-primary h-5 w-5" />,
+                  isDestructive: false,
                 });
               }
             }
@@ -1014,6 +1020,7 @@ export function VenueBottomSheet({
                 setMenuTarget(null);
               },
               icon: <Eye className="text-primary h-5 w-5" />,
+              isDestructive: false,
             });
           }
           return items;
