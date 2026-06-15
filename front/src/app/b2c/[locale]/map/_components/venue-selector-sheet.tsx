@@ -110,6 +110,12 @@ export function VenueSelectorSheet({
     [selectedCity],
   );
 
+  useEffect(() => {
+    if (isOpen && initialVenues.length === 0) {
+      fetchVenues('', 0, false);
+    }
+  }, [isOpen, initialVenues, fetchVenues]);
+
   const handleSearchChange = useCallback(
     (value: string) => {
       setQuery(value);

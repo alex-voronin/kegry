@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import {
   X,
   User,
-  CalendarSync,
+  CalendarClock,
   MapPinned,
   Sticker,
   MapPin,
@@ -77,7 +77,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <AlertCircle
               size={14}
               strokeWidth={3}
-              className="text-alert-vibrant absolute -right-1 -top-1"
+              className="text-alert-vibrant absolute -top-1 -right-1"
             />
           )}
         </span>
@@ -94,7 +94,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     {
       label: t('myEvents'),
       href: PAGE_ROUTES.MY_EVENTS,
-      icon: <CalendarSync size={24} />,
+      icon: <CalendarClock size={24} />,
     },
     {
       label: t('map'),

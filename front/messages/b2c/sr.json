@@ -652,6 +652,7 @@
       "helpDialogCustomDiscount": "Detalje o ponudi ili popustu možeš pronaći u lokalu. Skeniraj QR kod da povećaš broj poseta.",
       "ok": "OK",
       "menu": {
+        "createEvent": "Kreiraj događaj",
         "openInstagram": "Otvori Instagram",
         "openWebsite": "Otvori sajt",
         "openInMaps": "Otvori na Google Maps",

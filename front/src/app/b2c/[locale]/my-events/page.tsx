@@ -27,6 +27,7 @@ import { EventListItem } from '@/app/b2c/[locale]/my-events/_components/event-li
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import apiClient from '@/lib/api-client';
 import { useSafeBack } from '@/hooks/use-safe-back';
+import { VenueSelectorSheet } from '@/app/b2c/[locale]/map/_components/venue-selector-sheet';
 import styles from './my-events.module.css';
 
 type TabType = 'owner' | 'participant';
@@ -149,6 +150,7 @@ export default function MyEventsScreen() {
     }
   }, [inView, activeTab, tabState.hasMore, tabState.isLoading, tabState.hasError, tabState.events.length, limit]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const [isVenueSelectorOpen, setIsVenueSelectorOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<MyEventItem | null>(null);
   const [eventToDeleteId, setEventToDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -204,6 +206,17 @@ export default function MyEventsScreen() {
 
   const isOwnerTab = activeTab === 'owner';
 
+  const handleAddMeetupClick = useCallback(() => {
+    setIsVenueSelectorOpen(true);
+  }, []);
+
+  const handleSelectVenue = useCallback(
+    (venueId: string, _venueName: string) => {
+      router.push(PAGE_ROUTES.MEETUP_CREATE(venueId));
+    },
+    [router],
+  );
+
   const getMenuOptions = () => {
     if (!selectedEvent) return [];
     if (isOwnerTab) {
@@ -256,6 +269,18 @@ export default function MyEventsScreen() {
           />
         }
         title={t('title')}
+        right={
+          isOwnerTab ? (
+            <Icon
+              src="/assets/b2b/plus-icon.svg"
+              alt="add meetup"
+              width={22}
+              height={22}
+              onClick={handleAddMeetupClick}
+              priority
+            />
+          ) : undefined
+        }
       />
 
       <div className={styles.tabBar}>
@@ -310,6 +335,13 @@ export default function MyEventsScreen() {
           </div>
         )}
       </div>
+
+      <VenueSelectorSheet
+        isOpen={isVenueSelectorOpen}
+        onClose={() => setIsVenueSelectorOpen(false)}
+        onSelectVenue={handleSelectVenue}
+        initialVenues={[]}
+      />
 
       <ModalMenu
         isOpen={!!selectedEvent}

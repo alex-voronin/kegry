@@ -14,7 +14,14 @@ import { TabControl } from '@/components/ui/tab-control';
 import { useVenueStore } from './use-venue-store';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { toast } from 'react-toastify';
-import { ScanQrCode, Link, Eye, UserPlus, UserMinus } from 'lucide-react';
+import {
+  ScanQrCode,
+  Link,
+  Eye,
+  UserPlus,
+  UserMinus,
+  CalendarClock,
+} from 'lucide-react';
 import styles from './venue-detail.module.css';
 import { PinpadIcon } from '@/components/icons/pinpad-icon';
 import { useSafeBack } from '@/hooks/use-safe-back';
@@ -329,6 +336,14 @@ export default function VenueDetailScreen() {
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
         options={[
+          {
+            label: t('menu.createEvent'),
+            icon: <CalendarClock size={24} />,
+            onClick: () => {
+              router.push(PAGE_ROUTES.MEETUP_CREATE(venueId));
+              setIsMenuOpen(false);
+            },
+          },
           {
             label: t('menu.copyLink'),
             icon: <Link size={24} />,

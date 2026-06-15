@@ -652,6 +652,7 @@
       "helpDialogCustomDiscount": "You can find details about the offer or discount at the venue. Scan the QR code to increase your number of visits.",
       "ok": "OK",
       "menu": {
+        "createEvent": "Create Event",
         "openInstagram": "Open Instagram",
         "openWebsite": "Open Website",
         "openInMaps": "Open on Google Maps",

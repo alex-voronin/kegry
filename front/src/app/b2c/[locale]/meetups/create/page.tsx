@@ -12,10 +12,12 @@ import { uploadImage } from '@/lib/image-utils';
 import { useUserProfileStore } from '@/store/use-user-profile-store';
 import { useAuthStore } from '@/lib/auth/use-auth-store';
 import { MeetupForm, EventContactForm } from '../_components/meetup-form';
+import { useSafeBack } from '@/hooks/use-safe-back';
 
 export default function CreateMeetupPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { safeBack } = useSafeBack();
   const t = useTranslations('components.forms.event');
 
   const venueId = searchParams.get('venueId');
@@ -34,7 +36,7 @@ export default function CreateMeetupPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleCancel = () => {
-    router.push(PAGE_ROUTES.MAP);
+    safeBack(PAGE_ROUTES.MAP);
   };
 
   const handleSubmit = async (data: {
@@ -77,7 +79,7 @@ export default function CreateMeetupPage() {
         });
       }
 
-      router.push(PAGE_ROUTES.MAP);
+      safeBack(PAGE_ROUTES.MAP);
     } catch (error) {
       rethrowApiError(error, 'Failed to create meetup');
     } finally {

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
@@ -37,7 +36,6 @@ interface EventDetail {
 
 export default function EditMeetupPage() {
   const params = useParams();
-  const router = useRouter();
   const t = useTranslations('components.forms.event');
   const { safeBack } = useSafeBack();
 
@@ -114,7 +112,7 @@ export default function EditMeetupPage() {
         hobbyIds: data.hobbyIds,
       });
 
-      router.push(PAGE_ROUTES.MAP);
+      safeBack(PAGE_ROUTES.MAP);
     } catch (error) {
       rethrowApiError(error, 'Failed to update meetup');
     } finally {
