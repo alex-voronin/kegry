@@ -181,12 +181,8 @@ public class UserProfileEndpoints : IEndpoints
             FirstName: u.FirstName,
             LastName: u.LastName,
             Bio: u.Bio,
-            AvatarImageUrl: u.AvatarImageS3Key != null
-                ? storageService.S3KeyToPublicFileUrl(u.AvatarImageS3Key, u.UpdatedAt)
-                : null,
-            CoverImageUrl: u.CoverImageS3Key != null
-                ? storageService.S3KeyToPublicFileUrl(u.CoverImageS3Key, u.UpdatedAt)
-                : null,
+            AvatarImageUrl: storageService.S3KeyToPublicFileUrl(u.AvatarImageS3Key, u.UpdatedAt),
+            CoverImageUrl: storageService.S3KeyToPublicFileUrl(u.CoverImageS3Key, u.UpdatedAt),
             Birthday: u.Birthday,
             Gender: u.Gender,
             Hobbies: u.Hobbies

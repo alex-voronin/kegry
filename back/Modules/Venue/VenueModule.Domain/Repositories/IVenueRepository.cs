@@ -42,4 +42,6 @@ public interface IVenueRepository : IRepository<Venue>
         Guid[]? tagIds,
         string? companyName,
         CancellationToken ct);
+
+    Task<Venue[]> GetByIdsAsync(Guid[] ids, CancellationToken ct);
 }

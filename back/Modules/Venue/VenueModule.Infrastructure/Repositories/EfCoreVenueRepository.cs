@@ -214,4 +214,12 @@ public class EfCoreVenueRepository : Repository<VenueContext, Venue>, IVenueRepo
             .Take(limit)
             .ToArrayAsync(ct);
     }
+
+    public async Task<Venue[]> GetByIdsAsync(Guid[] ids, CancellationToken ct)
+    {
+        return await Context.Venues
+            .Include(v => v.Company)
+            .Where(v => ids.Contains(v.Id))
+            .ToArrayAsync(ct);
+    }
 }

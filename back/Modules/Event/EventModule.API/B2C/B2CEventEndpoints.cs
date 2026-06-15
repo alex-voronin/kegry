@@ -38,6 +38,8 @@ public class B2CEventEndpoints : IEndpoints
         usersApiGroup.MapGet("/api/v1/events/{id:guid}/participants", GetParticipants);
         usersApiGroup.MapPatch("/api/v1/events/{id:guid}/participants/{userId:guid}/approve", ApproveParticipant);
         usersApiGroup.MapPatch("/api/v1/events/{id:guid}/participants/{userId:guid}/reject", RejectParticipant);
+        usersApiGroup.MapGet("/api/v1/events/my/created", GetMyCreatedEvents);
+        usersApiGroup.MapGet("/api/v1/events/my/participated", GetMyParticipatedEvents);
     }
 
     private static async Task<ApiResult<VenueEventsDto[]>> GetEventsMap(
@@ -372,5 +374,65 @@ public class B2CEventEndpoints : IEndpoints
 
         return ApiResult<GetPresignedUrlResponse>.Build(
             new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl));
+    }
+
+    private static async Task<ApiResult<PaginatedResponse<EventListItemDto>>> GetMyCreatedEvents(
+        [AsParameters] PaginatedRequest request,
+        ClaimsPrincipal user,
+        IEventRepository eventRepository,
+        IS3StorageService storageService,
+        CancellationToken ct)
+    {
+        var userId = user.GetId();
+        var (events, totalCount) = await eventRepository.GetOwnEventsPaginatedAsync(
+            userId, offset: request.Offset, limit: request.Limit, ct: ct);
+
+        var dtos = MapToEventListItemDtos(events, userId, storageService);
+        return ApiResult<PaginatedResponse<EventListItemDto>>.Build(
+            new PaginatedResponse<EventListItemDto>(dtos, totalCount));
+    }
+
+    private static async Task<ApiResult<PaginatedResponse<EventListItemDto>>> GetMyParticipatedEvents(
+        [AsParameters] PaginatedRequest request,
+        ClaimsPrincipal user,
+        IEventRepository eventRepository,
+        IS3StorageService storageService,
+        CancellationToken ct)
+    {
+        var userId = user.GetId();
+        var (events, totalCount) = await eventRepository.GetParticipatedEventsPaginatedAsync(
+            userId, offset: request.Offset, limit: request.Limit, ct: ct);
+
+        var dtos = MapToEventListItemDtos(events, userId, storageService);
+        return ApiResult<PaginatedResponse<EventListItemDto>>.Build(
+            new PaginatedResponse<EventListItemDto>(dtos, totalCount));
+    }
+
+    private static EventListItemDto[] MapToEventListItemDtos(
+        Event[] events, Guid userId, IS3StorageService storageService)
+    {
+        return events.Select(e =>
+        {
+            var participationStatus = e.EventParticipants
+                .Where(p => p.UserId == userId)
+                .Select(p => (ParticipantStatus?)p.Status)
+                .FirstOrDefault();
+
+            return new EventListItemDto(
+                Id: e.Id.ToString(),
+                VenueId: e.VenueId.ToString(),
+                CoverImageUrl: e.CoverImageS3Key != null
+                    ? storageService.S3KeyToPublicFileUrl(e.CoverImageS3Key, e.UpdatedAt)
+                    : null,
+                Title: e.Title,
+                Type: e.Type,
+                StartDateTime: e.StartDateTime,
+                ParticipantsCount: e.EventParticipants.Count(p => p.Status == ParticipantStatus.Approved),
+                ParticipationStatus: participationStatus?.ToString(),
+                CreatorId: e.CreatorId.ToString(),
+                CreatorAvatarUrl: e.CreatorAvatarS3Key != null
+                    ? storageService.S3KeyToPublicFileUrl(e.CreatorAvatarS3Key, null)
+                    : null);
+        }).ToArray();
     }
 }

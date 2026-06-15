@@ -52,4 +52,10 @@ public interface IEventRepository : IRepository<Event>
         int offset = 0,
         int limit = 20,
         CancellationToken ct = default);
+
+    Task<(Event[] Events, int TotalCount)> GetParticipatedEventsPaginatedAsync(
+        Guid userId,
+        int offset = 0,
+        int limit = 20,
+        CancellationToken ct = default);
 }

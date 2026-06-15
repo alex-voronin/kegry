@@ -33,6 +33,7 @@ public class B2CVenueEndpoints : IEndpoints
         usersApiGroup.MapGet("/api/v1/venue/{id:guid}/discounts", GetDiscountsByWeekday);
         usersApiGroup.MapPost("/api/v1/venue/{qrCode:guid}/qr-check-in", CheckInToVenue);
         usersApiGroup.MapGet("/api/v1/venue/{qrCode:guid}/qr-check-in/settings", GetCheckInSettings);
+        usersApiGroup.MapPost("/api/v1/venues/batch", GetVenuesBatch);
     }
 
     private static async Task<ApiResult<CheckInResponse>> CheckInToVenue(
@@ -263,6 +264,29 @@ public class B2CVenueEndpoints : IEndpoints
                 .Select(p => new PromoDto(Type: p.Type, Body: p.Body))
                 .ToArray()
         );
+    }
+
+    private static async Task<ApiResult<VenueBatchItemDto[]>> GetVenuesBatch(
+        [FromBody] Guid[] ids,
+        IVenueRepository repository,
+        IS3StorageService storageService,
+        CancellationToken ct)
+    {
+        if (ids.Length == 0)
+            return ApiResult<VenueBatchItemDto[]>.Build([]);
+
+        var venues = await repository.GetByIdsAsync(ids, ct);
+
+        var dtos = venues.Select(v => new VenueBatchItemDto(
+            Id: v.Id.ToString(),
+            Name: v.Company.Name,
+            AvatarUrl: v.Company.AvatarImageS3Key != null
+                ? storageService.S3KeyToPublicFileUrl(v.Company.AvatarImageS3Key, v.Company.UpdatedAt)
+                : null,
+            Address: v.Address
+        )).ToArray();
+
+        return ApiResult<VenueBatchItemDto[]>.Build(dtos);
     }
 
     private static CompanyDto DomainCompanyToDto(IS3StorageService storageService, Company company)

@@ -212,6 +212,9 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
         int limit = 20,
         CancellationToken ct = default)
     {
+        var now = _timeProvider.GetUtcNow();
+        var weekBefore =now - TimeSpan.FromDays(7); 
+
         var query = Context.Events
             .Include(e => e.EventContacts)
             .Include(e => e.EventHobbyLinks)
@@ -226,10 +229,44 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
             query = query.Where(e => e.Type == type.Value);
 
         if (dateFrom.HasValue)
+        {
             query = query.Where(e => e.StartDateTime >= dateFrom.Value);
+        }
+        else
+        {
+            query = query.Where(e => e.StartDateTime >= weekBefore);
+        }
 
         if (dateTo.HasValue)
             query = query.Where(e => e.StartDateTime <= dateTo.Value);
+
+        var totalCount = await query.CountAsync(ct);
+
+        var events = await query
+            .OrderBy(e => e.StartDateTime)
+            .Skip(offset)
+            .Take(limit)
+            .ToArrayAsync(ct);
+
+        return (events, totalCount);
+    }
+
+    public async Task<(Event[] Events, int TotalCount)> GetParticipatedEventsPaginatedAsync(
+        Guid userId,
+        int offset = 0,
+        int limit = 20,
+        CancellationToken ct = default)
+    {
+        var now = _timeProvider.GetUtcNow();
+        var query = Context.Events
+            .Include(e => e.EventContacts)
+            .Include(e => e.EventHobbyLinks)
+            .Include(e => e.EventParticipants)
+            .Where(e => e.EventParticipants.Any(p =>
+                            p.UserId == userId &&
+                            (p.Status == ParticipantStatus.Approved || p.Status == ParticipantStatus.Pending)) &&
+                        e.StartDateTime >= now &&
+                        e.CreatorId != userId);
 
         var totalCount = await query.CountAsync(ct);
 
