@@ -24,9 +24,6 @@ import { useQrCheckIn } from '../venues/use-qr-check-in';
 import { VenueBottomSheet } from './_components/venue-bottom-sheet';
 import { VenueSelectorSheet } from './_components/venue-selector-sheet';
 import { useMapStore } from './use-map-store';
-import apiClient from '@/lib/api-client';
-import { API_ENDPOINTS } from '@/lib/routes';
-import { toast } from 'react-toastify';
 import styles from './map.module.css';
 import type { VenueMapItem } from '../venues/map/_components/venue-map-internal';
 import type { EventCountMap } from './_components/types';
@@ -63,8 +60,6 @@ export default function MapScreen() {
     setFocusedVenue,
     clearFocus,
     flyTo,
-    updateEventParticipation,
-    deleteEvent,
   } = useMapStore();
 
   const lastBoundsRef = useRef<string | null>(null);
@@ -202,53 +197,46 @@ export default function MapScreen() {
     [flyTo, fetchMapData, searchQuery, selectedTagIds, enabledEventTypes],
   );
 
-  const handleJoinEvent = useCallback(
-    async (eventId: string) => {
-      try {
-        await apiClient.post(API_ENDPOINTS.EVENTS.JOIN(eventId));
-        if (currentBoundsRef.current) {
-          await fetchMapData(
-            currentBoundsRef.current,
-            searchQuery,
-            selectedTagIds,
-            enabledEventTypes,
-          );
-        }
-      } catch {
-        toast.error('Failed to join event');
+  const handleJoinedEvent = useCallback(
+    async (_eventId: string) => {
+      if (currentBoundsRef.current) {
+        await fetchMapData(
+          currentBoundsRef.current,
+          searchQuery,
+          selectedTagIds,
+          enabledEventTypes,
+        );
       }
     },
     [fetchMapData, searchQuery, selectedTagIds, enabledEventTypes],
   );
 
-  const handleLeaveEvent = useCallback(
-    async (eventId: string) => {
-      try {
-        await apiClient.post(API_ENDPOINTS.EVENTS.LEAVE(eventId));
-        if (currentBoundsRef.current) {
-          await fetchMapData(
-            currentBoundsRef.current,
-            searchQuery,
-            selectedTagIds,
-            enabledEventTypes,
-          );
-        }
-      } catch {
-        toast.error('Failed to leave event');
+  const handleLeftEvent = useCallback(
+    async (_eventId: string) => {
+      if (currentBoundsRef.current) {
+        await fetchMapData(
+          currentBoundsRef.current,
+          searchQuery,
+          selectedTagIds,
+          enabledEventTypes,
+        );
       }
     },
     [fetchMapData, searchQuery, selectedTagIds, enabledEventTypes],
   );
 
-  const handleDeleteEvent = useCallback(
-    async (eventId: string) => {
-      try {
-        await deleteEvent(eventId);
-      } catch {
-        toast.error(t('toast.loadFailed'));
+  const handleDeletedEvent = useCallback(
+    async (_eventId: string) => {
+      if (currentBoundsRef.current) {
+        await fetchMapData(
+          currentBoundsRef.current,
+          searchQuery,
+          selectedTagIds,
+          enabledEventTypes,
+        );
       }
     },
-    [deleteEvent, t],
+    [fetchMapData, searchQuery, selectedTagIds, enabledEventTypes],
   );
 
   const handleVenueDetails = useCallback(
@@ -423,9 +411,9 @@ export default function MapScreen() {
           isLoading={isLoading}
           onFlyTo={handleFlyTo}
           onCenter={handleCenter}
-          onJoinEvent={handleJoinEvent}
-          onLeaveEvent={handleLeaveEvent}
-          onDeleteEvent={handleDeleteEvent}
+          onJoinEvent={handleJoinedEvent}
+          onLeaveEvent={handleLeftEvent}
+          onDeleteEvent={handleDeletedEvent}
           sheetState={sheetState}
           onSheetStateChange={setSheetState}
           enabledEventTypes={enabledEventTypes}

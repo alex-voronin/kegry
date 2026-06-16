@@ -1,22 +1,15 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
-import {
-  Trash2,
-  LogOut,
-  CalendarSync,
-  Pencil,
-} from 'lucide-react';
+import { CalendarSync } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { TabControl } from '@/components/ui/tab-control';
-import { ModalMenu } from '@/components/ui/modal-menu';
-import { ModalDialog } from '@/components/ui/modal-dialog';
 import { useInView } from 'react-intersection-observer';
 import { useViewportItemCount } from '@/hooks/use-viewport-item-count';
 import {
@@ -24,10 +17,11 @@ import {
   MyEventItem,
 } from '@/app/b2c/[locale]/my-events/use-my-events-store';
 import { EventListItem } from '@/app/b2c/[locale]/my-events/_components/event-list-item';
-import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
-import apiClient from '@/lib/api-client';
+import { PAGE_ROUTES } from '@/lib/routes';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { VenueSelectorSheet } from '@/app/b2c/[locale]/map/_components/venue-selector-sheet';
+import { EventActionSheet } from '@/components/common/event-action-sheet';
+import { useAuthStore } from '@/lib/auth/use-auth-store';
 import styles from './my-events.module.css';
 
 type TabType = 'owner' | 'participant';
@@ -151,10 +145,9 @@ export default function MyEventsScreen() {
   }, [inView, activeTab, tabState.hasMore, tabState.isLoading, tabState.hasError, tabState.events.length, limit]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [isVenueSelectorOpen, setIsVenueSelectorOpen] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<MyEventItem | null>(null);
-  const [eventToDeleteId, setEventToDeleteId] = useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const lastMenuEventRef = useRef<MyEventItem | null>(null);
+  const [menuEvent, setMenuEvent] = useState<MyEventItem | null>(null);
+  const userId = useAuthStore((s) => s.userId);
+  const isOwnerTab = activeTab === 'owner';
 
   const handleCardTap = useCallback(
     (event: MyEventItem) => {
@@ -169,42 +162,10 @@ export default function MyEventsScreen() {
 
   const handleMenuOpen = useCallback(
     (event: MyEventItem) => {
-      lastMenuEventRef.current = event;
-      setSelectedEvent(event);
+      setMenuEvent(event);
     },
     [],
   );
-
-  const handleDeleteEvent = useCallback(async () => {
-    if (!eventToDeleteId) return;
-    setIsDeleting(true);
-    try {
-      await apiClient.delete(API_ENDPOINTS.EVENTS.DELETE(eventToDeleteId));
-      store.removeEvent('owner', eventToDeleteId);
-      toast.success(t('toast.deleted'));
-    } catch {
-      toast.error(t('toast.deleteFailed'));
-    } finally {
-      setIsDeleting(false);
-      setEventToDeleteId(null);
-    }
-  }, [eventToDeleteId, store, t]);
-
-  const handleLeaveEvent = useCallback(async () => {
-    const event = lastMenuEventRef.current;
-    if (!event) return;
-    try {
-      await apiClient.post(API_ENDPOINTS.EVENTS.LEAVE(event.id));
-      store.removeEvent('participant', event.id);
-      toast.success(t('toast.left'));
-    } catch {
-      toast.error(t('toast.leaveFailed'));
-    } finally {
-      setSelectedEvent(null);
-    }
-  }, [store, t]);
-
-  const isOwnerTab = activeTab === 'owner';
 
   const handleAddMeetupClick = useCallback(() => {
     setIsVenueSelectorOpen(true);
@@ -216,40 +177,6 @@ export default function MyEventsScreen() {
     },
     [router],
   );
-
-  const getMenuOptions = () => {
-    if (!selectedEvent) return [];
-    if (isOwnerTab) {
-      return [
-        {
-          icon: <Pencil size={20} />,
-          label: t('menu.edit'),
-          onClick: () => {
-            router.push(PAGE_ROUTES.MEETUP_EDIT(selectedEvent.id));
-            setSelectedEvent(null);
-          },
-        },
-        {
-          icon: <Trash2 size={20} />,
-          label: t('menu.delete'),
-          onClick: () => {
-            setEventToDeleteId(selectedEvent.id);
-          },
-          isDestructive: true,
-        },
-      ];
-    }
-    return [
-      {
-        icon: <LogOut size={20} />,
-        label: t('menu.leave'),
-        onClick: () => {
-          handleLeaveEvent();
-        },
-        isDestructive: true,
-      },
-    ];
-  };
 
   const emptyMessage = isOwnerTab
     ? t('emptyOwner')
@@ -292,7 +219,7 @@ export default function MyEventsScreen() {
           value={activeTab}
           onChange={(val) => {
             setActiveTab(val as TabType);
-            setSelectedEvent(null);
+            setMenuEvent(null);
             router.replace(`${PAGE_ROUTES.MY_EVENTS}?tab=${val}`, { scroll: false });
           }}
         />
@@ -343,20 +270,14 @@ export default function MyEventsScreen() {
         initialVenues={[]}
       />
 
-      <ModalMenu
-        isOpen={!!selectedEvent}
-        onClose={() => setSelectedEvent(null)}
-        options={getMenuOptions()}
-      />
-
-      <ModalDialog
-        isOpen={!!eventToDeleteId}
-        onClose={() => setEventToDeleteId(null)}
-        message={t('deleteConfirm')}
-        primaryButtonText={t('cancel')}
-        secondaryButtonText={isDeleting ? t('deleting') : t('delete')}
-        onPrimaryAction={() => setEventToDeleteId(null)}
-        onSecondaryAction={handleDeleteEvent}
+      <EventActionSheet
+        event={menuEvent}
+        currentUserId={userId}
+        onClose={() => setMenuEvent(null)}
+        onJoined={() => {}}
+        onLeft={(id) => store.removeEvent(activeTab, id)}
+        onDeleted={(id) => store.removeEvent('owner', id)}
+        onEdit={(id) => router.push(PAGE_ROUTES.MEETUP_EDIT(id))}
       />
     </div>
   );

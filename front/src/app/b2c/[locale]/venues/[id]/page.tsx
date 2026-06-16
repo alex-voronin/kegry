@@ -10,16 +10,14 @@ import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
+import { EventActionSheet } from '@/components/common/event-action-sheet';
 import { TabControl } from '@/components/ui/tab-control';
 import { useVenueStore } from './use-venue-store';
-import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
+import { PAGE_ROUTES } from '@/lib/routes';
 import { toast } from 'react-toastify';
 import {
   ScanQrCode,
   Link,
-  Eye,
-  UserPlus,
-  UserMinus,
   CalendarClock,
 } from 'lucide-react';
 import styles from './venue-detail.module.css';
@@ -31,7 +29,7 @@ import { useQrCheckIn } from '../use-qr-check-in';
 import { DetailsTab } from './_components/details-tab';
 import { EventsTab } from './_components/events-tab';
 import { InstagramIcon } from './_components/instagram-icon';
-import apiClient from '@/lib/api-client';
+import { useAuthStore } from '@/lib/auth/use-auth-store';
 
 const PIN_CODE_ONLY_CHECKIN_ENABLED = false;
 
@@ -61,9 +59,9 @@ export default function VenueDetailScreen() {
   const [isHelpDialogOpen, setIsHelpDialogOpen] = useState(false);
   const [checkInVenueId, setCheckInVenueId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('details');
-  const [isEventMenuOpen, setIsEventMenuOpen] = useState(false);
-  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [menuEvent, setMenuEvent] = useState<typeof venueEvents[number] | null>(null);
   const hasMoreEvents = venueEvents.length < totalEventCount;
+  const userId = useAuthStore((s) => s.userId);
 
   const handleCheckInSuccess = useCallback((id: string) => {
     setCheckInVenueId(id);
@@ -139,39 +137,11 @@ export default function VenueDetailScreen() {
   const handleEventMenuOpen = useCallback(
     (eventId: string, e: React.MouseEvent) => {
       e.stopPropagation();
-      setSelectedEventId(eventId);
-      setIsEventMenuOpen(true);
+      const ev = venueEvents.find((ev) => ev.id === eventId);
+      if (ev) setMenuEvent(ev);
     },
-    [],
+    [venueEvents],
   );
-
-  const handleJoinEvent = useCallback(async () => {
-    if (!selectedEventId) return;
-    setIsEventMenuOpen(false);
-    try {
-      await apiClient.post(API_ENDPOINTS.EVENTS.JOIN(selectedEventId));
-      updateEventParticipation(selectedEventId, 'Approved');
-    } catch {
-      toast.error('Failed to join event');
-    }
-  }, [selectedEventId, updateEventParticipation]);
-
-  const handleLeaveEvent = useCallback(async () => {
-    if (!selectedEventId) return;
-    setIsEventMenuOpen(false);
-    try {
-      await apiClient.post(API_ENDPOINTS.EVENTS.LEAVE(selectedEventId));
-      updateEventParticipation(selectedEventId, undefined);
-    } catch {
-      toast.error('Failed to leave event');
-    }
-  }, [selectedEventId, updateEventParticipation]);
-
-  const handleViewEvent = useCallback(() => {
-    if (!selectedEventId) return;
-    setIsEventMenuOpen(false);
-    router.push(PAGE_ROUTES.MEETUP_DETAIL(selectedEventId));
-  }, [selectedEventId, router]);
 
   if ((isInitializing || isLoading) && currentVenue?.venue.id !== venueId) {
     return (
@@ -381,32 +351,14 @@ export default function VenueDetailScreen() {
         ]}
       />
 
-      <ModalMenu
-        isOpen={isEventMenuOpen}
-        onClose={() => setIsEventMenuOpen(false)}
-        options={(() => {
-          const ev = venueEvents.find((e) => e.id === selectedEventId);
-          return [
-            {
-              label: ev?.participationStatus === 'Approved' ? 'Leave' : 'Join',
-              onClick:
-                ev?.participationStatus === 'Approved'
-                  ? handleLeaveEvent
-                  : handleJoinEvent,
-              icon:
-                ev?.participationStatus === 'Approved' ? (
-                  <UserMinus size={24} />
-                ) : (
-                  <UserPlus size={24} />
-                ),
-            },
-            {
-              label: 'View',
-              onClick: handleViewEvent,
-              icon: <Eye size={24} />,
-            },
-          ];
-        })()}
+      <EventActionSheet
+        event={menuEvent}
+        currentUserId={userId}
+        onClose={() => setMenuEvent(null)}
+        onJoined={(id) => updateEventParticipation(id, 'Approved')}
+        onLeft={(id) => updateEventParticipation(id, undefined)}
+        onDeleted={() => fetchVenueEventsStore(venueId, 0)}
+        onEdit={(id) => router.push(PAGE_ROUTES.MEETUP_EDIT(id))}
       />
 
       <CheckInManager

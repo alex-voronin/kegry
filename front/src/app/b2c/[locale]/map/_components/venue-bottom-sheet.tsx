@@ -15,7 +15,7 @@ import Image from 'next/image';
 import { PAGE_ROUTES } from '@/lib/routes';
 
 import { useAuthStore } from '@/lib/auth/use-auth-store';
-import { ModalDialog } from '@/components/ui/modal-dialog';
+import { EventActionSheet } from '@/components/common/event-action-sheet';
 import {
   ChevronDown,
   MoreHorizontal,
@@ -27,10 +27,6 @@ import {
   Plus,
   LocateFixed,
   Eye,
-  Pencil,
-  Trash2,
-  UserPlus,
-  UserMinus,
 } from 'lucide-react';
 import { ListItem } from '@/components/ui/list-item';
 import { ModalMenu } from '@/components/ui/modal-menu';
@@ -92,8 +88,6 @@ export function VenueBottomSheet({
     participationStatus?: string;
     isCreator?: boolean;
   } | null>(null);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [deleteEventId, setDeleteEventId] = useState<string | null>(null);
   const [translateY, setTranslateY] = useState(() => {
     if (typeof window === 'undefined') return 0;
     return Math.max(window.innerHeight - 60 - PEEK_HEIGHT, EXPANDED_TOP);
@@ -411,22 +405,10 @@ export function VenueBottomSheet({
     onSheetStateChange('collapsed');
   }, [menuTarget, onCenter]);
 
-  const handleMenuJoinLeave = useCallback(() => {
-    if (!menuTarget || !menuTarget.eventId) return;
-    if (menuTarget.participationStatus === 'Approved') {
-      onLeaveEvent?.(menuTarget.eventId);
-    } else {
-      onJoinEvent?.(menuTarget.eventId);
-    }
-    setMenuTarget(null);
-  }, [menuTarget, onJoinEvent, onLeaveEvent]);
-
-  const handleDeleteEvent = useCallback(() => {
-    if (!deleteEventId) return;
-    onDeleteEvent?.(deleteEventId);
-    setDeleteEventId(null);
-    setIsDeleteDialogOpen(false);
-  }, [deleteEventId, onDeleteEvent]);
+  const menuEvent = useMemo(() => {
+    if (!menuTarget?.eventId) return null;
+    return events.find((e) => e.id === menuTarget.eventId) ?? null;
+  }, [menuTarget, events]);
 
   useEffect(() => {
     const el = dragAreaRef.current;
@@ -944,98 +926,48 @@ export function VenueBottomSheet({
         </div>
       </div>
 
-      <ModalMenu
-        isOpen={!!menuTarget}
+      <EventActionSheet
+        event={menuTarget?.eventId ? menuEvent : null}
+        currentUserId={currentUserId}
         onClose={() => setMenuTarget(null)}
-        options={(() => {
-          const items = [
+        onJoined={(id) => { onJoinEvent?.(id); setMenuTarget(null); }}
+        onLeft={(id) => { onLeaveEvent?.(id); setMenuTarget(null); }}
+        onDeleted={(id) => { onDeleteEvent?.(id); }}
+        onEdit={(id) => { router.push(PAGE_ROUTES.MEETUP_EDIT(id)); setMenuTarget(null); }}
+        extraItems={
+          menuTarget?.eventId
+            ? [
+                {
+                  label: t('menu.center'),
+                  onClick: handleMenuCenter,
+                  icon: <LocateFixed className="text-primary h-5 w-5" />,
+                },
+              ]
+            : undefined
+        }
+      />
+
+      {menuTarget?.venue && !menuTarget?.eventId ? (
+        <ModalMenu
+          isOpen={!!menuTarget}
+          onClose={() => setMenuTarget(null)}
+          options={[
             {
               label: t('menu.center'),
               onClick: handleMenuCenter,
               icon: <LocateFixed className="text-primary h-5 w-5" />,
-              isDestructive: false,
             },
-          ];
-          if (menuTarget?.eventId) {
-            items.push({
-              label: t('menu.view'),
-              onClick: () => {
-                router.push(PAGE_ROUTES.MEETUP_DETAIL(menuTarget.eventId!));
-                setMenuTarget(null);
-              },
-              icon: <Eye className="text-primary h-5 w-5" />,
-              isDestructive: false,
-            });
-            if (menuTarget.isCreator) {
-              items.push({
-                label: t('menu.edit'),
-                onClick: () => {
-                  router.push(PAGE_ROUTES.MEETUP_EDIT(menuTarget.eventId!));
-                  setMenuTarget(null);
-                },
-                icon: <Pencil className="text-primary h-5 w-5" />,
-                isDestructive: false,
-              });
-              items.push({
-                label: t('menu.delete'),
-                onClick: () => {
-                  setDeleteEventId(menuTarget.eventId!);
-                  setIsDeleteDialogOpen(true);
-                },
-                isDestructive: true,
-                icon: <Trash2 className="text-destructive h-5 w-5" />,
-              });
-            } else {
-              if (menuTarget.participationStatus === 'Pending') {
-                items.push({
-                  label: t('menu.cancelRequest'),
-                  onClick: () => {
-                    onLeaveEvent?.(menuTarget.eventId!);
-                    setMenuTarget(null);
-                  },
-                  icon: <UserMinus className="text-primary h-5 w-5" />,
-                  isDestructive: false,
-                });
-              } else if (menuTarget.participationStatus === 'Approved') {
-                items.push({
-                  label: t('menu.leave'),
-                  onClick: handleMenuJoinLeave,
-                  icon: <UserMinus className="text-primary h-5 w-5" />,
-                  isDestructive: false,
-                });
-              } else {
-                items.push({
-                  label: t('menu.join'),
-                  onClick: handleMenuJoinLeave,
-                  icon: <UserPlus className="text-primary h-5 w-5" />,
-                  isDestructive: false,
-                });
-              }
-            }
-          } else if (menuTarget?.venue) {
-            items.push({
+            {
               label: t('menu.view'),
               onClick: () => {
                 router.push(PAGE_ROUTES.VENUE_DETAIL(menuTarget.venue!.id));
                 setMenuTarget(null);
               },
               icon: <Eye className="text-primary h-5 w-5" />,
-              isDestructive: false,
-            });
-          }
-          return items;
-        })()}
-      />
-
-      <ModalDialog
-        isOpen={isDeleteDialogOpen}
-        onClose={() => setIsDeleteDialogOpen(false)}
-        message={t('deleteMeetupDialog.title')}
-        primaryButtonText={t('deleteMeetupDialog.buttonNo')}
-        secondaryButtonText={t('deleteMeetupDialog.buttonYes')}
-        onPrimaryAction={() => setIsDeleteDialogOpen(false)}
-        onSecondaryAction={handleDeleteEvent}
-      />
+            },
+          ]}
+        />
+      ) : null}
 
       <VenueTagSheet
         key={sheetKey}

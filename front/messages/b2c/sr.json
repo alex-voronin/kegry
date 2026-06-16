@@ -342,15 +342,6 @@
       "participantTab": "Učesnik",
       "emptyOwner": "Još uvek nemaš nijedan događaj",
       "emptyParticipant": "Još uvek ne učestvuješ ni na jednom događaju.",
-      "cancel": "Otkaži",
-      "delete": "Obriši",
-      "deleting": "Brisanje...",
-      "deleteConfirm": "Želiš li da obrišeš ovaj događaj?",
-      "menu": {
-        "edit": "Uredi",
-        "delete": "Obriši",
-        "leave": "Napusti"
-      },
       "toast": {
         "loadFailed": "Učitavanje događaja nije uspelo",
         "deleted": "Događaj obrisan",
@@ -603,17 +594,7 @@
       },
       "menu": {
         "center": "Centriraj",
-        "join": "Pridruži se",
-        "leave": "Napusti",
-        "cancelRequest": "Otkaži zahtev",
-        "edit": "Uredi",
-        "delete": "Obriši",
         "view": "Prikaži"
-      },
-      "deleteMeetupDialog": {
-        "title": "Da li si siguran da želiš da obrišeš ovaj susret?",
-        "buttonYes": "Da",
-        "buttonNo": "Ne"
       },
       "venueSelector": {
         "title": "Izaberi lokal za svoj susret",
@@ -652,7 +633,7 @@
       "helpDialogCustomDiscount": "Detalje o ponudi ili popustu možeš pronaći u lokalu. Skeniraj QR kod da povećaš broj poseta.",
       "ok": "OK",
       "menu": {
-        "createEvent": "Kreiraj događaj",
+        "createEvent": "Napravi događaj",
         "openInstagram": "Otvori Instagram",
         "openWebsite": "Otvori sajt",
         "openInMaps": "Otvori na Google Maps",
@@ -980,6 +961,25 @@
           "contactPhoneInvalid": "Neispravan broj telefona",
           "contactEmailInvalid": "Neispravna email adresa"
         }
+      }
+    },
+    "eventMenu": {
+      "join": "Pridruži se",
+      "leave": "Napusti",
+      "cancelRequest": "Otkaži zahtev",
+      "view": "Pregled",
+      "edit": "Izmeni",
+      "delete": "Obriši",
+      "deleteDialog": {
+        "message": "Želiš li da obrišeš ovaj susret?",
+        "cancel": "Otkaži",
+        "confirm": "Obriši",
+        "confirming": "Brisanje..."
+      },
+      "toast": {
+        "joinFailed": "Pridruživanje nije uspelo",
+        "leaveFailed": "Napuštanje nije uspelo",
+        "deleteFailed": "Brisanje nije uspelo"
       }
     }
   }

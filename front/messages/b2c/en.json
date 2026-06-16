@@ -342,15 +342,6 @@
       "participantTab": "Participant",
       "emptyOwner": "You haven't created any events yet",
       "emptyParticipant": "You haven't joined any events yet",
-      "cancel": "Cancel",
-      "delete": "Delete",
-      "deleting": "Deleting...",
-      "deleteConfirm": "Are you sure you want to delete this event?",
-      "menu": {
-        "edit": "Edit",
-        "delete": "Delete",
-        "leave": "Leave"
-      },
       "toast": {
         "loadFailed": "Failed to load events",
         "deleted": "Event deleted",
@@ -603,17 +594,7 @@
       },
       "menu": {
         "center": "Center",
-        "join": "Join",
-        "leave": "Leave",
-        "cancelRequest": "Cancel request",
-        "edit": "Edit",
-        "delete": "Delete",
         "view": "View"
-      },
-      "deleteMeetupDialog": {
-        "title": "Are you sure you want to delete this meetup?",
-        "buttonYes": "Yes",
-        "buttonNo": "No"
       },
       "venueSelector": {
         "title": "Choose a venue for your meetup",
@@ -980,6 +961,25 @@
           "contactPhoneInvalid": "Invalid phone number",
           "contactEmailInvalid": "Invalid email address"
         }
+      }
+    },
+    "eventMenu": {
+      "join": "Join",
+      "leave": "Leave",
+      "cancelRequest": "Cancel Request",
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteDialog": {
+        "message": "Are you sure you want to delete this meetup?",
+        "cancel": "Cancel",
+        "confirm": "Delete",
+        "confirming": "Deleting..."
+      },
+      "toast": {
+        "joinFailed": "Failed to join event",
+        "leaveFailed": "Failed to leave event",
+        "deleteFailed": "Failed to delete event"
       }
     }
   }
