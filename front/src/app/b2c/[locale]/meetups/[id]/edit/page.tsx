@@ -11,7 +11,8 @@ import { uploadImage } from '@/lib/image-utils';
 import { useUserProfileStore } from '@/store/use-user-profile-store';
 import { useAuthStore } from '@/lib/auth/use-auth-store';
 import { Spinner } from '@/components/ui/spinner';
-import { MeetupForm, EventContactForm } from '../../_components/meetup-form';
+import { MeetupForm } from '../../_components/meetup-form';
+import type { EventContactForm } from '@/components/ui/contact-section';
 import { useSafeBack } from '@/hooks/use-safe-back';
 
 interface EventDetail {

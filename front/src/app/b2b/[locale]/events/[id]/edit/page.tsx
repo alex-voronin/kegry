@@ -10,7 +10,8 @@ import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
 import { uploadImage } from '@/lib/image-utils';
-import { EventForm, EventContactForm } from '../../_components/event-form';
+import { EventForm } from '../../_components/event-form';
+import type { EventContactForm } from '@/components/ui/contact-section';
 
 interface EventDetailDto {
   id: string;

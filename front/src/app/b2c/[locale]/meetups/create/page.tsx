@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
@@ -11,12 +10,12 @@ import { rethrowApiError } from '@/lib/api-error';
 import { uploadImage } from '@/lib/image-utils';
 import { useUserProfileStore } from '@/store/use-user-profile-store';
 import { useAuthStore } from '@/lib/auth/use-auth-store';
-import { MeetupForm, EventContactForm } from '../_components/meetup-form';
+import { MeetupForm } from '../_components/meetup-form';
+import type { EventContactForm } from '@/components/ui/contact-section';
 import { useSafeBack } from '@/hooks/use-safe-back';
 
 export default function CreateMeetupPage() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const { safeBack } = useSafeBack();
   const t = useTranslations('components.forms.event');
 

@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'react-toastify';
-import { Camera, Plus, X } from 'lucide-react';
+import { Camera } from 'lucide-react';
 
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -15,6 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
+import { ContactSection, type EventContactForm, type ContactSectionHandle } from '@/components/ui/contact-section';
 import { ImageCropperModal } from '@/components/ui/image-cropper-modal';
 import { compressImageToBlob } from '@/lib/image-utils';
 import { VENUE_COVER_MAX_SIZE_BYTES } from '@/lib/constants';
@@ -25,13 +26,6 @@ export type EventFormValues = {
   description: string;
   startDateTime: string;
 };
-
-export interface EventContactForm {
-  id: string;
-  type: string;
-  value: string;
-  isPublic: boolean;
-}
 
 interface EventFormProps {
   title: string;
@@ -56,14 +50,6 @@ interface EventFormProps {
   submitLabel: string;
 }
 
-const contactTypes = [
-  'Telegram',
-  'WhatsApp',
-  'Viber',
-  'Phone',
-  'Email',
-] as const;
-
 export function EventForm({
   title,
   onCancel,
@@ -86,10 +72,8 @@ export function EventForm({
   const [coverBlob, setCoverBlob] = useState<Blob | null>(null);
   const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
   const [isCropperOpen, setIsCropperOpen] = useState(false);
-  const [contacts, setContacts] = useState<EventContactForm[]>(
-    initialValues?.contacts ?? [],
-  );
   const [hobbyIds] = useState<string[]>(initialValues?.hobbyIds ?? []);
+  const contactsRef = useRef<ContactSectionHandle>(null);
 
   const now = new Date();
   const nowLocal = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
@@ -148,46 +132,31 @@ export function EventForm({
     }
   };
 
-  const addContact = () => {
-    setContacts((prev) => [
-      ...prev,
-      { id: crypto.randomUUID(), type: 'Telegram', value: '', isPublic: false },
-    ]);
-  };
-
-  const updateContact = (
-    id: string,
-    field: keyof EventContactForm,
-    value: string | boolean,
-  ) => {
-    setContacts((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, [field]: value } : c)),
-    );
-  };
-
-  const removeContact = (id: string) => {
-    setContacts((prev) => prev.filter((c) => c.id !== id));
-  };
-
-  const onFormSubmit = async (values: EventFormValues) => {
+  // eslint-disable-next-line react-hooks/refs
+  const onFormSubmit = handleSubmit(async (values: EventFormValues) => {
     if (!coverBlob && !initialValues?.coverImageUrl) {
       toast.error(t('validation.coverRequired'));
       return;
     }
+
+    if (!contactsRef.current?.validate()) {
+      return;
+    }
+
     await onSubmit({
       title: values.title,
       description: values.description,
       startDateTime: values.startDateTime,
       coverBlob,
-      contacts,
+      contacts: contactsRef.current?.getContacts() ?? [],
       hobbyIds,
     });
-  };
+  });
 
   return (
     <div className="overflow-hidden sm:rounded-[16px]">
       <form
-        onSubmit={handleSubmit(onFormSubmit)}
+        onSubmit={onFormSubmit}
         className="flex flex-col gap-5"
       >
         <div className="w-full">
@@ -285,62 +254,7 @@ export function EventForm({
           )}
         </div>
 
-        {/* Contacts */}
-        <div className={`${stylesCommon.sectionContainer} px-0 sm:px-4`}>
-          <div className="flex items-center justify-between">
-            <FormSectionTitle>{t('contacts')}</FormSectionTitle>
-            <button type="button" onClick={addContact} className="p-1">
-              <Plus size={20} className="text-primary" />
-            </button>
-          </div>
-          {contacts.map((contact) => (
-              <div
-                  key={contact.id}
-                  className="mt-2 flex items-start gap-2 rounded-xl bg-surface-dark p-3"
-                >
-              <div className="flex flex-1 flex-col gap-2">
-                <select
-                  value={contact.type}
-                  onChange={(e) =>
-                    updateContact(contact.id, 'type', e.target.value)
-                  }
-                  className="h-10 w-full rounded-xl bg-form-element px-3 text-sm outline-none"
-                >
-                  {contactTypes.map((ct) => (
-                    <option key={ct} value={ct}>
-                      {ct}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  value={contact.value}
-                  onChange={(e) =>
-                    updateContact(contact.id, 'value', e.target.value)
-                  }
-                  placeholder={t('contactValue')}
-                  className="h-[44px] w-full rounded-xl bg-form-element px-3 text-base outline-none placeholder:text-secondary"
-                />
-                <label className="text-secondary flex items-center gap-2 text-xs">
-                  <input
-                    type="checkbox"
-                    checked={contact.isPublic}
-                    onChange={(e) =>
-                      updateContact(contact.id, 'isPublic', e.target.checked)
-                    }
-                  />
-                  {t('contactIsPublic')}
-                </label>
-              </div>
-              <button
-                type="button"
-                onClick={() => removeContact(contact.id)}
-                className="p-1"
-              >
-                <X size={18} className="text-error" />
-              </button>
-            </div>
-          ))}
-        </div>
+        <ContactSection ref={contactsRef} initialContacts={initialValues?.contacts} />
 
         <div className="mb-10 flex justify-center px-0 sm:px-4">
           <Button
