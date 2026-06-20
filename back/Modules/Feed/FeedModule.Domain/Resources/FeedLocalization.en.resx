@@ -15,7 +15,10 @@
   <data name="InviteExpired" xml:space="preserve">
     <value>The invite has expired or you've already met.</value>
   </data>
-  <data name="UserAlreadyInMeeting" xml:space="preserve">
+  <data name="OtherUserAlreadyInMeeting" xml:space="preserve">
     <value>Can't invite. The user already has a scheduled meetup.</value>
+  </data>
+  <data name="YouAlreadyInMeeting" xml:space="preserve">
+    <value>Can't invite. You already have an active meetup. Finish it first.</value>
   </data>
 </root>

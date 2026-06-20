@@ -1061,4 +1061,46 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         feedResponse.Success.ShouldBeTrue();
         feedResponse.Result.Feed.ShouldBeEmpty();
     }
+
+    [Fact]
+    public async Task GivenUserInMeeting_WhenInvitingAnotherUser_ThenReturnsError()
+    {
+        // 1. Create three users A, B, and C
+        var authA = await Factory.AuthManager.CreateAndLoginUserAsync("in_meeting_a@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(authA);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authB = await Factory.AuthManager.CreateAndLoginUserAsync("in_meeting_b@example.com", "Password123!");
+        var userBId = authB.UserId;
+        Factory.ApiClient.SetAuth(authB);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var authC = await Factory.AuthManager.CreateAndLoginUserAsync("in_meeting_c@example.com", "Password123!");
+        var userCId = authC.UserId;
+        Factory.ApiClient.SetAuth(authC);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        // 2. Establish a meeting between A and B
+        Factory.ApiClient.SetAuth(authA);
+        var inviteResponseA = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.InviteUser(userBId),
+            new InviteUserRequest(ComputeExpiresAtForNowOption()));
+        inviteResponseA.Success.ShouldBeTrue();
+
+        Factory.ApiClient.SetAuth(authB);
+        var inviteResponseB = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.InviteUser(authA.UserId),
+            new InviteUserRequest(ComputeExpiresAtForNowOption()));
+        inviteResponseB.Success.ShouldBeTrue();
+
+        // 3. User A is in a meeting. Try to invite User C.
+        Factory.ApiClient.SetAuth(authA);
+        var response = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.InviteUser(userCId),
+            new InviteUserRequest(ComputeExpiresAtForNowOption()));
+
+        // 4. Assert the invite fails because User A is already in a meeting
+        response.Success.ShouldBeFalse();
+        response.Errors.First().Code.ShouldBe(nameof(ErrorCode.ValidationError));
+    }
 }

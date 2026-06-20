@@ -49,9 +49,16 @@ public static class FeedExceptions
             ErrorCode.ValidationError);
     }
 
-    public static HttpCodeException UserAlreadyInMeeting(IStringLocalizer<FeedLocalization> localizer)
+    public static HttpCodeException OtherUserAlreadyInMeeting(IStringLocalizer<FeedLocalization> localizer)
     {
-        return new HttpCodeException(localizer.GetString("UserAlreadyInMeeting"),
+        return new HttpCodeException(localizer.GetString("OtherUserAlreadyInMeeting"),
+            HttpStatusCode.Forbidden,
+            ErrorCode.ValidationError);
+    }
+    
+    public static HttpCodeException YouAlreadyInMeeting(IStringLocalizer<FeedLocalization> localizer)
+    {
+        return new HttpCodeException(localizer.GetString("YouAlreadyInMeeting"),
             HttpStatusCode.Forbidden,
             ErrorCode.ValidationError);
     }

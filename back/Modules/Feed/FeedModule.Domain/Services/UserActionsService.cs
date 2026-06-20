@@ -228,7 +228,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
                 ct: ct);
             if (!succeed && throwInMeetingException)
             {
-                throw FeedExceptions.UserAlreadyInMeeting(_localizer);
+                throw FeedExceptions.OtherUserAlreadyInMeeting(_localizer);
             }
         }
         else
@@ -271,6 +271,12 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
                 throw FeedExceptions.NoAvailableInvitesLeft(myUserId);
             }
         }
+        
+        var youInMeeting = await _feedUserRelationRepository.IsInMeetingAsync(myUserId, ct);
+        if (youInMeeting)
+        {
+            throw FeedExceptions.YouAlreadyInMeeting(_localizer);
+        }
 
         try
         {
@@ -283,8 +289,8 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
         }
         catch (Exception e)
         {
-            var isInMeeting = await _feedUserRelationRepository.IsInMeetingAsync(otherUserId, ct);
-            if (!isInMeeting || throwInMeetingException)
+            var isOtherInMeeting = await _feedUserRelationRepository.IsInMeetingAsync(otherUserId, ct);
+            if (!isOtherInMeeting || throwInMeetingException)
             {
                 throw;
             }

@@ -15,7 +15,10 @@
   <data name="InviteExpired" xml:space="preserve">
     <value>Pozivnica je istekla ili ste se već upoznali.</value>
   </data>
-  <data name="UserAlreadyInMeeting" xml:space="preserve">
-    <value>Nije moguće poslati poziv. Korisnik već ima zakazan sastanak.</value>
+  <data name="OtherUserAlreadyInMeeting" xml:space="preserve">
+    <value>Nije moguće poslati poziv. Korisnik već ima zakazan susret.</value>
+  </data>
+  <data name="YouAlreadyInMeeting" xml:space="preserve">
+    <value>Nije moguće poslati poziv. Već imaš aktivan susret. Prvo ga završi.</value>
   </data>
 </root>
