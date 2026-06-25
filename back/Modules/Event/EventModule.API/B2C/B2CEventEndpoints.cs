@@ -208,6 +208,13 @@ public class B2CEventEndpoints : IEndpoints
             ev.SetHobbyLinks(request.HobbyIds.Select(h => new EventHobbyLink(eventId, h)).ToArray());
         }
 
+        ev.AddParticipant(new EventParticipant(
+            eventId: eventId,
+            userId: userId,
+            joinedAt: DateTimeOffset.UtcNow,
+            status: ParticipantStatus.Approved)
+        { ApprovedAt = DateTimeOffset.UtcNow });
+
         await eventRepository.AddAsync(ev, ct);
         await eventRepository.SaveChangesAsync(ct);
 
@@ -337,7 +344,7 @@ public class B2CEventEndpoints : IEndpoints
         IEventActionService eventActionService,
         CancellationToken ct)
     {
-        await eventActionService.ApproveParticipantAsync(id, user.GetId(), userId);
+        await eventActionService.ApproveParticipantAsync(id, user.GetId(), userId, ct);
         return ApiResult.Empty;
     }
 
