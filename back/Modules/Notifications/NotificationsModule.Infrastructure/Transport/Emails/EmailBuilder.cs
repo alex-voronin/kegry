@@ -1,7 +1,9 @@
 using System.Text;
 using ChatModule.Contracts.Events;
+using EventModule.Contracts.Events;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using NotificationsModule.Infrastructure.Resources;
 using SharedCore.Services.LifeTimes;
 
@@ -16,7 +18,9 @@ public interface IEmailBuilder
     public Email BuildUserInvitedEmail(string toEmail);
     public Email BuildChatMessageReceivedEmail(string toEmail, ChatMessageSentEvent @event);
     public Email BuildPasswordResetEmail(string toEmail, string baseUrl, string resetToken);
-    public Email BuildReferrerRewardReceived(string toEmail);
+    public Email BuildReferrerRewardReceivedEmail(string toEmail);
+    public Email BuildParticipationApprovedEmail(string toEmail, UserParticipationApprovedEvent @event);
+    public Email BuildUserRequestedApproveEmail(string toEmail, UserRequestedApproveEvent @event);
 }
 
 internal class EmailBuilder : IEmailBuilder, ISingleton
@@ -66,11 +70,27 @@ internal class EmailBuilder : IEmailBuilder, ISingleton
         return new Email(ToEmail: toEmail, Subject: title, Body: body, IsImportant: true);
     }
 
-    public Email BuildReferrerRewardReceived(string toEmail)
+    public Email BuildReferrerRewardReceivedEmail(string toEmail)
     {
         var title = _localizer.GetString("Email.ReferrerRewardReceived.Title");
         // TODO: add friend's name in the body
         var body = _localizer.GetString("Email.ReferrerRewardReceived.Body");
+        return new Email(ToEmail: toEmail, Subject: title, Body: body, IsImportant: false);
+    }
+
+    public Email BuildParticipationApprovedEmail(string toEmail, UserParticipationApprovedEvent @event)
+    {
+        var title = _localizer.GetString("Email.ParticipationApproved.Title");
+        var body = _localizer.GetString("Email.ParticipationApproved.Body", @event.EventId,
+            @event.EventTitle, @event.EventStartDate.ToString("g"));
+        return new Email(ToEmail: toEmail, Subject: title, Body: body, IsImportant: false);
+    }
+
+    public Email BuildUserRequestedApproveEmail(string toEmail, UserRequestedApproveEvent @event)
+    {
+        var title = _localizer.GetString("Email.UserRequestedApprove.Title");
+        var body = _localizer.GetString("Email.UserRequestedApprove.Body", @event.EventId,
+            @event.EventTitle, @event.EventStartDate.ToString("g"));
         return new Email(ToEmail: toEmail, Subject: title, Body: body, IsImportant: false);
     }
 }

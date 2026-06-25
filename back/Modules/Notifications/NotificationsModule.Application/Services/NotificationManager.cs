@@ -1,5 +1,6 @@
 using System.Globalization;
 using ChatModule.Contracts.Events;
+using EventModule.Contracts.Events;
 using NotificationModule.Domain.Repositories;
 using SharedCore.Services.LifeTimes;
 
@@ -51,6 +52,22 @@ internal class NotificationManager : INotificationManager, IScoped
     {
         return SendNotifications(userId,
             sendFunc: strategy => strategy.SendReferrerRewardReceived(userId, ct),
+            ct: ct
+        );
+    }
+
+    public Task SendParticipationApproved(UserParticipationApprovedEvent @event, CancellationToken ct = default)
+    {
+        return SendNotifications(@event.ApprovedUserId,
+            sendFunc: strategy => strategy.SendParticipationApproved(@event, ct),
+            ct: ct
+        );
+    }
+
+    public Task SendUserRequestedApprove(UserRequestedApproveEvent @event, CancellationToken ct = default)
+    {
+        return SendNotifications(@event.EventCreatorId,
+            sendFunc: strategy => strategy.SendUserRequestedApprove(@event, ct),
             ct: ct
         );
     }

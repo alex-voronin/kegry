@@ -25,6 +25,12 @@
     <data name="InApp.UserInvitedNotification.PrimaryText" xml:space="preserve">
         <value>Zdravo! Idemo na piće!</value>
     </data>
+    <data name="InApp.UserRequestedApprove.PrimaryText" xml:space="preserve">
+        <value>Zdravo! Mogu li da se pridružim tvom susretu?</value>
+    </data>
+    <data name="InApp.UserParticipationApprove.PrimaryText" xml:space="preserve">
+        <value>Tvoj zahtev za pridruživanje susretu je odobren! 🤝</value>
+    </data>
     <data name="Push.MeetingArranged.Title" xml:space="preserve">
         <value>Pozivnica prihvaćena! 🤝</value>
     </data>
@@ -89,6 +95,18 @@
     <data name="Push.ReferrerRewardReceived.Body" xml:space="preserve">
         <value>Novi imaginarni prijatelj otključan! Dodirni da vidiš</value>
     </data>
+    <data name="Push.ParticipationApproved.Title" xml:space="preserve">
+    <value>Prijava odobrena! 🎉</value>
+    </data>
+    <data name="Push.ParticipationApproved.Body" xml:space="preserve">
+        <value>Tvoj zahtev za pridruživanje susretu {0} je odobren</value>
+    </data>
+    <data name="Push.UserRequestedApprove.Title" xml:space="preserve">
+        <value>Novi zahtev za pridruživanje 👋</value>
+    </data>
+    <data name="Push.UserRequestedApprove.Body" xml:space="preserve">
+        <value>Neko želi da se pridruži susretu {0}. Dodirni da pregledaš zahtev</value>
+    </data>
     <data name="Email.MeetingArranged.Title" xml:space="preserve">
         <value>Pozivnica prihvaćena!</value>
     </data>
@@ -132,5 +150,28 @@
             Srdačan pozdrav,&lt;br /&gt;
             Tim Kegry
         </value>
+    </data>
+    <data name="Email.ParticipationApproved.Title" xml:space="preserve">
+    <value>Tvoj zahtev je odobren!</value>
+    </data>
+    
+    <data name="Email.ParticipationApproved.Body" xml:space="preserve">
+        <value>
+            Tvoj zahtev za pridruživanje susretu je odobren.&lt;br /&gt;
+            Možeš pogledati detalje ovde: &lt;a href=&quot;https://kegry.rs/meetups/{0}&quot;&gt;{1} ({2})&lt;/a&gt; &lt;br /&gt;
+            Srdačan pozdrav,&lt;br /&gt;
+            Tim Kegry
+        </value>
+    </data>
+    <data name="Email.UserRequestedApprove.Title" xml:space="preserve">
+        <value>Novi zahtev za pridruživanje.</value>
+    </data>
+    <data name="Email.UserRequestedApprove.Body" xml:space="preserve">
+       <value>
+           Neko želi da se pridruži tvom susretu.&lt;br /&gt; 
+           Pregledaj detalje susreta i upravljaj zahtevom ovde: &lt;a href=&quot;https://kegry.rs/meetups/{0}&quot;&gt;{1} ({2})&lt;/a&gt;&lt;br /&gt; 
+           Srdačan pozdrav,&lt;br /&gt; 
+           Kegry tim
+       </value>
     </data>
 </root>

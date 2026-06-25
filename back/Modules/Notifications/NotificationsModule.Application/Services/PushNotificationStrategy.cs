@@ -1,5 +1,6 @@
 using System.Globalization;
 using ChatModule.Contracts.Events;
+using EventModule.Contracts.Events;
 using NotificationModule.Domain.Repositories;
 using NotificationsModule.Infrastructure.Transport.Push;
 using Serilog;
@@ -82,7 +83,23 @@ internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
     {
         return SendPush(
             userId: userId,
-            factory: fcmTokens => _pushBuilder.BuildReferrerRewardReceived(fcmTokens),
+            factory: fcmTokens => _pushBuilder.BuildReferrerRewardReceivedPush(fcmTokens),
+            ct: ct);
+    }
+
+    public Task SendParticipationApproved(UserParticipationApprovedEvent @event, CancellationToken ct = default)
+    {
+        return SendPush(
+            userId: @event.ApprovedUserId,
+            factory: fcmTokens => _pushBuilder.BuildParticipationApprovedPush(fcmTokens, @event),
+            ct: ct);
+    }
+
+    public Task SendUserRequestedApprove(UserRequestedApproveEvent @event, CancellationToken ct = default)
+    {
+        return SendPush(
+            userId: @event.JoinedUserId,
+            factory: fcmTokens => _pushBuilder.BuildUserRequestedApprovePush(fcmTokens, @event),
             ct: ct);
     }
 

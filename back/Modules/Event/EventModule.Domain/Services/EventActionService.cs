@@ -1,3 +1,4 @@
+using EventModule.Contracts.Events;
 using EventModule.Domain.Aggregates;
 using EventModule.Domain.Enums;
 using EventModule.Domain.Exceptions;
@@ -45,7 +46,18 @@ internal class EventActionService : IEventActionService, IScoped
             ev.AddParticipant(participant);
             ev.UpdatedAt = DateTimeOffset.UtcNow;
 
-            await _eventRepository.SaveChangesAsync(ct);
+            if (status == ParticipantStatus.Approved)
+            {
+                await _eventRepository.PublishEventAsync(
+                    new UserRequestedApproveEvent()
+                    {
+                        EventId = eventId,
+                        JoinedUserId = userId
+                    }
+                );
+            }
+
+            await _eventRepository.SaveChangesAndFlushMessagesAsync(ct);
         });
     }
 
@@ -84,7 +96,18 @@ internal class EventActionService : IEventActionService, IScoped
             participant.ApprovedAt = DateTimeOffset.UtcNow;
             ev.UpdatedAt = DateTimeOffset.UtcNow;
 
-            await _eventRepository.SaveChangesAsync(ct);
+            await _eventRepository.PublishEventAsync(
+                new UserParticipationApprovedEvent()
+                {
+                    EventId = eventId,
+                    EventTitle = ev.Title,
+                    EventStartDate = ev.StartDateTime,
+                    EventCreatorId = ev.CreatorId,
+                    ApprovedUserId = targetUserId
+                }
+            );
+
+            await _eventRepository.SaveChangesAndFlushMessagesAsync(ct);
         });
     }
 

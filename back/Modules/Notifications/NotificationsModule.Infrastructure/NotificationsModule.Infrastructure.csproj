@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Chat\ChatModule.Contracts\ChatModule.Contracts.csproj" />
+      <ProjectReference Include="..\..\Event\EventModule.Contracts\EventModule.Contracts.csproj" />
       <ProjectReference Include="..\..\Shared\Shared.Core\Shared.Core.csproj" />
       <ProjectReference Include="..\..\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
       <ProjectReference Include="..\NotificationModule.Domain\NotificationModule.Domain.csproj" />

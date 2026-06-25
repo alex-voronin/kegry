@@ -55,7 +55,7 @@ public static class FeedExceptions
             HttpStatusCode.Forbidden,
             ErrorCode.ValidationError);
     }
-    
+
     public static HttpCodeException YouAlreadyInMeeting(IStringLocalizer<FeedLocalization> localizer)
     {
         return new HttpCodeException(localizer.GetString("YouAlreadyInMeeting"),

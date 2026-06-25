@@ -4,16 +4,18 @@ using EventModule.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
 using Shared.Infrastructure.Persistence;
+using Wolverine.EntityFrameworkCore;
 
 namespace EventModule.Infrastructure.Persistence.Repositories;
 
-public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepository
+public class EfCoreEventRepository : RepositoryOutbox<EventContext, Event>, IEventRepository
 {
     private const double SearchRadiusMeters = 25_000;
     private readonly GeometryFactory _geometryFactory = new(new PrecisionModel(), 4326);
     private readonly TimeProvider _timeProvider;
 
-    public EfCoreEventRepository(EventContext context, TimeProvider timeProvider) : base(context)
+    public EfCoreEventRepository(IDbContextOutbox<EventContext> contextOutbox, TimeProvider timeProvider) :
+        base(contextOutbox)
     {
         _timeProvider = timeProvider;
     }
@@ -69,7 +71,7 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
 
         var pagedIds = await venueJoinQuery
             .Select(x => new
-                { x.e.Id, Distance = EF.Functions.Distance(x.v.Coordinates, userPoint, useSpheroid: false) })
+            { x.e.Id, Distance = EF.Functions.Distance(x.v.Coordinates, userPoint, useSpheroid: false) })
             .OrderBy(x => x.Distance)
             .Skip(offset)
             .Take(limit)
@@ -213,7 +215,7 @@ public class EfCoreEventRepository : Repository<EventContext, Event>, IEventRepo
         CancellationToken ct = default)
     {
         var now = _timeProvider.GetUtcNow();
-        var weekBefore =now - TimeSpan.FromDays(7); 
+        var weekBefore = now - TimeSpan.FromDays(7);
 
         var query = Context.Events
             .Include(e => e.EventContacts)

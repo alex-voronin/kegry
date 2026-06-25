@@ -7,6 +7,7 @@ public class Notification
     public required Guid Id { get; init; }
     public required NotificationType Type { get; init; }
     public required Guid UserId { get; init; }
+    public Guid? LinkedEntityId { get; init; } // depending on Type it can be event id or venue id
     public required DateTimeOffset CreatedAt { get; init; }
     public required DateTimeOffset ExpiresAt { get; init; }
     public Guid? FromUserId { get; init; }

@@ -25,6 +25,12 @@
     <data name="InApp.UserInvitedNotification.PrimaryText" xml:space="preserve">
         <value>Hi! Let's get a drink!</value>
     </data>
+    <data name="InApp.UserRequestedApprove.PrimaryText" xml:space="preserve">
+        <value>Hi! May I join your meetup?</value>
+    </data>
+    <data name="InApp.UserParticipationApprove.PrimaryText" xml:space="preserve">
+        <value>Your request to join the meetup has been approved! 🤝</value>
+    </data>
     <data name="Push.MeetingArranged.Title" xml:space="preserve">
         <value>Invitation accepted! 🤝</value>
     </data>
@@ -87,7 +93,19 @@
         <value>Your friend just joined! 👋</value>
     </data>
     <data name="Push.ReferrerRewardReceived.Body" xml:space="preserve">
-        <value>New imaginary friend unlocked! Tap to see</value>
+        <value>New imaginary friend unlocked! Tap to view</value>
+    </data>
+    <data name="Push.ParticipationApproved.Title" xml:space="preserve">
+        <value>You're in! 🎉</value>
+    </data>
+        <data name="Push.ParticipationApproved.Body" xml:space="preserve">
+        <value>Your request to join {0} was approved</value>
+    </data>
+    <data name="Push.UserRequestedApprove.Title" xml:space="preserve">
+        <value>New join request 👋</value>
+    </data>
+    <data name="Push.UserRequestedApprove.Body" xml:space="preserve">
+        <value>Someone wants to join {0}. Tap to review</value>
     </data>
     <data name="Email.MeetingArranged.Title" xml:space="preserve">
         <value>Invitation accepted!</value>
@@ -132,5 +150,27 @@
             Best regards,&lt;br /&gt;
             The Kegry Team
         </value>
+    </data>
+    <data name="Email.ParticipationApproved.Title" xml:space="preserve">
+        <value>You're in! Your request was approved.</value>
+    </data>
+    <data name="Email.ParticipationApproved.Body" xml:space="preserve">
+        <value>
+            Your request to join the meetup has been approved.&lt;br /&gt;
+            You can check out the meetup details here: &lt;a href=&quot;https://kegry.rs/meetups/{0}&quot;&gt;{1} ({2})&lt;/a&gt; &lt;br /&gt;
+            Best regards,&lt;br /&gt;
+            The Kegry Team
+        </value>
+    </data>
+    <data name="Email.UserRequestedApprove.Title" xml:space="preserve">
+        <value>New join request.</value>
+    </data>
+    <data name="Email.UserRequestedApprove.Body" xml:space="preserve">
+       <value>
+           Someone would like to join your meetup.&lt;br /&gt; 
+           Review the meetup details and manage the request here: &lt;a href=&quot;https://kegry.rs/meetups/{0}&quot;&gt;{1} ({2})&lt;/a&gt;&lt;br /&gt; 
+           Best regards,&lt;br /&gt; 
+           The Kegry Team 
+       </value>
     </data>
 </root>

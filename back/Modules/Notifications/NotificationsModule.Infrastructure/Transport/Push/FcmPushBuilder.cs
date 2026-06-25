@@ -1,4 +1,5 @@
 using ChatModule.Contracts.Events;
+using EventModule.Contracts.Events;
 using FirebaseAdmin.Messaging;
 using JasperFx.Core;
 using Microsoft.Extensions.Localization;
@@ -16,7 +17,9 @@ public interface IPushBuilder
     PushMessage BuildChatMessageReceivedPush(string[] fcmTokens, ChatMessageSentEvent @event, bool silent = false);
     PushMessage BuildOpenRateUserScreenPush(string[] fcmTokens, Guid rateeUserId);
     PushMessage BuildEndMeetingSuggestionPush(string[] fcmTokens);
-    PushMessage BuildReferrerRewardReceived(string[] fcmTokens);
+    PushMessage BuildReferrerRewardReceivedPush(string[] fcmTokens);
+    PushMessage BuildParticipationApprovedPush(string[] fcmTokens, UserParticipationApprovedEvent @event);
+    PushMessage BuildUserRequestedApprovePush(string[] fcmTokens, UserRequestedApproveEvent @event);
 }
 
 internal class FcmPushBuilder : IPushBuilder, ISingleton
@@ -29,6 +32,8 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         public static readonly string OpenRateUserScreen = nameof(OpenRateUserScreen).ToCamelCase();
         public static readonly string ShowEndMeetingSuggestion = nameof(ShowEndMeetingSuggestion).ToCamelCase();
         public static readonly string ReferrerRewardReceived = nameof(ReferrerRewardReceived).ToCamelCase();
+        public static readonly string ParticipationApproved = nameof(ParticipationApproved).ToCamelCase();
+        public static readonly string UserRequestedApprove = nameof(UserRequestedApprove).ToCamelCase();
     }
 
     internal static class Keys
@@ -44,6 +49,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
         public static readonly string Type = nameof(Type).ToCamelCase();
         public static readonly string MessageId = nameof(MessageId).ToCamelCase();
         public static readonly string IsSilent = nameof(IsSilent).ToCamelCase();
+        public static readonly string EventId = nameof(EventId).ToCamelCase();
     }
 
     private readonly IStringLocalizer<NotificationsLocalization> _localizer;
@@ -161,7 +167,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
             data: data);
     }
 
-    public PushMessage BuildReferrerRewardReceived(string[] fcmTokens)
+    public PushMessage BuildReferrerRewardReceivedPush(string[] fcmTokens)
     {
         var title = _localizer.GetString("Push.ReferrerRewardReceived.Title");
         var body = _localizer.GetString("Push.ReferrerRewardReceived.Body");
@@ -170,6 +176,42 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
             { Keys.Title, title },
             { Keys.Body, body },
             { Keys.Type, PushType.ReferrerRewardReceived },
+        };
+
+        return BuildPushMessages(
+            fcmTokens: fcmTokens,
+            notification: null,
+            data: data);
+    }
+
+    public PushMessage BuildParticipationApprovedPush(string[] fcmTokens, UserParticipationApprovedEvent @event)
+    {
+        var title = _localizer.GetString("Push.ParticipationApproved.Title");
+        var body = _localizer.GetString("Push.ParticipationApproved.Body");
+        var data = new Dictionary<string, string>()
+        {
+            { Keys.Title, title },
+            { Keys.Body, body },
+            { Keys.Type, PushType.ParticipationApproved },
+            { Keys.EventId, @event.EventId.ToString() }
+        };
+
+        return BuildPushMessages(
+            fcmTokens: fcmTokens,
+            notification: null,
+            data: data);
+    }
+
+    public PushMessage BuildUserRequestedApprovePush(string[] fcmTokens, UserRequestedApproveEvent @event)
+    {
+        var title = _localizer.GetString("Push.UserRequestedApprove.Title");
+        var body = _localizer.GetString("Push.UserRequestedApprove.Body");
+        var data = new Dictionary<string, string>()
+        {
+            { Keys.Title, title },
+            { Keys.Body, body },
+            { Keys.Type, PushType.UserRequestedApprove },
+            { Keys.EventId, @event.EventId.ToString() }
         };
 
         return BuildPushMessages(

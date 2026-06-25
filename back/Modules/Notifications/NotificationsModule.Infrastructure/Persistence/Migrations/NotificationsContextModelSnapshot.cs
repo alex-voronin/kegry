@@ -18,7 +18,7 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("notifications")
-                .HasAnnotation("ProductVersion", "10.0.1")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -73,6 +73,10 @@ namespace NotificationsModule.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsSeen")
                         .HasColumnType("boolean")
                         .HasColumnName("is_seen");
+
+                    b.Property<Guid?>("LinkedEntityId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("linked_entity_id");
 
                     b.Property<string>("Text")
                         .IsRequired()

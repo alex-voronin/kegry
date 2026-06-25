@@ -271,7 +271,7 @@ internal sealed class UserActionsService : IUserActionsService, IScoped
                 throw FeedExceptions.NoAvailableInvitesLeft(myUserId);
             }
         }
-        
+
         var youInMeeting = await _feedUserRelationRepository.IsInMeetingAsync(myUserId, ct);
         if (youInMeeting)
         {

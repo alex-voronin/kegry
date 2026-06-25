@@ -8,7 +8,7 @@ public record EventWithDistance(Event Event, double DistanceMeters);
 
 public record EventWithParticipantStatus(Event Event, ParticipantStatus? Status);
 
-public interface IEventRepository : IRepository<Event>
+public interface IEventRepository : IRepositoryOutbox<Event>
 {
     Task<Event?> GetByIdWithRelationsAsync(Guid id, CancellationToken ct = default);
 

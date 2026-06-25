@@ -1,4 +1,5 @@
 using ChatModule.Contracts.Events;
+using EventModule.Contracts.Events;
 using NotificationModule.Domain.Repositories;
 using NotificationsModule.Infrastructure.Transport.Emails;
 using Serilog;
@@ -68,7 +69,23 @@ public class EmailNotificationStrategy : IEmailNotificationStrategy, IScoped
     {
         return SendEmail(
             userId: userId,
-            factory: email => _emailBuilder.BuildReferrerRewardReceived(email),
+            factory: email => _emailBuilder.BuildReferrerRewardReceivedEmail(email),
+            ct: ct);
+    }
+
+    public Task SendParticipationApproved(UserParticipationApprovedEvent @event, CancellationToken ct = default)
+    {
+        return SendEmail(
+            userId: @event.ApprovedUserId,
+            factory: email => _emailBuilder.BuildParticipationApprovedEmail(email, @event),
+            ct: ct);
+    }
+
+    public Task SendUserRequestedApprove(UserRequestedApproveEvent @event, CancellationToken ct = default)
+    {
+        return SendEmail(
+            userId: @event.EventCreatorId,
+            factory: email => _emailBuilder.BuildUserRequestedApproveEmail(email, @event),
             ct: ct);
     }
 

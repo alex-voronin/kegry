@@ -96,6 +96,7 @@ public class NotificationEndpoints : IEndpoints
                 Id: x.Id,
                 Type: x.Type,
                 FromUserId: x.FromUserId,
+                LinkedEntityId: x.LinkedEntityId,
                 AvatarImageUrl: x.FromUser != null
                     ? storageService.S3KeyToPublicFileUrl(x.FromUser.AvatarImageS3Key, x.FromUser.UpdatedAt)
                     : null,
