@@ -321,6 +321,7 @@
       "tomorrowUntil": "tomorrow until {h}:{m}",
       "expired": "Expired {time}",
       "menu": {
+        "viewEvent": "View Event",
         "viewProfile": "View Profile",
         "accept": "Accept",
         "delete": "Delete",

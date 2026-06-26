@@ -321,6 +321,7 @@
       "tomorrowUntil": "sutra do {h}:{m}",
       "expired": "Isteklo {time}",
       "menu": {
+        "viewEvent": "Pogledaj susret",
         "viewProfile": "Pogledaj profil",
         "accept": "Prihvati",
         "delete": "Obriši",

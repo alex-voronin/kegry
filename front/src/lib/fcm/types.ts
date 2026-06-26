@@ -26,6 +26,8 @@ export enum NotificationType {
   OPEN_RATE_USER_SCREEN = 'openRateUserScreen',
   SHOW_END_MEETING_SUGGESTION = 'showEndMeetingSuggestion',
   REFERRER_REWARD_RECEIVED = 'referrerRewardReceived',
+  PARTICIPATION_APPROVED = 'participationApproved',
+  USER_REQUESTED_APPROVE = 'userRequestedApprove',
 }
 
 export enum SwMessageType {

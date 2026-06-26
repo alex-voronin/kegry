@@ -18,8 +18,11 @@ import {
 } from '@/app/b2c/[locale]/notifications/use-notifications-store';
 import { formatNotificationDate } from '@/lib/date';
 import { toast } from 'react-toastify';
+import apiClient from '@/lib/api-client';
+import { rethrowApiError } from '@/lib/api-error';
 import styles from './notifications.module.css';
-import { PAGE_ROUTES } from '@/lib/routes';
+import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
+import { CalendarClock } from 'lucide-react';
 import { useSafeBack } from '@/hooks/use-safe-back';
 
 export default function NotificationsScreen() {
@@ -139,6 +142,21 @@ export default function NotificationsScreen() {
     }
   };
 
+  const handleApproveJoinRequest = async (notif: NotificationDto) => {
+    if (!notif.linkedEntityId || !notif.fromUserId) return;
+    try {
+      await apiClient.post(
+        API_ENDPOINTS.EVENTS.APPROVE_PARTICIPANT(
+          notif.linkedEntityId,
+          notif.fromUserId,
+        ),
+      );
+      toast.success(t('toast.accepted'));
+    } catch (err: any) {
+      rethrowApiError(err, t('toast.acceptFailed'));
+    }
+  };
+
   const getMenuOptions = (notif: NotificationDto) => {
     const options = [];
 
@@ -153,7 +171,38 @@ export default function NotificationsScreen() {
       });
     }
 
-    if (!isNotificationExpired(notif.expiresAt) && notif.fromUserId) {
+    if (notif.linkedEntityId) {
+      options.push({
+        icon: <CalendarClock size={24} className="text-white" />,
+        label: t('menu.viewEvent'),
+        onClick: () => {
+          router.push(PAGE_ROUTES.MEETUP_DETAIL(notif.linkedEntityId!));
+          setSelectedNotification(null);
+        },
+      });
+    }
+
+    if (
+      notif.type === 'UserRequestedApprove' &&
+      notif.linkedEntityId &&
+      notif.fromUserId &&
+      !isNotificationExpired(notif.expiresAt)
+    ) {
+      options.push({
+        icon: '/assets/notifications/accept-icon.webp',
+        label: t('menu.accept'),
+        onClick: () => {
+          handleApproveJoinRequest(notif);
+          setSelectedNotification(null);
+        },
+      });
+    }
+
+    if (
+      !isNotificationExpired(notif.expiresAt) &&
+      notif.fromUserId &&
+      notif.type !== 'UserRequestedApprove'
+    ) {
       options.push({
         icon: '/assets/notifications/accept-icon.webp',
         label: t('menu.accept'),
@@ -220,9 +269,13 @@ export default function NotificationsScreen() {
                 <ListItem
                   key={notif.id}
                   dimmed={expired}
-                  className={notif.fromUserId ? 'cursor-pointer' : ''}
+                  className={
+                    notif.fromUserId || notif.linkedEntityId
+                      ? 'cursor-pointer'
+                      : ''
+                  }
                   onClick={() => {
-                    if (notif.fromUserId) {
+                    if (notif.fromUserId || notif.linkedEntityId) {
                       setSelectedNotification(notif);
                     }
                   }}
@@ -232,21 +285,27 @@ export default function NotificationsScreen() {
                   }
                   avatarAlt="Profile"
                   title={notif.text}
-                  subtitle={formatNotificationDate(notif.expiresAt, t)}
+                  subtitle={
+                    notif.type === 'Invite'
+                      ? formatNotificationDate(notif.expiresAt, t)
+                      : undefined
+                  }
                   rightEl={
                     <>
-                      {!expired && notif.fromUserId && (
-                        <Icon
-                          src="/assets/notifications/accept-icon.webp"
-                          alt="accept"
-                          width={24}
-                          height={24}
-                          className="object-fill"
-                          priority
-                          stopPropagation
-                          onClick={() => handleAccept(notif)}
-                        />
-                      )}
+                      {!expired &&
+                        notif.fromUserId &&
+                        notif.type !== 'UserRequestedApprove' && (
+                          <Icon
+                            src="/assets/notifications/accept-icon.webp"
+                            alt="accept"
+                            width={24}
+                            height={24}
+                            className="object-fill"
+                            priority
+                            stopPropagation
+                            onClick={() => handleAccept(notif)}
+                          />
+                        )}
                       <Icon
                         src="/assets/common/more-icon.svg"
                         alt="more"

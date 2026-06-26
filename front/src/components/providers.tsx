@@ -62,6 +62,14 @@ function FcmGlobalHandler() {
         showNotification = true;
       }
 
+      if (type === NotificationType.PARTICIPATION_APPROVED) {
+        showNotification = true;
+      }
+
+      if (type === NotificationType.USER_REQUESTED_APPROVE) {
+        showNotification = true;
+      }
+
       if (
         type === NotificationType.CHAT_MESSAGE_RECEIVED &&
         pathname !== PAGE_ROUTES.CHAT

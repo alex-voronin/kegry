@@ -14,6 +14,7 @@ export interface NotificationDto {
   createdAt: string;
   expiresAt: string;
   type: string;
+  linkedEntityId: string | null;
 }
 
 interface NotificationsState {

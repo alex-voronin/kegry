@@ -22,7 +22,15 @@ function getMessageId(payload) {
   return payload.data?.messageId || payload.messageId || 'unknown';
 }
 
-function getTargetUrl(type) {
+function getTargetUrl(type, payload) {
+  if (type === 'participationApproved') {
+    const eventId = payload?.data?.eventId;
+    if (eventId) return `/meetups/${eventId}`;
+  }
+  if (type === 'userRequestedApprove') {
+    const eventId = payload?.data?.eventId;
+    if (eventId) return `/meetups/${eventId}/approvals`;
+  }
   if (type === 'userInvited') return '/notifications';
   if (
     type === 'chatMessageReceived' ||
@@ -85,7 +93,7 @@ self.addEventListener('notificationclick', (event) => {
 
   if (!messageId) return;
 
-  const targetUrl = getTargetUrl(type);
+  const targetUrl = getTargetUrl(type, payload);
 
   event.waitUntil(
     (async () => {
