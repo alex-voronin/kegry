@@ -1,4 +1,5 @@
 using EventModule.Domain.Aggregates;
+using EventModule.Domain.Aggregates.ReadOnly;
 using EventModule.Domain.Enums;
 using EventModule.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -165,6 +166,21 @@ public class EfCoreEventRepository : RepositoryOutbox<EventContext, Event>, IEve
             baseQuery = baseQuery.Where(e => e.StartDateTime <= dateTo.Value);
         if (venueIds is { Length: > 0 })
             baseQuery = baseQuery.Where(e => venueIds.Contains(e.VenueId));
+
+        if (currentUserId.HasValue)
+        {
+            var blockedUserIds = await Context.FeedUserRelations
+                .Where(b => (b.MyUserId == currentUserId || b.OtherUserId == currentUserId) && b.IsBlocked)
+                .Select(b => b.MyUserId == currentUserId ? b.OtherUserId : b.MyUserId)
+                .Distinct()
+                .Take(500)
+                .ToArrayAsync(ct);
+
+            if (blockedUserIds.Length > 0)
+            {
+                baseQuery = baseQuery.Where(e => !blockedUserIds.Contains(e.CreatorId));
+            }
+        }
 
         var venueCounts = await baseQuery
             .GroupBy(e => e.VenueId)

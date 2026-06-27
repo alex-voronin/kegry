@@ -15,6 +15,7 @@ public class EventContext : DbContext
     public DbSet<Company> Companies => Set<Company>();
     public DbSet<User> Users => Set<User>();
     public DbSet<Hobby> Hobbies => Set<Hobby>();
+    public DbSet<FeedUserRelation> FeedUserRelations => Set<FeedUserRelation>();
 
     public EventContext(DbContextOptions<EventContext> options) : base(options)
     {
@@ -34,7 +35,7 @@ public class EventContext : DbContext
 
     private void ThrowOnReadOnlyEntityModification()
     {
-        Type[] readOnlyTypes = [typeof(Venue), typeof(Company), typeof(User), typeof(Hobby)];
+        Type[] readOnlyTypes = [typeof(Venue), typeof(Company), typeof(User), typeof(Hobby), typeof(FeedUserRelation)];
 
         var forbiddenChanges = ChangeTracker.Entries()
             .Where(e => readOnlyTypes.Contains(e.Entity.GetType()) &&
@@ -193,6 +194,13 @@ public class EventContext : DbContext
             builder.ToTable("hobbies", "user_profile");
             builder.HasKey(h => h.Id);
 
+            builder.Metadata.SetIsTableExcludedFromMigrations(true);
+        });
+
+        modelBuilder.Entity<FeedUserRelation>(builder =>
+        {
+            builder.ToTable("user_relations", "feed");
+            builder.HasKey(r => r.Id);
             builder.Metadata.SetIsTableExcludedFromMigrations(true);
         });
     }
