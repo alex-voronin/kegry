@@ -1,6 +1,7 @@
 using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.Extensions.Options;
+using Serilog;
 using Shared.Infrastructure.Storage.Configs;
 using SharedCore.Enums;
 using SharedCore.Services.LifeTimes;
@@ -13,6 +14,8 @@ public interface IS3StorageService
 
     // Timestamp is required to bypass CDN cache after a file has changed.
     public string S3KeyToPublicFileUrl(string s3Key, DateTimeOffset? timestamp);
+
+    public Task DeleteObjectAsync(string key, bool dontThrow = false);
 
     public Task<string> GetPresignedUploadUrlAsync(
         string key,
@@ -50,6 +53,25 @@ internal class S3StorageService : IS3StorageService, ISingleton
         return timestamp.HasValue
             ? $"{_config.PublicUrl}/{s3Key}?v={timestamp.Value.ToUnixTimeSeconds()}"
             : $"{_config.PublicUrl}/{s3Key}";
+    }
+
+    public async Task DeleteObjectAsync(string key, bool dontThrow = false)
+    {
+        if (dontThrow)
+        {
+            try
+            {
+                await _s3Client.DeleteObjectAsync(_config.BucketName, key);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to delete S3 object {Key}", key);
+            }
+        }
+        else
+        {
+            await _s3Client.DeleteObjectAsync(_config.BucketName, key);
+        }
     }
 
     public Task<string> GetPresignedUploadUrlAsync(

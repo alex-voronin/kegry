@@ -7,6 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="IntegrationTests.EventModule" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\..\Shared\Shared.Infrastructure\Shared.Infrastructure.csproj" />
       <ProjectReference Include="..\EventModule.Domain\EventModule.Domain.csproj" />
     </ItemGroup>

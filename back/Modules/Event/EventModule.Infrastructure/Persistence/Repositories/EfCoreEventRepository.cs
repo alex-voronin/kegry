@@ -280,4 +280,29 @@ public class EfCoreEventRepository : RepositoryOutbox<EventContext, Event>, IEve
 
         return (events, totalCount);
     }
+
+    public async Task<string[]> GetCoverImageKeysForInactiveEventsAsync(
+        DateTimeOffset threshold, CancellationToken ct = default)
+    {
+        return await Context.Events
+            .Where(e => e.StartDateTime < threshold && !e.IsDeleted)
+            .Where(e => e.CoverImageS3Key != null)
+            .Select(e => e.CoverImageS3Key!)
+            .ToArrayAsync(ct);
+    }
+
+    public async Task SoftDeleteInactiveEventsAsync(DateTimeOffset threshold, CancellationToken ct = default)
+    {
+        await Context.Events
+            .Where(e => e.StartDateTime < threshold && !e.IsDeleted)
+            .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.IsDeleted, true), ct);
+    }
+
+    public async Task HardDeleteExpiredEventsAsync(DateTimeOffset threshold, CancellationToken ct = default)
+    {
+        await Context.Events
+            .IgnoreQueryFilters()
+            .Where(e => e.StartDateTime < threshold)
+            .ExecuteDeleteAsync(ct);
+    }
 }

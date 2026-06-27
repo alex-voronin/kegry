@@ -45,6 +45,8 @@ public class Event : IAuditable
 
     public int? MaxParticipants { get; set; }
 
+    public bool IsDeleted { get; set; }
+
     public bool RequiresApproval
     {
         get;

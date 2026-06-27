@@ -85,6 +85,11 @@ public class EventContext : DbContext
             builder.Property(e => e.UpdatedAt)
                 .IsConcurrencyToken();
 
+            builder.Property(e => e.IsDeleted)
+                .HasDefaultValue(false);
+
+            builder.HasQueryFilter(e => !e.IsDeleted);
+
             builder.Property(e => e.IsVisibleOnMap)
                 .IsRequired()
                 .HasDefaultValue(false);

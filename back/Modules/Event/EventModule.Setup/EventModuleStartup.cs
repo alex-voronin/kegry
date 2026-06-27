@@ -1,3 +1,4 @@
+using EventModule.Application.BackgroundJobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,5 +30,7 @@ public class EventModuleStartup : AppModuleStartupBase<EventContext>
                 .UseNpgsql(dbConnectionString, npgsqlOptions => npgsqlOptions.UseNetTopologySuite())
                 .UseSnakeCaseNamingConvention()
         );
+
+        services.AddHostedService<ExpiredEventsCollectorBackgroundService>();
     }
 }

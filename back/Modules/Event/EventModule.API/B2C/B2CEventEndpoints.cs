@@ -267,6 +267,7 @@ public class B2CEventEndpoints : IEndpoints
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         IEventRepository eventRepository,
+        IS3StorageService storageService,
         CancellationToken ct)
     {
         var ev = await eventRepository.GetByIdAsync(id, ct: ct);
@@ -275,8 +276,14 @@ public class B2CEventEndpoints : IEndpoints
         if (ev.CreatorId != user.GetId())
             throw EventExceptions.NotEventCreator();
 
-        eventRepository.Delete(ev);
+        var coverKey = ev.CoverImageS3Key;
+
+        ev.IsDeleted = true;
         await eventRepository.SaveChangesAsync(ct);
+
+        if (coverKey != null)
+            await storageService.DeleteObjectAsync(coverKey, dontThrow: true);
+
         return ApiResult.Empty;
     }
 

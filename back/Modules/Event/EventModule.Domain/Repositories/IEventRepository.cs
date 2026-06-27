@@ -58,4 +58,11 @@ public interface IEventRepository : IRepositoryOutbox<Event>
         int offset = 0,
         int limit = 20,
         CancellationToken ct = default);
+
+    Task<string[]> GetCoverImageKeysForInactiveEventsAsync(
+        DateTimeOffset threshold, CancellationToken ct = default);
+
+    Task SoftDeleteInactiveEventsAsync(DateTimeOffset threshold, CancellationToken ct = default);
+
+    Task HardDeleteExpiredEventsAsync(DateTimeOffset threshold, CancellationToken ct = default);
 }

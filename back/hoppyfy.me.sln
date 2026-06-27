@@ -192,6 +192,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventModule.Contracts", "Mo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventModule.Application", "Modules\Event\EventModule.Application\EventModule.Application.csproj", "{AAF736F3-0B17-414B-ADA8-178B4C161E02}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests.EventModule", "Tests\Integration\IntegrationTests.EventModule\IntegrationTests.EventModule.csproj", "{616DE2EC-D219-4EB7-AFE4-04A6CE0F76AC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1150,6 +1152,18 @@ Global
 		{AAF736F3-0B17-414B-ADA8-178B4C161E02}.Release|x64.Build.0 = Release|Any CPU
 		{AAF736F3-0B17-414B-ADA8-178B4C161E02}.Release|x86.ActiveCfg = Release|Any CPU
 		{AAF736F3-0B17-414B-ADA8-178B4C161E02}.Release|x86.Build.0 = Release|Any CPU
+		{616DE2EC-D219-4EB7-AFE4-04A6CE0F76AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{616DE2EC-D219-4EB7-AFE4-04A6CE0F76AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{616DE2EC-D219-4EB7-AFE4-04A6CE0F76AC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{616DE2EC-D219-4EB7-AFE4-04A6CE0F76AC}.Debug|x64.Build.0 = Debug|Any CPU
+		{616DE2EC-D219-4EB7-AFE4-04A6CE0F76AC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{616DE2EC-D219-4EB7-AFE4-04A6CE0F76AC}.Debug|x86.Build.0 = Debug|Any CPU
+		{616DE2EC-D219-4EB7-AFE4-04A6CE0F76AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{616DE2EC-D219-4EB7-AFE4-04A6CE0F76AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{616DE2EC-D219-4EB7-AFE4-04A6CE0F76AC}.Release|x64.ActiveCfg = Release|Any CPU
+		{616DE2EC-D219-4EB7-AFE4-04A6CE0F76AC}.Release|x64.Build.0 = Release|Any CPU
+		{616DE2EC-D219-4EB7-AFE4-04A6CE0F76AC}.Release|x86.ActiveCfg = Release|Any CPU
+		{616DE2EC-D219-4EB7-AFE4-04A6CE0F76AC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1247,5 +1261,6 @@ Global
 		{E3695C5B-5C07-4BA7-9717-A25ED4CA758F} = {ED55F507-2A6F-29E2-88C2-F8E2D2DB0C48}
 		{3992676D-A550-42C3-A0A8-C67C2D90B2DE} = {ED55F507-2A6F-29E2-88C2-F8E2D2DB0C48}
 		{AAF736F3-0B17-414B-ADA8-178B4C161E02} = {ED55F507-2A6F-29E2-88C2-F8E2D2DB0C48}
+		{616DE2EC-D219-4EB7-AFE4-04A6CE0F76AC} = {5B8B6067-4EF7-4AB2-8A2A-A77959E7BF2D}
 	EndGlobalSection
 EndGlobal

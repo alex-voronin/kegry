@@ -55,6 +55,12 @@ namespace EventModule.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(2000)")
                         .HasColumnName("description");
 
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_deleted");
+
                     b.Property<bool>("IsVisibleOnMap")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
