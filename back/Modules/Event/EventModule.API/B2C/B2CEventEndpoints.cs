@@ -35,7 +35,6 @@ public class B2CEventEndpoints : IEndpoints
         usersApiGroup.MapPost("/api/v1/events/{id:guid}/cover/upload-url", GetCoverUploadUrl);
         usersApiGroup.MapPost("/api/v1/events/{id:guid}/join", JoinEvent);
         usersApiGroup.MapPost("/api/v1/events/{id:guid}/leave", LeaveEvent);
-        usersApiGroup.MapGet("/api/v1/events/{id:guid}/participants", GetParticipants);
         usersApiGroup.MapPatch("/api/v1/events/{id:guid}/participants/{userId:guid}/approve", ApproveParticipant);
         usersApiGroup.MapPatch("/api/v1/events/{id:guid}/participants/{userId:guid}/reject", RejectParticipant);
         usersApiGroup.MapGet("/api/v1/events/my/created", GetMyCreatedEvents);
@@ -285,43 +284,6 @@ public class B2CEventEndpoints : IEndpoints
             await storageService.DeleteObjectAsync(coverKey, dontThrow: true);
 
         return ApiResult.Empty;
-    }
-
-    private static async Task<ApiResult<EventParticipantDto[]>> GetParticipants(
-        [FromRoute] Guid id,
-        ClaimsPrincipal user,
-        IEventRepository eventRepository,
-        EventContext dbContext,
-        IS3StorageService storageService,
-        CancellationToken ct)
-    {
-        var ev = await eventRepository.GetByIdWithRelationsAsync(id, ct);
-        if (ev == null)
-            throw EventExceptions.EventNotFound(id);
-        if (ev.CreatorId != user.GetId())
-            throw EventExceptions.NotEventCreator();
-
-        var userIds = ev.EventParticipants.Select(p => p.UserId).ToArray();
-        var users = await dbContext.Users
-            .Where(u => userIds.Contains(u.Id))
-            .ToDictionaryAsync(u => u.Id, ct);
-
-        var dtos = ev.EventParticipants.Select(p =>
-        {
-            var u = users.GetValueOrDefault(p.UserId);
-            return new EventParticipantDto(
-                UserId: p.UserId.ToString(),
-                FirstName: u?.FirstName,
-                LastName: u?.LastName,
-                AvatarUrl: u?.AvatarImageS3Key != null
-                    ? storageService.S3KeyToPublicFileUrl(u.AvatarImageS3Key, null)
-                    : null,
-                JoinedAt: p.JoinedAt,
-                ApprovedAt: p.ApprovedAt,
-                Status: p.Status);
-        }).ToArray();
-
-        return ApiResult<EventParticipantDto[]>.Build(dtos);
     }
 
     private static async Task<ApiResult.EmptyResult> JoinEvent(

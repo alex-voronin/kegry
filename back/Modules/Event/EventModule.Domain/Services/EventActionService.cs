@@ -67,6 +67,9 @@ internal class EventActionService : IEventActionService, IScoped
         {
             var ev = await LoadEventWithParticipantsAsync(eventId);
 
+            if (ev.CreatorId == userId)
+                throw EventExceptions.CreatorCannotLeave();
+
             if (!ev.EventParticipants.Any(p => p.UserId == userId))
                 throw EventExceptions.NotParticipant();
 

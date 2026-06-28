@@ -20,8 +20,10 @@
 
     <ItemGroup>
         <ProjectReference Include="..\IntegrationTests.Shared\IntegrationTests.Shared.csproj"/>
+        <ProjectReference Include="..\..\..\Modules\Event\EventModule.API\EventModule.API.csproj"/>
         <ProjectReference Include="..\..\..\Modules\Event\EventModule.Application\EventModule.Application.csproj"/>
         <ProjectReference Include="..\..\..\Modules\Event\EventModule.Infrastructure\EventModule.Infrastructure.csproj"/>
+        <ProjectReference Include="..\..\..\Modules\Venue\VenueModule.API\VenueModule.API.csproj"/>
     </ItemGroup>
 
 </Project>

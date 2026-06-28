@@ -94,6 +94,21 @@ public static class ApiRoutes
         public const string Discounts = "/api/v1/discounts";
         public const string Promotions = "/api/v1/promotions";
     }
+    
+    public static class Event
+    {
+        public const string Map = "/api/v1/events/map";
+        public const string Root = "/api/v1/events";
+        public static string Single(Guid id) => $"/api/v1/events/{id}";
+        public static string CoverUploadUrl(Guid id) => $"/api/v1/events/{id}/cover/upload-url";
+        public static string Join(Guid id) => $"/api/v1/events/{id}/join";
+        public static string Leave(Guid id) => $"/api/v1/events/{id}/leave";
+        public static string ApproveParticipant(Guid eventId, Guid userId) => $"/api/v1/events/{eventId}/participants/{userId}/approve";
+        public static string RejectParticipant(Guid eventId, Guid userId) => $"/api/v1/events/{eventId}/participants/{userId}/reject";
+        public const string MyCreated = "/api/v1/events/my/created";
+        public const string MyParticipated = "/api/v1/events/my/participated";
+        public static string VenueEvents(Guid venueId) => $"/api/v1/venues/{venueId}/events";
+    }
 
     public static class B2B
     {
@@ -114,6 +129,14 @@ public static class ApiRoutes
             public static string Promotion(Guid venueId, Guid id) => $"/api/v1/b2b/venue/{venueId}/promotions/{id}";
             public static string Discounts(Guid venueId) => $"/api/v1/b2b/venue/{venueId}/discounts";
             public static string Discount(Guid venueId, Guid id) => $"/api/v1/b2b/venue/{venueId}/discounts/{id}";
+        }
+
+        // ReSharper disable once MemberHidesStaticFromOuterClass
+        public static class Event
+        {
+            public const string Root = "/api/v1/b2b/events";
+            public static string Single(Guid id) => $"/api/v1/b2b/event/{id}";
+            public static string CoverUploadUrl(Guid id) => $"/api/v1/b2b/event/{id}/cover/upload-url";
         }
     }
 }

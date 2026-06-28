@@ -34,7 +34,6 @@ public class B2BEventEndpoints : IEndpoints
         managementApiGroup.MapPatch("/api/v1/b2b/event/{id:guid}", UpdateEvent);
         managementApiGroup.MapDelete("/api/v1/b2b/event/{id:guid}", DeleteEvent);
         managementApiGroup.MapPost("/api/v1/b2b/event/{id:guid}/cover/upload-url", GetCoverUploadUrl);
-        managementApiGroup.MapGet("/api/v1/b2b/event/{id:guid}/participants", GetParticipants);
     }
 
     private static async Task<ApiResult<PaginatedResponse<B2BEventListItemDto>>> GetEvents(
@@ -234,43 +233,6 @@ public class B2BEventEndpoints : IEndpoints
         return ApiResult.Empty;
     }
 
-    private static async Task<ApiResult<EventParticipantDto[]>> GetParticipants(
-        [FromRoute] Guid id,
-        ClaimsPrincipal user,
-        IEventRepository eventRepository,
-        EventContext dbContext,
-        IS3StorageService storageService,
-        CancellationToken ct)
-    {
-        var ev = await eventRepository.GetByIdWithRelationsAsync(id, ct);
-        if (ev == null)
-            throw EventExceptions.EventNotFound(id);
-        if (ev.CreatorId != user.GetId())
-            throw EventExceptions.NotEventCreator();
-
-        var userIds = ev.EventParticipants.Select(p => p.UserId).ToArray();
-        var users = await dbContext.Users
-            .Where(u => userIds.Contains(u.Id))
-            .ToDictionaryAsync(u => u.Id, ct);
-
-        var dtos = ev.EventParticipants.Select(p =>
-        {
-            var u = users.GetValueOrDefault(p.UserId);
-            return new EventParticipantDto(
-                UserId: p.UserId.ToString(),
-                FirstName: u?.FirstName,
-                LastName: u?.LastName,
-                AvatarUrl: u?.AvatarImageS3Key != null
-                    ? storageService.S3KeyToPublicFileUrl(u.AvatarImageS3Key, null)
-                    : null,
-                JoinedAt: p.JoinedAt,
-                ApprovedAt: p.ApprovedAt,
-                Status: p.Status);
-        }).ToArray();
-
-        return ApiResult<EventParticipantDto[]>.Build(dtos);
-    }
-
     private static async Task<ApiResult<GetPresignedUrlResponse>> GetCoverUploadUrl(
         [FromRoute] Guid id,
         [FromBody] GetPresignedUrlRequest request,
@@ -282,6 +244,8 @@ public class B2BEventEndpoints : IEndpoints
         var ev = await eventRepository.GetByIdAsync(id, ct: ct);
         if (ev == null)
             throw EventExceptions.EventNotFound(id);
+        if (ev.CreatorId != user.GetId())
+            throw EventExceptions.NotEventCreator();
 
         var urls = await imageService.GetEventCoverUploadUrlAsync(
             eventId: id,

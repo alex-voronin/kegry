@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.WebUtilities;
 using NotificationModule.Domain.ValueObjects;
 using SecurityModule.API.Dto;
+using SharedCore.Exceptions;
 
 namespace IntegrationTests.Shared.HttpClients;
 
@@ -21,13 +22,17 @@ public class IntegrationApiClient
 
     public IntegrationApiClient(HttpClient apiHttpClient) => _apiHttpClient = apiHttpClient;
 
-    public async Task<TResp> GetAsync<TResp>(string url)
+    public async Task<TResp> GetAsync<TResp>(string url, bool throwOnError = false)
     {
         var response = await _apiHttpClient.GetAsync(url);
+        if (throwOnError && !response.IsSuccessStatusCode)
+        {
+            throw new HttpCodeException("Request failed", response.StatusCode, ErrorCode.GeneralError);
+        }
         return (await response.Content.ReadFromJsonAsync<TResp>(_options))!;
     }
 
-    public async Task<TResp> GetAsync<TReq, TResp>(string url, TReq data)
+    public async Task<TResp> GetAsync<TReq, TResp>(string url, TReq data, bool throwOnError = false)
     {
         var queryString = BuildQueryString(data);
         var fullUrl = string.IsNullOrEmpty(queryString)
@@ -35,12 +40,20 @@ public class IntegrationApiClient
             : $"{url.TrimEnd('?')}{(url.Contains('?') ? "&" : "?")}{queryString}";
 
         var response = await _apiHttpClient.GetAsync(fullUrl);
+        if (throwOnError && !response.IsSuccessStatusCode)
+        {
+            throw new HttpCodeException("Request failed", response.StatusCode, ErrorCode.GeneralError);
+        }
         return (await response.Content.ReadFromJsonAsync<TResp>(_options))!;
     }
 
-    public async Task<TResp> PostAsync<TReq, TResp>(string url, TReq data)
+    public async Task<TResp> PostAsync<TReq, TResp>(string url, TReq data, bool throwOnError = false)
     {
         var response = await _apiHttpClient.PostAsJsonAsync(url, data, _options);
+        if (throwOnError && !response.IsSuccessStatusCode)
+        {
+            throw new HttpCodeException("Request failed", response.StatusCode, ErrorCode.GeneralError);
+        }
         return (await response.Content.ReadFromJsonAsync<TResp>(_options))!;
     }
 

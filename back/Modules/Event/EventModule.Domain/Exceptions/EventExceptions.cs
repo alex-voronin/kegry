@@ -37,4 +37,7 @@ public static class EventExceptions
 
     public static HttpCodeException NotVenueOwner() =>
         new("User does not own the venue", HttpStatusCode.Forbidden, ErrorCode.NotAllowed);
+
+    public static HttpCodeException CreatorCannotLeave() =>
+        new("Event creator cannot leave the event", HttpStatusCode.Forbidden, ErrorCode.NotAllowed);
 }

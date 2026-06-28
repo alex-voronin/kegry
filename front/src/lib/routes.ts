@@ -178,7 +178,6 @@ export const API_ENDPOINTS = {
       DETAILS: (id: string) => `/api/v1/b2b/event/${id}`,
       COVER_UPLOAD_URL: (id: string) =>
         `/api/v1/b2b/event/${id}/cover/upload-url`,
-      PARTICIPANTS: (id: string) => `/api/v1/b2b/event/${id}/participants`,
     },
   },
   EVENTS: {
@@ -190,7 +189,6 @@ export const API_ENDPOINTS = {
     JOIN: (id: string) => `/api/v1/events/${id}/join`,
     LEAVE: (id: string) => `/api/v1/events/${id}/leave`,
     COVER_UPLOAD_URL: (id: string) => `/api/v1/events/${id}/cover/upload-url`,
-    PARTICIPANTS: (id: string) => `/api/v1/events/${id}/participants`,
     APPROVE_PARTICIPANT: (eventId: string, userId: string) =>
       `/api/v1/events/${eventId}/participants/${userId}/approve`,
     REJECT_PARTICIPANT: (eventId: string, userId: string) =>
