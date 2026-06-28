@@ -1,6 +1,7 @@
 using EventModule.API.B2B.Dto;
 using EventModule.API.B2C.Dto;
 using EventModule.Domain.Enums;
+using EventModule.Domain.Services;
 using IntegrationTests.Shared;
 using SecurityModule.API.Dto;
 using SecurityModule.Domain.ValueObjects;
@@ -31,7 +32,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenB2BAdminWithVenue_WhenCreates_ThenCreated()
     {
-        var (auth, companyId, venueId) = await CreateB2BCompanyAndVenueAsync();
+        var (auth, _, venueId) = await CreateB2BCompanyAndVenueAsync();
         Factory.ApiClient.SetAuth(auth);
 
         var response = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
@@ -55,7 +56,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenB2BAdmin_WhenCreatesAtUnownedVenue_Then403()
     {
-        var (ownerAuth, ownerCompanyId, ownerVenueId) = await CreateB2BCompanyAndVenueAsync();
+        var (_, _, ownerVenueId) = await CreateB2BCompanyAndVenueAsync();
         var otherAuth = await CreateB2BUserAsync();
         Factory.ApiClient.SetAuth(otherAuth);
 
@@ -74,8 +75,8 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenB2CUser_WhenCreatesB2B_Then403()
     {
-        var b2cAuth = await CreateUserAsync();
-        Factory.ApiClient.SetAuth(b2cAuth);
+        var b2CAuth = await CreateUserAsync();
+        Factory.ApiClient.SetAuth(b2CAuth);
 
         await Should.ThrowAsync<HttpCodeException>(async () =>
         {
@@ -116,7 +117,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenB2BUserWithEvents_WhenList_ThenPaginated()
     {
-        var (auth, companyId, venueId) = await CreateB2BCompanyAndVenueAsync();
+        var (auth, _, venueId) = await CreateB2BCompanyAndVenueAsync();
         Factory.ApiClient.SetAuth(auth);
 
         await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
@@ -149,7 +150,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenB2BUser_WhenListFilteredByVenue_ThenFiltered()
     {
-        var (auth, companyId, venueAId) = await CreateB2BCompanyAndVenueAsync();
+        var (auth, _, venueAId) = await CreateB2BCompanyAndVenueAsync();
         Factory.ApiClient.SetAuth(auth);
 
         await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
@@ -172,8 +173,8 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenB2CUser_WhenListB2B_Then403()
     {
-        var b2cAuth = await CreateUserAsync();
-        Factory.ApiClient.SetAuth(b2cAuth);
+        var b2CAuth = await CreateUserAsync();
+        Factory.ApiClient.SetAuth(b2CAuth);
 
         await Should.ThrowAsync<HttpCodeException>(async () =>
         {
@@ -413,13 +414,55 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     }
 
     // ========================================
+    //  DAILY CREATION LIMIT
+    // ========================================
+
+    [Fact]
+    public async Task GivenB2BAdmin_WhenCreatesMoreThan10Events_Then429()
+    {
+        var (auth, _, venueId) = await CreateB2BCompanyAndVenueAsync();
+        Factory.ApiClient.SetAuth(auth);
+
+        // Create exactly up to the limit — all should succeed
+        for (var i = 0; i < EventParameters.MaxB2BEventsPerDay; i++)
+        {
+            var response = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+                ApiRoutes.B2B.Event.Root,
+                new B2BCreateEventRequest(
+                    CoverImageUrl: null,
+                    Title: $"Event {i}",
+                    Description: "Desc",
+                    StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
+                    VenueId: venueId));
+            response.Success.ShouldBeTrue();
+        }
+
+        // One more should be rejected
+        var eleventhResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+            ApiRoutes.B2B.Event.Root,
+            new B2BCreateEventRequest(
+                CoverImageUrl: null,
+                Title: "Too Many",
+                Description: "Should fail",
+                StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
+                VenueId: venueId));
+
+        eleventhResponse.Success.ShouldBeFalse();
+        eleventhResponse.Errors.ShouldNotBeNull();
+        eleventhResponse.Errors.Length.ShouldBe(1);
+        eleventhResponse.Errors[0].Error.ShouldBe(
+            $"Daily creation limit of {EventParameters.MaxB2BEventsPerDay} reached");
+        eleventhResponse.Errors[0].Code.ShouldBe(nameof(ErrorCode.TooManyRequests));
+    }
+
+    // ========================================
     //  HELPERS
     // ========================================
 
     private async Task<AuthResponse> CreateUserAsync()
     {
         return await Factory.AuthManager.CreateAndLoginUserAsync(
-            $"b2c_{Guid.NewGuid():N}@hoppyfy.me", "Password123!", UserType.B2C);
+            $"b2c_{Guid.NewGuid():N}@hoppyfy.me", "Password123!");
     }
 
     private async Task<AuthResponse> CreateB2BUserAsync()

@@ -321,4 +321,15 @@ public class EfCoreEventRepository : RepositoryOutbox<EventContext, Event>, IEve
             .Where(e => e.StartDateTime < threshold)
             .ExecuteDeleteAsync(ct);
     }
+
+    public async Task<int> GetDailyEventCountAsync(Guid userId, CancellationToken ct = default)
+    {
+        var now = DateTimeOffset.UtcNow;
+        var startOfDay = new DateTimeOffset(now.Year, now.Month, now.Day, 0, 0, 0, TimeSpan.Zero);
+        var startOfNextDay = startOfDay.AddDays(1);
+
+        return await Context.Events
+            .Where(e => e.CreatorId == userId && e.CreatedAt >= startOfDay && e.CreatedAt < startOfNextDay)
+            .CountAsync(ct);
+    }
 }

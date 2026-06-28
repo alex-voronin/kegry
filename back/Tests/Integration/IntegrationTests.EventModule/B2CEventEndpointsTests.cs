@@ -2,11 +2,18 @@ using System.Net;
 using System.Net.Http.Json;
 using EventModule.API.B2C.Dto;
 using EventModule.Domain.Enums;
+using EventModule.Domain.Services;
+using EventModule.Infrastructure.Persistence;
 using IntegrationTests.Shared;
+using IntegrationTests.Shared.HttpClients;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using SecurityModule.API.Dto;
+using SecurityModule.Domain.Aggregates;
 using SecurityModule.Domain.ValueObjects;
 using SharedCore.Api.Dto;
 using SharedCore.Enums;
+using SharedCore.Exceptions;
 using SharedCore.Extensions;
 using Shouldly;
 using VenueModule.API.B2B.Companies.Dto;
@@ -197,6 +204,14 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenUnauthenticated_WhenCreates_Then401()
     {
+        var invalidAuth = new AuthResponse(
+            UserId: "",
+            UserType: UserType.B2C,
+            RequiredAction: RequiredAction.None,
+            AccessToken: null,
+            RefreshToken: null
+            );
+        Factory.HttpClient.SetAuth(invalidAuth);
         var httpResponse = await Factory.HttpClient.PostAsJsonAsync(
             ApiRoutes.Event.Root,
             new CreateEventRequest(
@@ -255,7 +270,7 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenExistingEvent_WhenGetByNonCreator_ThenReturnsDetail()
     {
-        var (creatorAuth, eventId) = await CreateEventAsync();
+        var (_, eventId) = await CreateEventAsync();
         var otherUser = await CreateUserAsync();
 
         Factory.ApiClient.SetAuth(otherUser);
@@ -347,7 +362,7 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenNonCreator_WhenUpdates_Then403()
     {
-        var (creatorAuth, eventId) = await CreateEventAsync();
+        var (_, eventId) = await CreateEventAsync();
         var otherUser = await CreateUserAsync();
         Factory.ApiClient.SetAuth(otherUser);
 
@@ -412,7 +427,7 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenNonCreator_WhenDeletes_Then403()
     {
-        var (creatorAuth, eventId) = await CreateEventAsync();
+        var (_, eventId) = await CreateEventAsync();
         var otherUser = await CreateUserAsync();
         Factory.ApiClient.SetAuth(otherUser);
 
@@ -446,8 +461,8 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var venueAId = await SeedVenueAsync(44.7866, 20.4489);
         var venueBId = await SeedVenueAsync(44.7870, 20.4490);
 
-        var eventAId = await CreateEventAtVenueAsync(auth, venueAId);
-        var eventBId = await CreateEventAtVenueAsync(auth, venueBId);
+        await CreateEventAtVenueAsync(auth, venueAId);
+        await CreateEventAtVenueAsync(auth, venueBId);
 
         var response = await Factory.ApiClient.PostAsync<GetEventsMapRequest, ApiResult<VenueEventsDto[]>>(
             ApiRoutes.Event.Map,
@@ -738,7 +753,7 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenNonParticipant_WhenLeave_Then409()
     {
-        var (creatorAuth, eventId) = await CreateEventAsync();
+        var (_, eventId) = await CreateEventAsync();
         var nonParticipant = await CreateUserAsync();
         Factory.ApiClient.SetAuth(nonParticipant);
 
@@ -948,7 +963,7 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenNonCreator_WhenApprove_Then403()
     {
-        var (creatorAuth, eventId) = await CreateEventWithApprovalAsync();
+        var (_, eventId) = await CreateEventWithApprovalAsync();
         var joiner = await CreateUserAsync();
         Factory.ApiClient.SetAuth(joiner);
         await Factory.ApiClient.PostAsync<object, ApiResult.EmptyResult>(
@@ -1013,7 +1028,7 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenUserWithJoined_WhenMyParticipated_ThenReturnsJoined()
     {
-        var (creatorAuth, eventId) = await CreateEventAsync();
+        var (_, eventId) = await CreateEventAsync();
         var joiner = await CreateUserAsync();
         Factory.ApiClient.SetAuth(joiner);
         await Factory.ApiClient.PostAsync<object, ApiResult.EmptyResult>(
@@ -1031,7 +1046,7 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenOwnEvent_WhenMyParticipated_ThenExcluded()
     {
-        var (auth, eventId) = await CreateEventAsync();
+        var (auth, _) = await CreateEventAsync();
         Factory.ApiClient.SetAuth(auth);
 
         var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<EventListItemDto>>>(
@@ -1064,7 +1079,7 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     [Fact]
     public async Task GivenNonCreator_WhenCoverUploadUrl_Then403()
     {
-        var (creatorAuth, eventId) = await CreateEventAsync();
+        var (_, eventId) = await CreateEventAsync();
         var otherUser = await CreateUserAsync();
         Factory.ApiClient.SetAuth(otherUser);
 
@@ -1076,6 +1091,118 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     }
 
     // ========================================
+    //  DAILY CREATION LIMIT
+    // ========================================
+
+    [Fact]
+    public async Task GivenUser_WhenCreatesMoreThan3Meetups_Then429()
+    {
+        var auth = await CreateUserAsync();
+        Factory.ApiClient.SetAuth(auth);
+
+        // Create exactly up to the limit — all should succeed
+        for (var i = 0; i < EventParameters.MaxB2CMeetupsPerDay; i++)
+        {
+            var response = await Factory.ApiClient.PostAsync<CreateEventRequest, ApiResult<EventDto>>(
+                ApiRoutes.Event.Root,
+                new CreateEventRequest(
+                    CreatorAvatarUrl: null,
+                    CoverImageUrl: null,
+                    Title: $"Meetup {i}",
+                    Description: "Desc",
+                    StartDateTime: DateTimeOffset.UtcNow.AddDays(14),
+                    VenueId: Guid.NewGuid()));
+            response.Success.ShouldBeTrue();
+        }
+
+        // One more should be rejected
+        var fourthResponse = await Factory.ApiClient.PostAsync<CreateEventRequest, ApiResult<EventDto>>(
+            ApiRoutes.Event.Root,
+            new CreateEventRequest(
+                CreatorAvatarUrl: null,
+                CoverImageUrl: null,
+                Title: "Too Many",
+                Description: "Should fail",
+                StartDateTime: DateTimeOffset.UtcNow.AddDays(14),
+                VenueId: Guid.NewGuid()));
+
+        fourthResponse.Success.ShouldBeFalse();
+        fourthResponse.Errors.ShouldNotBeNull();
+        fourthResponse.Errors.Length.ShouldBe(1);
+        fourthResponse.Errors[0].Error.ShouldBe(
+            $"Daily creation limit of {EventParameters.MaxB2CMeetupsPerDay} reached");
+        fourthResponse.Errors[0].Code.ShouldBe(nameof(ErrorCode.TooManyRequests));
+    }
+
+    [Fact]
+    public async Task GivenUser_WhenCreates3MeetupsThenNextDay_ThenCanCreateAgain()
+    {
+        var auth = await CreateUserAsync();
+        Factory.ApiClient.SetAuth(auth);
+
+        // Create 3 meetups via API (today's CreatedAt)
+        var eventIds = new List<Guid>();
+        for (var i = 0; i < EventParameters.MaxB2CMeetupsPerDay; i++)
+        {
+            var response = await Factory.ApiClient.PostAsync<CreateEventRequest, ApiResult<EventDto>>(
+                ApiRoutes.Event.Root,
+                new CreateEventRequest(
+                    CreatorAvatarUrl: null,
+                    CoverImageUrl: null,
+                    Title: $"Meetup {i}",
+                    Description: "Desc",
+                    StartDateTime: DateTimeOffset.UtcNow.AddDays(14),
+                    VenueId: Guid.NewGuid()));
+            response.Success.ShouldBeTrue();
+            eventIds.Add(Guid.Parse(response.Result.Id));
+        }
+
+        // Move events to yesterday so daily count resets (raw SQL to bypass AuditableInterceptor)
+        var yesterday = DateTimeOffset.UtcNow.AddDays(-1);
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<EventContext>();
+            foreach (var id in eventIds)
+            {
+                await db.Database.ExecuteSqlRawAsync(
+                    "UPDATE event.events SET created_at = {0} WHERE id = {1}",
+                    yesterday, id);
+            }
+        }
+
+        // Should now be able to create up to the limit again (daily count reset)
+        for (var i = 0; i < EventParameters.MaxB2CMeetupsPerDay; i++)
+        {
+            var response = await Factory.ApiClient.PostAsync<CreateEventRequest, ApiResult<EventDto>>(
+                ApiRoutes.Event.Root,
+                new CreateEventRequest(
+                    CreatorAvatarUrl: null,
+                    CoverImageUrl: null,
+                    Title: $"Today Meetup {i}",
+                    Description: "Desc",
+                    StartDateTime: DateTimeOffset.UtcNow.AddDays(14),
+                    VenueId: Guid.NewGuid()));
+            response.Success.ShouldBeTrue();
+        }
+
+        // Exceeding the limit again should be rejected
+        var excess = await Factory.ApiClient.PostAsync<CreateEventRequest, ApiResult<EventDto>>(
+            ApiRoutes.Event.Root,
+            new CreateEventRequest(
+                CreatorAvatarUrl: null,
+                CoverImageUrl: null,
+                Title: "Too Many Again",
+                Description: "Should fail",
+                StartDateTime: DateTimeOffset.UtcNow.AddDays(14),
+                VenueId: Guid.NewGuid()));
+
+        excess.Success.ShouldBeFalse();
+        excess.Errors.ShouldNotBeNull();
+        excess.Errors.Length.ShouldBe(1);
+        excess.Errors[0].Code.ShouldBe(nameof(ErrorCode.TooManyRequests));
+    }
+
+    // ========================================
     //  HELPERS
     // ========================================
 
@@ -1083,7 +1210,7 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     {
         var email = $"b2c_event_{Guid.NewGuid():N}@example.com";
         return await Factory.AuthManager.CreateAndLoginUserAsync(
-            email, "Password123!", UserType.B2C);
+            email, "Password123!");
     }
 
     private async Task<(AuthResponse Auth, Guid EventId)> CreateEventAsync()
@@ -1130,9 +1257,9 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
     private async Task<Guid> SeedVenueAsync(double lat, double lng)
     {
-        var b2bAuth = await Factory.AuthManager.CreateAndLoginUserAsync(
+        var b2BAuth = await Factory.AuthManager.CreateAndLoginUserAsync(
             $"b2b_venue_seed_{Guid.NewGuid():N}@example.com", "Password123!", UserType.B2B);
-        Factory.ApiClient.SetAuth(b2bAuth);
+        Factory.ApiClient.SetAuth(b2BAuth);
 
         var companyResponse = await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
             ApiRoutes.B2B.Company.Root,

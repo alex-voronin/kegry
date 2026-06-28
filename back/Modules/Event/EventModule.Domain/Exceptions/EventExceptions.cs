@@ -40,4 +40,7 @@ public static class EventExceptions
 
     public static HttpCodeException CreatorCannotLeave() =>
         new("Event creator cannot leave the event", HttpStatusCode.Forbidden, ErrorCode.NotAllowed);
+
+    public static HttpCodeException DailyCreationLimitExceeded(int limit) =>
+        new($"Daily creation limit of {limit} reached", HttpStatusCode.TooManyRequests, ErrorCode.TooManyRequests);
 }

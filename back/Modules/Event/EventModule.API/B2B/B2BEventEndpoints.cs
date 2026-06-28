@@ -133,6 +133,11 @@ public class B2BEventEndpoints : IEndpoints
         CancellationToken ct)
     {
         var userId = user.GetId();
+
+        var dailyCount = await eventRepository.GetDailyEventCountAsync(userId, ct);
+        if (dailyCount >= EventParameters.MaxB2BEventsPerDay)
+            throw EventExceptions.DailyCreationLimitExceeded(EventParameters.MaxB2BEventsPerDay);
+
         await RequireVenueOwnershipAsync(request.VenueId, userId, dbContext, ct);
 
         var eventId = Guid.CreateVersion7();

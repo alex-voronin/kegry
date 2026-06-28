@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.EntityFrameworkCore;
 using Shared.Infrastructure.Storage;
 using SharedCore.Api;
 using SharedCore.Api.Dto;
@@ -179,6 +178,11 @@ public class B2CEventEndpoints : IEndpoints
         CancellationToken ct)
     {
         var userId = user.GetId();
+
+        var dailyCount = await eventRepository.GetDailyEventCountAsync(userId, ct);
+        if (dailyCount >= EventParameters.MaxB2CMeetupsPerDay)
+            throw EventExceptions.DailyCreationLimitExceeded(EventParameters.MaxB2CMeetupsPerDay);
+
         var eventId = Guid.CreateVersion7();
 
         var ev = new Event(
