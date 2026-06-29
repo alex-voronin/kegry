@@ -13,8 +13,6 @@ public class EventContext : DbContext
 
     public DbSet<Venue> Venues => Set<Venue>();
     public DbSet<Company> Companies => Set<Company>();
-    public DbSet<User> Users => Set<User>();
-    public DbSet<Hobby> Hobbies => Set<Hobby>();
     public DbSet<FeedUserRelation> FeedUserRelations => Set<FeedUserRelation>();
 
     public EventContext(DbContextOptions<EventContext> options) : base(options)
@@ -35,7 +33,7 @@ public class EventContext : DbContext
 
     private void ThrowOnReadOnlyEntityModification()
     {
-        Type[] readOnlyTypes = [typeof(Venue), typeof(Company), typeof(User), typeof(Hobby), typeof(FeedUserRelation)];
+        Type[] readOnlyTypes = [typeof(Venue), typeof(Company), typeof(FeedUserRelation)];
 
         var forbiddenChanges = ChangeTracker.Entries()
             .Where(e => readOnlyTypes.Contains(e.Entity.GetType()) &&
@@ -115,6 +113,15 @@ public class EventContext : DbContext
                 .WithOne()
                 .HasForeignKey(p => p.EventId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasIndex(e => new { e.VenueId, e.StartDateTime })
+                .HasDatabaseName("ix_events_venue_id_start_date");
+
+            builder.HasIndex(e => new { e.CreatorId, e.StartDateTime })
+                .HasDatabaseName("ix_events_creator_id_start_date");
+
+            builder.HasIndex(e => e.StartDateTime)
+                .HasDatabaseName("ix_events_start_date");
         });
 
         modelBuilder.Entity<EventContact>(builder =>
@@ -142,6 +149,9 @@ public class EventContext : DbContext
         {
             builder.ToTable("event_hobby_links", "event");
             builder.HasKey(h => new { h.EventId, h.HobbyId });
+
+            builder.HasIndex(h => new { h.HobbyId, h.EventId })
+                .HasDatabaseName("ix_event_hobby_links_hobby_id_event_id");
         });
 
         modelBuilder.Entity<EventParticipant>(builder =>
@@ -156,6 +166,12 @@ public class EventContext : DbContext
 
             builder.Property(p => p.JoinedAt)
                 .IsRequired();
+
+            builder.HasIndex(p => new { p.UserId, p.Status })
+                .HasDatabaseName("ix_event_participants_user_id_status");
+
+            builder.HasIndex(p => new { p.UserId, p.EventId })
+                .HasDatabaseName("ix_event_participants_user_id_event_id");
         });
 
         modelBuilder.Entity<Venue>(builder =>
@@ -177,23 +193,6 @@ public class EventContext : DbContext
             builder.HasKey(c => c.Id);
 
             builder.HasQueryFilter(c => !c.IsDeleted);
-            builder.Metadata.SetIsTableExcludedFromMigrations(true);
-        });
-
-        modelBuilder.Entity<User>(builder =>
-        {
-            builder.ToTable("users", "user_profile");
-            builder.HasKey(u => u.Id);
-
-            builder.HasQueryFilter(u => !u.IsDeleted);
-            builder.Metadata.SetIsTableExcludedFromMigrations(true);
-        });
-
-        modelBuilder.Entity<Hobby>(builder =>
-        {
-            builder.ToTable("hobbies", "user_profile");
-            builder.HasKey(h => h.Id);
-
             builder.Metadata.SetIsTableExcludedFromMigrations(true);
         });
 

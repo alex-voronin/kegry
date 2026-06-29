@@ -105,6 +105,15 @@ namespace EventModule.Infrastructure.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_events");
 
+                    b.HasIndex("StartDateTime")
+                        .HasDatabaseName("ix_events_start_date");
+
+                    b.HasIndex("CreatorId", "StartDateTime")
+                        .HasDatabaseName("ix_events_creator_id_start_date");
+
+                    b.HasIndex("VenueId", "StartDateTime")
+                        .HasDatabaseName("ix_events_venue_id_start_date");
+
                     b.ToTable("events", "event");
                 });
 
@@ -158,6 +167,9 @@ namespace EventModule.Infrastructure.Persistence.Migrations
                     b.HasKey("EventId", "HobbyId")
                         .HasName("pk_event_hobby_links");
 
+                    b.HasIndex("HobbyId", "EventId")
+                        .HasDatabaseName("ix_event_hobby_links_hobby_id_event_id");
+
                     b.ToTable("event_hobby_links", "event");
                 });
 
@@ -187,6 +199,12 @@ namespace EventModule.Infrastructure.Persistence.Migrations
 
                     b.HasKey("EventId", "UserId")
                         .HasName("pk_event_participants");
+
+                    b.HasIndex("UserId", "EventId")
+                        .HasDatabaseName("ix_event_participants_user_id_event_id");
+
+                    b.HasIndex("UserId", "Status")
+                        .HasDatabaseName("ix_event_participants_user_id_status");
 
                     b.ToTable("event_participants", "event");
                 });
@@ -220,60 +238,29 @@ namespace EventModule.Infrastructure.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("EventModule.Domain.Aggregates.ReadOnly.Hobby", b =>
+            modelBuilder.Entity("EventModule.Domain.Aggregates.ReadOnly.FeedUserRelation", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("category_id");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id")
-                        .HasName("pk_hobbies");
-
-                    b.ToTable("hobbies", "user_profile", t =>
-                        {
-                            t.ExcludeFromMigrations();
-                        });
-                });
-
-            modelBuilder.Entity("EventModule.Domain.Aggregates.ReadOnly.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<string>("AvatarImageS3Key")
-                        .HasColumnType("text")
-                        .HasColumnName("avatar_image_s3key");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("first_name");
-
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsBlocked")
                         .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
+                        .HasColumnName("is_blocked");
 
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("last_name");
+                    b.Property<Guid>("MyUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("my_user_id");
+
+                    b.Property<Guid>("OtherUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("other_user_id");
 
                     b.HasKey("Id")
-                        .HasName("pk_users");
+                        .HasName("pk_user_relations");
 
-                    b.ToTable("users", "user_profile", t =>
+                    b.ToTable("user_relations", "feed", t =>
                         {
                             t.ExcludeFromMigrations();
                         });
