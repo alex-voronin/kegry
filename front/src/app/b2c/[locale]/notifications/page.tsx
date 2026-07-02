@@ -24,6 +24,7 @@ import styles from './notifications.module.css';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { CalendarClock } from 'lucide-react';
 import { useSafeBack } from '@/hooks/use-safe-back';
+import { useAuthStore } from '@/lib/auth/use-auth-store';
 
 export default function NotificationsScreen() {
   const router = useRouter();
@@ -57,6 +58,8 @@ export default function NotificationsScreen() {
     hasError,
   } = useNotificationsStore();
 
+  const hasHydrated = useAuthStore((s) => s.hasHydrated);
+
   useEffect(() => {
     return () => {
       // Clear store when leaving the page so it refreshes when reopened.
@@ -65,6 +68,7 @@ export default function NotificationsScreen() {
   }, [reset]);
 
   useEffect(() => {
+    if (!hasHydrated) return;
     // Initial load
     if (notifications.length === 0 && !isLoading && hasMore && !hasError) {
       const loadNotifications = async () => {
@@ -76,9 +80,10 @@ export default function NotificationsScreen() {
       };
       loadNotifications();
     }
-  }, [fetchNotifications, t, notifications.length, isLoading, hasMore]);
+  }, [fetchNotifications, t, notifications.length, isLoading, hasMore, hasHydrated]);
 
   useEffect(() => {
+    if (!hasHydrated) return;
     // Load more when scrolled to the bottom
     if (
       inView &&
@@ -105,6 +110,7 @@ export default function NotificationsScreen() {
     fetchNotifications,
     t,
     limit,
+    hasHydrated,
   ]);
 
   const handleAccept = async (notif: NotificationDto) => {
