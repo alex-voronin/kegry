@@ -7,7 +7,7 @@ import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { Button, ButtonVariant } from '@/components/ui/button';
-import { UserX, CalendarCheck } from 'lucide-react';
+import { UserX, CalendarClock } from 'lucide-react';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { toast } from 'react-toastify';
@@ -116,7 +116,7 @@ export default function ParticipantsPage() {
         {approvedUsers.length === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.emptyStateInner}>
-              <CalendarCheck size={20} className={styles.emptyStateIcon} />
+              <CalendarClock size={20} className={styles.emptyStateIcon} />
               <span className={styles.emptyStateText}>
                 {t('noParticipants')}
               </span>

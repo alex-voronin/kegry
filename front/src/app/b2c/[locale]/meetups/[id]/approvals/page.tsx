@@ -7,7 +7,7 @@ import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { Button, ButtonVariant } from '@/components/ui/button';
-import { UserCheck, UserX, CalendarCheck } from 'lucide-react';
+import { UserCheck, UserX, CalendarClock } from 'lucide-react';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { toast } from 'react-toastify';
@@ -178,7 +178,7 @@ export default function ApprovalsPage() {
         {event.pendingApprovalsCount === 0 && (
           <div className={styles.emptyState}>
             <div className={styles.emptyStateInner}>
-              <CalendarCheck size={20} className={styles.emptyStateIcon} />
+              <CalendarClock size={20} className={styles.emptyStateIcon} />
               <span className={styles.emptyStateText}>{t('allApproved')}</span>
             </div>
           </div>

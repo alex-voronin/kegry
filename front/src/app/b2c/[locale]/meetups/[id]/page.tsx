@@ -17,7 +17,7 @@ import {
   Users,
   UserCheck,
   CheckCircle,
-  CalendarCheck,
+  CalendarClock,
   Phone,
   Mail,
   Globe,
@@ -256,7 +256,7 @@ export default function MeetupDetailPage() {
             <div className={styles.coverInfoRight}>
               {(event.participationStatus === 'Approved' ||
                 event.isCreator) && (
-                <CalendarCheck size={14} className="text-accent" />
+                <CalendarClock size={14} className="text-accent" />
               )}
               <Users size={14} />
               <span>
@@ -398,7 +398,7 @@ export default function MeetupDetailPage() {
                   }
                 >
                   <div className="flex items-center gap-2">
-                    <CalendarCheck
+                    <CalendarClock
                       size={20}
                       className="text-secondary shrink-0"
                     />
@@ -438,7 +438,7 @@ export default function MeetupDetailPage() {
           <div className={styles.approvalRow}>
             {event.participationStatus === 'Approved' ? (
               <>
-                <CalendarCheck size={20} className="text-accent shrink-0" />
+                <CalendarClock size={20} className="text-accent shrink-0" />
                 <span className={styles.fieldValue}>{t('joined')}</span>
               </>
             ) : event.participationStatus ? (
@@ -450,14 +450,14 @@ export default function MeetupDetailPage() {
               </>
             ) : event.requiresApproval ? (
               <>
-                <CalendarCheck size={20} className="text-secondary shrink-0" />
+                <CalendarClock size={20} className="text-secondary shrink-0" />
                 <span className={styles.fieldValue}>
                   {t('requiresApproval')}
                 </span>
               </>
             ) : (
               <>
-                <CalendarCheck size={20} className="text-accent shrink-0" />
+                <CalendarClock size={20} className="text-accent shrink-0" />
                 <span className={styles.fieldValue}>
                   {t('noApprovalRequired')}
                 </span>

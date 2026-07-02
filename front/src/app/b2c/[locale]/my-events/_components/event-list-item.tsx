@@ -1,6 +1,6 @@
 'use client';
 
-import { MoreHorizontal, CalendarCheck, Clock, Users } from 'lucide-react';
+import { MoreHorizontal, CalendarClock, Clock, Users } from 'lucide-react';
 import { MyEventItem, VenueInfo } from '../use-my-events-store';
 import styles from '../my-events.module.css';
 
@@ -38,7 +38,7 @@ export function EventListItem({
           </div>
           <div className={styles.eventCardTitle}>
             {(event.participationStatus === 'Approved' || (showOwnerIndicator && !event.participationStatus)) && (
-              <CalendarCheck size={14} className="text-accent shrink-0" />
+              <CalendarClock size={14} className="text-accent shrink-0" />
             )}
             {event.participationStatus === 'Pending' && (
               <Clock size={14} className="text-accent shrink-0" />

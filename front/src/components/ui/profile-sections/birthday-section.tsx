@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useTranslations } from 'next-intl';
 import { Control, useController } from 'react-hook-form';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarClock } from 'lucide-react';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
 import { cn } from '@/lib/utils';
 import stylesCommon from '@/components/ui/common.module.css';
@@ -66,7 +66,7 @@ export function BirthdaySection({
           disabled={readOnly}
           className="absolute right-3 flex items-center justify-center opacity-50 transition-opacity hover:opacity-100"
         >
-          <CalendarIcon className="h-4 w-4" />
+          <CalendarClock className="h-4 w-4" />
         </button>
       </div>
       {error && <p className={stylesCommon.errorMessage}>{error.message}</p>}

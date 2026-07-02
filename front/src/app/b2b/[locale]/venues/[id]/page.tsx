@@ -31,7 +31,6 @@ import {
   QrCode,
   SquarePen,
   Trash2,
-  Calendar,
   Users,
   ChevronRight,
 } from 'lucide-react';

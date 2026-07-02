@@ -19,7 +19,7 @@ import { EventActionSheet } from '@/components/common/event-action-sheet';
 import {
   ChevronDown,
   MoreHorizontal,
-  CalendarCheck,
+  CalendarClock,
   Clock,
   Search,
   ListFilter,
@@ -679,7 +679,7 @@ export function VenueBottomSheet({
                           </div>
                           <div className={styles.eventCardTitle}>
                             {event.participationStatus === 'Approved' && (
-                              <CalendarCheck
+                              <CalendarClock
                                 size={14}
                                 className="text-accent shrink-0"
                               />
@@ -859,7 +859,7 @@ export function VenueBottomSheet({
                             </div>
                             <div className={styles.eventCardTitle}>
                               {event.participationStatus === 'Approved' && (
-                                <CalendarCheck
+                                <CalendarClock
                                   size={14}
                                   className="text-accent shrink-0"
                                 />

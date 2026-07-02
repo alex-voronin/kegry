@@ -5,7 +5,7 @@ import { useInView } from 'react-intersection-observer';
 import { useRouter } from '@/i18n/routing';
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
-import { Users, MoreHorizontal, CalendarCheck } from 'lucide-react';
+import { Users, MoreHorizontal, CalendarClock } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
 import styles from '../venue-detail.module.css';
 import type { EventListItem } from '../../../map/_components/types';
@@ -184,7 +184,7 @@ export function EventsTab({
                       )}
                       <span className="flex items-center gap-1">
                         {ev.participationStatus === 'Approved' && (
-                          <CalendarCheck size={12} className="text-accent" />
+                          <CalendarClock size={12} className="text-accent" />
                         )}
                         <Users size={12} />
                         {ev.participantsCount}

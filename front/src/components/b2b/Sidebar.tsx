@@ -9,7 +9,7 @@ import {
   Building2,
   MapPin,
   LayoutDashboard,
-  Calendar,
+  CalendarClock,
   LogOut,
   Menu,
   MessageCircle,
@@ -90,7 +90,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     {
       label: t('events'),
       href: PAGE_ROUTES.B2B.EVENTS,
-      icon: <Calendar size={24} />,
+      icon: <CalendarClock size={24} />,
     },
     {
       label: t('contactUs'),

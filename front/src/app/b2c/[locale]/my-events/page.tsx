@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
-import { CalendarSync } from 'lucide-react';
+import { CalendarClock } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
@@ -232,7 +232,7 @@ export default function MyEventsScreen() {
           </div>
         ) : tabState.events.length === 0 ? (
           <div className={styles.emptyState}>
-            <CalendarSync size={48} className="text-secondary/40" />
+            <CalendarClock size={48} className="text-secondary/40" />
             <span>{emptyMessage}</span>
           </div>
         ) : (
