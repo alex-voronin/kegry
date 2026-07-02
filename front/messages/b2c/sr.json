@@ -573,7 +573,8 @@
     },
     "map": {
       "title": "Mapa",
-      "venuesCount": "{count} lokala u blizini",
+      "venuesCount": "{count} {count, plural, one {lokal} few {lokala} other {lokala}}",
+      "venuesAndEvents": "{venues} {venues, plural, one {lokal} few {lokala} other {lokala}} i {events} {events, plural, one {događaj} few {događaja} other {događaja}}",
       "tabVenues": "Lokali",
       "tabEvents": "Događaji",
       "eventsPlaceholder": "Događaji će uskoro biti dostupni",

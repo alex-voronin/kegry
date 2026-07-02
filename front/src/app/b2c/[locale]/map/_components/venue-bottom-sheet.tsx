@@ -590,26 +590,24 @@ export function VenueBottomSheet({
                 className={`${styles.sheetHeader} ${styles.sheetHeaderCompact}`}
               >
                 <span className={styles.sheetTitle}>
-                  {t('venuesCount', { count: venues.length })}
-                  {filteredEvents.length > 0 && (
-                    <span className="text-white/40">
-                      {' '}
-                      · {t('eventsCount', { count: filteredEvents.length })}
-                    </span>
-                  )}
+                  {filteredEvents.length > 0
+                    ? t('venuesAndEvents', {
+                        venues: venues.length,
+                        events: filteredEvents.length,
+                      })
+                    : t('venuesCount', { count: venues.length })}
                 </span>
               </div>
             </div>
           ) : (
             <div className={styles.sheetHeader}>
               <span className={styles.sheetTitle}>
-                {t('venuesCount', { count: venues.length })}
-                {filteredEvents.length > 0 && (
-                  <span className="text-white/40">
-                    {' '}
-                    · {t('eventsCount', { count: filteredEvents.length })}
-                  </span>
-                )}
+                {filteredEvents.length > 0
+                    ? t('venuesAndEvents', {
+                        venues: venues.length,
+                        events: filteredEvents.length,
+                      })
+                    : t('venuesCount', { count: venues.length })}
               </span>
               <div className="flex items-center gap-1">
                 {hasActiveFilters && (

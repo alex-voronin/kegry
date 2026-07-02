@@ -573,7 +573,8 @@
     },
     "map": {
       "title": "Map",
-      "venuesCount": "{count} venues nearby",
+      "venuesCount": "{count} {count, plural, one {venue} other {venues}}",
+      "venuesAndEvents": "{venues} {venues, plural, one {venue} other {venues}} and {events} {events, plural, one {event} other {events}}",
       "tabVenues": "Venues",
       "tabEvents": "Events",
       "eventsPlaceholder": "Events coming soon",

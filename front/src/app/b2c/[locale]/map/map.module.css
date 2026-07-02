@@ -48,7 +48,7 @@
 }
 
 .sheetTitle {
-  @apply text-sm font-semibold text-white/80;
+  @apply text-secondary text-sm font-semibold;
 }
 
 .chevron {
@@ -187,7 +187,7 @@
 }
 
 .profileBtn {
-  @apply bg-surface/85 rounded-full p-2 cursor-pointer;
+  @apply bg-surface/85 cursor-pointer rounded-full p-2;
   width: 46px;
   height: 48px;
   display: flex;
