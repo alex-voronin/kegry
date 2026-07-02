@@ -100,7 +100,7 @@
 }
 
 .emptyState {
-  @apply flex h-full w-full flex-col items-center justify-center p-8 pb-30;
+  @apply flex h-full w-full flex-col items-center justify-center px-8 pt-36 pb-30;
 }
 
 .emptyStateImage {
