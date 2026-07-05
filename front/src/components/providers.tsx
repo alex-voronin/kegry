@@ -135,6 +135,20 @@ function FcmGlobalHandler() {
       if (type === NotificationType.REFERRER_REWARD_RECEIVED) {
         router.replace(`${PAGE_ROUTES.FRIENDS_AND_FOES}?tab=imaginary`);
       }
+
+      if (type === NotificationType.USER_REQUESTED_APPROVE) {
+        const eventId = payload?.data?.eventId;
+        if (eventId) {
+          router.replace(PAGE_ROUTES.MEETUP_DETAIL(eventId));
+        }
+      }
+
+      if (type === NotificationType.PARTICIPATION_APPROVED) {
+        const eventId = payload?.data?.eventId;
+        if (eventId) {
+          router.replace(PAGE_ROUTES.MEETUP_DETAIL(eventId));
+        }
+      }
     },
     [router],
   );

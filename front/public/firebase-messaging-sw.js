@@ -29,7 +29,7 @@ function getTargetUrl(type, payload) {
   }
   if (type === 'userRequestedApprove') {
     const eventId = payload?.data?.eventId;
-    if (eventId) return `/meetups/${eventId}/approvals`;
+    if (eventId) return `/meetups/${eventId}`;
   }
   if (type === 'userInvited') return '/notifications';
   if (

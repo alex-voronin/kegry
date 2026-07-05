@@ -392,10 +392,18 @@ export function VenueBottomSheet({
         const venue = venues.find((v) => v.id === event.venueId);
         if (!venue) return;
         onFlyTo?.(venue.latitude, venue.longitude, venue);
+        setMenuTarget({
+          lat: venue.latitude,
+          lng: venue.longitude,
+          venue,
+          eventId: event.id,
+          participationStatus: event.participationStatus,
+          isCreator: event.creatorId === currentUserId,
+        });
       }
       onSheetStateChange('collapsed');
     },
-    [filteredEvents, venues, onFlyTo],
+    [filteredEvents, venues, onFlyTo, currentUserId],
   );
 
   const handleMenuCenter = useCallback(() => {
@@ -603,11 +611,11 @@ export function VenueBottomSheet({
             <div className={styles.sheetHeader}>
               <span className={styles.sheetTitle}>
                 {filteredEvents.length > 0
-                    ? t('venuesAndEvents', {
-                        venues: venues.length,
-                        events: filteredEvents.length,
-                      })
-                    : t('venuesCount', { count: venues.length })}
+                  ? t('venuesAndEvents', {
+                      venues: venues.length,
+                      events: filteredEvents.length,
+                    })
+                  : t('venuesCount', { count: venues.length })}
               </span>
               <div className="flex items-center gap-1">
                 {hasActiveFilters && (
@@ -928,10 +936,21 @@ export function VenueBottomSheet({
         event={menuTarget?.eventId ? menuEvent : null}
         currentUserId={currentUserId}
         onClose={() => setMenuTarget(null)}
-        onJoined={(id) => { onJoinEvent?.(id); setMenuTarget(null); }}
-        onLeft={(id) => { onLeaveEvent?.(id); setMenuTarget(null); }}
-        onDeleted={(id) => { onDeleteEvent?.(id); }}
-        onEdit={(id) => { router.push(PAGE_ROUTES.MEETUP_EDIT(id)); setMenuTarget(null); }}
+        onJoined={(id) => {
+          onJoinEvent?.(id);
+          setMenuTarget(null);
+        }}
+        onLeft={(id) => {
+          onLeaveEvent?.(id);
+          setMenuTarget(null);
+        }}
+        onDeleted={(id) => {
+          onDeleteEvent?.(id);
+        }}
+        onEdit={(id) => {
+          router.push(PAGE_ROUTES.MEETUP_EDIT(id));
+          setMenuTarget(null);
+        }}
         extraItems={
           menuTarget?.eventId
             ? [

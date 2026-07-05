@@ -152,7 +152,7 @@ export default function MyEventsScreen() {
   const handleCardTap = useCallback(
     (event: MyEventItem) => {
       if (activeTab === 'owner') {
-        router.push(PAGE_ROUTES.MEETUP_EDIT(event.id));
+        setMenuEvent(event);
       } else {
         router.push(PAGE_ROUTES.MEETUP_DETAIL(event.id));
       }
