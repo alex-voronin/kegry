@@ -46,13 +46,16 @@ internal class EventActionService : IEventActionService, IScoped
             ev.AddParticipant(participant);
             ev.UpdatedAt = DateTimeOffset.UtcNow;
 
-            if (status == ParticipantStatus.Approved)
+            if (status == ParticipantStatus.Pending)
             {
                 await _eventRepository.PublishEventAsync(
                     new UserRequestedApproveEvent()
                     {
+                        EventCreatorId =  ev.CreatorId,
                         EventId = eventId,
-                        JoinedUserId = userId
+                        EventTitle = ev.Title,
+                        EventStartDate = ev.StartDateTime,
+                        JoinedUserId = userId,
                     }
                 );
             }
@@ -106,7 +109,7 @@ internal class EventActionService : IEventActionService, IScoped
                     EventTitle = ev.Title,
                     EventStartDate = ev.StartDateTime,
                     EventCreatorId = ev.CreatorId,
-                    ApprovedUserId = targetUserId
+                    JoinedUserId = targetUserId
                 }
             );
 

@@ -76,7 +76,7 @@ public class EmailNotificationStrategy : IEmailNotificationStrategy, IScoped
     public Task SendParticipationApproved(UserParticipationApprovedEvent @event, CancellationToken ct = default)
     {
         return SendEmail(
-            userId: @event.ApprovedUserId,
+            userId: @event.JoinedUserId,
             factory: email => _emailBuilder.BuildParticipationApprovedEmail(email, @event),
             ct: ct);
     }

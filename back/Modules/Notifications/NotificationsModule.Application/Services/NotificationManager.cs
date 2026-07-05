@@ -58,7 +58,7 @@ internal class NotificationManager : INotificationManager, IScoped
 
     public Task SendParticipationApproved(UserParticipationApprovedEvent @event, CancellationToken ct = default)
     {
-        return SendNotifications(@event.ApprovedUserId,
+        return SendNotifications(@event.JoinedUserId,
             sendFunc: strategy => strategy.SendParticipationApproved(@event, ct),
             ct: ct
         );

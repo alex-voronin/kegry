@@ -187,7 +187,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
     public PushMessage BuildParticipationApprovedPush(string[] fcmTokens, UserParticipationApprovedEvent @event)
     {
         var title = _localizer.GetString("Push.ParticipationApproved.Title");
-        var body = _localizer.GetString("Push.ParticipationApproved.Body");
+        var body = _localizer.GetString("Push.ParticipationApproved.Body", @event.EventTitle);
         var data = new Dictionary<string, string>()
         {
             { Keys.Title, title },
@@ -205,7 +205,7 @@ internal class FcmPushBuilder : IPushBuilder, ISingleton
     public PushMessage BuildUserRequestedApprovePush(string[] fcmTokens, UserRequestedApproveEvent @event)
     {
         var title = _localizer.GetString("Push.UserRequestedApprove.Title");
-        var body = _localizer.GetString("Push.UserRequestedApprove.Body");
+        var body = _localizer.GetString("Push.UserRequestedApprove.Body", @event.EventTitle);
         var data = new Dictionary<string, string>()
         {
             { Keys.Title, title },

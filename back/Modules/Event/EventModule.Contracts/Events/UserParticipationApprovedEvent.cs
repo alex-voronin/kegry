@@ -9,6 +9,6 @@ public record UserParticipationApprovedEvent : IdempotentEventBase
     public required DateTimeOffset EventStartDate { get; init; }
 
     public required Guid EventCreatorId { get; init; }
-    public required Guid ApprovedUserId { get; init; }
-    public override Guid IdempotencyKey() => ApprovedUserId;
+    public required Guid JoinedUserId { get; init; }
+    public override Guid IdempotencyKey() => JoinedUserId;
 }

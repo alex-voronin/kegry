@@ -90,7 +90,7 @@ internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
     public Task SendParticipationApproved(UserParticipationApprovedEvent @event, CancellationToken ct = default)
     {
         return SendPush(
-            userId: @event.ApprovedUserId,
+            userId: @event.JoinedUserId,
             factory: fcmTokens => _pushBuilder.BuildParticipationApprovedPush(fcmTokens, @event),
             ct: ct);
     }
@@ -98,7 +98,7 @@ internal class FcmPushNotificationStrategy : IPushNotificationStrategy, IScoped
     public Task SendUserRequestedApprove(UserRequestedApproveEvent @event, CancellationToken ct = default)
     {
         return SendPush(
-            userId: @event.JoinedUserId,
+            userId: @event.EventCreatorId,
             factory: fcmTokens => _pushBuilder.BuildUserRequestedApprovePush(fcmTokens, @event),
             ct: ct);
     }
