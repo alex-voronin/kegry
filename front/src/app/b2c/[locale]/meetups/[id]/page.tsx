@@ -110,9 +110,7 @@ export default function MeetupDetailPage() {
 
   const showInlineParticipants = !event
     ? false
-    : event.maxParticipants !== null &&
-      event.maxParticipants <= 2 &&
-      event.participantsCount > 0;
+    : event.maxParticipants !== null;
 
   useEffect(() => {
     if (showInlineParticipants && eventId) {
@@ -514,8 +512,24 @@ export default function MeetupDetailPage() {
                     className={styles.contactItem}
                     onClick={() => openContact(c.type, c.value)}
                   >
-                    <span className={styles.fieldIcon} style={{ width: 18, height: 18, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {messengerIcons[c.type] ?? (c.type === 'Phone' ? <Phone size={18} /> : c.type === 'Email' ? <Mail size={18} /> : <Globe size={18} />)}
+                    <span
+                      className={styles.fieldIcon}
+                      style={{
+                        width: 18,
+                        height: 18,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      {messengerIcons[c.type] ??
+                        (c.type === 'Phone' ? (
+                          <Phone size={18} />
+                        ) : c.type === 'Email' ? (
+                          <Mail size={18} />
+                        ) : (
+                          <Globe size={18} />
+                        ))}
                     </span>
                     <span className={styles.contactValue}>{c.value}</span>
                   </div>
