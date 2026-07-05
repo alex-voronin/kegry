@@ -195,6 +195,7 @@ export const API_ENDPOINTS = {
       `/api/v1/events/${eventId}/participants/${userId}/reject`,
     MY_CREATED: '/api/v1/events/my/created',
     MY_PARTICIPATED: '/api/v1/events/my/participated',
+    PENDING_COUNT: '/api/v1/events/my/pending-count',
   },
   VENUES: {
     LIST: '/api/v1/venues',

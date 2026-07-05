@@ -3,12 +3,16 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
-import { ScanQrCode, Menu } from 'lucide-react';
+import { ScanQrCode } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { checkIfPermissionsDenied } from '@/lib/permissions';
 
 import { processStoredQrCode } from '@/lib/qr-utils';
 import { useSidebar, Sidebar } from '@/components/b2c/Sidebar';
+import { usePendingApprovalsStore } from '@/components/b2c/use-pending-approvals-store';
+import { BurgerButton } from '@/components/common/burger-button';
+import { useFcmStore } from '@/lib/fcm/store';
+import { NotificationType, FcmPayload } from '@/lib/fcm/types';
 
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
@@ -79,6 +83,7 @@ export default function MapScreen() {
     close: closeSidebar,
   } = useSidebar();
   const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
+  const pendingTotal = usePendingApprovalsStore((s) => s.total);
 
   useEffect(() => {
     const check = async () => {
@@ -327,6 +332,24 @@ export default function MapScreen() {
     onError: handleCheckInError,
   });
 
+  useEffect(() => {
+    usePendingApprovalsStore.getState().fetch();
+  }, []);
+
+  useEffect(() => {
+    const { registerForegroundHandler, unregisterForegroundHandler } =
+      useFcmStore.getState();
+
+    const handleNotification = (payload: FcmPayload) => {
+      if (payload?.data?.type === NotificationType.USER_REQUESTED_APPROVE) {
+        usePendingApprovalsStore.getState().fetch();
+      }
+    };
+
+    registerForegroundHandler(handleNotification);
+    return () => unregisterForegroundHandler(handleNotification);
+  }, []);
+
   if (!hasHydrated) {
     return (
       <div className={styles.wrapper}>
@@ -356,9 +379,11 @@ export default function MapScreen() {
         />
 
         <div className={styles.leftControls}>
-          <div className={styles.profileBtn}>
-            <Menu size={28} className="text-primary" onClick={openSidebar} />
-          </div>
+          <BurgerButton
+            onOpen={openSidebar}
+            hasRestrictedPermissions={showPermissionsBadge}
+            pendingApprovalsCount={pendingTotal}
+          />
           <MapFeedToggle activeView="map" />
         </div>
 

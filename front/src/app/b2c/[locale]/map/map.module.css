@@ -186,16 +186,6 @@
   touch-action: manipulation;
 }
 
-.profileBtn {
-  @apply bg-surface/85 cursor-pointer rounded-full p-2;
-  width: 46px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  touch-action: manipulation;
-}
-
 .leftControls {
   @apply absolute left-2 z-50 flex flex-col items-center gap-2;
   top: 8px;

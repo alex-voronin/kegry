@@ -67,4 +67,6 @@ public interface IEventRepository : IRepositoryOutbox<Event>
     Task HardDeleteExpiredEventsAsync(DateTimeOffset threshold, CancellationToken ct = default);
 
     Task<int> GetDailyEventCountAsync(Guid userId, CancellationToken ct = default);
+
+    Task<int> GetPendingApprovalsCountAsync(Guid userId, CancellationToken ct = default);
 }

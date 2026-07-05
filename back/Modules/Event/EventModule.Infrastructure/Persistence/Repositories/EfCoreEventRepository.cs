@@ -332,4 +332,12 @@ public class EfCoreEventRepository : RepositoryOutbox<EventContext, Event>, IEve
             .Where(e => e.CreatorId == userId && e.CreatedAt >= startOfDay && e.CreatedAt < startOfNextDay)
             .CountAsync(ct);
     }
+
+    public async Task<int> GetPendingApprovalsCountAsync(Guid userId, CancellationToken ct = default)
+    {
+        return await Context.Events
+            .Where(e => e.CreatorId == userId)
+            .SelectMany(e => e.EventParticipants)
+            .CountAsync(p => p.Status == ParticipantStatus.Pending, ct);
+    }
 }

@@ -16,6 +16,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { usePendingApprovalsStore } from './use-pending-approvals-store';
 import styles from './Sidebar.module.css';
 
 export const useSidebar = () => {
@@ -65,6 +66,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const t = useTranslations('screens.sidebar');
   const router = useRouter();
   const pathname = usePathname();
+  const pendingTotal = usePendingApprovalsStore((s) => s.total);
 
   const navItems = [
     {
@@ -94,7 +96,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
     {
       label: t('myEvents'),
       href: PAGE_ROUTES.MY_EVENTS,
-      icon: <CalendarClock size={24} />,
+      icon: (
+        <span className="relative">
+          <CalendarClock size={24} />
+          {pendingTotal > 0 && (
+            <span className="absolute -top-1 -right-1 rounded-full bg-[var(--color-alert-vibrant)] px-1 text-xs leading-tight text-white">
+              {pendingTotal > 99 ? '99+' : pendingTotal}
+            </span>
+          )}
+        </span>
+      ),
     },
     {
       label: t('map'),

@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/routing';
-import { AlertCircle, Menu, ScanQrCode } from 'lucide-react';
+import { ScanQrCode } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import styles from './feed.module.css';
 import { Icon } from '@/components/ui/icon';
@@ -37,6 +37,8 @@ import {
 } from './_components/user-feed-card';
 import { NpcFeedBody, NpcFeedFooter } from './_components/npc-feed-card';
 import { useSidebar, Sidebar } from '@/components/b2c/Sidebar';
+import { BurgerButton } from '@/components/common/burger-button';
+import { usePendingApprovalsStore } from '@/components/b2c/use-pending-approvals-store';
 import { useQrCheckIn } from '@/app/b2c/[locale]/venues/use-qr-check-in';
 import { FEED_VISITS_TO_SHOW_REFERRAL_PROMPT } from '@/lib/constants';
 import { processStoredQrCode } from '@/lib/qr-utils';
@@ -150,6 +152,7 @@ export default function FeedScreen() {
   const requiredAction = useAuthStore((state) => state.requiredAction);
   const { npc, monolog, fetchNpc, inviteNpc, dismissNpc } = useNpcStore();
   const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
+  const pendingTotal = usePendingApprovalsStore((s) => s.total);
   const [isLocationDenied, setIsLocationDenied] = useState(false);
   const {
     isOpen: isSidebarOpen,
@@ -723,17 +726,14 @@ export default function FeedScreen() {
 
         <div onClick={(e) => e.stopPropagation()}>
           <div className={styles.leftControls}>
-            <div className={styles.feedProfilePill}>
-              <Menu size={28} className="text-primary" onClick={openSidebar} />
-              {showPermissionsBadge &&
-                requiredAction !== RequiredAction.OnboardingCompletion && (
-                  <AlertCircle
-                    size={16}
-                    strokeWidth={3}
-                    className={styles.permissionsIcon}
-                  />
-                )}
-            </div>
+            <BurgerButton
+              onOpen={openSidebar}
+              hasRestrictedPermissions={
+                showPermissionsBadge &&
+                requiredAction !== RequiredAction.OnboardingCompletion
+              }
+              pendingApprovalsCount={pendingTotal}
+            />
             <MapFeedToggle activeView="feed" />
           </div>
         </div>

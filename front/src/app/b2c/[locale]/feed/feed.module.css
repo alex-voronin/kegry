@@ -23,16 +23,6 @@
   pointer-events: none;
 }
 
-.feedProfilePill {
-  @apply bg-surface/85 relative cursor-pointer rounded-full;
-  width: 46px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  touch-action: manipulation;
-}
-
 .feedIconPill {
   @apply bg-surface/85 rounded-full px-3 py-2 backdrop-blur-md;
   pointer-events: auto;
@@ -45,10 +35,6 @@
 
 .badge {
   @apply absolute -top-1 -right-1 rounded-full bg-red-500 px-1 text-xs text-white;
-}
-
-.permissionsIcon {
-  @apply text-alert-vibrant absolute top-1 -right-px;
 }
 
 .profileImage {

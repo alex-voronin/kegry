@@ -38,6 +38,7 @@ public class B2CEventEndpoints : IEndpoints
         usersApiGroup.MapPatch("/api/v1/events/{id:guid}/participants/{userId:guid}/reject", RejectParticipant);
         usersApiGroup.MapGet("/api/v1/events/my/created", GetMyCreatedEvents);
         usersApiGroup.MapGet("/api/v1/events/my/participated", GetMyParticipatedEvents);
+        usersApiGroup.MapGet("/api/v1/events/my/pending-count", GetMyPendingApprovalsCount);
     }
 
     private static async Task<ApiResult<VenueEventsDto[]>> GetEventsMap(
@@ -386,6 +387,16 @@ public class B2CEventEndpoints : IEndpoints
         var dtos = MapToEventListItemDtos(events, userId, storageService);
         return ApiResult<PaginatedResponse<EventListItemDto>>.Build(
             new PaginatedResponse<EventListItemDto>(dtos, totalCount));
+    }
+
+    private static async Task<ApiResult<PendingApprovalsCountDto>> GetMyPendingApprovalsCount(
+        ClaimsPrincipal user,
+        IEventRepository eventRepository,
+        CancellationToken ct)
+    {
+        var userId = user.GetId();
+        var count = await eventRepository.GetPendingApprovalsCountAsync(userId, ct);
+        return ApiResult<PendingApprovalsCountDto>.Build(new PendingApprovalsCountDto(count));
     }
 
     private static EventListItemDto[] MapToEventListItemDtos(
