@@ -3,18 +3,14 @@
 import { useState, useCallback } from 'react';
 import { useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
-import {
-  Eye,
-  Pencil,
-  Trash2,
-  UserPlus,
-  UserMinus,
-} from 'lucide-react';
+import { Eye, Pencil, Trash2, UserPlus, UserMinus } from 'lucide-react';
 import { ModalMenu, type ModalMenuOption } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import apiClient from '@/lib/api-client';
 import { toast } from 'react-toastify';
+import { useEventActions } from '@/hooks/use-event-actions';
+import { OnboardingGuardDialog } from '@/components/common/onboarding-guard-dialog';
 
 interface EventActionData {
   id: string;
@@ -47,6 +43,12 @@ export function EventActionSheet({
   const router = useRouter();
   const [deleteEventId, setDeleteEventId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const {
+    requireProfile,
+    showOnboardingDialog,
+    setShowOnboardingDialog,
+    handleCreateProfile,
+  } = useEventActions();
 
   const isOpen = !!event;
   const isCreator = event ? event.creatorId === currentUserId : false;
@@ -54,25 +56,29 @@ export function EventActionSheet({
 
   const handleJoin = useCallback(async () => {
     if (!event) return;
-    try {
-      await apiClient.post(API_ENDPOINTS.EVENTS.JOIN(event.id));
-      onJoined(event.id);
-    } catch {
-      toast.error(t('toast.joinFailed'));
-    }
-    onClose();
-  }, [event, onJoined, onClose, t]);
+    requireProfile(async () => {
+      try {
+        await apiClient.post(API_ENDPOINTS.EVENTS.JOIN(event.id));
+        onJoined(event.id);
+      } catch {
+        toast.error(t('toast.joinFailed'));
+      }
+      onClose();
+    });
+  }, [event, onJoined, onClose, t, requireProfile]);
 
   const handleLeave = useCallback(async () => {
     if (!event) return;
-    try {
-      await apiClient.post(API_ENDPOINTS.EVENTS.LEAVE(event.id));
-      onLeft(event.id);
-    } catch {
-      toast.error(t('toast.leaveFailed'));
-    }
-    onClose();
-  }, [event, onLeft, onClose, t]);
+    requireProfile(async () => {
+      try {
+        await apiClient.post(API_ENDPOINTS.EVENTS.LEAVE(event.id));
+        onLeft(event.id);
+      } catch {
+        toast.error(t('toast.leaveFailed'));
+      }
+      onClose();
+    });
+  }, [event, onLeft, onClose, t, requireProfile]);
 
   const handleEdit = useCallback(() => {
     if (!event) return;
@@ -171,20 +177,24 @@ export function EventActionSheet({
 
   return (
     <>
-      <ModalMenu
-        isOpen={isOpen}
-        onClose={onClose}
-        options={menuOptions}
-      />
+      <ModalMenu isOpen={isOpen} onClose={onClose} options={menuOptions} />
 
       <ModalDialog
         isOpen={!!deleteEventId}
         onClose={() => setDeleteEventId(null)}
         message={t('deleteDialog.message')}
         primaryButtonText={t('deleteDialog.cancel')}
-        secondaryButtonText={isDeleting ? t('deleteDialog.confirming') : t('deleteDialog.confirm')}
+        secondaryButtonText={
+          isDeleting ? t('deleteDialog.confirming') : t('deleteDialog.confirm')
+        }
         onPrimaryAction={() => setDeleteEventId(null)}
         onSecondaryAction={handleDeleteConfirm}
+      />
+
+      <OnboardingGuardDialog
+        isOpen={showOnboardingDialog}
+        onClose={() => setShowOnboardingDialog(false)}
+        onCreateProfile={handleCreateProfile}
       />
     </>
   );

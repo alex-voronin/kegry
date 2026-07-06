@@ -13,6 +13,8 @@ import { useAuthStore } from '@/lib/auth/use-auth-store';
 import { MeetupForm } from '../_components/meetup-form';
 import type { EventContactForm } from '@/components/ui/contact-section';
 import { useSafeBack } from '@/hooks/use-safe-back';
+import { useEventActions } from '@/hooks/use-event-actions';
+import { OnboardingGuardDialog } from '@/components/common/onboarding-guard-dialog';
 
 export default function CreateMeetupPage() {
   const searchParams = useSearchParams();
@@ -33,6 +35,12 @@ export default function CreateMeetupPage() {
   }, [isAuthenticated, serverProfile, fetchMyProfile]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    requireProfile,
+    showOnboardingDialog,
+    setShowOnboardingDialog,
+    handleCreateProfile,
+  } = useEventActions();
 
   const handleCancel = () => {
     safeBack(PAGE_ROUTES.MAP);
@@ -48,42 +56,44 @@ export default function CreateMeetupPage() {
     maxParticipants: number | null;
     requiresApproval: boolean;
   }) => {
-    setIsSubmitting(true);
-    try {
-      const response = await apiClient.post(API_ENDPOINTS.EVENTS.CREATE, {
-        creatorAvatarUrl: avatarUrl,
-        title: data.title,
-        description: data.description,
-        startDateTime: new Date(data.startDateTime).toISOString(),
-        venueId,
-        maxParticipants: data.maxParticipants,
-        requiresApproval: data.requiresApproval,
-        contacts: data.contacts.map((c) => ({
-          type: c.type,
-          value: c.value,
-          isPublic: c.isPublic,
-        })),
-        hobbyIds: data.hobbyIds,
-      });
-
-      const eventId = response.data.result.id;
-
-      if (data.coverBlob) {
-        const publicUrl = await uploadImage(
-          data.coverBlob,
-          API_ENDPOINTS.EVENTS.COVER_UPLOAD_URL(eventId),
-        );
-        await apiClient.patch(API_ENDPOINTS.EVENTS.UPDATE(eventId), {
-          coverImageUrl: publicUrl,
+    requireProfile(async () => {
+      setIsSubmitting(true);
+      try {
+        const response = await apiClient.post(API_ENDPOINTS.EVENTS.CREATE, {
+          creatorAvatarUrl: avatarUrl,
+          title: data.title,
+          description: data.description,
+          startDateTime: new Date(data.startDateTime).toISOString(),
+          venueId,
+          maxParticipants: data.maxParticipants,
+          requiresApproval: data.requiresApproval,
+          contacts: data.contacts.map((c) => ({
+            type: c.type,
+            value: c.value,
+            isPublic: c.isPublic,
+          })),
+          hobbyIds: data.hobbyIds,
         });
-      }
 
-      safeBack(PAGE_ROUTES.MAP);
-    } catch (error) {
-      rethrowApiError(error, 'Failed to create meetup');
-    } finally {
-      setIsSubmitting(false);
-    }
+        const eventId = response.data.result.id;
+
+        if (data.coverBlob) {
+          const publicUrl = await uploadImage(
+            data.coverBlob,
+            API_ENDPOINTS.EVENTS.COVER_UPLOAD_URL(eventId),
+          );
+          await apiClient.patch(API_ENDPOINTS.EVENTS.UPDATE(eventId), {
+            coverImageUrl: publicUrl,
+          });
+        }
+
+        safeBack(PAGE_ROUTES.MAP);
+      } catch (error) {
+        rethrowApiError(error, 'Failed to create meetup');
+      } finally {
+        setIsSubmitting(false);
+      }
+    });
   };
 
   if (!venueId) {
@@ -95,13 +105,21 @@ export default function CreateMeetupPage() {
   }
 
   return (
-    <MeetupForm
-      pageTitle={t('createTitle')}
-      userName={firstName}
-      onCancel={handleCancel}
-      onSubmit={handleSubmit}
-      isSubmitting={isSubmitting}
-      submitLabel={t('save')}
-    />
+    <>
+      <MeetupForm
+        pageTitle={t('createTitle')}
+        userName={firstName}
+        onCancel={handleCancel}
+        onSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
+        submitLabel={t('save')}
+      />
+
+      <OnboardingGuardDialog
+        isOpen={showOnboardingDialog}
+        onClose={() => setShowOnboardingDialog(false)}
+        onCreateProfile={handleCreateProfile}
+      />
+    </>
   );
 }

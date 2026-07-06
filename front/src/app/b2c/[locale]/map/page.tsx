@@ -20,6 +20,8 @@ import { ModalDialog } from '@/components/ui/modal-dialog';
 import { CheckInManager } from '@/components/common/check-in-manager';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useCitySelection } from '@/hooks/use-city-selection';
+import { useEventActions } from '@/hooks/use-event-actions';
+import { OnboardingGuardDialog } from '@/components/common/onboarding-guard-dialog';
 import { BELGRADE_COORDS } from '@/lib/cities';
 import { CitySelector } from '@/components/common/city-selector';
 import { useVenueFiltersStore } from '@/store/use-venue-filters-store';
@@ -293,10 +295,18 @@ export default function MapScreen() {
   const [isFirstCheckInDialogOpen, setIsFirstCheckInDialogOpen] =
     useState(false);
   const [isVenueSelectorOpen, setIsVenueSelectorOpen] = useState(false);
+  const {
+    requireProfile,
+    showOnboardingDialog,
+    setShowOnboardingDialog,
+    handleCreateProfile,
+  } = useEventActions();
 
   const handleAddMeetupClick = useCallback(() => {
-    setIsVenueSelectorOpen(true);
-  }, []);
+    requireProfile(() => {
+      setIsVenueSelectorOpen(true);
+    });
+  }, [requireProfile]);
 
   const handleSelectVenue = useCallback(
     (venueId: string, _venueName: string) => {
@@ -452,6 +462,12 @@ export default function MapScreen() {
         onClose={() => setIsVenueSelectorOpen(false)}
         onSelectVenue={handleSelectVenue}
         initialVenues={venues}
+      />
+
+      <OnboardingGuardDialog
+        isOpen={showOnboardingDialog}
+        onClose={() => setShowOnboardingDialog(false)}
+        onCreateProfile={handleCreateProfile}
       />
 
       <ModalDialog

@@ -983,6 +983,11 @@
         "leaveFailed": "Napuštanje nije uspelo",
         "deleteFailed": "Brisanje nije uspelo"
       }
+    },
+    "onboardingGuard": {
+      "message": "Za pridruživanje ili kreiranje susreta potrebno je da kreiraš profil",
+      "create": "Kreiraj",
+      "cancel": "Otkaži"
     }
   }
 }

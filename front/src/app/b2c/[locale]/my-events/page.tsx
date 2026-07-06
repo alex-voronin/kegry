@@ -22,6 +22,8 @@ import { useSafeBack } from '@/hooks/use-safe-back';
 import { VenueSelectorSheet } from '@/app/b2c/[locale]/map/_components/venue-selector-sheet';
 import { EventActionSheet } from '@/components/common/event-action-sheet';
 import { useAuthStore } from '@/lib/auth/use-auth-store';
+import { useEventActions } from '@/hooks/use-event-actions';
+import { OnboardingGuardDialog } from '@/components/common/onboarding-guard-dialog';
 import styles from './my-events.module.css';
 
 type TabType = 'owner' | 'participant';
@@ -35,8 +37,18 @@ type DateGroup = {
 function formatDateLabel(dateKey: string): string {
   const [, month, day] = dateKey.split('-');
   const monthNames = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   return `${monthNames[parseInt(month, 10) - 1]} ${parseInt(day, 10)}`;
 }
@@ -118,7 +130,9 @@ export default function MyEventsScreen() {
         try {
           await store.fetchEvents(activeTab, 0, limit);
         } catch (err: unknown) {
-          toast.error(err instanceof Error ? err.message : t('toast.loadFailed'));
+          toast.error(
+            err instanceof Error ? err.message : t('toast.loadFailed'),
+          );
         }
       };
       load();
@@ -137,17 +151,33 @@ export default function MyEventsScreen() {
         try {
           await store.fetchEvents(activeTab, tabState.events.length, limit);
         } catch (err: unknown) {
-          toast.error(err instanceof Error ? err.message : t('toast.loadFailed'));
+          toast.error(
+            err instanceof Error ? err.message : t('toast.loadFailed'),
+          );
         }
       };
       loadNext();
     }
-  }, [inView, activeTab, tabState.hasMore, tabState.isLoading, tabState.hasError, tabState.events.length, limit]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    inView,
+    activeTab,
+    tabState.hasMore,
+    tabState.isLoading,
+    tabState.hasError,
+    tabState.events.length,
+    limit,
+  ]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [isVenueSelectorOpen, setIsVenueSelectorOpen] = useState(false);
   const [menuEvent, setMenuEvent] = useState<MyEventItem | null>(null);
   const userId = useAuthStore((s) => s.userId);
   const isOwnerTab = activeTab === 'owner';
+  const {
+    requireProfile,
+    showOnboardingDialog,
+    setShowOnboardingDialog,
+    handleCreateProfile,
+  } = useEventActions();
 
   const handleCardTap = useCallback(
     (event: MyEventItem) => {
@@ -160,16 +190,15 @@ export default function MyEventsScreen() {
     [activeTab, router],
   );
 
-  const handleMenuOpen = useCallback(
-    (event: MyEventItem) => {
-      setMenuEvent(event);
-    },
-    [],
-  );
+  const handleMenuOpen = useCallback((event: MyEventItem) => {
+    setMenuEvent(event);
+  }, []);
 
   const handleAddMeetupClick = useCallback(() => {
-    setIsVenueSelectorOpen(true);
-  }, []);
+    requireProfile(() => {
+      setIsVenueSelectorOpen(true);
+    });
+  }, [requireProfile]);
 
   const handleSelectVenue = useCallback(
     (venueId: string, _venueName: string) => {
@@ -178,9 +207,7 @@ export default function MyEventsScreen() {
     [router],
   );
 
-  const emptyMessage = isOwnerTab
-    ? t('emptyOwner')
-    : t('emptyParticipant');
+  const emptyMessage = isOwnerTab ? t('emptyOwner') : t('emptyParticipant');
 
   return (
     <div className="flex flex-1 flex-col">
@@ -220,7 +247,9 @@ export default function MyEventsScreen() {
           onChange={(val) => {
             setActiveTab(val as TabType);
             setMenuEvent(null);
-            router.replace(`${PAGE_ROUTES.MY_EVENTS}?tab=${val}`, { scroll: false });
+            router.replace(`${PAGE_ROUTES.MY_EVENTS}?tab=${val}`, {
+              scroll: false,
+            });
           }}
         />
       </div>
@@ -278,6 +307,12 @@ export default function MyEventsScreen() {
         onLeft={(id) => store.removeEvent(activeTab, id)}
         onDeleted={(id) => store.removeEvent('owner', id)}
         onEdit={(id) => router.push(PAGE_ROUTES.MEETUP_EDIT(id))}
+      />
+
+      <OnboardingGuardDialog
+        isOpen={showOnboardingDialog}
+        onClose={() => setShowOnboardingDialog(false)}
+        onCreateProfile={handleCreateProfile}
       />
     </div>
   );

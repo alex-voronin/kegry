@@ -15,14 +15,12 @@ import { TabControl } from '@/components/ui/tab-control';
 import { useVenueStore } from './use-venue-store';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { toast } from 'react-toastify';
-import {
-  ScanQrCode,
-  Link,
-  CalendarClock,
-} from 'lucide-react';
+import { ScanQrCode, Link, CalendarClock } from 'lucide-react';
 import styles from './venue-detail.module.css';
 import { PinpadIcon } from '@/components/icons/pinpad-icon';
 import { useSafeBack } from '@/hooks/use-safe-back';
+import { useEventActions } from '@/hooks/use-event-actions';
+import { OnboardingGuardDialog } from '@/components/common/onboarding-guard-dialog';
 import { CheckInManager } from '@/components/common/check-in-manager';
 import { CheckInAnimation } from '../_components/check-in-animation';
 import { useQrCheckIn } from '../use-qr-check-in';
@@ -59,9 +57,17 @@ export default function VenueDetailScreen() {
   const [isHelpDialogOpen, setIsHelpDialogOpen] = useState(false);
   const [checkInVenueId, setCheckInVenueId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('details');
-  const [menuEvent, setMenuEvent] = useState<typeof venueEvents[number] | null>(null);
+  const [menuEvent, setMenuEvent] = useState<
+    (typeof venueEvents)[number] | null
+  >(null);
   const hasMoreEvents = venueEvents.length < totalEventCount;
   const userId = useAuthStore((s) => s.userId);
+  const {
+    requireProfile,
+    showOnboardingDialog,
+    setShowOnboardingDialog,
+    handleCreateProfile,
+  } = useEventActions();
 
   const handleCheckInSuccess = useCallback((id: string) => {
     setCheckInVenueId(id);
@@ -310,8 +316,10 @@ export default function VenueDetailScreen() {
             label: t('menu.createEvent'),
             icon: <CalendarClock size={24} />,
             onClick: () => {
-              router.push(PAGE_ROUTES.MEETUP_CREATE(venueId));
-              setIsMenuOpen(false);
+              requireProfile(() => {
+                router.push(PAGE_ROUTES.MEETUP_CREATE(venueId));
+                setIsMenuOpen(false);
+              });
             },
           },
           {
@@ -359,6 +367,12 @@ export default function VenueDetailScreen() {
         onLeft={(id) => updateEventParticipation(id, undefined)}
         onDeleted={() => fetchVenueEventsStore(venueId, 0)}
         onEdit={(id) => router.push(PAGE_ROUTES.MEETUP_EDIT(id))}
+      />
+
+      <OnboardingGuardDialog
+        isOpen={showOnboardingDialog}
+        onClose={() => setShowOnboardingDialog(false)}
+        onCreateProfile={handleCreateProfile}
       />
 
       <CheckInManager

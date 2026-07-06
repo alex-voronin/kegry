@@ -27,6 +27,8 @@ import {
   UserX,
 } from 'lucide-react';
 import { useSafeBack } from '@/hooks/use-safe-back';
+import { useEventActions } from '@/hooks/use-event-actions';
+import { OnboardingGuardDialog } from '@/components/common/onboarding-guard-dialog';
 import { useMeetupDetailStore, PendingUser } from './use-meetup-detail-store';
 import { calculateAge } from '@/lib/date';
 import { messengerIcons } from '@/components/ui/messenger-icons';
@@ -65,6 +67,12 @@ export default function MeetupDetailPage() {
   const { safeBack } = useSafeBack();
   const eventId = params.id as string;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const {
+    requireProfile,
+    showOnboardingDialog,
+    setShowOnboardingDialog,
+    handleCreateProfile,
+  } = useEventActions();
 
   const {
     event,
@@ -94,18 +102,20 @@ export default function MeetupDetailPage() {
 
   const handleJoinLeave = async () => {
     if (!event) return;
-    try {
-      if (
-        event.participationStatus === 'Approved' ||
-        event.participationStatus
-      ) {
-        await leaveEvent(event.id);
-      } else {
-        await joinEvent(event.id);
+    requireProfile(async () => {
+      try {
+        if (
+          event.participationStatus === 'Approved' ||
+          event.participationStatus
+        ) {
+          await leaveEvent(event.id);
+        } else {
+          await joinEvent(event.id);
+        }
+      } catch {
+        toast.error(t('actionFailed'));
       }
-    } catch {
-      toast.error(t('actionFailed'));
-    }
+    });
   };
 
   const showInlineParticipants = !event
@@ -589,6 +599,12 @@ export default function MeetupDetailPage() {
                 },
               ]),
         ]}
+      />
+
+      <OnboardingGuardDialog
+        isOpen={showOnboardingDialog}
+        onClose={() => setShowOnboardingDialog(false)}
+        onCreateProfile={handleCreateProfile}
       />
     </div>
   );

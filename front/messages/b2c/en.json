@@ -983,6 +983,11 @@
         "leaveFailed": "Failed to leave event",
         "deleteFailed": "Failed to delete event"
       }
+    },
+    "onboardingGuard": {
+      "message": "You must create a profile to join or create a meetup",
+      "create": "Create",
+      "cancel": "Cancel"
     }
   }
 }
