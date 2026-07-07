@@ -31,7 +31,9 @@ namespace EventModule.Infrastructure.Persistence.Migrations
                     venue_id = table.Column<Guid>(type: "uuid", nullable: false),
                     creator_id = table.Column<Guid>(type: "uuid", nullable: false),
                     is_visible_on_map = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    creator_avatar_s3key = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     max_participants = table.Column<int>(type: "integer", nullable: true),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     requires_approval = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
@@ -112,6 +114,42 @@ namespace EventModule.Infrastructure.Persistence.Migrations
                 schema: "event",
                 table: "event_contacts",
                 column: "event_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_event_hobby_links_hobby_id_event_id",
+                schema: "event",
+                table: "event_hobby_links",
+                columns: new[] { "hobby_id", "event_id" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_event_participants_user_id_event_id",
+                schema: "event",
+                table: "event_participants",
+                columns: new[] { "user_id", "event_id" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_event_participants_user_id_status",
+                schema: "event",
+                table: "event_participants",
+                columns: new[] { "user_id", "status" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_events_creator_id_start_date",
+                schema: "event",
+                table: "events",
+                columns: new[] { "creator_id", "start_date_time" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_events_start_date",
+                schema: "event",
+                table: "events",
+                column: "start_date_time");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_events_venue_id_start_date",
+                schema: "event",
+                table: "events",
+                columns: new[] { "venue_id", "start_date_time" });
         }
 
         /// <inheritdoc />
