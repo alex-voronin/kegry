@@ -13,14 +13,13 @@ import { ModalDialog } from '@/components/ui/modal-dialog';
 import { CheckInManager } from '@/components/common/check-in-manager';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { MapFeedToggle } from '@/components/common/map-feed-toggle';
+import { NotificationsButton } from '@/components/common/notifications-button';
 import { useAuthStore, RequiredAction } from '@/lib/auth/use-auth-store';
 import { useFeedStore, UserProfileDto } from './use-feed-store';
 import { useNpcStore, NpcDto } from './use-npc-store';
 import { useSettingsStore } from '@/app/b2c/[locale]/settings/use-settings-store';
 import { toast } from 'react-toastify';
 import { InviteExpiration, expiresAtToWhen } from '@/lib/invite-utils';
-import { useFcmStore } from '@/lib/fcm/store';
-import { NotificationType, FcmPayload } from '@/lib/fcm/types';
 import {
   checkIfPermissionsDenied,
   checkPermissionStatus,
@@ -52,13 +51,11 @@ type FeedItem =
 // --- Sub-components ---
 
 function FeedHeader({
-  unseenCount,
   isInMeeting,
   onboardingRequired,
   showQrScan,
   onQrScanClick,
 }: {
-  unseenCount: number;
   isInMeeting: boolean;
   onboardingRequired: boolean;
   showQrScan: boolean;
@@ -103,20 +100,7 @@ function FeedHeader({
               onClick={() => router.push(PAGE_ROUTES.CHAT)}
             />
           ) : (
-            <Icon
-              src="/assets/feed/notifications-icon.svg"
-              alt="notifications"
-              width={28}
-              height={30}
-              priority
-              onClick={() => router.push(PAGE_ROUTES.NOTIFICATIONS)}
-            >
-              {unseenCount > 0 && (
-                <span className={styles.badge}>
-                  {unseenCount > 99 ? '99+' : unseenCount}
-                </span>
-              )}
-            </Icon>
+            <NotificationsButton />
           )}
         </div>
       </div>
@@ -142,9 +126,6 @@ export default function FeedScreen() {
     ignoreUser,
     isLoading,
     hasHydrated,
-    unseenNotificationCount,
-    fetchUnseenNotificationCount,
-    setUnseenNotificationCount,
     availableInvitesCount,
     isInMeeting,
     isPerformingAction,
@@ -332,7 +313,6 @@ export default function FeedScreen() {
         const [status] = await Promise.all([
           fetchFeedStatus(),
           fetchFeed(),
-          fetchUnseenNotificationCount(),
           fetchNpc(),
         ]);
 
@@ -399,7 +379,6 @@ export default function FeedScreen() {
     hasHydrated,
     fetchFeedStatus,
     fetchFeed,
-    fetchUnseenNotificationCount,
     fetchNpc,
     router,
     handleQrCode,
@@ -416,25 +395,6 @@ export default function FeedScreen() {
     setIsReferralPromptOpen(false);
     router.push(`${PAGE_ROUTES.FRIENDS_AND_FOES}?share=true`);
   };
-
-  const { registerForegroundHandler, unregisterForegroundHandler } =
-    useFcmStore();
-
-  useEffect(() => {
-    const handleNotification = (payload: FcmPayload) => {
-      const type = payload?.data?.type;
-      if (type === NotificationType.USER_INVITED) {
-        setUnseenNotificationCount((current) => current + 1);
-      }
-    };
-
-    registerForegroundHandler(handleNotification);
-    return () => unregisterForegroundHandler(handleNotification);
-  }, [
-    registerForegroundHandler,
-    unregisterForegroundHandler,
-    setUnseenNotificationCount,
-  ]);
 
   const showLoading = isLoading || !hasHydrated || !isInitialized;
 
@@ -714,7 +674,6 @@ export default function FeedScreen() {
       <div className={styles.content} onClick={handleProfileClick}>
         <div onClick={(e) => e.stopPropagation()}>
           <FeedHeader
-            unseenCount={unseenNotificationCount}
             isInMeeting={isInMeeting}
             onboardingRequired={
               requiredAction === RequiredAction.OnboardingCompletion

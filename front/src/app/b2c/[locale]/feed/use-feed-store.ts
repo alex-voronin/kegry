@@ -34,7 +34,6 @@ interface FeedState {
   lastFetchedAt: number | null;
   isLoading: boolean;
   hasHydrated: boolean;
-  unseenNotificationCount: number;
   isInMeeting: boolean;
   availableInvitesCount: number;
   isFetching: boolean;
@@ -50,10 +49,6 @@ interface FeedState {
   setIsPerformingAction: (isPerformingAction: boolean) => void;
   nextProfile: () => void;
   setHasHydrated: () => void;
-  fetchUnseenNotificationCount: () => Promise<void>;
-  setUnseenNotificationCount: (
-    countOrFn: number | ((current: number) => number),
-  ) => void;
   reset: () => void;
 }
 
@@ -66,7 +61,6 @@ const initialState = {
   lastFetchedAt: null as number | null,
   isLoading: false,
   hasHydrated: false,
-  unseenNotificationCount: 0,
   isInMeeting: false,
   availableInvitesCount: 0,
   isFetching: false,
@@ -245,30 +239,6 @@ export const useFeedStore = create<FeedState>()(
       },
 
       setHasHydrated: () => set({ hasHydrated: true }),
-
-      fetchUnseenNotificationCount: async () => {
-        try {
-          const response = await apiClient.get<ApiResult<number>>(
-            API_ENDPOINTS.NOTIFICATIONS.UNSEEN_COUNT,
-          );
-
-          if (response.data.success) {
-            set({ unseenNotificationCount: response.data.result });
-          }
-        } catch {
-          // Silent failure for notification count
-        }
-      },
-
-      setUnseenNotificationCount: (
-        countOrFn: number | ((current: number) => number),
-      ) =>
-        set((state) => ({
-          unseenNotificationCount:
-            typeof countOrFn === 'function'
-              ? countOrFn(state.unseenNotificationCount)
-              : countOrFn,
-        })),
 
       reset: () => set({ ...initialState, hasHydrated: true }),
     }),

@@ -26,6 +26,7 @@ import { BELGRADE_COORDS } from '@/lib/cities';
 import { CitySelector } from '@/components/common/city-selector';
 import { useVenueFiltersStore } from '@/store/use-venue-filters-store';
 import { MapFeedToggle } from '@/components/common/map-feed-toggle';
+import { NotificationsButton } from '@/components/common/notifications-button';
 import { useQrCheckIn } from '../venues/use-qr-check-in';
 import { VenueBottomSheet } from './_components/venue-bottom-sheet';
 import { VenueSelectorSheet } from './_components/venue-selector-sheet';
@@ -420,14 +421,7 @@ export default function MapScreen() {
                 priority
                 onClick={() => router.push(PAGE_ROUTES.VENUES)}
               />
-              <Icon
-                src="/assets/feed/notifications-icon.svg"
-                alt="notifications"
-                width={28}
-                height={30}
-                priority
-                onClick={() => router.push(PAGE_ROUTES.NOTIFICATIONS)}
-              />
+              <NotificationsButton />
             </div>
           </div>
         </div>
