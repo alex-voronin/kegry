@@ -4,7 +4,7 @@ import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
 import { API_ENDPOINTS } from '@/lib/routes';
 import { paramsForReq } from '@/lib/query-params';
-import type { VenueMapItem } from '../venues/map/_components/venue-map-internal';
+import type { VenueMapItem } from './_components/venue-map-internal';
 import type { VenueEventsDto } from './_components/types';
 
 type FlyToCoord = { lat: number; lng: number; key: number };

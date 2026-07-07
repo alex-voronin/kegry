@@ -36,7 +36,7 @@ import { useVenueFiltersStore } from '@/store/use-venue-filters-store';
 import { useVenueTagsStore } from '@/store/use-venue-tags-store';
 import filtersStyles from '@/components/b2c/venue-filters.module.css';
 import styles from '../map.module.css';
-import type { VenueMapItem } from '../../venues/map/_components/venue-map-internal';
+import type { VenueMapItem } from './venue-map-internal';
 import type { EventMapItem } from '../_components/types';
 
 const PEEK_HEIGHT = 176;

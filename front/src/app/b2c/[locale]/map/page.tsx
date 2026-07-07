@@ -33,11 +33,11 @@ import { VenueBottomSheet } from './_components/venue-bottom-sheet';
 import { VenueSelectorSheet } from './_components/venue-selector-sheet';
 import { useMapStore } from './use-map-store';
 import styles from './map.module.css';
-import type { VenueMapItem } from '../venues/map/_components/venue-map-internal';
+import type { VenueMapItem } from './_components/venue-map-internal';
 import type { EventCountMap } from './_components/types';
 
 const VenueMapInternal = dynamic(
-  () => import('../venues/map/_components/venue-map-internal'),
+  () => import('./_components/venue-map-internal'),
   {
     ssr: false,
     loading: () => (

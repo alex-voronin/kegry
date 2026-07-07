@@ -16,7 +16,7 @@ import { LocateFixed } from 'lucide-react';
 import { getLowAccuracyLocation } from '@/lib/geo-utils';
 import { useMapStore } from '@/app/b2c/[locale]/map/use-map-store';
 import 'leaflet/dist/leaflet.css';
-import styles from '../map.module.css';
+import styles from './map.module.css';
 
 // Custom dark marker icon as inline SVG
 const darkMarkerSvg = encodeURIComponent(
@@ -108,7 +108,11 @@ function BoundsWatcher({
   return null;
 }
 
-function RestoreViewport({ onBoundsChange }: { onBoundsChange: VenueMapInternalProps['onBoundsChange'] }) {
+function RestoreViewport({
+  onBoundsChange,
+}: {
+  onBoundsChange: VenueMapInternalProps['onBoundsChange'];
+}) {
   const map = useMap();
   const onBoundsChangeRef = useRef(onBoundsChange);
   onBoundsChangeRef.current = onBoundsChange;
@@ -131,14 +135,21 @@ function RestoreViewport({ onBoundsChange }: { onBoundsChange: VenueMapInternalP
   return null;
 }
 
-function FlyToTarget({ coord, mcgRef }: { coord: { lat: number; lng: number; key: number }; mcgRef: { current: any } }) {
+function FlyToTarget({
+  coord,
+  mcgRef,
+}: {
+  coord: { lat: number; lng: number; key: number };
+  mcgRef: { current: any };
+}) {
   const map = useMap();
   useEffect(() => {
     mcgRef.current?.unspiderfy();
 
     const center = map.getCenter();
     const dz = Math.abs(map.getZoom() - (map.getMaxZoom() - 2));
-    const dl = Math.abs(center.lat - coord.lat) + Math.abs(center.lng - coord.lng);
+    const dl =
+      Math.abs(center.lat - coord.lat) + Math.abs(center.lng - coord.lng);
     if (dl < 0.0001 && dz < 1) return;
 
     map.flyTo([coord.lat, coord.lng], map.getMaxZoom() - 2, {
@@ -209,7 +220,6 @@ function FocusedVenuePopup({
     return () => {
       cancelled = true;
     };
-     
   }, [venue.id, hasFlyTo, map, markerRefs, mcgRef]);
 
   return null;
@@ -459,7 +469,10 @@ export default function VenueMapInternal({
           mcgRef={mcgRef}
         />
       )}
-      <BoundsWatcher onBoundsChange={onBoundsChange} onMapDragStart={onMapDragStart} />
+      <BoundsWatcher
+        onBoundsChange={onBoundsChange}
+        onMapDragStart={onMapDragStart}
+      />
       <RestoreViewport onBoundsChange={onBoundsChange} />
       <LocateMe />
 

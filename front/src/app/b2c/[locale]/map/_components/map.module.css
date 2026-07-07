@@ -1,4 +1,4 @@
-@reference "../../../../../app/globals.css";
+@reference "../../../../globals.css";
 
 .wrapper {
   @apply flex h-dvh flex-col;

@@ -17,7 +17,7 @@ import { API_ENDPOINTS } from '@/lib/routes';
 import { paramsForReq } from '@/lib/query-params';
 import { useCitySelection } from '@/hooks/use-city-selection';
 import { BELGRADE_COORDS } from '@/lib/cities';
-import type { VenueMapItem } from '../../venues/map/_components/venue-map-internal';
+import type { VenueMapItem } from './venue-map-internal';
 import styles from '../map.module.css';
 
 interface VenueSelectorSheetProps {

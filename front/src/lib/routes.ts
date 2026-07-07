@@ -16,7 +16,6 @@ export const PAGE_ROUTES = {
   APPROVALS: (eventId: string) => `/meetups/${eventId}/approvals`,
   PARTICIPANTS: (eventId: string) => `/meetups/${eventId}/participants`,
   VENUES: '/venues',
-  VENUES_MAP: '/venues/map',
   VENUE_DETAIL: (id: string) => `/venues/${id}`,
   VENUE_DISCOUNTS: (id: string) => `/venues/${id}/discounts`,
   ONBOARDING: '/onboarding',
