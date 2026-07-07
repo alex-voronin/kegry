@@ -21,6 +21,7 @@ import { CheckInManager } from '@/components/common/check-in-manager';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { useCitySelection } from '@/hooks/use-city-selection';
 import { useEventActions } from '@/hooks/use-event-actions';
+import { useAuthStore } from '@/lib/auth/use-auth-store';
 import { OnboardingGuardDialog } from '@/components/common/onboarding-guard-dialog';
 import { BELGRADE_COORDS } from '@/lib/cities';
 import { CitySelector } from '@/components/common/city-selector';
@@ -52,9 +53,11 @@ export default function MapScreen() {
   const t = useTranslations('screens.map');
   const {
     selectedCity,
-    hasHydrated,
+    hasHydrated: cityHydrated,
     handleCityChange: setCity,
   } = useCitySelection();
+
+  const authHydrated = useAuthStore((s) => s.hasHydrated);
 
   const {
     venues,
@@ -99,13 +102,25 @@ export default function MapScreen() {
   }, []);
 
   useEffect(() => {
-    processStoredQrCode(handleQrCode);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (!authHydrated) return;
 
-  useEffect(() => {
+    processStoredQrCode(handleQrCode);
     setFlyToCoord(null);
     clearFocus();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    usePendingApprovalsStore.getState().fetch();
+
+    const { registerForegroundHandler, unregisterForegroundHandler } =
+      useFcmStore.getState();
+
+    const handleNotification = (payload: FcmPayload) => {
+      if (payload?.data?.type === NotificationType.USER_REQUESTED_APPROVE) {
+        usePendingApprovalsStore.getState().fetch();
+      }
+    };
+
+    registerForegroundHandler(handleNotification);
+    return () => unregisterForegroundHandler(handleNotification);
+  }, [authHydrated]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const mapCenter = useMemo(
     () => ({
@@ -343,25 +358,7 @@ export default function MapScreen() {
     onError: handleCheckInError,
   });
 
-  useEffect(() => {
-    usePendingApprovalsStore.getState().fetch();
-  }, []);
-
-  useEffect(() => {
-    const { registerForegroundHandler, unregisterForegroundHandler } =
-      useFcmStore.getState();
-
-    const handleNotification = (payload: FcmPayload) => {
-      if (payload?.data?.type === NotificationType.USER_REQUESTED_APPROVE) {
-        usePendingApprovalsStore.getState().fetch();
-      }
-    };
-
-    registerForegroundHandler(handleNotification);
-    return () => unregisterForegroundHandler(handleNotification);
-  }, []);
-
-  if (!hasHydrated) {
+  if (!cityHydrated || !authHydrated) {
     return (
       <div className={styles.wrapper}>
         <div className={styles.mapLoadingScreen}>
