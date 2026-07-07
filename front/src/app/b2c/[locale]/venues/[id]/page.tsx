@@ -106,14 +106,25 @@ export default function VenueDetailScreen() {
   useEffect(() => {
     if (searchParams.get('animate-check-in') === 'true') {
       setShowCheckIn(true);
-      router.replace(pathname);
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete('animate-check-in');
+      router.replace(`${pathname}?${params.toString()}`);
     }
     const tabParam = searchParams.get('tab');
-    if (tabParam === 'events') {
-      setActiveTab('events');
-      router.replace(pathname);
+    if (tabParam === 'events' || tabParam === 'details') {
+      setActiveTab(tabParam);
     }
   }, [searchParams, router, pathname]);
+
+  const handleTabChange = useCallback(
+    (value: string) => {
+      setActiveTab(value);
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('tab', value);
+      router.replace(`${pathname}?${params.toString()}`);
+    },
+    [searchParams, router, pathname],
+  );
 
   useEffect(() => {
     const loadVenue = async () => {
@@ -276,7 +287,7 @@ export default function VenueDetailScreen() {
                 { value: 'events', label: t('tabEvents') },
               ]}
               value={activeTab}
-              onChange={setActiveTab}
+              onChange={handleTabChange}
             />
           </div>
 

@@ -3,8 +3,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { useRouter } from '@/i18n/routing';
-import { useParams } from 'next/navigation';
+import { useRouter, usePathname } from '@/i18n/routing';
+import { useParams, useSearchParams } from 'next/navigation';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
@@ -42,7 +42,9 @@ import type { B2BEventListItemDto } from '../../events/use-events-store';
 
 export default function VenueDetailPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const params = useParams();
+  const searchParams = useSearchParams();
   const venueId = params.id as string;
   const t = useTranslations('screens.venueDetail');
   const tCommon = useTranslations('common');
@@ -110,6 +112,23 @@ export default function VenueDetailPage() {
   useEffect(() => {
     loadVenueEvents();
   }, [loadVenueEvents]);
+
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'deals' || tabParam === 'events') {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
+
+  const handleTabChange = useCallback(
+    (value: string) => {
+      setActiveTab(value);
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('tab', value);
+      router.replace(`${pathname}?${params.toString()}`);
+    },
+    [searchParams, router, pathname],
+  );
 
   const handleBack = () => {
     safeBack(PAGE_ROUTES.B2B.COMPANIES);
@@ -432,7 +451,7 @@ export default function VenueDetailPage() {
             { value: 'events', label: t('events') },
           ]}
           value={activeTab}
-          onChange={setActiveTab}
+          onChange={handleTabChange}
         />
       </div>
 
