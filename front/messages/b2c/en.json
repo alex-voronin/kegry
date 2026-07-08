@@ -957,6 +957,8 @@
           "descriptionRequired": "Description is required",
           "descriptionMaxLength": "Description must be 2000 characters or less",
           "startDateTimeRequired": "Date and time is required",
+          "startDateTimePast": "Date and time cannot be in the past",
+          "startDateTimeTooFar": "Meetup cannot be planned more than 2 months in advance",
           "coverRequired": "Cover image is required",
           "contactRequired": "Contact value is required",
           "contactTelegramInvalid": "Invalid Telegram username",

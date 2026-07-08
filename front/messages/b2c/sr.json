@@ -957,6 +957,8 @@
           "descriptionRequired": "Opis je obavezan",
           "descriptionMaxLength": "Opis mora imati najviše 2000 karaktera",
           "startDateTimeRequired": "Datum i vreme su obavezni",
+          "startDateTimePast": "Datum i vreme ne mogu biti u prošlosti",
+          "startDateTimeTooFar": "Susret se ne može planirati više od 2 meseca unapred",
           "coverRequired": "Naslovna slika je obavezna",
           "contactRequired": "Vrednost kontakta je obavezna",
           "contactTelegramInvalid": "Neispravno Telegram korisničko ime",

@@ -18,7 +18,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
-import { ContactSection, type EventContactForm, type ContactSectionHandle } from '@/components/ui/contact-section';
+import {
+  ContactSection,
+  type EventContactForm,
+  type ContactSectionHandle,
+} from '@/components/ui/contact-section';
 import { ImageCropperModal } from '@/components/ui/image-cropper-modal';
 import { compressImageToBlob } from '@/lib/image-utils';
 import { VENUE_COVER_MAX_SIZE_BYTES } from '@/lib/constants';
@@ -89,7 +93,25 @@ export function MeetupForm({
           .string()
           .min(1, t('validation.descriptionRequired'))
           .max(2000, t('validation.descriptionMaxLength')),
-    startDateTime: z.string().min(1, t('validation.startDateTimeRequired')),
+    startDateTime: z
+      .string()
+      .min(1, t('validation.startDateTimeRequired'))
+      .refine(
+        (val) => {
+          const date = new Date(val);
+          return !isNaN(date.getTime()) && date >= new Date();
+        },
+        { message: t('validation.startDateTimePast') },
+      )
+      .refine(
+        (val) => {
+          const date = new Date(val);
+          const maxDate = new Date();
+          maxDate.setMonth(maxDate.getMonth() + 2);
+          return !isNaN(date.getTime()) && date <= maxDate;
+        },
+        { message: t('validation.startDateTimeTooFar') },
+      ),
     maxParticipants: z.string().optional(),
     requiresApproval: z.boolean(),
   });
@@ -106,7 +128,9 @@ export function MeetupForm({
   const now = new Date();
   const tomorrow = new Date(now);
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const defaultDateTime = new Date(tomorrow.getTime() - tomorrow.getTimezoneOffset() * 60000)
+  const defaultDateTime = new Date(
+    tomorrow.getTime() - tomorrow.getTimezoneOffset() * 60000,
+  )
     .toISOString()
     .slice(0, 16);
 
@@ -202,10 +226,7 @@ export function MeetupForm({
 
   return (
     <div className="overflow-hidden sm:rounded-[16px]">
-      <form
-        onSubmit={onFormSubmit}
-        className="flex flex-col gap-5"
-      >
+      <form onSubmit={onFormSubmit} className="flex flex-col gap-5">
         {/* Cover image — advanced only */}
         {!isSimple && (
           <div className="w-full">
@@ -385,18 +406,21 @@ export function MeetupForm({
 
         {/* Requires Approval */}
         <div className={`${stylesCommon.sectionContainer} px-0 sm:px-4`}>
-            <div className="flex items-center justify-between px-2 sm:px-0">
-              <span className="text-sm text-white/80">
-                {t('requiresApproval')}
-              </span>
-              <Toggle
-                checked={watch('requiresApproval')}
-                onChange={(v) => setValue('requiresApproval', v)}
-              />
-            </div>
+          <div className="flex items-center justify-between px-2 sm:px-0">
+            <span className="text-sm text-white/80">
+              {t('requiresApproval')}
+            </span>
+            <Toggle
+              checked={watch('requiresApproval')}
+              onChange={(v) => setValue('requiresApproval', v)}
+            />
           </div>
+        </div>
 
-        <ContactSection ref={contactsRef} initialContacts={initialValues?.contacts} />
+        <ContactSection
+          ref={contactsRef}
+          initialContacts={initialValues?.contacts}
+        />
 
         <div className="mb-10 flex justify-center px-0 sm:px-4">
           <Button
