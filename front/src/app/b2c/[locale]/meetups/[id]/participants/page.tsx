@@ -31,6 +31,7 @@ export default function ParticipantsPage() {
     isLoading,
     fetchEvent,
     fetchApprovedUsers,
+    removeApprovedUser,
     reset,
   } = useMeetupDetailStore();
 
@@ -59,13 +60,13 @@ export default function ParticipantsPage() {
         await apiClient.patch(
           API_ENDPOINTS.EVENTS.REJECT_PARTICIPANT(eventId, userId),
         );
+        removeApprovedUser(userId);
         toast.success(t('rejected'));
-        fetchApprovedUsers(eventId);
       } catch {
         toast.error(t('actionFailed'));
       }
     },
-    [eventId, fetchApprovedUsers, t],
+    [eventId, removeApprovedUser, t],
   );
 
   if (isLoading) {
@@ -127,7 +128,11 @@ export default function ParticipantsPage() {
             {approvedUsers.map((p: PendingUser, i: number) => (
               <div
                 key={p.id}
-                className={i < approvedUsers.length - 1 ? styles.cardItem : styles.cardItemLast}
+                className={
+                  i < approvedUsers.length - 1
+                    ? styles.cardItem
+                    : styles.cardItemLast
+                }
               >
                 <ParticipantListItem
                   avatarUrl={p.avatarImageUrl}

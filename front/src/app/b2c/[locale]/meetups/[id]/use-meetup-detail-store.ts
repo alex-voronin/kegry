@@ -60,6 +60,8 @@ interface MeetupDetailState {
   leaveEvent: (eventId: string) => Promise<void>;
   fetchPendingUsers: (eventId: string) => Promise<void>;
   fetchApprovedUsers: (eventId: string, extraIds?: string[]) => Promise<void>;
+  removePendingUser: (userId: string) => void;
+  removeApprovedUser: (userId: string) => void;
   reset: () => void;
 }
 
@@ -154,7 +156,10 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
 
     fetchApprovedUsers: async (eventId: string, extraIds?: string[]) => {
       const { event } = get();
-      const ids = [...(event?.approvedParticipantIds ?? []), ...(extraIds ?? [])];
+      const ids = [
+        ...(event?.approvedParticipantIds ?? []),
+        ...(extraIds ?? []),
+      ];
       if (!ids.length) {
         set({ approvedUsers: [] });
         return;
@@ -168,6 +173,39 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
       } catch {
         set({ approvedUsers: [] });
       }
+    },
+
+    removePendingUser: (userId: string) => {
+      set((state) => ({
+        pendingUsers: state.pendingUsers.filter((u) => u.id !== userId),
+        event: state.event
+          ? {
+              ...state.event,
+              pendingApprovalsCount: Math.max(
+                0,
+                state.event.pendingApprovalsCount - 1,
+              ),
+              pendingParticipantIds: state.event.pendingParticipantIds.filter(
+                (id) => id !== userId,
+              ),
+            }
+          : null,
+      }));
+    },
+
+    removeApprovedUser: (userId: string) => {
+      set((state) => ({
+        approvedUsers: state.approvedUsers.filter((u) => u.id !== userId),
+        event: state.event
+          ? {
+              ...state.event,
+              participantsCount: Math.max(0, state.event.participantsCount - 1),
+              approvedParticipantIds: state.event.approvedParticipantIds.filter(
+                (id) => id !== userId,
+              ),
+            }
+          : null,
+      }));
     },
 
     reset: () =>

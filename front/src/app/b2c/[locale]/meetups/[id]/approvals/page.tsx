@@ -31,6 +31,7 @@ export default function ApprovalsPage() {
     isLoading,
     fetchEvent,
     fetchPendingUsers,
+    removePendingUser,
     reset,
   } = useMeetupDetailStore();
 
@@ -59,13 +60,13 @@ export default function ApprovalsPage() {
         await apiClient.patch(
           API_ENDPOINTS.EVENTS.APPROVE_PARTICIPANT(eventId, userId),
         );
+        removePendingUser(userId);
         toast.success(t('approved'));
-        fetchPendingUsers(eventId);
       } catch {
         toast.error(t('actionFailed'));
       }
     },
-    [eventId, fetchPendingUsers, t],
+    [eventId, removePendingUser, t],
   );
 
   const handleReject = useCallback(
@@ -74,13 +75,13 @@ export default function ApprovalsPage() {
         await apiClient.patch(
           API_ENDPOINTS.EVENTS.REJECT_PARTICIPANT(eventId, userId),
         );
+        removePendingUser(userId);
         toast.success(t('rejected'));
-        fetchPendingUsers(eventId);
       } catch {
         toast.error(t('actionFailed'));
       }
     },
-    [eventId, fetchPendingUsers, t],
+    [eventId, removePendingUser, t],
   );
 
   if (isLoading) {
@@ -136,7 +137,11 @@ export default function ApprovalsPage() {
               {pendingUsers.map((p: PendingUser, i: number) => (
                 <div
                   key={p.id}
-                  className={i < pendingUsers.length - 1 ? styles.cardItem : styles.cardItemLast}
+                  className={
+                    i < pendingUsers.length - 1
+                      ? styles.cardItem
+                      : styles.cardItemLast
+                  }
                 >
                   <ParticipantListItem
                     avatarUrl={p.avatarImageUrl}

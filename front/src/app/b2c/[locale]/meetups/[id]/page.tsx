@@ -84,6 +84,7 @@ export default function MeetupDetailPage() {
     leaveEvent,
     approvedUsers,
     fetchApprovedUsers,
+    removeApprovedUser,
     reset,
   } = useMeetupDetailStore();
 
@@ -137,12 +138,12 @@ export default function MeetupDetailPage() {
         await apiClient.patch(
           API_ENDPOINTS.EVENTS.REJECT_PARTICIPANT(eventId, userId),
         );
-        fetchApprovedUsers(eventId);
+        removeApprovedUser(userId);
       } catch {
         toast.error(t('actionFailed'));
       }
     },
-    [eventId, fetchApprovedUsers, t],
+    [eventId, removeApprovedUser, t],
   );
 
   const handleEdit = () => {
