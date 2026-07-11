@@ -10,15 +10,15 @@ namespace Internal.Generated.WolverineHandlers
     [global::System.CodeDom.Compiler.GeneratedCode("JasperFx", "1.0.0")]
     public sealed class EmailConfirmationRequestedEventHandlerHandler997851882 : Wolverine.Runtime.Handlers.MessageHandler
     {
-        private readonly System.TimeProvider _timeProvider;
         private readonly Microsoft.Extensions.DependencyInjection.IServiceScopeFactory _serviceScopeFactory;
         private readonly Microsoft.Extensions.Caching.Hybrid.HybridCache _hybridCache;
+        private readonly System.TimeProvider _timeProvider;
 
-        public EmailConfirmationRequestedEventHandlerHandler997851882(System.TimeProvider timeProvider, Microsoft.Extensions.DependencyInjection.IServiceScopeFactory serviceScopeFactory, Microsoft.Extensions.Caching.Hybrid.HybridCache hybridCache)
+        public EmailConfirmationRequestedEventHandlerHandler997851882(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory serviceScopeFactory, Microsoft.Extensions.Caching.Hybrid.HybridCache hybridCache, System.TimeProvider timeProvider)
         {
-            _timeProvider = timeProvider;
             _serviceScopeFactory = serviceScopeFactory;
             _hybridCache = hybridCache;
+            _timeProvider = timeProvider;
         }
 
 

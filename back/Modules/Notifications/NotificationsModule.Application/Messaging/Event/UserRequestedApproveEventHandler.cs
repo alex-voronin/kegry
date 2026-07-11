@@ -18,6 +18,7 @@ public class UserRequestedApproveEventHandler : DebouncedEventHandlerBase<UserRe
 {
     private readonly INotificationManager _notificationManager;
     private readonly INotificationRepository _notificationRepository;
+    private readonly INotificationsSettingsRepository _notificationsSettingsRepository;
     private readonly IStringLocalizer<NotificationsLocalization> _localizer;
 
     public UserRequestedApproveEventHandler(
@@ -26,10 +27,12 @@ public class UserRequestedApproveEventHandler : DebouncedEventHandlerBase<UserRe
         IMessageBus messageBus,
         INotificationManager notificationManager,
         INotificationRepository notificationRepository,
+        INotificationsSettingsRepository notificationsSettingsRepository,
         IStringLocalizer<NotificationsLocalization> localizer) : base(timeProvider, cache, messageBus)
     {
         _notificationManager = notificationManager;
         _notificationRepository = notificationRepository;
+        _notificationsSettingsRepository = notificationsSettingsRepository;
         _localizer = localizer;
     }
 
@@ -50,6 +53,13 @@ public class UserRequestedApproveEventHandler : DebouncedEventHandlerBase<UserRe
     {
         Log.Information("{HandlerClass} Handling debounced event {@Event}",
             typeof(UserRequestedApproveEventHandler).FullName, @event);
+
+        var settings = await _notificationsSettingsRepository.GetByIdOrDefaultAsync(
+            id: @event.EventCreatorId,
+            asNoTracking: true,
+            ct: ct);
+        settings.ApplyCurrentLocale();
+
         var notification = new Notification()
         {
             Id = Guid.CreateVersion7(),

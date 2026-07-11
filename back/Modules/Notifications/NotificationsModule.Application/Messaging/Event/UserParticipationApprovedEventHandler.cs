@@ -18,6 +18,7 @@ public class UserParticipationApprovedEventHandler : DebouncedEventHandlerBase<U
 {
     private readonly INotificationManager _notificationManager;
     private readonly INotificationRepository _notificationRepository;
+    private readonly INotificationsSettingsRepository _notificationsSettingsRepository;
     private readonly IStringLocalizer<NotificationsLocalization> _localizer;
 
     public UserParticipationApprovedEventHandler(
@@ -26,10 +27,12 @@ public class UserParticipationApprovedEventHandler : DebouncedEventHandlerBase<U
         IMessageBus messageBus,
         INotificationManager notificationManager,
         INotificationRepository notificationRepository,
+        INotificationsSettingsRepository notificationsSettingsRepository,
         IStringLocalizer<NotificationsLocalization> localizer) : base(timeProvider, cache, messageBus)
     {
         _notificationManager = notificationManager;
         _notificationRepository = notificationRepository;
+        _notificationsSettingsRepository = notificationsSettingsRepository;
         _localizer = localizer;
     }
 
@@ -51,11 +54,18 @@ public class UserParticipationApprovedEventHandler : DebouncedEventHandlerBase<U
     {
         Log.Information("{HandlerClass} Handling debounced event {@Event}",
             typeof(UserParticipationApprovedEventHandler).FullName, @event);
+
+        var settings = await _notificationsSettingsRepository.GetByIdOrDefaultAsync(
+            id: @event.JoinedUserId,
+            asNoTracking: true,
+            ct: ct);
+        settings.ApplyCurrentLocale();
+
         var notification = new Notification()
         {
             Id = Guid.CreateVersion7(),
             Type = NotificationType.UserParticipationApproved,
-            UserId = @event.EventCreatorId,
+            UserId = @event.JoinedUserId,
             FromUserId = @event.EventCreatorId,
             CreatedAt = TimeProvider.GetUtcNow(),
             ExpiresAt = @event.EventStartDate,

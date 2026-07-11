@@ -10,15 +10,15 @@ namespace Internal.Generated.WolverineHandlers
     [global::System.CodeDom.Compiler.GeneratedCode("JasperFx", "1.0.0")]
     public sealed class ScheduledEventMessageHandler1713544909 : Wolverine.Runtime.Handlers.MessageHandler
     {
-        private readonly System.TimeProvider _timeProvider;
         private readonly Microsoft.Extensions.DependencyInjection.IServiceScopeFactory _serviceScopeFactory;
         private readonly Microsoft.Extensions.Caching.Hybrid.HybridCache _hybridCache;
+        private readonly System.TimeProvider _timeProvider;
 
-        public ScheduledEventMessageHandler1713544909(System.TimeProvider timeProvider, Microsoft.Extensions.DependencyInjection.IServiceScopeFactory serviceScopeFactory, Microsoft.Extensions.Caching.Hybrid.HybridCache hybridCache)
+        public ScheduledEventMessageHandler1713544909(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory serviceScopeFactory, Microsoft.Extensions.Caching.Hybrid.HybridCache hybridCache, System.TimeProvider timeProvider)
         {
-            _timeProvider = timeProvider;
             _serviceScopeFactory = serviceScopeFactory;
             _hybridCache = hybridCache;
+            _timeProvider = timeProvider;
         }
 
 
@@ -27,6 +27,11 @@ namespace Internal.Generated.WolverineHandlers
         {
             await using var serviceScope = _serviceScopeFactory.CreateAsyncScope();
             var stringLocalizerOfNotificationsLocalization = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<Microsoft.Extensions.Localization.IStringLocalizer<NotificationsModule.Infrastructure.Resources.NotificationsLocalization>>(serviceScope.ServiceProvider);
+            
+            /*
+            * Concrete type NotificationsModule.Infrastructure.Persistence.Repositories.EfCoreNotificationsSettingsRepository is not public, so requires service location
+            */
+            var notificationsSettingsRepository = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<NotificationModule.Domain.Repositories.INotificationsSettingsRepository>(serviceScope.ServiceProvider);
             
             /*
             * Concrete type NotificationsModule.Infrastructure.Persistence.Repositories.EfCoreNotificationRepository is not public, so requires service location
@@ -41,7 +46,7 @@ namespace Internal.Generated.WolverineHandlers
             var scheduledEventMessageOfUserParticipationApprovedEvent = (NotificationsModule.Application.Services.ScheduledEventMessage<EventModule.Contracts.Events.UserParticipationApprovedEvent>)context.Envelope.Message;
 
             System.Diagnostics.Activity.Current?.SetTag("message.handler", "NotificationsModule.Application.Messaging.Event.UserParticipationApprovedEventHandler");
-            var userParticipationApprovedEventHandler = new NotificationsModule.Application.Messaging.Event.UserParticipationApprovedEventHandler(_timeProvider, _hybridCache, context, notificationManager, notificationRepository, stringLocalizerOfNotificationsLocalization);
+            var userParticipationApprovedEventHandler = new NotificationsModule.Application.Messaging.Event.UserParticipationApprovedEventHandler(_timeProvider, _hybridCache, context, notificationManager, notificationRepository, notificationsSettingsRepository, stringLocalizerOfNotificationsLocalization);
             
             // The actual message execution
             await userParticipationApprovedEventHandler.HandleAsync(scheduledEventMessageOfUserParticipationApprovedEvent, cancellation).ConfigureAwait(false);

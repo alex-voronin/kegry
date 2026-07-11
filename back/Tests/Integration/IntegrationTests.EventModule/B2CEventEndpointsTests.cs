@@ -8,6 +8,9 @@ using IntegrationTests.Shared;
 using IntegrationTests.Shared.HttpClients;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using NotificationModule.Domain.ValueObjects;
+using NotificationsModule.API.Dto;
+using NotificationsModule.Infrastructure.Transport.Push;
 using SecurityModule.API.Dto;
 using SecurityModule.Domain.Aggregates;
 using SecurityModule.Domain.ValueObjects;
@@ -210,7 +213,7 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
             RequiredAction: RequiredAction.None,
             AccessToken: null,
             RefreshToken: null
-            );
+        );
         Factory.HttpClient.SetAuth(invalidAuth);
         var httpResponse = await Factory.HttpClient.PostAsJsonAsync(
             ApiRoutes.Event.Root,
@@ -1200,6 +1203,129 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         excess.Errors.ShouldNotBeNull();
         excess.Errors.Length.ShouldBe(1);
         excess.Errors[0].Code.ShouldBe(nameof(ErrorCode.TooManyRequests));
+    }
+
+    [Fact]
+    public async Task GivenApprovalMeetup_WhenUserJoins_ThenCreatorReceivesJoinRequestNotification()
+    {
+        var creatorAuth = await Factory.AuthManager.CreateAndLoginUserAsync(
+            "creator-join-req@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(creatorAuth);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var joinerAuth = await Factory.AuthManager.CreateAndLoginUserAsync(
+            "joiner-join-req@example.com", "Password123!");
+        var joinerId = Guid.Parse(joinerAuth.UserId);
+        Factory.ApiClient.SetAuth(joinerAuth);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        Factory.ApiClient.SetAuth(creatorAuth);
+        var tokenResponse = await Factory.ApiClient
+            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(
+                ApiRoutes.Notifications.UpdateDeviceToken,
+                new UpdateFcmTokenRequest("dev-creator-join-req", "token-creator-join-req"));
+        tokenResponse.Success.ShouldBeTrue();
+
+        Factory.ApiClient.SetAuth(creatorAuth);
+        var createResponse = await Factory.ApiClient.PostAsync<CreateEventRequest, ApiResult<EventDto>>(
+            ApiRoutes.Event.Root,
+            new CreateEventRequest(
+                CreatorAvatarUrl: null,
+                CoverImageUrl: null,
+                Title: "Approval Meetup Notif",
+                Description: "Testing notifications",
+                StartDateTime: DateTimeOffset.UtcNow.AddDays(14),
+                VenueId: Guid.NewGuid(),
+                MaxParticipants: null,
+                RequiresApproval: true));
+        createResponse.Success.ShouldBeTrue();
+        var eventId = Guid.Parse(createResponse.Result.Id);
+
+        await Factory.NotificationManager.AwaitPushNotifications(
+            codeToRun: async () =>
+            {
+                Factory.ApiClient.SetAuth(joinerAuth);
+                var joinResponse = await Factory.ApiClient.PostAsync<object, ApiResult.EmptyResult>(
+                    ApiRoutes.Event.Join(eventId), new { });
+                joinResponse.Success.ShouldBeTrue();
+            },
+            expectedCount: 1,
+            expectedType: FcmPushBuilder.PushType.UserRequestedApprove);
+
+        Factory.ApiClient.SetAuth(creatorAuth);
+        var notificationsResponse = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
+            ApiRoutes.Notifications.GetNotificationsPaginated(0, 20));
+        notificationsResponse.Success.ShouldBeTrue();
+        var notification = notificationsResponse.Result.Data
+            .FirstOrDefault(n => n.Type == NotificationType.UserRequestedApprove && n.LinkedEntityId == eventId);
+        notification.ShouldNotBeNull();
+        notification.FromUserId.ShouldBe(joinerId);
+        notification.Text.ShouldNotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public async Task GivenPendingParticipant_WhenApproved_ThenParticipantReceivesApprovedNotification()
+    {
+        var creatorAuth = await Factory.AuthManager.CreateAndLoginUserAsync(
+            "creator-approve@example.com", "Password123!");
+        var creatorId = Guid.Parse(creatorAuth.UserId);
+        Factory.ApiClient.SetAuth(creatorAuth);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        var joinerAuth = await Factory.AuthManager.CreateAndLoginUserAsync(
+            "joiner-approve@example.com", "Password123!");
+        var joinerId = Guid.Parse(joinerAuth.UserId);
+        Factory.ApiClient.SetAuth(joinerAuth);
+        await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
+
+        Factory.ApiClient.SetAuth(joinerAuth);
+        var joinerTokenResponse = await Factory.ApiClient
+            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(
+                ApiRoutes.Notifications.UpdateDeviceToken,
+                new UpdateFcmTokenRequest("dev-joiner-approve", "token-joiner-approve")
+            );
+        joinerTokenResponse.Success.ShouldBeTrue();
+
+        Factory.ApiClient.SetAuth(creatorAuth);
+        var createResponse = await Factory.ApiClient.PostAsync<CreateEventRequest, ApiResult<EventDto>>(
+            ApiRoutes.Event.Root,
+            new CreateEventRequest(
+                CreatorAvatarUrl: null,
+                CoverImageUrl: null,
+                Title: "Approval Meetup Notif 2",
+                Description: "Testing approval notification",
+                StartDateTime: DateTimeOffset.UtcNow.AddDays(14),
+                VenueId: Guid.NewGuid(),
+                MaxParticipants: null,
+                RequiresApproval: true));
+        createResponse.Success.ShouldBeTrue();
+        var eventId = Guid.Parse(createResponse.Result.Id);
+
+        Factory.ApiClient.SetAuth(joinerAuth);
+        var joinResponse = await Factory.ApiClient.PostAsync<object, ApiResult.EmptyResult>(
+            ApiRoutes.Event.Join(eventId), new { });
+        joinResponse.Success.ShouldBeTrue();
+
+        await Factory.NotificationManager.AwaitPushNotifications(
+            codeToRun: async () =>
+            {
+                Factory.ApiClient.SetAuth(creatorAuth);
+                var approveResponse = await Factory.ApiClient.PatchAsync<object, ApiResult.EmptyResult>(
+                    ApiRoutes.Event.ApproveParticipant(eventId, joinerId), new { });
+                approveResponse.Success.ShouldBeTrue();
+            },
+            expectedCount: 1,
+            expectedType: FcmPushBuilder.PushType.ParticipationApproved);
+
+        Factory.ApiClient.SetAuth(joinerAuth);
+        var notificationsResponse = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
+            ApiRoutes.Notifications.GetNotificationsPaginated(0, 20));
+        notificationsResponse.Success.ShouldBeTrue();
+        var notification = notificationsResponse.Result.Data
+            .FirstOrDefault(n => n.Type == NotificationType.UserParticipationApproved && n.LinkedEntityId == eventId);
+        notification.ShouldNotBeNull();
+        notification.FromUserId.ShouldBe(creatorId);
+        notification.Text.ShouldNotBeNullOrEmpty();
     }
 
     // ========================================

@@ -10,15 +10,15 @@ namespace Internal.Generated.WolverineHandlers
     [global::System.CodeDom.Compiler.GeneratedCode("JasperFx", "1.0.0")]
     public sealed class PasswordResetRequestedEventHandlerHandler1950087035 : Wolverine.Runtime.Handlers.MessageHandler
     {
-        private readonly System.TimeProvider _timeProvider;
         private readonly Microsoft.Extensions.DependencyInjection.IServiceScopeFactory _serviceScopeFactory;
         private readonly Microsoft.Extensions.Caching.Hybrid.HybridCache _hybridCache;
+        private readonly System.TimeProvider _timeProvider;
 
-        public PasswordResetRequestedEventHandlerHandler1950087035(System.TimeProvider timeProvider, Microsoft.Extensions.DependencyInjection.IServiceScopeFactory serviceScopeFactory, Microsoft.Extensions.Caching.Hybrid.HybridCache hybridCache)
+        public PasswordResetRequestedEventHandlerHandler1950087035(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory serviceScopeFactory, Microsoft.Extensions.Caching.Hybrid.HybridCache hybridCache, System.TimeProvider timeProvider)
         {
-            _timeProvider = timeProvider;
             _serviceScopeFactory = serviceScopeFactory;
             _hybridCache = hybridCache;
+            _timeProvider = timeProvider;
         }
 
 

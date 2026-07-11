@@ -51,7 +51,7 @@ internal class EventActionService : IEventActionService, IScoped
                 await _eventRepository.PublishEventAsync(
                     new UserRequestedApproveEvent()
                     {
-                        EventCreatorId =  ev.CreatorId,
+                        EventCreatorId = ev.CreatorId,
                         EventId = eventId,
                         EventTitle = ev.Title,
                         EventStartDate = ev.StartDateTime,

@@ -94,7 +94,7 @@ public static class ApiRoutes
         public const string Discounts = "/api/v1/discounts";
         public const string Promotions = "/api/v1/promotions";
     }
-    
+
     public static class Event
     {
         public const string Map = "/api/v1/events/map";

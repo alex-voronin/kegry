@@ -88,8 +88,8 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                     Description: "Desc",
                     StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
                     VenueId: Guid.NewGuid()),
-                throwOnError:true);
-        }); 
+                throwOnError: true);
+        });
     }
 
     [Fact]
