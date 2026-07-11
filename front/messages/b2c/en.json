@@ -950,6 +950,8 @@
         "contacts": "Contacts",
         "contactValue": "Contact",
         "contactIsPublic": "Public",
+        "simple": "Simple",
+        "advanced": "Advanced",
         "save": "Save",
         "validation": {
           "titleRequired": "Title is required",

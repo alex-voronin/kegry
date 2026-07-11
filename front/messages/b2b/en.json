@@ -136,6 +136,8 @@
         "deleteConfirm": "Are you sure you want to delete this event?",
         "eventType": "Event",
         "meetupType": "Meetup",
+        "simple": "Simple",
+        "advanced": "Advanced",
         "save": "Save",
         "validation": {
           "titleRequired": "Title is required",

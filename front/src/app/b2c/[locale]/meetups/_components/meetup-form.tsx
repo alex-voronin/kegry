@@ -301,8 +301,8 @@ export function MeetupForm({
         {/* Mode toggle */}
         <TabControl
           options={[
-            { value: 'simple', label: 'Simple' },
-            { value: 'advanced', label: 'Advanced' },
+            { value: 'simple', label: t('simple') },
+            { value: 'advanced', label: t('advanced') },
           ]}
           value={isSimple ? 'simple' : 'advanced'}
           onChange={(v) => setIsSimple(v === 'simple')}
