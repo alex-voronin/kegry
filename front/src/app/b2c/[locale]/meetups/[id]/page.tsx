@@ -127,9 +127,14 @@ export default function MeetupDetailPage() {
     });
   };
 
+  const isFull =
+    event !== null &&
+    event.maxParticipants !== null &&
+    event.participantsCount >= event.maxParticipants;
+
   const showInlineParticipants = !event
     ? false
-    : event.maxParticipants !== null;
+    : event.participantsCount < 4;
 
   useEffect(() => {
     if (showInlineParticipants && eventId) {
@@ -198,8 +203,10 @@ export default function MeetupDetailPage() {
     );
   }
 
+  const dateTimeLocale = locale === 'sr' ? 'sr-Latn' : locale;
+
   const formattedDate = new Date(event.startDateTime).toLocaleDateString(
-    locale,
+    dateTimeLocale,
     {
       weekday: 'long',
       year: 'numeric',
@@ -209,7 +216,7 @@ export default function MeetupDetailPage() {
   );
 
   const formattedTime = new Date(event.startDateTime).toLocaleTimeString(
-    locale,
+    dateTimeLocale,
     {
       hour: '2-digit',
       minute: '2-digit',
@@ -422,7 +429,7 @@ export default function MeetupDetailPage() {
                   }
                 >
                   <div className="flex items-center gap-2">
-                    <CalendarClock
+                    <Users
                       size={20}
                       className="text-secondary shrink-0"
                     />
@@ -488,10 +495,6 @@ export default function MeetupDetailPage() {
               </>
             )}
             {!event.isCreator && (() => {
-              const isFull =
-                event.maxParticipants !== null &&
-                event.participantsCount >= event.maxParticipants;
-
               const isDisabled = isJoining || (!event.participationStatus && isFull);
 
               let label: string;
@@ -608,25 +611,32 @@ export default function MeetupDetailPage() {
                   icon: <Pencil size={24} />,
                 },
               ]
-            : [
-                {
-                  label:
-                    event.participationStatus === 'Approved'
-                      ? t('leave')
-                      : event.participationStatus
-                        ? t('cancelRequest')
-                        : t('join'),
-                  onClick: () => {
-                    setIsMenuOpen(false);
-                    handleJoinLeave();
+            : event.participationStatus
+              ? [
+                  {
+                    label:
+                      event.participationStatus === 'Approved'
+                        ? t('leave')
+                        : t('cancelRequest'),
+                    onClick: () => {
+                      setIsMenuOpen(false);
+                      handleJoinLeave();
+                    },
+                    icon: <UserMinus size={24} />,
                   },
-                  icon: event.participationStatus ? (
-                    <UserMinus size={24} />
-                  ) : (
-                    <UserPlus size={24} />
-                  ),
-                },
-              ]),
+                ]
+              : isFull
+                ? []
+                : [
+                    {
+                      label: t('join'),
+                      onClick: () => {
+                        setIsMenuOpen(false);
+                        handleJoinLeave();
+                      },
+                      icon: <UserPlus size={24} />,
+                    },
+                  ]),
         ]}
       />
 

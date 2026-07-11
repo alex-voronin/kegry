@@ -34,12 +34,20 @@ interface ContactSectionProps {
   initialContacts?: EventContactForm[];
 }
 
-export const ContactSection = forwardRef<ContactSectionHandle, ContactSectionProps>(
-  function ContactSection({ initialContacts }: ContactSectionProps, ref) {
+export const ContactSection = forwardRef<
+  ContactSectionHandle,
+  ContactSectionProps
+>(function ContactSection({ initialContacts }: ContactSectionProps, ref) {
   const t = useTranslations('components.forms.event');
-  const [contactTypeMenuId, setContactTypeMenuId] = useState<string | null>(null);
-  const [contacts, setContacts] = useState<EventContactForm[]>(initialContacts ?? []);
-  const [contactErrors, setContactErrors] = useState<Record<string, string>>({});
+  const [contactTypeMenuId, setContactTypeMenuId] = useState<string | null>(
+    null,
+  );
+  const [contacts, setContacts] = useState<EventContactForm[]>(
+    initialContacts ?? [],
+  );
+  const [contactErrors, setContactErrors] = useState<Record<string, string>>(
+    {},
+  );
 
   const addContact = () => {
     setContacts((prev) => [
@@ -61,15 +69,18 @@ export const ContactSection = forwardRef<ContactSectionHandle, ContactSectionPro
     if (!value.trim()) return null;
     switch (type) {
       case 'Telegram':
-        if (!/^[a-zA-Z0-9_]{3,32}$/.test(value)) return t('validation.contactTelegramInvalid');
+        if (!/^[a-zA-Z0-9_]{3,32}$/.test(value))
+          return t('validation.contactTelegramInvalid');
         return null;
       case 'WhatsApp':
       case 'Viber':
       case 'Phone':
-        if (!/^\+?\d{6,15}$/.test(value)) return t('validation.contactPhoneInvalid');
+        if (!/^\+?\d{6,15}$/.test(value))
+          return t('validation.contactPhoneInvalid');
         return null;
       case 'Email':
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return t('validation.contactEmailInvalid');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+          return t('validation.contactEmailInvalid');
         return null;
     }
     return null;
@@ -144,9 +155,12 @@ export const ContactSection = forwardRef<ContactSectionHandle, ContactSectionPro
     <div className={`${stylesCommon.sectionContainer} px-0 sm:px-4`}>
       <div className="flex items-center justify-between">
         <FormSectionTitle>{t('contacts')}</FormSectionTitle>
-        <button type="button" onClick={addContact} className="p-1">
-          <Plus size={20} className="text-primary" />
-        </button>
+        <div
+          onClick={addContact}
+          className="bg-form-element flex size-7 cursor-pointer items-center justify-center rounded-full"
+        >
+          <Plus size={22} className="text-primary" />
+        </div>
       </div>
       {contacts.map((contact) => (
         <div
@@ -168,8 +182,24 @@ export const ContactSection = forwardRef<ContactSectionHandle, ContactSectionPro
                 className="bg-form-element flex h-10 flex-1 cursor-pointer items-center gap-2 rounded-xl px-3 text-sm"
                 onClick={() => setContactTypeMenuId(contact.id)}
               >
-                <span style={{ width: 18, height: 18, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }} className="shrink-0">
-                  {messengerIcons[contact.type] ?? (contact.type === 'Phone' ? <Phone size={18} /> : contact.type === 'Email' ? <Mail size={18} /> : <Globe size={18} />)}
+                <span
+                  style={{
+                    width: 18,
+                    height: 18,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  className="shrink-0"
+                >
+                  {messengerIcons[contact.type] ??
+                    (contact.type === 'Phone' ? (
+                      <Phone size={18} />
+                    ) : contact.type === 'Email' ? (
+                      <Mail size={18} />
+                    ) : (
+                      <Globe size={18} />
+                    ))}
                 </span>
                 {contact.type}
               </div>
@@ -190,7 +220,7 @@ export const ContactSection = forwardRef<ContactSectionHandle, ContactSectionPro
               className="bg-form-element placeholder:text-secondary h-[44px] w-full rounded-xl px-3 text-base outline-none"
             />
             {contactErrors[contact.id] && (
-              <p className="text-xs text-error">{contactErrors[contact.id]}</p>
+              <p className="text-error text-xs">{contactErrors[contact.id]}</p>
             )}
             <p className="text-[11px] leading-tight text-white/40">
               {contact.isPublic
@@ -206,9 +236,26 @@ export const ContactSection = forwardRef<ContactSectionHandle, ContactSectionPro
         onClose={() => setContactTypeMenuId(null)}
         options={CONTACT_TYPES.map((ct) => ({
           label: ct,
-          icon: <span style={{ width: 24, height: 24, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-            {messengerIcons[ct] ?? (ct === 'Phone' ? <Phone size={24} /> : ct === 'Email' ? <Mail size={24} /> : <Globe size={24} />)}
-          </span>,
+          icon: (
+            <span
+              style={{
+                width: 24,
+                height: 24,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {messengerIcons[ct] ??
+                (ct === 'Phone' ? (
+                  <Phone size={24} />
+                ) : ct === 'Email' ? (
+                  <Mail size={24} />
+                ) : (
+                  <Globe size={24} />
+                ))}
+            </span>
+          ),
           onClick: () => {
             if (contactTypeMenuId) {
               updateContact(contactTypeMenuId, 'type', ct);

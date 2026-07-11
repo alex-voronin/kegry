@@ -691,7 +691,7 @@ export function VenueBottomSheet({
                                 size={14}
                                 className="text-accent shrink-0"
                               />
-                            ) : event.participationStatus === 'Pending' ? (
+                            ) : event.participationStatus === 'Pending' || event.participationStatus === 'Rejected' ? (
                               <Clock
                                 size={14}
                                 className="text-accent shrink-0"
@@ -875,7 +875,7 @@ export function VenueBottomSheet({
                                   size={14}
                                   className="text-accent shrink-0"
                                 />
-                              ) : event.participationStatus === 'Pending' ? (
+                              ) : event.participationStatus === 'Pending' || event.participationStatus === 'Rejected' ? (
                                 <Clock
                                   size={14}
                                   className="text-accent shrink-0"

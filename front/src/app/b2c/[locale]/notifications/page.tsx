@@ -151,7 +151,7 @@ export default function NotificationsScreen() {
   const handleApproveJoinRequest = async (notif: NotificationDto) => {
     if (!notif.linkedEntityId || !notif.fromUserId) return;
     try {
-      await apiClient.post(
+      await apiClient.patch(
         API_ENDPOINTS.EVENTS.APPROVE_PARTICIPANT(
           notif.linkedEntityId,
           notif.fromUserId,
@@ -207,7 +207,8 @@ export default function NotificationsScreen() {
     if (
       !isNotificationExpired(notif.expiresAt) &&
       notif.fromUserId &&
-      notif.type !== 'UserRequestedApprove'
+      notif.type !== 'UserRequestedApprove' &&
+      notif.type !== 'UserParticipationApproved'
     ) {
       options.push({
         icon: '/assets/notifications/accept-icon.webp',
@@ -300,7 +301,7 @@ export default function NotificationsScreen() {
                     <>
                       {!expired &&
                         notif.fromUserId &&
-                        notif.type !== 'UserRequestedApprove' && (
+                        notif.type !== 'UserParticipationApproved' && (
                           <Icon
                             src="/assets/notifications/accept-icon.webp"
                             alt="accept"
@@ -309,7 +310,11 @@ export default function NotificationsScreen() {
                             className="object-fill"
                             priority
                             stopPropagation
-                            onClick={() => handleAccept(notif)}
+                            onClick={() =>
+                              notif.type === 'UserRequestedApprove'
+                                ? handleApproveJoinRequest(notif)
+                                : handleAccept(notif)
+                            }
                           />
                         )}
                       <Icon

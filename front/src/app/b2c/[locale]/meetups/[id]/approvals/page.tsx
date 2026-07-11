@@ -159,12 +159,14 @@ export default function ApprovalsPage() {
                     }
                     rightEl={
                       <>
-                        <Button
-                          variant={ButtonVariant.Destructive}
-                          onClick={() => handleReject(p.id)}
-                        >
-                          <UserX size={16} />
-                        </Button>
+                        {p.id !== event.creatorId && (
+                          <Button
+                            variant={ButtonVariant.Destructive}
+                            onClick={() => handleReject(p.id)}
+                          >
+                            <UserX size={16} />
+                          </Button>
+                        )}
                         <Button
                           variant={ButtonVariant.Solid}
                           onClick={() => handleApprove(p.id)}

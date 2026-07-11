@@ -159,7 +159,7 @@ export function EventActionSheet({
         icon: <UserMinus size={24} />,
       },
     );
-  } else if (status === 'Pending') {
+  } else if (status === 'Pending' || status === 'Rejected') {
     menuOptions.push(
       {
         label: t('view'),

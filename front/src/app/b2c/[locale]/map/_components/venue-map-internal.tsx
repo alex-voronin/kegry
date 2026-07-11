@@ -275,7 +275,10 @@ const MemoizedMarker = memo(
         icon={createEventCountIcon(eventCount)}
       >
         <Popup>
-          <div className={styles.markerCard}>
+          <div
+            className={styles.markerCard}
+            onClick={() => onVenueDetails(venue.id)}
+          >
             <div className={styles.markerCardHeader}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -298,13 +301,19 @@ const MemoizedMarker = memo(
               <div className={styles.markerActions}>
                 <button
                   className={styles.markerDetailsBtn}
-                  onClick={() => onVenueDetails(venue.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onVenueDetails(venue.id);
+                  }}
                 >
                   {detailsLabel}
                 </button>
                 <button
                   className={styles.markerEventsBtn}
-                  onClick={() => onVenueEvents?.(venue.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onVenueEvents?.(venue.id);
+                  }}
                 >
                   {`${eventsLabel ?? 'Events'}: ${eventCount}`}
                 </button>
@@ -312,7 +321,10 @@ const MemoizedMarker = memo(
             ) : (
               <button
                 className={styles.markerDetailsBtnFull}
-                onClick={() => onVenueDetails(venue.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onVenueDetails(venue.id);
+                }}
               >
                 {detailsLabel}
               </button>

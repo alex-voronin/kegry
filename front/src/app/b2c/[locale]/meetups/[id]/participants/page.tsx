@@ -8,6 +8,7 @@ import { Icon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { Button, ButtonVariant } from '@/components/ui/button';
 import { UserX, CalendarClock } from 'lucide-react';
+import { useRouter } from '@/i18n/routing';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { toast } from 'react-toastify';
@@ -22,6 +23,7 @@ export default function ParticipantsPage() {
   const t = useTranslations('screens.participants');
   const tDetail = useTranslations('screens.meetupDetail');
   const tHobbies = useTranslations('components.profile-sections.hobbies');
+  const router = useRouter();
   const { safeBack } = useSafeBack();
   const eventId = params.id as string;
 
@@ -141,6 +143,7 @@ export default function ParticipantsPage() {
                   userId={p.id}
                   hobbies={p.hobbies}
                   translateHobby={(key) => tHobbies(key as 'gym')}
+                  onClick={() => router.push(PAGE_ROUTES.USER_PROFILE(p.id))}
                   subtitle={
                     p.birthday && (
                       <span className="text-secondary text-xs">
@@ -149,12 +152,14 @@ export default function ParticipantsPage() {
                     )
                   }
                   rightEl={
-                    <Button
-                      variant={ButtonVariant.Destructive}
-                      onClick={() => handleReject(p.id)}
-                    >
-                      <UserX size={16} />
-                    </Button>
+                    p.id !== event.creatorId ? (
+                      <Button
+                        variant={ButtonVariant.Destructive}
+                        onClick={() => handleReject(p.id)}
+                      >
+                        <UserX size={16} />
+                      </Button>
+                    ) : undefined
                   }
                 />
               </div>
