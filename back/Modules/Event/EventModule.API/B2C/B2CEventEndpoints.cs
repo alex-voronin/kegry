@@ -66,6 +66,8 @@ public class B2CEventEndpoints : IEndpoints
                 Type: ewps.Event.Type,
                 StartDateTime: ewps.Event.StartDateTime,
                 VenueId: ewps.Event.VenueId.ToString(),
+                ParticipantsCount: ewps.Event.EventParticipants.Count(p => p.Status == ParticipantStatus.Approved),
+                MaxParticipants: ewps.Event.MaxParticipants,
                 ParticipationStatus: ewps.Status?.ToString(),
                 CreatorId: ewps.Event.CreatorId.ToString(),
                 CreatorAvatarUrl: ewps.Event.CreatorAvatarS3Key != null
@@ -160,6 +162,7 @@ public class B2CEventEndpoints : IEndpoints
                 Type: e.Type,
                 StartDateTime: e.StartDateTime,
                 ParticipantsCount: e.EventParticipants.Count(p => p.Status == ParticipantStatus.Approved),
+                MaxParticipants: e.MaxParticipants,
                 ParticipationStatus: e.EventParticipants.Where(p => p.UserId == userId).Select(p => (ParticipantStatus?)p.Status).FirstOrDefault()?.ToString(),
                 CreatorId: e.CreatorId.ToString(),
                 CreatorAvatarUrl: e.CreatorAvatarS3Key != null
@@ -419,6 +422,7 @@ public class B2CEventEndpoints : IEndpoints
                 Type: e.Type,
                 StartDateTime: e.StartDateTime,
                 ParticipantsCount: e.EventParticipants.Count(p => p.Status == ParticipantStatus.Approved),
+                MaxParticipants: e.MaxParticipants,
                 ParticipationStatus: participationStatus?.ToString(),
                 CreatorId: e.CreatorId.ToString(),
                 CreatorAvatarUrl: e.CreatorAvatarS3Key != null

@@ -5,6 +5,8 @@ export interface EventMapItem {
   type: 'Event' | 'Meetup';
   startDateTime: string;
   venueId: string;
+  participantsCount: number;
+  maxParticipants: number | null;
   participationStatus?: string;
   creatorId: string;
   creatorAvatarUrl?: string | null;
@@ -26,6 +28,7 @@ export interface EventListItem {
   startDateTime: string;
   venueId: string;
   participantsCount: number;
+  maxParticipants: number | null;
   participationStatus?: string;
   creatorId: string;
   creatorAvatarUrl?: string | null;

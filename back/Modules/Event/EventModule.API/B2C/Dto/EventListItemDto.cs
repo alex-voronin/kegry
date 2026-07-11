@@ -10,6 +10,7 @@ public record EventListItemDto(
     EventType Type,
     DateTimeOffset StartDateTime,
     int ParticipantsCount,
+    int? MaxParticipants,
     string? ParticipationStatus,
     string CreatorId,
     string? CreatorAvatarUrl);

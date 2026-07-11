@@ -17,6 +17,8 @@ interface EventActionData {
   id: string;
   participationStatus?: string;
   creatorId: string;
+  participantsCount: number;
+  maxParticipants: number | null;
 }
 
 interface EventActionSheetProps {
@@ -54,6 +56,10 @@ export function EventActionSheet({
   const isOpen = !!event;
   const isCreator = event ? event.creatorId === currentUserId : false;
   const status = event?.participationStatus;
+  const isFull =
+    event !== null &&
+    event.maxParticipants !== null &&
+    event.participantsCount >= event.maxParticipants;
 
   const handleJoin = useCallback(async () => {
     if (!event) return;
@@ -164,6 +170,14 @@ export function EventActionSheet({
         label: t('cancelRequest'),
         onClick: handleLeave,
         icon: <UserMinus size={24} />,
+      },
+    );
+  } else if (isFull) {
+    menuOptions.push(
+      {
+        label: t('view'),
+        onClick: handleView,
+        icon: <Eye size={24} />,
       },
     );
   } else {

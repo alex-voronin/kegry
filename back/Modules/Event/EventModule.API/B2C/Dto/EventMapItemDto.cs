@@ -9,6 +9,8 @@ public record EventMapItemDto(
     EventType Type,
     DateTimeOffset StartDateTime,
     string VenueId,
+    int ParticipantsCount,
+    int? MaxParticipants,
     string? ParticipationStatus,
     string CreatorId,
     string? CreatorAvatarUrl);

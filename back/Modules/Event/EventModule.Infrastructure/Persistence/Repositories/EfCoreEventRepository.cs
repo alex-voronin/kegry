@@ -147,6 +147,7 @@ public class EfCoreEventRepository : RepositoryOutbox<EventContext, Event>, IEve
         var oneMonthFromNow = now.AddDays(30);
 
         var baseQuery = Context.Events
+            .Include(e => e.EventParticipants)
             .Join(Context.Venues,
                 e => e.VenueId,
                 v => v.Id,

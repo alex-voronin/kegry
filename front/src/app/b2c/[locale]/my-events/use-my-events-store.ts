@@ -14,6 +14,7 @@ export interface MyEventItem {
   startDateTime: string;
   venueId: string;
   participantsCount: number;
+  maxParticipants: number | null;
   participationStatus?: string;
   creatorId: string;
   creatorAvatarUrl?: string | null;
