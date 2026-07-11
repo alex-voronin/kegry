@@ -70,9 +70,12 @@ export default function VenueDetailPage() {
   const [activeTab, setActiveTab] = useState('venue');
   const [venueEvents, setVenueEvents] = useState<B2BEventListItemDto[]>([]);
   const [isEventsLoading, setIsEventsLoading] = useState(false);
-  const [selectedVenueEventId, setSelectedVenueEventId] = useState<string | null>(null);
+  const [selectedVenueEventId, setSelectedVenueEventId] = useState<
+    string | null
+  >(null);
   const [isVenueEventMenuOpen, setIsVenueEventMenuOpen] = useState(false);
-  const [isVenueEventDeleteModalOpen, setIsVenueEventDeleteModalOpen] = useState(false);
+  const [isVenueEventDeleteModalOpen, setIsVenueEventDeleteModalOpen] =
+    useState(false);
   const [isVenueEventDeleting, setIsVenueEventDeleting] = useState(false);
 
   const { safeBack } = useSafeBack();
@@ -281,7 +284,9 @@ export default function VenueDetailPage() {
     if (!selectedVenueEventId) return;
     setIsVenueEventDeleting(true);
     try {
-      await apiClient.delete(API_ENDPOINTS.B2B.EVENTS.DETAILS(selectedVenueEventId));
+      await apiClient.delete(
+        API_ENDPOINTS.B2B.EVENTS.DETAILS(selectedVenueEventId),
+      );
       toast.success(t('toast.deleteSuccess'));
       loadVenueEvents();
     } catch (error: any) {
@@ -443,7 +448,7 @@ export default function VenueDetailPage() {
         )}
       </div>
 
-      <div className="sm:px-4 pb-2 pt-2">
+      <div className="pt-2 pb-2 sm:px-4">
         <TabControl
           options={[
             { value: 'venue', label: t('venue') },
@@ -461,7 +466,10 @@ export default function VenueDetailPage() {
           <div className={styles.content}>
             {currentVenue.tags?.length > 0 && (
               <div className={styles.section}>
-                <VenueTagAccordion tagIds={currentVenue.tags.map(t => t.id)} tagsEndpoint={API_ENDPOINTS.B2B.TAGS.LIST} />
+                <VenueTagAccordion
+                  tagIds={currentVenue.tags.map((t) => t.id)}
+                  tagsEndpoint={API_ENDPOINTS.B2B.TAGS.LIST}
+                />
               </div>
             )}
 
@@ -568,8 +576,8 @@ export default function VenueDetailPage() {
               <div className={styles.section}>
                 <div className={styles.listHeader}>
                   <h2 className={styles.listTitle}>{t('promotions')}</h2>
-                  <div onClick={handleAddPromo} className="cursor-pointer">
-                    <Plus size={24} className="text-primary" />
+                  <div onClick={handleAddPromo} className={styles.addButton}>
+                    <Plus size={22} className="text-primary" />
                   </div>
                 </div>
                 <div className={styles.promoList}>
@@ -589,7 +597,10 @@ export default function VenueDetailPage() {
                           <div className={styles.promoBody}>{promo.body}</div>
                         </div>
                         <div className="shrink-0 p-1">
-                          <MoreHorizontal size={20} className="text-secondary" />
+                          <MoreHorizontal
+                            size={20}
+                            className="text-secondary"
+                          />
                         </div>
                       </div>
                     </div>
@@ -602,8 +613,8 @@ export default function VenueDetailPage() {
               <div className={styles.section}>
                 <div className={styles.listHeader}>
                   <h2 className={styles.listTitle}>{t('discounts')}</h2>
-                  <div onClick={handleAddDiscount} className="cursor-pointer">
-                    <Plus size={24} className="text-primary" />
+                  <div onClick={handleAddDiscount} className={styles.addButton}>
+                    <Plus size={22} className="text-primary" />
                   </div>
                 </div>
                 <div className={styles.discountList}>
@@ -629,7 +640,10 @@ export default function VenueDetailPage() {
                           )}
                         </div>
                         <div className="p-1">
-                          <MoreHorizontal size={20} className="text-secondary" />
+                          <MoreHorizontal
+                            size={20}
+                            className="text-secondary"
+                          />
                         </div>
                       </div>
                       {discount.days && discount.days.length > 0 && (
@@ -653,8 +667,8 @@ export default function VenueDetailPage() {
             <div className={styles.section}>
               <div className={styles.listHeader}>
                 <h2 className={styles.listTitle}>{t('events')}</h2>
-                <div onClick={handleAddEvent} className="cursor-pointer">
-                  <Plus size={24} className="text-primary" />
+                <div onClick={handleAddEvent} className={styles.addButton}>
+                  <Plus size={22} className="text-primary" />
                 </div>
               </div>
               {isEventsLoading ? (
@@ -662,7 +676,7 @@ export default function VenueDetailPage() {
                   <Spinner />
                 </div>
               ) : venueEvents.length === 0 ? (
-                <div className="py-8 text-center text-sm text-secondary">
+                <div className="text-secondary py-8 text-center text-sm">
                   {t('noVenueEvents')}
                 </div>
               ) : (
@@ -675,7 +689,7 @@ export default function VenueDetailPage() {
                         if (target.closest('button')) return;
                         handleVenueEventMenuOpen(ev.id, e);
                       }}
-                      className="relative flex min-h-[56px] w-full cursor-pointer items-end overflow-hidden sm:rounded-xl bg-[#1e1e1e]"
+                      className="relative flex min-h-[56px] w-full cursor-pointer items-end overflow-hidden bg-[#1e1e1e] sm:rounded-xl"
                     >
                       {ev.coverImageUrl ? (
                         <img
@@ -692,7 +706,13 @@ export default function VenueDetailPage() {
                             {ev.title}
                           </span>
                           <div className="mt-0.5 flex items-center gap-2 text-xs text-white/70 drop-shadow-md">
-                            <span>{new Date(ev.startDateTime).toLocaleDateString()} {new Date(ev.startDateTime).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}</span>
+                            <span>
+                              {new Date(ev.startDateTime).toLocaleDateString()}{' '}
+                              {new Date(ev.startDateTime).toLocaleTimeString(
+                                undefined,
+                                { hour: '2-digit', minute: '2-digit' },
+                              )}
+                            </span>
                             <span className="flex items-center gap-1">
                               <Users size={12} />
                               {ev.participantsCount}

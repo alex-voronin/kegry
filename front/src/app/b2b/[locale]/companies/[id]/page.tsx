@@ -213,8 +213,8 @@ export default function CompanyProfilePage() {
           <div className={styles.listSection}>
             <div className={styles.listHeader}>
               <h2 className={styles.listTitle}>{t('venuesTitle')}</h2>
-              <div onClick={handleAddVenue} className="cursor-pointer">
-                <Plus size={24} className="text-primary" />
+              <div onClick={handleAddVenue} className={styles.addButton}>
+                <Plus size={22} className="text-primary" />
               </div>
             </div>
 
