@@ -663,6 +663,7 @@
       "joined": "Joined!",
       "left": "Left!",
       "actionFailed": "Action failed",
+      "eventFull": "Event is full",
       "edit": "Edit",
       "awaitingApproval": "Awaiting approval",
       "cancelRequest": "Cancel request",
@@ -984,6 +985,7 @@
       },
       "toast": {
         "joinFailed": "Failed to join event",
+        "eventFull": "Event is full",
         "leaveFailed": "Failed to leave event",
         "deleteFailed": "Failed to delete event"
       }

@@ -662,6 +662,7 @@
       "joined": "Pridružen/a!",
       "left": "Napustio/la!",
       "actionFailed": "Akcija nije uspela",
+      "eventFull": "Događaj je pun",
       "edit": "Uredi",
       "awaitingApproval": "Čeka odobrenje",
       "cancelRequest": "Otkaži zahtev",
@@ -984,6 +985,7 @@
       },
       "toast": {
         "joinFailed": "Pridruživanje nije uspelo",
+        "eventFull": "Događaj je pun",
         "leaveFailed": "Napuštanje nije uspelo",
         "deleteFailed": "Brisanje nije uspelo"
       }

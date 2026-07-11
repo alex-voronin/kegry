@@ -11,6 +11,7 @@ import apiClient from '@/lib/api-client';
 import { toast } from 'react-toastify';
 import { useEventActions } from '@/hooks/use-event-actions';
 import { OnboardingGuardDialog } from '@/components/common/onboarding-guard-dialog';
+import { extractApiError } from '@/lib/api-error';
 
 interface EventActionData {
   id: string;
@@ -60,8 +61,13 @@ export function EventActionSheet({
       try {
         await apiClient.post(API_ENDPOINTS.EVENTS.JOIN(event.id));
         onJoined(event.id);
-      } catch {
-        toast.error(t('toast.joinFailed'));
+      } catch (error) {
+        const [, code] = extractApiError(error);
+        if (code === 'TooManyEntities') {
+          toast.error(t('toast.eventFull'));
+        } else {
+          toast.error(t('toast.joinFailed'));
+        }
       }
       onClose();
     });

@@ -108,9 +108,9 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
           API_ENDPOINTS.EVENTS.UPDATE(eventId),
         );
         set({ event: eventRes.data.result as EventDetail, isJoining: false });
-      } catch {
+      } catch (error) {
         set({ isJoining: false });
-        throw new Error('Failed to join');
+        rethrowApiError(error, 'Failed to join');
       }
     },
 

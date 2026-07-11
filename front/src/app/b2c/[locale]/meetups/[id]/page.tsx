@@ -29,6 +29,7 @@ import {
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { useEventActions } from '@/hooks/use-event-actions';
 import { OnboardingGuardDialog } from '@/components/common/onboarding-guard-dialog';
+import { ApiRequestError } from '@/lib/api-error';
 import { useMeetupDetailStore, PendingUser } from './use-meetup-detail-store';
 import { calculateAge } from '@/lib/date';
 import { messengerIcons } from '@/components/ui/messenger-icons';
@@ -113,8 +114,15 @@ export default function MeetupDetailPage() {
         } else {
           await joinEvent(event.id);
         }
-      } catch {
-        toast.error(t('actionFailed'));
+      } catch (error) {
+        if (
+          error instanceof ApiRequestError &&
+          error.code === 'TooManyEntities'
+        ) {
+          toast.error(t('eventFull'));
+        } else {
+          toast.error(t('actionFailed'));
+        }
       }
     });
   };
@@ -479,24 +487,37 @@ export default function MeetupDetailPage() {
                 </span>
               </>
             )}
-            {!event.isCreator && (
-              <Button
-                variant={ButtonVariant.Solid}
-                className="ml-auto shrink-0"
-                onClick={handleJoinLeave}
-                disabled={isJoining}
-              >
-                {isJoining ? (
-                  <Spinner />
-                ) : event.participationStatus === 'Approved' ? (
-                  t('leave')
-                ) : event.participationStatus ? (
-                  t('cancelRequest')
-                ) : (
-                  t('join')
-                )}
-              </Button>
-            )}
+            {!event.isCreator && (() => {
+              const isFull =
+                event.maxParticipants !== null &&
+                event.participantsCount >= event.maxParticipants;
+
+              const isDisabled = isJoining || (!event.participationStatus && isFull);
+
+              let label: string;
+              if (isJoining) {
+                label = '';
+              } else if (event.participationStatus === 'Approved') {
+                label = t('leave');
+              } else if (event.participationStatus) {
+                label = t('cancelRequest');
+              } else if (isFull) {
+                label = t('eventFull');
+              } else {
+                label = t('join');
+              }
+
+              return (
+                <Button
+                  variant={ButtonVariant.Solid}
+                  className="ml-auto shrink-0"
+                  onClick={handleJoinLeave}
+                  disabled={isDisabled}
+                >
+                  {isJoining ? <Spinner /> : label}
+                </Button>
+              );
+            })()}
           </div>
 
           {/* Pending Approvals — creator only */}
