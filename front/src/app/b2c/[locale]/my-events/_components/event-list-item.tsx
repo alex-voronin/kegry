@@ -37,11 +37,12 @@ export function EventListItem({
             {formatTime(event.startDateTime)}
           </div>
           <div className={styles.eventCardTitle}>
-            {(event.participationStatus === 'Approved' || (showOwnerIndicator && !event.participationStatus)) && (
+            {event.participationStatus === 'Approved' ? (
               <CalendarClock size={14} className="text-accent shrink-0" />
-            )}
-            {event.participationStatus === 'Pending' && (
+            ) : event.participationStatus === 'Pending' ? (
               <Clock size={14} className="text-accent shrink-0" />
+            ) : (
+              <CalendarClock size={14} className="text-secondary shrink-0" />
             )}
             <span className="min-w-0 truncate">{event.title}</span>
           </div>

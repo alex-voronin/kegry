@@ -265,7 +265,14 @@ export default function MeetupDetailPage() {
             <div className={styles.coverInfoRight}>
               {(event.participationStatus === 'Approved' ||
                 event.isCreator) && (
-                <CalendarClock size={14} className="text-accent" />
+                <CalendarClock
+                  size={14}
+                  className={
+                    event.participationStatus === 'Approved'
+                      ? 'text-accent'
+                      : 'text-secondary'
+                  }
+                />
               )}
               <Users size={14} />
               <span>

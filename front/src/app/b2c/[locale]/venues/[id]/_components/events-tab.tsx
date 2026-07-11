@@ -183,9 +183,14 @@ export function EventsTab({
                         </button>
                       )}
                       <span className="flex items-center gap-1">
-                        {ev.participationStatus === 'Approved' && (
-                          <CalendarClock size={12} className="text-accent" />
-                        )}
+                        <CalendarClock
+                          size={12}
+                          className={
+                            ev.participationStatus === 'Approved'
+                              ? 'text-accent'
+                              : 'text-secondary'
+                          }
+                        />
                         <Users size={12} />
                         {ev.participantsCount}
                       </span>
