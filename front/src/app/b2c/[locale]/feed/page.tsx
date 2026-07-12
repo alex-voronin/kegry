@@ -269,6 +269,8 @@ export default function FeedScreen() {
 
       if (await processStoredQrCode(handleQrCode)) return;
 
+      usePendingApprovalsStore.getState().fetch();
+
       if (requiredAction !== RequiredAction.None) {
         return;
       }
@@ -681,10 +683,7 @@ export default function FeedScreen() {
           <div className={styles.leftControls}>
             <BurgerButton
               onOpen={openSidebar}
-              hasRestrictedPermissions={
-                showPermissionsBadge &&
-                requiredAction !== RequiredAction.OnboardingCompletion
-              }
+              hasRestrictedPermissions={showPermissionsBadge}
               pendingApprovalsCount={pendingTotal}
             />
             <MapFeedToggle activeView="feed" />
@@ -754,10 +753,7 @@ export default function FeedScreen() {
             isOpen={isSidebarOpen}
             onClose={closeSidebar}
             onCheckIn={handleQrScanClick}
-            showPermissionsBadge={
-              showPermissionsBadge &&
-              requiredAction !== RequiredAction.OnboardingCompletion
-            }
+            showPermissionsBadge={showPermissionsBadge}
             isInMeeting={isInMeeting}
           />
         </div>
