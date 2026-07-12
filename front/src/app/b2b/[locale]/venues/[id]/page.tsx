@@ -15,6 +15,7 @@ import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { ButtonVariant } from '@/components/ui/button';
 import { useSafeBack } from '@/hooks/use-safe-back';
+import { useAuthStore } from '@/lib/auth/use-auth-store';
 import { useVenueStore } from './use-venue-store';
 import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
@@ -48,6 +49,8 @@ export default function VenueDetailPage() {
   const venueId = params.id as string;
   const t = useTranslations('screens.venueDetail');
   const tCommon = useTranslations('common');
+
+  const { hasHydrated } = useAuthStore();
 
   const { currentVenue, isLoading, fetchVenue, deleteVenue, reset } =
     useVenueStore();
@@ -92,10 +95,10 @@ export default function VenueDetailPage() {
       }
     };
 
-    if (venueId) {
+    if (venueId && hasHydrated) {
       loadVenue();
     }
-  }, [venueId, fetchVenue, t]);
+  }, [venueId, hasHydrated, fetchVenue, t]);
 
   const loadVenueEvents = useCallback(async () => {
     if (!venueId) return;
@@ -113,8 +116,10 @@ export default function VenueDetailPage() {
   }, [venueId]);
 
   useEffect(() => {
-    loadVenueEvents();
-  }, [loadVenueEvents]);
+    if (hasHydrated) {
+      loadVenueEvents();
+    }
+  }, [hasHydrated, loadVenueEvents]);
 
   useEffect(() => {
     const tabParam = searchParams.get('tab');
@@ -337,7 +342,7 @@ export default function VenueDetailPage() {
     },
   ];
 
-  if (isInitializing || isLoading) {
+  if (!hasHydrated || isInitializing || isLoading) {
     return (
       <div className={styles.loadingContainer}>
         <Spinner />

@@ -12,6 +12,7 @@ import { ModalMenu } from '@/components/ui/modal-menu';
 import { VenueListItem } from '@/components/b2b/venue-list-item';
 import { useSidebar, SidebarIcon, Sidebar } from '@/components/b2b/Sidebar';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { useAuthStore } from '@/lib/auth/use-auth-store';
 import { useVenuesStore } from './use-venues-store';
 import { useCompaniesStore } from '../companies/use-companies-store';
 import styles from '../companies/companies.module.css';
@@ -21,16 +22,20 @@ export default function VenuesPage() {
   const t = useTranslations('screens.b2bVenues');
   const { isOpen, open, close } = useSidebar();
 
+  const { hasHydrated } = useAuthStore();
+
   const { venues, isLoading, fetchVenues } = useVenuesStore();
   const { companies, fetchCompanies } = useCompaniesStore();
 
   const [isCompanyMenuOpen, setIsCompanyMenuOpen] = useState(false);
 
   useEffect(() => {
-    fetchVenues().catch(() => {
-      toast.error(t('toast.loadFailed'));
-    });
-  }, [fetchVenues, t]);
+    if (hasHydrated) {
+      fetchVenues().catch(() => {
+        toast.error(t('toast.loadFailed'));
+      });
+    }
+  }, [hasHydrated, fetchVenues, t]);
 
   const handleVenueClick = (id: string) => {
     router.push(PAGE_ROUTES.B2B.VENUES_DETAIL(id));
@@ -94,7 +99,7 @@ export default function VenuesPage() {
       />
 
       <div className={styles.content}>
-        {isLoading && venues.length === 0 ? (
+        {!hasHydrated || (isLoading && venues.length === 0) ? (
           <div className={styles.emptyState}>
             <Spinner />
           </div>

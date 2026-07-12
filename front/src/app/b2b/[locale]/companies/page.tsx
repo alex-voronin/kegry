@@ -10,6 +10,7 @@ import { ListItem } from '@/components/ui/list-item';
 import { useCompaniesStore } from './use-companies-store';
 import { toast } from 'react-toastify';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { useAuthStore } from '@/lib/auth/use-auth-store';
 import styles from './companies.module.css';
 import { useSidebar, SidebarIcon, Sidebar } from '@/components/b2b/Sidebar';
 import { cn } from '@/lib/utils';
@@ -20,13 +21,17 @@ export default function CompaniesPage() {
   const t = useTranslations('screens.companies');
   const { isOpen, open, close } = useSidebar();
 
+  const { hasHydrated } = useAuthStore();
+
   const { companies, isLoading, fetchCompanies } = useCompaniesStore();
 
   useEffect(() => {
-    fetchCompanies().catch(() => {
-      toast.error(t('toast.loadFailed'));
-    });
-  }, [fetchCompanies, t]);
+    if (hasHydrated) {
+      fetchCompanies().catch(() => {
+        toast.error(t('toast.loadFailed'));
+      });
+    }
+  }, [hasHydrated, fetchCompanies, t]);
 
   const handleCompanyClick = (id: string) => {
     router.push(PAGE_ROUTES.B2B.COMPANIES_DETAIL(id));
@@ -52,7 +57,7 @@ export default function CompaniesPage() {
       <Sidebar isOpen={isOpen} onClose={close} />
 
       <div className={styles.content}>
-        {isLoading && companies.length === 0 ? (
+        {!hasHydrated || (isLoading && companies.length === 0) ? (
           <div className={styles.emptyState}>
             <Spinner />
           </div>

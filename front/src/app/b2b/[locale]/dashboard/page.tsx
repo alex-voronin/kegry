@@ -17,6 +17,7 @@ import { Header } from '@/components/ui/header';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { Spinner } from '@/components/ui/spinner';
 import { SidebarIcon, Sidebar, useSidebar } from '@/components/b2b/Sidebar';
+import { useAuthStore } from '@/lib/auth/use-auth-store';
 import { useCompaniesStore } from '@/app/b2b/[locale]/companies/use-companies-store';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { cn } from '@/lib/utils';
@@ -35,6 +36,8 @@ export default function DashboardPage() {
   const router = useRouter();
   const { isOpen, open, close } = useSidebar();
 
+  const { hasHydrated } = useAuthStore();
+
   const {
     companies,
     isLoading: isLoadingCompanies,
@@ -50,8 +53,10 @@ export default function DashboardPage() {
   } = useDashboardStore();
 
   useEffect(() => {
-    fetchCompanies();
-  }, [fetchCompanies]);
+    if (hasHydrated) {
+      fetchCompanies();
+    }
+  }, [hasHydrated, fetchCompanies]);
 
   const companiesList = useMemo(() => companies ?? [], [companies]);
 
@@ -88,7 +93,7 @@ export default function DashboardPage() {
     }
   };
 
-  if (isLoadingCompanies) {
+  if (!hasHydrated || isLoadingCompanies) {
     return (
       <div className="relative flex flex-1 flex-col overflow-hidden">
         <Header
