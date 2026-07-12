@@ -135,6 +135,7 @@ export const API_ENDPOINTS = {
   },
   CHAT: {
     GET: '/api/v1/chat',
+    STATUS: '/api/v1/chat/status',
     SEND_MESSAGE: '/api/v1/chat/message',
     DELETE: '/api/v1/chat',
   },

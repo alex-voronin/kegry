@@ -90,7 +90,7 @@ function FeedHeader({
               onClick={() => router.push(PAGE_ROUTES.FEED_FILTERS)}
             />
           )}
-          {isInMeeting ? (
+          {isInMeeting && (
             <Icon
               src="/assets/feed/chat-icon.svg"
               alt="chat"
@@ -99,9 +99,8 @@ function FeedHeader({
               priority
               onClick={() => router.push(PAGE_ROUTES.CHAT)}
             />
-          ) : (
-            <NotificationsButton />
           )}
+          <NotificationsButton />
         </div>
       </div>
     </div>
@@ -263,7 +262,6 @@ export default function FeedScreen() {
     null,
   );
 
-  const autoChatRedirect = searchParams.get('auto-chat-redirect');
   useEffect(() => {
     let isMounted = true;
     const initializeFeed = async () => {
@@ -318,13 +316,9 @@ export default function FeedScreen() {
 
         if (!isMounted) return;
 
-        // 4. Handle redirects (Check-in/Meeting/Rating)
+        // 4. Handle redirects (Check-in/Rating)
         if (status.isInMeeting) {
           useFeedStore.setState({ isInMeeting: true });
-          if (autoChatRedirect !== 'false') {
-            router.push(PAGE_ROUTES.CHAT);
-            return;
-          }
         }
 
         if (status.userIdToRate) {
@@ -763,6 +757,7 @@ export default function FeedScreen() {
             showPermissionsBadge &&
             requiredAction !== RequiredAction.OnboardingCompletion
           }
+          isInMeeting={isInMeeting}
         />
       </div>
     </div>

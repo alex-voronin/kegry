@@ -14,6 +14,7 @@ public interface IChatService
     public Task<Chat> CreateChatAsync(Guid[] userIds, DateTimeOffset expiresAt, CancellationToken ct = default);
 
     public Task<Chat?> GetActiveChatAsync(Guid userId, CancellationToken ct = default);
+    public Task<bool> HasActiveChatAsync(Guid userId, CancellationToken ct = default);
     public Task AddNewMessageAsync(Guid userId, string messageText, CancellationToken ct = default);
     public Task DeleteChatAsync(Guid userId, CancellationToken ct = default);
 }
@@ -69,6 +70,12 @@ internal class ChatService : DomainService<IChatRepository>, IChatService, IScop
     public Task<Chat?> GetActiveChatAsync(Guid userId, CancellationToken ct = default)
     {
         return Repository.GetActiveChatByUserId(userId, loadMessages: true, ct: ct);
+    }
+
+    public async Task<bool> HasActiveChatAsync(Guid userId, CancellationToken ct = default)
+    {
+        var chat = await Repository.GetActiveChatByUserId(userId, loadMessages: false, ct: ct);
+        return chat != null;
     }
 
     public async Task AddNewMessageAsync(Guid userId, string messageText, CancellationToken ct = default)

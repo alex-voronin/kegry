@@ -611,7 +611,8 @@
       "feed": "Feed",
       "venues": "Lokali",
       "notifications": "Obaveštenja",
-      "checkIn": "Prijava"
+      "checkIn": "Prijava",
+      "chat": "Ćaskanje"
     },
     "venueDetail": {
       "contacts": "Kontakti",

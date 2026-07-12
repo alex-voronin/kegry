@@ -15,6 +15,7 @@ interface MapState {
   isLoading: boolean;
   flyToCoord: FlyToCoord | null;
   focusedVenue: VenueMapItem | null;
+  hasActiveChat: boolean;
 
   fetchMapData: (
     bounds: { minLat: number; maxLat: number; minLng: number; maxLng: number },
@@ -31,6 +32,7 @@ interface MapState {
     participationStatus: string | undefined,
   ) => void;
   deleteEvent: (eventId: string) => void;
+  fetchChatStatus: () => Promise<void>;
 }
 
 export const useMapStore = create<MapState>()(
@@ -40,6 +42,7 @@ export const useMapStore = create<MapState>()(
     isLoading: false,
     flyToCoord: null,
     focusedVenue: null,
+    hasActiveChat: false,
 
     fetchMapData: async (bounds, searchQuery, selectedTagIds, eventTypes) => {
       const filterKey = `${searchQuery}|${selectedTagIds.slice().sort().join(',')}`;
@@ -126,6 +129,17 @@ export const useMapStore = create<MapState>()(
           ),
         })),
       }));
+    },
+
+    fetchChatStatus: async () => {
+      try {
+        const res = await apiClient.get<{ result: { hasActiveChat: boolean } }>(
+          API_ENDPOINTS.CHAT.STATUS,
+        );
+        set({ hasActiveChat: res.data.result.hasActiveChat });
+      } catch {
+        set({ hasActiveChat: false });
+      }
     },
 
     deleteEvent: async (eventId: string) => {

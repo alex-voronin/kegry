@@ -24,6 +24,7 @@ public class ChatEndpoints : IEndpoints
             .RequireAuthorization();
 
         group.MapGet("/api/v1/chat", GetActiveChat);
+        group.MapGet("/api/v1/chat/status", GetChatStatus);
         group.MapPost("/api/v1/chat/message", SendMessage);
         group.MapDelete("/api/v1/chat", DeleteChat);
     }
@@ -65,6 +66,18 @@ public class ChatEndpoints : IEndpoints
                 Participant: participantDto,
                 Messages: messageDtos
             )
+        );
+    }
+
+    private static async Task<ApiResult<GetChatStatusResponse>> GetChatStatus(
+        ClaimsPrincipal user,
+        IChatService chatService,
+        CancellationToken ct)
+    {
+        var userId = user.GetId();
+        var hasActiveChat = await chatService.HasActiveChatAsync(userId, ct);
+        return ApiResult<GetChatStatusResponse>.Build(
+            new GetChatStatusResponse(HasActiveChat: hasActiveChat)
         );
     }
 

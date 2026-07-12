@@ -14,6 +14,7 @@ import {
   ScanQrCode,
   Menu,
   AlertCircle,
+  MessageCircle,
 } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { usePendingApprovalsStore } from './use-pending-approvals-store';
@@ -56,6 +57,7 @@ interface SidebarProps {
   onClose: () => void;
   onCheckIn: () => void;
   showPermissionsBadge?: boolean;
+  isInMeeting?: boolean;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -63,6 +65,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onClose,
   onCheckIn,
   showPermissionsBadge = false,
+  isInMeeting = false,
 }) => {
   const t = useTranslations('screens.sidebar');
   const router = useRouter();
@@ -119,6 +122,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
       href: PAGE_ROUTES.FEED,
       icon: <Sticker size={24} />,
     },
+    ...(isInMeeting
+      ? [
+          {
+            label: t('chat'),
+            href: PAGE_ROUTES.CHAT,
+            icon: <MessageCircle size={24} />,
+          },
+        ]
+      : []),
     {
       label: t('venues'),
       href: PAGE_ROUTES.VENUES,

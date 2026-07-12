@@ -611,7 +611,8 @@
       "feed": "Feed",
       "venues": "Venues",
       "notifications": "Notifications",
-      "checkIn": "Check-in"
+      "checkIn": "Check-in",
+      "chat": "Chat"
     },
     "venueDetail": {
       "contacts": "Contacts",

@@ -90,6 +90,7 @@ export default function MapScreen() {
   } = useSidebar();
   const [showPermissionsBadge, setShowPermissionsBadge] = useState(false);
   const pendingTotal = usePendingApprovalsStore((s) => s.total);
+  const hasActiveChat = useMapStore((s) => s.hasActiveChat);
 
   useEffect(() => {
     const check = async () => {
@@ -108,6 +109,7 @@ export default function MapScreen() {
     setFlyToCoord(null);
     clearFocus();
     usePendingApprovalsStore.getState().fetch();
+    useMapStore.getState().fetchChatStatus();
 
     const { registerForegroundHandler, unregisterForegroundHandler } =
       useFcmStore.getState();
@@ -485,6 +487,7 @@ export default function MapScreen() {
         onClose={closeSidebar}
         onCheckIn={handleQrScanClick}
         showPermissionsBadge={showPermissionsBadge}
+        isInMeeting={hasActiveChat}
       />
     </div>
   );
