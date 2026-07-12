@@ -99,13 +99,16 @@ export function VenueBottomSheet({
     if (typeof window === 'undefined') return 0;
     return Math.max(window.innerHeight - 60 - PEEK_HEIGHT, EXPANDED_TOP);
   });
+  const getSnapTranslate = useCallback(
+    (s: SheetState) => {
+      if (s === 'expanded') return EXPANDED_TOP;
+      return Math.max(viewportHeight - PEEK_HEIGHT, EXPANDED_TOP);
+    },
+    [viewportHeight],
+  );
+
   const [isDragging, setIsDragging] = useState(false);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
-
-  const sheetTop = useMemo(
-    () => (sheetState === 'expanded' ? `${EXPANDED_TOP}px` : '0px'),
-    [sheetState],
-  );
 
   const tVenues = useTranslations('screens.venues');
   const tTag = useTranslations('components.tagSections.tags');
@@ -183,14 +186,6 @@ export function VenueBottomSheet({
   const clampTranslateRef = useRef<(clientY: number) => void>(() => {});
   const recordVelocityRef = useRef<(clientY: number) => void>(() => {});
 
-  const getSnapTranslate = useCallback(
-    (s: SheetState) => {
-      if (s === 'expanded') return 0;
-      return Math.max(viewportHeight - PEEK_HEIGHT, EXPANDED_TOP);
-    },
-    [viewportHeight],
-  );
-
   useLayoutEffect(() => {
     const el = sheetRef.current;
     if (!el || isDragging) return;
@@ -245,7 +240,7 @@ export function VenueBottomSheet({
       const dy = clientY - startYRef.current;
       const raw = startTranslateRef.current + dy;
       const maxTranslate = getMaxTranslate();
-      const minTranslate = sheetState === 'expanded' ? 0 : EXPANDED_TOP;
+      const minTranslate = EXPANDED_TOP;
       const clamped = Math.max(minTranslate, Math.min(maxTranslate, raw));
 
       currentTranslateRef.current = clamped;
@@ -503,11 +498,10 @@ export function VenueBottomSheet({
         ref={sheetRef}
         className={`${styles.sheet} ${isDragging ? styles.sheetDragging : ''}`}
         style={{
-          top: sheetTop,
           transform: `translateY(${translateY}px)`,
-          transition: transitionEnabledRef.current
-            ? 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), top 0.35s cubic-bezier(0.32, 0.72, 0, 1)'
-            : 'none',
+          transition: isDragging || !transitionEnabledRef.current
+            ? 'none'
+            : 'transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
           height: '100%',
           overscrollBehavior: 'contain',
         }}
