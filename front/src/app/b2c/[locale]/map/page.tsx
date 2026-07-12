@@ -103,6 +103,39 @@ export default function MapScreen() {
   }, []);
 
   useEffect(() => {
+    const docEl = document.documentElement;
+    const body = document.body;
+    const prev: Record<string, string> = {
+      htmlPosition: docEl.style.position,
+      htmlOverflow: docEl.style.overflow,
+      htmlWidth: docEl.style.width,
+      htmlHeight: docEl.style.height,
+      bodyOverflow: body.style.overflow,
+      bodyHeight: body.style.height,
+    };
+
+    // Prevent iOS Safari from scrolling the document when the keyboard opens.
+    // Without this, the keyboard shifts the entire page and leaves it scrolled
+    // after dismissal, requiring manual scroll to reset.
+    docEl.style.position = 'fixed';
+    docEl.style.overflow = 'hidden';
+    docEl.style.width = '100%';
+    docEl.style.height = '100%';
+    body.style.overflow = 'hidden';
+    body.style.height = '100%';
+
+    return () => {
+      docEl.style.position = prev.htmlPosition;
+      docEl.style.overflow = prev.htmlOverflow;
+      docEl.style.width = prev.htmlWidth;
+      docEl.style.height = prev.htmlHeight;
+      body.style.overflow = prev.bodyOverflow;
+      body.style.height = prev.bodyHeight;
+      window.scrollTo(0, 0);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!authHydrated) return;
 
     processStoredQrCode(handleQrCode);

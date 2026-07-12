@@ -214,8 +214,11 @@ export function VenueBottomSheet({
       setViewportHeight(vv?.height ?? window.innerHeight);
       // Re-enable transitions after keyboard/address-bar resize settles,
       // otherwise a subsequent tap-to-toggle would snap without animation.
+      // Also reset any scroll that iOS may have introduced while the
+      // keyboard was open.
       setTimeout(() => {
         transitionEnabledRef.current = true;
+        window.scrollTo(0, 0);
       }, 350);
     };
     vv?.addEventListener('resize', handleResize);
