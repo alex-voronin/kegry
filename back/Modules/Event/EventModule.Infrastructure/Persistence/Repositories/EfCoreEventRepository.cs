@@ -1,5 +1,4 @@
 using EventModule.Domain.Aggregates;
-using EventModule.Domain.Aggregates.ReadOnly;
 using EventModule.Domain.Enums;
 using EventModule.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +11,7 @@ namespace EventModule.Infrastructure.Persistence.Repositories;
 public class EfCoreEventRepository : RepositoryOutbox<EventContext, Event>, IEventRepository
 {
     private const double SearchRadiusMeters = 25_000;
+    private const int DaysToHideEventFromParticipants = 7;
     private readonly GeometryFactory _geometryFactory = new(new PrecisionModel(), 4326);
     private readonly TimeProvider _timeProvider;
 
@@ -72,7 +72,7 @@ public class EfCoreEventRepository : RepositoryOutbox<EventContext, Event>, IEve
 
         var pagedIds = await venueJoinQuery
             .Select(x => new
-            { x.e.Id, Distance = EF.Functions.Distance(x.v.Coordinates, userPoint, useSpheroid: false) })
+                { x.e.Id, Distance = EF.Functions.Distance(x.v.Coordinates, userPoint, useSpheroid: false) })
             .OrderBy(x => x.Distance)
             .Skip(offset)
             .Take(limit)
@@ -232,7 +232,7 @@ public class EfCoreEventRepository : RepositoryOutbox<EventContext, Event>, IEve
         CancellationToken ct = default)
     {
         var now = _timeProvider.GetUtcNow();
-        var weekBefore = now - TimeSpan.FromDays(7);
+        var hideThresholdDate = now - TimeSpan.FromDays(DaysToHideEventFromParticipants);
 
         var query = Context.Events
             .Include(e => e.EventContacts)
@@ -253,7 +253,7 @@ public class EfCoreEventRepository : RepositoryOutbox<EventContext, Event>, IEve
         }
         else
         {
-            query = query.Where(e => e.StartDateTime >= weekBefore);
+            query = query.Where(e => e.StartDateTime >= hideThresholdDate);
         }
 
         if (dateTo.HasValue)
@@ -277,6 +277,7 @@ public class EfCoreEventRepository : RepositoryOutbox<EventContext, Event>, IEve
         CancellationToken ct = default)
     {
         var now = _timeProvider.GetUtcNow();
+        var hideThresholdDate = now - TimeSpan.FromDays(DaysToHideEventFromParticipants);
         var query = Context.Events
             .Include(e => e.EventContacts)
             .Include(e => e.EventHobbyLinks)
@@ -284,7 +285,7 @@ public class EfCoreEventRepository : RepositoryOutbox<EventContext, Event>, IEve
             .Where(e => e.EventParticipants.Any(p =>
                             p.UserId == userId &&
                             (p.Status == ParticipantStatus.Approved || p.Status == ParticipantStatus.Pending)) &&
-                        e.StartDateTime >= now &&
+                        e.StartDateTime >= hideThresholdDate &&
                         e.CreatorId != userId);
 
         var totalCount = await query.CountAsync(ct);
