@@ -82,7 +82,7 @@ export function VenueBottomSheet({
 
   const [viewportHeight, setViewportHeight] = useState(() =>
     typeof window !== 'undefined'
-      ? window.visualViewport?.height ?? window.innerHeight
+      ? (window.visualViewport?.height ?? window.innerHeight)
       : 0,
   );
 
@@ -501,15 +501,15 @@ export function VenueBottomSheet({
       <div
         ref={sheetRef}
         className={`${styles.sheet} ${isDragging ? styles.sheetDragging : ''}`}
-          style={{
-            top: sheetTop,
-            transform: `translateY(${translateY}px)`,
-            transition: transitionEnabledRef.current
-              ? 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), top 0.35s cubic-bezier(0.32, 0.72, 0, 1)'
-              : 'none',
-            height: '100%',
-            overscrollBehavior: 'contain',
-          }}
+        style={{
+          top: sheetTop,
+          transform: `translateY(${translateY}px)`,
+          transition: transitionEnabledRef.current
+            ? 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), top 0.35s cubic-bezier(0.32, 0.72, 0, 1)'
+            : 'none',
+          height: '100%',
+          overscrollBehavior: 'contain',
+        }}
       >
         <div className={styles.fab}>
           <button
@@ -660,7 +660,7 @@ export function VenueBottomSheet({
                 {hasActiveFilters && (
                   <div className="relative">
                     <ListFilter size={14} className="text-secondary" />
-                    <span className="bg-secondary absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full text-[8px] font-bold text-white">
+                    <span className="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-[var(--color-alert-vibrant)] text-[8px] font-bold text-white">
                       {filterCount}
                     </span>
                   </div>
@@ -730,7 +730,8 @@ export function VenueBottomSheet({
                                 size={14}
                                 className="text-accent shrink-0"
                               />
-                            ) : event.participationStatus === 'Pending' || event.participationStatus === 'Rejected' ? (
+                            ) : event.participationStatus === 'Pending' ||
+                              event.participationStatus === 'Rejected' ? (
                               <Clock
                                 size={14}
                                 className="text-accent shrink-0"
@@ -914,7 +915,8 @@ export function VenueBottomSheet({
                                   size={14}
                                   className="text-accent shrink-0"
                                 />
-                              ) : event.participationStatus === 'Pending' || event.participationStatus === 'Rejected' ? (
+                              ) : event.participationStatus === 'Pending' ||
+                                event.participationStatus === 'Rejected' ? (
                                 <Clock
                                   size={14}
                                   className="text-accent shrink-0"
