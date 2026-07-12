@@ -227,3 +227,7 @@
 .attribution {
   @apply pointer-events-none absolute right-0 bottom-0 z-[1000] bg-black/40 px-2 py-0.5 text-[10px] text-zinc-300 backdrop-blur-sm;
 }
+
+.mapFixedWrap {
+  height: 100lvh;
+}

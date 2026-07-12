@@ -132,6 +132,36 @@ function RestoreViewport({
     return () => clearTimeout(timer);
   }, [map]);
 
+  useEffect(() => {
+    const el = map.getContainer();
+    const wrapper = el.parentElement;
+    if (!wrapper) return;
+
+    const pinHeight = () => {
+      wrapper.style.height = `${wrapper.clientHeight}px`;
+    };
+    pinHeight();
+
+    const mq = window.matchMedia('(orientation: portrait)');
+    const onOrientationChange = () => setTimeout(pinHeight, 400);
+    mq.addEventListener('change', onOrientationChange);
+
+    let prevWidth = window.innerWidth;
+    const onWindowResize = () => {
+      const w = window.innerWidth;
+      if (Math.abs(w - prevWidth) > 20) {
+        prevWidth = w;
+        setTimeout(pinHeight, 300);
+      }
+    };
+    window.addEventListener('resize', onWindowResize);
+
+    return () => {
+      mq.removeEventListener('change', onOrientationChange);
+      window.removeEventListener('resize', onWindowResize);
+    };
+  }, [map]);
+
   return null;
 }
 
@@ -436,59 +466,61 @@ export default function VenueMapInternal({
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <MapContainer
-      center={[initialView.center.lat, initialView.center.lng]}
-      zoom={initialView.zoom}
-      style={{ height: '100%', width: '100%', zIndex: 0 }}
-      zoomControl={true}
-      attributionControl={false}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-
-      <MarkerClusterGroup
-        ref={mcgRef}
-        chunkedLoading
-        iconCreateFunction={createClusterIcon}
-        maxClusterRadius={50}
-        spiderfyOnMaxZoom
-        showCoverageOnHover={false}
+    <div className={styles.mapFixedWrap}>
+      <MapContainer
+        center={[initialView.center.lat, initialView.center.lng]}
+        zoom={initialView.zoom}
+        style={{ height: '100%', width: '100%', zIndex: 0 }}
+        zoomControl={true}
+        attributionControl={false}
       >
-        {venues.map((venue) => (
-          <MemoizedMarker
-            key={venue.id}
-            venue={venue}
-            eventCount={eventCountByVenueId?.[venue.id] ?? 0}
-            onVenueDetails={onVenueDetails}
-            onVenueEvents={onVenueEvents}
-            detailsLabel={detailsLabel}
-            eventsLabel={eventsLabel}
-            onMarkerReady={handleMarkerReady}
-          />
-        ))}
-      </MarkerClusterGroup>
-
-      <FlyToCenter center={center} />
-      {flyToCoord && <FlyToTarget coord={flyToCoord} mcgRef={mcgRef} />}
-      {focusedVenue && (
-        <FocusedVenuePopup
-          key={focusCountRef.current}
-          venue={focusedVenue}
-          hasFlyTo={!!flyToCoord}
-          markerRefs={markerRefs}
-          mcgRef={mcgRef}
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-      )}
-      <BoundsWatcher
-        onBoundsChange={onBoundsChange}
-        onMapDragStart={onMapDragStart}
-      />
-      <RestoreViewport onBoundsChange={onBoundsChange} />
-      <LocateMe />
 
-      <div className={styles.attribution}>© OpenStreetMap contributors</div>
-    </MapContainer>
+        <MarkerClusterGroup
+          ref={mcgRef}
+          chunkedLoading
+          iconCreateFunction={createClusterIcon}
+          maxClusterRadius={50}
+          spiderfyOnMaxZoom
+          showCoverageOnHover={false}
+        >
+          {venues.map((venue) => (
+            <MemoizedMarker
+              key={venue.id}
+              venue={venue}
+              eventCount={eventCountByVenueId?.[venue.id] ?? 0}
+              onVenueDetails={onVenueDetails}
+              onVenueEvents={onVenueEvents}
+              detailsLabel={detailsLabel}
+              eventsLabel={eventsLabel}
+              onMarkerReady={handleMarkerReady}
+            />
+          ))}
+        </MarkerClusterGroup>
+
+        <FlyToCenter center={center} />
+        {flyToCoord && <FlyToTarget coord={flyToCoord} mcgRef={mcgRef} />}
+        {focusedVenue && (
+          <FocusedVenuePopup
+            key={focusCountRef.current}
+            venue={focusedVenue}
+            hasFlyTo={!!flyToCoord}
+            markerRefs={markerRefs}
+            mcgRef={mcgRef}
+          />
+        )}
+        <BoundsWatcher
+          onBoundsChange={onBoundsChange}
+          onMapDragStart={onMapDragStart}
+        />
+        <RestoreViewport onBoundsChange={onBoundsChange} />
+        <LocateMe />
+
+        <div className={styles.attribution}>© OpenStreetMap contributors</div>
+      </MapContainer>
+    </div>
   );
 }

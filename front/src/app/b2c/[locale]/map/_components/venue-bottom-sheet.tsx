@@ -101,9 +101,8 @@ export function VenueBottomSheet({
   const [isDragging, setIsDragging] = useState(false);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
 
-  const sheetHeight = useMemo(
-    () =>
-      sheetState === 'expanded' ? `calc(100dvh - ${EXPANDED_TOP}px)` : '100%',
+  const sheetTop = useMemo(
+    () => (sheetState === 'expanded' ? `${EXPANDED_TOP}px` : '0px'),
     [sheetState],
   );
 
@@ -192,7 +191,6 @@ export function VenueBottomSheet({
     const el = sheetRef.current;
     if (!el || isDragging) return;
     setTranslateY(getSnapTranslate(sheetState));
-    transitionEnabledRef.current = true;
   }, [sheetState, getSnapTranslate, isDragging]);
 
   useEffect(() => {
@@ -212,7 +210,13 @@ export function VenueBottomSheet({
   useEffect(() => {
     const vv = window.visualViewport;
     const handleResize = () => {
+      transitionEnabledRef.current = false;
       setViewportHeight(vv?.height ?? window.innerHeight);
+      // Re-enable transitions after keyboard/address-bar resize settles,
+      // otherwise a subsequent tap-to-toggle would snap without animation.
+      setTimeout(() => {
+        transitionEnabledRef.current = true;
+      }, 350);
     };
     vv?.addEventListener('resize', handleResize);
     window.addEventListener('resize', handleResize);
@@ -274,11 +278,6 @@ export function VenueBottomSheet({
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
 
     const totalDrag = totalDragRef.current;
-
-    console.log('[sheet] endDrag', {
-      hasMoved: hasMovedRef.current,
-      totalDrag,
-    });
 
     if (hasMovedRef.current || totalDrag === 0) {
       toggle();
@@ -486,14 +485,15 @@ export function VenueBottomSheet({
       <div
         ref={sheetRef}
         className={`${styles.sheet} ${isDragging ? styles.sheetDragging : ''}`}
-        style={{
-          transform: `translateY(${translateY}px)`,
-          transition: transitionEnabledRef.current
-            ? 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), height 0.35s cubic-bezier(0.32, 0.72, 0, 1)'
-            : 'none',
-          height: sheetHeight,
-          overscrollBehavior: 'contain',
-        }}
+          style={{
+            top: sheetTop,
+            transform: `translateY(${translateY}px)`,
+            transition: transitionEnabledRef.current
+              ? 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), top 0.35s cubic-bezier(0.32, 0.72, 0, 1)'
+              : 'none',
+            height: '100%',
+            overscrollBehavior: 'contain',
+          }}
       >
         <div className={styles.fab}>
           <button
