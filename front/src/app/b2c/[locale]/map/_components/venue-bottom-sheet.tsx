@@ -80,6 +80,12 @@ export function VenueBottomSheet({
   const currentUserId = useAuthStore((s) => s.userId);
   const t = useTranslations('screens.map');
 
+  const [viewportHeight, setViewportHeight] = useState(() =>
+    typeof window !== 'undefined'
+      ? window.visualViewport?.height ?? window.innerHeight
+      : 0,
+  );
+
   const [menuTarget, setMenuTarget] = useState<{
     lat: number;
     lng: number;
@@ -174,10 +180,13 @@ export function VenueBottomSheet({
   const clampTranslateRef = useRef<(clientY: number) => void>(() => {});
   const recordVelocityRef = useRef<(clientY: number) => void>(() => {});
 
-  const getSnapTranslate = useCallback((s: SheetState) => {
-    if (s === 'expanded') return 0;
-    return Math.max(window.innerHeight - PEEK_HEIGHT, EXPANDED_TOP);
-  }, []);
+  const getSnapTranslate = useCallback(
+    (s: SheetState) => {
+      if (s === 'expanded') return 0;
+      return Math.max(viewportHeight - PEEK_HEIGHT, EXPANDED_TOP);
+    },
+    [viewportHeight],
+  );
 
   useLayoutEffect(() => {
     const el = sheetRef.current;
@@ -199,6 +208,20 @@ export function VenueBottomSheet({
       document.body.style.webkitUserSelect = '';
     };
   }, [isDragging]);
+
+  useEffect(() => {
+    const vv = window.visualViewport;
+    const handleResize = () => {
+      setViewportHeight(vv?.height ?? window.innerHeight);
+    };
+    vv?.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => {
+      vv?.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const getMaxTranslate = useCallback(() => {
     const el = sheetRef.current;
@@ -264,11 +287,6 @@ export function VenueBottomSheet({
 
   const startDrag = useCallback(
     (clientY: number) => {
-      console.log('[sheet] startDrag', {
-        clientY,
-        translateY,
-        startTranslateRef: translateY,
-      });
       setIsDragging(true);
       hasMovedRef.current = false;
       totalDragRef.current = 0;
@@ -423,6 +441,10 @@ export function VenueBottomSheet({
     if (!el) return;
 
     const onTouchStart = (e: TouchEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('button, input, textarea, select, a, [role="button"]')) {
+        return;
+      }
       e.preventDefault();
       touchInProgressRef.current = true;
       handlePointerDownRef.current(e.touches[0].clientY);
@@ -440,6 +462,7 @@ export function VenueBottomSheet({
     };
 
     const onTouchMove = (e: TouchEvent) => {
+      if (!touchInProgressRef.current) return;
       e.preventDefault();
       const dy = Math.abs(e.touches[0].clientY - startYRef.current);
       totalDragRef.current = Math.max(totalDragRef.current, dy);

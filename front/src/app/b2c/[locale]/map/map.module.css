@@ -28,7 +28,7 @@
 }
 
 .dragArea {
-  @apply flex shrink-0 cursor-grab touch-none flex-col active:cursor-grabbing;
+  @apply flex shrink-0 cursor-grab flex-col active:cursor-grabbing;
 }
 
 .sheetHeaderCompact {
