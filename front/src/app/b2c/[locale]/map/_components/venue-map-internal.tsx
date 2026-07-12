@@ -270,7 +270,8 @@ const createEventCountIcon = (count: number) => {
   if (count <= 0) return venueMarkerIcon;
   const badge = count > 99 ? '99+' : count;
   return L.divIcon({
-    html: `<div style="position:relative;display:inline-block"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="30" height="30"><path d="M4 1l5.6 45.18c.175 1.409 1.399 2.82 2.801 2.82h25.198c1.401 0 2.627-1.411 2.799-2.82l5.602-45.18h-42zm6.3 5.646h29.399l-1.312 11.295h-26.774l-1.313-11.295z" fill="#333333" stroke="rgba(255,255,255,0.3)" stroke-width="1"/></svg><div style="position:absolute;top:-6px;right:-6px;background:var(--color-accent);color:#000;border:1.5px solid #000;border-radius:999px;min-width:18px;height:18px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px;box-shadow:0 1px 3px rgba(0,0,0,0.5)">${badge}</div></div>`,
+    /* font-family:var(--font-geist-sans) — identical glyph metrics across platforms for consistent centering */
+html: `<div style="position:relative;display:inline-block"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="30" height="30"><path d="M4 1l5.6 45.18c.175 1.409 1.399 2.82 2.801 2.82h25.198c1.401 0 2.627-1.411 2.799-2.82l5.602-45.18h-42zm6.3 5.646h29.399l-1.312 11.295h-26.774l-1.313-11.295z" fill="#333333" stroke="rgba(255,255,255,0.3)" stroke-width="1"/></svg><div style="position:absolute;top:-6px;right:-6px;background:var(--color-accent);color:#000;border:1.5px solid #000;border-radius:999px;min-width:18px;height:18px;font-family:var(--font-geist-sans);font-size:11px;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center;padding:0 4px;box-shadow:0 1px 3px rgba(0,0,0,0.5)">${badge}</div></div>`,
     className: '',
     iconSize: [30, 30],
     iconAnchor: [15, 30],

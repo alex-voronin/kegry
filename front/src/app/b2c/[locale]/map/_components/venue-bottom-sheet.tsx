@@ -28,6 +28,7 @@ import {
   LocateFixed,
   Eye,
 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { ListItem } from '@/components/ui/list-item';
 import { ModalMenu } from '@/components/ui/modal-menu';
 import { VenueDisplayTags } from '@/components/b2c/venue-display-tags';
@@ -566,9 +567,10 @@ export function VenueBottomSheet({
                 >
                   <ListFilter size={18} className="text-foreground" />
                   {selectedTagIds.length > 0 && (
-                    <span className={filtersStyles.tagBtnBadge}>
-                      {selectedTagIds.length}
-                    </span>
+                    <Badge
+                      count={selectedTagIds.length}
+                      className="absolute -top-1 -right-1 h-3 min-w-3 text-[10px]"
+                    />
                   )}
                 </button>
               </div>
@@ -660,9 +662,10 @@ export function VenueBottomSheet({
                 {hasActiveFilters && (
                   <div className="relative">
                     <ListFilter size={14} className="text-secondary" />
-                    <span className="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-[var(--color-alert-vibrant)] text-[8px] font-bold text-white">
-                      {filterCount}
-                    </span>
+                    <Badge
+                      count={filterCount}
+                      className="absolute -top-1 -right-1 h-3 min-w-3 text-[10px]"
+                    />
                   </div>
                 )}
                 <ChevronDown size={18} className={styles.chevron} />

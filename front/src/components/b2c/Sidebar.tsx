@@ -17,6 +17,7 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { Badge } from '@/components/ui/badge';
 import { usePendingApprovalsStore } from './use-pending-approvals-store';
 import { useNotificationCountStore } from '@/store/use-notification-count-store';
 import styles from './Sidebar.module.css';
@@ -71,7 +72,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const router = useRouter();
   const pathname = usePathname();
   const pendingTotal = usePendingApprovalsStore((s) => s.total);
-  const unseenNotificationCount = useNotificationCountStore((s) => s.unseenCount);
+  const unseenNotificationCount = useNotificationCountStore(
+    (s) => s.unseenCount,
+  );
 
   const navItems = [
     {
@@ -105,9 +108,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <span className="relative">
           <CalendarClock size={24} />
           {pendingTotal > 0 && (
-            <span className="absolute -top-1 -right-1 rounded-full bg-[var(--color-alert-vibrant)] px-1 text-xs leading-tight text-white">
-              {pendingTotal > 99 ? '99+' : pendingTotal}
-            </span>
+            <Badge
+              count={pendingTotal}
+              className="absolute -top-1 -right-1"
+            />
           )}
         </span>
       ),
@@ -143,9 +147,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <span className="relative">
           <Bell size={24} />
           {unseenNotificationCount > 0 && (
-            <span className="absolute -top-1 -right-1 rounded-full bg-[var(--color-alert-vibrant)] px-1 text-xs leading-tight text-white">
-              {unseenNotificationCount > 99 ? '99+' : unseenNotificationCount}
-            </span>
+            <Badge
+              count={unseenNotificationCount}
+              className="absolute -top-1 -right-1"
+            />
           )}
         </span>
       ),

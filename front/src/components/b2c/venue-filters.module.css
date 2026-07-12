@@ -28,8 +28,10 @@
 }
 
 .tagBtnBadge {
-  @apply absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-semibold text-white shadow-sm;
+  @apply absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-semibold leading-none text-white shadow-sm;
   background-color: var(--color-alert-vibrant);
+  /* Geist ensures identical glyph metrics across all platforms for consistent centering */
+  font-family: var(--font-geist-sans);
 }
 
 .chipsRow {

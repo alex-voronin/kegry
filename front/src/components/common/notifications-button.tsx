@@ -2,8 +2,12 @@
 
 import { useRouter } from '@/i18n/routing';
 import { Icon } from '@/components/ui/icon';
+import { Badge } from '@/components/ui/badge';
 import { PAGE_ROUTES } from '@/lib/routes';
-import { useNotificationCountStore, useNotificationCountInit } from '@/store/use-notification-count-store';
+import {
+  useNotificationCountStore,
+  useNotificationCountInit,
+} from '@/store/use-notification-count-store';
 
 interface NotificationsButtonProps {
   onClick?: () => void;
@@ -26,11 +30,7 @@ export function NotificationsButton({ onClick }: NotificationsButtonProps) {
       priority
       onClick={handleClick}
     >
-      {unseenCount > 0 && (
-        <span className="absolute -top-1 -right-1 rounded-full bg-[var(--color-alert-vibrant)] px-1 text-xs text-white">
-          {unseenCount > 99 ? '99+' : unseenCount}
-        </span>
-      )}
+      {unseenCount > 0 && <Badge count={unseenCount} className="absolute -top-1 -right-1" />}
     </Icon>
   );
 }
