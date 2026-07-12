@@ -371,7 +371,7 @@ export function VenueBottomSheet({
   }, [filteredEvents]);
 
   const collapsedItems = useMemo(() => {
-    const eventSlots = filteredEvents.slice(0, 2);
+    const eventSlots = venues.length > 0 ? filteredEvents.slice(0, 2) : [];
     const venueSlots =
       eventSlots.length < 2 ? venues.slice(0, 2 - eventSlots.length) : [];
     return { events: eventSlots, venues: venueSlots };
