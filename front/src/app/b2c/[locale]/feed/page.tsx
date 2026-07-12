@@ -749,16 +749,18 @@ export default function FeedScreen() {
           onDismissLocationRequiredDialog={dismissLocationRequiredDialog}
         />
 
-        <Sidebar
-          isOpen={isSidebarOpen}
-          onClose={closeSidebar}
-          onCheckIn={handleQrScanClick}
-          showPermissionsBadge={
-            showPermissionsBadge &&
-            requiredAction !== RequiredAction.OnboardingCompletion
-          }
-          isInMeeting={isInMeeting}
-        />
+        <div onClick={(e) => e.stopPropagation()}>
+          <Sidebar
+            isOpen={isSidebarOpen}
+            onClose={closeSidebar}
+            onCheckIn={handleQrScanClick}
+            showPermissionsBadge={
+              showPermissionsBadge &&
+              requiredAction !== RequiredAction.OnboardingCompletion
+            }
+            isInMeeting={isInMeeting}
+          />
+        </div>
       </div>
     </div>
   );
