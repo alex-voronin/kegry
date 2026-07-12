@@ -174,6 +174,9 @@ export function VenueBottomSheet({
   const currentTranslateRef = useRef(0);
   const transitionEnabledRef = useRef(false);
   const touchInProgressRef = useRef(false);
+  // True when the current touch sequence started on an input/textarea.
+  // Used to skip toggle() on a plain tap so the input receives focus instead.
+  const wasFormElementRef = useRef(false);
   const endDragRef = useRef<() => void>(() => {});
   const handlePointerDownRef = useRef<(clientY: number) => void>(() => {});
   const clampTranslateRef = useRef<(clientY: number) => void>(() => {});
@@ -281,8 +284,12 @@ export function VenueBottomSheet({
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
 
     const totalDrag = totalDragRef.current;
+    // If the touch started on a form element and the user didn't move,
+    // skip the toggle so the input/textarea receives focus instead.
+    const wasForm = wasFormElementRef.current;
+    wasFormElementRef.current = false;
 
-    if (hasMovedRef.current || totalDrag === 0) {
+    if (hasMovedRef.current || (totalDrag === 0 && !wasForm)) {
       toggle();
     }
   }, [toggle]);
@@ -444,10 +451,16 @@ export function VenueBottomSheet({
 
     const onTouchStart = (e: TouchEvent) => {
       const target = e.target as HTMLElement;
-      if (target.closest('button, input, textarea, select, a, [role="button"]')) {
+      if (target.closest('button, select, a, [role="button"]')) {
         return;
       }
-      e.preventDefault();
+      // Allow drag to start from form elements (input/textarea),
+      // but skip preventDefault so the browser can still focus the element.
+      const isFormElement = target.closest('input, textarea');
+      wasFormElementRef.current = !!isFormElement;
+      if (!isFormElement) {
+        e.preventDefault();
+      }
       touchInProgressRef.current = true;
       handlePointerDownRef.current(e.touches[0].clientY);
 
