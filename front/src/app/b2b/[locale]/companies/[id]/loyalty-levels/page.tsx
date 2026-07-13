@@ -84,13 +84,13 @@ export default function LoyaltyLevelsManagePage() {
     }
   };
 
-  const getLevelBound = (levelId: number) => {
+  const getLevelBound = (levelId: number): number => {
     if (activeCount === 0) return 0;
-    if (levelId === activeCount - 1) {
-      const prev = levelId > 0 ? Number(bounds[levelId - 1]) || 0 : 0;
-      return prev + 5;
+    if (levelId < activeCount - 1) {
+      return Number(bounds[levelId]) || 0;
     }
-    return Number(bounds[levelId]) || 0;
+    const prev = levelId > 0 ? getLevelBound(levelId - 1) : 0;
+    return prev + 5;
   };
 
   const previewLevels = useMemo(

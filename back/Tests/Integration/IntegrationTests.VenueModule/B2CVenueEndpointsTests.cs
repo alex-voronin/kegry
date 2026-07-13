@@ -780,6 +780,40 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
     }
 
     [Fact]
+    public async Task GivenCompanyWithSingleLoyaltyLevel_WhenUserExceedsVisitsUpperBound_ThenCantReachNextLevel()
+    {
+        // 1. Create B2B user
+        var b2BAuth = await Factory.AuthManager
+            .CreateAndLoginUserAsync("b2b_discounts@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        // 2. Create all required entities with only level 0
+        var levels = new[]
+        {
+            new LoyaltyLevelDto(0, 1, true),
+            new LoyaltyLevelDto(1, 5, false),
+            new LoyaltyLevelDto(2, 10, false),
+            new LoyaltyLevelDto(3, 15, false),
+        };
+
+        var (_, venueId) = await _testUtils.SetupLoyaltyLevelsAndCreateDiscounts(levels, []);
+
+        // 3. Create B2C user and perform check-ins to exceed level 0 upper bound
+        var b2CAuth = await _testUtils.CreateB2CUserAndReachLoyaltyLevel(
+            "b2c@example.com", "Password123!",
+            levels, 1, venueId);
+
+        // 4. Verify user stays at level 0 with no next level to reach
+        Factory.ApiClient.SetAuth(b2CAuth);
+        var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
+            ApiRoutes.Venue.Single(venueId));
+        response.Success.ShouldBeTrue();
+        response.Result.LoyaltyLevel.VisitsUpperBound.ShouldBeNull();
+        response.Result.LoyaltyLevel.UserLoyaltyLevel.ShouldBe(0);
+        response.Result.LoyaltyLevel.Discount.ShouldBe(0);
+    }
+
+    [Fact]
     public async Task GivenVenue_WhenB2CUserGetsCheckInSettings_ThenReturnsValidData()
     {
         // 1. Create B2B user

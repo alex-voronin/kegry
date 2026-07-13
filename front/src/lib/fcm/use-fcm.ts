@@ -183,13 +183,25 @@ export function useFcm(hasOnboardingCompleted: boolean = false) {
 
           case FcmState.SW: {
             await navigator.serviceWorker.ready;
-            const reg = await navigator.serviceWorker.getRegistration();
+            let reg = await navigator.serviceWorker.getRegistration();
+
+            if (!reg) {
+              // Fallback: no SW found — register one.
+              // This covers the case where login's reRegisterServiceWorker failed
+              // or the page loaded without a prior SW registration.
+              await navigator.serviceWorker.register('/sw.js');
+              await navigator.serviceWorker.ready;
+              reg = await navigator.serviceWorker.getRegistration();
+              if (reg) {
+                console.log('[FCM] Registered missing SW');
+              }
+            }
+
             if (reg) {
               setSwRegistration(reg);
               transition(FcmState.TOKEN);
             } else {
-              console.warn('[FCM] SW not ready yet');
-              // Retrying via visibility change or next render
+              console.warn('[FCM] SW registration missing');
             }
             break;
           }
