@@ -285,7 +285,7 @@ export default function FriendsAndFoesPage() {
         right={
           activeTab === 'friends' && (
             <Icon
-              src="/assets/friends-and-foes/plus-icon.svg"
+              src="/assets/common/plus-icon.svg"
               alt="add friend"
               width={24}
               height={24}

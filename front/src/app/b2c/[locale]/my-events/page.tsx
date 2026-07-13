@@ -226,7 +226,7 @@ export default function MyEventsScreen() {
         right={
           isOwnerTab ? (
             <Icon
-              src="/assets/b2b/plus-icon.svg"
+              src="/assets/common/plus-icon.svg"
               alt="add meetup"
               width={22}
               height={22}

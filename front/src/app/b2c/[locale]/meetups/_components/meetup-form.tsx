@@ -239,7 +239,7 @@ export function MeetupForm({
                 title={pageTitle}
                 left={
                   <Icon
-                    src="/assets/b2b/disclosure-left-icon.svg"
+                    src="/assets/common/disclosure-left-icon.svg"
                     alt="back"
                     width={14}
                     height={27}
@@ -287,7 +287,7 @@ export function MeetupForm({
             title={pageTitle}
             left={
               <Icon
-                src="/assets/b2b/disclosure-left-icon.svg"
+                src="/assets/common/disclosure-left-icon.svg"
                 alt="back"
                 width={14}
                 height={27}
