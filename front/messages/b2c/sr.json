@@ -52,7 +52,7 @@
       },
       "cheers": {
         "title": "Pronađi društvo za bar odmah!",
-        "description": "Spreman za piće i dobro društvo? Bez dejtinga. Bez beskonačnog dopisivanja. Pogledaj profil, pošalji poziv, dogovori se i već si u baru! Pričaj o životu, smej se, izbaci stres i drži glavu gore. Ako ti se priviđaju goblini, možda je vreme da malo usporiš 🥴",
+        "description": "Spreman za piće i dobro društvo? Bez dejtinga. Bez beskonačnog dopisivanja. Pridruži se nečijem druženju ili organizuj svoje, pa pravo u bar. Pričaj o životu, smej se, izbaci stres i drži glavu gore. Ako se pojave goblini, možda je vreme da malo usporiš 🥴",
         "loyaltyPrograms": "I još nešto: ne zaboravi na naše <link>programe lojalnosti</link>.",
         "cta": "Spreman?"
       },
@@ -64,11 +64,11 @@
       },
       "howItWorks": {
         "title": "Kako radi",
-        "step1": "1. Pretraži i pozovi",
-        "step2": "2. Ćaskaj i planiraj",
-        "step3": "3. Sretni se i uživaj",
-        "step4": "4. Štedi uz lojalnost",
-        "note": "Hej avanturisto! Samo da napomenem: pozivi ističu, možeš imati samo jedan čet odjednom i postoji ograničen broj poruka po četu, pa biraj mudro. Pozivaj prijatelje samo ako si zaista spreman za barsku avanturu — i požuri pre nego što goblini popiju svo pivo!"
+        "step1": "Budi spontan",
+        "step2": "Ili isplaniraj sve",
+        "step3": "Nađite se u baru",
+        "step4": "Štedi uz program lojalnosti",
+        "note": "Želiš da isplaniraš svaki detalj ili da budeš spontan? Kako god da više voliš, prilagođavamo se tvom stilu. Zakaži okupljanje u određenom lokalu kako bi ga svi lako pronašli na mapi. Ili pronađi društvo za piće u blizini i uskoči u brz čet da se dogovorite za susret. (Ti prokleti goblini ograničili su broj poruka kako bi vas podstakli da se upoznate uživo!)"
       },
       "loyalty": {
         "title": "Programi lojalnosti",

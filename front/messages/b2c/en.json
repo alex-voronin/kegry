@@ -52,7 +52,7 @@
       },
       "cheers": {
         "title": "Find Your Bar Buddy Right Now!",
-        "description": "Up for a drink and good company? No dating. No endless chats. Check a profile, send an invite, arrange a meetup, and there you go, you're at the bar! Talk about life, laugh, vent and keep your head up. If any goblins appear, maybe it's time to slow down a bit 🥴",
+        "description": "Up for a drink and good company? No dating. No endless chats. Join someone else's meetup or create your own, then head straight to the bar. Talk about life, laugh, vent, and enjoy the moment. If any goblins appear, maybe it's time to slow down a bit 🥴",
         "loyaltyPrograms": "And one more thing: don't forget about our <link>loyalty programs</link>.",
         "cta": "Ready?"
       },
@@ -64,11 +64,11 @@
       },
       "howItWorks": {
         "title": "How It Works",
-        "step1": "1. Browse & Invite",
-        "step2": "2. Chat & Plan",
-        "step3": "3. Meet & Enjoy",
-        "step4": "4. Save with Loyalty",
-        "note": "Hey adventurer! Just a heads-up: invites expire, you can have only one chat at a time, and there is a limited number of messages per chat, so choose wisely. Invite buddies only if you're really ready for a bar adventure and hurry before the goblins drink all the beer!"
+        "step1": "Be spontaneous",
+        "step2": "Or plan everything",
+        "step3": "Meet in a bar",
+        "step4": "Save with loyalty",
+        "note": "Want to plan every detail, or just be spontaneous? We match your vibe either way. Schedule a meetup at a specific venue so people can easily find it on the map. Or find a bar buddy nearby and jump into a fast-paced chat to arrange a meetup. (Those damn goblins limited the messages to push you to meet in real life!)"
       },
       "loyalty": {
         "title": "Loyalty Programs",
