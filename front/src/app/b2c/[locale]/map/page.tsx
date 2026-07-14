@@ -26,6 +26,7 @@ import { OnboardingGuardDialog } from '@/components/common/onboarding-guard-dial
 import { BELGRADE_COORDS } from '@/lib/cities';
 import { CitySelector } from '@/components/common/city-selector';
 import { useVenueFiltersStore } from '@/store/use-venue-filters-store';
+import { useAuthRecovery } from '@/hooks/use-auth-recovery';
 import { MapFeedToggle } from '@/components/common/map-feed-toggle';
 import { NotificationsButton } from '@/components/common/notifications-button';
 import { useQrCheckIn } from '../venues/use-qr-check-in';
@@ -35,6 +36,14 @@ import { useMapStore } from './use-map-store';
 import styles from './map.module.css';
 import type { VenueMapItem } from './_components/venue-map-internal';
 import type { EventCountMap } from './_components/types';
+
+const captureEvent = (event: string, props: Record<string, unknown>) => {
+  if (typeof window !== 'undefined') {
+    import('posthog-js')
+      .then(({ default: posthog }) => posthog.capture(event, props))
+      .catch(() => {});
+  }
+};
 
 const VenueMapInternal = dynamic(
   () => import('./_components/venue-map-internal'),
@@ -58,6 +67,7 @@ export default function MapScreen() {
   } = useCitySelection();
 
   const authHydrated = useAuthStore((s) => s.hasHydrated);
+  const { ensureAuthReady } = useAuthRecovery('map');
 
   const {
     venues,
@@ -138,11 +148,28 @@ export default function MapScreen() {
   useEffect(() => {
     if (!authHydrated) return;
 
-    processStoredQrCode(handleQrCode);
-    setFlyToCoord(null);
-    clearFocus();
-    usePendingApprovalsStore.getState().fetch();
-    useMapStore.getState().fetchChatStatus();
+    const init = async () => {
+      const preFetchAuth = useAuthStore.getState();
+      captureEvent('map_before_fetch', {
+        userId: preFetchAuth.userId,
+        hasAccessToken: !!preFetchAuth.accessToken,
+        hasRefreshToken: !!preFetchAuth.refreshToken,
+        requiredAction: preFetchAuth.requiredAction,
+      });
+
+      const ready = await ensureAuthReady();
+      if (!ready) return;
+
+      if (await processStoredQrCode(handleQrCode)) {
+        return;
+      }
+
+      setFlyToCoord(null);
+      clearFocus();
+      usePendingApprovalsStore.getState().fetch();
+      useMapStore.getState().fetchChatStatus();
+    };
+    init();
 
     const { registerForegroundHandler, unregisterForegroundHandler } =
       useFcmStore.getState();
@@ -155,7 +182,7 @@ export default function MapScreen() {
 
     registerForegroundHandler(handleNotification);
     return () => unregisterForegroundHandler(handleNotification);
-  }, [authHydrated]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [authHydrated, ensureAuthReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const mapCenter = useMemo(
     () => ({
