@@ -16,7 +16,13 @@ public class Event : IAuditable
     public string? CoverImageS3Key
     {
         get;
-        set => field = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+        set
+        {
+            field = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+            // It's kind of a hack, since CoverImageS3Key typically doesn't change even when we upload a new image,
+            // but we should still update UpdatedAt to revalidate the Cloudflare cache.
+            UpdatedAt = DateTimeOffset.UtcNow;
+        }
     }
 
     public required string Title
@@ -128,6 +134,7 @@ public class Event : IAuditable
         IsVisibleOnMap = isVisibleOnMap;
         MaxParticipants = maxParticipants;
         RequiresApproval = requiresApproval;
+        UpdatedAt = DateTimeOffset.UtcNow;
     }
 
     public void SetContacts(IReadOnlyCollection<EventContact> contacts)

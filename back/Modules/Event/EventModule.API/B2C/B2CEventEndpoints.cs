@@ -71,7 +71,7 @@ public class B2CEventEndpoints : IEndpoints
                 ParticipationStatus: ewps.Status?.ToString(),
                 CreatorId: ewps.Event.CreatorId.ToString(),
                 CreatorAvatarUrl: ewps.Event.CreatorAvatarS3Key != null
-                    ? storageService.S3KeyToPublicFileUrl(ewps.Event.CreatorAvatarS3Key, null)
+                    ? storageService.S3KeyToPublicFileUrl(ewps.Event.CreatorAvatarS3Key, ewps.Event.UpdatedAt)
                     : null);
         }
 
@@ -166,7 +166,7 @@ public class B2CEventEndpoints : IEndpoints
                 ParticipationStatus: e.EventParticipants.Where(p => p.UserId == userId).Select(p => (ParticipantStatus?)p.Status).FirstOrDefault()?.ToString(),
                 CreatorId: e.CreatorId.ToString(),
                 CreatorAvatarUrl: e.CreatorAvatarS3Key != null
-                    ? storageService.S3KeyToPublicFileUrl(e.CreatorAvatarS3Key, null)
+                    ? storageService.S3KeyToPublicFileUrl(e.CreatorAvatarS3Key, e.UpdatedAt)
                     : null);
         }).ToArray();
 
@@ -426,7 +426,7 @@ public class B2CEventEndpoints : IEndpoints
                 ParticipationStatus: participationStatus?.ToString(),
                 CreatorId: e.CreatorId.ToString(),
                 CreatorAvatarUrl: e.CreatorAvatarS3Key != null
-                    ? storageService.S3KeyToPublicFileUrl(e.CreatorAvatarS3Key, null)
+                    ? storageService.S3KeyToPublicFileUrl(e.CreatorAvatarS3Key, e.UpdatedAt)
                     : null);
         }).ToArray();
     }

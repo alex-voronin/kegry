@@ -294,7 +294,7 @@ public class B2BEventEndpoints : IEndpoints
             VenueId: ev.VenueId.ToString(),
             CreatorId: ev.CreatorId.ToString(),
             CreatorAvatarUrl: ev.CreatorAvatarS3Key != null
-                ? storageService.S3KeyToPublicFileUrl(ev.CreatorAvatarS3Key, null)
+                ? storageService.S3KeyToPublicFileUrl(ev.CreatorAvatarS3Key, ev.UpdatedAt)
                 : null,
             IsVisibleOnMap: ev.IsVisibleOnMap,
             MaxParticipants: ev.MaxParticipants,
