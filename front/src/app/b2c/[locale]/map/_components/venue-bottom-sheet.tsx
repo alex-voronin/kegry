@@ -499,9 +499,10 @@ export function VenueBottomSheet({
         className={`${styles.sheet} ${isDragging ? styles.sheetDragging : ''}`}
         style={{
           transform: `translateY(${translateY}px)`,
-          transition: isDragging || !transitionEnabledRef.current
-            ? 'none'
-            : 'transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
+          transition:
+            isDragging || !transitionEnabledRef.current
+              ? 'none'
+              : 'transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
           height: '100%',
           overscrollBehavior: 'contain',
         }}
@@ -671,6 +672,11 @@ export function VenueBottomSheet({
         <div
           className={
             sheetState === 'collapsed' ? styles.peekWrapper : styles.scrollArea
+          }
+          style={
+            sheetState === 'expanded'
+              ? { paddingBottom: translateY }
+              : undefined
           }
         >
           {sheetState === 'collapsed' ? (
