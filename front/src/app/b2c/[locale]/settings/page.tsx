@@ -2,7 +2,11 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter, usePathname } from '@/i18n/routing';
-import { useSafeBack } from '@/hooks/use-safe-back';
+import {
+  useSafeBack,
+  STORAGE_CURRENT_PATH,
+  STORAGE_PREVIOUS_PATH,
+} from '@/hooks/use-safe-back';
 import { useTranslations, useLocale } from 'next-intl';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
@@ -120,6 +124,8 @@ export default function SettingsPage() {
 
       await Promise.all(promises);
       if (storeLocale && storeLocale !== locale) {
+        sessionStorage.removeItem(STORAGE_CURRENT_PATH);
+        sessionStorage.removeItem(STORAGE_PREVIOUS_PATH);
         router.replace(PAGE_ROUTES.PROFILE, { locale: storeLocale });
       } else {
         safeBack(PAGE_ROUTES.PROFILE);
