@@ -374,10 +374,10 @@ export function VenueBottomSheet({
   }, [filteredEvents]);
 
   const collapsedItems = useMemo(() => {
-    const eventSlots = venues.length > 0 ? filteredEvents.slice(0, 2) : [];
-    const venueSlots =
-      eventSlots.length < 2 ? venues.slice(0, 2 - eventSlots.length) : [];
-    return { events: eventSlots, venues: venueSlots };
+    if (venues.length === 1 && filteredEvents.length > 0) {
+      return { events: filteredEvents.slice(0, 1), venues };
+    }
+    return { events: [], venues: venues.slice(0, 2) };
   }, [filteredEvents, venues]);
 
   const venueLookup = useMemo(
@@ -679,6 +679,48 @@ export function VenueBottomSheet({
               <p className={styles.emptyText}>{t('nothingFound')}</p>
             ) : (
               <>
+                {collapsedItems.venues.map((venue) => (
+                  <div
+                    key={venue.id}
+                    className={styles.compactCard}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleVenueClick(venue.id);
+                    }}
+                  >
+                    <Image
+                      src={
+                        venue.companyAvatarImageUrl ||
+                        '/assets/common/venues-icon.svg'
+                      }
+                      alt={venue.companyName}
+                      width={40}
+                      height={40}
+                      className={styles.compactCardAvatar}
+                    />
+                    <div className={styles.compactCardInfo}>
+                      <span className={styles.compactCardName}>
+                        {venue.companyName}
+                      </span>
+                      <span className={styles.compactCardAddress}>
+                        {venue.address}
+                      </span>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMenuTarget({
+                          lat: venue.latitude,
+                          lng: venue.longitude,
+                          venue,
+                        });
+                      }}
+                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-white/10"
+                    >
+                      <MoreHorizontal size={16} className="text-white/70" />
+                    </button>
+                  </div>
+                ))}
                 {collapsedItems.events.map((event) => {
                   const v = venueLookup[event.venueId];
                   const formattedDate = new Date(
@@ -784,48 +826,6 @@ export function VenueBottomSheet({
                     </div>
                   );
                 })}
-                {collapsedItems.venues.map((venue) => (
-                  <div
-                    key={venue.id}
-                    className={styles.compactCard}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleVenueClick(venue.id);
-                    }}
-                  >
-                    <Image
-                      src={
-                        venue.companyAvatarImageUrl ||
-                        '/assets/common/venues-icon.svg'
-                      }
-                      alt={venue.companyName}
-                      width={40}
-                      height={40}
-                      className={styles.compactCardAvatar}
-                    />
-                    <div className={styles.compactCardInfo}>
-                      <span className={styles.compactCardName}>
-                        {venue.companyName}
-                      </span>
-                      <span className={styles.compactCardAddress}>
-                        {venue.address}
-                      </span>
-                    </div>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setMenuTarget({
-                          lat: venue.latitude,
-                          lng: venue.longitude,
-                          venue,
-                        });
-                      }}
-                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-white/10"
-                    >
-                      <MoreHorizontal size={16} className="text-white/70" />
-                    </button>
-                  </div>
-                ))}
               </>
             )
           ) : venues.length === 0 ? (

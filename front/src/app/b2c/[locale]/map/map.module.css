@@ -31,6 +31,10 @@
   @apply flex shrink-0 cursor-grab flex-col active:cursor-grabbing;
 }
 
+.sheetHeader {
+  @apply flex shrink-0 items-center justify-between px-4 py-2;
+}
+
 .sheetHeaderCompact {
   @apply px-0;
 }
@@ -41,10 +45,6 @@
 
 .dragHandleBar {
   @apply h-1 w-10 rounded-full bg-white/20;
-}
-
-.sheetHeader {
-  @apply flex shrink-0 items-center justify-between px-4 py-2;
 }
 
 .sheetTitle {
