@@ -4,6 +4,10 @@
   @apply relative flex min-h-[64px] w-full cursor-pointer items-center overflow-hidden bg-[#1e1e1e] sm:rounded-xl;
 }
 
+.cardExpired {
+  @apply opacity-50 grayscale;
+}
+
 .cardImage {
   @apply absolute inset-0 h-full w-full object-cover;
 }

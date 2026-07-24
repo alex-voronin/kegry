@@ -686,7 +686,9 @@ export default function VenueDetailPage() {
                 </div>
               ) : (
                 <div className="flex flex-col gap-2">
-                  {venueEvents.map((ev) => (
+                  {venueEvents.map((ev) => {
+                    const isExpired = new Date(ev.startDateTime) < new Date();
+                    return (
                     <div
                       key={ev.id}
                       onClick={(e) => {
@@ -694,7 +696,7 @@ export default function VenueDetailPage() {
                         if (target.closest('button')) return;
                         handleVenueEventMenuOpen(ev.id, e);
                       }}
-                      className="relative flex min-h-[56px] w-full cursor-pointer items-end overflow-hidden bg-[#1e1e1e] sm:rounded-xl"
+                      className={`relative flex min-h-[56px] w-full cursor-pointer items-end overflow-hidden bg-[#1e1e1e] sm:rounded-xl ${isExpired ? styles.eventCardExpired : ''}`}
                     >
                       {ev.coverImageUrl ? (
                         <img
@@ -736,7 +738,8 @@ export default function VenueDetailPage() {
                         </button>
                       </div>
                     </div>
-                  ))}
+                  );
+                  })}
                 </div>
               )}
             </div>

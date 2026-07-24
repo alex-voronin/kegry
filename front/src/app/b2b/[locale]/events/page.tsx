@@ -254,13 +254,15 @@ function EventCard({
   event: B2BEventListItemDto;
   onMenuOpen: (e: React.MouseEvent) => void;
 }) {
+  const isExpired = new Date(event.startDateTime) < new Date();
+
   const handleClick = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('button')) return;
     onMenuOpen(e);
   };
 
   return (
-    <div onClick={handleClick} className={eventStyles.card}>
+    <div onClick={handleClick} className={`${eventStyles.card} ${isExpired ? eventStyles.cardExpired : ''}`}>
       {event.coverImageUrl ? (
         <img
           src={event.coverImageUrl}
