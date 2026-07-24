@@ -590,7 +590,6 @@
         "loadFailed": "Failed to load events",
         "createSuccess": "Event created",
         "updateSuccess": "Event updated",
-        "deleteSuccess": "Event deleted",
         "deleteFailed": "Failed to delete event"
       }
     }

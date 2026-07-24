@@ -12,6 +12,7 @@ import { ModalMenu } from '@/components/ui/modal-menu';
 import { ModalDialog } from '@/components/ui/modal-dialog';
 import { EventActionSheet } from '@/components/common/event-action-sheet';
 import { TabControl } from '@/components/ui/tab-control';
+import { Badge } from '@/components/ui/badge';
 import { useVenueStore } from './use-venue-store';
 import { PAGE_ROUTES } from '@/lib/routes';
 import { toast } from 'react-toastify';
@@ -284,7 +285,18 @@ export default function VenueDetailScreen() {
             <TabControl
               options={[
                 { value: 'details', label: t('tabDetails') },
-                { value: 'events', label: t('tabEvents') },
+                {
+                  value: 'events',
+                  label: (
+                    <span className="flex items-center gap-1.5">
+                      {t('tabEvents')}
+                      <Badge
+                        count={totalEventCount}
+                        className="bg-secondary text-black"
+                      />
+                    </span>
+                  ),
+                },
               ]}
               value={activeTab}
               onChange={handleTabChange}

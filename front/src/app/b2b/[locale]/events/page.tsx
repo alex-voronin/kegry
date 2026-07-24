@@ -126,7 +126,6 @@ export default function EventsPage() {
     setIsDeleting(true);
     try {
       await apiClient.delete(API_ENDPOINTS.B2B.EVENTS.DETAILS(selectedEventId));
-      toast.success(t('toast.deleteSuccess'));
       fetchEvents();
     } catch (error) {
       rethrowApiError(error, t('toast.deleteFailed'));
@@ -262,7 +261,10 @@ function EventCard({
   };
 
   return (
-    <div onClick={handleClick} className={`${eventStyles.card} ${isExpired ? eventStyles.cardExpired : ''}`}>
+    <div
+      onClick={handleClick}
+      className={`${eventStyles.card} ${isExpired ? eventStyles.cardExpired : ''}`}
+    >
       {event.coverImageUrl ? (
         <img
           src={event.coverImageUrl}

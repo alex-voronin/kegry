@@ -590,7 +590,6 @@
         "loadFailed": "Greška pri učitavanju događaja",
         "createSuccess": "Događaj kreiran",
         "updateSuccess": "Događaj ažuriran",
-        "deleteSuccess": "Događaj obrisan",
         "deleteFailed": "Greška pri brisanju događaja"
       }
     }

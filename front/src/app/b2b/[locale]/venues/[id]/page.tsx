@@ -40,6 +40,7 @@ import { PromoIcon } from '@/lib/promo-types';
 import { parseInstagramHandle } from '@/lib/url-utils';
 import apiClient from '@/lib/api-client';
 import type { B2BEventListItemDto } from '../../events/use-events-store';
+import { Badge } from '@/components/ui/badge';
 
 export default function VenueDetailPage() {
   const router = useRouter();
@@ -72,6 +73,7 @@ export default function VenueDetailPage() {
     useState(false);
   const [activeTab, setActiveTab] = useState('venue');
   const [venueEvents, setVenueEvents] = useState<B2BEventListItemDto[]>([]);
+  const [venueEventTotalCount, setVenueEventTotalCount] = useState(0);
   const [isEventsLoading, setIsEventsLoading] = useState(false);
   const [selectedVenueEventId, setSelectedVenueEventId] = useState<
     string | null
@@ -108,6 +110,7 @@ export default function VenueDetailPage() {
         params: { venueId, limit: 50 },
       });
       setVenueEvents(response.data.result.data ?? []);
+      setVenueEventTotalCount(response.data.result.totalCount ?? 0);
     } catch {
       // silently fail
     } finally {
@@ -292,7 +295,6 @@ export default function VenueDetailPage() {
       await apiClient.delete(
         API_ENDPOINTS.B2B.EVENTS.DETAILS(selectedVenueEventId),
       );
-      toast.success(t('toast.deleteSuccess'));
       loadVenueEvents();
     } catch (error: any) {
       toast.error(error.message || t('toast.deleteFailed'));
@@ -458,7 +460,18 @@ export default function VenueDetailPage() {
           options={[
             { value: 'venue', label: t('venue') },
             { value: 'deals', label: t('deals') },
-            { value: 'events', label: t('events') },
+            {
+              value: 'events',
+              label: (
+                <span className="flex items-center gap-1.5">
+                  {t('events')}
+                  <Badge
+                    count={venueEventTotalCount}
+                    className="bg-secondary text-black"
+                  />
+                </span>
+              ),
+            },
           ]}
           value={activeTab}
           onChange={handleTabChange}
@@ -689,56 +702,61 @@ export default function VenueDetailPage() {
                   {venueEvents.map((ev) => {
                     const isExpired = new Date(ev.startDateTime) < new Date();
                     return (
-                    <div
-                      key={ev.id}
-                      onClick={(e) => {
-                        const target = e.target as HTMLElement;
-                        if (target.closest('button')) return;
-                        handleVenueEventMenuOpen(ev.id, e);
-                      }}
-                      className={`relative flex min-h-[56px] w-full cursor-pointer items-end overflow-hidden bg-[#1e1e1e] sm:rounded-xl ${isExpired ? styles.eventCardExpired : ''}`}
-                    >
-                      {ev.coverImageUrl ? (
-                        <img
-                          src={ev.coverImageUrl}
-                          alt={ev.title}
-                          className="absolute inset-0 h-full w-full object-cover"
-                        />
-                      ) : null}
-                      <div className="absolute inset-0 bg-black/60" />
+                      <div
+                        key={ev.id}
+                        onClick={(e) => {
+                          const target = e.target as HTMLElement;
+                          if (target.closest('button')) return;
+                          handleVenueEventMenuOpen(ev.id, e);
+                        }}
+                        className={`relative flex min-h-[56px] w-full cursor-pointer items-end overflow-hidden bg-[#1e1e1e] sm:rounded-xl ${isExpired ? styles.eventCardExpired : ''}`}
+                      >
+                        {ev.coverImageUrl ? (
+                          <img
+                            src={ev.coverImageUrl}
+                            alt={ev.title}
+                            className="absolute inset-0 h-full w-full object-cover"
+                          />
+                        ) : null}
+                        <div className="absolute inset-0 bg-black/60" />
 
-                      <div className="relative z-10 flex w-full items-center justify-between px-3 py-3">
-                        <div className="flex flex-col">
-                          <span className="overflow-hidden text-sm leading-tight font-normal text-white drop-shadow-md">
-                            {ev.title}
-                          </span>
-                          <div className="mt-0.5 flex items-center gap-2 text-xs text-white/70 drop-shadow-md">
-                            <span>
-                              {new Date(ev.startDateTime).toLocaleDateString()}{' '}
-                              {new Date(ev.startDateTime).toLocaleTimeString(
-                                undefined,
-                                { hour: '2-digit', minute: '2-digit' },
-                              )}
+                        <div className="relative z-10 flex w-full items-center justify-between px-3 py-3">
+                          <div className="flex flex-col">
+                            <span className="overflow-hidden text-sm leading-tight font-normal text-white drop-shadow-md">
+                              {ev.title}
                             </span>
-                            <span className="flex items-center gap-1">
-                              <Users size={12} />
-                              {ev.participantsCount}
-                            </span>
+                            <div className="mt-0.5 flex items-center gap-2 text-xs text-white/70 drop-shadow-md">
+                              <span>
+                                {new Date(
+                                  ev.startDateTime,
+                                ).toLocaleDateString()}{' '}
+                                {new Date(ev.startDateTime).toLocaleTimeString(
+                                  undefined,
+                                  { hour: '2-digit', minute: '2-digit' },
+                                )}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <Users size={12} />
+                                {ev.participantsCount}
+                              </span>
+                            </div>
                           </div>
-                        </div>
 
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleVenueEventMenuOpen(ev.id, e);
-                          }}
-                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-white/10"
-                        >
-                          <MoreHorizontal size={16} className="text-white/70" />
-                        </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleVenueEventMenuOpen(ev.id, e);
+                            }}
+                            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-white/10"
+                          >
+                            <MoreHorizontal
+                              size={16}
+                              className="text-white/70"
+                            />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  );
+                    );
                   })}
                 </div>
               )}
