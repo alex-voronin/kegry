@@ -56,7 +56,7 @@ export interface LoyaltyLevelWithDiscountDto {
 export interface GetVenueResponse {
   company: CompanyDto;
   venue: VenueDto;
-  loyaltyLevel: LoyaltyLevelWithDiscountDto;
+  loyaltyLevel: LoyaltyLevelWithDiscountDto | null;
 }
 
 interface VenueState {

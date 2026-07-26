@@ -42,11 +42,13 @@ export const useNotificationCountStore = create<NotificationCountState>()(
   }),
 );
 
-export function useNotificationCountInit() {
+export function useNotificationCountInit(enabled = true) {
   const fetch = useNotificationCountStore((s) => s.fetch);
   const increment = useNotificationCountStore((s) => s.increment);
 
   useEffect(() => {
+    if (!enabled) return;
+
     fetch();
 
     const { registerForegroundHandler, unregisterForegroundHandler } =
@@ -60,5 +62,5 @@ export function useNotificationCountInit() {
 
     registerForegroundHandler(handleNotification);
     return () => unregisterForegroundHandler(handleNotification);
-  }, [fetch, increment]);
+  }, [fetch, increment, enabled]);
 }

@@ -59,6 +59,8 @@ interface SidebarProps {
   onCheckIn: () => void;
   showPermissionsBadge?: boolean;
   isInMeeting?: boolean;
+  isAuthenticated?: boolean;
+  onAuthRequired?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -67,6 +69,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onCheckIn,
   showPermissionsBadge = false,
   isInMeeting = false,
+  isAuthenticated = true,
+  onAuthRequired,
 }) => {
   const t = useTranslations('screens.sidebar');
   const router = useRouter();
@@ -108,10 +112,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <span className="relative">
           <CalendarClock size={24} />
           {pendingTotal > 0 && (
-            <Badge
-              count={pendingTotal}
-              className="absolute -top-1 -right-1"
-            />
+            <Badge count={pendingTotal} className="absolute -top-1 -right-1" />
           )}
         </span>
       ),
@@ -157,7 +158,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
   ];
 
+  const AUTH_REQUIRED_HREFS = new Set([
+    PAGE_ROUTES.PROFILE,
+    PAGE_ROUTES.MY_EVENTS,
+    PAGE_ROUTES.CHAT,
+    PAGE_ROUTES.NOTIFICATIONS,
+    PAGE_ROUTES.VENUES,
+  ]);
+
   const handleNavClick = (item: (typeof navItems)[0]) => {
+    if (!isAuthenticated && onAuthRequired) {
+      if (item.onClick || (item.href && AUTH_REQUIRED_HREFS.has(item.href))) {
+        onAuthRequired();
+        return;
+      }
+    }
+
     if (item.onClick) {
       item.onClick();
     } else if (item.href) {

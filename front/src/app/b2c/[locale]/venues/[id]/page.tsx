@@ -29,6 +29,8 @@ import { DetailsTab } from './_components/details-tab';
 import { EventsTab } from './_components/events-tab';
 import { InstagramIcon } from './_components/instagram-icon';
 import { useAuthStore } from '@/lib/auth/use-auth-store';
+import { useAuthGuard } from '@/hooks/use-auth-guard';
+import { AuthRequiredDialog } from '@/components/common/auth-required-dialog';
 
 const PIN_CODE_ONLY_CHECKIN_ENABLED = false;
 
@@ -63,6 +65,12 @@ export default function VenueDetailScreen() {
   >(null);
   const hasMoreEvents = venueEvents.length < totalEventCount;
   const userId = useAuthStore((s) => s.userId);
+  const {
+    isAuthenticated,
+    guardAuth,
+    isAuthRequiredDialogOpen,
+    setIsAuthRequiredDialogOpen,
+  } = useAuthGuard();
   const {
     requireProfile,
     showOnboardingDialog,
@@ -233,7 +241,7 @@ export default function VenueDetailScreen() {
                   <PinpadIcon size={24} className="text-white" />
                 </Icon>
               )}
-              <Icon onClick={() => setIsScannerOpen(true)}>
+              <Icon onClick={guardAuth(() => setIsScannerOpen(true))}>
                 <ScanQrCode size={24} className="text-white" />
               </Icon>
               <Icon
@@ -338,12 +346,12 @@ export default function VenueDetailScreen() {
           {
             label: t('menu.createEvent'),
             icon: <CalendarClock size={24} />,
-            onClick: () => {
+            onClick: guardAuth(() => {
               requireProfile(() => {
                 router.push(PAGE_ROUTES.MEETUP_CREATE(venueId));
                 setIsMenuOpen(false);
               });
-            },
+            }),
           },
           {
             label: t('menu.copyLink'),
@@ -385,6 +393,8 @@ export default function VenueDetailScreen() {
       <EventActionSheet
         event={menuEvent}
         currentUserId={userId}
+        isAuthenticated={isAuthenticated}
+        onAuthRequired={() => setIsAuthRequiredDialogOpen(true)}
         onClose={() => setMenuEvent(null)}
         onJoined={(id) => updateEventParticipation(id, 'Approved')}
         onLeft={(id) => updateEventParticipation(id, undefined)}
@@ -420,6 +430,11 @@ export default function VenueDetailScreen() {
         }
         primaryButtonText={t('ok')}
         onPrimaryAction={() => setIsHelpDialogOpen(false)}
+      />
+
+      <AuthRequiredDialog
+        isOpen={isAuthRequiredDialogOpen}
+        onClose={() => setIsAuthRequiredDialogOpen(false)}
       />
 
       <CheckInAnimation

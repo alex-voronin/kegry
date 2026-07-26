@@ -28,6 +28,9 @@ import {
 } from 'lucide-react';
 import { useSafeBack } from '@/hooks/use-safe-back';
 import { useEventActions } from '@/hooks/use-event-actions';
+import { useAuthStore } from '@/lib/auth/use-auth-store';
+import { useAuthGuard } from '@/hooks/use-auth-guard';
+import { AuthRequiredDialog } from '@/components/common/auth-required-dialog';
 import { OnboardingGuardDialog } from '@/components/common/onboarding-guard-dialog';
 import { ApiRequestError } from '@/lib/api-error';
 import { useMeetupDetailStore, PendingUser } from './use-meetup-detail-store';
@@ -69,6 +72,12 @@ export default function MeetupDetailPage() {
   const eventId = params.id as string;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const {
+    isAuthenticated,
+    guardAuth,
+    isAuthRequiredDialogOpen,
+    setIsAuthRequiredDialogOpen,
+  } = useAuthGuard();
+  const {
     requireProfile,
     showOnboardingDialog,
     setShowOnboardingDialog,
@@ -102,7 +111,7 @@ export default function MeetupDetailPage() {
     safeBack(PAGE_ROUTES.MAP);
   };
 
-  const handleJoinLeave = async () => {
+  const handleJoinLeave = guardAuth(async () => {
     if (!event) return;
     requireProfile(async () => {
       try {
@@ -125,25 +134,23 @@ export default function MeetupDetailPage() {
         }
       }
     });
-  };
+  });
 
   const isFull =
     event !== null &&
     event.maxParticipants !== null &&
     event.participantsCount >= event.maxParticipants;
 
-  const showInlineParticipants = !event
-    ? false
-    : event.participantsCount < 4;
+  const showInlineParticipants = !event ? false : event.participantsCount < 4;
 
   useEffect(() => {
-    if (showInlineParticipants && eventId) {
+    if (showInlineParticipants && eventId && isAuthenticated) {
       setIsInlineApprovedLoading(true);
       fetchApprovedUsers(eventId, [event!.creatorId]).finally(() =>
         setIsInlineApprovedLoading(false),
       );
     }
-  }, [showInlineParticipants, eventId, fetchApprovedUsers]);
+  }, [showInlineParticipants, eventId, fetchApprovedUsers, isAuthenticated]);
 
   const handleInlineReject = useCallback(
     async (userId: string) => {
@@ -429,10 +436,7 @@ export default function MeetupDetailPage() {
                   }
                 >
                   <div className="flex items-center gap-2">
-                    <Users
-                      size={20}
-                      className="text-secondary shrink-0"
-                    />
+                    <Users size={20} className="text-secondary shrink-0" />
                     <span className="text-primary text-sm">
                       {t('participants')}
                     </span>
@@ -494,33 +498,35 @@ export default function MeetupDetailPage() {
                 </span>
               </>
             )}
-            {!event.isCreator && (() => {
-              const isDisabled = isJoining || (!event.participationStatus && isFull);
+            {!event.isCreator &&
+              (() => {
+                const isDisabled =
+                  isJoining || (!event.participationStatus && isFull);
 
-              let label: string;
-              if (isJoining) {
-                label = '';
-              } else if (event.participationStatus === 'Approved') {
-                label = t('leave');
-              } else if (event.participationStatus) {
-                label = t('cancelRequest');
-              } else if (isFull) {
-                label = t('eventFull');
-              } else {
-                label = t('join');
-              }
+                let label: string;
+                if (isJoining) {
+                  label = '';
+                } else if (event.participationStatus === 'Approved') {
+                  label = t('leave');
+                } else if (event.participationStatus) {
+                  label = t('cancelRequest');
+                } else if (isFull) {
+                  label = t('eventFull');
+                } else {
+                  label = t('join');
+                }
 
-              return (
-                <Button
-                  variant={ButtonVariant.Solid}
-                  className="ml-auto shrink-0"
-                  onClick={handleJoinLeave}
-                  disabled={isDisabled}
-                >
-                  {isJoining ? <Spinner /> : label}
-                </Button>
-              );
-            })()}
+                return (
+                  <Button
+                    variant={ButtonVariant.Solid}
+                    className="ml-auto shrink-0"
+                    onClick={handleJoinLeave}
+                    disabled={isDisabled}
+                  >
+                    {isJoining ? <Spinner /> : label}
+                  </Button>
+                );
+              })()}
           </div>
 
           {/* Pending Approvals — creator only */}
@@ -638,6 +644,11 @@ export default function MeetupDetailPage() {
                     },
                   ]),
         ]}
+      />
+
+      <AuthRequiredDialog
+        isOpen={isAuthRequiredDialogOpen}
+        onClose={() => setIsAuthRequiredDialogOpen(false)}
       />
 
       <OnboardingGuardDialog

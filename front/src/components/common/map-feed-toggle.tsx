@@ -8,10 +8,13 @@ import styles from './map-feed-toggle.module.css';
 type Props = {
   activeView: 'map' | 'feed';
   className?: string;
+  onFeedClick?: () => void;
 };
 
-export function MapFeedToggle({ activeView, className }: Props) {
+export function MapFeedToggle({ activeView, className, onFeedClick }: Props) {
   const router = useRouter();
+
+  const handleFeedClick = onFeedClick ?? (() => router.push(PAGE_ROUTES.FEED));
 
   return (
     <div className={className} onClick={(e) => e.stopPropagation()}>
@@ -24,9 +27,7 @@ export function MapFeedToggle({ activeView, className }: Props) {
         </button>
         <button
           className={`${styles.pillOption} ${activeView === 'feed' ? styles.pillOptionActive : ''}`}
-          onClick={() =>
-            router.push(PAGE_ROUTES.FEED)
-          }
+          onClick={handleFeedClick}
         >
           <Sticker size={20} />
         </button>

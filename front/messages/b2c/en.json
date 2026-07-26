@@ -995,6 +995,11 @@
       "message": "You must create a profile to join or create a meetup",
       "create": "Create",
       "cancel": "Cancel"
+    },
+    "authRequired": {
+      "message": "Sign in or register to access all app features.",
+      "login": "Sign in",
+      "cancel": "Cancel"
     }
   }
 }

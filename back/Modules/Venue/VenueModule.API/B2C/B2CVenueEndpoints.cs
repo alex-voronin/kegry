@@ -28,12 +28,15 @@ public class B2CVenueEndpoints : IEndpoints
             .WithTags("Venue User API")
             .RequireAuthorization();
         usersApiGroup.MapGet("/api/v1/venues", GetVenues);
-        usersApiGroup.MapGet("/api/v1/venues/map", GetVenuesMap);
-        usersApiGroup.MapGet("/api/v1/venue/{id:guid}", GetVenue);
         usersApiGroup.MapGet("/api/v1/venue/{id:guid}/discounts", GetDiscountsByWeekday);
         usersApiGroup.MapPost("/api/v1/venue/{qrCode:guid}/qr-check-in", CheckInToVenue);
         usersApiGroup.MapGet("/api/v1/venue/{qrCode:guid}/qr-check-in/settings", GetCheckInSettings);
         usersApiGroup.MapPost("/api/v1/venues/batch", GetVenuesBatch);
+
+        var publicGroup = app.MapGroup("")
+            .WithTags("Venue User API");
+        publicGroup.MapGet("/api/v1/venues/map", GetVenuesMap);
+        publicGroup.MapGet("/api/v1/venue/{id:guid}", GetVenue);
     }
 
     private static async Task<ApiResult<CheckInResponse>> CheckInToVenue(
@@ -165,20 +168,26 @@ public class B2CVenueEndpoints : IEndpoints
 
         var companyDto = DomainCompanyToDto(storageService, venue.Company);
         var venueDto = DomainVenueToDto(storageService, venue);
-        var loyaltyLevel = await loyaltyService.GetLoyaltyLevelWithDiscountAsync(
-            userId: user.GetId(),
-            venue: venue,
-            ct: ct);
 
-        var loyaltyLevelDto = new LoyaltyLevelWithDiscountDto(
-            UserLoyaltyLevel: loyaltyLevel.UserLoyaltyLevel,
-            VisitsCount: loyaltyLevel.VisitsCount,
-            VisitsLowerBound: loyaltyLevel.VisitsLowerBound,
-            VisitsUpperBound: loyaltyLevel.VisitsUpperBound,
-            Discount: loyaltyLevel.Discount,
-            NextLevelDiscount: loyaltyLevel.NextLevelDiscount,
-            IsCustomDiscount: loyaltyLevel.Discount == null
-        );
+        LoyaltyLevelWithDiscountDto? loyaltyLevelDto = null;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var userId = user.GetId();
+            var loyaltyLevel = await loyaltyService.GetLoyaltyLevelWithDiscountAsync(
+                userId: userId,
+                venue: venue,
+                ct: ct);
+
+            loyaltyLevelDto = new LoyaltyLevelWithDiscountDto(
+                UserLoyaltyLevel: loyaltyLevel.UserLoyaltyLevel,
+                VisitsCount: loyaltyLevel.VisitsCount,
+                VisitsLowerBound: loyaltyLevel.VisitsLowerBound,
+                VisitsUpperBound: loyaltyLevel.VisitsUpperBound,
+                Discount: loyaltyLevel.Discount,
+                NextLevelDiscount: loyaltyLevel.NextLevelDiscount,
+                IsCustomDiscount: loyaltyLevel.Discount == null
+            );
+        }
 
         return ApiResult<GetVenueResponse>.Build(
             new GetVenueResponse(

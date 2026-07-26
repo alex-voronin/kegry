@@ -4,6 +4,7 @@ import { useRouter } from '@/i18n/routing';
 import { Icon } from '@/components/ui/icon';
 import { Badge } from '@/components/ui/badge';
 import { PAGE_ROUTES } from '@/lib/routes';
+import { useAuthStore } from '@/lib/auth/use-auth-store';
 import {
   useNotificationCountStore,
   useNotificationCountInit,
@@ -15,7 +16,8 @@ interface NotificationsButtonProps {
 
 export function NotificationsButton({ onClick }: NotificationsButtonProps) {
   const router = useRouter();
-  useNotificationCountInit();
+  const isAuthenticated = useAuthStore((s) => !!s.accessToken);
+  useNotificationCountInit(isAuthenticated);
 
   const unseenCount = useNotificationCountStore((s) => s.unseenCount);
 
@@ -30,7 +32,9 @@ export function NotificationsButton({ onClick }: NotificationsButtonProps) {
       priority
       onClick={handleClick}
     >
-      {unseenCount > 0 && <Badge count={unseenCount} className="absolute -top-1 -right-1" />}
+      {unseenCount > 0 && (
+        <Badge count={unseenCount} className="absolute -top-1 -right-1" />
+      )}
     </Icon>
   );
 }

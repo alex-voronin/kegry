@@ -30,6 +30,8 @@ interface EventActionSheetProps {
   onDeleted: (eventId: string) => void;
   onEdit: (eventId: string) => void;
   extraItems?: ModalMenuOption[];
+  isAuthenticated?: boolean;
+  onAuthRequired?: () => void;
 }
 
 export function EventActionSheet({
@@ -41,6 +43,8 @@ export function EventActionSheet({
   onDeleted,
   onEdit,
   extraItems,
+  isAuthenticated = true,
+  onAuthRequired,
 }: EventActionSheetProps) {
   const t = useTranslations('components.eventMenu');
   const router = useRouter();
@@ -125,6 +129,16 @@ export function EventActionSheet({
     menuOptions.push(...extraItems);
   }
 
+  const guardAction = (action: () => void) => {
+    if (!isAuthenticated && onAuthRequired) {
+      return () => {
+        onClose();
+        onAuthRequired();
+      };
+    }
+    return action;
+  };
+
   if (isCreator) {
     menuOptions.push(
       {
@@ -134,14 +148,14 @@ export function EventActionSheet({
       },
       {
         label: t('edit'),
-        onClick: handleEdit,
+        onClick: guardAction(handleEdit),
         icon: <Pencil size={24} />,
       },
       {
         label: t('delete'),
-        onClick: () => {
+        onClick: guardAction(() => {
           setDeleteEventId(event!.id);
-        },
+        }),
         icon: <Trash2 size={24} />,
         isDestructive: true,
       },
@@ -155,7 +169,7 @@ export function EventActionSheet({
       },
       {
         label: t('leave'),
-        onClick: handleLeave,
+        onClick: guardAction(handleLeave),
         icon: <UserMinus size={24} />,
       },
     );
@@ -168,18 +182,16 @@ export function EventActionSheet({
       },
       {
         label: t('cancelRequest'),
-        onClick: handleLeave,
+        onClick: guardAction(handleLeave),
         icon: <UserMinus size={24} />,
       },
     );
   } else if (isFull) {
-    menuOptions.push(
-      {
-        label: t('view'),
-        onClick: handleView,
-        icon: <Eye size={24} />,
-      },
-    );
+    menuOptions.push({
+      label: t('view'),
+      onClick: handleView,
+      icon: <Eye size={24} />,
+    });
   } else {
     menuOptions.push(
       {
@@ -189,7 +201,7 @@ export function EventActionSheet({
       },
       {
         label: t('join'),
-        onClick: handleJoin,
+        onClick: guardAction(handleJoin),
         icon: <UserPlus size={24} />,
       },
     );

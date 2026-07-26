@@ -58,6 +58,7 @@ interface VenueBottomSheetProps {
   enabledEventTypes: ('Event' | 'Meetup')[];
   onToggleEventType: (type: 'Event' | 'Meetup') => void;
   onAddMeetup?: () => void;
+  onAuthRequired?: () => void;
 }
 
 type SheetState = 'collapsed' | 'expanded';
@@ -76,9 +77,11 @@ export function VenueBottomSheet({
   onToggleEventType,
   onAddMeetup,
   onDeleteEvent,
+  onAuthRequired,
 }: VenueBottomSheetProps) {
   const router = useRouter();
   const currentUserId = useAuthStore((s) => s.userId);
+  const isAuthenticated = useAuthStore((s) => !!s.accessToken);
   const t = useTranslations('screens.map');
 
   const [viewportHeight, setViewportHeight] = useState(() =>
@@ -987,6 +990,8 @@ export function VenueBottomSheet({
       <EventActionSheet
         event={menuTarget?.eventId ? menuEvent : null}
         currentUserId={currentUserId}
+        isAuthenticated={isAuthenticated}
+        onAuthRequired={onAuthRequired}
         onClose={() => setMenuTarget(null)}
         onJoined={(id) => {
           onJoinEvent?.(id);

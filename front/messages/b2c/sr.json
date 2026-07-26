@@ -995,6 +995,11 @@
       "message": "Za pridruživanje ili kreiranje susreta potrebno je da kreiraš profil",
       "create": "Kreiraj",
       "cancel": "Otkaži"
+    },
+    "authRequired": {
+      "message": "Prijavite se ili registrujte da biste koristili sve funkcije aplikacije.",
+      "login": "Prijavi se",
+      "cancel": "Otkaži"
     }
   }
 }

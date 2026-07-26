@@ -25,9 +25,6 @@ public class B2CEventEndpoints : IEndpoints
             .WithTags("Event User API")
             .RequireAuthorization();
 
-        usersApiGroup.MapPost("/api/v1/events/map", GetEventsMap);
-        usersApiGroup.MapGet("/api/v1/venues/{venueId:guid}/events", GetVenueEvents);
-        usersApiGroup.MapGet("/api/v1/events/{id:guid}", GetEvent);
         usersApiGroup.MapPost("/api/v1/events", CreateEvent);
         usersApiGroup.MapPatch("/api/v1/events/{id:guid}", UpdateEvent);
         usersApiGroup.MapDelete("/api/v1/events/{id:guid}", DeleteEvent);
@@ -39,6 +36,12 @@ public class B2CEventEndpoints : IEndpoints
         usersApiGroup.MapGet("/api/v1/events/my/created", GetMyCreatedEvents);
         usersApiGroup.MapGet("/api/v1/events/my/participated", GetMyParticipatedEvents);
         usersApiGroup.MapGet("/api/v1/events/my/pending-count", GetMyPendingApprovalsCount);
+
+        var publicGroup = app.MapGroup("")
+            .WithTags("Event User API");
+        publicGroup.MapPost("/api/v1/events/map", GetEventsMap);
+        publicGroup.MapGet("/api/v1/venues/{venueId:guid}/events", GetVenueEvents);
+        publicGroup.MapGet("/api/v1/events/{id:guid}", GetEvent);
     }
 
     private static async Task<ApiResult<VenueEventsDto[]>> GetEventsMap(
@@ -48,7 +51,9 @@ public class B2CEventEndpoints : IEndpoints
         IS3StorageService storageService,
         CancellationToken ct)
     {
-        var userId = user.GetId();
+        var userId = user.Identity?.IsAuthenticated == true
+            ? user.GetId()
+            : (Guid?)null;
         var result = await eventRepository.GetEventsInBoundsAsync(
             request.MinLat, request.MaxLat,
             request.MinLng, request.MaxLng,
@@ -96,10 +101,13 @@ public class B2CEventEndpoints : IEndpoints
         if (ev == null)
             throw EventExceptions.EventNotFound(id);
 
-        var userId = user.GetId();
-        var isCreator = ev.CreatorId == userId;
-        var participationStatus = ev.EventParticipants
-            .FirstOrDefault(p => p.UserId == userId)?.Status;
+        var userId = user.Identity?.IsAuthenticated == true
+            ? user.GetId()
+            : (Guid?)null;
+        var isCreator = userId.HasValue && ev.CreatorId == userId.Value;
+        var participationStatus = userId.HasValue
+            ? ev.EventParticipants.FirstOrDefault(p => p.UserId == userId.Value)?.Status
+            : null;
 
         var contacts = ev.EventContacts
             .Where(c => c.IsPublic || isCreator || participationStatus == ParticipantStatus.Approved)
@@ -146,7 +154,6 @@ public class B2CEventEndpoints : IEndpoints
         IS3StorageService storageService,
         CancellationToken ct)
     {
-        var userId = user.GetId();
         var (events, totalCount) = await eventRepository.GetVenueEventsAsync(
             request.VenueId, request.Offset, request.Limit, ct);
 
@@ -163,7 +170,11 @@ public class B2CEventEndpoints : IEndpoints
                 StartDateTime: e.StartDateTime,
                 ParticipantsCount: e.EventParticipants.Count(p => p.Status == ParticipantStatus.Approved),
                 MaxParticipants: e.MaxParticipants,
-                ParticipationStatus: e.EventParticipants.Where(p => p.UserId == userId).Select(p => (ParticipantStatus?)p.Status).FirstOrDefault()?.ToString(),
+                ParticipationStatus: user.Identity != null && user.Identity.IsAuthenticated ? 
+                    e.EventParticipants
+                        .Where(p => p.UserId == user.GetId())
+                        .Select(p => (ParticipantStatus?)p.Status)
+                        .FirstOrDefault()?.ToString() : null,
                 CreatorId: e.CreatorId.ToString(),
                 CreatorAvatarUrl: e.CreatorAvatarS3Key != null
                     ? storageService.S3KeyToPublicFileUrl(e.CreatorAvatarS3Key, e.UpdatedAt)

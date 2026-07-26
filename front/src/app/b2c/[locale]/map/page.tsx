@@ -22,13 +22,14 @@ import { PAGE_ROUTES } from '@/lib/routes';
 import { useCitySelection } from '@/hooks/use-city-selection';
 import { useEventActions } from '@/hooks/use-event-actions';
 import { useAuthStore } from '@/lib/auth/use-auth-store';
+import { useAuthGuard } from '@/hooks/use-auth-guard';
 import { OnboardingGuardDialog } from '@/components/common/onboarding-guard-dialog';
 import { BELGRADE_COORDS } from '@/lib/cities';
 import { CitySelector } from '@/components/common/city-selector';
 import { useVenueFiltersStore } from '@/store/use-venue-filters-store';
-import { useAuthRecovery } from '@/hooks/use-auth-recovery';
 import { MapFeedToggle } from '@/components/common/map-feed-toggle';
 import { NotificationsButton } from '@/components/common/notifications-button';
+import { AuthRequiredDialog } from '@/components/common/auth-required-dialog';
 import { useQrCheckIn } from '../venues/use-qr-check-in';
 import { VenueBottomSheet } from './_components/venue-bottom-sheet';
 import { VenueSelectorSheet } from './_components/venue-selector-sheet';
@@ -67,7 +68,12 @@ export default function MapScreen() {
   } = useCitySelection();
 
   const authHydrated = useAuthStore((s) => s.hasHydrated);
-  const { ensureAuthReady } = useAuthRecovery('map');
+  const {
+    isAuthenticated,
+    guardAuth,
+    isAuthRequiredDialogOpen,
+    setIsAuthRequiredDialogOpen,
+  } = useAuthGuard();
 
   const {
     venues,
@@ -157,17 +163,17 @@ export default function MapScreen() {
         requiredAction: preFetchAuth.requiredAction,
       });
 
-      const ready = await ensureAuthReady();
-      if (!ready) return;
-
       if (await processStoredQrCode(handleQrCode)) {
         return;
       }
 
       setFlyToCoord(null);
       clearFocus();
-      usePendingApprovalsStore.getState().fetch();
-      useMapStore.getState().fetchChatStatus();
+
+      if (preFetchAuth.accessToken) {
+        usePendingApprovalsStore.getState().fetch();
+        useMapStore.getState().fetchChatStatus();
+      }
     };
     init();
 
@@ -182,7 +188,7 @@ export default function MapScreen() {
 
     registerForegroundHandler(handleNotification);
     return () => unregisterForegroundHandler(handleNotification);
-  }, [authHydrated, ensureAuthReady]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [authHydrated]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const mapCenter = useMemo(
     () => ({
@@ -381,10 +387,14 @@ export default function MapScreen() {
   } = useEventActions();
 
   const handleAddMeetupClick = useCallback(() => {
+    if (!isAuthenticated) {
+      setIsAuthRequiredDialogOpen(true);
+      return;
+    }
     requireProfile(() => {
       setIsVenueSelectorOpen(true);
     });
-  }, [requireProfile]);
+  }, [requireProfile, isAuthenticated]);
 
   const handleSelectVenue = useCallback(
     (venueId: string, _venueName: string) => {
@@ -454,7 +464,10 @@ export default function MapScreen() {
             hasRestrictedPermissions={showPermissionsBadge}
             pendingApprovalsCount={pendingTotal}
           />
-          <MapFeedToggle activeView="map" />
+          <MapFeedToggle
+            activeView="map"
+            onFeedClick={guardAuth(() => router.push(PAGE_ROUTES.FEED))}
+          />
         </div>
 
         <div className={styles.topBar}>
@@ -469,7 +482,11 @@ export default function MapScreen() {
           </div>
           <div className={styles.topBarIconPill}>
             <div className={styles.topBarIcons}>
-              <Icon width={32} height={32} onClick={handleQrScanClick}>
+              <Icon
+                width={32}
+                height={32}
+                onClick={guardAuth(handleQrScanClick)}
+              >
                 <ScanQrCode className="text-primary h-full w-full" />
               </Icon>
               <Icon
@@ -478,9 +495,13 @@ export default function MapScreen() {
                 width={30}
                 height={30}
                 priority
-                onClick={() => router.push(PAGE_ROUTES.VENUES)}
+                onClick={guardAuth(() => router.push(PAGE_ROUTES.VENUES))}
               />
-              <NotificationsButton />
+              <NotificationsButton
+                onClick={guardAuth(() =>
+                  router.push(PAGE_ROUTES.NOTIFICATIONS),
+                )}
+              />
             </div>
           </div>
         </div>
@@ -507,6 +528,7 @@ export default function MapScreen() {
           enabledEventTypes={enabledEventTypes}
           onToggleEventType={toggleEventType}
           onAddMeetup={handleAddMeetupClick}
+          onAuthRequired={() => setIsAuthRequiredDialogOpen(true)}
         />
       </div>
 
@@ -531,6 +553,11 @@ export default function MapScreen() {
         onPrimaryAction={handleFirstCheckInOk}
       />
 
+      <AuthRequiredDialog
+        isOpen={isAuthRequiredDialogOpen}
+        onClose={() => setIsAuthRequiredDialogOpen(false)}
+      />
+
       <CheckInManager
         isScannerOpen={isScannerOpen}
         onScannerOpenChange={setIsScannerOpen}
@@ -548,6 +575,8 @@ export default function MapScreen() {
         onCheckIn={handleQrScanClick}
         showPermissionsBadge={showPermissionsBadge}
         isInMeeting={hasActiveChat}
+        isAuthenticated={isAuthenticated}
+        onAuthRequired={() => setIsAuthRequiredDialogOpen(true)}
       />
     </div>
   );
