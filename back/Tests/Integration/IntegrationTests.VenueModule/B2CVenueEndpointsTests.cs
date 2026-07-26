@@ -1059,4 +1059,98 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         response.Result[0].Address.ShouldBe("Inside Venue");
         response.Result.ShouldNotContain(v => v.Address == "Outside Venue");
     }
+
+    // ========================================
+    //  ANONYMOUS ACCESS (PUBLIC ENDPOINTS)
+    // ========================================
+
+    [Fact]
+    public async Task GivenVenuesInBounds_WhenAnonymousGetsMap_ThenReturnsVenues()
+    {
+        var b2BAuth = await Factory.AuthManager
+            .CreateAndLoginUserAsync("b2b_anon_map@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Public Map Co", "pubmap@example.com"))).Result.Id;
+
+        await _testUtils.CreateVerifiedVenueAsync(companyId, 44.8, 20.5, "Public Venue");
+        await _testUtils.CreateVerifiedVenueAsync(companyId, 45.0, 21.0, "Far Venue");
+
+        Factory.HttpClient.DefaultRequestHeaders.Authorization = null;
+
+        var mapRequest = new GetVenuesMapRequest(
+            MinLat: 44.7,
+            MaxLat: 44.9,
+            MinLng: 20.4,
+            MaxLng: 20.6);
+
+        var response = await Factory.ApiClient.GetAsync<GetVenuesMapRequest, ApiResult<VenueMapItemDto[]>>(
+            ApiRoutes.Venue.Map, mapRequest);
+
+        response.Success.ShouldBeTrue();
+        response.Result.Length.ShouldBe(1);
+        response.Result[0].Address.ShouldBe("Public Venue");
+    }
+
+    [Fact]
+    public async Task GivenVenue_WhenAnonymousGetsDetail_ThenReturnsVenueWithoutLoyalty()
+    {
+        var b2BAuth = await Factory.AuthManager
+            .CreateAndLoginUserAsync("b2b_anon_detail@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Public Detail Co", "pubdetail@example.com"))).Result.Id;
+
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+            ApiRoutes.B2B.Company.Venues(companyId),
+            new CreateVenueRequest(45, 13, "Public Detail Venue", "https://site.com", "https://google.com/mo",
+                "https://instagram.com/some-venue", "123", "9-5", TestConfig.S3.PublicUrl + "/cover.jpg", []))).Result.Id;
+
+        await _testUtils.VerifyVenueByIdAsync(venueId);
+
+        Factory.HttpClient.DefaultRequestHeaders.Authorization = null;
+
+        var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
+            ApiRoutes.Venue.Single(venueId));
+
+        response.Success.ShouldBeTrue();
+        response.Result.Venue.ShouldNotBeNull();
+        response.Result.Venue.Address.ShouldBe("Public Detail Venue");
+        response.Result.Company.ShouldNotBeNull();
+        response.Result.LoyaltyLevel.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task GivenVenuesInBounds_WhenAnonymousGetsMap_ThenOnlyVerifiedVenuesReturned()
+    {
+        var b2BAuth = await Factory.AuthManager
+            .CreateAndLoginUserAsync("b2b_anon_verified@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Verified Only Co", "vonl@example.com"))).Result.Id;
+
+        await _testUtils.CreateVerifiedVenueAsync(companyId, 44.8, 20.5, "Verified One");
+
+        var unverifiedVenueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+            ApiRoutes.B2B.Company.Venues(companyId),
+            new CreateVenueRequest(44.8, 20.5, "Unverified One", null, null, null, null, null, null, []))).Result.Id;
+
+        Factory.HttpClient.DefaultRequestHeaders.Authorization = null;
+
+        var mapRequest = new GetVenuesMapRequest(
+            MinLat: 44.7,
+            MaxLat: 44.9,
+            MinLng: 20.4,
+            MaxLng: 20.6);
+
+        var response = await Factory.ApiClient.GetAsync<GetVenuesMapRequest, ApiResult<VenueMapItemDto[]>>(
+            ApiRoutes.Venue.Map, mapRequest);
+
+        response.Success.ShouldBeTrue();
+        response.Result.Length.ShouldBe(1);
+        response.Result[0].Address.ShouldBe("Verified One");
+    }
 }

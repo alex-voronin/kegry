@@ -1329,6 +1329,114 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     }
 
     // ========================================
+    //  ANONYMOUS ACCESS (PUBLIC ENDPOINTS)
+    // ========================================
+
+    [Fact]
+    public async Task GivenEventsInBounds_WhenAnonymousGetsMap_ThenReturnsWithoutParticipationStatus()
+    {
+        var auth = await CreateUserAsync();
+        Factory.ApiClient.SetAuth(auth);
+
+        var venueId = await SeedVenueAsync(44.7866, 20.4489);
+        await CreateEventAtVenueAsync(auth, venueId);
+
+        Factory.HttpClient.DefaultRequestHeaders.Authorization = null;
+
+        var response = await Factory.ApiClient.PostAsync<GetEventsMapRequest, ApiResult<VenueEventsDto[]>>(
+            ApiRoutes.Event.Map,
+            new GetEventsMapRequest(
+                MinLat: 44.78,
+                MaxLat: 44.80,
+                MinLng: 20.44,
+                MaxLng: 20.46));
+
+        response.Success.ShouldBeTrue();
+        response.Result.Length.ShouldBe(1);
+        response.Result[0].Events.Length.ShouldBe(1);
+        response.Result[0].Events[0].ParticipationStatus.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task GivenBlockedCreator_WhenAnonymousGetsMap_ThenBlockedEventsStillVisible()
+    {
+        var userA = await CreateUserAsync();
+        var userB = await CreateUserAsync();
+
+        Factory.ApiClient.SetAuth(userA);
+        var venueId = await SeedVenueAsync(44.7866, 20.4489);
+
+        Factory.ApiClient.SetAuth(userB);
+        await CreateEventAtVenueAsync(userB, venueId);
+
+        Factory.ApiClient.SetAuth(userA);
+        await Factory.ApiClient.PostAsync<object, ApiResult.EmptyResult>(
+            ApiRoutes.Feed.BlockUser(userB.UserId), new { });
+
+        Factory.HttpClient.DefaultRequestHeaders.Authorization = null;
+
+        var response = await Factory.ApiClient.PostAsync<GetEventsMapRequest, ApiResult<VenueEventsDto[]>>(
+            ApiRoutes.Event.Map,
+            new GetEventsMapRequest(
+                MinLat: 44.78,
+                MaxLat: 44.80,
+                MinLng: 20.44,
+                MaxLng: 20.46));
+
+        response.Success.ShouldBeTrue();
+        response.Result.Length.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task GivenExistingEvent_WhenAnonymousGetsDetail_ThenReturnsWithoutAuth()
+    {
+        var (auth, eventId) = await CreateEventWithContactsAsync();
+
+        Factory.HttpClient.DefaultRequestHeaders.Authorization = null;
+
+        var response = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(
+            ApiRoutes.Event.Single(eventId));
+
+        response.Success.ShouldBeTrue();
+        response.Result.Id.ShouldBe(eventId.ToString());
+        response.Result.IsCreator.ShouldBeFalse();
+        response.Result.ParticipationStatus.ShouldBeNull();
+        response.Result.Contacts.ShouldNotBeEmpty();
+        response.Result.Contacts.ShouldAllBe(c => c.IsPublic);
+    }
+
+    [Fact]
+    public async Task GivenNonExistentEvent_WhenAnonymousGetsDetail_Then404()
+    {
+        Factory.HttpClient.DefaultRequestHeaders.Authorization = null;
+
+        var response = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(
+            ApiRoutes.Event.Single(Guid.NewGuid()));
+
+        response.Success.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task GivenVenueWithEvents_WhenAnonymousGetsVenueEvents_ThenReturnsWithoutParticipationStatus()
+    {
+        var auth = await CreateUserAsync();
+        Factory.ApiClient.SetAuth(auth);
+
+        var venueId = await SeedVenueAsync(44.7866, 20.4489);
+        await CreateEventAtVenueAsync(auth, venueId);
+
+        Factory.HttpClient.DefaultRequestHeaders.Authorization = null;
+
+        var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<EventListItemDto>>>(
+            ApiRoutes.Event.VenueEvents(venueId) + "?Offset=0&Limit=20");
+
+        response.Success.ShouldBeTrue();
+        response.Result.Data.Count.ShouldBe(1);
+        response.Result.TotalCount.ShouldBe(1);
+        response.Result.Data.First().ParticipationStatus.ShouldBeNull();
+    }
+
+    // ========================================
     //  HELPERS
     // ========================================
 
@@ -1408,6 +1516,32 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         venueResponse.Success.ShouldBeTrue();
 
         return venueResponse.Result.Id;
+    }
+
+    private async Task<(AuthResponse Auth, Guid EventId)> CreateEventWithContactsAsync()
+    {
+        var auth = await CreateUserAsync();
+        Factory.ApiClient.SetAuth(auth);
+
+        var response = await Factory.ApiClient.PostAsync<CreateEventRequest, ApiResult<EventDto>>(
+            ApiRoutes.Event.Root,
+            new CreateEventRequest(
+                CreatorAvatarUrl: null,
+                CoverImageUrl: null,
+                Title: "Contacts Meetup",
+                Description: "Has contacts",
+                StartDateTime: DateTimeOffset.UtcNow.AddDays(14),
+                VenueId: Guid.NewGuid(),
+                MaxParticipants: null,
+                RequiresApproval: false,
+                Contacts:
+                [
+                    new CreateEventContactDto(ContactType.Telegram, "publicuser", IsPublic: true),
+                    new CreateEventContactDto(ContactType.Email, "private@test.com", IsPublic: false)
+                ]));
+
+        response.Success.ShouldBeTrue();
+        return (auth, Guid.Parse(response.Result.Id));
     }
 
     private async Task<Guid> CreateEventAtVenueAsync(AuthResponse auth, Guid venueId)

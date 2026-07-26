@@ -170,7 +170,7 @@ public class B2CEventEndpoints : IEndpoints
                 StartDateTime: e.StartDateTime,
                 ParticipantsCount: e.EventParticipants.Count(p => p.Status == ParticipantStatus.Approved),
                 MaxParticipants: e.MaxParticipants,
-                ParticipationStatus: user.Identity != null && user.Identity.IsAuthenticated ? 
+                ParticipationStatus: user.Identity != null && user.Identity.IsAuthenticated ?
                     e.EventParticipants
                         .Where(p => p.UserId == user.GetId())
                         .Select(p => (ParticipantStatus?)p.Status)
