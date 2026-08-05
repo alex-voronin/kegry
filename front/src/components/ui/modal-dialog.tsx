@@ -36,7 +36,7 @@ export function ModalDialog({
 }: ModalDialogProps) {
   return (
     <Transition show={isOpen}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+      <Dialog as="div" className="relative z-[1000]" onClose={onClose}>
         <TransitionChild
           enter="opacity-0"
           enterFrom="opacity-0"
@@ -48,7 +48,7 @@ export function ModalDialog({
           <DialogBackdrop className={styles.backdrop} />
         </TransitionChild>
 
-        <div className="fixed inset-0 z-50 flex items-end justify-center overflow-hidden p-4">
+        <div className="fixed inset-0 z-[1000] flex items-end justify-center overflow-hidden p-4">
           <TransitionChild
             enter="transition duration-300 ease-out"
             enterFrom="translate-y-[calc(100%+200px)]"
