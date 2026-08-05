@@ -188,8 +188,8 @@ export default function MobileLayout() {
             })}
           </p>
           <div className={mobileStyles.mobileLoginButtonWrapper}>
-            <Link href={PAGE_ROUTES.LOGIN(true)} className={styles.loginButton}>
-              {t('header.nav.login')}
+            <Link href={PAGE_ROUTES.MAP} className={styles.loginButton}>
+              {t('cheers.exploreBarsNearby')}
             </Link>
           </div>
         </div>

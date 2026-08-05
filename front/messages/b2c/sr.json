@@ -52,9 +52,10 @@
       },
       "cheers": {
         "title": "Pronađi društvo za bar odmah!",
-        "description": "Spreman za piće i dobro društvo? Bez dejtinga. Bez beskonačnog dopisivanja. Pridruži se nečijem druženju ili organizuj svoje, pa pravo u bar. Pričaj o životu, smej se, izbaci stres i drži glavu gore. Ako se pojave goblini, možda je vreme da malo usporiš 🥴",
+        "description": "Spreman za piće i dobro društvo? Bez dejtinga. Bez beskonačnog dopisivanja. Pogledaj barove u blizini, pridruži se druženju ili organizuj svoje, pa pravo u bar. Pričaj o životu, smej se, izbaci stres i drži glavu gore. Ako se pojave goblini, možda je vreme da malo usporiš 🥴",
         "loyaltyPrograms": "I još nešto: ne zaboravi na naše <link>programe lojalnosti</link>.",
-        "cta": "Spreman?"
+        "cta": "Spreman?",
+        "exploreBarsNearby": "Pogledaj barove u blizini"
       },
       "pollsNews": {
         "newsTitle": "Vesti",

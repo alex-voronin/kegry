@@ -52,9 +52,10 @@
       },
       "cheers": {
         "title": "Find Your Bar Buddy Right Now!",
-        "description": "Up for a drink and good company? No dating. No endless chats. Join someone else's meetup or create your own, then head straight to the bar. Talk about life, laugh, vent, and enjoy the moment. If any goblins appear, maybe it's time to slow down a bit 🥴",
+        "description": "Up for a drink and good company? No dating. No endless chats. Browse bars nearby, join a meetup or create your own, then head straight to the bar. Talk about life, laugh, vent, and enjoy the moment. If any goblins appear, maybe it's time to slow down a bit 🥴",
         "loyaltyPrograms": "And one more thing: don't forget about our <link>loyalty programs</link>.",
-        "cta": "Ready?"
+        "cta": "Ready?",
+        "exploreBarsNearby": "Explore bars nearby"
       },
       "pollsNews": {
         "newsTitle": "News",

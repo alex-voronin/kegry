@@ -97,7 +97,7 @@ export default function DesktopLayout() {
             {t.rich('cheers.description', {
               br: () => <br />,
             })}{' '}
-            <Link href={PAGE_ROUTES.LOGIN(true)} className={styles.actionLink}>
+            <Link href={PAGE_ROUTES.MAP} className={styles.actionLink}>
               {t('cheers.cta')}
             </Link>
           </p>
