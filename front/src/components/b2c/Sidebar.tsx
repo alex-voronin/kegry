@@ -158,7 +158,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
   ];
 
-  const AUTH_REQUIRED_HREFS = new Set([
+  const AUTH_REQUIRED_HREFS = new Set<string>([
     PAGE_ROUTES.PROFILE,
     PAGE_ROUTES.MY_EVENTS,
     PAGE_ROUTES.CHAT,
