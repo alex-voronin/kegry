@@ -6,6 +6,7 @@ Allow: /
 Disallow: /api/
 Disallow: /login
 Disallow: /login?*
+Disallow: /map
 
 Sitemap: https://kegry.rs/sitemap.xml`;
 
