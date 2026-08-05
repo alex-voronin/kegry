@@ -313,7 +313,7 @@ export default function MeetupDetailPage() {
           {/* Description */}
           {event.description && (
             <p
-              className={`${styles.sectionCard} text-primary text-sm leading-relaxed`}
+              className={`${styles.sectionCard} text-primary text-base leading-relaxed`}
             >
               {event.description}
             </p>
