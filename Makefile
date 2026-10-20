@@ -177,7 +177,9 @@ format-back:
 	dotnet format $(BACK_SOLUTION)
 
 format-front:
-	cd $(FRONT_DIR) && npm run lint -- --fix && npx prettier --write .
+	# eslint currently reports pre-existing issues, but --fix still applies what it can
+	-cd $(FRONT_DIR) && npm run lint -- --fix
+	cd $(FRONT_DIR) && npx prettier --write --ignore-unknown .
 
 audit-back:
 	dotnet list $(BACK_SOLUTION) package --vulnerable

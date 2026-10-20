@@ -166,7 +166,7 @@ export default function MyEventsScreen() {
     tabState.hasError,
     tabState.events.length,
     limit,
-  ]); // eslint-disable-line react-hooks/exhaustive-deps
+  ]);
 
   const [isVenueSelectorOpen, setIsVenueSelectorOpen] = useState(false);
   const [menuEvent, setMenuEvent] = useState<MyEventItem | null>(null);
