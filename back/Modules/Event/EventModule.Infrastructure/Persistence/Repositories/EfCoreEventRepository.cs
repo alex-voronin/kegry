@@ -72,10 +72,10 @@ public class EfCoreEventRepository : RepositoryOutbox<EventContext, Event>, IEve
 
         var pagedIds = await venueJoinQuery
             .Select(x => new
-                {
-                    x.e.Id,
-                    Distance = EF.Functions.Distance(x.v.Coordinates, userPoint, useSpheroid: false)
-                }
+            {
+                x.e.Id,
+                Distance = EF.Functions.Distance(x.v.Coordinates, userPoint, useSpheroid: false)
+            }
             )
             .OrderBy(x => x.Distance)
             .Skip(offset)
