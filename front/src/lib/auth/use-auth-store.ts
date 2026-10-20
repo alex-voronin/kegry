@@ -154,10 +154,6 @@ export const useAuthStore = create<AuthState>()(
             { email, password },
           );
 
-          if (!signinRes.data.success) {
-            throw new Error(signinRes.data.errors[0]?.error || 'Signin failed');
-          }
-
           const { isSignupRequired, auth } = signinRes.data.result;
 
           if (isSignupRequired) {
@@ -191,10 +187,6 @@ export const useAuthStore = create<AuthState>()(
             { email, password, userType },
           );
 
-          if (!signupRes.data.success) {
-            throw new Error(signupRes.data.errors[0]?.error || 'Signup failed');
-          }
-
           const auth = signupRes.data.result;
           await reRegisterServiceWorker().catch((err) =>
             console.error('[auth] SW re-registration failed:', err),
@@ -212,12 +204,6 @@ export const useAuthStore = create<AuthState>()(
             API_ENDPOINTS.AUTH.GOOGLE,
             { idToken, userType },
           );
-
-          if (!res.data.success) {
-            throw new Error(
-              res.data.errors[0]?.error || 'Google sign-in failed',
-            );
-          }
 
           const auth = res.data.result;
 
@@ -241,12 +227,6 @@ export const useAuthStore = create<AuthState>()(
             { userId, token },
           );
 
-          if (!res.data.success) {
-            throw new Error(
-              res.data.errors[0]?.error || 'Email verification failed',
-            );
-          }
-
           get().setAuth(res.data.result);
           return res.data.result;
         } catch (error) {
@@ -257,23 +237,14 @@ export const useAuthStore = create<AuthState>()(
       resendConfirmationEmail: async (userId) => {
         const now = Date.now();
         if (now - lastResendTimestamp < RESEND_COOLDOWN_MS) {
-          const err: any = new Error('Cooldown active');
-          err.code = 'CooldownActive';
-          throw err;
+          throw new ApiRequestError('Cooldown active', 'CooldownActive');
         }
 
         try {
-          const res = await authClient.post<ApiResult<any>>(
+          await authClient.post<ApiResult<unknown>>(
             API_ENDPOINTS.AUTH.RESEND_CONFIRMATION_EMAIL,
             { userId },
           );
-
-          if (!res.data.success) {
-            throw new Error(
-              res.data.errors[0]?.error ||
-                'Failed to resend verification email',
-            );
-          }
 
           lastResendTimestamp = now;
         } catch (error) {
@@ -297,15 +268,10 @@ export const useAuthStore = create<AuthState>()(
 
       requestPasswordReset: async (email) => {
         try {
-          const res = await authClient.post<ApiResult<any>>(
+          await authClient.post<ApiResult<unknown>>(
             API_ENDPOINTS.AUTH.REQUEST_PASSWORD_RESET,
             { email },
           );
-
-          if (!res.data.success) {
-            const error = res.data.errors[0];
-            throw new Error(error?.error || 'Password reset request failed');
-          }
         } catch (error) {
           rethrowApiError(error, 'Password reset request failed');
         }
@@ -313,7 +279,7 @@ export const useAuthStore = create<AuthState>()(
 
       confirmPasswordReset: async (encodedEmail, encodedToken, newPassword) => {
         try {
-          const res = await authClient.post<ApiResult<any>>(
+          await authClient.post<ApiResult<unknown>>(
             API_ENDPOINTS.AUTH.CONFIRM_PASSWORD_RESET,
             {
               encodedEmail,
@@ -321,11 +287,6 @@ export const useAuthStore = create<AuthState>()(
               newPassword,
             },
           );
-
-          if (!res.data.success) {
-            const error = res.data.errors[0];
-            throw new Error(error?.error || 'Password reset failed');
-          }
         } catch (error) {
           rethrowApiError(error, 'Password reset failed');
         }
@@ -369,7 +330,7 @@ authClient.interceptors.request.use((config) => {
 let isRefreshing = false;
 let failedQueue: Array<{
   resolve: (token: string) => void;
-  reject: (error: any) => void;
+  reject: (error: unknown) => void;
 }> = [];
 
 const handleAuthFailure = () => {
@@ -381,7 +342,7 @@ const handleAuthFailure = () => {
   }
 };
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
@@ -424,7 +385,7 @@ authClient.interceptors.response.use(
       originalRequest._retry = true;
       isRefreshing = true;
 
-      const { refreshToken, setAuth, logout } = useAuthStore.getState();
+      const { refreshToken, setAuth } = useAuthStore.getState();
 
       if (!refreshToken) {
         handleAuthFailure();

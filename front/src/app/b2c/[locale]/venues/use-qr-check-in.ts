@@ -19,6 +19,10 @@ interface CheckInResponse {
   venueId: string;
 }
 
+type CheckInBody =
+  | { latitude: number; longitude: number }
+  | { pinCode: string };
+
 export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
   const t = useTranslations('components.qr-code-reader');
   const [isScannerOpen, setIsScannerOpen] = useState(false);
@@ -32,9 +36,8 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
   const executeCheckIn = useCallback(
     async (
       qrCode: string,
-      body: any,
+      body: CheckInBody,
       onSuccessCallback?: (venueId: string) => Promise<void> | void,
-      onErrorCallback?: (venueId: string | null) => void,
     ): Promise<boolean> => {
       const response = await apiClient.post<ApiResult<CheckInResponse>>(
         API_ENDPOINTS.VENUES.QR_CHECK_IN(qrCode),
@@ -43,18 +46,11 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
 
       const { venueId } = response.data.result;
 
-      if (response.data.success) {
-        setShowCheckIn(true);
-        await onSuccessCallback?.(venueId);
-        return true;
-      } else {
-        const errorMessage = response.data?.errors?.[0]?.error;
-        toast.error(errorMessage || t('toast.checkInFailed'));
-        onErrorCallback?.(venueId);
-        return false;
-      }
+      setShowCheckIn(true);
+      await onSuccessCallback?.(venueId);
+      return true;
     },
-    [t],
+    [],
   );
 
   const performCheckIn = useCallback(
@@ -63,46 +59,52 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
       onSuccessCallback?: (venueId: string) => Promise<void> | void,
       onErrorCallback?: (venueId: string | null) => void,
     ): Promise<boolean> => {
-      try {
-        const toastId = toast.loading(t('toast.gettingLocation'));
-        try {
-          const position = await getHighAccuracyLocation();
-          toast.dismiss(toastId);
-          return await executeCheckIn(
-            qrCode,
-            {
-              latitude: position.latitude,
-              longitude: position.longitude,
-            },
-            onSuccessCallback,
-            onErrorCallback,
-          );
-        } catch (err) {
-          toast.dismiss(toastId);
-          // Location failed, verify if PIN check-in is allowed before showing popup
-          try {
-            const settingsResponse = await apiClient.get<
-              ApiResult<{ isPinCheckInAllowed: boolean }>
-            >(API_ENDPOINTS.VENUES.QR_CHECK_IN_SETTINGS(qrCode));
+      const toastId = toast.loading(t('toast.gettingLocation'));
 
-            if (settingsResponse.data.result.isPinCheckInAllowed) {
-              setPendingQrCode(qrCode);
-              setCodeDescription(undefined);
-              setIsCodePopupOpen(true);
-            } else {
-              setShowLocationRequiredDialog(true);
-              onErrorCallback?.(null);
-            }
-          } catch (apiErr) {
-            toast.error(t('toast.checkInFailed'));
+      let position: Awaited<ReturnType<typeof getHighAccuracyLocation>>;
+      try {
+        position = await getHighAccuracyLocation();
+      } catch {
+        toast.dismiss(toastId);
+        // Location failed, verify if PIN check-in is allowed before showing popup
+        try {
+          const settingsResponse = await apiClient.get<
+            ApiResult<{ isPinCheckInAllowed: boolean }>
+          >(API_ENDPOINTS.VENUES.QR_CHECK_IN_SETTINGS(qrCode));
+
+          if (settingsResponse.data.result.isPinCheckInAllowed) {
+            setPendingQrCode(qrCode);
+            setCodeDescription(undefined);
+            setIsCodePopupOpen(true);
+          } else {
+            setShowLocationRequiredDialog(true);
             onErrorCallback?.(null);
           }
-          return false;
+        } catch {
+          toast.error(t('toast.checkInFailed'));
+          onErrorCallback?.(null);
         }
-      } catch (error: any) {
-        const errorMessage = extractApiError(error)[0];
-        toast.error(errorMessage || t('toast.checkInFailed'));
-        onErrorCallback?.(null);
+        return false;
+      }
+
+      toast.dismiss(toastId);
+
+      try {
+        return await executeCheckIn(
+          qrCode,
+          {
+            latitude: position.latitude,
+            longitude: position.longitude,
+          },
+          onSuccessCallback,
+        );
+      } catch (error) {
+        const [message, , context] = extractApiError(error);
+        const venueId =
+          typeof context?.venueId === 'string' ? context.venueId : null;
+
+        toast.error(message || t('toast.checkInFailed'));
+        onErrorCallback?.(venueId);
         return false;
       }
     },
@@ -117,16 +119,14 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
       onErrorCallback?: (venueId: string | null) => void,
     ): Promise<boolean> => {
       try {
-        return await executeCheckIn(
-          qrCode,
-          { pinCode },
-          onSuccessCallback,
-          onErrorCallback,
-        );
-      } catch (error: any) {
-        const errorMessage = extractApiError(error)[0];
-        toast.error(errorMessage || t('toast.checkInFailed'));
-        onErrorCallback?.(null);
+        return await executeCheckIn(qrCode, { pinCode }, onSuccessCallback);
+      } catch (error) {
+        const [message, , context] = extractApiError(error);
+        const venueId =
+          typeof context?.venueId === 'string' ? context.venueId : null;
+
+        toast.error(message || t('toast.checkInFailed'));
+        onErrorCallback?.(venueId);
         return false;
       }
     },

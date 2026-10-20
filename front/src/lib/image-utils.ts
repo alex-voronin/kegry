@@ -1,5 +1,6 @@
 import axios from 'axios';
 import apiClient from '@/lib/api-client';
+import { ApiResult } from '@/lib/api-types';
 import imageCompression from 'browser-image-compression';
 
 const uploadClient = axios.create({
@@ -68,20 +69,12 @@ export async function uploadImage(
   }
 
   // Get presigned URL
-  const presignedResponse = await apiClient.post<{
-    success: boolean;
-    result: PresignedUrlResponse;
-    errors: { error: string }[];
-  }>(presignedUrlEndpoint, {
+  const presignedResponse = await apiClient.post<
+    ApiResult<PresignedUrlResponse>
+  >(presignedUrlEndpoint, {
     ContentType: blob.type === 'image/jpeg' ? 'ImageJpeg' : 'ImageWebp',
     ContentLength: blob.size,
   });
-
-  if (!presignedResponse.data.success) {
-    throw new Error(
-      presignedResponse.data.errors[0]?.error || 'Failed to get upload URL',
-    );
-  }
 
   const { uploadUrl, publicDownloadUrl } = presignedResponse.data.result;
 

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { ProblemDetails } from './api-types';
 
 export class ApiRequestError extends Error {
   code?: string;
@@ -10,35 +11,40 @@ export class ApiRequestError extends Error {
 }
 
 /**
- * Extracts an error message from various error types (axios, API response, generic).
+ * Extracts an error message, code and context from various error types
+ * (ProblemDetails from the API, axios, generic errors).
  */
 export function extractApiError(
   error: unknown,
   fallback = 'An error occurred',
-): [string, string] {
-  if (error instanceof ApiRequestError) {
-    return [error.message, error.code || 'unknown'];
-  }
-
+): [string, string, ProblemDetails?] {
   if (axios.isAxiosError(error)) {
-    const apiError = error.response?.data?.errors?.[0];
-    if (apiError) {
-      return [apiError.error, apiError.code];
+    const data = error.response?.data as ProblemDetails | undefined;
+
+    if (data?.detail || data?.title) {
+      return [
+        data.detail ?? data.title ?? fallback,
+        data.code ?? 'unknown',
+        data,
+      ];
     }
 
-    // Fallback to axios error message
-    return [error.message || fallback, 'unknown'];
+    return [error.message || fallback, 'unknown', undefined];
+  }
+
+  if (error instanceof ApiRequestError) {
+    return [error.message, error.code || 'unknown', undefined];
   }
 
   if (error instanceof Error) {
-    return [error.message || fallback, 'unknown'];
+    return [error.message || fallback, 'unknown', undefined];
   }
 
   if (typeof error === 'string') {
-    return [error, 'unknown'];
+    return [error, 'unknown', undefined];
   }
 
-  return [fallback, 'unknown'];
+  return [fallback, 'unknown', undefined];
 }
 
 /**
