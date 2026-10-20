@@ -1,8 +1,8 @@
+using System.Net;
 using System.Net.Http.Json;
 using IntegrationTests.Shared;
 using IntegrationTests.Shared.Extensions;
 using SecurityModule.Domain.ValueObjects;
-using Serilog;
 using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
 using SharedCore.Extensions;
@@ -53,10 +53,6 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var createVenueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyId), createVenueRequest);
 
-        if (!createVenueResponse.Success)
-        {
-            Log.Error(createVenueResponse.Errors.First().Error);
-        }
         createVenueResponse.Success.ShouldBeTrue();
         var venueId = createVenueResponse.Result.Id;
 
@@ -109,18 +105,21 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 CoverImageUrl: TestConfig.S3.PublicUrl + "/cover.jpg",
                 TagIds: []);
 
-            var createVenueResponse =
-                await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
-                    ApiRoutes.B2B.Company.Venues(companyId), createVenueRequest);
-
             if (i < Validation.MaxVenuesPerCompany)
             {
-                createVenueResponse.Success.ShouldBeTrue();
+                var createVenueResponse =
+                    await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+                        ApiRoutes.B2B.Company.Venues(companyId), createVenueRequest);
+                createVenueResponse.Result.Id.ShouldNotBe(Guid.Empty);
             }
             else
             {
-                createVenueResponse.Success.ShouldBeFalse();
-                createVenueResponse.Errors.ShouldContain(e => e.Code == nameof(ErrorCode.TooManyEntities));
+                var error = await Factory.ApiClient.PostProblemAsync(
+                    ApiRoutes.B2B.Company.Venues(companyId), createVenueRequest);
+
+                error.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+                error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.Forbidden);
+                error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.TooManyEntities));
             }
         }
     }
@@ -213,9 +212,10 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         deleteResponse.Success.ShouldBeTrue();
 
         // 3. Verify venue is not found
-        var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
+        var getError = await Factory.ApiClient.GetProblemAsync(
             ApiRoutes.B2B.Venue.Single(venueId));
-        getResponse.Success.ShouldBeFalse();
+        getError.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        getError.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.NotFound));
     }
 
     [Fact]

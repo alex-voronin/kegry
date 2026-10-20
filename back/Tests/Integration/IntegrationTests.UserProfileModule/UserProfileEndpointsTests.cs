@@ -1,8 +1,8 @@
+using System.Net;
 using IntegrationTests.Shared;
 using IntegrationTests.Shared.Extensions;
 using NotificationModule.Domain.ValueObjects;
 using NotificationsModule.API.Dto;
-using Serilog;
 using SharedCore.Api.Dto;
 using SharedCore.Enums;
 using SharedCore.Exceptions;
@@ -52,10 +52,6 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         var response = await Factory.ApiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(
             ApiRoutes.UserProfile.Profile, request);
-        if (!response.Success)
-        {
-            Log.Error(response.Errors.First().Error);
-        }
 
         response.Success.ShouldBeTrue();
 
@@ -170,11 +166,6 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
             ApiRoutes.UserProfile.Profile, request);
 
-        if (!response.Success)
-        {
-            Log.Error(response.Errors.First().Error);
-        }
-
         response.Success.ShouldBeTrue();
 
         // 3. Check response
@@ -220,11 +211,6 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         var response = await Factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
             ApiRoutes.UserProfile.Profile, request);
-
-        if (!response.Success)
-        {
-            Log.Error(response.Errors.First().Error);
-        }
 
         response.Success.ShouldBeTrue();
 
@@ -280,12 +266,12 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Get profile
-        var response =
-            await Factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
+        var error = await Factory.ApiClient.GetProblemAsync(ApiRoutes.UserProfile.Profile);
 
         // 3. Check response
-        response.Success.ShouldBeFalse();
-        response.Errors.First().Code.ShouldBe(nameof(ErrorCode.NotFound));
+        error.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.NotFound);
+        error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.NotFound));
     }
 
     [Fact]
@@ -340,7 +326,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Get upload url
-        var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
+        var error = await Factory.ApiClient.PostProblemAsync(
             ApiRoutes.UserProfile.AvatarUploadUrl,
             new GetPresignedUrlRequest(
                 ContentType: ContentType.ImageWebp,
@@ -348,9 +334,10 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
             );
 
         // 3. Check response
-        response.Success.ShouldBeFalse();
-        response.Result.PublicDownloadUrl.ShouldBeNull();
-        response.Result.UploadUrl.ShouldBeNull();
+        error.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.UnprocessableEntity);
+        error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.ValidationError));
+        error.ProblemDetails.Detail.ShouldBe("Upload size is too large");
     }
 
     [Fact]
@@ -361,7 +348,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Get upload url
-        var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
+        var error = await Factory.ApiClient.PostProblemAsync(
             ApiRoutes.UserProfile.CoverUploadUrl,
             new GetPresignedUrlRequest(
                 ContentType: ContentType.ImageWebp,
@@ -369,9 +356,10 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
             );
 
         // 3. Check response
-        response.Success.ShouldBeFalse();
-        response.Result.PublicDownloadUrl.ShouldBeNull();
-        response.Result.UploadUrl.ShouldBeNull();
+        error.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.UnprocessableEntity);
+        error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.ValidationError));
+        error.ProblemDetails.Detail.ShouldBe("Upload size is too large");
     }
 
     [Fact]

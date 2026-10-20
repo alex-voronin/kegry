@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using IntegrationTests.Shared;
 using IntegrationTests.Shared.Extensions;
@@ -60,17 +61,21 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
         for (int i = 0; i <= Validation.MaxCompaniesPerUser; i++)
         {
             var createRequest = new CreateCompanyRequest(Name: $"Test Company {i}", Email: $"company{i}@test.com");
-            var createResponse =
-                await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-                    ApiRoutes.B2B.Company.Root, createRequest);
             if (i < Validation.MaxCompaniesPerUser)
             {
-                createResponse.Success.ShouldBeTrue();
+                var createResponse =
+                    await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+                        ApiRoutes.B2B.Company.Root, createRequest);
+                createResponse.Result.Id.ShouldNotBe(Guid.Empty);
             }
             else
             {
-                createResponse.Success.ShouldBeFalse();
-                createResponse.Errors.ShouldContain(e => e.Code == nameof(ErrorCode.TooManyEntities));
+                var error = await Factory.ApiClient.PostProblemAsync(
+                    ApiRoutes.B2B.Company.Root, createRequest);
+
+                error.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+                error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.Forbidden);
+                error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.TooManyEntities));
             }
         }
     }
@@ -129,11 +134,12 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
         deleteResponse.Success.ShouldBeTrue();
 
         // 3. Verify company is not found
-        var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetCompanyResponse>>(
+        var getError = await Factory.ApiClient.GetProblemAsync(
             ApiRoutes.B2B.Company.Single(companyId));
 
-        getResponse.Success.ShouldBeFalse();
-        getResponse.Errors.ShouldContain(e => e.Code == nameof(ErrorCode.NotFound));
+        getError.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        getError.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.NotFound);
+        getError.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.NotFound));
     }
 
     [Fact]

@@ -1,18 +1,26 @@
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using PostHog;
 using Serilog;
-using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
 
 namespace API.Web.Exceptions;
 
 public class ExceptionHandler : IExceptionHandler
 {
+    private const string GenericErrorMessage = "An unexpected error occurred.";
+
+    private readonly IProblemDetailsService _problemDetailsService;
     private readonly IPostHogClient _postHogClient;
     private readonly IWebHostEnvironment _hostEnvironment;
 
-    public ExceptionHandler(IPostHogClient postHogClient, IWebHostEnvironment hostEnvironment)
+    public ExceptionHandler(
+        IProblemDetailsService problemDetailsService,
+        IPostHogClient postHogClient,
+        IWebHostEnvironment hostEnvironment)
     {
+        _problemDetailsService = problemDetailsService;
         _postHogClient = postHogClient;
         _hostEnvironment = hostEnvironment;
     }
@@ -29,23 +37,52 @@ public class ExceptionHandler : IExceptionHandler
         var (statusCode, errorCode) = exception switch
         {
             ArgumentNullException => (StatusCodes.Status400BadRequest, ErrorCode.GeneralError),
+            ArgumentException => (StatusCodes.Status400BadRequest, ErrorCode.ValidationError),
+            FormatException => (StatusCodes.Status400BadRequest, ErrorCode.ValidationError),
             UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, ErrorCode.GeneralError),
             HttpCodeException httpCodeException => ((int)httpCodeException.HttpStatusCode, httpCodeException.ErrorCode),
             _ => (StatusCodes.Status500InternalServerError, ErrorCode.GeneralError)
         };
 
-        httpContext.Response.StatusCode = statusCode;
-        httpContext.Response.ContentType = "application/json";
+        var codeException = exception as HttpCodeException;
+        var isServerError = statusCode == StatusCodes.Status500InternalServerError;
 
-        var apiError = new ApiError()
+        var problemDetails = new ProblemDetails
         {
-            Error = exception.Message,
-            Code = Enum.GetName(typeof(ErrorCode), errorCode) ?? nameof(ErrorCode.GeneralError),
+            Status = statusCode,
+            Title = ReasonPhrases.GetReasonPhrase(statusCode),
+            Detail = isServerError ? GenericErrorMessage : exception.Message,
+            Instance = httpContext.Request.Path,
+            Type = $"https://httpstatuses.io/{statusCode}"
         };
-        var response = new ApiResult.EmptyResult(apiError);
+
+        problemDetails.Extensions["code"] = codeException?.Code
+                                            ?? Enum.GetName(typeof(ErrorCode), errorCode)
+                                            ?? nameof(ErrorCode.GeneralError);
+
+        if (codeException?.Details is { } details)
+        {
+            foreach (var (key, value) in details)
+            {
+                problemDetails.Extensions[key] = value;
+            }
+        }
 
         httpContext.Response.StatusCode = statusCode;
-        await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);
+
+        var written = await _problemDetailsService.TryWriteAsync(new ProblemDetailsContext
+        {
+            HttpContext = httpContext,
+            Exception = exception,
+            ProblemDetails = problemDetails
+        });
+
+        if (!written)
+        {
+            httpContext.Response.ContentType = "application/problem+json";
+            await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
+        }
+
         return true;
     }
 

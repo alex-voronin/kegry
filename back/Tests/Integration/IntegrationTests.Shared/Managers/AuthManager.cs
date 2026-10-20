@@ -67,8 +67,7 @@ public class AuthManager
             .ExecuteAndWaitAsync(signupFunc);
 
         signinResponse.ShouldNotBeNull();
-        signinResponse.Success.ShouldBeTrue(
-            $"Login failed with errors: {string.Join(", ", signinResponse.Errors.Select(e => e.Error))}");
+        signinResponse.Success.ShouldBeTrue();
         signinResponse.Result.Auth.ShouldNotBeNull();
         signinResponse.Result.Auth.AccessToken.ShouldNotBeNullOrEmpty();
 

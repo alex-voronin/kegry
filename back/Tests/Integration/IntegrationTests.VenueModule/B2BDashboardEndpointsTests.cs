@@ -3,6 +3,7 @@ using IntegrationTests.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using SecurityModule.Domain.ValueObjects;
 using SharedCore.Api.Dto;
+using SharedCore.Exceptions;
 using Shouldly;
 using VenueModule.API.B2B.Companies.Dto;
 using VenueModule.API.B2B.Dashboard.Dto;
@@ -195,10 +196,12 @@ public class B2BDashboardEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .CreateAndLoginUserAsync("b2b_dash_owner_b@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(authB);
 
-        var response = await Factory.ApiClient.GetAsync<ApiResult<VisitsChartResponseDto>>(
+        var error = await Factory.ApiClient.GetProblemAsync(
             DashboardVisitsUrl(companyId, "Daily"));
 
-        response.Success.ShouldBeFalse();
+        error.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.NotFound);
+        error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.NotFound));
     }
 
     [Fact]

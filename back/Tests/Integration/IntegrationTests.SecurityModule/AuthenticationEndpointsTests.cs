@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Text;
 using IntegrationTests.Shared;
 using Microsoft.IdentityModel.Tokens;
@@ -140,11 +141,11 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var email = "asd@asldk.com";
         var request = new SignUpRequest(Email: email, Password: "123456789Qwe", UserType: UserType.B2C);
 
-        var signinResponse = await Factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
-            ApiRoutes.Auth.Signup, request);
+        var error = await Factory.ApiClient.PostProblemAsync(ApiRoutes.Auth.Signup, request);
 
-        signinResponse.Success.ShouldBeFalse();
-        signinResponse.Errors.First().Code.ShouldBe(nameof(ErrorCode.DoesNotExist));
+        error.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.UnprocessableEntity);
+        error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.DoesNotExist));
     }
 
     [Fact]
@@ -262,11 +263,13 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Confirm password reset
         var confirmRequest = new ConfirmPasswordResetRequest(userId, "invalid-token", "NewPassword123!");
-        var confirmResponse = await Factory.ApiClient.PostAsync<ConfirmPasswordResetRequest, ApiResult.EmptyResult>(
+        var confirmError = await Factory.ApiClient.PostProblemAsync(
             ApiRoutes.Auth.ConfirmPasswordReset, confirmRequest);
 
         // 3. Check response
-        confirmResponse.Success.ShouldBeFalse();
+        confirmError.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        confirmError.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.BadRequest);
+        confirmError.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.ValidationError));
     }
 
     [Fact]
@@ -302,22 +305,23 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. Renew token
         Factory.FakeTimeProvider.Reset(DateTime.UtcNow);
         var request = new RenewTokensRequest(auth.RefreshToken!);
-        var response = await Factory.ApiClient.PostAsync<RenewTokensRequest, ApiResult<AuthResponse>>(
-            ApiRoutes.Auth.RenewTokens, request);
+        var error = await Factory.ApiClient.PostProblemAsync(ApiRoutes.Auth.RenewTokens, request);
 
         // 3. Check that 
-        response.Success.ShouldBeFalse();
-        response.Errors[0].Error.ShouldBe("Invalid or revoked access token");
+        error.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.Forbidden);
+        error.ProblemDetails.Detail.ShouldBe("Invalid or revoked access token");
+        error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.NotFound));
     }
 
     [Fact]
     public async Task GivenUser_WhenRenewTokensWithInvalidRefreshToken_ThenReturnsError()
     {
         var request = new RenewTokensRequest("invalid-refresh-token");
-        var response = await Factory.ApiClient.PostAsync<RenewTokensRequest, ApiResult<AuthResponse>>(
-            ApiRoutes.Auth.RenewTokens, request);
+        var error = await Factory.ApiClient.PostProblemAsync(ApiRoutes.Auth.RenewTokens, request);
 
-        response.Success.ShouldBeFalse();
+        error.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.NotFound));
     }
 
     [Fact]
@@ -357,11 +361,11 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 3. Renew token
         var request = new RenewTokensRequest(auth.RefreshToken!);
-        var response = await Factory.ApiClient.PostAsync<RenewTokensRequest, ApiResult<AuthResponse>>(
-            ApiRoutes.Auth.RenewTokens, request);
+        var error = await Factory.ApiClient.PostProblemAsync(ApiRoutes.Auth.RenewTokens, request);
 
-        response.Success.ShouldBeFalse();
-        response.Errors[0].Error.ShouldBe("Invalid or revoked access token");
+        error.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        error.ProblemDetails.Detail.ShouldBe("Invalid or revoked access token");
+        error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.NotFound));
     }
 
     [Fact]
@@ -379,10 +383,12 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 3. Sign in again
         var request = new SignInRequest(Email: email, Password: "123456789Qwe");
-        var signinResponse = await Factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
-            ApiRoutes.Auth.Signin, request);
+        var signinError = await Factory.ApiClient.PostProblemAsync(ApiRoutes.Auth.Signin, request);
 
-        signinResponse.Success.ShouldBeFalse();
+        signinError.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
+        signinError.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.UnprocessableEntity);
+        signinError.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.ValidationError));
+        signinError.ProblemDetails.Detail.ShouldBe("Invalid email or password");
     }
 
     [Fact]

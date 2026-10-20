@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using API.Web.Exceptions;
 using Npgsql;
 using Serilog;
@@ -17,6 +18,15 @@ public static class WebApplicationBuilderExtensions
                 startup.Register(builder, builder.Host);
             }
 
+            builder.Services.AddProblemDetails(options =>
+            {
+                options.CustomizeProblemDetails = context =>
+                {
+                    context.ProblemDetails.Instance ??= context.HttpContext.Request.Path;
+                    context.ProblemDetails.Extensions["traceId"] =
+                        Activity.Current?.Id ?? context.HttpContext.TraceIdentifier;
+                };
+            });
             builder.Services.AddExceptionHandler<ExceptionHandler>();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddOpenApi();

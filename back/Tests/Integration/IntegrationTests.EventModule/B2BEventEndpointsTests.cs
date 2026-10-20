@@ -1,3 +1,5 @@
+using System.Net;
+using System.Net.Http.Json;
 using EventModule.API.B2B.Dto;
 using EventModule.API.B2C.Dto;
 using EventModule.Domain.Enums;
@@ -60,7 +62,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var otherAuth = await CreateB2BUserAsync();
         Factory.ApiClient.SetAuth(otherAuth);
 
-        var response = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+        var error = await Factory.ApiClient.PostProblemAsync(
             ApiRoutes.B2B.Event.Root,
             new B2BCreateEventRequest(
                 CoverImageUrl: null,
@@ -69,7 +71,9 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
                 VenueId: ownerVenueId));
 
-        response.Success.ShouldBeFalse();
+        error.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.Forbidden);
+        error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.NotAllowed));
     }
 
     [Fact]
@@ -78,18 +82,16 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var b2CAuth = await CreateUserAsync();
         Factory.ApiClient.SetAuth(b2CAuth);
 
-        await Should.ThrowAsync<HttpCodeException>(async () =>
-        {
-            await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
-                ApiRoutes.B2B.Event.Root,
-                new B2BCreateEventRequest(
-                    CoverImageUrl: null,
-                    Title: "Not Allowed",
-                    Description: "Desc",
-                    StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
-                    VenueId: Guid.NewGuid()),
-                throwOnError: true);
-        });
+        var response = await Factory.HttpClient.PostAsJsonAsync(
+            ApiRoutes.B2B.Event.Root,
+            new B2BCreateEventRequest(
+                CoverImageUrl: null,
+                Title: "Not Allowed",
+                Description: "Desc",
+                StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
+                VenueId: Guid.NewGuid()));
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
     }
 
     [Fact]
@@ -98,7 +100,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var auth = await CreateB2BUserAsync();
         Factory.ApiClient.SetAuth(auth);
 
-        var response = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+        var error = await Factory.ApiClient.PostProblemAsync(
             ApiRoutes.B2B.Event.Root,
             new B2BCreateEventRequest(
                 CoverImageUrl: null,
@@ -107,7 +109,9 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
                 VenueId: Guid.NewGuid()));
 
-        response.Success.ShouldBeFalse();
+        error.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.NotFound);
+        error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.NotFound));
     }
 
     // ========================================
@@ -176,11 +180,10 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var b2CAuth = await CreateUserAsync();
         Factory.ApiClient.SetAuth(b2CAuth);
 
-        await Should.ThrowAsync<HttpCodeException>(async () =>
-        {
-            await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<B2BEventListItemDto>>>(
-                ApiRoutes.B2B.Event.Root + "?Offset=0&Limit=20", throwOnError: true);
-        });
+        var response = await Factory.HttpClient.GetAsync(
+            ApiRoutes.B2B.Event.Root + "?Offset=0&Limit=20");
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
     }
 
     // ========================================
@@ -230,10 +233,12 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var otherAuth = await CreateB2BUserAsync();
         Factory.ApiClient.SetAuth(otherAuth);
 
-        var response = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(
+        var error = await Factory.ApiClient.GetProblemAsync(
             ApiRoutes.B2B.Event.Single(eventId));
 
-        response.Success.ShouldBeFalse();
+        error.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.Forbidden);
+        error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.NotAllowed));
     }
 
     // ========================================
@@ -290,7 +295,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var otherAuth = await CreateB2BUserAsync();
         Factory.ApiClient.SetAuth(otherAuth);
 
-        var response = await Factory.ApiClient.PatchAsync<B2BUpdateEventRequest, ApiResult<EventDto>>(
+        var error = await Factory.ApiClient.PatchProblemAsync(
             ApiRoutes.B2B.Event.Single(eventId),
             new B2BUpdateEventRequest(
                 Title: "Hacked!",
@@ -300,7 +305,8 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Contacts: null,
                 HobbyIds: null));
 
-        response.Success.ShouldBeFalse();
+        error.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.NotAllowed));
     }
 
     // ========================================
@@ -327,9 +333,10 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.B2B.Event.Single(eventId));
         deleteResponse.Success.ShouldBeTrue();
 
-        var getResponse = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(
+        var getError = await Factory.ApiClient.GetProblemAsync(
             ApiRoutes.B2B.Event.Single(eventId));
-        getResponse.Success.ShouldBeFalse();
+        getError.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        getError.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.NotFound));
     }
 
     [Fact]
@@ -351,9 +358,10 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
             ApiRoutes.B2B.Event.Single(eventId));
 
-        var response = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(
+        var error = await Factory.ApiClient.GetProblemAsync(
             ApiRoutes.B2B.Event.Single(eventId));
-        response.Success.ShouldBeFalse();
+        error.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.NotFound));
     }
 
     // ========================================
@@ -404,13 +412,11 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var otherAuth = await CreateB2BUserAsync();
         Factory.ApiClient.SetAuth(otherAuth);
 
-        await Should.ThrowAsync<HttpCodeException>(async () =>
-        {
-            await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
-                ApiRoutes.B2B.Event.CoverUploadUrl(eventId),
-                new GetPresignedUrlRequest(ContentType.ImageJpeg, 50000),
-                throwOnError: true);
-        });
+        var response = await Factory.HttpClient.PostAsJsonAsync(
+            ApiRoutes.B2B.Event.CoverUploadUrl(eventId),
+            new GetPresignedUrlRequest(ContentType.ImageJpeg, 50000));
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
     }
 
     // ========================================
@@ -438,7 +444,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         }
 
         // One more should be rejected
-        var eleventhResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+        var error = await Factory.ApiClient.PostProblemAsync(
             ApiRoutes.B2B.Event.Root,
             new B2BCreateEventRequest(
                 CoverImageUrl: null,
@@ -447,12 +453,11 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
                 VenueId: venueId));
 
-        eleventhResponse.Success.ShouldBeFalse();
-        eleventhResponse.Errors.ShouldNotBeNull();
-        eleventhResponse.Errors.Length.ShouldBe(1);
-        eleventhResponse.Errors[0].Error.ShouldBe(
+        error.StatusCode.ShouldBe(HttpStatusCode.TooManyRequests);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.TooManyRequests);
+        error.ProblemDetails.Detail.ShouldBe(
             $"Daily creation limit of {EventParameters.MaxB2BEventsPerDay} reached");
-        eleventhResponse.Errors[0].Code.ShouldBe(nameof(ErrorCode.TooManyRequests));
+        error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.TooManyRequests));
     }
 
     // ========================================
@@ -462,13 +467,13 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
     private async Task<AuthResponse> CreateUserAsync()
     {
         return await Factory.AuthManager.CreateAndLoginUserAsync(
-            $"b2c_{Guid.NewGuid():N}@hoppyfy.me", "Password123!");
+            $"b2c_{Guid.NewGuid():N}@example.com", "Password123!");
     }
 
     private async Task<AuthResponse> CreateB2BUserAsync()
     {
         return await Factory.AuthManager.CreateAndLoginUserAsync(
-            $"b2b_event_{Guid.NewGuid():N}@hoppyfy.me", "Password123!", UserType.B2B);
+            $"b2b_event_{Guid.NewGuid():N}@example.com", "Password123!", UserType.B2B);
     }
 
     private async Task<(AuthResponse Auth, Guid CompanyId, Guid VenueId)> CreateB2BCompanyAndVenueAsync()

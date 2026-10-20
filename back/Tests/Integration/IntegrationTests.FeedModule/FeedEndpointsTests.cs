@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using FeedModule.API.Dto;
 using FeedModule.Domain.Aggregates;
@@ -103,8 +104,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.PostAsync<UserRatingDto, ApiResult.EmptyResult>(
             ApiRoutes.Feed.RateUser(userBId), ratingRequest);
 
-        response.Success.ShouldBeTrue(
-            $"Rating failed with errors: {string.Join(", ", response.Errors.Select(e => e.Error))}");
+        response.Success.ShouldBeTrue();
 
         // 4. Get Feed and check rating
         var feedResponse = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
@@ -544,12 +544,13 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         }
 
         // 4. Try to invite one more user and expect failure
-        var failedResponse = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+        var failedError = await Factory.ApiClient.PostProblemAsync(
             ApiRoutes.Feed.InviteUser(candidateIds[FeedParameters.DefaultAvailableInvitesPerDay]),
             new InviteUserRequest(ComputeExpiresAtForNowOption()));
 
-        failedResponse.Success.ShouldBeFalse();
-        failedResponse.Errors.First().Code.ShouldBe(nameof(ErrorCode.TooManyRequests));
+        failedError.StatusCode.ShouldBe(HttpStatusCode.TooManyRequests);
+        failedError.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.TooManyRequests);
+        failedError.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.TooManyRequests));
 
         // 5. Wait until midnight and check limit
         // .UtcDateTime is required to keep UTC timezone after calculations
@@ -806,10 +807,11 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 4. User B tries to accept the expired invite
         Factory.ApiClient.SetAuth(authB);
-        var acceptResponse = await Factory.ApiClient.PostAsync<object?, ApiResult.EmptyResult>(
+        var acceptError = await Factory.ApiClient.PostProblemAsync<object?>(
             ApiRoutes.Feed.AcceptInvite(authA.UserId), null);
-        acceptResponse.Success.ShouldBeFalse();
-        acceptResponse.Errors.First().Code.ShouldBe(nameof(ErrorCode.ValidationError));
+        acceptError.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        acceptError.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.BadRequest);
+        acceptError.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.ValidationError));
 
         // 5. Neither user should be in the other's friends list
         Factory.ApiClient.SetAuth(authA);
@@ -965,12 +967,14 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. User A tries to invite User C via Friend Endpoint
         Factory.ApiClient.SetAuth(authA);
         var request = new InviteUserRequest(DateTimeOffset.UtcNow.AddHours(1));
-        var response = await Factory.ApiClient
-            .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteFriend(userBId), request);
+        var error = await Factory.ApiClient
+            .PostProblemAsync(ApiRoutes.Feed.InviteFriend(userBId), request);
 
-        response.Success.ShouldBeFalse();
-        response.Errors.ShouldContain(e => e.Code == "ValidationError");
-        response.Errors.ShouldContain(e => e.Error.Contains("not a friend"));
+        error.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.Forbidden);
+        error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.ValidationError));
+        error.ProblemDetails.Detail.ShouldNotBeNull();
+        error.ProblemDetails.Detail.ShouldContain("not a friend");
     }
 
     [Fact]
@@ -1095,12 +1099,13 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 3. User A is in a meeting. Try to invite User C.
         Factory.ApiClient.SetAuth(authA);
-        var response = await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+        var error = await Factory.ApiClient.PostProblemAsync(
             ApiRoutes.Feed.InviteUser(userCId),
             new InviteUserRequest(ComputeExpiresAtForNowOption()));
 
         // 4. Assert the invite fails because User A is already in a meeting
-        response.Success.ShouldBeFalse();
-        response.Errors.First().Code.ShouldBe(nameof(ErrorCode.ValidationError));
+        error.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.Forbidden);
+        error.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.ValidationError));
     }
 }

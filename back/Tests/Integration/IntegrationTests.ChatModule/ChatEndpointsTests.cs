@@ -1,3 +1,4 @@
+using System.Net;
 using ChatModule.API.Dto;
 using ChatModule.Application.Messaging.Location;
 using ChatModule.Domain.Aggregates;
@@ -12,6 +13,7 @@ using NotificationsModule.Infrastructure.Transport.Push;
 using Polly;
 using SecurityModule.API.Dto;
 using SharedCore.Api.Dto;
+using SharedCore.Exceptions;
 using Shouldly;
 using Wolverine.Tracking;
 
@@ -54,9 +56,10 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 3. Verify no active chat exists for User A
         Factory.ApiClient.SetAuth(authA);
-        var chatResponseBefore = await Factory.ApiClient
-            .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
-        chatResponseBefore.Success.ShouldBeFalse();
+        var chatErrorBefore = await Factory.ApiClient
+            .GetProblemAsync(ApiRoutes.Chat.ChatRoot);
+        chatErrorBefore.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        chatErrorBefore.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.NotFound));
 
         var inviteAExpiresAt = DateTimeOffset.UtcNow.AddHours(12);
         var inviteBExpiresAt = DateTimeOffset.UtcNow.AddHours(24);
@@ -170,9 +173,10 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
             expectedType: FcmPushBuilder.PushType.OpenRateUserScreen);
 
         // 4. Verify chat is deleted for User A
-        var chatAfterDelete = await Factory.ApiClient
-            .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
-        chatAfterDelete.Success.ShouldBeFalse();
+        var chatErrorAfterDelete = await Factory.ApiClient
+            .GetProblemAsync(ApiRoutes.Chat.ChatRoot);
+        chatErrorAfterDelete.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        chatErrorAfterDelete.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.NotFound));
 
         // 5. Verify FeedStatus returns UserIdToRate for User A
         var statusAfterA = await Factory.ApiClient
@@ -279,11 +283,13 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 3. When user A sends MaxMessagesPerUser + 1 message then receives an error
         var requestExtra = new SendMessageRequest("Extra message");
-        var responseExtra = await Factory.ApiClient
-            .PostAsync<SendMessageRequest, ApiResult.EmptyResult>(ApiRoutes.Chat.Message, requestExtra);
+        var errorExtra = await Factory.ApiClient
+            .PostProblemAsync(ApiRoutes.Chat.Message, requestExtra);
 
-        responseExtra.Success.ShouldBeFalse();
-        responseExtra.Errors[0].Error.ShouldStartWith("You are unable to post more than");
+        errorExtra.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
+        errorExtra.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.UnprocessableEntity);
+        errorExtra.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.ValidationError));
+        errorExtra.ProblemDetails.Detail.ShouldStartWith("You are unable to post more than");
     }
 
     [Fact]
