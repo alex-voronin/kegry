@@ -75,7 +75,7 @@ interface VenueState {
 }
 
 export const useVenueStore = create<VenueState>()(
-  devtools((set, get) => ({
+  devtools((set) => ({
     currentVenue: null,
     isLoading: false,
     venueEvents: [],
@@ -89,13 +89,9 @@ export const useVenueStore = create<VenueState>()(
           API_ENDPOINTS.VENUES.DETAILS(id),
         );
 
-        if (response.data.success) {
-          set({ currentVenue: response.data.result });
-        } else {
-          throw new Error('Failed to fetch venue');
-        }
+        set({ currentVenue: response.data.result });
       } catch (error) {
-        rethrowApiError(error, 'Failed to delete company');
+        rethrowApiError(error, 'Failed to fetch venue');
       } finally {
         set({ isLoading: false });
       }

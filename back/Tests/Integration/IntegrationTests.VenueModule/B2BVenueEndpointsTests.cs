@@ -53,14 +53,12 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var createVenueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyId), createVenueRequest);
 
-        createVenueResponse.Success.ShouldBeTrue();
         var venueId = createVenueResponse.Result.Id;
 
         // 3. Get venue and verify
         var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
             ApiRoutes.B2B.Venue.Single(venueId));
 
-        getResponse.Success.ShouldBeTrue();
         getResponse.Result.Venue.ShouldSatisfyAllConditions(
             v => v.Id.ShouldBe(venueId.ToString()),
             v => v.Address.ShouldBe(createVenueRequest.Address),
@@ -160,15 +158,13 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             QrCode: Guid.NewGuid(),
             TagIds: ["beer_craft".ToDeterministicGuid(), "spirit_vodka".ToDeterministicGuid()]);
 
-        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
             ApiRoutes.B2B.Venue.Single(venueId), patchRequest);
-        patchResponse.Success.ShouldBeTrue();
 
         // 3. Get venue and verify updates
         var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
             ApiRoutes.B2B.Venue.Single(venueId));
 
-        getResponse.Success.ShouldBeTrue();
         getResponse.Result.Venue.ShouldSatisfyAllConditions(
             v => v.Address.ShouldBe(patchRequest.Address),
             v => v.Latitude.ShouldBe(patchRequest.Latitude!.Value),
@@ -209,7 +205,6 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. Delete venue
         var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
             ApiRoutes.B2B.Venue.Single(venueId));
-        deleteResponse.Success.ShouldBeTrue();
 
         // 3. Verify venue is not found
         var getError = await Factory.ApiClient.GetProblemAsync(
@@ -244,7 +239,6 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var listResponse = await Factory.ApiClient.GetAsync<ApiResult<GetVenuesResponse>>(
             ApiRoutes.B2B.Venue.Root);
 
-        listResponse.Success.ShouldBeTrue();
         listResponse.Result.Venues.Length.ShouldBe(2);
         listResponse.Result.Venues.ShouldContain(v => v.Address == "Venue 1");
         listResponse.Result.Venues.ShouldContain(v => v.Address == "Venue 2");
@@ -279,13 +273,11 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 3. Delete company
         var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
             ApiRoutes.B2B.Company.Single(companyId));
-        deleteResponse.Success.ShouldBeTrue();
 
         // 4. Get venues list and verify
         var listResponse = await Factory.ApiClient.GetAsync<ApiResult<GetVenuesResponse>>(
             ApiRoutes.B2B.Venue.Root);
 
-        listResponse.Success.ShouldBeTrue();
         listResponse.Result.Venues.Length.ShouldBe(0);
     }
 

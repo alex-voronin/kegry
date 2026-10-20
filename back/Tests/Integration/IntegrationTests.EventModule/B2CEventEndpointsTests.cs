@@ -58,7 +58,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 MaxParticipants: null,
                 RequiresApproval: false));
 
-        response.Success.ShouldBeTrue();
         response.Result.ShouldNotBeNull();
         response.Result.Title.ShouldBe("Fun Meetup");
         response.Result.Description.ShouldBe("A great gathering");
@@ -97,7 +96,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 ],
                 HobbyIds: [hobbyId]));
 
-        response.Success.ShouldBeTrue();
         response.Result.Contacts.Length.ShouldBe(2);
         response.Result.Contacts.ShouldContain(c => c.Type == ContactType.Telegram && c.Value == "testuser");
         response.Result.HobbyIds.ShouldContain(hobbyId);
@@ -121,7 +119,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 MaxParticipants: null,
                 RequiresApproval: true));
 
-        response.Success.ShouldBeTrue();
         response.Result.RequiresApproval.ShouldBeTrue();
     }
 
@@ -143,7 +140,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 MaxParticipants: 5,
                 RequiresApproval: false));
 
-        response.Success.ShouldBeTrue();
         response.Result.MaxParticipants.ShouldBe(5);
     }
 
@@ -243,7 +239,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(auth);
         var response = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(ApiRoutes.Event.Single(eventId));
 
-        response.Success.ShouldBeTrue();
         response.Result.Id.ShouldBe(eventId.ToString());
         response.Result.Title.ShouldBe("Test Meetup");
         response.Result.IsCreator.ShouldBeTrue();
@@ -284,7 +279,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(otherUser);
         var response = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(ApiRoutes.Event.Single(eventId));
 
-        response.Success.ShouldBeTrue();
         response.Result.IsCreator.ShouldBeFalse();
         response.Result.Id.ShouldBe(eventId.ToString());
     }
@@ -312,7 +306,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Contacts: null,
                 HobbyIds: null));
 
-        response.Success.ShouldBeTrue();
         response.Result.Title.ShouldBe("Updated Title");
         response.Result.Description.ShouldBe("Updated Desc");
     }
@@ -339,7 +332,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 ],
                 HobbyIds: null));
 
-        response.Success.ShouldBeTrue();
         response.Result.Contacts.Length.ShouldBe(1);
         response.Result.Contacts[0].Value.ShouldBe("+381611111111");
     }
@@ -363,7 +355,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Contacts: null,
                 HobbyIds: null));
 
-        response.Success.ShouldBeTrue();
         response.Result.IsVisibleOnMap.ShouldBeFalse();
     }
 
@@ -425,9 +416,8 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var (auth, eventId) = await CreateEventAsync();
         Factory.ApiClient.SetAuth(auth);
 
-        var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
+        await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
             ApiRoutes.Event.Single(eventId));
-        deleteResponse.Success.ShouldBeTrue();
 
         var getError = await Factory.ApiClient.GetProblemAsync(
             ApiRoutes.Event.Single(eventId));
@@ -485,7 +475,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 MinLng: 20.44,
                 MaxLng: 20.46));
 
-        response.Success.ShouldBeTrue();
         response.Result.Length.ShouldBe(2);
         response.Result.ShouldContain(v => v.VenueId == venueAId.ToString());
         response.Result.ShouldContain(v => v.VenueId == venueBId.ToString());
@@ -509,7 +498,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 MinLng: 21.0,
                 MaxLng: 22.0));
 
-        response.Success.ShouldBeTrue();
         response.Result.ShouldBeEmpty();
     }
 
@@ -531,7 +519,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 MaxLng: 20.46,
                 EventTypes: []));
 
-        response.Success.ShouldBeTrue();
         response.Result.ShouldBeEmpty();
     }
 
@@ -560,7 +547,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 MinLng: 20.44,
                 MaxLng: 20.46));
 
-        response.Success.ShouldBeTrue();
         response.Result.ShouldBeEmpty();
     }
 
@@ -580,7 +566,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<EventListItemDto>>>(
             ApiRoutes.Event.VenueEvents(venueId) + "?Offset=0&Limit=20");
 
-        response.Success.ShouldBeTrue();
         response.Result.Data.Count.ShouldBe(1);
         response.Result.TotalCount.ShouldBe(1);
         response.Result.Data.First().Id.ShouldBe(eventId.ToString());
@@ -605,7 +590,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<EventListItemDto>>>(
             ApiRoutes.Event.VenueEvents(venueId) + "?Offset=0&Limit=20");
 
-        response.Success.ShouldBeTrue();
         response.Result.Data.ShouldBeEmpty();
         response.Result.TotalCount.ShouldBe(0);
     }
@@ -624,7 +608,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.PostAsync<object, ApiResult.EmptyResult>(
             ApiRoutes.Event.Join(eventId), new { });
 
-        response.Success.ShouldBeTrue();
 
         Factory.ApiClient.SetAuth(creatorAuth);
         var eventDetail = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(
@@ -643,7 +626,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.PostAsync<object, ApiResult.EmptyResult>(
             ApiRoutes.Event.Join(eventId), new { });
 
-        response.Success.ShouldBeTrue();
 
         Factory.ApiClient.SetAuth(creatorAuth);
         var eventDetail = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(
@@ -760,9 +742,8 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.ApiClient.PostAsync<object, ApiResult.EmptyResult>(
             ApiRoutes.Event.Join(eventId), new { });
 
-        var leaveResponse = await Factory.ApiClient.PostAsync<object, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PostAsync<object, ApiResult.EmptyResult>(
             ApiRoutes.Event.Leave(eventId), new { });
-        leaveResponse.Success.ShouldBeTrue();
 
         Factory.ApiClient.SetAuth(creatorAuth);
         var eventDetail = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(
@@ -852,7 +833,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         var beforeJoin = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(
             ApiRoutes.Event.Single(eventId));
-        beforeJoin.Success.ShouldBeTrue();
         beforeJoin.Result.Contacts.Length.ShouldBe(1);
         beforeJoin.Result.Contacts.ShouldContain(c => c.IsPublic && c.Value == "publicuser");
         beforeJoin.Result.Contacts.ShouldNotContain(c => !c.IsPublic);
@@ -863,7 +843,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var afterJoin = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(
             ApiRoutes.Event.Single(eventId));
 
-        afterJoin.Success.ShouldBeTrue();
         afterJoin.Result.Contacts.Length.ShouldBe(2);
         afterJoin.Result.Contacts.ShouldContain(c => c.IsPublic && c.Value == "publicuser");
         afterJoin.Result.Contacts.ShouldContain(c => !c.IsPublic && c.Value == "private@test.com");
@@ -901,7 +880,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var eventDetail = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(
             ApiRoutes.Event.Single(eventId));
 
-        eventDetail.Success.ShouldBeTrue();
         eventDetail.Result.Contacts.Length.ShouldBe(1);
         eventDetail.Result.Contacts.ShouldContain(c => c.IsPublic && c.Value == "publicuser");
         eventDetail.Result.Contacts.ShouldNotContain(c => !c.IsPublic);
@@ -937,7 +915,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var eventDetail = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(
             ApiRoutes.Event.Single(eventId));
 
-        eventDetail.Success.ShouldBeTrue();
         eventDetail.Result.Contacts.Length.ShouldBe(1);
         eventDetail.Result.Contacts.ShouldContain(c => c.IsPublic && c.Value == "publicuser");
         eventDetail.Result.Contacts.ShouldNotContain(c => !c.IsPublic);
@@ -956,7 +933,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.PatchAsync<object, ApiResult.EmptyResult>(
             ApiRoutes.Event.ApproveParticipant(eventId, Guid.Parse(joiner.UserId)), new { });
 
-        response.Success.ShouldBeTrue();
 
         var eventDetail = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(
             ApiRoutes.Event.Single(eventId));
@@ -977,7 +953,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.PatchAsync<object, ApiResult.EmptyResult>(
             ApiRoutes.Event.RejectParticipant(eventId, Guid.Parse(joiner.UserId)), new { });
 
-        response.Success.ShouldBeTrue();
 
         var eventDetail = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(
             ApiRoutes.Event.Single(eventId));
@@ -1017,7 +992,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<EventListItemDto>>>(
             ApiRoutes.Event.MyCreated + "?Offset=0&Limit=20");
 
-        response.Success.ShouldBeTrue();
         response.Result.Data.Count.ShouldBe(1);
         response.Result.TotalCount.ShouldBe(1);
         response.Result.Data.First().Id.ShouldBe(eventId.ToString());
@@ -1043,7 +1017,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<EventListItemDto>>>(
             ApiRoutes.Event.MyCreated + "?Offset=0&Limit=20");
 
-        response.Success.ShouldBeTrue();
         response.Result.Data.ShouldBeEmpty();
         response.Result.TotalCount.ShouldBe(0);
     }
@@ -1064,7 +1037,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<EventListItemDto>>>(
             ApiRoutes.Event.MyParticipated + "?Offset=0&Limit=20");
 
-        response.Success.ShouldBeTrue();
         response.Result.Data.Count.ShouldBe(1);
         response.Result.TotalCount.ShouldBe(1);
         response.Result.Data.First().Id.ShouldBe(eventId.ToString());
@@ -1079,7 +1051,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<EventListItemDto>>>(
             ApiRoutes.Event.MyParticipated + "?Offset=0&Limit=20");
 
-        response.Success.ShouldBeTrue();
         response.Result.Data.ShouldBeEmpty();
         response.Result.TotalCount.ShouldBe(0);
     }
@@ -1098,7 +1069,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.Event.CoverUploadUrl(eventId),
             new GetPresignedUrlRequest(ContentType.ImageJpeg, 50000));
 
-        response.Success.ShouldBeTrue();
         response.Result.UploadUrl.ShouldNotBeNullOrEmpty();
         response.Result.PublicDownloadUrl.ShouldNotBeNullOrEmpty();
     }
@@ -1141,7 +1111,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                     Description: "Desc",
                     StartDateTime: DateTimeOffset.UtcNow.AddDays(14),
                     VenueId: Guid.NewGuid()));
-            response.Success.ShouldBeTrue();
         }
 
         // One more should be rejected
@@ -1181,7 +1150,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                     Description: "Desc",
                     StartDateTime: DateTimeOffset.UtcNow.AddDays(14),
                     VenueId: Guid.NewGuid()));
-            response.Success.ShouldBeTrue();
             eventIds.Add(Guid.Parse(response.Result.Id));
         }
 
@@ -1210,7 +1178,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                     Description: "Desc",
                     StartDateTime: DateTimeOffset.UtcNow.AddDays(14),
                     VenueId: Guid.NewGuid()));
-            response.Success.ShouldBeTrue();
         }
 
         // Exceeding the limit again should be rejected
@@ -1244,11 +1211,10 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         Factory.ApiClient.SetAuth(creatorAuth);
-        var tokenResponse = await Factory.ApiClient
+        await Factory.ApiClient
             .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(
                 ApiRoutes.Notifications.UpdateDeviceToken,
                 new UpdateFcmTokenRequest("dev-creator-join-req", "token-creator-join-req"));
-        tokenResponse.Success.ShouldBeTrue();
 
         Factory.ApiClient.SetAuth(creatorAuth);
         var createResponse = await Factory.ApiClient.PostAsync<CreateEventRequest, ApiResult<EventDto>>(
@@ -1262,7 +1228,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 VenueId: Guid.NewGuid(),
                 MaxParticipants: null,
                 RequiresApproval: true));
-        createResponse.Success.ShouldBeTrue();
         var eventId = Guid.Parse(createResponse.Result.Id);
 
         await Factory.NotificationManager.AwaitPushNotifications(
@@ -1271,7 +1236,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Factory.ApiClient.SetAuth(joinerAuth);
                 var joinResponse = await Factory.ApiClient.PostAsync<object, ApiResult.EmptyResult>(
                     ApiRoutes.Event.Join(eventId), new { });
-                joinResponse.Success.ShouldBeTrue();
             },
             expectedCount: 1,
             expectedType: FcmPushBuilder.PushType.UserRequestedApprove);
@@ -1279,7 +1243,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(creatorAuth);
         var notificationsResponse = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
             ApiRoutes.Notifications.GetNotificationsPaginated(0, 20));
-        notificationsResponse.Success.ShouldBeTrue();
         var notification = notificationsResponse.Result.Data
             .FirstOrDefault(n => n.Type == NotificationType.UserRequestedApprove && n.LinkedEntityId == eventId);
         notification.ShouldNotBeNull();
@@ -1303,12 +1266,11 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         Factory.ApiClient.SetAuth(joinerAuth);
-        var joinerTokenResponse = await Factory.ApiClient
+        await Factory.ApiClient
             .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(
                 ApiRoutes.Notifications.UpdateDeviceToken,
                 new UpdateFcmTokenRequest("dev-joiner-approve", "token-joiner-approve")
             );
-        joinerTokenResponse.Success.ShouldBeTrue();
 
         Factory.ApiClient.SetAuth(creatorAuth);
         var createResponse = await Factory.ApiClient.PostAsync<CreateEventRequest, ApiResult<EventDto>>(
@@ -1322,21 +1284,18 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 VenueId: Guid.NewGuid(),
                 MaxParticipants: null,
                 RequiresApproval: true));
-        createResponse.Success.ShouldBeTrue();
         var eventId = Guid.Parse(createResponse.Result.Id);
 
         Factory.ApiClient.SetAuth(joinerAuth);
         var joinResponse = await Factory.ApiClient.PostAsync<object, ApiResult.EmptyResult>(
             ApiRoutes.Event.Join(eventId), new { });
-        joinResponse.Success.ShouldBeTrue();
 
         await Factory.NotificationManager.AwaitPushNotifications(
             codeToRun: async () =>
             {
                 Factory.ApiClient.SetAuth(creatorAuth);
-                var approveResponse = await Factory.ApiClient.PatchAsync<object, ApiResult.EmptyResult>(
+                await Factory.ApiClient.PatchAsync<object, ApiResult.EmptyResult>(
                     ApiRoutes.Event.ApproveParticipant(eventId, joinerId), new { });
-                approveResponse.Success.ShouldBeTrue();
             },
             expectedCount: 1,
             expectedType: FcmPushBuilder.PushType.ParticipationApproved);
@@ -1344,7 +1303,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(joinerAuth);
         var notificationsResponse = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
             ApiRoutes.Notifications.GetNotificationsPaginated(0, 20));
-        notificationsResponse.Success.ShouldBeTrue();
         var notification = notificationsResponse.Result.Data
             .FirstOrDefault(n => n.Type == NotificationType.UserParticipationApproved && n.LinkedEntityId == eventId);
         notification.ShouldNotBeNull();
@@ -1375,7 +1333,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 MinLng: 20.44,
                 MaxLng: 20.46));
 
-        response.Success.ShouldBeTrue();
         response.Result.Length.ShouldBe(1);
         response.Result[0].Events.Length.ShouldBe(1);
         response.Result[0].Events[0].ParticipationStatus.ShouldBeNull();
@@ -1407,7 +1364,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 MinLng: 20.44,
                 MaxLng: 20.46));
 
-        response.Success.ShouldBeTrue();
         response.Result.Length.ShouldBe(1);
     }
 
@@ -1421,7 +1377,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(
             ApiRoutes.Event.Single(eventId));
 
-        response.Success.ShouldBeTrue();
         response.Result.Id.ShouldBe(eventId.ToString());
         response.Result.IsCreator.ShouldBeFalse();
         response.Result.ParticipationStatus.ShouldBeNull();
@@ -1455,7 +1410,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<EventListItemDto>>>(
             ApiRoutes.Event.VenueEvents(venueId) + "?Offset=0&Limit=20");
 
-        response.Success.ShouldBeTrue();
         response.Result.Data.Count.ShouldBe(1);
         response.Result.TotalCount.ShouldBe(1);
         response.Result.Data.First().ParticipationStatus.ShouldBeNull();
@@ -1489,7 +1443,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 MaxParticipants: null,
                 RequiresApproval: false));
 
-        response.Success.ShouldBeTrue();
         return (auth, Guid.Parse(response.Result.Id));
     }
 
@@ -1510,7 +1463,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 MaxParticipants: null,
                 RequiresApproval: true));
 
-        response.Success.ShouldBeTrue();
         return (auth, Guid.Parse(response.Result.Id));
     }
 
@@ -1523,7 +1475,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var companyResponse = await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
             ApiRoutes.B2B.Company.Root,
             new CreateCompanyRequest(Name: "Seed Co", Email: null));
-        companyResponse.Success.ShouldBeTrue();
 
         var venueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
             ApiRoutes.B2B.Company.Venues(companyResponse.Result.Id),
@@ -1538,7 +1489,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 WorkingHours: null,
                 CoverImageUrl: null,
                 TagIds: []));
-        venueResponse.Success.ShouldBeTrue();
 
         return venueResponse.Result.Id;
     }
@@ -1565,7 +1515,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                     new CreateEventContactDto(ContactType.Email, "private@test.com", IsPublic: false)
                 ]));
 
-        response.Success.ShouldBeTrue();
         return (auth, Guid.Parse(response.Result.Id));
     }
 
@@ -1584,7 +1533,6 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 MaxParticipants: null,
                 RequiresApproval: false));
 
-        response.Success.ShouldBeTrue();
         return Guid.Parse(response.Result.Id);
     }
 }

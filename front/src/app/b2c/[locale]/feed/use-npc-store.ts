@@ -58,12 +58,8 @@ export const useNpcStore = create<NpcState>()((set) => ({
         API_ENDPOINTS.NPC.GET,
       );
 
-      if (response.data.success) {
-        set({ npc: response.data.result.npc, isLoading: false });
-        updateRequestSentAt();
-      } else {
-        set({ isLoading: false });
-      }
+      set({ npc: response.data.result.npc, isLoading: false });
+      updateRequestSentAt();
     } catch {
       set({ isLoading: false });
     }
@@ -76,9 +72,7 @@ export const useNpcStore = create<NpcState>()((set) => ({
         API_ENDPOINTS.NPC.INVITE(id),
       );
 
-      if (response.data.success) {
-        set({ monolog: response.data.result.monolog });
-      }
+      set({ monolog: response.data.result.monolog });
     } catch (error) {
       console.error('Failed to invite NPC', error);
     } finally {

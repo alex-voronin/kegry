@@ -34,14 +34,12 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var createResponse = await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
             ApiRoutes.B2B.Company.Root, createRequest);
 
-        createResponse.Success.ShouldBeTrue();
         var companyId = createResponse.Result.Id;
 
         // 3. Get company and verify
         var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetCompanyResponse>>(
             ApiRoutes.B2B.Company.Single(companyId));
 
-        getResponse.Success.ShouldBeTrue();
         getResponse.Result.Company.ShouldSatisfyAllConditions(
             c => c.Id.ShouldBe(companyId.ToString()),
             c => c.Name.ShouldBe(createRequest.Name),
@@ -99,15 +97,13 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
             Email: "updated@test.com",
             AvatarImageUrl: TestConfig.S3.PublicUrl + "/company_avatar.jpg");
 
-        var patchResponse = await Factory.ApiClient.PatchAsync<PatchCompanyRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PatchAsync<PatchCompanyRequest, ApiResult.EmptyResult>(
             ApiRoutes.B2B.Company.Single(companyId), patchRequest);
-        patchResponse.Success.ShouldBeTrue();
 
         // 3. Get company and verify updates
         var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetCompanyResponse>>(
             ApiRoutes.B2B.Company.Single(companyId));
 
-        getResponse.Success.ShouldBeTrue();
         getResponse.Result.Company.ShouldSatisfyAllConditions(
             c => c.Name.ShouldBe(patchRequest.Name),
             c => c.Email.ShouldBe(patchRequest.Email),
@@ -129,9 +125,8 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var companyId = createResponse.Result.Id;
 
         // 2. Delete company
-        var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
+        await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
             ApiRoutes.B2B.Company.Single(companyId));
-        deleteResponse.Success.ShouldBeTrue();
 
         // 3. Verify company is not found
         var getError = await Factory.ApiClient.GetProblemAsync(
@@ -163,7 +158,6 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var listResponse = await Factory.ApiClient.GetAsync<ApiResult<GetCompaniesResponse>>(
             ApiRoutes.B2B.Company.Root);
 
-        listResponse.Success.ShouldBeTrue();
         listResponse.Result.Companies.Length.ShouldBeGreaterThanOrEqualTo(2);
         listResponse.Result.Companies.ShouldContain(c => c.Name == firstRequest.Name);
         listResponse.Result.Companies.ShouldContain(c => c.Name == secondRequest.Name);

@@ -75,7 +75,6 @@ public class ExpiredChatsCollectorTests : IntegrationTestBase, IAsyncLifetime
 
         // Verify chat exists
         var chatResponse = await Factory.ApiClient.GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
-        chatResponse.Success.ShouldBeTrue();
         var chatId = chatResponse.Result.Id;
 
         Factory.FakeTimeProvider.Advance(expirationSpan + TimeSpan.FromHours(1));

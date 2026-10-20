@@ -13,7 +13,6 @@ import { reRegisterServiceWorker } from '../service-worker';
 // --- Types ---
 
 export interface ApiResult<T> {
-  success: boolean;
   result: T;
 }
 
@@ -392,7 +391,7 @@ authClient.interceptors.response.use(
           { refreshToken },
         );
 
-        if (response.data.success && response.data.result.accessToken) {
+        if (response.data.result.accessToken) {
           const newAuth = response.data.result;
           setAuth(newAuth);
 

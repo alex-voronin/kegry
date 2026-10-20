@@ -34,17 +34,15 @@ public class ChatEventHandlersTests : IntegrationTestBase, IAsyncLifetime
         // 2. Create users' device tokens. They are required to send pushes
         var requestA = new UpdateFcmTokenRequest("devA", "tokenA");
         Factory.ApiClient.SetAuth(authResponseA);
-        var tokenResponseA = await Factory.ApiClient
+        await Factory.ApiClient
             .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
                 requestA);
-        tokenResponseA.Success.ShouldBeTrue();
 
         var requestB = new UpdateFcmTokenRequest("devB", "tokenB");
         Factory.ApiClient.SetAuth(authResponseB);
-        var tokenResponseB = await Factory.ApiClient
+        await Factory.ApiClient
             .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
                 requestB);
-        tokenResponseB.Success.ShouldBeTrue();
 
         // 3. Send invites and await push notifications
         var inviteExpiresAt = Factory.FakeTimeProvider.GetUtcNow() + TimeSpan.FromHours(4);
@@ -52,20 +50,18 @@ public class ChatEventHandlersTests : IntegrationTestBase, IAsyncLifetime
             codeToRun: async () =>
             {
                 Factory.ApiClient.SetAuth(authResponseA);
-                var inviteResponseA = await Factory.ApiClient
+                await Factory.ApiClient
                     .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
                         ApiRoutes.Feed.InviteUser(userBId),
                         new InviteUserRequest(inviteExpiresAt)
                     );
-                inviteResponseA.Success.ShouldBeTrue();
 
                 Factory.ApiClient.SetAuth(authResponseB);
-                var inviteResponseB = await Factory.ApiClient
+                await Factory.ApiClient
                     .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
                         ApiRoutes.Feed.InviteUser(userAId),
                         new InviteUserRequest(inviteExpiresAt)
                     );
-                inviteResponseB.Success.ShouldBeTrue();
             },
             expectedCount: 2,
             expectedType: FcmPushBuilder.PushType.MeetingArranged);

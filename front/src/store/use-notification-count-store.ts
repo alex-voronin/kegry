@@ -28,9 +28,7 @@ export const useNotificationCountStore = create<NotificationCountState>()(
         const response = await apiClient.get<ApiResult<number>>(
           API_ENDPOINTS.NOTIFICATIONS.UNSEEN_COUNT,
         );
-        if (response.data.success) {
-          set({ unseenCount: response.data.result });
-        }
+        set({ unseenCount: response.data.result });
       } catch {
         // Silent failure for notification count
       }

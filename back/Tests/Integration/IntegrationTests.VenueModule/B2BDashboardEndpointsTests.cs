@@ -40,7 +40,6 @@ public class B2BDashboardEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<VisitsChartResponseDto>>(
             DashboardVisitsUrl(companyId, "Daily"));
 
-        response.Success.ShouldBeTrue();
         response.Result.Venues.Length.ShouldBe(1);
         response.Result.Venues[0].DataPoints.Length.ShouldBe(12);
         response.Result.Venues[0].DataPoints.ShouldAllBe(dp => dp.Count == 0);
@@ -74,7 +73,6 @@ public class B2BDashboardEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<VisitsChartResponseDto>>(
             DashboardVisitsUrl(companyId, "Daily"));
 
-        response.Success.ShouldBeTrue();
         var venueData = response.Result.Venues.ShouldHaveSingleItem();
         venueData.DataPoints.Length.ShouldBe(12);
         venueData.DataPoints.ShouldContain(dp => dp.Label == today.ToString("yyyy-MM-dd") && dp.Count == 1);
@@ -113,7 +111,6 @@ public class B2BDashboardEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<VisitsChartResponseDto>>(
             DashboardVisitsUrl(companyId, "Weekly"));
 
-        response.Success.ShouldBeTrue();
         var venueData = response.Result.Venues.ShouldHaveSingleItem();
         venueData.DataPoints.Length.ShouldBe(12);
         venueData.DataPoints.ShouldContain(dp =>
@@ -154,7 +151,6 @@ public class B2BDashboardEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<VisitsChartResponseDto>>(
             DashboardVisitsUrl(companyId, "Monthly"));
 
-        response.Success.ShouldBeTrue();
         var venueData = response.Result.Venues.ShouldHaveSingleItem();
         venueData.DataPoints.Length.ShouldBe(12);
         venueData.DataPoints.ShouldContain(dp =>
@@ -178,7 +174,6 @@ public class B2BDashboardEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<VisitsChartResponseDto>>(
             DashboardVisitsUrl(companyId, "Daily"));
 
-        response.Success.ShouldBeTrue();
         response.Result.Venues.ShouldBeEmpty();
     }
 

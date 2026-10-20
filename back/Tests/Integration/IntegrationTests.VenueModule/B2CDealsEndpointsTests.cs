@@ -81,7 +81,6 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<AvailableDiscountDto>>>(
             $"{ApiRoutes.Deals.Discounts}?Latitude=0&Longitude=0&Offset=0&Limit=10");
 
-        response.Success.ShouldBeTrue();
         var discounts = response.Result.Data.ToArray();
 
         // Expected Order:
@@ -152,7 +151,6 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<AvailablePromotionDto>>>(
             $"{ApiRoutes.Deals.Promotions}?Latitude=0&Longitude=0&Offset=0&Limit=10");
 
-        response.Success.ShouldBeTrue();
         var promos = response.Result.Data.ToArray();
 
         // Expected Order:
@@ -206,7 +204,6 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // Ensure Level 2 discount is applied
         var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<AvailableDiscountDto>>>(
             $"{ApiRoutes.Deals.Discounts}?Latitude=0&Longitude=0&Offset=0&Limit=10");
-        response.Success.ShouldBeTrue();
         response.Result.Data.First().Percent.ShouldBe(15);
     }
 
@@ -247,7 +244,6 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(b2CAuth);
         var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<AvailableDiscountDto>>>(
             $"{ApiRoutes.Deals.Discounts}?Latitude=0&Longitude=0&Offset=0&Limit=10");
-        response.Success.ShouldBeTrue();
         response.Result.Data.First().Percent.ShouldBe(15);
     }
 

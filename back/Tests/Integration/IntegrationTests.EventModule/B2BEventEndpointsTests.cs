@@ -46,7 +46,6 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
                 VenueId: venueId));
 
-        response.Success.ShouldBeTrue();
         response.Result.Type.ShouldBe(EventType.Event);
         response.Result.IsVisibleOnMap.ShouldBeTrue();
         response.Result.RequiresApproval.ShouldBeFalse();
@@ -145,7 +144,6 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<B2BEventListItemDto>>>(
             ApiRoutes.B2B.Event.Root + "?Offset=0&Limit=20");
 
-        response.Success.ShouldBeTrue();
         response.Result.Data.Count.ShouldBe(2);
         response.Result.TotalCount.ShouldBe(2);
         response.Result.Data.ShouldAllBe(e => e.VenueAddress == "Test Address");
@@ -169,7 +167,6 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<B2BEventListItemDto>>>(
             ApiRoutes.B2B.Event.Root + $"?VenueId={venueAId}&Offset=0&Limit=20");
 
-        response.Success.ShouldBeTrue();
         response.Result.Data.Count.ShouldBe(1);
         response.Result.TotalCount.ShouldBe(1);
     }
@@ -209,7 +206,6 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(
             ApiRoutes.B2B.Event.Single(eventId));
 
-        response.Success.ShouldBeTrue();
         response.Result.Title.ShouldBe("Detail Event");
         response.Result.IsCreator.ShouldBeTrue();
     }
@@ -271,7 +267,6 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Contacts: null,
                 HobbyIds: null));
 
-        response.Success.ShouldBeTrue();
         response.Result.Title.ShouldBe("Updated Title");
         response.Result.Description.ShouldBe("Updated Desc");
     }
@@ -329,9 +324,8 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 VenueId: venueId));
         var eventId = Guid.Parse(createResponse.Result.Id);
 
-        var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
+        await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
             ApiRoutes.B2B.Event.Single(eventId));
-        deleteResponse.Success.ShouldBeTrue();
 
         var getError = await Factory.ApiClient.GetProblemAsync(
             ApiRoutes.B2B.Event.Single(eventId));
@@ -388,7 +382,6 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.B2B.Event.CoverUploadUrl(eventId),
             new GetPresignedUrlRequest(ContentType.ImageJpeg, 50000));
 
-        response.Success.ShouldBeTrue();
         response.Result.UploadUrl.ShouldNotBeNullOrEmpty();
         response.Result.PublicDownloadUrl.ShouldNotBeNullOrEmpty();
     }
@@ -440,7 +433,6 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                     Description: "Desc",
                     StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
                     VenueId: venueId));
-            response.Success.ShouldBeTrue();
         }
 
         // One more should be rejected
@@ -484,7 +476,6 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var companyResponse = await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
             ApiRoutes.B2B.Company.Root,
             new CreateCompanyRequest(Name: "Event Co", Email: "event.co@test.com"));
-        companyResponse.Success.ShouldBeTrue();
         var companyId = companyResponse.Result.Id;
 
         var venueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
@@ -500,7 +491,6 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 WorkingHours: null,
                 CoverImageUrl: null,
                 TagIds: []));
-        venueResponse.Success.ShouldBeTrue();
         var venueId = venueResponse.Result.Id;
 
         return (auth, companyId, venueId);

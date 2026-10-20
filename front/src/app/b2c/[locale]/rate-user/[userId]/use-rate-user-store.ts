@@ -45,9 +45,7 @@ export const useRateUserStore = create<RateUserState>((set) => ({
         ApiResult<{ userProfile: UserProfileDto }>
       >(`${API_ENDPOINTS.USER_PROFILE.PROFILE}/${userId}`);
 
-      if (response.data.success) {
-        set({ userProfile: response.data.result.userProfile });
-      }
+      set({ userProfile: response.data.result.userProfile });
     } catch (error) {
       console.error(
         'Failed to fetch user profile to rate:',

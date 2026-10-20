@@ -43,7 +43,6 @@ public class AuthManager
             var signupResponse = await _apiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
                 ApiRoutes.Auth.Signup, signupRequest);
 
-            signupResponse.Success.ShouldBeTrue();
             var userId = Guid.Parse(signupResponse.Result.UserId);
 
             // 2. Manually verify user in DB
@@ -67,7 +66,6 @@ public class AuthManager
             .ExecuteAndWaitAsync(signupFunc);
 
         signinResponse.ShouldNotBeNull();
-        signinResponse.Success.ShouldBeTrue();
         signinResponse.Result.Auth.ShouldNotBeNull();
         signinResponse.Result.Auth.AccessToken.ShouldNotBeNullOrEmpty();
 
@@ -92,7 +90,7 @@ public class AuthManager
         Guid[]? hobbyIds = null)
     {
         hobbyIds ??= ["boxing".ToDeterministicGuid()];
-        var response = await _apiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(ApiRoutes.UserProfile.Profile,
+        await _apiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(ApiRoutes.UserProfile.Profile,
             new CreateUserProfileRequest(
                 ReferrerId: referrerId,
                 FirstName: firstName,
@@ -105,13 +103,11 @@ public class AuthManager
                 HobbyIds: hobbyIds
             )
         );
-        response.Success.ShouldBeTrue();
     }
 
     public async Task SubmitLocation(double latitude = 0.0, double longitude = 0.0)
     {
-        var response = await _apiClient.PostAsync<UpdateLocationRequest, ApiResult.EmptyResult>(ApiRoutes.Location.PostLocation,
+        await _apiClient.PostAsync<UpdateLocationRequest, ApiResult.EmptyResult>(ApiRoutes.Location.PostLocation,
             new UpdateLocationRequest(Latitude: latitude, Longitude: longitude));
-        response.Success.ShouldBeTrue();
     }
 }

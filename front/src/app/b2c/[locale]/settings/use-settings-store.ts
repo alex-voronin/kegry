@@ -52,50 +52,37 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     set({ isLoading: true });
     try {
       const fetchFeed = fetchType === SettingsFetchType.All;
-      const fetchNotif = true; // For now we always fetch notifications in this store
 
-      const promises = [];
-      if (fetchFeed) {
-        promises.push(
-          apiClient.get<
-            ApiResult<{
-              settings: { distanceUnits: DistanceUnits };
-            }>
-          >(API_ENDPOINTS.FEED.SETTINGS),
-        );
-      } else {
-        promises.push(Promise.resolve(null));
-      }
-
-      if (fetchNotif) {
-        promises.push(
-          apiClient.get<
-            ApiResult<{
-              pushesEnabled: boolean;
-              emailsEnabled: boolean;
-              locale: string;
-            }>
-          >(API_ENDPOINTS.NOTIFICATIONS.SETTINGS),
-        );
-      }
-
-      const [feedSettingsRes, notifSettingsRes] = (await Promise.all(
-        promises,
-      )) as [any, any];
+      const [feedSettingsRes, notifSettingsRes] = await Promise.all([
+        fetchFeed
+          ? apiClient.get<
+              ApiResult<{
+                settings: { distanceUnits: DistanceUnits };
+              }>
+            >(API_ENDPOINTS.FEED.SETTINGS)
+          : null,
+        apiClient.get<
+          ApiResult<{
+            pushesEnabled: boolean;
+            emailsEnabled: boolean;
+            locale: string;
+          }>
+        >(API_ENDPOINTS.NOTIFICATIONS.SETTINGS),
+      ]);
 
       const newState: Partial<SettingsState> = {};
       const newServerSettings: Partial<SettingsDto> = {
         ...get().serverSettings,
       };
 
-      if (feedSettingsRes?.data?.success) {
+      if (feedSettingsRes?.data?.result) {
         const distanceUnits =
           feedSettingsRes.data.result.settings.distanceUnits;
         newState.distanceUnits = distanceUnits;
         newServerSettings.distanceUnits = distanceUnits;
       }
 
-      if (notifSettingsRes?.data?.success) {
+      if (notifSettingsRes?.data?.result) {
         const {
           pushesEnabled,
           emailsEnabled,

@@ -61,7 +61,6 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.Notifications.GetNotificationsPaginated(10, 10));
 
         // 5. Check the response
-        response.Success.ShouldBeTrue();
         var data = response.Result.Data.ToList();
         data.Count.ShouldBe(10);
         response.Result.TotalCount.ShouldBe(20);
@@ -105,7 +104,6 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.Notifications.GetNotificationsPaginated(0, 10));
 
         // 3. Check that the notification is marked as seen
-        response.Success.ShouldBeTrue();
         using (var scope = Factory.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
@@ -165,7 +163,6 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var response = await Factory.ApiClient.GetAsync<ApiResult<int>>(ApiRoutes.Notifications.GetUnseenCount);
 
         // 4. Check response
-        response.Success.ShouldBeTrue();
         response.Result.ShouldBe(2);
     }
 
@@ -180,7 +177,6 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. Get initial settings (should be default)
         var initialResponse = await Factory.ApiClient
             .GetAsync<ApiResult<GetNotificationSettingsResponse>>(ApiRoutes.Notifications.Settings);
-        initialResponse.Success.ShouldBeTrue();
         initialResponse.Result.PushesEnabled.ShouldBeTrue();
         initialResponse.Result.EmailsEnabled.ShouldBeFalse();
 
@@ -192,11 +188,9 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var enableAllResponse =
             await Factory.ApiClient.PutAsync<PutNotificationSettingsRequest, ApiResult.EmptyResult>(
                 ApiRoutes.Notifications.Settings, enableAllRequest);
-        enableAllResponse.Success.ShouldBeTrue();
 
         var allEnabledResponse = await Factory.ApiClient
             .GetAsync<ApiResult<GetNotificationSettingsResponse>>(ApiRoutes.Notifications.Settings);
-        allEnabledResponse.Success.ShouldBeTrue();
         allEnabledResponse.Result.Locale.ShouldBe(enableAllRequest.Locale);
         allEnabledResponse.Result.PushesEnabled.ShouldBeTrue();
         allEnabledResponse.Result.EmailsEnabled.ShouldBeTrue();
@@ -232,7 +226,6 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.Notifications.UpdateDeviceToken, request);
 
         // 3. Verify response and database
-        response.Success.ShouldBeTrue();
 
         using (var scope = Factory.Services.CreateScope())
         {
@@ -279,7 +272,6 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.Notifications.UpdateDeviceToken, request);
 
         // 4. Verify update
-        response.Success.ShouldBeTrue();
 
         using (var scope = Factory.Services.CreateScope())
         {
@@ -322,7 +314,6 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.Notifications.DeleteDeviceToken(deviceId));
 
         // 4. Verify removal
-        response.Success.ShouldBeTrue();
 
         using (var scope = Factory.Services.CreateScope())
         {
@@ -351,30 +342,26 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 3. User B invites User A (triggers UserInvitedEvent → creates notification for User A)
         await Factory.Host.ExecuteAndWaitAsync(async () =>
         {
-            var inviteResponse = await Factory.ApiClient.PostAsync<object, ApiResult.EmptyResult>(
+            await Factory.ApiClient.PostAsync<object, ApiResult.EmptyResult>(
                 ApiRoutes.Feed.InviteUser(userAId), new { });
-            inviteResponse.Success.ShouldBeTrue();
         });
 
         // 4. Switch to User A and fetch notifications
         Factory.ApiClient.SetAuth(authA);
         var notificationsResponse = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
             ApiRoutes.Notifications.GetNotificationsPaginated(0, 10));
-        notificationsResponse.Success.ShouldBeTrue();
         notificationsResponse.Result.Data.Count.ShouldBe(1);
 
         var notification = notificationsResponse.Result.Data.First();
         notification.FromUserId.ShouldBe(Guid.Parse(userBId));
 
         // 5. User A deletes the notification
-        var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
+        await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
             ApiRoutes.Notifications.DeleteNotification(notification.Id));
-        deleteResponse.Success.ShouldBeTrue();
 
         // 6. Verify notification list is empty
         var afterDeleteResponse = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
             ApiRoutes.Notifications.GetNotificationsPaginated(0, 10));
-        afterDeleteResponse.Success.ShouldBeTrue();
         afterDeleteResponse.Result.Data.Count.ShouldBe(0);
         afterDeleteResponse.Result.TotalCount.ShouldBe(0);
     }
@@ -413,13 +400,11 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 3. User B tries to delete User A's notification
         var response = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
             ApiRoutes.Notifications.DeleteNotification(notificationId));
-        response.Success.ShouldBeTrue(); // Returns success but doesn't actually delete
 
         // 4. Switch to User A and fetch notifications
         Factory.ApiClient.SetAuth(authA);
         var notificationsResponse = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
             ApiRoutes.Notifications.GetNotificationsPaginated(0, 10));
-        notificationsResponse.Success.ShouldBeTrue();
         notificationsResponse.Result.Data.Count.ShouldBe(1);
         notificationsResponse.Result.Data.First().Id.ShouldBe(notificationId);
     }

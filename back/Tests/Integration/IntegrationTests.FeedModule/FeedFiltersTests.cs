@@ -31,7 +31,6 @@ public class FeedFiltersTests : IntegrationTestBase, IAsyncLifetime
 
         // 3. Check that default filter is returned
         var defaultFilter = Filter.CreateDefault(Guid.NewGuid());
-        response.Success.ShouldBeTrue();
         response.Result.Filter.RadiusMeters.ShouldBe(defaultFilter.RadiusMeters);
         response.Result.Filter.AgeFrom.ShouldBe(defaultFilter.AgeFrom);
         response.Result.Filter.AgeTo.ShouldBe(defaultFilter.AgeTo);
@@ -54,15 +53,13 @@ public class FeedFiltersTests : IntegrationTestBase, IAsyncLifetime
             Gender: Gender.Female,
             HobbyIds: []);
 
-        var updateResponse = await Factory.ApiClient.PutAsync<UpdateFilterRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateFilterRequest, ApiResult.EmptyResult>(
             ApiRoutes.Feed.Filter, new UpdateFilterRequest(newFilter));
-        updateResponse.Success.ShouldBeTrue();
 
         // 3. Get filter again
         var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetFilterResponse>>(ApiRoutes.Feed.Filter);
 
         // 4. Check new filter parameters
-        getResponse.Success.ShouldBeTrue();
         getResponse.Result.Filter.RadiusMeters.ShouldBe(newFilter.RadiusMeters);
         getResponse.Result.Filter.AgeFrom.ShouldBe(newFilter.AgeFrom);
         getResponse.Result.Filter.AgeTo.ShouldBe(newFilter.AgeTo);

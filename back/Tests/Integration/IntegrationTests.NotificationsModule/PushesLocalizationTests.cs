@@ -38,17 +38,15 @@ public class PushesLocalizationTests : IntegrationTestBase, IAsyncLifetime
         // 2. Create users' device tokens. They are required to send pushes
         var requestA = new UpdateFcmTokenRequest("devA", "tokenA");
         Factory.ApiClient.SetAuth(authResponseA);
-        var tokenResponseA = await Factory.ApiClient
+        await Factory.ApiClient
             .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
                 requestA);
-        tokenResponseA.Success.ShouldBeTrue();
 
         var requestB = new UpdateFcmTokenRequest("devB", "tokenB");
         Factory.ApiClient.SetAuth(authResponseB);
-        var tokenResponseB = await Factory.ApiClient
+        await Factory.ApiClient
             .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
                 requestB);
-        tokenResponseB.Success.ShouldBeTrue();
 
         // 3. Send invite from A(sr) to B(en)
         var inviteExpirationHours = 4;
@@ -57,12 +55,11 @@ public class PushesLocalizationTests : IntegrationTestBase, IAsyncLifetime
             codeToRun: async () =>
             {
                 Factory.ApiClient.SetAuth(authResponseA);
-                var inviteResponseA = await Factory.ApiClient
+                await Factory.ApiClient
                     .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
                         ApiRoutes.Feed.InviteUser(userBId),
                         new InviteUserRequest(inviteExpiresAt)
                     );
-                inviteResponseA.Success.ShouldBeTrue();
             },
             expectedCount: 1,
             containedTextInTitle: "invitation", // en as A(sr) invites B(en)
@@ -81,12 +78,11 @@ public class PushesLocalizationTests : IntegrationTestBase, IAsyncLifetime
             codeToRun: async () =>
             {
                 Factory.ApiClient.SetAuth(authResponseB);
-                var inviteResponseB = await Factory.ApiClient
+                await Factory.ApiClient
                     .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
                         ApiRoutes.Feed.InviteUser(userAId),
                         new InviteUserRequest(inviteExpiresAt)
                     );
-                inviteResponseB.Success.ShouldBeTrue();
             },
             expectedCount: 1,
             containedTextInTitle: "pozivnica", // sr as B(en) invites A(sr) 
