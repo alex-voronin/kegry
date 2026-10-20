@@ -57,7 +57,9 @@ export function QrScannerPopup({
       const track = stream.getVideoTracks()[0];
       if ((track?.getCapabilities() as Record<string, unknown>)?.zoom) {
         track
-          .applyConstraints({ advanced: [{ zoom: 1.8 }] } as unknown as MediaTrackConstraints)
+          .applyConstraints({
+            advanced: [{ zoom: 1.8 }],
+          } as unknown as MediaTrackConstraints)
           .catch(() => {});
       }
     };

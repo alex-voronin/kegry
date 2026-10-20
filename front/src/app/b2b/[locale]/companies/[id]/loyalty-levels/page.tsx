@@ -52,7 +52,9 @@ export default function LoyaltyLevelsManagePage() {
 
   useEffect(() => {
     if (!selectedCompany) return;
-    const count = selectedCompany.loyaltyLevels.filter((l) => l.isActive).length;
+    const count = selectedCompany.loyaltyLevels.filter(
+      (l) => l.isActive,
+    ).length;
     setActiveCount(count);
     const init: Record<number, string> = {};
     for (const level of selectedCompany.loyaltyLevels) {
@@ -115,7 +117,8 @@ export default function LoyaltyLevelsManagePage() {
   const hasChanges = useMemo(() => {
     if (!selectedCompany) return false;
     const activeChanged =
-      activeCount !== selectedCompany.loyaltyLevels.filter((l) => l.isActive).length;
+      activeCount !==
+      selectedCompany.loyaltyLevels.filter((l) => l.isActive).length;
     if (activeChanged) return true;
     return selectedCompany.loyaltyLevels.some(
       (l) => l.visitsUpperBound !== getLevelBound(l.id),
@@ -128,9 +131,8 @@ export default function LoyaltyLevelsManagePage() {
 
   const handleTimelineClick = () => {
     selectRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    const control = selectRef.current?.querySelector<HTMLElement>(
-      '[role="combobox"]',
-    );
+    const control =
+      selectRef.current?.querySelector<HTMLElement>('[role="combobox"]');
     if (control) {
       control.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
     }
@@ -220,9 +222,7 @@ export default function LoyaltyLevelsManagePage() {
               </FormSectionTitle>
               <Select
                 options={LEVEL_COUNT_OPTIONS}
-                value={LEVEL_COUNT_OPTIONS.find(
-                  (o) => o.value === activeCount,
-                )}
+                value={LEVEL_COUNT_OPTIONS.find((o) => o.value === activeCount)}
                 onChange={(option) => {
                   if (option && 'value' in option) {
                     handleActiveCountChange(option.value);

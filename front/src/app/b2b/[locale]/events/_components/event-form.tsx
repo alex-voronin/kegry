@@ -15,7 +15,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Header } from '@/components/ui/header';
 import { Icon } from '@/components/ui/icon';
 import { FormSectionTitle } from '@/components/ui/form-section-title';
-import { ContactSection, type EventContactForm, type ContactSectionHandle } from '@/components/ui/contact-section';
+import {
+  ContactSection,
+  type EventContactForm,
+  type ContactSectionHandle,
+} from '@/components/ui/contact-section';
 import { ImageCropperModal } from '@/components/ui/image-cropper-modal';
 import { compressImageToBlob } from '@/lib/image-utils';
 import { VENUE_COVER_MAX_SIZE_BYTES } from '@/lib/constants';
@@ -62,8 +66,14 @@ export function EventForm({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const eventSchema = z.object({
-    title: z.string().min(1, t('validation.titleRequired')).max(200, t('validation.titleMaxLength')),
-    description: z.string().min(1, t('validation.descriptionRequired')).max(2000, t('validation.descriptionMaxLength')),
+    title: z
+      .string()
+      .min(1, t('validation.titleRequired'))
+      .max(200, t('validation.titleMaxLength')),
+    description: z
+      .string()
+      .min(1, t('validation.descriptionRequired'))
+      .max(2000, t('validation.descriptionMaxLength')),
     startDateTime: z.string().min(1, t('validation.startDateTimeRequired')),
   });
   const [coverPreview, setCoverPreview] = useState<string | null>(
@@ -155,10 +165,7 @@ export function EventForm({
 
   return (
     <div className="overflow-hidden sm:rounded-[16px]">
-      <form
-        onSubmit={onFormSubmit}
-        className="flex flex-col gap-5"
-      >
+      <form onSubmit={onFormSubmit} className="flex flex-col gap-5">
         <div className="w-full">
           <div
             className="relative h-[130px] w-full shrink-0 cursor-pointer"
@@ -254,7 +261,10 @@ export function EventForm({
           )}
         </div>
 
-        <ContactSection ref={contactsRef} initialContacts={initialValues?.contacts} />
+        <ContactSection
+          ref={contactsRef}
+          initialContacts={initialValues?.contacts}
+        />
 
         <div className="mb-10 flex justify-center px-0 sm:px-4">
           <Button

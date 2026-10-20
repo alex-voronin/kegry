@@ -1,13 +1,13 @@
 @reference "../../app/globals.css";
 
 .pillToggle {
-  @apply border border-white/10 bg-surface/85 flex flex-col items-center rounded-2xl p-0.5 gap-0.5;
+  @apply bg-surface/85 flex flex-col items-center gap-0.5 rounded-2xl border border-white/10 p-0.5;
   width: fit-content;
   border-width: 1px;
 }
 
 .pillOption {
-  @apply rounded-xl flex items-center justify-center w-8 h-8 text-white/60 transition-colors cursor-pointer;
+  @apply flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl text-white/60 transition-colors;
 }
 
 .pillOptionActive {

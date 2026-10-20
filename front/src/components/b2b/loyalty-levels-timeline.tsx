@@ -25,14 +25,10 @@ export function LoyaltyLevelsTimeline({
     return (
       <div
         onClick={onClick}
-        className="bg-form-element hover:bg-hover cursor-pointer sm:rounded-xl px-4 py-6 text-center text-sm text-secondary transition-colors"
+        className="bg-form-element hover:bg-hover text-secondary cursor-pointer px-4 py-6 text-center text-sm transition-colors sm:rounded-xl"
       >
         {t('noActiveLevels')}
-        {showTapHint && (
-          <span className="font-medium">
-            {' '}{t('tapToAdd')}
-          </span>
-        )}
+        {showTapHint && <span className="font-medium"> {t('tapToAdd')}</span>}
       </div>
     );
   }
@@ -42,15 +38,15 @@ export function LoyaltyLevelsTimeline({
   return (
     <div
       onClick={onClick}
-      className="bg-form-element hover:bg-hover cursor-pointer sm:rounded-xl px-4 py-3 transition-colors"
+      className="bg-form-element hover:bg-hover cursor-pointer px-4 py-3 transition-colors sm:rounded-xl"
     >
       <div className="flex items-start gap-3">
         {/* Left labels */}
         <div className="flex flex-col justify-between self-stretch pb-[1px]">
-          <span className="text-xs leading-none text-secondary">
+          <span className="text-secondary text-xs leading-none">
             {t('levelsLabel')}
           </span>
-          <span className="text-xs leading-none text-secondary">
+          <span className="text-secondary text-xs leading-none">
             {t('visitsLabel')}
           </span>
         </div>
@@ -66,7 +62,7 @@ export function LoyaltyLevelsTimeline({
               return (
                 <span
                   key={level.id}
-                  className="absolute text-sm font-medium -translate-x-1/2"
+                  className="absolute -translate-x-1/2 text-sm font-medium"
                   style={{ left: `${center}%` }}
                 >
                   {level.id}
@@ -85,7 +81,7 @@ export function LoyaltyLevelsTimeline({
                   key={level.id}
                   className={cn(
                     'h-full',
-                    i > 0 && 'border-l-2 border-form-element',
+                    i > 0 && 'border-form-element border-l-2',
                     i === 0 && 'rounded-l-full',
                     i === levels.length - 1 && 'rounded-r-full',
                   )}
@@ -101,7 +97,7 @@ export function LoyaltyLevelsTimeline({
           {/* Boundary values row */}
           <div className="relative mt-1 h-4">
             <span
-              className="absolute text-xs text-secondary -translate-x-1/2"
+              className="text-secondary absolute -translate-x-1/2 text-xs"
               style={{ left: '0%' }}
             >
               0
@@ -109,7 +105,7 @@ export function LoyaltyLevelsTimeline({
             {levels.slice(0, -1).map((level) => (
               <span
                 key={level.id}
-                className="absolute text-xs text-secondary -translate-x-1/2"
+                className="text-secondary absolute -translate-x-1/2 text-xs"
                 style={{
                   left: `${(level.visitsUpperBound / total) * 100}%`,
                 }}

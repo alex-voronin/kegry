@@ -19,7 +19,11 @@ export interface TagChipItem {
   label: string;
 }
 
-export function useVenueTagChips(tagIds: string[], tagsEndpoint?: string, max = 10) {
+export function useVenueTagChips(
+  tagIds: string[],
+  tagsEndpoint?: string,
+  max = 10,
+) {
   const tTag = useTranslations('components.tagSections.tags');
   const { fetchTags, hasHydrated, getTagLabel, getTagCategory, categories } =
     useVenueTagsStore();

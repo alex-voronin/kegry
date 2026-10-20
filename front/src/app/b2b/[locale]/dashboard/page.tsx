@@ -144,7 +144,7 @@ export default function DashboardPage() {
       <div className={styles.content}>
         {selectedCompany && companiesList.length > 1 && (
           <div
-            className="flex cursor-pointer items-center gap-2 sm:rounded-xl bg-[var(--color-form-element)] px-3 py-2 text-sm"
+            className="flex cursor-pointer items-center gap-2 bg-[var(--color-form-element)] px-3 py-2 text-sm sm:rounded-xl"
             onClick={() => setIsCompanyMenuOpen(true)}
           >
             <span className="flex-1">{selectedCompany.name}</span>

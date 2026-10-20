@@ -86,9 +86,7 @@ export const useMyEventsStore = create<MyEventsState>()((set, get) => ({
 
       set((state) => {
         const current = state[tab];
-        const merged = offset === 0
-          ? data
-          : [...current.events, ...data];
+        const merged = offset === 0 ? data : [...current.events, ...data];
 
         return {
           [tab]: {
@@ -121,9 +119,10 @@ export const useMyEventsStore = create<MyEventsState>()((set, get) => ({
 
   loadVenues: async (venueIds) => {
     try {
-      const response = await apiClient.post<
-        ApiResult<VenueInfo[]>
-      >(API_ENDPOINTS.VENUES.BATCH, venueIds);
+      const response = await apiClient.post<ApiResult<VenueInfo[]>>(
+        API_ENDPOINTS.VENUES.BATCH,
+        venueIds,
+      );
 
       const venues = response.data.result;
       const cache: Record<string, VenueInfo> = {};

@@ -36,11 +36,7 @@ export function ParticipantListItem({
     >
       <div className={styles.row}>
         {avatarUrl ? (
-          <img
-            src={avatarUrl}
-            alt=""
-            className={styles.avatar}
-          />
+          <img src={avatarUrl} alt="" className={styles.avatar} />
         ) : (
           <div className={styles.avatarFallback}>
             {(firstName ?? userId).charAt(0).toUpperCase()}
@@ -55,10 +51,7 @@ export function ParticipantListItem({
           {subtitle}
         </div>
         {rightEl && (
-          <div
-            className={styles.actions}
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
             {rightEl}
           </div>
         )}
@@ -66,10 +59,7 @@ export function ParticipantListItem({
       {hobbies && hobbies.length > 0 && (
         <div className={styles.hobbies}>
           {hobbies.map((h) => (
-            <span
-              key={h.id}
-              className={styles.hobbyTag}
-            >
+            <span key={h.id} className={styles.hobbyTag}>
               {(translateHobby ? translateHobby(h.name) : h.name) || h.name}
             </span>
           ))}

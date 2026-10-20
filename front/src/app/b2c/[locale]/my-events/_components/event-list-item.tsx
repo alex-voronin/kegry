@@ -52,7 +52,9 @@ export function EventListItem({
               alt=""
               className={styles.eventCardVenueAvatar}
             />
-            <span className="min-w-0 truncate">{venue?.name || 'Unknown Venue'}</span>
+            <span className="min-w-0 truncate">
+              {venue?.name || 'Unknown Venue'}
+            </span>
             <span className={styles.eventCardMetaDot}>·</span>
             <span className="flex shrink-0 items-center gap-1">
               <Users size={12} />

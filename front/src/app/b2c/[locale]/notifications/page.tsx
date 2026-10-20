@@ -80,7 +80,14 @@ export default function NotificationsScreen() {
       };
       loadNotifications();
     }
-  }, [fetchNotifications, t, notifications.length, isLoading, hasMore, hasHydrated]);
+  }, [
+    fetchNotifications,
+    t,
+    notifications.length,
+    isLoading,
+    hasMore,
+    hasHydrated,
+  ]);
 
   useEffect(() => {
     if (!hasHydrated) return;

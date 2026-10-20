@@ -111,10 +111,13 @@ apiClient.interceptors.response.use(
 
       // Early exit if no refresh token - logout immediately
       if (!refreshToken) {
-        console.warn('[api-client] 401 with no refreshToken — redirecting to login', {
-          userId,
-          url: originalRequest.url,
-        });
+        console.warn(
+          '[api-client] 401 with no refreshToken — redirecting to login',
+          {
+            userId,
+            url: originalRequest.url,
+          },
+        );
         captureEvent('auth_no_refresh_token', {
           userId,
           url: originalRequest.url,

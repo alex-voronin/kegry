@@ -10,7 +10,7 @@
 }
 
 .modeTab {
-  @apply flex-1 rounded-[10px] px-4 py-1.5 text-center text-sm font-medium text-secondary transition-colors cursor-pointer;
+  @apply text-secondary flex-1 cursor-pointer rounded-[10px] px-4 py-1.5 text-center text-sm font-medium transition-colors;
 }
 
 .modeTabActive {
@@ -19,11 +19,11 @@
 }
 
 .venueCard {
-  @apply bg-form-element sm:rounded-xl p-4;
+  @apply bg-form-element p-4 sm:rounded-xl;
 }
 
 .venueAddress {
-  @apply text-sm font-medium mb-3;
+  @apply mb-3 text-sm font-medium;
 }
 
 .emptyState {
@@ -44,11 +44,11 @@
 }
 
 .retryButton {
-  @apply bg-form-element text-primary sm:rounded-xl px-4 py-2 text-sm cursor-pointer;
+  @apply bg-form-element text-primary cursor-pointer px-4 py-2 text-sm sm:rounded-xl;
 }
 
 .visitsCard {
-  @apply bg-form-element sm:rounded-xl p-4;
+  @apply bg-form-element p-4 sm:rounded-xl;
 }
 
 .visitsCardTitle {

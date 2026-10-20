@@ -1,8 +1,8 @@
 @reference "../../app/globals.css";
-@import "../common/venue-chip-base.css";
+@import '../common/venue-chip-base.css';
 
 .row {
-  @apply flex flex-wrap gap-1 mt-1;
+  @apply mt-1 flex flex-wrap gap-1;
 }
 
 .chip {

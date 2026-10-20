@@ -91,10 +91,7 @@ export const useMapStore = create<MapState>()(
           });
         } else {
           const [venuesRes, eventsRes] = await Promise.all([
-            apiClient.get(
-              API_ENDPOINTS.VENUES.MAP,
-              paramsForReq(venueParams),
-            ),
+            apiClient.get(API_ENDPOINTS.VENUES.MAP, paramsForReq(venueParams)),
             apiClient.post(API_ENDPOINTS.EVENTS.MAP, eventsBody),
           ]);
 

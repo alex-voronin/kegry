@@ -26,5 +26,5 @@
 }
 
 .variantSolid {
-  @apply h-[40px] rounded-[16px] bg-form-active-element px-4 py-2 font-sans text-sm font-semibold text-white select-none hover:opacity-90 active:opacity-100;
+  @apply bg-form-active-element h-[40px] rounded-[16px] px-4 py-2 font-sans text-sm font-semibold text-white select-none hover:opacity-90 active:opacity-100;
 }

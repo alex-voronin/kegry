@@ -486,9 +486,7 @@ export default function ChatScreen() {
             width={14}
             height={27}
             priority
-            onClick={() =>
-              router.push(PAGE_ROUTES.FEED)
-            }
+            onClick={() => router.push(PAGE_ROUTES.FEED)}
           />
         }
         title={

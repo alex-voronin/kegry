@@ -57,7 +57,7 @@
 }
 
 .sectionCard {
-  @apply bg-form-element sm:rounded-xl px-4 py-3;
+  @apply bg-form-element px-4 py-3 sm:rounded-xl;
 }
 
 .clickable {
@@ -65,19 +65,19 @@
 }
 
 .fieldIcon {
-  @apply shrink-0 text-secondary;
+  @apply text-secondary shrink-0;
 }
 
 .fieldValue {
-  @apply text-sm text-primary;
+  @apply text-primary text-sm;
 }
 
 .fieldValueSecondary {
-  @apply text-xs text-secondary;
+  @apply text-secondary text-xs;
 }
 
 .creatorSection {
-  @apply sm:rounded-xl px-4 py-3;
+  @apply px-4 py-3 sm:rounded-xl;
 }
 
 .creatorRow {
@@ -93,15 +93,15 @@
 }
 
 .creatorAvatarFallback {
-  @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm text-secondary;
+  @apply bg-primary/10 text-secondary flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm;
 }
 
 .creatorName {
-  @apply text-sm text-primary;
+  @apply text-primary text-sm;
 }
 
 .creatorAge {
-  @apply text-xs text-secondary;
+  @apply text-secondary text-xs;
 }
 
 .creatorHobbies {
@@ -109,27 +109,27 @@
 }
 
 .creatorHobbyTag {
-  @apply flex h-7 items-center rounded-full border border-primary px-2.5 text-xs;
+  @apply border-primary flex h-7 items-center rounded-full border px-2.5 text-xs;
 }
 
 .venueRow {
-  @apply bg-form-element sm:rounded-xl flex cursor-pointer items-center gap-3 px-4 py-3;
+  @apply bg-form-element flex cursor-pointer items-center gap-3 px-4 py-3 sm:rounded-xl;
 }
 
 .venueName {
-  @apply text-sm text-primary;
+  @apply text-primary text-sm;
 }
 
 .venueAddress {
-  @apply text-xs text-secondary;
+  @apply text-secondary text-xs;
 }
 
 .approvalRow {
-  @apply bg-form-element sm:rounded-xl flex items-center gap-3 px-4 py-3;
+  @apply bg-form-element flex items-center gap-3 px-4 py-3 sm:rounded-xl;
 }
 
 .sectionTitle {
-  @apply mb-2 block text-sm text-secondary;
+  @apply text-secondary mb-2 block text-sm;
 }
 
 .contactList {
@@ -145,7 +145,7 @@
 }
 
 .contactValue {
-  @apply text-sm text-primary;
+  @apply text-primary text-sm;
 }
 
 .hobbyTags {
@@ -153,7 +153,7 @@
 }
 
 .hobbyTag {
-  @apply rounded-full border border-primary/10 bg-primary/5 px-2.5 py-0.5 text-xs text-secondary;
+  @apply border-primary/10 bg-primary/5 text-secondary rounded-full border px-2.5 py-0.5 text-xs;
 }
 
 .footer {

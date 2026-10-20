@@ -149,7 +149,7 @@ export function TagSections({
             <button
               type="button"
               onClick={() => setSheetCategory(cat)}
-              className={`hover:bg-hover bg-form-element flex w-full items-center justify-between rounded-none sm:rounded-xl px-3 py-3 transition-colors chipCat${cat.category}`}
+              className={`hover:bg-hover bg-form-element flex w-full items-center justify-between rounded-none px-3 py-3 transition-colors sm:rounded-xl chipCat${cat.category}`}
             >
               <div className="flex flex-col items-start gap-0.5">
                 <span className="text-sm font-medium">
@@ -191,7 +191,7 @@ export function TagSections({
           <button
             type="button"
             onClick={() => setShowOptional(!showOptional)}
-            className="hover:bg-hover bg-form-element flex w-full items-center justify-between rounded-none sm:rounded-xl px-3 py-3 transition-colors"
+            className="hover:bg-hover bg-form-element flex w-full items-center justify-between rounded-none px-3 py-3 transition-colors sm:rounded-xl"
           >
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium">{t('optional')}</span>
@@ -226,7 +226,7 @@ export function TagSections({
                   <button
                     type="button"
                     onClick={() => setSheetCategory(cat)}
-                    className={`hover:bg-hover bg-form-element flex w-full items-center justify-between rounded-none sm:rounded-xl px-3 py-3 transition-colors chipCat${cat.category}`}
+                    className={`hover:bg-hover bg-form-element flex w-full items-center justify-between rounded-none px-3 py-3 transition-colors sm:rounded-xl chipCat${cat.category}`}
                   >
                     <div className="flex flex-col items-start gap-0.5">
                       <span className="text-sm font-medium">

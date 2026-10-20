@@ -17,8 +17,15 @@ const CATEGORY_CLASS: Record<string, string | undefined> = {
   InfrastructureAndAmenities: styles.chipCatInfrastructureAndAmenities,
 };
 
-export function VenueDisplayTags({ tagIds, tagsEndpoint }: VenueDisplayTagsProps) {
-  const { visible, remaining, isEmpty } = useVenueTagChips(tagIds ?? [], tagsEndpoint, 4);
+export function VenueDisplayTags({
+  tagIds,
+  tagsEndpoint,
+}: VenueDisplayTagsProps) {
+  const { visible, remaining, isEmpty } = useVenueTagChips(
+    tagIds ?? [],
+    tagsEndpoint,
+    4,
+  );
 
   if (isEmpty) return null;
 

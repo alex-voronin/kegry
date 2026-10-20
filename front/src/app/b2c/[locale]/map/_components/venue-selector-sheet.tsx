@@ -87,7 +87,12 @@ export function VenueSelectorSheet({
 
         const { data, totalCount: total } = response.data.result;
         const items: VenueSearchItem[] = data.map(
-          (d: { id: string; companyName: string; companyAvatarImageUrl: string | null; address: string }) => ({
+          (d: {
+            id: string;
+            companyName: string;
+            companyAvatarImageUrl: string | null;
+            address: string;
+          }) => ({
             id: d.id,
             companyName: d.companyName,
             companyAvatarImageUrl: d.companyAvatarImageUrl,
@@ -200,7 +205,11 @@ export function VenueSelectorSheet({
                   autoFocus
                 />
                 {query && (
-                  <button type="button" onClick={handleClear} className="shrink-0 text-zinc-500">
+                  <button
+                    type="button"
+                    onClick={handleClear}
+                    className="shrink-0 text-zinc-500"
+                  >
                     <X size={14} />
                   </button>
                 )}
@@ -213,7 +222,9 @@ export function VenueSelectorSheet({
               >
                 {venues.length === 0 && !isLoading && (
                   <p className={styles.selectorEmpty}>
-                    {query ? t('nothingFound') : t('venueSelector.typeToSearch')}
+                    {query
+                      ? t('nothingFound')
+                      : t('venueSelector.typeToSearch')}
                   </p>
                 )}
 
@@ -251,9 +262,7 @@ export function VenueSelectorSheet({
                   </div>
                 )}
 
-                {!hasMore && venues.length > 0 && (
-                  <div className="h-4" />
-                )}
+                {!hasMore && venues.length > 0 && <div className="h-4" />}
               </div>
             </DialogPanel>
           </TransitionChild>

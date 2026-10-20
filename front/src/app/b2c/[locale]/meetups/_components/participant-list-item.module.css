@@ -5,7 +5,7 @@
 }
 
 .rootClickable {
-  @apply cursor-pointer hover:bg-hover active:bg-active;
+  @apply hover:bg-hover active:bg-active cursor-pointer;
 }
 
 .row {

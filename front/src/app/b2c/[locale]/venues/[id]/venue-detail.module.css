@@ -50,7 +50,7 @@
 }
 
 .segmentedControlWrapper {
-  @apply pb-2 pt-3;
+  @apply pt-3 pb-2;
 }
 
 .section {
@@ -142,7 +142,7 @@
 }
 
 .eventCard {
-  @apply relative flex min-h-[64px] w-full cursor-pointer items-center overflow-hidden bg-[#1e1e1e] rounded-xl;
+  @apply relative flex min-h-[64px] w-full cursor-pointer items-center overflow-hidden rounded-xl bg-[#1e1e1e];
 }
 
 .eventCardJoined {

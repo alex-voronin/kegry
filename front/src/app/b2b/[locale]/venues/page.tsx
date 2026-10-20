@@ -93,8 +93,7 @@ export default function VenuesPage() {
               className="h-6 w-6 rounded-full object-cover"
             />
           ) : undefined,
-          onClick: () =>
-            router.push(PAGE_ROUTES.B2B.VENUES_CREATE(company.id)),
+          onClick: () => router.push(PAGE_ROUTES.B2B.VENUES_CREATE(company.id)),
         }))}
       />
 

@@ -11,11 +11,17 @@ interface VenueTagAccordionProps {
   tagsEndpoint?: string;
 }
 
-export function VenueTagAccordion({ tagIds, tagsEndpoint }: VenueTagAccordionProps) {
+export function VenueTagAccordion({
+  tagIds,
+  tagsEndpoint,
+}: VenueTagAccordionProps) {
   const t = useTranslations('components.tagSections');
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const { resolved, visible, remaining, isEmpty } = useVenueTagChips(tagIds, tagsEndpoint);
+  const { resolved, visible, remaining, isEmpty } = useVenueTagChips(
+    tagIds,
+    tagsEndpoint,
+  );
 
   const tagsByCategory = useMemo(() => {
     const map = new Map<string, { id: string; label: string }[]>();
@@ -36,7 +42,7 @@ export function VenueTagAccordion({ tagIds, tagsEndpoint }: VenueTagAccordionPro
         className={styles.accordionButton}
       >
         <div className={styles.accordionBody}>
-        <div className={styles.chipsRow}>
+          <div className={styles.chipsRow}>
             {visible.map(({ id, category, label }) => (
               <span
                 key={id}
@@ -51,9 +57,7 @@ export function VenueTagAccordion({ tagIds, tagsEndpoint }: VenueTagAccordionPro
               </span>
             ))}
             {remaining > 0 && (
-              <span className={styles.moreBadge}>
-                +{remaining}
-              </span>
+              <span className={styles.moreBadge}>+{remaining}</span>
             )}
           </div>
         </div>
@@ -80,7 +84,10 @@ export function VenueTagAccordion({ tagIds, tagsEndpoint }: VenueTagAccordionPro
       {isExpanded && (
         <div className={styles.accordionContent}>
           {tagsByCategory.map(([category, items]) => (
-            <div key={category} className={`${styles.category} chipCat${category}`}>
+            <div
+              key={category}
+              className={`${styles.category} chipCat${category}`}
+            >
               <p className={styles.categoryTitle}>
                 {t(`categories.${category}`)}
               </p>

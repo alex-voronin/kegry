@@ -42,7 +42,12 @@ export const useVenuesStore = create<VenuesState>()((set) => ({
     try {
       const params: Record<
         string,
-        string | number | boolean | (string | number | boolean)[] | undefined | null
+        | string
+        | number
+        | boolean
+        | (string | number | boolean)[]
+        | undefined
+        | null
       > = {
         latitude: lat,
         longitude: lon,
