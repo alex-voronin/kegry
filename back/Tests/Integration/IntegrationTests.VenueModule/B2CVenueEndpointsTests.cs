@@ -1,5 +1,9 @@
+using System.Net;
 using IntegrationTests.Shared;
 using IntegrationTests.Shared.Extensions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using NotificationModule.Domain.ValueObjects;
 using SecurityModule.Domain.ValueObjects;
 using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
@@ -10,6 +14,7 @@ using VenueModule.API.B2B.Deals.Dto;
 using VenueModule.API.B2B.Venues.Dto;
 using VenueModule.API.B2C.Dto;
 using VenueModule.Domain.ValueObjects;
+using VenueModule.Infrastructure.Persistence;
 using B2BGetVenueResponse = VenueModule.API.B2B.Venues.Dto.GetVenueResponse;
 using GetVenueResponse = VenueModule.API.B2C.Dto.GetVenueResponse;
 using VenueListItemDto = VenueModule.API.B2C.Dto.VenueListItemDto;
@@ -222,11 +227,20 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.B2B.Company.LoyaltyLevels(companyId),
             new UpdateLoyaltyLevelsRequest(levels));
 
-        // 3. Create Discounts (0%, 5%, 10% for levels 0, 1, 2) except Friday
+        // 3. Create Discounts (5%, 10% for levels 1, 2) except Friday.
+        // 0% is not a valid discount (domain allows 1..100), so verify it is rejected.
         var workDaysExceptFriday = Enum.GetValues<DayOfWeek>().Where(d => d != DayOfWeek.Friday).ToArray();
+
+        var zeroPercentError = await Factory.ApiClient
+            .PostProblemAsync(
+                ApiRoutes.B2B.Venue.Discounts(venueId),
+                new CreateDiscountRequest(0, 0, workDaysExceptFriday));
+
+        zeroPercentError.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
+        zeroPercentError.ProblemDetails.GetCode().ShouldBe(nameof(ErrorCode.ValidationError));
+
         var discounts = new[]
         {
-            new CreateDiscountRequest(0, 0, workDaysExceptFriday),
             new CreateDiscountRequest(1, 5, workDaysExceptFriday),
             new CreateDiscountRequest(2, 10, workDaysExceptFriday)
         };
@@ -311,6 +325,19 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         response.Success.ShouldBeTrue();
         response.Result.VenueId.ShouldBe(venueId);
+
+        using var scope = Factory.Services.CreateScope();
+        var venueContext = scope.ServiceProvider.GetRequiredService<VenueContext>();
+        var userId = Guid.Parse(b2CAuth.UserId);
+
+        var visits = await venueContext.Visits
+            .Where(v => v.UserId == userId && v.VenueId == venueId)
+            .ToArrayAsync();
+        visits.Length.ShouldBe(1);
+
+        var loyalty = await venueContext.UserLoyalties
+            .SingleAsync(l => l.UserId == userId && l.CompanyId == companyId);
+        loyalty.VisitsCount.ShouldBe(1);
     }
 
     [Fact]
@@ -338,11 +365,131 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 3. Check in as B2C user
         var checkInRequest = new CheckInRequest(51, 51, null);
-        var response = await Factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+        var error = await Factory.ApiClient.PostProblemAsync(
             ApiRoutes.Venue.QrCheckIn(venueId), checkInRequest);
 
-        response.Success.ShouldBeFalse();
-        response.Errors[0].Code.ShouldBe(nameof(ErrorCode.ValidationError));
+        error.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.UnprocessableEntity);
+        error.ProblemDetails.GetCode().ShouldBe("OutsideVenueRadius");
+        error.ProblemDetails.GetVenueId().ShouldBe(venueId);
+        error.ProblemDetails.Detail.ShouldBe("You must be in the venue to check in");
+    }
+
+    [Fact]
+    public async Task GivenVenue_WhenB2CUserChecksInWithoutPinOrCoordinates_Then422CoordinatesRequired()
+    {
+        var (_, venueId) = await CreateVerifiedVenueAsync();
+
+        var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_no_coords@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(b2CAuth);
+
+        var error = await Factory.ApiClient.PostProblemAsync(
+            ApiRoutes.Venue.QrCheckIn(venueId),
+            new CheckInRequest(null, null, null));
+
+        error.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.UnprocessableEntity);
+        error.ProblemDetails.GetCode().ShouldBe("CoordinatesRequired");
+        error.ProblemDetails.GetVenueId().ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task GivenVenue_WhenB2CUserChecksInTwiceWithinCooldown_Then429AndNoExtraVisit()
+    {
+        var (companyId, venueId) = await CreateVerifiedVenueAsync();
+
+        var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_cooldown@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(b2CAuth);
+        var userId = Guid.Parse(b2CAuth.UserId);
+
+        var firstResponse = await Factory.ApiClient
+            .PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+                ApiRoutes.Venue.QrCheckIn(venueId), new CheckInRequest(50.00001, 50.00001, null));
+
+        firstResponse.Result.VenueId.ShouldBe(venueId);
+
+        var error = await Factory.ApiClient.PostProblemAsync(
+            ApiRoutes.Venue.QrCheckIn(venueId),
+            new CheckInRequest(50.00001, 50.00001, null));
+
+        error.StatusCode.ShouldBe(HttpStatusCode.TooManyRequests);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.TooManyRequests);
+        error.ProblemDetails.GetCode().ShouldBe("AlreadyCheckedIn");
+        error.ProblemDetails.GetVenueId().ShouldBe(venueId);
+        error.ProblemDetails.Detail.ShouldBe("You've already checked in recently");
+
+        using var scope = Factory.Services.CreateScope();
+        var venueContext = scope.ServiceProvider.GetRequiredService<VenueContext>();
+
+        var visitsCount = await venueContext.Visits
+            .CountAsync(v => v.UserId == userId && v.VenueId == venueId);
+        visitsCount.ShouldBe(1);
+
+        var loyalty = await venueContext.UserLoyalties
+            .SingleAsync(l => l.UserId == userId && l.CompanyId == companyId);
+        loyalty.VisitsCount.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task GivenVenue_WhenB2CUserChecksInAfterCooldown_ThenSuccess()
+    {
+        var (companyId, venueId) = await CreateVerifiedVenueAsync();
+
+        var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_after_cooldown@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(b2CAuth);
+        var userId = Guid.Parse(b2CAuth.UserId);
+
+        try
+        {
+            var firstResponse = await Factory.ApiClient
+                .PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+                    ApiRoutes.Venue.QrCheckIn(venueId), new CheckInRequest(50.00001, 50.00001, null));
+            firstResponse.Result.VenueId.ShouldBe(venueId);
+
+            Factory.FakeTimeProvider.Advance(TimeSpan.FromHours(12).Add(TimeSpan.FromMinutes(1)));
+
+            var secondResponse = await Factory.ApiClient
+                .PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+                    ApiRoutes.Venue.QrCheckIn(venueId), new CheckInRequest(50.00001, 50.00001, null));
+            secondResponse.Result.VenueId.ShouldBe(venueId);
+
+            using var scope = Factory.Services.CreateScope();
+            var venueContext = scope.ServiceProvider.GetRequiredService<VenueContext>();
+
+            var visitsCount = await venueContext.Visits
+                .CountAsync(v => v.UserId == userId && v.VenueId == venueId);
+            visitsCount.ShouldBe(2);
+
+            var loyalty = await venueContext.UserLoyalties
+                .SingleAsync(l => l.UserId == userId && l.CompanyId == companyId);
+            loyalty.VisitsCount.ShouldBe(2);
+        }
+        finally
+        {
+            Factory.FakeTimeProvider.Reset(DateTimeOffset.UtcNow);
+        }
+    }
+
+    [Theory]
+    [InlineData(SupportedLocales.English, "Invalid PIN-code")]
+    [InlineData(SupportedLocales.Serbian, "Nevažeći PIN kod")]
+    public async Task GivenVenue_WhenB2CUserChecksInWithWrongPin_ThenDetailIsLocalized(
+        string locale,
+        string expectedDetail)
+    {
+        var (_, venueId) = await CreateVerifiedVenueAsync(pinCode: "1234", isPinCheckInAllowed: true);
+
+        var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_localized_pin@example.com", "Password123!");
+        Factory.ApiClient.SetAuth(b2CAuth);
+        Factory.ApiClient.SetLocale(locale);
+
+        var error = await Factory.ApiClient.PostProblemAsync(
+            ApiRoutes.Venue.QrCheckIn(venueId),
+            new CheckInRequest(null, null, "9999"));
+
+        error.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
+        error.ProblemDetails.GetCode().ShouldBe("InvalidPinCode");
+        error.ProblemDetails.Detail.ShouldBe(expectedDetail);
     }
 
     [Fact]
@@ -392,12 +539,14 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_qr@example.com", "Password123!");
         Factory.ApiClient.SetAuth(b2CAuth);
 
-        var oldResponse = await Factory.ApiClient
-            .PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+        var oldError = await Factory.ApiClient
+            .PostProblemAsync(
                 ApiRoutes.Venue.QrCheckIn(venueId),
                 new CheckInRequest(0, 0, null)
             );
-        oldResponse.Success.ShouldBeFalse();
+        oldError.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        oldError.ProblemDetails.GetCode().ShouldBe("VenueNotFound");
+        oldError.ProblemDetails.GetVenueId().ShouldBeNull();
 
         // 5. Check in with the new QR
         var newResponse = await Factory.ApiClient
@@ -563,12 +712,15 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(b2CAuth);
 
         // 3. Check in as B2C user
-        var checkInRequest = new CheckInRequest(null, null, newPinCode.Reverse().ToString());
-        var response = await Factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+        var wrongPinCode = new string(newPinCode.Reverse().ToArray());
+        var checkInRequest = new CheckInRequest(null, null, wrongPinCode);
+        var error = await Factory.ApiClient.PostProblemAsync(
             ApiRoutes.Venue.QrCheckIn(venueId), checkInRequest);
 
-        response.Success.ShouldBeFalse();
-        response.Result.VenueId.ShouldBe(venueId);
+        error.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.UnprocessableEntity);
+        error.ProblemDetails.GetCode().ShouldBe("InvalidPinCode");
+        error.ProblemDetails.GetVenueId().ShouldBe(venueId);
     }
 
     [Fact]
@@ -617,11 +769,13 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 3. Check in as B2C user
         var checkInRequest = new CheckInRequest(null, null, newPinCode);
-        var response = await Factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+        var error = await Factory.ApiClient.PostProblemAsync(
             ApiRoutes.Venue.QrCheckIn(venueId), checkInRequest);
 
-        response.Success.ShouldBeFalse();
-        response.Result.VenueId.ShouldBe(venueId);
+        error.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.Forbidden);
+        error.ProblemDetails.GetCode().ShouldBe("PinCheckInDisabled");
+        error.ProblemDetails.GetVenueId().ShouldBe(venueId);
     }
 
     [Fact]
@@ -1152,5 +1306,42 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         response.Success.ShouldBeTrue();
         response.Result.Length.ShouldBe(1);
         response.Result[0].Address.ShouldBe("Verified One");
+    }
+
+    private async Task<(Guid CompanyId, Guid VenueId)> CreateVerifiedVenueAsync(
+        string? pinCode = null,
+        bool isPinCheckInAllowed = false)
+    {
+        var b2BAuth = await Factory.AuthManager.CreateAndLoginUserAsync(
+            $"b2b_checkin_{Guid.NewGuid():N}@example.com", "Password123!", UserType.B2B);
+        Factory.ApiClient.SetAuth(b2BAuth);
+
+        var companyId = await _testUtils.CreateCompanyAsync(
+            $"Checkin Co {Guid.NewGuid():N}",
+            $"checkin_{Guid.NewGuid():N}@example.com");
+        var venueId = await _testUtils.CreateVerifiedVenueAsync(companyId, 50, 50, "Checkin Venue");
+
+        if (pinCode != null || isPinCheckInAllowed)
+        {
+            var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
+                ApiRoutes.B2B.Venue.Single(venueId),
+                new PatchVenueRequest(
+                    Latitude: null,
+                    Longitude: null,
+                    Address: null,
+                    WebsiteUrl: null,
+                    GoogleMapsUrl: null,
+                    InstagramUrl: null,
+                    PhoneNumber: null,
+                    WorkingHours: null,
+                    CoverImageUrl: null,
+                    PinCode: pinCode,
+                    IsPinCheckInAllowed: isPinCheckInAllowed,
+                    QrCode: null,
+                    TagIds: null));
+            patchResponse.Success.ShouldBeTrue();
+        }
+
+        return (companyId, venueId);
     }
 }

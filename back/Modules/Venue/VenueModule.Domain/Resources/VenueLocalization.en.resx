@@ -15,6 +15,9 @@
   <data name="InvalidPinCodeError" xml:space="preserve">
     <value>Invalid PIN-code</value>
   </data>
+  <data name="PinCheckInDisabled" xml:space="preserve">
+    <value>PIN check-in is disabled</value>
+  </data>
   <data name="NotInVenueError" xml:space="preserve">
     <value>You must be in the venue to check in</value>
   </data>

@@ -15,6 +15,9 @@
   <data name="InvalidPinCodeError" xml:space="preserve">
     <value>Nevažeći PIN kod</value>
   </data>
+  <data name="PinCheckInDisabled" xml:space="preserve">
+    <value>Prijava PIN kodom je onemogućena</value>
+  </data>
   <data name="NotInVenueError" xml:space="preserve">
     <value>Moraš biti u lokalu da bi se prijavio</value>
   </data>

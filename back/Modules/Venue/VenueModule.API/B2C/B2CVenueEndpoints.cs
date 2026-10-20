@@ -1,5 +1,4 @@
 using Shared.Infrastructure.Storage;
-using SharedCore.Exceptions;
 using VenueModule.API.B2C.Dto;
 using VenueModule.API.Shared;
 using VenueModule.Domain.ValueObjects;
@@ -46,9 +45,8 @@ public class B2CVenueEndpoints : IEndpoints
         ILoyaltyService loyaltyService,
         CancellationToken ct)
     {
-        var userId = user.GetId();
-        var (venueId, error) = await loyaltyService.CheckInToVenue(
-            userId: userId,
+        var venueId = await loyaltyService.CheckInToVenue(
+            userId: user.GetId(),
             qrCode: qrCode,
             userLatitude: request.Latitude,
             userLongitude: request.Longitude,
@@ -56,17 +54,7 @@ public class B2CVenueEndpoints : IEndpoints
             ct: ct);
 
         return ApiResult<CheckInResponse>.Build(
-            result: new CheckInResponse(venueId),
-            errors: error != null
-                ?
-                [
-                    new ApiError
-                    {
-                        Error = error,
-                        Code = nameof(ErrorCode.ValidationError)
-                    }
-                ]
-                : null
+            result: new CheckInResponse(venueId)
         );
     }
 

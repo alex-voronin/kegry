@@ -41,7 +41,7 @@ public interface ILoyaltyService
         Guid venueId,
         CancellationToken ct = default);
 
-    Task<(Guid, string? error)> CheckInToVenue(
+    Task<Guid> CheckInToVenue(
         Guid userId, Guid qrCode,
         double? userLatitude, double? userLongitude,
         string? pinCode,
@@ -101,16 +101,12 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             ct: ct);
     }
 
-    public async Task<(Guid, string? error)> CheckInToVenue(
+    public async Task<Guid> CheckInToVenue(
         Guid userId, Guid qrCode,
         double? userLatitude, double? userLongitude,
         string? pinCode,
         CancellationToken ct = default)
     {
-        var transaction = await _venueRepository
-            .And(_userLoyaltyRepository)
-            .StartTransactionAsync(ct);
-
         var (venue, lastVisit, userLoyalty) = await _venueRepository.GetVenueWithLastVisitsAndUserLoyaltyAsync(
             qrCode: qrCode,
             userId: userId,
@@ -118,8 +114,43 @@ internal class LoyaltyService : ILoyaltyService, IScoped
 
         if (venue == null)
         {
-            throw VenueExceptions.VenueNotFound(qrCode);
+            throw VenueExceptions.VenueNotFoundByQr(qrCode);
         }
+
+        if (pinCode == null && (userLatitude == null || userLongitude == null))
+        {
+            throw VenueExceptions.CheckInCoordinatesRequired();
+        }
+
+        if (pinCode != null)
+        {
+            if (!venue.IsPinCheckInAllowed)
+            {
+                throw VenueExceptions.CheckInPinDisabled(venue.Id, _localizer);
+            }
+
+            if (!CheckInByPin(pinCode, venue))
+            {
+                throw VenueExceptions.CheckInInvalidPin(venue.Id, _localizer);
+            }
+        }
+        else if (!CanCheckInUsingLocation(userLatitude!.Value, userLongitude!.Value, venue))
+        {
+            throw VenueExceptions.CheckInOutsideRadius(venue.Id, _localizer);
+        }
+
+        var now = _timeProvider.GetUtcNow();
+        if (lastVisit != null && lastVisit.CheckedInAt > now - TimeSpan.FromHours(CheckInCooldownHours))
+        {
+            throw VenueExceptions.CheckInAlreadyCheckedIn(venue.Id, _localizer);
+        }
+
+        var newVisitsCount = (userLoyalty?.VisitsCount ?? 0) + 1;
+        var (currentLoyaltyLevelId, _, _) = GetCurrentLoyaltyLevel(venue.Company.LoyaltyLevels, newVisitsCount);
+
+        var transaction = await _venueRepository
+            .And(_userLoyaltyRepository)
+            .StartTransactionAsync(ct);
 
         if (userLoyalty == null)
         {
@@ -127,41 +158,15 @@ internal class LoyaltyService : ILoyaltyService, IScoped
             {
                 UserId = userId,
                 CompanyId = venue.CompanyId,
-                LoyaltyLevelId = 0,
-                VisitsCount = 0
+                LoyaltyLevelId = currentLoyaltyLevelId,
+                VisitsCount = newVisitsCount
             };
             await _userLoyaltyRepository.AddAsync(userLoyalty, ct);
         }
-
-        if (pinCode == null && (userLatitude == null || userLongitude == null))
-        {
-            throw new ArgumentException("Either PIN or latitude and longitude must be provided");
-        }
-
-        string? error;
-        if (pinCode != null)
-        {
-            if (!venue.IsPinCheckInAllowed)
-            {
-                return (venue.Id, "PIN check-in is disabled");
-            }
-
-            error = CheckInByPin(pinCode, venue);
-        }
         else
         {
-            error = CanCheckInUsingLocation(userLatitude!.Value, userLongitude!.Value, venue);
-        }
-
-        if (error != null)
-        {
-            return (venue.Id, error);
-        }
-
-        var now = _timeProvider.GetUtcNow();
-        if (lastVisit != null && lastVisit.CheckedInAt > now - TimeSpan.FromHours(CheckInCooldownHours))
-        {
-            return (venue.Id, _localizer.GetString("AlreadyCheckedInError"));
+            userLoyalty.LoyaltyLevelId = currentLoyaltyLevelId;
+            userLoyalty.VisitsCount = newVisitsCount;
         }
 
         var visit = new Visit
@@ -173,42 +178,24 @@ internal class LoyaltyService : ILoyaltyService, IScoped
         };
         await _visitRepository.AddAsync(visit, ct);
 
-        var newVisitsCount = userLoyalty.VisitsCount + 1;
-        var (currentLoyaltyLevelId, _, _) = GetCurrentLoyaltyLevel(venue.Company.LoyaltyLevels, newVisitsCount);
-
-        userLoyalty.LoyaltyLevelId = currentLoyaltyLevelId;
-        userLoyalty.VisitsCount = newVisitsCount;
-
-        await _visitRepository.SaveChangesAsync(ct);
-        await _userLoyaltyRepository.SaveChangesAsync(ct);
         await transaction.CommitAsync(ct);
 
-        return (venue.Id, null);
+        return venue.Id;
     }
 
-    private string? CanCheckInUsingLocation(double userLatitude, double userLongitude, Venue venue)
+    private bool CanCheckInUsingLocation(double userLatitude, double userLongitude, Venue venue)
     {
         var distanceMeters = Haversine.DistanceMeters(
             userLatitude, userLongitude,
             venue.Coordinates.Y, venue.Coordinates.X);
 
-        if (distanceMeters > MaxCheckInDistanceMeters)
-        {
-            return _localizer.GetString("NotInVenueError");
-        }
-
-        return null;
+        return distanceMeters <= MaxCheckInDistanceMeters;
     }
 
-    private string? CheckInByPin(string pinCode, Venue venue)
+    private bool CheckInByPin(string pinCode, Venue venue)
     {
         var expectedPinCode = venue.PinCode.Length > 0 ? venue.PinCode : GenerateDailyTotpPinCode(venue);
-        if (expectedPinCode != pinCode)
-        {
-            return _localizer.GetString("InvalidPinCodeError");
-        }
-
-        return null;
+        return expectedPinCode == pinCode;
     }
 
     public async Task<LoyaltyLevelWithDiscount> GetLoyaltyLevelWithDiscountAsync(
