@@ -15,7 +15,6 @@ function problemError(
 describe('extractApiError', () => {
   it('extracts detail, code and context from ProblemDetails', () => {
     const problem: ProblemDetails = {
-      type: 'https://httpstatuses.io/422',
       title: 'Unprocessable Entity',
       status: 422,
       detail: 'You must be in the venue to check in',
@@ -45,28 +44,6 @@ describe('extractApiError', () => {
     expect(message).toBe('Not Found');
     expect(code).toBe('VenueNotFound');
     expect(context).toEqual(problem);
-  });
-
-  it('keeps validation errors in context', () => {
-    const problem: ProblemDetails = {
-      title: 'One or more validation errors occurred.',
-      status: 400,
-      errors: {
-        Email: ['Email is invalid'],
-        Password: ['Password is too short'],
-      },
-    };
-
-    const [message, code, context] = extractApiError(
-      problemError(problem, '400'),
-    );
-
-    expect(message).toBe('One or more validation errors occurred.');
-    expect(code).toBe('unknown');
-    expect(context?.errors).toEqual({
-      Email: ['Email is invalid'],
-      Password: ['Password is too short'],
-    });
   });
 
   it('returns axios message when response has no detail or title', () => {

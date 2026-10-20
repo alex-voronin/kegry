@@ -4,7 +4,6 @@ using API.Web.Exceptions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using PostHog;
 using SharedCore.Exceptions;
@@ -12,46 +11,42 @@ using Shouldly;
 
 namespace Tests.API.Web;
 
-public sealed class ExceptionHandlerTests : IDisposable
+public sealed class ExceptionHandlerTests
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+    private static readonly ErrorCode CustomErrorCode = new(nameof(CustomErrorCode));
 
-    private readonly ServiceProvider _serviceProvider;
     private readonly ExceptionHandler _handler;
 
     public ExceptionHandlerTests()
     {
-        var services = new ServiceCollection();
-        services.AddLogging();
-        services.AddProblemDetails();
-
-        _serviceProvider = services.BuildServiceProvider();
-
         var hostEnvironment = Substitute.For<IWebHostEnvironment>();
         hostEnvironment.EnvironmentName = "Development";
 
         _handler = new ExceptionHandler(
-            _serviceProvider.GetRequiredService<IProblemDetailsService>(),
             Substitute.For<IPostHogClient>(),
             hostEnvironment);
     }
 
-    public void Dispose() => _serviceProvider.Dispose();
+    public static TheoryData<HttpStatusCode, string> CodeCases => new()
+    {
+        { HttpStatusCode.BadRequest, ErrorCode.GeneralError.Value },
+        { HttpStatusCode.Unauthorized, ErrorCode.GeneralError.Value },
+        { HttpStatusCode.Forbidden, ErrorCode.NotAllowed.Value },
+        { HttpStatusCode.NotFound, ErrorCode.NotFound.Value },
+        { HttpStatusCode.Conflict, ErrorCode.AlreadyExists.Value },
+        { HttpStatusCode.UnprocessableEntity, ErrorCode.ValidationError.Value },
+        { HttpStatusCode.TooManyRequests, ErrorCode.TooManyRequests.Value }
+    };
 
     [Theory]
-    [InlineData(HttpStatusCode.BadRequest, ErrorCode.GeneralError)]
-    [InlineData(HttpStatusCode.Unauthorized, ErrorCode.GeneralError)]
-    [InlineData(HttpStatusCode.Forbidden, ErrorCode.NotAllowed)]
-    [InlineData(HttpStatusCode.NotFound, ErrorCode.NotFound)]
-    [InlineData(HttpStatusCode.Conflict, ErrorCode.AlreadyExists)]
-    [InlineData(HttpStatusCode.UnprocessableEntity, ErrorCode.ValidationError)]
-    [InlineData(HttpStatusCode.TooManyRequests, ErrorCode.TooManyRequests)]
-    public async Task HttpCodeException_ReturnsProblemDetailsWithStatusAndCode(
+    [MemberData(nameof(CodeCases))]
+    public async Task HttpCodeException_WhenThrown_ThenReturnsProblemDetailsWithStatusAndCode(
         HttpStatusCode statusCode,
-        ErrorCode errorCode)
+        string expectedCode)
     {
         var context = CreateHttpContext();
-        var exception = new HttpCodeException("Something went wrong", statusCode, errorCode);
+        var exception = new HttpCodeException("Something went wrong", statusCode, new ErrorCode(expectedCode));
 
         var handled = await HandleAsync(context, exception);
 
@@ -63,23 +58,42 @@ public sealed class ExceptionHandlerTests : IDisposable
         problem.Status.ShouldBe((int)statusCode);
         problem.Title.ShouldNotBeNullOrEmpty();
         problem.Detail.ShouldBe("Something went wrong");
-        problem.Type.ShouldBe($"https://httpstatuses.io/{(int)statusCode}");
+        problem.Type.ShouldBeNull();
         problem.Instance.ShouldBe("/api/v1/test");
-        GetCode(problem).ShouldBe(errorCode.ToString());
+        GetCode(problem).ShouldBe(expectedCode);
         problem.Extensions.ShouldContainKey("traceId");
     }
 
     [Fact]
-    public async Task HttpCodeException_UsesExplicitCodeAndMergesDetails()
+    public async Task HttpCodeException_WhenAcceptIsNotJson_ThenStillWritesProblemDetailsJson()
+    {
+        var context = CreateHttpContext();
+        context.Request.Headers.Accept = "text/html";
+
+        var exception = new HttpCodeException(
+            "Something went wrong",
+            HttpStatusCode.BadRequest,
+            ErrorCode.ValidationError);
+
+        await HandleAsync(context, exception);
+
+        context.Response.ContentType.ShouldStartWith("application/problem+json");
+
+        var problem = await ReadProblemAsync(context);
+        problem.Detail.ShouldBe("Something went wrong");
+        GetCode(problem).ShouldBe(ErrorCode.ValidationError.Value);
+    }
+
+    [Fact]
+    public async Task HttpCodeException_WhenDetailsProvided_ThenUsesCodeAndMergesDetails()
     {
         var venueId = Guid.NewGuid();
         var context = CreateHttpContext();
         var exception = new HttpCodeException(
             "You must be in the venue to check in",
             HttpStatusCode.UnprocessableEntity,
-            ErrorCode.ValidationError)
+            CustomErrorCode)
         {
-            Code = "OutsideVenueRadius",
             Details = new Dictionary<string, object?>
             {
                 ["venueId"] = venueId
@@ -89,12 +103,12 @@ public sealed class ExceptionHandlerTests : IDisposable
         await HandleAsync(context, exception);
 
         var problem = await ReadProblemAsync(context);
-        GetCode(problem).ShouldBe("OutsideVenueRadius");
+        GetCode(problem).ShouldBe(CustomErrorCode.Value);
         GetVenueId(problem).ShouldBe(venueId);
     }
 
     [Fact]
-    public async Task ArgumentException_ReturnsBadRequestWithValidationError()
+    public async Task ArgumentException_WhenThrown_ThenReturnsBadRequestWithValidationError()
     {
         var context = CreateHttpContext();
 
@@ -109,7 +123,7 @@ public sealed class ExceptionHandlerTests : IDisposable
     }
 
     [Fact]
-    public async Task ArgumentNullException_ReturnsBadRequestWithGeneralError()
+    public async Task ArgumentNullException_WhenThrown_ThenReturnsBadRequestWithValidationError()
     {
         var context = CreateHttpContext();
 
@@ -118,11 +132,11 @@ public sealed class ExceptionHandlerTests : IDisposable
         context.Response.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
 
         var problem = await ReadProblemAsync(context);
-        GetCode(problem).ShouldBe(nameof(ErrorCode.GeneralError));
+        GetCode(problem).ShouldBe(nameof(ErrorCode.ValidationError));
     }
 
     [Fact]
-    public async Task FormatException_ReturnsBadRequestWithValidationError()
+    public async Task FormatException_WhenThrown_ThenReturnsBadRequestWithValidationError()
     {
         var context = CreateHttpContext();
 
@@ -136,7 +150,7 @@ public sealed class ExceptionHandlerTests : IDisposable
     }
 
     [Fact]
-    public async Task UnauthorizedAccessException_ReturnsUnauthorized()
+    public async Task UnauthorizedAccessException_WhenThrown_ThenReturnsUnauthorized()
     {
         var context = CreateHttpContext();
 
@@ -150,7 +164,7 @@ public sealed class ExceptionHandlerTests : IDisposable
     }
 
     [Fact]
-    public async Task UnknownException_ReturnsGenericServerErrorWithoutLeakingMessage()
+    public async Task UnknownException_WhenThrown_ThenReturnsGenericServerErrorWithoutLeakingMessage()
     {
         var context = CreateHttpContext();
 
@@ -163,7 +177,7 @@ public sealed class ExceptionHandlerTests : IDisposable
         problem.Detail.ShouldBe("An unexpected error occurred.");
         problem.Detail!.ShouldNotContain("Sensitive");
         GetCode(problem).ShouldBe(nameof(ErrorCode.GeneralError));
-        problem.Type.ShouldBe("https://httpstatuses.io/500");
+        problem.Type.ShouldBeNull();
         problem.Instance.ShouldBe("/api/v1/test");
     }
 

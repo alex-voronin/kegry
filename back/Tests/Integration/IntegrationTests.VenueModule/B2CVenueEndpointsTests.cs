@@ -394,7 +394,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
     }
 
     [Fact]
-    public async Task GivenVenue_WhenB2CUserChecksInTwiceWithinCooldown_Then429AndNoExtraVisit()
+    public async Task GivenVenue_WhenB2CUserChecksInTwiceWithinCooldown_ThenConflictAndNoExtraVisit()
     {
         var (companyId, venueId) = await CreateVerifiedVenueAsync();
 
@@ -412,8 +412,8 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ApiRoutes.Venue.QrCheckIn(venueId),
             new CheckInRequest(50.00001, 50.00001, null));
 
-        error.StatusCode.ShouldBe(HttpStatusCode.TooManyRequests);
-        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.TooManyRequests);
+        error.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+        error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.Conflict);
         error.ProblemDetails.GetCode().ShouldBe("AlreadyCheckedIn");
         error.ProblemDetails.GetVenueId().ShouldBe(venueId);
         error.ProblemDetails.Detail.ShouldBe("You've already checked in recently");

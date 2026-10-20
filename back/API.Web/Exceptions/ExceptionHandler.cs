@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
@@ -11,16 +12,13 @@ public class ExceptionHandler : IExceptionHandler
 {
     private const string GenericErrorMessage = "An unexpected error occurred.";
 
-    private readonly IProblemDetailsService _problemDetailsService;
     private readonly IPostHogClient _postHogClient;
     private readonly IWebHostEnvironment _hostEnvironment;
 
     public ExceptionHandler(
-        IProblemDetailsService problemDetailsService,
         IPostHogClient postHogClient,
         IWebHostEnvironment hostEnvironment)
     {
-        _problemDetailsService = problemDetailsService;
         _postHogClient = postHogClient;
         _hostEnvironment = hostEnvironment;
     }
@@ -36,7 +34,6 @@ public class ExceptionHandler : IExceptionHandler
 
         var (statusCode, errorCode) = exception switch
         {
-            ArgumentNullException => (StatusCodes.Status400BadRequest, ErrorCode.GeneralError),
             ArgumentException => (StatusCodes.Status400BadRequest, ErrorCode.ValidationError),
             FormatException => (StatusCodes.Status400BadRequest, ErrorCode.ValidationError),
             UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, ErrorCode.GeneralError),
@@ -52,13 +49,10 @@ public class ExceptionHandler : IExceptionHandler
             Status = statusCode,
             Title = ReasonPhrases.GetReasonPhrase(statusCode),
             Detail = isServerError ? GenericErrorMessage : exception.Message,
-            Instance = httpContext.Request.Path,
-            Type = $"https://httpstatuses.io/{statusCode}"
+            Instance = httpContext.Request.Path
         };
 
-        problemDetails.Extensions["code"] = codeException?.Code
-                                            ?? Enum.GetName(typeof(ErrorCode), errorCode)
-                                            ?? nameof(ErrorCode.GeneralError);
+        problemDetails.Extensions["code"] = errorCode.Value;
 
         if (codeException?.Details is { } details)
         {
@@ -70,18 +64,13 @@ public class ExceptionHandler : IExceptionHandler
 
         httpContext.Response.StatusCode = statusCode;
 
-        var written = await _problemDetailsService.TryWriteAsync(new ProblemDetailsContext
-        {
-            HttpContext = httpContext,
-            Exception = exception,
-            ProblemDetails = problemDetails
-        });
+        problemDetails.Extensions["traceId"] = Activity.Current?.Id ?? httpContext.TraceIdentifier;
 
-        if (!written)
-        {
-            httpContext.Response.ContentType = "application/problem+json";
-            await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
-        }
+        await httpContext.Response.WriteAsJsonAsync(
+            problemDetails,
+            options: null,
+            contentType: "application/problem+json",
+            cancellationToken: cancellationToken);
 
         return true;
     }

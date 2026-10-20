@@ -7,7 +7,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
-using NotificationModule.Domain.ValueObjects;
 using SecurityModule.API.Dto;
 
 namespace IntegrationTests.Shared.HttpClients;

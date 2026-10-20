@@ -1,6 +1,6 @@
 import axios from 'axios';
 import apiClient from '@/lib/api-client';
-import { ApiResult } from '@/lib/api-types';
+import type { ApiResult } from '@/lib/api-types';
 import imageCompression from 'browser-image-compression';
 
 const uploadClient = axios.create({

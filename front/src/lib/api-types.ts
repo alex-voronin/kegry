@@ -3,12 +3,6 @@ export interface ApiResult<T> {
   result: T;
 }
 
-export interface ApiProblem {
-  code?: string;
-  detail: string;
-  target?: string;
-}
-
 export interface ProblemDetails {
   type?: string;
   title?: string;
@@ -17,7 +11,6 @@ export interface ProblemDetails {
   instance?: string;
   code?: string;
   venueId?: string;
-  errors?: Record<string, string[]> | ApiProblem[];
   [key: string]: unknown;
 }
 

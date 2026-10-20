@@ -7,6 +7,8 @@ namespace VenueModule.Domain.Exceptions;
 
 public static class VenueExceptions
 {
+    private const string VenueIdKey = "venueId";
+
     public static HttpCodeException CompanyNotFound()
     {
         return new HttpCodeException("No companies found", HttpStatusCode.NotFound, ErrorCode.NotFound);
@@ -25,10 +27,8 @@ public static class VenueExceptions
 
     public static HttpCodeException VenueNotFoundByQr(Guid qrCode)
     {
-        return new HttpCodeException($"Venue with QR-Code {qrCode} not found", HttpStatusCode.NotFound, ErrorCode.NotFound)
-        {
-            Code = "VenueNotFound"
-        };
+        return new HttpCodeException($"Venue with QR-Code {qrCode} not found", HttpStatusCode.NotFound,
+            VenueErrorCodes.VenueNotFound);
     }
 
     public static HttpCodeException TooManyVenues(string companyName)
@@ -79,8 +79,7 @@ public static class VenueExceptions
             venueId,
             localizer.GetString("PinCheckInDisabled"),
             HttpStatusCode.Forbidden,
-            ErrorCode.NotAllowed,
-            "PinCheckInDisabled");
+            VenueErrorCodes.PinCheckInDisabled);
 
     public static HttpCodeException CheckInInvalidPin(
         Guid venueId, IStringLocalizer<VenueLocalization> localizer)
@@ -88,8 +87,7 @@ public static class VenueExceptions
             venueId,
             localizer.GetString("InvalidPinCodeError"),
             HttpStatusCode.UnprocessableEntity,
-            ErrorCode.ValidationError,
-            "InvalidPinCode");
+            VenueErrorCodes.InvalidPinCode);
 
     public static HttpCodeException CheckInOutsideRadius(
         Guid venueId, IStringLocalizer<VenueLocalization> localizer)
@@ -97,39 +95,32 @@ public static class VenueExceptions
             venueId,
             localizer.GetString("NotInVenueError"),
             HttpStatusCode.UnprocessableEntity,
-            ErrorCode.ValidationError,
-            "OutsideVenueRadius");
+            VenueErrorCodes.OutsideVenueRadius);
 
     public static HttpCodeException CheckInAlreadyCheckedIn(
         Guid venueId, IStringLocalizer<VenueLocalization> localizer)
         => CheckInFailure(
             venueId,
             localizer.GetString("AlreadyCheckedInError"),
-            HttpStatusCode.TooManyRequests,
-            ErrorCode.TooManyRequests,
-            "AlreadyCheckedIn");
+            HttpStatusCode.Conflict,
+            VenueErrorCodes.AlreadyCheckedIn);
 
     public static HttpCodeException CheckInCoordinatesRequired()
         => new("Either PIN or coordinates must be provided",
             HttpStatusCode.UnprocessableEntity,
-            ErrorCode.ValidationError)
-        {
-            Code = "CoordinatesRequired"
-        };
+            VenueErrorCodes.CoordinatesRequired);
 
     private static HttpCodeException CheckInFailure(
         Guid venueId,
         string message,
         HttpStatusCode statusCode,
-        ErrorCode errorCode,
-        string code)
+        ErrorCode errorCode)
     {
         return new HttpCodeException(message, statusCode, errorCode)
         {
-            Code = code,
             Details = new Dictionary<string, object?>
             {
-                ["venueId"] = venueId
+                [VenueIdKey] = venueId
             }
         };
     }
