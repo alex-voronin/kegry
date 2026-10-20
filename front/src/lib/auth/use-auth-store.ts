@@ -6,15 +6,12 @@ import authClient from '../auth-client';
 import { API_ENDPOINTS, PAGE_ROUTES } from '../routes';
 import { rethrowApiError, ApiRequestError } from '../api-error';
 import { reRegisterServiceWorker } from '../service-worker';
+import type { ApiResult } from '../api-types';
 
 // Note: Auth endpoints use raw axios to avoid token interceptor issues during login/signup.
 // For other API calls, use apiClient from '../api-client' for automatic token handling and retries.
 
 // --- Types ---
-
-export interface ApiResult<T> {
-  result: T;
-}
 
 export enum UserType {
   B2B = 'B2B',
