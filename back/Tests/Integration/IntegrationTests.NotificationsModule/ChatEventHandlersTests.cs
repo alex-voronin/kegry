@@ -2,7 +2,6 @@ using FeedModule.API.Dto;
 using IntegrationTests.Shared;
 using NotificationsModule.API.Dto;
 using NotificationsModule.Infrastructure.Transport.Push;
-using SharedCore.Api.Dto;
 using Shouldly;
 
 namespace IntegrationTests.NotificationsModule;
@@ -35,13 +34,13 @@ public class ChatEventHandlersTests : IntegrationTestBase, IAsyncLifetime
         var requestA = new UpdateFcmTokenRequest("devA", "tokenA");
         Factory.ApiClient.SetAuth(authResponseA);
         await Factory.ApiClient
-            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+            .PostAsync<UpdateFcmTokenRequest>(ApiRoutes.Notifications.UpdateDeviceToken,
                 requestA);
 
         var requestB = new UpdateFcmTokenRequest("devB", "tokenB");
         Factory.ApiClient.SetAuth(authResponseB);
         await Factory.ApiClient
-            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+            .PostAsync<UpdateFcmTokenRequest>(ApiRoutes.Notifications.UpdateDeviceToken,
                 requestB);
 
         // 3. Send invites and await push notifications
@@ -51,14 +50,14 @@ public class ChatEventHandlersTests : IntegrationTestBase, IAsyncLifetime
             {
                 Factory.ApiClient.SetAuth(authResponseA);
                 await Factory.ApiClient
-                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                    .PostAsync<InviteUserRequest>(
                         ApiRoutes.Feed.InviteUser(userBId),
                         new InviteUserRequest(inviteExpiresAt)
                     );
 
                 Factory.ApiClient.SetAuth(authResponseB);
                 await Factory.ApiClient
-                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                    .PostAsync<InviteUserRequest>(
                         ApiRoutes.Feed.InviteUser(userAId),
                         new InviteUserRequest(inviteExpiresAt)
                     );

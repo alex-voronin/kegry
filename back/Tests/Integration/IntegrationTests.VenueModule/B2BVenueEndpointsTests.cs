@@ -3,7 +3,6 @@ using System.Net.Http.Json;
 using IntegrationTests.Shared;
 using IntegrationTests.Shared.Extensions;
 using SecurityModule.Domain.ValueObjects;
-using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
 using SharedCore.Extensions;
 using Shouldly;
@@ -33,9 +32,9 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         var createCompanyRequest = new CreateCompanyRequest(Name: "Venue Owner Co", Email: "owner@test.com");
         var createCompanyResponse =
-            await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
                 ApiRoutes.B2B.Company.Root, createCompanyRequest);
-        var companyId = createCompanyResponse.Result.Id;
+        var companyId = createCompanyResponse.Id;
 
         // 2. Create venue
         var createVenueRequest = new CreateVenueRequest(
@@ -50,16 +49,16 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             CoverImageUrl: TestConfig.S3.PublicUrl + "/cover.jpg",
             TagIds: ["beer_craft".ToDeterministicGuid(), "spirit_vodka".ToDeterministicGuid()]);
 
-        var createVenueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var createVenueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId), createVenueRequest);
 
-        var venueId = createVenueResponse.Result.Id;
+        var venueId = createVenueResponse.Id;
 
         // 3. Get venue and verify
-        var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
+        var getResponse = await Factory.ApiClient.GetAsync<GetVenueResponse>(
             ApiRoutes.B2B.Venue.Single(venueId));
 
-        getResponse.Result.Venue.ShouldSatisfyAllConditions(
+        getResponse.Venue.ShouldSatisfyAllConditions(
             v => v.Id.ShouldBe(venueId.ToString()),
             v => v.Address.ShouldBe(createVenueRequest.Address),
             v => v.Latitude.ShouldBe(createVenueRequest.Latitude),
@@ -84,9 +83,9 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         var createCompanyRequest = new CreateCompanyRequest(Name: "Venue Owner Co", Email: "owner@test.com");
         var createCompanyResponse =
-            await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
                 ApiRoutes.B2B.Company.Root, createCompanyRequest);
-        var companyId = createCompanyResponse.Result.Id;
+        var companyId = createCompanyResponse.Id;
 
         // 2. Create venues until we fail
         for (int i = 0; i <= Validation.MaxVenuesPerCompany; i++)
@@ -106,9 +105,9 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             if (i < Validation.MaxVenuesPerCompany)
             {
                 var createVenueResponse =
-                    await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+                    await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
                         ApiRoutes.B2B.Company.Venues(companyId), createVenueRequest);
-                createVenueResponse.Result.Id.ShouldNotBe(Guid.Empty);
+                createVenueResponse.Id.ShouldNotBe(Guid.Empty);
             }
             else
             {
@@ -132,15 +131,15 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authResponse);
 
         var createCompanyResponse =
-            await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
                 ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Update Co", "up@test.com"));
-        var companyId = createCompanyResponse.Result.Id;
+        var companyId = createCompanyResponse.Id;
 
         var createVenueRequest = new CreateVenueRequest(40.0, -70.0, "Old Address", null, null, null, null, null, null,
             []);
-        var createVenueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var createVenueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId), createVenueRequest);
-        var venueId = createVenueResponse.Result.Id;
+        var venueId = createVenueResponse.Id;
 
         // 2. Update venue
         var patchRequest = new PatchVenueRequest(
@@ -158,14 +157,14 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             QrCode: Guid.NewGuid(),
             TagIds: ["beer_craft".ToDeterministicGuid(), "spirit_vodka".ToDeterministicGuid()]);
 
-        await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PatchAsync<PatchVenueRequest>(
             ApiRoutes.B2B.Venue.Single(venueId), patchRequest);
 
         // 3. Get venue and verify updates
-        var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
+        var getResponse = await Factory.ApiClient.GetAsync<GetVenueResponse>(
             ApiRoutes.B2B.Venue.Single(venueId));
 
-        getResponse.Result.Venue.ShouldSatisfyAllConditions(
+        getResponse.Venue.ShouldSatisfyAllConditions(
             v => v.Address.ShouldBe(patchRequest.Address),
             v => v.Latitude.ShouldBe(patchRequest.Latitude!.Value),
             v => v.Longitude.ShouldBe(patchRequest.Longitude!.Value),
@@ -192,18 +191,18 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authResponse);
 
         var createCompanyResponse =
-            await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
                 ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Del Co", "del@test.com"));
-        var companyId = createCompanyResponse.Result.Id;
+        var companyId = createCompanyResponse.Id;
 
         var createVenueResponse = await Factory.ApiClient
-            .PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+            .PostAsync<CreateVenueRequest, CreateVenueResponse>(
                 ApiRoutes.B2B.Company.Venues(companyId),
                 new CreateVenueRequest(0, 0, "To Del", null, null, null, null, null, null, []));
-        var venueId = createVenueResponse.Result.Id;
+        var venueId = createVenueResponse.Id;
 
         // 2. Delete venue
-        var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
+        var deleteResponse = await Factory.ApiClient.DeleteAsync(
             ApiRoutes.B2B.Venue.Single(venueId));
 
         // 3. Verify venue is not found
@@ -223,28 +222,28 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authResponse);
 
         var createCompanyResponse =
-            await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
                 ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("List Co", "list@test.com"));
-        var companyId = createCompanyResponse.Result.Id;
+        var companyId = createCompanyResponse.Id;
 
         // 2. Create 2 venues
-        await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(1, 1, "Venue 1", null, null, null, null, null, null, []));
-        await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(2, 2, "Venue 2", null, null, null, null, null, null, []));
 
         // 3. Get venues list and verify
-        var listResponse = await Factory.ApiClient.GetAsync<ApiResult<GetVenuesResponse>>(
+        var listResponse = await Factory.ApiClient.GetAsync<GetVenuesResponse>(
             ApiRoutes.B2B.Venue.Root);
 
-        listResponse.Result.Venues.Length.ShouldBe(2);
-        listResponse.Result.Venues.ShouldContain(v => v.Address == "Venue 1");
-        listResponse.Result.Venues.ShouldContain(v => v.Address == "Venue 2");
+        listResponse.Venues.Length.ShouldBe(2);
+        listResponse.Venues.ShouldContain(v => v.Address == "Venue 1");
+        listResponse.Venues.ShouldContain(v => v.Address == "Venue 2");
 
-        var first = listResponse.Result.Venues.First();
-        var last = listResponse.Result.Venues.Last();
+        var first = listResponse.Venues.First();
+        var last = listResponse.Venues.Last();
         first.PinCode.ShouldNotBe(last.PinCode);
     }
 
@@ -258,27 +257,27 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authResponse);
 
         var createCompanyResponse =
-            await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+            await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
                 ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("List Co", "list@test.com"));
-        var companyId = createCompanyResponse.Result.Id;
+        var companyId = createCompanyResponse.Id;
 
         // 2. Create 2 venues
-        await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(1, 1, "Venue 1", null, null, null, null, null, null, []));
-        await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(2, 2, "Venue 2", null, null, null, null, null, null, []));
 
         // 3. Delete company
-        var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
+        var deleteResponse = await Factory.ApiClient.DeleteAsync(
             ApiRoutes.B2B.Company.Single(companyId));
 
         // 4. Get venues list and verify
-        var listResponse = await Factory.ApiClient.GetAsync<ApiResult<GetVenuesResponse>>(
+        var listResponse = await Factory.ApiClient.GetAsync<GetVenuesResponse>(
             ApiRoutes.B2B.Venue.Root);
 
-        listResponse.Result.Venues.Length.ShouldBe(0);
+        listResponse.Venues.Length.ShouldBe(0);
     }
 
     [Fact]

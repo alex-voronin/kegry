@@ -3,10 +3,10 @@ using LocationModule.API.Dto;
 using LocationModule.Domain.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using SharedCore.Api;
-using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 
 namespace LocationModule.API;
@@ -20,12 +20,12 @@ public class LocationEndpoints : IEndpoints
             .RequireAuthorization();
     }
 
-    private static async Task<ApiResult.EmptyResult> UpdateLocation(
+    private static async Task<NoContent> UpdateLocation(
         [FromBody] UpdateLocationRequest request,
         ClaimsPrincipal user,
         ILocationService locationService)
     {
         await locationService.UpdateLocation(user.GetId(), request.Latitude, request.Longitude);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 }

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,7 @@ public class B2BEventEndpoints : IEndpoints
         managementApiGroup.MapPost("/api/v1/b2b/event/{id:guid}/cover/upload-url", GetCoverUploadUrl);
     }
 
-    private static async Task<ApiResult<PaginatedResponse<B2BEventListItemDto>>> GetEvents(
+    private static async Task<PaginatedResponse<B2BEventListItemDto>> GetEvents(
         [AsParameters] B2BGetEventsRequest request,
         ClaimsPrincipal user,
         IEventRepository eventRepository,
@@ -70,11 +71,10 @@ public class B2BEventEndpoints : IEndpoints
             RequiresApproval: e.RequiresApproval,
             ParticipantsCount: e.EventParticipants.Count(p => p.Status == ParticipantStatus.Approved))).ToArray();
 
-        return ApiResult<PaginatedResponse<B2BEventListItemDto>>.Build(
-            new PaginatedResponse<B2BEventListItemDto>(dtos, totalCount));
+        return new PaginatedResponse<B2BEventListItemDto>(dtos, totalCount);
     }
 
-    private static async Task<ApiResult<EventDto>> GetEvent(
+    private static async Task<EventDto> GetEvent(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         IEventRepository eventRepository,
@@ -121,10 +121,10 @@ public class B2BEventEndpoints : IEndpoints
             ParticipationStatus: participationStatus?.ToString(),
             IsCreator: true);
 
-        return ApiResult<EventDto>.Build(dto);
+        return dto;
     }
 
-    private static async Task<ApiResult<EventDto>> CreateEvent(
+    private static async Task<EventDto> CreateEvent(
         [FromBody] B2BCreateEventRequest request,
         ClaimsPrincipal user,
         IEventRepository eventRepository,
@@ -175,7 +175,7 @@ public class B2BEventEndpoints : IEndpoints
         return await BuildEventDetail(eventId, userId, eventRepository, storageService, ct);
     }
 
-    private static async Task<ApiResult<EventDto>> UpdateEvent(
+    private static async Task<EventDto> UpdateEvent(
         [FromRoute] Guid id,
         [FromBody] B2BUpdateEventRequest request,
         ClaimsPrincipal user,
@@ -213,8 +213,7 @@ public class B2BEventEndpoints : IEndpoints
         return await BuildEventDetail(id, user.GetId(), eventRepository, storageService, ct);
     }
 
-    private static async Task<ApiResult.EmptyResult>
- DeleteEvent(
+    private static async Task<NoContent> DeleteEvent(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         IEventRepository eventRepository,
@@ -235,10 +234,10 @@ public class B2BEventEndpoints : IEndpoints
         if (coverKey != null)
             await storageService.DeleteObjectAsync(coverKey, dontThrow: true);
 
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult<GetPresignedUrlResponse>> GetCoverUploadUrl(
+    private static async Task<GetPresignedUrlResponse> GetCoverUploadUrl(
         [FromRoute] Guid id,
         [FromBody] GetPresignedUrlRequest request,
         ClaimsPrincipal user,
@@ -258,11 +257,10 @@ public class B2BEventEndpoints : IEndpoints
             contentLength: request.ContentLength,
             ct: ct);
 
-        return ApiResult<GetPresignedUrlResponse>.Build(
-            new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl));
+        return new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl);
     }
 
-    private static async Task<ApiResult<EventDto>> BuildEventDetail(
+    private static async Task<EventDto> BuildEventDetail(
         Guid eventId,
         Guid userId,
         IEventRepository eventRepository,
@@ -308,7 +306,7 @@ public class B2BEventEndpoints : IEndpoints
             ParticipationStatus: participationStatus?.ToString(),
             IsCreator: isCreator);
 
-        return ApiResult<EventDto>.Build(dto);
+        return dto;
     }
 
     private static async Task RequireVenueOwnershipAsync(

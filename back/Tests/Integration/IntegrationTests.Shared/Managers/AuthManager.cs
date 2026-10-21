@@ -7,7 +7,6 @@ using SecurityModule.API.Dto;
 using SecurityModule.Domain.Aggregates;
 using SecurityModule.Domain.ValueObjects;
 using SecurityModule.Infrastructure.Persistence;
-using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 using SharedCore.ValueObjects;
 using Shouldly;
@@ -33,17 +32,17 @@ public class AuthManager
     public async Task<AuthResponse> CreateAndLoginUserAsync(string email, string password,
         UserType userType = UserType.B2C, string? locale = null)
     {
-        ApiResult<SigninResponse>? signinResponse = null;
+        SigninResponse? signinResponse = null;
         Func<IMessageContext, Task> signupFunc = async (ctx) =>
         {
             // 1. Sign up
             locale ??= SupportedLocales.English;
             _apiClient.SetLocale(locale);
             var signupRequest = new SignUpRequest(email, password, userType);
-            var signupResponse = await _apiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
+            var signupResponse = await _apiClient.PostAsync<SignUpRequest, AuthResponse>(
                 ApiRoutes.Auth.Signup, signupRequest);
 
-            var userId = Guid.Parse(signupResponse.Result.UserId);
+            var userId = Guid.Parse(signupResponse.UserId);
 
             // 2. Manually verify user in DB
             using (var scope = _serviceProvider.CreateScope())
@@ -58,7 +57,7 @@ public class AuthManager
 
             // 3. Sign in again to get access token
             var signinRequest = new SignInRequest(email, password);
-            signinResponse = await _apiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
+            signinResponse = await _apiClient.PostAsync<SignInRequest, SigninResponse>(
                 ApiRoutes.Auth.Signin, signinRequest);
         };
         await _host.TrackActivity()
@@ -66,10 +65,10 @@ public class AuthManager
             .ExecuteAndWaitAsync(signupFunc);
 
         signinResponse.ShouldNotBeNull();
-        signinResponse.Result.Auth.ShouldNotBeNull();
-        signinResponse.Result.Auth.AccessToken.ShouldNotBeNullOrEmpty();
+        signinResponse.Auth.ShouldNotBeNull();
+        signinResponse.Auth.AccessToken.ShouldNotBeNullOrEmpty();
 
-        return signinResponse.Result.Auth;
+        return signinResponse.Auth;
     }
 
     public async Task CreateDefaultProfileAndSubmitLocation(Guid? referrerId = null)
@@ -90,7 +89,7 @@ public class AuthManager
         Guid[]? hobbyIds = null)
     {
         hobbyIds ??= ["boxing".ToDeterministicGuid()];
-        await _apiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(ApiRoutes.UserProfile.Profile,
+        await _apiClient.PostAsync<CreateUserProfileRequest>(ApiRoutes.UserProfile.Profile,
             new CreateUserProfileRequest(
                 ReferrerId: referrerId,
                 FirstName: firstName,
@@ -107,7 +106,7 @@ public class AuthManager
 
     public async Task SubmitLocation(double latitude = 0.0, double longitude = 0.0)
     {
-        await _apiClient.PostAsync<UpdateLocationRequest, ApiResult.EmptyResult>(ApiRoutes.Location.PostLocation,
+        await _apiClient.PostAsync<UpdateLocationRequest>(ApiRoutes.Location.PostLocation,
             new UpdateLocationRequest(Latitude: latitude, Longitude: longitude));
     }
 }

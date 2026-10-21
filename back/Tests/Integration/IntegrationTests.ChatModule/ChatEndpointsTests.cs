@@ -12,7 +12,6 @@ using NotificationsModule.API.Dto;
 using NotificationsModule.Infrastructure.Transport.Push;
 using Polly;
 using SecurityModule.API.Dto;
-using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
 using Shouldly;
 using Wolverine.Tracking;
@@ -45,13 +44,13 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var tokenRequestA = new UpdateFcmTokenRequest("devA", "tokenA");
         Factory.ApiClient.SetAuth(authA);
         await Factory.ApiClient
-            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+            .PostAsync<UpdateFcmTokenRequest>(ApiRoutes.Notifications.UpdateDeviceToken,
                 tokenRequestA);
 
         var tokenRequestB = new UpdateFcmTokenRequest("devB", "tokenB");
         Factory.ApiClient.SetAuth(authB);
         await Factory.ApiClient
-            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+            .PostAsync<UpdateFcmTokenRequest>(ApiRoutes.Notifications.UpdateDeviceToken,
                 tokenRequestB);
 
         // 3. Verify no active chat exists for User A
@@ -68,13 +67,13 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
             {
                 // 4. User A invites User B
                 await Factory.ApiClient
-                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authB.UserId),
+                    .PostAsync<InviteUserRequest>(ApiRoutes.Feed.InviteUser(authB.UserId),
                         new InviteUserRequest(inviteAExpiresAt));
 
                 // 5. User B invites User A (creates chat)
                 Factory.ApiClient.SetAuth(authB);
                 await Factory.ApiClient
-                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(ApiRoutes.Feed.InviteUser(authA.UserId),
+                    .PostAsync<InviteUserRequest>(ApiRoutes.Feed.InviteUser(authA.UserId),
                         new InviteUserRequest(inviteBExpiresAt));
             },
             expectedCount: 2,
@@ -83,16 +82,16 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 6. Verify chat exists for User A
         Factory.ApiClient.SetAuth(authA);
         var chatResponseAfter = await Factory.ApiClient
-            .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
-        chatResponseAfter.Result.Participant.Id.ShouldBe(Guid.Parse(authB.UserId));
-        chatResponseAfter.Result.ParticipantsMet.ShouldBeFalse();
+            .GetAsync<GetChatResponse>(ApiRoutes.Chat.ChatRoot);
+        chatResponseAfter.Participant.Id.ShouldBe(Guid.Parse(authB.UserId));
+        chatResponseAfter.ParticipantsMet.ShouldBeFalse();
 
         // 7. Verify chat exists for User B
         Factory.ApiClient.SetAuth(authB);
         var chatResponseB = await Factory.ApiClient
-            .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
-        chatResponseB.Result.Participant.Id.ShouldBe(Guid.Parse(authA.UserId));
-        chatResponseB.Result.ExpiresAt.ShouldBe(inviteAExpiresAt);
+            .GetAsync<GetChatResponse>(ApiRoutes.Chat.ChatRoot);
+        chatResponseB.Participant.Id.ShouldBe(Guid.Parse(authA.UserId));
+        chatResponseB.ExpiresAt.ShouldBe(inviteAExpiresAt);
     }
 
     [Fact]
@@ -122,12 +121,12 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Factory.FakeTimeProvider.SetUtcNow(DateTime.UtcNow + TimeSpan.FromHours(1));
 
                 Factory.ApiClient.SetAuth(authA);
-                await Factory.ApiClient.PostAsync<UpdateLocationRequest, ApiResult.EmptyResult>(
+                await Factory.ApiClient.PostAsync<UpdateLocationRequest>(
                     ApiRoutes.Location.PostLocation,
                     new UpdateLocationRequest(Latitude: 0.0, Longitude: 0.0));
 
                 Factory.ApiClient.SetAuth(authB);
-                await Factory.ApiClient.PostAsync<UpdateLocationRequest, ApiResult.EmptyResult>(
+                await Factory.ApiClient.PostAsync<UpdateLocationRequest>(
                     ApiRoutes.Location.PostLocation,
                     new UpdateLocationRequest(Latitude: 0.0, Longitude: 0.0));
             },
@@ -137,8 +136,8 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 4. Verify ParticipantsMet flag is true
         Factory.ApiClient.SetAuth(authA);
         var chatResponse = await Factory.ApiClient
-            .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
-        chatResponse.Result.ParticipantsMet.ShouldBeTrue();
+            .GetAsync<GetChatResponse>(ApiRoutes.Chat.ChatRoot);
+        chatResponse.ParticipantsMet.ShouldBeTrue();
     }
 
     [Fact]
@@ -150,15 +149,15 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. Verify IsInMeeting is true before deletion
         Factory.ApiClient.SetAuth(authA);
         var statusBefore = await Factory.ApiClient
-            .GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
-        statusBefore.Result.IsInMeeting.ShouldBeTrue();
+            .GetAsync<GetFeedStatusResponse>(ApiRoutes.Feed.GetStatus);
+        statusBefore.IsInMeeting.ShouldBeTrue();
 
         // 3. User A deletes the chat, and we are waiting for delivery of pushes to both users
         await Factory.NotificationManager.AwaitPushNotifications(
             codeToRun: async () =>
             {
                 var deleteResponse = await Factory.ApiClient
-                    .DeleteAsync<ApiResult.EmptyResult>(ApiRoutes.Chat.ChatRoot);
+                    .DeleteAsync(ApiRoutes.Chat.ChatRoot);
             },
             expectedCount: 2,
             expectedType: FcmPushBuilder.PushType.OpenRateUserScreen);
@@ -171,24 +170,24 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 5. Verify FeedStatus returns UserIdToRate for User A
         var statusAfterA = await Factory.ApiClient
-            .GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
-        statusAfterA.Result.IsInMeeting.ShouldBeFalse();
-        statusAfterA.Result.UserIdToRate.ShouldBe(Guid.Parse(authB.UserId));
+            .GetAsync<GetFeedStatusResponse>(ApiRoutes.Feed.GetStatus);
+        statusAfterA.IsInMeeting.ShouldBeFalse();
+        statusAfterA.UserIdToRate.ShouldBe(Guid.Parse(authB.UserId));
 
         // 6. Verify FeedStatus returns UserIdToRate for User B
         Factory.ApiClient.SetAuth(authB);
         var statusAfterB = await Factory.ApiClient
-            .GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
-        statusAfterB.Result.IsInMeeting.ShouldBeFalse();
-        statusAfterB.Result.UserIdToRate.ShouldBe(Guid.Parse(authA.UserId));
+            .GetAsync<GetFeedStatusResponse>(ApiRoutes.Feed.GetStatus);
+        statusAfterB.IsInMeeting.ShouldBeFalse();
+        statusAfterB.UserIdToRate.ShouldBe(Guid.Parse(authA.UserId));
 
         // 7. Verify that UserIdToRate is null after rating updated
         var rateRequest = new UserRatingDto(4.5m);
-        await Factory.ApiClient.PostAsync<UserRatingDto, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PostAsync<UserRatingDto>(
             ApiRoutes.Feed.RateUser(authA.UserId), rateRequest);
         var statusAfterRate = await Factory.ApiClient
-            .GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
-        statusAfterRate.Result.UserIdToRate.ShouldBeNull();
+            .GetAsync<GetFeedStatusResponse>(ApiRoutes.Feed.GetStatus);
+        statusAfterRate.UserIdToRate.ShouldBeNull();
     }
 
     [Fact]
@@ -205,7 +204,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Factory.ApiClient.SetAuth(authA);
                 var request = new SendMessageRequest(messageA);
                 var response = await Factory.ApiClient
-                    .PostAsync<SendMessageRequest, ApiResult.EmptyResult>(ApiRoutes.Chat.Message, request);
+                    .PostAsync<SendMessageRequest>(ApiRoutes.Chat.Message, request);
             },
             expectedCount: 1,
             pushPredicate: p =>
@@ -220,7 +219,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Factory.ApiClient.SetAuth(authB);
                 var request = new SendMessageRequest(messageB);
                 var response = await Factory.ApiClient
-                    .PostAsync<SendMessageRequest, ApiResult.EmptyResult>(ApiRoutes.Chat.Message, request);
+                    .PostAsync<SendMessageRequest>(ApiRoutes.Chat.Message, request);
             },
             expectedCount: 1,
             pushPredicate: p =>
@@ -230,22 +229,22 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 4. Verify User A sees both messages in history
         Factory.ApiClient.SetAuth(authA);
         var chatResponseA = await Factory.ApiClient
-            .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
-        chatResponseA.Result.Messages.Count.ShouldBe(2);
-        chatResponseA.Result.Messages[0].MessageText.ShouldBe(messageA);
-        chatResponseA.Result.Messages[0].IsMine.ShouldBeTrue();
-        chatResponseA.Result.Messages[1].MessageText.ShouldBe(messageB);
-        chatResponseA.Result.Messages[1].IsMine.ShouldBeFalse();
+            .GetAsync<GetChatResponse>(ApiRoutes.Chat.ChatRoot);
+        chatResponseA.Messages.Count.ShouldBe(2);
+        chatResponseA.Messages[0].MessageText.ShouldBe(messageA);
+        chatResponseA.Messages[0].IsMine.ShouldBeTrue();
+        chatResponseA.Messages[1].MessageText.ShouldBe(messageB);
+        chatResponseA.Messages[1].IsMine.ShouldBeFalse();
 
         // 5. Verify User B sees both messages in history
         Factory.ApiClient.SetAuth(authB);
         var chatResponseB = await Factory.ApiClient
-            .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
-        chatResponseB.Result.Messages.Count.ShouldBe(2);
-        chatResponseB.Result.Messages[0].MessageText.ShouldBe(messageA);
-        chatResponseB.Result.Messages[0].IsMine.ShouldBeFalse();
-        chatResponseB.Result.Messages[1].MessageText.ShouldBe(messageB);
-        chatResponseB.Result.Messages[1].IsMine.ShouldBeTrue();
+            .GetAsync<GetChatResponse>(ApiRoutes.Chat.ChatRoot);
+        chatResponseB.Messages.Count.ShouldBe(2);
+        chatResponseB.Messages[0].MessageText.ShouldBe(messageA);
+        chatResponseB.Messages[0].IsMine.ShouldBeFalse();
+        chatResponseB.Messages[1].MessageText.ShouldBe(messageB);
+        chatResponseB.Messages[1].IsMine.ShouldBeTrue();
     }
 
     [Fact]
@@ -260,7 +259,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
         {
             var request = new SendMessageRequest($"Message {i}");
             var response = await Factory.ApiClient
-                .PostAsync<SendMessageRequest, ApiResult.EmptyResult>(ApiRoutes.Chat.Message, request);
+                .PostAsync<SendMessageRequest>(ApiRoutes.Chat.Message, request);
         }
 
         // 3. When user A sends MaxMessagesPerUser + 1 message then receives an error
@@ -284,7 +283,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authB);
         await Factory.Host.ExecuteAndWaitAsync(async () =>
         {
-            var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(ApiRoutes.Auth.Account);
+            var deleteResponse = await Factory.ApiClient.DeleteAsync(ApiRoutes.Auth.Account);
         });
 
         // 3. Create account C
@@ -294,7 +293,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         var tokenRequestC = new UpdateFcmTokenRequest("devC", "tokenC");
         await Factory.ApiClient
-            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+            .PostAsync<UpdateFcmTokenRequest>(ApiRoutes.Notifications.UpdateDeviceToken,
                 tokenRequestC);
 
         // 4. User A and C establishes a new chat
@@ -304,7 +303,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
             // User A invites User C
             Factory.ApiClient.SetAuth(authA);
             await Factory.ApiClient
-                .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                .PostAsync<InviteUserRequest>(
                     ApiRoutes.Feed.InviteUser(authC.UserId),
                     new InviteUserRequest(inviteExpiresAt)
                 );
@@ -312,7 +311,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
             // User B invites User A (creates chat)
             Factory.ApiClient.SetAuth(authC);
             await Factory.ApiClient
-                .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                .PostAsync<InviteUserRequest>(
                     ApiRoutes.Feed.InviteUser(authA.UserId),
                     new InviteUserRequest(inviteExpiresAt)
                 );
@@ -322,21 +321,21 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authA);
 
         var statusA = await Factory.ApiClient
-            .GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
+            .GetAsync<GetFeedStatusResponse>(ApiRoutes.Feed.GetStatus);
 
-        statusA.Result.IsInMeeting.ShouldBeTrue();
+        statusA.IsInMeeting.ShouldBeTrue();
 
         var chatResponseA = await Factory.ApiClient
-            .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
+            .GetAsync<GetChatResponse>(ApiRoutes.Chat.ChatRoot);
 
         Factory.ApiClient.SetAuth(authC);
 
         var statusC = await Factory.ApiClient
-            .GetAsync<ApiResult<GetFeedStatusResponse>>(ApiRoutes.Feed.GetStatus);
-        statusC.Result.IsInMeeting.ShouldBeTrue();
+            .GetAsync<GetFeedStatusResponse>(ApiRoutes.Feed.GetStatus);
+        statusC.IsInMeeting.ShouldBeTrue();
 
         await Factory.ApiClient
-            .GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
+            .GetAsync<GetChatResponse>(ApiRoutes.Chat.ChatRoot);
     }
 
     private async Task<(AuthResponse authA, AuthResponse authB)>
@@ -356,13 +355,13 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var tokenRequestA = new UpdateFcmTokenRequest("devA", "tokenA");
         Factory.ApiClient.SetAuth(authA);
         await Factory.ApiClient
-            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+            .PostAsync<UpdateFcmTokenRequest>(ApiRoutes.Notifications.UpdateDeviceToken,
                 tokenRequestA);
 
         var tokenRequestB = new UpdateFcmTokenRequest("devB", "tokenB");
         Factory.ApiClient.SetAuth(authB);
         await Factory.ApiClient
-            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+            .PostAsync<UpdateFcmTokenRequest>(ApiRoutes.Notifications.UpdateDeviceToken,
                 tokenRequestB);
 
         // Await chat creation
@@ -373,7 +372,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 // User A invites User B
                 Factory.ApiClient.SetAuth(authA);
                 await Factory.ApiClient
-                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                    .PostAsync<InviteUserRequest>(
                         ApiRoutes.Feed.InviteUser(authB.UserId),
                         new InviteUserRequest(inviteExpiresAt)
                     );
@@ -381,7 +380,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 // User B invites User A (creates chat)
                 Factory.ApiClient.SetAuth(authB);
                 await Factory.ApiClient
-                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                    .PostAsync<InviteUserRequest>(
                         ApiRoutes.Feed.InviteUser(authA.UserId),
                         new InviteUserRequest(inviteExpiresAt)
                     );

@@ -17,7 +17,6 @@ using SecurityModule.API.Dto;
 using SecurityModule.Domain.Aggregates;
 using SecurityModule.Domain.ValueObjects;
 using SecurityModule.Infrastructure.Persistence;
-using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
 using Shouldly;
 using Wolverine.Tracking;
@@ -49,27 +48,27 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 }
             }), Arg.Any<CancellationToken>());
 
-        ApiResult<AuthResponse>? signupResponse = null;
+        AuthResponse? signupResponse = null;
         await Factory.Host.ExecuteAndWaitAsync(async () =>
         {
             // 1. Signup
             var email = "asd@gmail.com";
             var request = new SignUpRequest(Email: email, Password: "123456789Qwe", UserType: UserType.B2C);
 
-            signupResponse = await Factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
+            signupResponse = await Factory.ApiClient.PostAsync<SignUpRequest, AuthResponse>(
                 ApiRoutes.Auth.Signup, request);
         });
 
         // 2. Check signup response
         signupResponse.ShouldNotBeNull();
-        signupResponse.Result.RequiredAction.ShouldBe(RequiredAction.EmailVerification);
-        signupResponse.Result.AccessToken.ShouldBeNull();
-        signupResponse.Result.RefreshToken.ShouldBeNull();
+        signupResponse.RequiredAction.ShouldBe(RequiredAction.EmailVerification);
+        signupResponse.AccessToken.ShouldBeNull();
+        signupResponse.RefreshToken.ShouldBeNull();
 
         capturedCode.ShouldNotBeNullOrEmpty();
 
         // 3. Verify CreateAt and UpdateAt are set
-        var userId = Guid.Parse(signupResponse.Result.UserId);
+        var userId = Guid.Parse(signupResponse.UserId);
         using var scope = Factory.Services.CreateScope();
 
         var context = scope.ServiceProvider.GetRequiredService<SecurityContext>();
@@ -79,13 +78,13 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         user.UpdatedAt.Date.ShouldBe(DateTime.UtcNow.Date);
 
         // 4. Confirm Email
-        var confirmRequest = new ConfirmEmailRequest(signupResponse.Result.UserId, capturedCode);
-        var confirmResponse = await Factory.ApiClient.PostAsync<ConfirmEmailRequest, ApiResult<AuthResponse>>(
+        var confirmRequest = new ConfirmEmailRequest(signupResponse.UserId, capturedCode);
+        var confirmResponse = await Factory.ApiClient.PostAsync<ConfirmEmailRequest, AuthResponse>(
             ApiRoutes.Auth.ConfirmEmail, confirmRequest);
 
         // 5. Check confirmation response
-        confirmResponse.Result.AccessToken.ShouldNotBeNullOrEmpty();
-        confirmResponse.Result.RequiredAction.ShouldBe(RequiredAction.OnboardingCompletion);
+        confirmResponse.AccessToken.ShouldNotBeNullOrEmpty();
+        confirmResponse.RequiredAction.ShouldBe(RequiredAction.OnboardingCompletion);
     }
 
     [Fact]
@@ -102,14 +101,14 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 }
             }), Arg.Any<CancellationToken>());
 
-        ApiResult<AuthResponse>? signupResponse = null;
+        AuthResponse? signupResponse = null;
         await Factory.Host.ExecuteAndWaitAsync(async () =>
         {
             // 1. Signup
             var email = "new_code_email@gmail.com";
             var request = new SignUpRequest(Email: email, Password: "123456789Qwe", UserType: UserType.B2C);
 
-            signupResponse = await Factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(
+            signupResponse = await Factory.ApiClient.PostAsync<SignUpRequest, AuthResponse>(
                 ApiRoutes.Auth.Signup, request);
         });
 
@@ -121,9 +120,9 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         capturedCode = "";
         await Factory.Host.ExecuteAndWaitAsync(async () =>
         {
-            var newCodeRequest = new ResendConfirmationEmailRequest(signupResponse.Result.UserId);
+            var newCodeRequest = new ResendConfirmationEmailRequest(signupResponse.UserId);
             await Factory.ApiClient
-                .PostAsync<ResendConfirmationEmailRequest, ApiResult.EmptyResult>(
+                .PostAsync<ResendConfirmationEmailRequest>(
                     ApiRoutes.Auth.ResendConfirmationEmail, newCodeRequest);
         });
 
@@ -149,11 +148,11 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
     {
         var request = new SignInRequest(Email: "asd@gmail.com", Password: "123456789Qwe");
 
-        var signinResponse = await Factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
+        var signinResponse = await Factory.ApiClient.PostAsync<SignInRequest, SigninResponse>(
             ApiRoutes.Auth.Signin, request);
 
-        signinResponse.Result.Auth.ShouldBeNull();
-        signinResponse.Result.IsSignupRequired.ShouldBeTrue();
+        signinResponse.Auth.ShouldBeNull();
+        signinResponse.IsSignupRequired.ShouldBeTrue();
     }
 
     [Fact]
@@ -211,21 +210,21 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.Host.ExecuteAndWaitAsync(async () =>
         {
             var requestReset = new RequestPasswordResetRequest(email);
-            await Factory.ApiClient.PostAsync<RequestPasswordResetRequest, ApiResult.EmptyResult>(
+            await Factory.ApiClient.PostAsync<RequestPasswordResetRequest>(
                 ApiRoutes.Auth.RequestPasswordReset, requestReset);
         });
         capturedToken.ShouldNotBeNullOrEmpty();
 
-        // 3. Confirm password reset 
+        // 3. Confirm password reset
         var confirmRequest = new ConfirmPasswordResetRequest(
             Base64UrlEncoder.Encode(email), capturedToken, newPassword);
-        var confirmResponse = await Factory.ApiClient.PostAsync<ConfirmPasswordResetRequest, ApiResult.EmptyResult>(
+        var confirmResponse = await Factory.ApiClient.PostAsync<ConfirmPasswordResetRequest>(
             ApiRoutes.Auth.ConfirmPasswordReset, confirmRequest);
 
 
         // 4. Ensure that we can sign in with the new password
         var signinRequest = new SignInRequest(email, newPassword);
-        var signinResponse = await Factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
+        var signinResponse = await Factory.ApiClient.PostAsync<SignInRequest, SigninResponse>(
             ApiRoutes.Auth.Signin, signinRequest);
     }
 
@@ -236,7 +235,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 1. Reset password
         var requestReset = new RequestPasswordResetRequest("test@test.com");
-        await Factory.ApiClient.PostAsync<RequestPasswordResetRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PostAsync<RequestPasswordResetRequest>(
             ApiRoutes.Auth.RequestPasswordReset, requestReset);
 
         // 2. Ensure that we haven't sent any emails
@@ -275,11 +274,11 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Renew token
         var request = new RenewTokensRequest(auth.RefreshToken!);
-        var response = await Factory.ApiClient.PostAsync<RenewTokensRequest, ApiResult<AuthResponse>>(
+        var response = await Factory.ApiClient.PostAsync<RenewTokensRequest, AuthResponse>(
             ApiRoutes.Auth.RenewTokens, request);
 
-        response.Result.AccessToken.ShouldNotBeNullOrEmpty();
-        response.Result.RefreshToken.ShouldNotBeNullOrEmpty();
+        response.AccessToken.ShouldNotBeNullOrEmpty();
+        response.RefreshToken.ShouldNotBeNullOrEmpty();
     }
 
     [Fact]
@@ -298,7 +297,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var request = new RenewTokensRequest(auth.RefreshToken!);
         var error = await Factory.ApiClient.PostProblemAsync(ApiRoutes.Auth.RenewTokens, request);
 
-        // 3. Check that 
+        // 3. Check that
         error.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
         error.ProblemDetails.Status.ShouldBe((int)HttpStatusCode.Forbidden);
         error.ProblemDetails.Detail.ShouldBe("Invalid or revoked access token");
@@ -325,15 +324,15 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(auth);
 
         // 2. Delete account
-        var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(ApiRoutes.Auth.Account);
+        var deleteResponse = await Factory.ApiClient.DeleteAsync(ApiRoutes.Auth.Account);
 
         // 3. Sign in again
         var signinRequest = new SignInRequest(email, password);
-        var signinResponse = await Factory.ApiClient.PostAsync<SignInRequest, ApiResult<SigninResponse>>(
+        var signinResponse = await Factory.ApiClient.PostAsync<SignInRequest, SigninResponse>(
             ApiRoutes.Auth.Signin, signinRequest);
 
-        // 4. Ensure that signup is required 
-        signinResponse.Result.IsSignupRequired.ShouldBeTrue();
+        // 4. Ensure that signup is required
+        signinResponse.IsSignupRequired.ShouldBeTrue();
     }
 
     [Fact]
@@ -345,7 +344,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Log out
         var logoutResponse = await Factory.ApiClient
-            .PostAsync<LogoutRequest, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, new LogoutRequest(null));
+            .PostAsync<LogoutRequest>(ApiRoutes.Auth.Logout, new LogoutRequest(null));
 
         // 3. Renew token
         var request = new RenewTokensRequest(auth.RefreshToken!);
@@ -366,7 +365,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Log out
         var logoutResponse = await Factory.ApiClient
-            .PostAsync<LogoutRequest, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, new LogoutRequest(null));
+            .PostAsync<LogoutRequest>(ApiRoutes.Auth.Logout, new LogoutRequest(null));
 
         // 3. Sign in again
         var request = new SignInRequest(Email: email, Password: "123456789Qwe");
@@ -386,12 +385,12 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var token = FakeGoogleTokenValidator.CreateToken(email);
         var request = new GoogleIdTokenRequest(token, UserType.B2C);
 
-        var result = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, ApiResult<AuthResponse>>(
+        var result = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, AuthResponse>(
             ApiRoutes.Auth.Google, request);
 
-        result.Result.AccessToken.ShouldNotBeNullOrEmpty();
-        result.Result.RefreshToken.ShouldNotBeNullOrEmpty();
-        result.Result.RequiredAction.ShouldBe(RequiredAction.OnboardingCompletion);
+        result.AccessToken.ShouldNotBeNullOrEmpty();
+        result.RefreshToken.ShouldNotBeNullOrEmpty();
+        result.RequiredAction.ShouldBe(RequiredAction.OnboardingCompletion);
 
         // 2. Verify changes in DB
         using var scope = Factory.Services.CreateScope();
@@ -410,21 +409,21 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var token = FakeGoogleTokenValidator.CreateToken(email);
         var request = new GoogleIdTokenRequest(token, UserType: UserType.B2C);
 
-        var signupResponse = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, ApiResult<AuthResponse>>(
+        var signupResponse = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, AuthResponse>(
             ApiRoutes.Auth.Google, request);
 
         // 2. Logout
-        Factory.ApiClient.SetAuth(signupResponse.Result);
+        Factory.ApiClient.SetAuth(signupResponse);
         var logoutResponse = await Factory.ApiClient
-            .PostAsync<LogoutRequest, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, new LogoutRequest(null));
+            .PostAsync<LogoutRequest>(ApiRoutes.Auth.Logout, new LogoutRequest(null));
 
         // 3. Signin via Google
-        var signinResponse = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, ApiResult<AuthResponse>>(
+        var signinResponse = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, AuthResponse>(
             ApiRoutes.Auth.Google, request);
 
-        signinResponse.Result.AccessToken.ShouldNotBeNullOrEmpty();
-        signinResponse.Result.RefreshToken.ShouldNotBeNullOrEmpty();
-        signinResponse.Result.UserId.ShouldBe(signupResponse.Result.UserId);
+        signinResponse.AccessToken.ShouldNotBeNullOrEmpty();
+        signinResponse.RefreshToken.ShouldNotBeNullOrEmpty();
+        signinResponse.UserId.ShouldBe(signupResponse.UserId);
     }
 
     [Fact]
@@ -447,13 +446,13 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. Logout
         Factory.ApiClient.SetAuth(auth);
         var logoutResponse = await Factory.ApiClient
-            .PostAsync<LogoutRequest, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, new LogoutRequest(null));
+            .PostAsync<LogoutRequest>(ApiRoutes.Auth.Logout, new LogoutRequest(null));
 
         // 3. Login via Google
-        var result = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, ApiResult<AuthResponse>>(
+        var result = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, AuthResponse>(
             ApiRoutes.Auth.Google, request);
 
-        result.Result.AccessToken.ShouldNotBeNullOrEmpty();
+        result.AccessToken.ShouldNotBeNullOrEmpty();
 
         {
             using var scope = Factory.Services.CreateScope();
@@ -470,16 +469,16 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 1. Signup via email but don't confirm
         var email = "unconfirmed@gmail.com";
         var signupRequest = new SignUpRequest(Email: email, Password: "Password123!", UserType: UserType.B2C);
-        await Factory.ApiClient.PostAsync<SignUpRequest, ApiResult<AuthResponse>>(ApiRoutes.Auth.Signup, signupRequest);
+        await Factory.ApiClient.PostAsync<SignUpRequest, AuthResponse>(ApiRoutes.Auth.Signup, signupRequest);
 
         var token = FakeGoogleTokenValidator.CreateToken(email);
         var googleRequest = new GoogleIdTokenRequest(token, UserType: UserType.B2C);
 
         // 2. Login via Google
-        var result = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, ApiResult<AuthResponse>>(
+        var result = await Factory.ApiClient.PostAsync<GoogleIdTokenRequest, AuthResponse>(
             ApiRoutes.Auth.Google, googleRequest);
 
-        result.Result.AccessToken.ShouldNotBeNullOrEmpty();
+        result.AccessToken.ShouldNotBeNullOrEmpty();
 
         // 3. Verify changes in DB
         using var scope = Factory.Services.CreateScope();
@@ -524,7 +523,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.Host.ExecuteAndWaitAsync(async () =>
         {
             var logoutResponse = await Factory.ApiClient
-                .PostAsync<LogoutRequest, ApiResult.EmptyResult>(ApiRoutes.Auth.Logout, new LogoutRequest(deviceIdA));
+                .PostAsync<LogoutRequest>(ApiRoutes.Auth.Logout, new LogoutRequest(deviceIdA));
         });
 
         // 4. Verify device is deleted
@@ -564,7 +563,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 3. Delete account and wait for events
         await Factory.Host.ExecuteAndWaitAsync(async () =>
         {
-            var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(ApiRoutes.Auth.Account);
+            var deleteResponse = await Factory.ApiClient.DeleteAsync(ApiRoutes.Auth.Account);
         });
 
         // 4. Verify all devices are deleted
@@ -617,7 +616,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authA);
         await Factory.Host.ExecuteAndWaitAsync(async () =>
         {
-            var deleteResponse = await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(ApiRoutes.Auth.Account);
+            var deleteResponse = await Factory.ApiClient.DeleteAsync(ApiRoutes.Auth.Account);
         });
 
         // 4. Verify that exists only devices for user A

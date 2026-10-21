@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using NotificationModule.Domain.Aggregates;
@@ -30,7 +31,7 @@ public class NotificationEndpoints : IEndpoints
         apiGroup.MapDelete("/api/v1/notifications/{id:guid}", DeleteNotification);
     }
 
-    private static async Task<ApiResult.EmptyResult> UpdateFcmToken(
+    private static async Task<NoContent> UpdateFcmToken(
         [FromBody] UpdateFcmTokenRequest request,
         ClaimsPrincipal user,
         IDeviceRepository deviceRepository,
@@ -55,10 +56,10 @@ public class NotificationEndpoints : IEndpoints
 
         await deviceRepository.SaveChangesAsync(ct);
 
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult.EmptyResult> DeleteDevice(
+    private static async Task<NoContent> DeleteDevice(
         [FromQuery] string deviceId,
         ClaimsPrincipal user,
         IDeviceRepository deviceRepository,
@@ -66,10 +67,10 @@ public class NotificationEndpoints : IEndpoints
     {
         await deviceRepository.DeleteByIdAsync(deviceId, user.GetId(), ct);
         await deviceRepository.SaveChangesAsync(ct);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult<PaginatedResponse<NotificationDto>>> GetNotifications(
+    private static async Task<PaginatedResponse<NotificationDto>> GetNotifications(
         [AsParameters] PaginatedRequest request,
         ClaimsPrincipal user,
         INotificationRepository notificationRepository,
@@ -105,34 +106,32 @@ public class NotificationEndpoints : IEndpoints
                 ExpiresAt: x.ExpiresAt
             )
         ).ToArray();
-        return ApiResult<PaginatedResponse<NotificationDto>>.Build(
-            new PaginatedResponse<NotificationDto>(Data: dtos, TotalCount: totalCount)
-        );
+        return new PaginatedResponse<NotificationDto>(Data: dtos, TotalCount: totalCount);
     }
 
-    private static async Task<ApiResult<int>> GetUnseenCount(
+    private static async Task<int> GetUnseenCount(
         ClaimsPrincipal user,
         INotificationRepository notificationRepository,
         CancellationToken ct = default)
     {
         var count = await notificationRepository.GetUnseenCountAsync(user.GetId(), ct);
-        return ApiResult<int>.Build(count);
+        return count;
     }
 
-    private static async Task<ApiResult<GetNotificationSettingsResponse>> GetSettings(
+    private static async Task<GetNotificationSettingsResponse> GetSettings(
         ClaimsPrincipal user,
         INotificationsSettingsRepository settingsRepository,
         CancellationToken ct)
     {
         var userId = user.GetId();
         var settings = await settingsRepository.GetByIdOrDefaultAsync(userId, ct: ct);
-        return ApiResult<GetNotificationSettingsResponse>.Build(new GetNotificationSettingsResponse(
+        return new GetNotificationSettingsResponse(
             Locale: settings.Locale,
             PushesEnabled: settings.PushesEnabled,
-            EmailsEnabled: settings.EmailsEnabled));
+            EmailsEnabled: settings.EmailsEnabled);
     }
 
-    private static async Task<ApiResult.EmptyResult> UpdateSettings(
+    private static async Task<NoContent> UpdateSettings(
         [FromBody] PutNotificationSettingsRequest request,
         ClaimsPrincipal user,
         INotificationsSettingsRepository settingsRepository,
@@ -160,10 +159,10 @@ public class NotificationEndpoints : IEndpoints
         }
 
         await settingsRepository.SaveChangesAsync(ct);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult.EmptyResult> DeleteNotification(
+    private static async Task<NoContent> DeleteNotification(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         INotificationRepository notificationRepository,
@@ -172,11 +171,11 @@ public class NotificationEndpoints : IEndpoints
         var notification = await notificationRepository.GetByIdAsync(id, ct: ct);
         if (notification == null || notification.UserId != user.GetId())
         {
-            return ApiResult.Empty;
+            return TypedResults.NoContent();
         }
 
         notificationRepository.Delete(notification);
         await notificationRepository.SaveChangesAsync(ct);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 }

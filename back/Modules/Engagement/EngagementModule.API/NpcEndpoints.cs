@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Localization;
 using SharedCore.Api;
-using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 
 namespace EngagementModule.API;
@@ -27,7 +26,7 @@ public class NpcEndpoints : IEndpoints
         apiGroup.MapGet("/api/v1/npc/{id:guid}/invite", InviteNpc);
     }
 
-    private static async Task<ApiResult<GetNpcResponse>> GetNpc(
+    private static async Task<GetNpcResponse> GetNpc(
         ClaimsPrincipal userClaims,
         INpcActionsService npcActionsService,
         IStringLocalizer<NpcLocalization> localizer,
@@ -42,12 +41,10 @@ public class NpcEndpoints : IEndpoints
                 AvatarUrl: npc.AvatarUrl,
                 CoverUrl: npc.CoverUrl
             );
-        return ApiResult<GetNpcResponse>.Build(
-            new GetNpcResponse(npcDto)
-        );
+        return new GetNpcResponse(npcDto);
     }
 
-    private static async Task<ApiResult<GetMetNpcsResponse>> GetMetNpcs(
+    private static async Task<GetMetNpcsResponse> GetMetNpcs(
         ClaimsPrincipal userClaims,
         IUserRepository userRepository,
         IStringLocalizer<NpcLocalization> localizer,
@@ -68,12 +65,10 @@ public class NpcEndpoints : IEndpoints
             CoverUrl: npc.CoverUrl
         )).ToArray();
 
-        return ApiResult<GetMetNpcsResponse>.Build(
-            new GetMetNpcsResponse(dtos)
-        );
+        return new GetMetNpcsResponse(dtos);
     }
 
-    private static async Task<ApiResult<InviteNpcResponse>> InviteNpc(
+    private static async Task<InviteNpcResponse> InviteNpc(
         [FromRoute] Guid id,
         INpcActionsService npcActionsService,
         ClaimsPrincipal user,
@@ -82,6 +77,6 @@ public class NpcEndpoints : IEndpoints
     {
         var npc = await npcActionsService.InviteNpcAsync(user.GetId(), id, ct);
         var response = new InviteNpcResponse(Monolog: localizer.GetString(npc.MonologKey));
-        return ApiResult<InviteNpcResponse>.Build(response);
+        return response;
     }
 }

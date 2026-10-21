@@ -5,6 +5,7 @@ using FeedModule.Domain.Repositories;
 using FeedModule.Domain.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Storage;
@@ -42,7 +43,7 @@ public class FeedEndpoints : IEndpoints
         apiGroup.MapPut("/api/v1/feed/settings", UpdateSettings);
     }
 
-    private static async Task<ApiResult<GetFeedResponse>> GetFeed(
+    private static async Task<GetFeedResponse> GetFeed(
         ClaimsPrincipal user,
         IFeedScoringService feedScoringService,
         IS3StorageService storageService,
@@ -65,12 +66,10 @@ public class FeedEndpoints : IEndpoints
             )
             .ToArray();
 
-        return ApiResult<GetFeedResponse>.Build(
-            new GetFeedResponse(Feed: dtos)
-        );
+        return new GetFeedResponse(Feed: dtos);
     }
 
-    private static async Task<ApiResult<GetFeedStatusResponse>> GetFeedStatus(
+    private static async Task<GetFeedStatusResponse> GetFeedStatus(
         ClaimsPrincipal user,
         IUserContext userContext,
         IFeedUserRelationRepository repository,
@@ -82,22 +81,20 @@ public class FeedEndpoints : IEndpoints
             userTimeZone: userContext.UserTimeZone,
             ct: ct);
         var (isInMeeting, userIdToRate) = await repository.GetFeedStatusAsync(user.GetId(), ct);
-        return ApiResult<GetFeedStatusResponse>.Build(
-            new GetFeedStatusResponse(isInMeeting, userIdToRate, availableInvitesCount)
-        );
+        return new GetFeedStatusResponse(isInMeeting, userIdToRate, availableInvitesCount);
     }
 
-    private static async Task<ApiResult.EmptyResult> PostUserRating(
+    private static async Task<NoContent> PostUserRating(
         [AsParameters] PostUserRatingRequest request,
         ClaimsPrincipal user,
         IUserActionsService userActionsService,
         CancellationToken ct)
     {
         await userActionsService.RateUserAsync(user.GetId(), request.Id, request.RatingDto.Rating, ct);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult.EmptyResult> BlockUser(
+    private static async Task<NoContent> BlockUser(
         [FromRoute] Guid id,
         [FromBody] BlockUserRequest request,
         ClaimsPrincipal user,
@@ -105,30 +102,30 @@ public class FeedEndpoints : IEndpoints
         CancellationToken ct)
     {
         await userActionsService.BlockUserAsync(user.GetId(), id, request.ReportMessage, ct);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult.EmptyResult> UnblockUser(
+    private static async Task<NoContent> UnblockUser(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         IUserActionsService userActionsService,
         CancellationToken ct)
     {
         await userActionsService.UnblockUserAsync(user.GetId(), id, ct);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult.EmptyResult> SkipUser(
+    private static async Task<NoContent> SkipUser(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         IUserActionsService userActionsService,
         CancellationToken ct)
     {
         await userActionsService.SkipUserAsync(user.GetId(), id, ct);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult.EmptyResult> InviteUser(
+    private static async Task<NoContent> InviteUser(
         [FromRoute] Guid id,
         [FromBody] InviteUserRequest request,
         ClaimsPrincipal user,
@@ -140,10 +137,10 @@ public class FeedEndpoints : IEndpoints
             otherUserId: id,
             expiresAt: request.ExpiresAt,
             ct: ct);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult.EmptyResult> InviteFriend(
+    private static async Task<NoContent> InviteFriend(
         [FromRoute] Guid id,
         [FromBody] InviteUserRequest request,
         ClaimsPrincipal user,
@@ -155,20 +152,20 @@ public class FeedEndpoints : IEndpoints
             otherUserId: id,
             expiresAt: request.ExpiresAt,
             ct: ct);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult.EmptyResult> AcceptInvite(
+    private static async Task<NoContent> AcceptInvite(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         IUserActionsService userActionsService,
         CancellationToken ct)
     {
         await userActionsService.AcceptInviteAsync(user.GetId(), id, ct);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult<GetInviteExpirationResponse>> GetInviteExpiration(
+    private static async Task<GetInviteExpirationResponse> GetInviteExpiration(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         IFeedUserRelationRepository repository,
@@ -184,21 +181,20 @@ public class FeedEndpoints : IEndpoints
             expiresAt = relation.InviteExpiresAt;
         }
 
-        return ApiResult<GetInviteExpirationResponse>.Build(
-            new GetInviteExpirationResponse(expiresAt));
+        return new GetInviteExpirationResponse(expiresAt);
     }
 
-    private static async Task<ApiResult.EmptyResult> IgnoreUser(
+    private static async Task<NoContent> IgnoreUser(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         IUserActionsService userActionsService,
         CancellationToken ct)
     {
         await userActionsService.IgnoreUserAsync(user.GetId(), id, ct);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult<GetFilterResponse>> GetFilter(
+    private static async Task<GetFilterResponse> GetFilter(
         ClaimsPrincipal user,
         IUserActionsService userActionsService,
         CancellationToken ct)
@@ -211,10 +207,10 @@ public class FeedEndpoints : IEndpoints
             Gender: filter.Gender,
             HobbyIds: filter.HobbyIds);
 
-        return ApiResult<GetFilterResponse>.Build(new GetFilterResponse(dto));
+        return new GetFilterResponse(dto);
     }
 
-    private static async Task<ApiResult.EmptyResult> UpdateFilter(
+    private static async Task<NoContent> UpdateFilter(
         [FromBody] UpdateFilterRequest request,
         ClaimsPrincipal user,
         IUserActionsService userActionsService,
@@ -229,10 +225,10 @@ public class FeedEndpoints : IEndpoints
             request.Filter.HobbyIds);
 
         await userActionsService.UpdateFilterAsync(domainFilter, ct);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult<PaginatedResponse<BlockedUserDto>>> GetBlockedUsers(
+    private static async Task<PaginatedResponse<BlockedUserDto>> GetBlockedUsers(
         [AsParameters] PaginatedRequest request,
         ClaimsPrincipal user,
         IUserRepository repository,
@@ -244,15 +240,13 @@ public class FeedEndpoints : IEndpoints
         var dtos = blockedUsersPage
             .Select(u => DomainUserToBlockedUserDto(u, storageService))
             .ToArray();
-        return ApiResult<PaginatedResponse<BlockedUserDto>>.Build(
-            new PaginatedResponse<BlockedUserDto>(
-                Data: dtos,
-                TotalCount: blockedUsersCount
-            )
-        );
+        return new PaginatedResponse<BlockedUserDto>(
+            Data: dtos,
+            TotalCount: blockedUsersCount
+            );
     }
 
-    private static async Task<ApiResult<GetSettingsResponse>> GetSettings(
+    private static async Task<GetSettingsResponse> GetSettings(
         ClaimsPrincipal user,
         IDisplaySettingsRepository repository,
         CancellationToken ct)
@@ -260,21 +254,17 @@ public class FeedEndpoints : IEndpoints
         var settings = await repository.GetByIdAsync(user.GetId(), ct: ct);
         if (settings == null)
         {
-            return ApiResult<GetSettingsResponse>.Build(
-                new GetSettingsResponse(
-                    new SettingsDto(Domain.ValueObjects.DistanceUnits.Kilometers)
-                )
-            );
+            return new GetSettingsResponse(
+                new SettingsDto(Domain.ValueObjects.DistanceUnits.Kilometers)
+                );
         }
 
-        return ApiResult<GetSettingsResponse>.Build(
-            new GetSettingsResponse(
-                new SettingsDto(settings.DistanceUnits)
-            )
-        );
+        return new GetSettingsResponse(
+            new SettingsDto(settings.DistanceUnits)
+            );
     }
 
-    private static async Task<ApiResult.EmptyResult> UpdateSettings(
+    private static async Task<NoContent> UpdateSettings(
         [FromBody] UpdateSettingsRequest request,
         ClaimsPrincipal user,
         IDisplaySettingsRepository repository,
@@ -298,10 +288,10 @@ public class FeedEndpoints : IEndpoints
         }
         await repository.SaveAsync(settings, ct);
 
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult<PaginatedResponse<FriendUserDto>>> GetFriends(
+    private static async Task<PaginatedResponse<FriendUserDto>> GetFriends(
         [AsParameters] PaginatedRequest request,
         ClaimsPrincipal user,
         IUserRepository repository,
@@ -313,22 +303,20 @@ public class FeedEndpoints : IEndpoints
         var dtos = friendsPage
             .Select(u => DomainUserToFriendUserDto(u, storageService))
             .ToArray();
-        return ApiResult<PaginatedResponse<FriendUserDto>>.Build(
-            new PaginatedResponse<FriendUserDto>(
-                Data: dtos,
-                TotalCount: friendsCount
-            )
-        );
+        return new PaginatedResponse<FriendUserDto>(
+            Data: dtos,
+            TotalCount: friendsCount
+            );
     }
 
-    private static async Task<ApiResult.EmptyResult> RemoveFriend(
+    private static async Task<NoContent> RemoveFriend(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         IUserActionsService userActionsService,
         CancellationToken ct)
     {
         await userActionsService.RemoveFriendAsync(user.GetId(), id, ct);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
     private static BlockedUserDto DomainUserToBlockedUserDto(User user, IS3StorageService storageService)

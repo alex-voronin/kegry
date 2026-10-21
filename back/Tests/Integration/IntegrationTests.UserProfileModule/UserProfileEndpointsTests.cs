@@ -3,7 +3,6 @@ using IntegrationTests.Shared;
 using IntegrationTests.Shared.Extensions;
 using NotificationModule.Domain.ValueObjects;
 using NotificationsModule.API.Dto;
-using SharedCore.Api.Dto;
 using SharedCore.Enums;
 using SharedCore.Exceptions;
 using SharedCore.Extensions;
@@ -50,7 +49,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ]
         );
 
-        var response = await Factory.ApiClient.PostAsync<CreateUserProfileRequest, ApiResult.EmptyResult>(
+        var response = await Factory.ApiClient.PostAsync<CreateUserProfileRequest>(
             ApiRoutes.UserProfile.Profile, request);
 
 
@@ -58,8 +57,8 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.Host.ExecuteAndWaitAsync(async () =>
         {
             var getResponse = await Factory.ApiClient
-                .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
-            getResponse.Result.UserProfile.ShouldSatisfyAllConditions(
+                .GetAsync<GetUserProfileResponse>(ApiRoutes.UserProfile.Profile);
+            getResponse.UserProfile.ShouldSatisfyAllConditions(
                 p => p.Id.ShouldBe(authResponse.UserId),
                 p => p.FirstName.ShouldBe(request.FirstName),
                 p => p.LastName.ShouldBe(request.LastName),
@@ -74,10 +73,10 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 4. Check that notification settings have appropriate local
         var notificationSettingsResponse = await Factory.ApiClient
-            .GetAsync<ApiResult<GetNotificationSettingsResponse>>(ApiRoutes.Notifications.Settings);
-        notificationSettingsResponse.Result.Locale.ShouldBe(SupportedLocales.Serbian);
-        notificationSettingsResponse.Result.PushesEnabled.ShouldBeTrue();
-        notificationSettingsResponse.Result.EmailsEnabled.ShouldBeFalse();
+            .GetAsync<GetNotificationSettingsResponse>(ApiRoutes.Notifications.Settings);
+        notificationSettingsResponse.Locale.ShouldBe(SupportedLocales.Serbian);
+        notificationSettingsResponse.PushesEnabled.ShouldBeTrue();
+        notificationSettingsResponse.EmailsEnabled.ShouldBeFalse();
     }
 
     [Fact]
@@ -100,7 +99,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
             HobbyIds: ["tennis".ToDeterministicGuid()]
         );
 
-        var response = await Factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
+        var response = await Factory.ApiClient.PatchAsync<PatchUserProfileRequest>(
             ApiRoutes.UserProfile.Profile, firstRequest);
 
         // 3. Update profile again
@@ -115,12 +114,12 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
             HobbyIds: ["tennis".ToDeterministicGuid()]
         );
         await Factory.ApiClient
-            .PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(ApiRoutes.UserProfile.Profile, secondRequest);
+            .PatchAsync<PatchUserProfileRequest>(ApiRoutes.UserProfile.Profile, secondRequest);
 
         // 4. Check response
         var getResponse =
-            await Factory.ApiClient.GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
-        getResponse.Result.UserProfile.ShouldSatisfyAllConditions(
+            await Factory.ApiClient.GetAsync<GetUserProfileResponse>(ApiRoutes.UserProfile.Profile);
+        getResponse.UserProfile.ShouldSatisfyAllConditions(
             p => p.Id.ShouldBe(authResponse.UserId),
             p => p.FirstName.ShouldBe(secondRequest.FirstName),
             p => p.LastName.ShouldBe(secondRequest.LastName),
@@ -143,7 +142,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Get profile before update
         var getBeforeUpdateResponse = await Factory.ApiClient
-            .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
+            .GetAsync<GetUserProfileResponse>(ApiRoutes.UserProfile.Profile);
 
         // 3. Update profile
         var request = new PatchUserProfileRequest(
@@ -157,23 +156,23 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
             HobbyIds: null
         );
 
-        var response = await Factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
+        var response = await Factory.ApiClient.PatchAsync<PatchUserProfileRequest>(
             ApiRoutes.UserProfile.Profile, request);
 
 
         // 3. Check response
         var getAfterUpdateResponse = await Factory.ApiClient
-            .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
-        getAfterUpdateResponse.Result.UserProfile.ShouldSatisfyAllConditions(
+            .GetAsync<GetUserProfileResponse>(ApiRoutes.UserProfile.Profile);
+        getAfterUpdateResponse.UserProfile.ShouldSatisfyAllConditions(
             p => p.Id.ShouldBe(authResponse.UserId),
-            p => p.FirstName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.FirstName),
-            p => p.LastName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.LastName),
-            p => p.Bio.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Bio),
+            p => p.FirstName.ShouldBe(getBeforeUpdateResponse.UserProfile.FirstName),
+            p => p.LastName.ShouldBe(getBeforeUpdateResponse.UserProfile.LastName),
+            p => p.Bio.ShouldBe(getBeforeUpdateResponse.UserProfile.Bio),
             p => p.AvatarImageUrl.ShouldBeNewerOrTheSameS3Url(request.AvatarImageUrl!),
-            p => p.CoverImageUrl.ShouldBeNewerOrTheSameS3Url(getBeforeUpdateResponse.Result.UserProfile.CoverImageUrl),
-            p => p.Birthday.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Birthday),
-            p => p.Gender.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Gender),
-            p => p.Hobbies.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Hobbies, ignoreOrder: true)
+            p => p.CoverImageUrl.ShouldBeNewerOrTheSameS3Url(getBeforeUpdateResponse.UserProfile.CoverImageUrl),
+            p => p.Birthday.ShouldBe(getBeforeUpdateResponse.UserProfile.Birthday),
+            p => p.Gender.ShouldBe(getBeforeUpdateResponse.UserProfile.Gender),
+            p => p.Hobbies.ShouldBe(getBeforeUpdateResponse.UserProfile.Hobbies, ignoreOrder: true)
         );
     }
 
@@ -187,7 +186,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Get profile before update
         var getBeforeUpdateResponse = await Factory.ApiClient
-            .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
+            .GetAsync<GetUserProfileResponse>(ApiRoutes.UserProfile.Profile);
 
         // 3. Update profile
         var request = new PatchUserProfileRequest(
@@ -201,24 +200,24 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
             HobbyIds: null
         );
 
-        var response = await Factory.ApiClient.PatchAsync<PatchUserProfileRequest, ApiResult.EmptyResult>(
+        var response = await Factory.ApiClient.PatchAsync<PatchUserProfileRequest>(
             ApiRoutes.UserProfile.Profile, request);
 
 
         // 3. Check response
         var getAfterUpdateResponse = await Factory.ApiClient
-            .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
-        getAfterUpdateResponse.Result.UserProfile.ShouldSatisfyAllConditions(
+            .GetAsync<GetUserProfileResponse>(ApiRoutes.UserProfile.Profile);
+        getAfterUpdateResponse.UserProfile.ShouldSatisfyAllConditions(
             p => p.Id.ShouldBe(authResponse.UserId),
-            p => p.FirstName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.FirstName),
-            p => p.LastName.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.LastName),
-            p => p.Bio.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Bio),
+            p => p.FirstName.ShouldBe(getBeforeUpdateResponse.UserProfile.FirstName),
+            p => p.LastName.ShouldBe(getBeforeUpdateResponse.UserProfile.LastName),
+            p => p.Bio.ShouldBe(getBeforeUpdateResponse.UserProfile.Bio),
             p => p.AvatarImageUrl
-                .ShouldBeNewerOrTheSameS3Url(getBeforeUpdateResponse.Result.UserProfile.AvatarImageUrl),
+                .ShouldBeNewerOrTheSameS3Url(getBeforeUpdateResponse.UserProfile.AvatarImageUrl),
             p => p.CoverImageUrl.ShouldBeNewerOrTheSameS3Url(request.CoverImageUrl!),
-            p => p.Birthday.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Birthday),
-            p => p.Gender.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Gender),
-            p => p.Hobbies.ShouldBe(getBeforeUpdateResponse.Result.UserProfile.Hobbies, ignoreOrder: true)
+            p => p.Birthday.ShouldBe(getBeforeUpdateResponse.UserProfile.Birthday),
+            p => p.Gender.ShouldBe(getBeforeUpdateResponse.UserProfile.Gender),
+            p => p.Hobbies.ShouldBe(getBeforeUpdateResponse.UserProfile.Hobbies, ignoreOrder: true)
         );
     }
 
@@ -232,18 +231,18 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Get profile before update
         var getBeforeUpdateResponse = await Factory.ApiClient
-            .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
-        getBeforeUpdateResponse.Result.UserProfile.IsPublic.ShouldBeTrue(); // default is true
+            .GetAsync<GetUserProfileResponse>(ApiRoutes.UserProfile.Profile);
+        getBeforeUpdateResponse.UserProfile.IsPublic.ShouldBeTrue(); // default is true
 
         // 3. Update privacy
         var request = new UpdatePrivacyRequest(IsPublic: false);
-        var response = await Factory.ApiClient.PostAsync<UpdatePrivacyRequest, ApiResult.EmptyResult>(
+        var response = await Factory.ApiClient.PostAsync<UpdatePrivacyRequest>(
             ApiRoutes.UserProfile.Privacy, request);
 
         // 4. Check profile publicity
         var getAfterUpdateResponse = await Factory.ApiClient
-            .GetAsync<ApiResult<GetUserProfileResponse>>(ApiRoutes.UserProfile.Profile);
-        getAfterUpdateResponse.Result.UserProfile.IsPublic.ShouldBeFalse();
+            .GetAsync<GetUserProfileResponse>(ApiRoutes.UserProfile.Profile);
+        getAfterUpdateResponse.UserProfile.IsPublic.ShouldBeFalse();
     }
 
     [Fact]
@@ -270,7 +269,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Get upload url
-        var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
+        var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, GetPresignedUrlResponse>(
             ApiRoutes.UserProfile.AvatarUploadUrl,
             new GetPresignedUrlRequest(
                 ContentType: ContentType.ImageWebp,
@@ -278,9 +277,9 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         );
 
         // 3. Check response
-        response.Result.UploadUrl.ShouldNotBeNullOrEmpty();
-        response.Result.UploadUrl.ShouldContain("test-bucket");
-        response.Result.UploadUrl.ShouldNotContain("?v=");
+        response.UploadUrl.ShouldNotBeNullOrEmpty();
+        response.UploadUrl.ShouldContain("test-bucket");
+        response.UploadUrl.ShouldNotContain("?v=");
     }
 
     [Fact]
@@ -291,7 +290,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authResponse);
 
         // 2. Get upload url
-        var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
+        var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, GetPresignedUrlResponse>(
             ApiRoutes.UserProfile.CoverUploadUrl,
             new GetPresignedUrlRequest(
                 ContentType: ContentType.ImageWebp,
@@ -299,9 +298,9 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         );
 
         // 3. Check response
-        response.Result.UploadUrl.ShouldNotBeNullOrEmpty();
-        response.Result.UploadUrl.ShouldContain("test-bucket");
-        response.Result.UploadUrl.ShouldNotContain("?v=");
+        response.UploadUrl.ShouldNotBeNullOrEmpty();
+        response.UploadUrl.ShouldContain("test-bucket");
+        response.UploadUrl.ShouldNotContain("?v=");
     }
 
     [Fact]
@@ -367,16 +366,16 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. Get upload url
         var imageToUpload = "dummy image content"u8.ToArray();
 
-        var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
+        var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, GetPresignedUrlResponse>(
             ApiRoutes.UserProfile.AvatarUploadUrl, new GetPresignedUrlRequest(
                 ContentType: imageType,
                 ContentLength: imageToUpload.Length)
         );
 
         // 3. Check response
-        var uploadUrl = response.Result.UploadUrl;
+        var uploadUrl = response.UploadUrl;
         uploadUrl.ShouldNotBeNullOrEmpty();
-        var downloadUrl = response.Result.PublicDownloadUrl;
+        var downloadUrl = response.PublicDownloadUrl;
         downloadUrl.ShouldNotBeNullOrEmpty();
 
         // 4. Upload dummy image

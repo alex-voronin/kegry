@@ -24,7 +24,7 @@ public class B2CDealsEndpoints : IEndpoints
         group.MapGet("/api/v1/promotions", GetPromotions);
     }
 
-    private static async Task<ApiResult<PaginatedResponse<AvailableDiscountDto>>> GetDiscounts(
+    private static async Task<PaginatedResponse<AvailableDiscountDto>> GetDiscounts(
         [AsParameters] GetAvailableDiscountsRequest request,
         ClaimsPrincipal user,
         ILoyaltyService loyaltyService,
@@ -56,11 +56,10 @@ public class B2CDealsEndpoints : IEndpoints
             ))
             .ToArray();
 
-        return ApiResult<PaginatedResponse<AvailableDiscountDto>>.Build(
-            new PaginatedResponse<AvailableDiscountDto>(dtos, totalCount));
+        return new PaginatedResponse<AvailableDiscountDto>(dtos, totalCount);
     }
 
-    private static async Task<ApiResult<PaginatedResponse<AvailablePromotionDto>>> GetPromotions(
+    private static async Task<PaginatedResponse<AvailablePromotionDto>> GetPromotions(
         [AsParameters] GetAvailableDiscountsRequest request,
         IVenueRepository venueRepository,
         IS3StorageService storageService,
@@ -90,7 +89,6 @@ public class B2CDealsEndpoints : IEndpoints
             ))
             .ToArray();
 
-        return ApiResult<PaginatedResponse<AvailablePromotionDto>>.Build(
-            new PaginatedResponse<AvailablePromotionDto>(dtos, totalCount));
+        return new PaginatedResponse<AvailablePromotionDto>(dtos, totalCount);
     }
 }

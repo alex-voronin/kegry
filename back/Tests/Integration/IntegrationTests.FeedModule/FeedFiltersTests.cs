@@ -2,7 +2,6 @@ using FeedModule.API.Dto;
 using FeedModule.Domain.Aggregates;
 using IntegrationTests.Shared;
 using IntegrationTests.Shared.Managers;
-using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 using SharedCore.ValueObjects;
 using Shouldly;
@@ -27,15 +26,15 @@ public class FeedFiltersTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(auth);
 
         // 2. Get filter
-        var response = await Factory.ApiClient.GetAsync<ApiResult<GetFilterResponse>>(ApiRoutes.Feed.Filter);
+        var response = await Factory.ApiClient.GetAsync<GetFilterResponse>(ApiRoutes.Feed.Filter);
 
         // 3. Check that default filter is returned
         var defaultFilter = Filter.CreateDefault(Guid.NewGuid());
-        response.Result.Filter.RadiusMeters.ShouldBe(defaultFilter.RadiusMeters);
-        response.Result.Filter.AgeFrom.ShouldBe(defaultFilter.AgeFrom);
-        response.Result.Filter.AgeTo.ShouldBe(defaultFilter.AgeTo);
-        response.Result.Filter.Gender.ShouldBe(defaultFilter.Gender);
-        response.Result.Filter.HobbyIds.ShouldBe(defaultFilter.HobbyIds);
+        response.Filter.RadiusMeters.ShouldBe(defaultFilter.RadiusMeters);
+        response.Filter.AgeFrom.ShouldBe(defaultFilter.AgeFrom);
+        response.Filter.AgeTo.ShouldBe(defaultFilter.AgeTo);
+        response.Filter.Gender.ShouldBe(defaultFilter.Gender);
+        response.Filter.HobbyIds.ShouldBe(defaultFilter.HobbyIds);
     }
 
     [Fact]
@@ -53,17 +52,17 @@ public class FeedFiltersTests : IntegrationTestBase, IAsyncLifetime
             Gender: Gender.Female,
             HobbyIds: []);
 
-        await Factory.ApiClient.PutAsync<UpdateFilterRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateFilterRequest>(
             ApiRoutes.Feed.Filter, new UpdateFilterRequest(newFilter));
 
         // 3. Get filter again
-        var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetFilterResponse>>(ApiRoutes.Feed.Filter);
+        var getResponse = await Factory.ApiClient.GetAsync<GetFilterResponse>(ApiRoutes.Feed.Filter);
 
         // 4. Check new filter parameters
-        getResponse.Result.Filter.RadiusMeters.ShouldBe(newFilter.RadiusMeters);
-        getResponse.Result.Filter.AgeFrom.ShouldBe(newFilter.AgeFrom);
-        getResponse.Result.Filter.AgeTo.ShouldBe(newFilter.AgeTo);
-        getResponse.Result.Filter.Gender.ShouldBe(newFilter.Gender);
+        getResponse.Filter.RadiusMeters.ShouldBe(newFilter.RadiusMeters);
+        getResponse.Filter.AgeFrom.ShouldBe(newFilter.AgeFrom);
+        getResponse.Filter.AgeTo.ShouldBe(newFilter.AgeTo);
+        getResponse.Filter.Gender.ShouldBe(newFilter.Gender);
     }
 
     [Fact]
@@ -97,15 +96,15 @@ public class FeedFiltersTests : IntegrationTestBase, IAsyncLifetime
             AgeTo: null,
             Gender: Gender.Male,
             HobbyIds: []);
-        await Factory.ApiClient.PutAsync<UpdateFilterRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateFilterRequest>(
             ApiRoutes.Feed.Filter, new UpdateFilterRequest(filter));
 
         // 5. Get feed
-        var feedResponse = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        var feedResponse = await Factory.ApiClient.GetAsync<GetFeedResponse>(ApiRoutes.Feed.GetFeed);
 
         // 6. Check that only males on the feed
-        feedResponse.Result.Feed.Length.ShouldBe(1);
-        feedResponse.Result.Feed[0].FirstName.ShouldBe("Male");
+        feedResponse.Feed.Length.ShouldBe(1);
+        feedResponse.Feed[0].FirstName.ShouldBe("Male");
     }
 
     [Fact]
@@ -137,15 +136,15 @@ public class FeedFiltersTests : IntegrationTestBase, IAsyncLifetime
             AgeTo: null,
             Gender: null,
             HobbyIds: []);
-        await Factory.ApiClient.PutAsync<UpdateFilterRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateFilterRequest>(
             ApiRoutes.Feed.Filter, new UpdateFilterRequest(filter));
 
         // 5. Get feed
-        var feedResponse = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        var feedResponse = await Factory.ApiClient.GetAsync<GetFeedResponse>(ApiRoutes.Feed.GetFeed);
 
-        // 6. Check that only "near" candidate on the feed 
-        feedResponse.Result.Feed.Length.ShouldBe(1);
-        feedResponse.Result.Feed[0].FirstName.ShouldBe("Near");
+        // 6. Check that only "near" candidate on the feed
+        feedResponse.Feed.Length.ShouldBe(1);
+        feedResponse.Feed[0].FirstName.ShouldBe("Near");
     }
 
     [Fact]
@@ -188,15 +187,15 @@ public class FeedFiltersTests : IntegrationTestBase, IAsyncLifetime
             AgeTo: 30,
             Gender: null,
             HobbyIds: []);
-        await Factory.ApiClient.PutAsync<UpdateFilterRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateFilterRequest>(
             ApiRoutes.Feed.Filter, new UpdateFilterRequest(filter));
 
         // 5. Get feed
-        var feedResponse = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        var feedResponse = await Factory.ApiClient.GetAsync<GetFeedResponse>(ApiRoutes.Feed.GetFeed);
 
         // 6. Check that only candidates with matched age on the feed
-        feedResponse.Result.Feed.Length.ShouldBe(1);
-        feedResponse.Result.Feed[0].FirstName.ShouldBe("MatchedAge");
+        feedResponse.Feed.Length.ShouldBe(1);
+        feedResponse.Feed[0].FirstName.ShouldBe("MatchedAge");
     }
 
     [Fact]
@@ -236,14 +235,14 @@ public class FeedFiltersTests : IntegrationTestBase, IAsyncLifetime
             AgeTo: null,
             Gender: null,
             HobbyIds: [gymHobbyId]);
-        await Factory.ApiClient.PutAsync<UpdateFilterRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateFilterRequest>(
             ApiRoutes.Feed.Filter, new UpdateFilterRequest(filter));
 
         // 5. Get feed
-        var feedResponse = await Factory.ApiClient.GetAsync<ApiResult<GetFeedResponse>>(ApiRoutes.Feed.GetFeed);
+        var feedResponse = await Factory.ApiClient.GetAsync<GetFeedResponse>(ApiRoutes.Feed.GetFeed);
 
         // 6. Check that only candidate with matched hobby on the feed
-        feedResponse.Result.Feed.Length.ShouldBe(1);
-        feedResponse.Result.Feed[0].FirstName.ShouldBe("MatchedHobby");
+        feedResponse.Feed.Length.ShouldBe(1);
+        feedResponse.Feed[0].FirstName.ShouldBe("MatchedHobby");
     }
 }

@@ -2,7 +2,6 @@ using System.Net;
 using IntegrationTests.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using SecurityModule.Domain.ValueObjects;
-using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
 using Shouldly;
 using VenueModule.API.B2B.Companies.Dto;
@@ -30,19 +29,19 @@ public class B2BDashboardEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .CreateAndLoginUserAsync("b2b_dash_novisits@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(authResponse);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("No Visits Co", "novisits@test.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("No Visits Co", "novisits@test.com"))).Id;
 
-        await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(0, 0, "NV Venue", null, null, null, null, null, null, []));
 
-        var response = await Factory.ApiClient.GetAsync<ApiResult<VisitsChartResponseDto>>(
+        var response = await Factory.ApiClient.GetAsync<VisitsChartResponseDto>(
             DashboardVisitsUrl(companyId, "Daily"));
 
-        response.Result.Venues.Length.ShouldBe(1);
-        response.Result.Venues[0].DataPoints.Length.ShouldBe(12);
-        response.Result.Venues[0].DataPoints.ShouldAllBe(dp => dp.Count == 0);
+        response.Venues.Length.ShouldBe(1);
+        response.Venues[0].DataPoints.Length.ShouldBe(12);
+        response.Venues[0].DataPoints.ShouldAllBe(dp => dp.Count == 0);
     }
 
     [Fact]
@@ -52,12 +51,12 @@ public class B2BDashboardEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .CreateAndLoginUserAsync("b2b_dash_daily@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Daily Vis Co", "dailyvis@test.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Daily Vis Co", "dailyvis@test.com"))).Id;
 
-        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
-            new CreateVenueRequest(0, 0, "DV Venue", null, null, null, null, null, null, []))).Result.Id;
+            new CreateVenueRequest(0, 0, "DV Venue", null, null, null, null, null, null, []))).Id;
 
         var b2CAuth = await Factory.AuthManager
             .CreateAndLoginUserAsync("b2c_dash_daily@example.com", "Password123!");
@@ -70,10 +69,10 @@ public class B2BDashboardEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await SeedVisitAsync(venueId, b2CUserId, today.AddDays(-3).AddHours(18));
 
         Factory.ApiClient.SetAuth(b2BAuth);
-        var response = await Factory.ApiClient.GetAsync<ApiResult<VisitsChartResponseDto>>(
+        var response = await Factory.ApiClient.GetAsync<VisitsChartResponseDto>(
             DashboardVisitsUrl(companyId, "Daily"));
 
-        var venueData = response.Result.Venues.ShouldHaveSingleItem();
+        var venueData = response.Venues.ShouldHaveSingleItem();
         venueData.DataPoints.Length.ShouldBe(12);
         venueData.DataPoints.ShouldContain(dp => dp.Label == today.ToString("yyyy-MM-dd") && dp.Count == 1);
         venueData.DataPoints.ShouldContain(dp => dp.Label == today.AddDays(-1).ToString("yyyy-MM-dd") && dp.Count == 1);
@@ -87,12 +86,12 @@ public class B2BDashboardEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .CreateAndLoginUserAsync("b2b_dash_weekly@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Weekly Vis Co", "weeklyvis@test.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Weekly Vis Co", "weeklyvis@test.com"))).Id;
 
-        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
-            new CreateVenueRequest(0, 0, "WV Venue", null, null, null, null, null, null, []))).Result.Id;
+            new CreateVenueRequest(0, 0, "WV Venue", null, null, null, null, null, null, []))).Id;
 
         var b2CAuth = await Factory.AuthManager
             .CreateAndLoginUserAsync("b2c_dash_weekly@example.com", "Password123!");
@@ -108,10 +107,10 @@ public class B2BDashboardEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await SeedVisitAsync(venueId, b2CUserId, monday.AddDays(-14).AddHours(9));
 
         Factory.ApiClient.SetAuth(b2BAuth);
-        var response = await Factory.ApiClient.GetAsync<ApiResult<VisitsChartResponseDto>>(
+        var response = await Factory.ApiClient.GetAsync<VisitsChartResponseDto>(
             DashboardVisitsUrl(companyId, "Weekly"));
 
-        var venueData = response.Result.Venues.ShouldHaveSingleItem();
+        var venueData = response.Venues.ShouldHaveSingleItem();
         venueData.DataPoints.Length.ShouldBe(12);
         venueData.DataPoints.ShouldContain(dp =>
             dp.Label == monday.ToString("yyyy-MM-dd") && dp.Count == 1);
@@ -128,12 +127,12 @@ public class B2BDashboardEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .CreateAndLoginUserAsync("b2b_dash_monthly@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Monthly Vis Co", "monthlyvis@test.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Monthly Vis Co", "monthlyvis@test.com"))).Id;
 
-        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
-            new CreateVenueRequest(0, 0, "MV Venue", null, null, null, null, null, null, []))).Result.Id;
+            new CreateVenueRequest(0, 0, "MV Venue", null, null, null, null, null, null, []))).Id;
 
         var b2CAuth = await Factory.AuthManager
             .CreateAndLoginUserAsync("b2c_dash_monthly@example.com", "Password123!");
@@ -148,10 +147,10 @@ public class B2BDashboardEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await SeedVisitAsync(venueId, b2CUserId, thisMonth.AddMonths(-2).AddDays(15).AddHours(9));
 
         Factory.ApiClient.SetAuth(b2BAuth);
-        var response = await Factory.ApiClient.GetAsync<ApiResult<VisitsChartResponseDto>>(
+        var response = await Factory.ApiClient.GetAsync<VisitsChartResponseDto>(
             DashboardVisitsUrl(companyId, "Monthly"));
 
-        var venueData = response.Result.Venues.ShouldHaveSingleItem();
+        var venueData = response.Venues.ShouldHaveSingleItem();
         venueData.DataPoints.Length.ShouldBe(12);
         venueData.DataPoints.ShouldContain(dp =>
             dp.Label == thisMonth.ToString("yyyy-MM-dd") && dp.Count == 1);
@@ -168,13 +167,13 @@ public class B2BDashboardEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .CreateAndLoginUserAsync("b2b_dash_novenues@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(authResponse);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("No Venues Co", "novenues@test.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("No Venues Co", "novenues@test.com"))).Id;
 
-        var response = await Factory.ApiClient.GetAsync<ApiResult<VisitsChartResponseDto>>(
+        var response = await Factory.ApiClient.GetAsync<VisitsChartResponseDto>(
             DashboardVisitsUrl(companyId, "Daily"));
 
-        response.Result.Venues.ShouldBeEmpty();
+        response.Venues.ShouldBeEmpty();
     }
 
     [Fact]
@@ -184,8 +183,8 @@ public class B2BDashboardEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .CreateAndLoginUserAsync("b2b_dash_owner_a@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(authA);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Owner A Co", "ownera@test.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Owner A Co", "ownera@test.com"))).Id;
 
         var authB = await Factory.AuthManager
             .CreateAndLoginUserAsync("b2b_dash_owner_b@example.com", "Password123!", UserType.B2B);

@@ -4,7 +4,6 @@ using EngagementModule.Domain.Services;
 using IntegrationTests.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NotificationModule.Domain.ValueObjects;
-using SharedCore.Api.Dto;
 using Shouldly;
 
 namespace IntegrationTests.EngagementModule;
@@ -28,11 +27,11 @@ public class NpcEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Get Npc
-        var response = await Factory.ApiClient.GetAsync<ApiResult<GetNpcResponse>>(ApiRoutes.Npc.Root);
-        response.Result.ShouldNotBeNull();
-        response.Result.Npc.ShouldNotBeNull();
-        response.Result.Npc.Id.ShouldNotBeNullOrEmpty();
-        response.Result.Npc.Name.ShouldNotBeNullOrEmpty();
+        var response = await Factory.ApiClient.GetAsync<GetNpcResponse>(ApiRoutes.Npc.Root);
+        response.ShouldNotBeNull();
+        response.Npc.ShouldNotBeNull();
+        response.Npc.Id.ShouldNotBeNullOrEmpty();
+        response.Npc.Name.ShouldNotBeNullOrEmpty();
 
         // 3. Verify SeenNpcAt is updated
         using var scope = Factory.Services.CreateScope();
@@ -51,27 +50,27 @@ public class NpcEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Get Npc
-        var npcResponse = await Factory.ApiClient.GetAsync<ApiResult<GetNpcResponse>>(ApiRoutes.Npc.Root);
-        npcResponse.Result.ShouldNotBeNull();
-        npcResponse.Result.Npc.ShouldNotBeNull();
-        npcResponse.Result.Npc.Id.ShouldNotBeNullOrEmpty();
-        npcResponse.Result.Npc.Name.ShouldNotBeNullOrEmpty();
+        var npcResponse = await Factory.ApiClient.GetAsync<GetNpcResponse>(ApiRoutes.Npc.Root);
+        npcResponse.ShouldNotBeNull();
+        npcResponse.Npc.ShouldNotBeNull();
+        npcResponse.Npc.Id.ShouldNotBeNullOrEmpty();
+        npcResponse.Npc.Name.ShouldNotBeNullOrEmpty();
 
         // 3. Get Npc before timeout
         Factory.FakeTimeProvider.Advance(TimeSpan.FromHours(NpcActionsService.NpcMeetingTimeoutHours - 1));
         var npcResponseBeforeTimeout = await Factory.ApiClient
-            .GetAsync<ApiResult<GetNpcResponse>>(ApiRoutes.Npc.Root);
-        npcResponseBeforeTimeout.Result.ShouldNotBeNull();
-        npcResponseBeforeTimeout.Result.Npc.ShouldBeNull();
+            .GetAsync<GetNpcResponse>(ApiRoutes.Npc.Root);
+        npcResponseBeforeTimeout.ShouldNotBeNull();
+        npcResponseBeforeTimeout.Npc.ShouldBeNull();
 
         // 3. Get Npc after timeout
         Factory.FakeTimeProvider.Advance(TimeSpan.FromHours(2));
         var npcResponseAfterTimeout = await Factory.ApiClient
-            .GetAsync<ApiResult<GetNpcResponse>>(ApiRoutes.Npc.Root);
-        npcResponseAfterTimeout.Result.ShouldNotBeNull();
-        npcResponseAfterTimeout.Result.Npc.ShouldNotBeNull();
-        npcResponseAfterTimeout.Result.Npc.Id.ShouldNotBeNullOrEmpty();
-        npcResponseAfterTimeout.Result.Npc.Name.ShouldNotBeNullOrEmpty();
+            .GetAsync<GetNpcResponse>(ApiRoutes.Npc.Root);
+        npcResponseAfterTimeout.ShouldNotBeNull();
+        npcResponseAfterTimeout.Npc.ShouldNotBeNull();
+        npcResponseAfterTimeout.Npc.Id.ShouldNotBeNullOrEmpty();
+        npcResponseAfterTimeout.Npc.Name.ShouldNotBeNullOrEmpty();
 
         Factory.FakeTimeProvider.Reset(DateTimeOffset.UtcNow);
     }
@@ -85,13 +84,13 @@ public class NpcEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Get Npc to get ID
-        var npcResponse = await Factory.ApiClient.GetAsync<ApiResult<GetNpcResponse>>(ApiRoutes.Npc.Root);
-        npcResponse.Result.Npc.ShouldNotBeNull();
-        var npcId = npcResponse.Result.Npc.Id;
+        var npcResponse = await Factory.ApiClient.GetAsync<GetNpcResponse>(ApiRoutes.Npc.Root);
+        npcResponse.Npc.ShouldNotBeNull();
+        var npcId = npcResponse.Npc.Id;
 
         // 3. Invite Npc
-        var inviteResponse = await Factory.ApiClient.GetAsync<ApiResult<InviteNpcResponse>>(ApiRoutes.Npc.Invite(npcId));
-        inviteResponse.Result.Monolog.ShouldNotBeNullOrEmpty();
+        var inviteResponse = await Factory.ApiClient.GetAsync<InviteNpcResponse>(ApiRoutes.Npc.Invite(npcId));
+        inviteResponse.Monolog.ShouldNotBeNullOrEmpty();
     }
 
     [Fact]
@@ -103,17 +102,17 @@ public class NpcEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Get Npc to get ID
-        var npcResponse = await Factory.ApiClient.GetAsync<ApiResult<GetNpcResponse>>(ApiRoutes.Npc.Root);
-        npcResponse.Result.Npc.ShouldNotBeNull();
-        var npcId = npcResponse.Result.Npc.Id;
+        var npcResponse = await Factory.ApiClient.GetAsync<GetNpcResponse>(ApiRoutes.Npc.Root);
+        npcResponse.Npc.ShouldNotBeNull();
+        var npcId = npcResponse.Npc.Id;
 
         // 3. Invite Npc
-        var inviteResponse1 = await Factory.ApiClient.GetAsync<ApiResult<InviteNpcResponse>>(ApiRoutes.Npc.Invite(npcId));
-        inviteResponse1.Result.Monolog.ShouldNotBeNullOrEmpty();
+        var inviteResponse1 = await Factory.ApiClient.GetAsync<InviteNpcResponse>(ApiRoutes.Npc.Invite(npcId));
+        inviteResponse1.Monolog.ShouldNotBeNullOrEmpty();
 
         // 3. Invite Npc again
-        var inviteResponse2 = await Factory.ApiClient.GetAsync<ApiResult<InviteNpcResponse>>(ApiRoutes.Npc.Invite(npcId));
-        inviteResponse2.Result.Monolog.ShouldNotBeNullOrEmpty();
+        var inviteResponse2 = await Factory.ApiClient.GetAsync<InviteNpcResponse>(ApiRoutes.Npc.Invite(npcId));
+        inviteResponse2.Monolog.ShouldNotBeNullOrEmpty();
     }
 
     [Fact]
@@ -125,9 +124,9 @@ public class NpcEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Get met NPCs — should be empty
-        var response = await Factory.ApiClient.GetAsync<ApiResult<GetMetNpcsResponse>>(ApiRoutes.Npc.MetNpcs);
-        response.Result.MetNpcs.ShouldNotBeNull();
-        response.Result.MetNpcs.ShouldBeEmpty();
+        var response = await Factory.ApiClient.GetAsync<GetMetNpcsResponse>(ApiRoutes.Npc.MetNpcs);
+        response.MetNpcs.ShouldNotBeNull();
+        response.MetNpcs.ShouldBeEmpty();
     }
 
     [Fact]
@@ -139,19 +138,19 @@ public class NpcEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Get Npc to get ID
-        var npcResponse = await Factory.ApiClient.GetAsync<ApiResult<GetNpcResponse>>(ApiRoutes.Npc.Root);
-        npcResponse.Result.Npc.ShouldNotBeNull();
-        var npcId = npcResponse.Result.Npc.Id;
-        var npcName = npcResponse.Result.Npc.Name;
+        var npcResponse = await Factory.ApiClient.GetAsync<GetNpcResponse>(ApiRoutes.Npc.Root);
+        npcResponse.Npc.ShouldNotBeNull();
+        var npcId = npcResponse.Npc.Id;
+        var npcName = npcResponse.Npc.Name;
 
         // 3. Invite NPC
-        var inviteResponse = await Factory.ApiClient.GetAsync<ApiResult<InviteNpcResponse>>(ApiRoutes.Npc.Invite(npcId));
+        var inviteResponse = await Factory.ApiClient.GetAsync<InviteNpcResponse>(ApiRoutes.Npc.Invite(npcId));
 
         // 4. Get met NPCs — should contain the invited NPC
-        var metResponse = await Factory.ApiClient.GetAsync<ApiResult<GetMetNpcsResponse>>(ApiRoutes.Npc.MetNpcs);
-        metResponse.Result.MetNpcs.ShouldNotBeEmpty();
-        metResponse.Result.MetNpcs.Any(n => n.Id == npcId).ShouldBeTrue();
-        metResponse.Result.MetNpcs.First(n => n.Id == npcId).Name.ShouldBe(npcName);
+        var metResponse = await Factory.ApiClient.GetAsync<GetMetNpcsResponse>(ApiRoutes.Npc.MetNpcs);
+        metResponse.MetNpcs.ShouldNotBeEmpty();
+        metResponse.MetNpcs.Any(n => n.Id == npcId).ShouldBeTrue();
+        metResponse.MetNpcs.First(n => n.Id == npcId).Name.ShouldBe(npcName);
     }
 
     [Fact]
@@ -163,15 +162,15 @@ public class NpcEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Get Npc to get ID
-        var npcResponse = await Factory.ApiClient.GetAsync<ApiResult<GetNpcResponse>>(ApiRoutes.Npc.Root);
-        npcResponse.Result.Npc.ShouldNotBeNull();
-        var npcId = npcResponse.Result.Npc.Id;
+        var npcResponse = await Factory.ApiClient.GetAsync<GetNpcResponse>(ApiRoutes.Npc.Root);
+        npcResponse.Npc.ShouldNotBeNull();
+        var npcId = npcResponse.Npc.Id;
 
         // 3. Set en locale and invite Npc
         Factory.ApiClient.SetLocale(SupportedLocales.English);
-        var inviteResponse = await Factory.ApiClient.GetAsync<ApiResult<InviteNpcResponse>>(ApiRoutes.Npc.Invite(npcId));
+        var inviteResponse = await Factory.ApiClient.GetAsync<InviteNpcResponse>(ApiRoutes.Npc.Invite(npcId));
         // There is no letter "y" in the Serbian language, so we can just check for its presence.
-        inviteResponse.Result.Monolog.ShouldContain("y");
+        inviteResponse.Monolog.ShouldContain("y");
     }
 
     [Fact]
@@ -183,13 +182,13 @@ public class NpcEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.AuthManager.CreateDefaultProfileAndSubmitLocation();
 
         // 2. Get Npc to get ID
-        var npcResponse = await Factory.ApiClient.GetAsync<ApiResult<GetNpcResponse>>(ApiRoutes.Npc.Root);
-        npcResponse.Result.Npc.ShouldNotBeNull();
-        var npcId = npcResponse.Result.Npc.Id;
+        var npcResponse = await Factory.ApiClient.GetAsync<GetNpcResponse>(ApiRoutes.Npc.Root);
+        npcResponse.Npc.ShouldNotBeNull();
+        var npcId = npcResponse.Npc.Id;
 
         // 3. Set en locale and invite Npc
         Factory.ApiClient.SetLocale(SupportedLocales.Serbian);
-        var inviteResponse = await Factory.ApiClient.GetAsync<ApiResult<InviteNpcResponse>>(ApiRoutes.Npc.Invite(npcId));
-        inviteResponse.Result.Monolog.ShouldContain(" je ");
+        var inviteResponse = await Factory.ApiClient.GetAsync<InviteNpcResponse>(ApiRoutes.Npc.Invite(npcId));
+        inviteResponse.Monolog.ShouldContain(" je ");
     }
 }

@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NotificationsModule.API.Dto;
 using NotificationsModule.Infrastructure.Transport.Push;
-using SharedCore.Api.Dto;
 using Shouldly;
 
 namespace IntegrationTests.ChatModule;
@@ -45,13 +44,13 @@ public class ExpiredChatsCollectorTests : IntegrationTestBase, IAsyncLifetime
         var tokenRequestA = new UpdateFcmTokenRequest("devA", "tokenA");
         Factory.ApiClient.SetAuth(authA);
         await Factory.ApiClient
-            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+            .PostAsync<UpdateFcmTokenRequest>(ApiRoutes.Notifications.UpdateDeviceToken,
                 tokenRequestA);
 
         var tokenRequestB = new UpdateFcmTokenRequest("devB", "tokenB");
         Factory.ApiClient.SetAuth(authB);
         await Factory.ApiClient
-            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+            .PostAsync<UpdateFcmTokenRequest>(ApiRoutes.Notifications.UpdateDeviceToken,
                 tokenRequestB);
 
         // 3. Establish chat
@@ -59,13 +58,13 @@ public class ExpiredChatsCollectorTests : IntegrationTestBase, IAsyncLifetime
             codeToRun: async () =>
             {
                 Factory.ApiClient.SetAuth(authA);
-                await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                await Factory.ApiClient.PostAsync<InviteUserRequest>(
                     ApiRoutes.Feed.InviteUser(authB.UserId),
                     new InviteUserRequest(expiresAt)
                 );
 
                 Factory.ApiClient.SetAuth(authB);
-                await Factory.ApiClient.PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                await Factory.ApiClient.PostAsync<InviteUserRequest>(
                     ApiRoutes.Feed.InviteUser(authA.UserId),
                     new InviteUserRequest(expiresAt)
                 );
@@ -74,8 +73,8 @@ public class ExpiredChatsCollectorTests : IntegrationTestBase, IAsyncLifetime
             expectedType: FcmPushBuilder.PushType.MeetingArranged);
 
         // Verify chat exists
-        var chatResponse = await Factory.ApiClient.GetAsync<ApiResult<GetChatResponse>>(ApiRoutes.Chat.ChatRoot);
-        var chatId = chatResponse.Result.Id;
+        var chatResponse = await Factory.ApiClient.GetAsync<GetChatResponse>(ApiRoutes.Chat.ChatRoot);
+        var chatId = chatResponse.Id;
 
         Factory.FakeTimeProvider.Advance(expirationSpan + TimeSpan.FromHours(1));
 

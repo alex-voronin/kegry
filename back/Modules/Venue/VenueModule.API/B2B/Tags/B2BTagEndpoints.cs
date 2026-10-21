@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using SharedCore.Api;
-using SharedCore.Api.Dto;
 using SharedCore.Policies;
 using VenueModule.API.B2B.Tags.Dto;
 using VenueModule.Domain.Repositories;
@@ -20,7 +19,7 @@ public class B2BTagEndpoints : IEndpoints
         tagsApiGroup.MapGet("/api/v1/b2b/tags", GetTags);
     }
 
-    private static async Task<ApiResult<TagCategoryDto[]>> GetTags(
+    private static async Task<TagCategoryDto[]> GetTags(
         ITagRepository tagRepository,
         CancellationToken ct)
     {
@@ -37,6 +36,6 @@ public class B2BTagEndpoints : IEndpoints
             ))
             .ToArray();
 
-        return ApiResult<TagCategoryDto[]>.Build(dtos);
+        return dtos;
     }
 }

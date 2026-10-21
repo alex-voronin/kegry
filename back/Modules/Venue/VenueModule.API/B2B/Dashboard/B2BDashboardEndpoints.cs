@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using SharedCore.Api;
-using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 using SharedCore.Policies;
 using VenueModule.API.B2B.Dashboard.Dto;
@@ -26,7 +25,7 @@ public class B2BDashboardEndpoints : IEndpoints
         group.MapGet("/api/v1/b2b/dashboard/visits", GetVisitsChart);
     }
 
-    private static async Task<ApiResult<VisitsChartResponseDto>> GetVisitsChart(
+    private static async Task<VisitsChartResponseDto> GetVisitsChart(
         [FromQuery] Guid companyId,
         [FromQuery] VisitsChartMode mode,
         ClaimsPrincipal user,
@@ -55,7 +54,7 @@ public class B2BDashboardEndpoints : IEndpoints
             .ToList();
 
         if (activeVenueIds.Count == 0)
-            return ApiResult<VisitsChartResponseDto>.Build(new VisitsChartResponseDto([]));
+            return new VisitsChartResponseDto([]);
 
         var grouping = mode switch
         {
@@ -73,8 +72,7 @@ public class B2BDashboardEndpoints : IEndpoints
             .Select(venue => CreateVenueVisitsDto(venue, data.VisitsByVenue, data.Since, data.DataPointsCount, mode))
             .ToArray();
 
-        return ApiResult<VisitsChartResponseDto>.Build(
-            new VisitsChartResponseDto(venueDtos));
+        return new VisitsChartResponseDto(venueDtos);
     }
 
     private static VenueVisitsDto CreateVenueVisitsDto(

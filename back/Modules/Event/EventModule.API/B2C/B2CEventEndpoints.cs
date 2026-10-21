@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Storage;
@@ -44,7 +45,7 @@ public class B2CEventEndpoints : IEndpoints
         publicGroup.MapGet("/api/v1/events/{id:guid}", GetEvent);
     }
 
-    private static async Task<ApiResult<VenueEventsDto[]>> GetEventsMap(
+    private static async Task<VenueEventsDto[]> GetEventsMap(
         [FromBody] GetEventsMapRequest request,
         ClaimsPrincipal user,
         IEventRepository eventRepository,
@@ -86,10 +87,10 @@ public class B2CEventEndpoints : IEndpoints
             Events: r.Events.Select(MapEvent).ToArray()
         )).ToArray();
 
-        return ApiResult<VenueEventsDto[]>.Build(dtos);
+        return dtos;
     }
 
-    private static async Task<ApiResult<EventDto>> GetEvent(
+    private static async Task<EventDto> GetEvent(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         IEventRepository eventRepository,
@@ -144,10 +145,10 @@ public class B2CEventEndpoints : IEndpoints
             ParticipationStatus: participationStatus?.ToString(),
             IsCreator: isCreator);
 
-        return ApiResult<EventDto>.Build(dto);
+        return dto;
     }
 
-    private static async Task<ApiResult<PaginatedResponse<EventListItemDto>>> GetVenueEvents(
+    private static async Task<PaginatedResponse<EventListItemDto>> GetVenueEvents(
         [AsParameters] GetVenueEventsRequest request,
         ClaimsPrincipal user,
         IEventRepository eventRepository,
@@ -181,11 +182,10 @@ public class B2CEventEndpoints : IEndpoints
                     : null);
         }).ToArray();
 
-        return ApiResult<PaginatedResponse<EventListItemDto>>.Build(
-            new PaginatedResponse<EventListItemDto>(dtos, totalCount));
+        return new PaginatedResponse<EventListItemDto>(dtos, totalCount);
     }
 
-    private static async Task<ApiResult<EventDto>> CreateEvent(
+    private static async Task<EventDto> CreateEvent(
         [FromBody] CreateEventRequest request,
         ClaimsPrincipal user,
         IEventRepository eventRepository,
@@ -239,7 +239,7 @@ public class B2CEventEndpoints : IEndpoints
         return await GetEvent(eventId, user, eventRepository, storageService, ct: ct);
     }
 
-    private static async Task<ApiResult<EventDto>> UpdateEvent(
+    private static async Task<EventDto> UpdateEvent(
         [FromRoute] Guid id,
         [FromBody] UpdateEventRequest request,
         ClaimsPrincipal user,
@@ -281,7 +281,7 @@ public class B2CEventEndpoints : IEndpoints
         return await GetEvent(id, user, eventRepository, storageService, ct: ct);
     }
 
-    private static async Task<ApiResult.EmptyResult> DeleteEvent(
+    private static async Task<NoContent> DeleteEvent(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         IEventRepository eventRepository,
@@ -302,30 +302,30 @@ public class B2CEventEndpoints : IEndpoints
         if (coverKey != null)
             await storageService.DeleteObjectAsync(coverKey, dontThrow: true);
 
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult.EmptyResult> JoinEvent(
+    private static async Task<NoContent> JoinEvent(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         IEventActionService eventActionService,
         CancellationToken ct)
     {
         await eventActionService.JoinEventAsync(id, user.GetId());
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult.EmptyResult> LeaveEvent(
+    private static async Task<NoContent> LeaveEvent(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         IEventActionService eventActionService,
         CancellationToken ct)
     {
         await eventActionService.LeaveEventAsync(id, user.GetId());
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult.EmptyResult> ApproveParticipant(
+    private static async Task<NoContent> ApproveParticipant(
         [FromRoute] Guid id,
         [FromRoute] Guid userId,
         ClaimsPrincipal user,
@@ -333,10 +333,10 @@ public class B2CEventEndpoints : IEndpoints
         CancellationToken ct)
     {
         await eventActionService.ApproveParticipantAsync(id, user.GetId(), userId, ct);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult.EmptyResult> RejectParticipant(
+    private static async Task<NoContent> RejectParticipant(
         [FromRoute] Guid id,
         [FromRoute] Guid userId,
         ClaimsPrincipal user,
@@ -344,10 +344,10 @@ public class B2CEventEndpoints : IEndpoints
         CancellationToken ct)
     {
         await eventActionService.RejectParticipantAsync(id, user.GetId(), userId);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult<GetPresignedUrlResponse>> GetCoverUploadUrl(
+    private static async Task<GetPresignedUrlResponse> GetCoverUploadUrl(
         [FromRoute] Guid id,
         [FromBody] GetPresignedUrlRequest request,
         ClaimsPrincipal user,
@@ -367,11 +367,10 @@ public class B2CEventEndpoints : IEndpoints
             contentLength: request.ContentLength,
             ct: ct);
 
-        return ApiResult<GetPresignedUrlResponse>.Build(
-            new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl));
+        return new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl);
     }
 
-    private static async Task<ApiResult<PaginatedResponse<EventListItemDto>>> GetMyCreatedEvents(
+    private static async Task<PaginatedResponse<EventListItemDto>> GetMyCreatedEvents(
         [AsParameters] PaginatedRequest request,
         ClaimsPrincipal user,
         IEventRepository eventRepository,
@@ -383,11 +382,10 @@ public class B2CEventEndpoints : IEndpoints
             userId, offset: request.Offset, limit: request.Limit, ct: ct);
 
         var dtos = MapToEventListItemDtos(events, userId, storageService);
-        return ApiResult<PaginatedResponse<EventListItemDto>>.Build(
-            new PaginatedResponse<EventListItemDto>(dtos, totalCount));
+        return new PaginatedResponse<EventListItemDto>(dtos, totalCount);
     }
 
-    private static async Task<ApiResult<PaginatedResponse<EventListItemDto>>> GetMyParticipatedEvents(
+    private static async Task<PaginatedResponse<EventListItemDto>> GetMyParticipatedEvents(
         [AsParameters] PaginatedRequest request,
         ClaimsPrincipal user,
         IEventRepository eventRepository,
@@ -399,18 +397,17 @@ public class B2CEventEndpoints : IEndpoints
             userId, offset: request.Offset, limit: request.Limit, ct: ct);
 
         var dtos = MapToEventListItemDtos(events, userId, storageService);
-        return ApiResult<PaginatedResponse<EventListItemDto>>.Build(
-            new PaginatedResponse<EventListItemDto>(dtos, totalCount));
+        return new PaginatedResponse<EventListItemDto>(dtos, totalCount);
     }
 
-    private static async Task<ApiResult<PendingApprovalsCountDto>> GetMyPendingApprovalsCount(
+    private static async Task<PendingApprovalsCountDto> GetMyPendingApprovalsCount(
         ClaimsPrincipal user,
         IEventRepository eventRepository,
         CancellationToken ct)
     {
         var userId = user.GetId();
         var count = await eventRepository.GetPendingApprovalsCountAsync(userId, ct);
-        return ApiResult<PendingApprovalsCountDto>.Build(new PendingApprovalsCountDto(count));
+        return new PendingApprovalsCountDto(count);
     }
 
     private static EventListItemDto[] MapToEventListItemDtos(

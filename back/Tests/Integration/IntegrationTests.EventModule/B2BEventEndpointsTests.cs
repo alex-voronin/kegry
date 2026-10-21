@@ -37,7 +37,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var (auth, _, venueId) = await CreateB2BCompanyAndVenueAsync();
         Factory.ApiClient.SetAuth(auth);
 
-        var response = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+        var response = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, EventDto>(
             ApiRoutes.B2B.Event.Root,
             new B2BCreateEventRequest(
                 CoverImageUrl: null,
@@ -46,12 +46,12 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
                 VenueId: venueId));
 
-        response.Result.Type.ShouldBe(EventType.Event);
-        response.Result.IsVisibleOnMap.ShouldBeTrue();
-        response.Result.RequiresApproval.ShouldBeFalse();
-        response.Result.MaxParticipants.ShouldBeNull();
-        response.Result.Title.ShouldBe("B2B Event");
-        response.Result.IsCreator.ShouldBeTrue();
+        response.Type.ShouldBe(EventType.Event);
+        response.IsVisibleOnMap.ShouldBeTrue();
+        response.RequiresApproval.ShouldBeFalse();
+        response.MaxParticipants.ShouldBeNull();
+        response.Title.ShouldBe("B2B Event");
+        response.IsCreator.ShouldBeTrue();
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var (auth, _, venueId) = await CreateB2BCompanyAndVenueAsync();
         Factory.ApiClient.SetAuth(auth);
 
-        await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+        await Factory.ApiClient.PostAsync<B2BCreateEventRequest, EventDto>(
             ApiRoutes.B2B.Event.Root,
             new B2BCreateEventRequest(
                 CoverImageUrl: null,
@@ -132,7 +132,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
                 VenueId: venueId));
 
-        await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+        await Factory.ApiClient.PostAsync<B2BCreateEventRequest, EventDto>(
             ApiRoutes.B2B.Event.Root,
             new B2BCreateEventRequest(
                 CoverImageUrl: null,
@@ -141,12 +141,12 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 StartDateTime: DateTimeOffset.UtcNow.AddDays(60),
                 VenueId: venueId));
 
-        var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<B2BEventListItemDto>>>(
+        var response = await Factory.ApiClient.GetAsync<PaginatedResponse<B2BEventListItemDto>>(
             ApiRoutes.B2B.Event.Root + "?Offset=0&Limit=20");
 
-        response.Result.Data.Count.ShouldBe(2);
-        response.Result.TotalCount.ShouldBe(2);
-        response.Result.Data.ShouldAllBe(e => e.VenueAddress == "Test Address");
+        response.Data.Count.ShouldBe(2);
+        response.TotalCount.ShouldBe(2);
+        response.Data.ShouldAllBe(e => e.VenueAddress == "Test Address");
     }
 
     [Fact]
@@ -155,7 +155,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var (auth, _, venueAId) = await CreateB2BCompanyAndVenueAsync();
         Factory.ApiClient.SetAuth(auth);
 
-        await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+        await Factory.ApiClient.PostAsync<B2BCreateEventRequest, EventDto>(
             ApiRoutes.B2B.Event.Root,
             new B2BCreateEventRequest(
                 CoverImageUrl: null,
@@ -164,11 +164,11 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
                 VenueId: venueAId));
 
-        var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<B2BEventListItemDto>>>(
+        var response = await Factory.ApiClient.GetAsync<PaginatedResponse<B2BEventListItemDto>>(
             ApiRoutes.B2B.Event.Root + $"?VenueId={venueAId}&Offset=0&Limit=20");
 
-        response.Result.Data.Count.ShouldBe(1);
-        response.Result.TotalCount.ShouldBe(1);
+        response.Data.Count.ShouldBe(1);
+        response.TotalCount.ShouldBe(1);
     }
 
     [Fact]
@@ -193,7 +193,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var (auth, _, venueId) = await CreateB2BCompanyAndVenueAsync();
         Factory.ApiClient.SetAuth(auth);
 
-        var createResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+        var createResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, EventDto>(
             ApiRoutes.B2B.Event.Root,
             new B2BCreateEventRequest(
                 CoverImageUrl: null,
@@ -201,13 +201,13 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Description: "Detail Desc",
                 StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
                 VenueId: venueId));
-        var eventId = Guid.Parse(createResponse.Result.Id);
+        var eventId = Guid.Parse(createResponse.Id);
 
-        var response = await Factory.ApiClient.GetAsync<ApiResult<EventDto>>(
+        var response = await Factory.ApiClient.GetAsync<EventDto>(
             ApiRoutes.B2B.Event.Single(eventId));
 
-        response.Result.Title.ShouldBe("Detail Event");
-        response.Result.IsCreator.ShouldBeTrue();
+        response.Title.ShouldBe("Detail Event");
+        response.IsCreator.ShouldBeTrue();
     }
 
     [Fact]
@@ -216,7 +216,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var (creatorAuth, _, venueId) = await CreateB2BCompanyAndVenueAsync();
         Factory.ApiClient.SetAuth(creatorAuth);
 
-        var createResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+        var createResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, EventDto>(
             ApiRoutes.B2B.Event.Root,
             new B2BCreateEventRequest(
                 CoverImageUrl: null,
@@ -224,7 +224,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Description: "Desc",
                 StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
                 VenueId: venueId));
-        var eventId = Guid.Parse(createResponse.Result.Id);
+        var eventId = Guid.Parse(createResponse.Id);
 
         var otherAuth = await CreateB2BUserAsync();
         Factory.ApiClient.SetAuth(otherAuth);
@@ -247,7 +247,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var (auth, _, venueId) = await CreateB2BCompanyAndVenueAsync();
         Factory.ApiClient.SetAuth(auth);
 
-        var createResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+        var createResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, EventDto>(
             ApiRoutes.B2B.Event.Root,
             new B2BCreateEventRequest(
                 CoverImageUrl: null,
@@ -255,9 +255,9 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Description: "Original Desc",
                 StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
                 VenueId: venueId));
-        var eventId = Guid.Parse(createResponse.Result.Id);
+        var eventId = Guid.Parse(createResponse.Id);
 
-        var response = await Factory.ApiClient.PatchAsync<B2BUpdateEventRequest, ApiResult<EventDto>>(
+        var response = await Factory.ApiClient.PatchAsync<B2BUpdateEventRequest, EventDto>(
             ApiRoutes.B2B.Event.Single(eventId),
             new B2BUpdateEventRequest(
                 Title: "Updated Title",
@@ -267,8 +267,8 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Contacts: null,
                 HobbyIds: null));
 
-        response.Result.Title.ShouldBe("Updated Title");
-        response.Result.Description.ShouldBe("Updated Desc");
+        response.Title.ShouldBe("Updated Title");
+        response.Description.ShouldBe("Updated Desc");
     }
 
     [Fact]
@@ -277,7 +277,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var (creatorAuth, _, venueId) = await CreateB2BCompanyAndVenueAsync();
         Factory.ApiClient.SetAuth(creatorAuth);
 
-        var createResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+        var createResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, EventDto>(
             ApiRoutes.B2B.Event.Root,
             new B2BCreateEventRequest(
                 CoverImageUrl: null,
@@ -285,7 +285,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Description: "Desc",
                 StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
                 VenueId: venueId));
-        var eventId = Guid.Parse(createResponse.Result.Id);
+        var eventId = Guid.Parse(createResponse.Id);
 
         var otherAuth = await CreateB2BUserAsync();
         Factory.ApiClient.SetAuth(otherAuth);
@@ -314,7 +314,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var (auth, _, venueId) = await CreateB2BCompanyAndVenueAsync();
         Factory.ApiClient.SetAuth(auth);
 
-        var createResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+        var createResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, EventDto>(
             ApiRoutes.B2B.Event.Root,
             new B2BCreateEventRequest(
                 CoverImageUrl: null,
@@ -322,9 +322,9 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Description: "Desc",
                 StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
                 VenueId: venueId));
-        var eventId = Guid.Parse(createResponse.Result.Id);
+        var eventId = Guid.Parse(createResponse.Id);
 
-        await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
+        await Factory.ApiClient.DeleteAsync(
             ApiRoutes.B2B.Event.Single(eventId));
 
         var getError = await Factory.ApiClient.GetProblemAsync(
@@ -339,7 +339,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var (auth, _, venueId) = await CreateB2BCompanyAndVenueAsync();
         Factory.ApiClient.SetAuth(auth);
 
-        var createResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+        var createResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, EventDto>(
             ApiRoutes.B2B.Event.Root,
             new B2BCreateEventRequest(
                 CoverImageUrl: null,
@@ -347,9 +347,9 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Description: "Desc",
                 StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
                 VenueId: venueId));
-        var eventId = Guid.Parse(createResponse.Result.Id);
+        var eventId = Guid.Parse(createResponse.Id);
 
-        await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
+        await Factory.ApiClient.DeleteAsync(
             ApiRoutes.B2B.Event.Single(eventId));
 
         var error = await Factory.ApiClient.GetProblemAsync(
@@ -368,7 +368,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var (auth, _, venueId) = await CreateB2BCompanyAndVenueAsync();
         Factory.ApiClient.SetAuth(auth);
 
-        var createResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+        var createResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, EventDto>(
             ApiRoutes.B2B.Event.Root,
             new B2BCreateEventRequest(
                 CoverImageUrl: null,
@@ -376,14 +376,14 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Description: "Desc",
                 StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
                 VenueId: venueId));
-        var eventId = Guid.Parse(createResponse.Result.Id);
+        var eventId = Guid.Parse(createResponse.Id);
 
-        var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, ApiResult<GetPresignedUrlResponse>>(
+        var response = await Factory.ApiClient.PostAsync<GetPresignedUrlRequest, GetPresignedUrlResponse>(
             ApiRoutes.B2B.Event.CoverUploadUrl(eventId),
             new GetPresignedUrlRequest(ContentType.ImageJpeg, 50000));
 
-        response.Result.UploadUrl.ShouldNotBeNullOrEmpty();
-        response.Result.PublicDownloadUrl.ShouldNotBeNullOrEmpty();
+        response.UploadUrl.ShouldNotBeNullOrEmpty();
+        response.PublicDownloadUrl.ShouldNotBeNullOrEmpty();
     }
 
     [Fact]
@@ -392,7 +392,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var (creatorAuth, _, venueId) = await CreateB2BCompanyAndVenueAsync();
         Factory.ApiClient.SetAuth(creatorAuth);
 
-        var createResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+        var createResponse = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, EventDto>(
             ApiRoutes.B2B.Event.Root,
             new B2BCreateEventRequest(
                 CoverImageUrl: null,
@@ -400,7 +400,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 Description: "Desc",
                 StartDateTime: DateTimeOffset.UtcNow.AddDays(30),
                 VenueId: venueId));
-        var eventId = Guid.Parse(createResponse.Result.Id);
+        var eventId = Guid.Parse(createResponse.Id);
 
         var otherAuth = await CreateB2BUserAsync();
         Factory.ApiClient.SetAuth(otherAuth);
@@ -425,7 +425,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // Create exactly up to the limit — all should succeed
         for (var i = 0; i < EventParameters.MaxB2BEventsPerDay; i++)
         {
-            var response = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, ApiResult<EventDto>>(
+            var response = await Factory.ApiClient.PostAsync<B2BCreateEventRequest, EventDto>(
                 ApiRoutes.B2B.Event.Root,
                 new B2BCreateEventRequest(
                     CoverImageUrl: null,
@@ -473,12 +473,12 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var auth = await CreateB2BUserAsync();
         Factory.ApiClient.SetAuth(auth);
 
-        var companyResponse = await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+        var companyResponse = await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
             ApiRoutes.B2B.Company.Root,
             new CreateCompanyRequest(Name: "Event Co", Email: "event.co@test.com"));
-        var companyId = companyResponse.Result.Id;
+        var companyId = companyResponse.Id;
 
-        var venueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var venueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(
                 Latitude: 44.7866,
@@ -491,7 +491,7 @@ public class B2BEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 WorkingHours: null,
                 CoverImageUrl: null,
                 TagIds: []));
-        var venueId = venueResponse.Result.Id;
+        var venueId = venueResponse.Id;
 
         return (auth, companyId, venueId);
     }

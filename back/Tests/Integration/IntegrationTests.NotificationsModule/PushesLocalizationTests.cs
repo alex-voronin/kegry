@@ -39,13 +39,13 @@ public class PushesLocalizationTests : IntegrationTestBase, IAsyncLifetime
         var requestA = new UpdateFcmTokenRequest("devA", "tokenA");
         Factory.ApiClient.SetAuth(authResponseA);
         await Factory.ApiClient
-            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+            .PostAsync<UpdateFcmTokenRequest>(ApiRoutes.Notifications.UpdateDeviceToken,
                 requestA);
 
         var requestB = new UpdateFcmTokenRequest("devB", "tokenB");
         Factory.ApiClient.SetAuth(authResponseB);
         await Factory.ApiClient
-            .PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(ApiRoutes.Notifications.UpdateDeviceToken,
+            .PostAsync<UpdateFcmTokenRequest>(ApiRoutes.Notifications.UpdateDeviceToken,
                 requestB);
 
         // 3. Send invite from A(sr) to B(en)
@@ -56,7 +56,7 @@ public class PushesLocalizationTests : IntegrationTestBase, IAsyncLifetime
             {
                 Factory.ApiClient.SetAuth(authResponseA);
                 await Factory.ApiClient
-                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                    .PostAsync<InviteUserRequest>(
                         ApiRoutes.Feed.InviteUser(userBId),
                         new InviteUserRequest(inviteExpiresAt)
                     );
@@ -67,32 +67,32 @@ public class PushesLocalizationTests : IntegrationTestBase, IAsyncLifetime
 
         // 4. Check that stored notification has a correct locale
         Factory.ApiClient.SetAuth(authResponseB);
-        var notificationsResponseB = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
+        var notificationsResponseB = await Factory.ApiClient.GetAsync<PaginatedResponse<NotificationDto>>(
             ApiRoutes.Notifications.GetNotificationsPaginated(0, 10));
-        notificationsResponseB.Result.Data.Count.ShouldBe(1);
-        notificationsResponseB.Result.Data.First().Text.ShouldContain("drink");
+        notificationsResponseB.Data.Count.ShouldBe(1);
+        notificationsResponseB.Data.First().Text.ShouldContain("drink");
 
-        // 5. Send invite from B(en) to A(sr) 
+        // 5. Send invite from B(en) to A(sr)
         Factory.FakeTimeProvider.Advance(TimeSpan.FromHours(inviteExpirationHours + 1));
         await Factory.NotificationManager.AwaitPushNotifications(
             codeToRun: async () =>
             {
                 Factory.ApiClient.SetAuth(authResponseB);
                 await Factory.ApiClient
-                    .PostAsync<InviteUserRequest, ApiResult.EmptyResult>(
+                    .PostAsync<InviteUserRequest>(
                         ApiRoutes.Feed.InviteUser(userAId),
                         new InviteUserRequest(inviteExpiresAt)
                     );
             },
             expectedCount: 1,
-            containedTextInTitle: "pozivnica", // sr as B(en) invites A(sr) 
+            containedTextInTitle: "pozivnica", // sr as B(en) invites A(sr)
             expectedType: FcmPushBuilder.PushType.UserInvited);
 
         // 6. Check that stored notification has a correct locale
         Factory.ApiClient.SetAuth(authResponseA);
-        var notificationsResponseA = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<NotificationDto>>>(
+        var notificationsResponseA = await Factory.ApiClient.GetAsync<PaginatedResponse<NotificationDto>>(
             ApiRoutes.Notifications.GetNotificationsPaginated(0, 10));
-        notificationsResponseA.Result.Data.Count.ShouldBe(1);
-        notificationsResponseA.Result.Data.First().Text.ShouldContain("piće");
+        notificationsResponseA.Data.Count.ShouldBe(1);
+        notificationsResponseA.Data.First().Text.ShouldContain("piće");
     }
 }

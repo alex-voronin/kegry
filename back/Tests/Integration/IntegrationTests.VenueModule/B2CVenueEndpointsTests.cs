@@ -42,8 +42,8 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .CreateAndLoginUserAsync("b2b_list@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Sorting Co", "sort@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Sorting Co", "sort@example.com"))).Id;
 
         // 2. Create venues
         await _testUtils.CreateVerifiedVenueAsync(companyId, 0.1, 0.1, "Middle");
@@ -57,11 +57,11 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 4. Get venues list and check order
         var listRequest = new GetVenuesRequest(0, 0, 0, 10);
         var response =
-            await Factory.ApiClient.GetAsync<GetVenuesRequest, ApiResult<PaginatedResponse<VenueListItemDto>>>(
+            await Factory.ApiClient.GetAsync<GetVenuesRequest, PaginatedResponse<VenueListItemDto>>(
                 ApiRoutes.Venue.Root, listRequest);
 
-        response.Result.TotalCount.ShouldBeGreaterThanOrEqualTo(3);
-        var venues = response.Result.Data.ToArray();
+        response.TotalCount.ShouldBeGreaterThanOrEqualTo(3);
+        var venues = response.Data.ToArray();
         venues[0].Address.ShouldBe("Closest");
         venues[1].Address.ShouldBe("Middle");
         venues[2].Address.ShouldBe("Farthest");
@@ -78,13 +78,13 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Visibility Co", "vis@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Visibility Co", "vis@example.com"))).Id;
 
         // 2. Create verified and non-verified venue
         await _testUtils.CreateVerifiedVenueAsync(companyId, 0.05, 0.05, "Verified Venue");
         // Non-verified venue
-        await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(0.1, 0.1, "Non-Verified Venue", null, null, null, null, null, null, []));
 
@@ -94,11 +94,11 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 4. Get venues list and ensure only verified venues are present.
         var response =
-            await Factory.ApiClient.GetAsync<GetVenuesRequest, ApiResult<PaginatedResponse<VenueListItemDto>>>(
+            await Factory.ApiClient.GetAsync<GetVenuesRequest, PaginatedResponse<VenueListItemDto>>(
                 ApiRoutes.Venue.Root, new GetVenuesRequest(0, 0, 0, 10));
 
-        response.Result.Data.ShouldContain(v => v.Address == "Verified Venue");
-        response.Result.Data.ShouldNotContain(v => v.Address == "Non-Verified Venue");
+        response.Data.ShouldContain(v => v.Address == "Verified Venue");
+        response.Data.ShouldNotContain(v => v.Address == "Non-Verified Venue");
     }
 
     [Fact]
@@ -110,24 +110,24 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(b2BAuth);
 
         // 2. Create company and venue
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Detail Co", "det@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Detail Co", "det@example.com"))).Id;
 
         var venueRequest = new CreateVenueRequest(45, 13, "Detail Venue", "https://site.com", "https://google.com/mo",
             "https://instagram.com/some-venue", "123", "9-5", TestConfig.S3.PublicUrl + "/cover.jpg", []);
-        var venueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var venueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId), venueRequest);
-        var venueId = venueResponse.Result.Id;
+        var venueId = venueResponse.Id;
 
         // 3. Create B2C user
         var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_detail@example.com", "Password123!");
         Factory.ApiClient.SetAuth(b2CAuth);
 
         // 4. Get venues and check data
-        var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
+        var response = await Factory.ApiClient.GetAsync<GetVenueResponse>(
             ApiRoutes.Venue.Single(venueId));
 
-        var venue = response.Result.Venue;
+        var venue = response.Venue;
         venue.QrCode.ShouldBe(venue.Id);
         venue.IsPinCheckInAllowed.ShouldBe(false);
         venue.Address.ShouldBe(venueRequest.Address);
@@ -147,44 +147,44 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. Create company and venue
         var createCompanyRequest = new CreateCompanyRequest("Deals Co", "deals@example.com");
         var createCompanyResponse = await Factory.ApiClient
-            .PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(ApiRoutes.B2B.Company.Root,
+            .PostAsync<CreateCompanyRequest, CreateCompanyResponse>(ApiRoutes.B2B.Company.Root,
                 createCompanyRequest);
-        var companyId = createCompanyResponse.Result.Id;
+        var companyId = createCompanyResponse.Id;
 
         var createVenueRequest = new CreateVenueRequest(0, 0, "Deals Venue", null, null, null, null, null, null, []);
-        var createVenueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var createVenueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId), createVenueRequest);
-        var venueId = createVenueResponse.Result.Id;
+        var venueId = createVenueResponse.Id;
 
         // 3. Enable 0 loyalty level
-        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyId),
             new UpdateLoyaltyLevelsRequest(new[] { new LoyaltyLevelDto(0, 1, true) }));
 
         // 3. Create discounts
-        var loyaltyLevelsResponse = await Factory.ApiClient.GetAsync<ApiResult<LoyaltyLevelDto[]>>(
+        var loyaltyLevelsResponse = await Factory.ApiClient.GetAsync<LoyaltyLevelDto[]>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyId));
-        var loyaltyLevels = loyaltyLevelsResponse.Result;
+        var loyaltyLevels = loyaltyLevelsResponse;
         var levelId = loyaltyLevels[0].Id;
 
         // Discount for Monday (10%)
-        await Factory.ApiClient.PostAsync<CreateDiscountRequest, ApiResult<CreateDiscountResponse>>(
+        await Factory.ApiClient.PostAsync<CreateDiscountRequest, CreateDiscountResponse>(
             ApiRoutes.B2B.Venue.Discounts(venueId), new CreateDiscountRequest(levelId, 10, [DayOfWeek.Monday]));
 
         // Discount for Friday (20%)
-        await Factory.ApiClient.PostAsync<CreateDiscountRequest, ApiResult<CreateDiscountResponse>>(
+        await Factory.ApiClient.PostAsync<CreateDiscountRequest, CreateDiscountResponse>(
             ApiRoutes.B2B.Venue.Discounts(venueId), new CreateDiscountRequest(levelId, 20, [DayOfWeek.Friday]));
 
         // 4. Create B2C user and check discounts
         var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_deals@example.com", "Password123!");
         Factory.ApiClient.SetAuth(b2CAuth);
 
-        var response = await Factory.ApiClient.GetAsync<ApiResult<GetDiscountsByWeekdayResponse>>(
+        var response = await Factory.ApiClient.GetAsync<GetDiscountsByWeekdayResponse>(
             ApiRoutes.Venue.Discounts(venueId));
 
-        response.Result.Monday.CurrentLevelDiscount.ShouldBe(10);
-        response.Result.Friday.CurrentLevelDiscount.ShouldBe(20);
-        response.Result.Tuesday.CurrentLevelDiscount.ShouldBe(0);
+        response.Monday.CurrentLevelDiscount.ShouldBe(10);
+        response.Friday.CurrentLevelDiscount.ShouldBe(20);
+        response.Tuesday.CurrentLevelDiscount.ShouldBe(0);
     }
 
     [Fact]
@@ -197,14 +197,14 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         var createCompanyRequest = new CreateCompanyRequest("Deals Co", "deals@example.com");
         var createCompanyResponse = await Factory.ApiClient
-            .PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(ApiRoutes.B2B.Company.Root,
+            .PostAsync<CreateCompanyRequest, CreateCompanyResponse>(ApiRoutes.B2B.Company.Root,
                 createCompanyRequest);
-        var companyId = createCompanyResponse.Result.Id;
+        var companyId = createCompanyResponse.Id;
 
         var createVenueRequest = new CreateVenueRequest(0, 0, "Deals Venue", null, null, null, null, null, null, []);
-        var createVenueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var createVenueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId), createVenueRequest);
-        var venueId = createVenueResponse.Result.Id;
+        var venueId = createVenueResponse.Id;
 
         // 2. Configure Loyalty Levels: 0 (2 visits), 1 (4 visits), 2 (10 visits)
         var levels = new[]
@@ -215,7 +215,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             new LoyaltyLevelDto(3, 100, false)
         };
 
-        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyId),
             new UpdateLoyaltyLevelsRequest(levels));
 
@@ -239,7 +239,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         foreach (var discount in discounts)
         {
-            await Factory.ApiClient.PostAsync<CreateDiscountRequest, ApiResult<CreateDiscountResponse>>(
+            await Factory.ApiClient.PostAsync<CreateDiscountRequest, CreateDiscountResponse>(
                 ApiRoutes.B2B.Venue.Discounts(venueId), discount);
         }
 
@@ -257,7 +257,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             var day = now.DayOfWeek;
 
             // Verify current discount
-            var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
+            var response = await Factory.ApiClient.GetAsync<GetVenueResponse>(
                 ApiRoutes.Venue.Single(venueId));
 
             var expectedDiscount = 0;
@@ -271,10 +271,10 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
                 };
             }
 
-            response.Result.LoyaltyLevel.Discount.ShouldBe(expectedDiscount, $"Visits: {visits}, Day: {day}");
+            response.LoyaltyLevel.Discount.ShouldBe(expectedDiscount, $"Visits: {visits}, Day: {day}");
 
             // Perform Check-in
-            await Factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+            await Factory.ApiClient.PostAsync<CheckInRequest, CheckInResponse>(
                 ApiRoutes.Venue.QrCheckIn(venueId), new CheckInRequest(0, 0, null));
 
             // Advance time by 1 day
@@ -293,13 +293,13 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             await Factory.AuthManager.CreateAndLoginUserAsync("b2b_checkin@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Checkin Co", "chk@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Checkin Co", "chk@example.com"))).Id;
 
-        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
                 ApiRoutes.B2B.Company.Venues(companyId),
                 new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, [])))
-            .Result
+
             .Id;
 
         await _testUtils.VerifyVenueByIdAsync(venueId);
@@ -310,10 +310,10 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 3. Check in as B2C user
         var checkInRequest = new CheckInRequest(50.00001, 50.00001, null);
-        var response = await Factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+        var response = await Factory.ApiClient.PostAsync<CheckInRequest, CheckInResponse>(
             ApiRoutes.Venue.QrCheckIn(venueId), checkInRequest);
 
-        response.Result.VenueId.ShouldBe(venueId);
+        response.VenueId.ShouldBe(venueId);
 
         using var scope = Factory.Services.CreateScope();
         var venueContext = scope.ServiceProvider.GetRequiredService<VenueContext>();
@@ -337,13 +337,13 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             await Factory.AuthManager.CreateAndLoginUserAsync("b2b_checkin@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Checkin Co", "chk@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Checkin Co", "chk@example.com"))).Id;
 
-        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
                 ApiRoutes.B2B.Company.Venues(companyId),
                 new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, [])))
-            .Result
+
             .Id;
 
         await _testUtils.VerifyVenueByIdAsync(venueId);
@@ -392,10 +392,10 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var userId = Guid.Parse(b2CAuth.UserId);
 
         var firstResponse = await Factory.ApiClient
-            .PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+            .PostAsync<CheckInRequest, CheckInResponse>(
                 ApiRoutes.Venue.QrCheckIn(venueId), new CheckInRequest(50.00001, 50.00001, null));
 
-        firstResponse.Result.VenueId.ShouldBe(venueId);
+        firstResponse.VenueId.ShouldBe(venueId);
 
         var error = await Factory.ApiClient.PostProblemAsync(
             ApiRoutes.Venue.QrCheckIn(venueId),
@@ -431,16 +431,16 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         try
         {
             var firstResponse = await Factory.ApiClient
-                .PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+                .PostAsync<CheckInRequest, CheckInResponse>(
                     ApiRoutes.Venue.QrCheckIn(venueId), new CheckInRequest(50.00001, 50.00001, null));
-            firstResponse.Result.VenueId.ShouldBe(venueId);
+            firstResponse.VenueId.ShouldBe(venueId);
 
             Factory.FakeTimeProvider.Advance(TimeSpan.FromHours(12).Add(TimeSpan.FromMinutes(1)));
 
             var secondResponse = await Factory.ApiClient
-                .PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+                .PostAsync<CheckInRequest, CheckInResponse>(
                     ApiRoutes.Venue.QrCheckIn(venueId), new CheckInRequest(50.00001, 50.00001, null));
-            secondResponse.Result.VenueId.ShouldBe(venueId);
+            secondResponse.VenueId.ShouldBe(venueId);
 
             using var scope = Factory.Services.CreateScope();
             var venueContext = scope.ServiceProvider.GetRequiredService<VenueContext>();
@@ -492,19 +492,19 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. Create company and venue
         var createCompanyRequest = new CreateCompanyRequest("QrChange Co", "qr@example.com");
         var createCompanyResponse = await Factory.ApiClient
-            .PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(ApiRoutes.B2B.Company.Root,
+            .PostAsync<CreateCompanyRequest, CreateCompanyResponse>(ApiRoutes.B2B.Company.Root,
                 createCompanyRequest);
-        var companyId = createCompanyResponse.Result.Id;
+        var companyId = createCompanyResponse.Id;
 
         var createVenueResponse = await Factory.ApiClient
-            .PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+            .PostAsync<CreateVenueRequest, CreateVenueResponse>(
                 ApiRoutes.B2B.Company.Venues(companyId),
                 new CreateVenueRequest(0, 0, "Qr Venue", null, null, null, null, null, null, []));
-        var venueId = createVenueResponse.Result.Id;
+        var venueId = createVenueResponse.Id;
 
         // 3. Update QR Code
         var newQr = Guid.CreateVersion7();
-        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
+        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest>(
             ApiRoutes.B2B.Venue.Single(venueId),
             new PatchVenueRequest(
                 Latitude: null,
@@ -538,11 +538,11 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 5. Check in with the new QR
         var newResponse = await Factory.ApiClient
-            .PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+            .PostAsync<CheckInRequest, CheckInResponse>(
                 ApiRoutes.Venue.QrCheckIn(newQr),
                 new CheckInRequest(0, 0, null)
             );
-        newResponse.Result.VenueId.ShouldBe(venueId);
+        newResponse.VenueId.ShouldBe(venueId);
     }
 
     [Fact]
@@ -553,18 +553,18 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             await Factory.AuthManager.CreateAndLoginUserAsync("b2b_checkin@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Checkin Co", "chk@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Checkin Co", "chk@example.com"))).Id;
 
-        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
                 ApiRoutes.B2B.Company.Venues(companyId),
                 new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, [])))
-            .Result
+
             .Id;
         await _testUtils.VerifyVenueByIdAsync(venueId);
 
         // allow pin-code check-in
-        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
+        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest>(
             ApiRoutes.B2B.Venue.Single(venueId),
             new PatchVenueRequest(
                 Latitude: null,
@@ -583,7 +583,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             )
         );
 
-        var getVenueResponse = await Factory.ApiClient.GetAsync<ApiResult<B2BGetVenueResponse>>(
+        var getVenueResponse = await Factory.ApiClient.GetAsync<B2BGetVenueResponse>(
             ApiRoutes.B2B.Venue.Single(venueId));
 
         // 2. Create B2C user
@@ -591,11 +591,11 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(b2CAuth);
 
         // 3. Check in as B2C user
-        var checkInRequest = new CheckInRequest(null, null, getVenueResponse.Result.Venue.PinCode);
-        var response = await Factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+        var checkInRequest = new CheckInRequest(null, null, getVenueResponse.Venue.PinCode);
+        var response = await Factory.ApiClient.PostAsync<CheckInRequest, CheckInResponse>(
             ApiRoutes.Venue.QrCheckIn(venueId), checkInRequest);
 
-        response.Result.VenueId.ShouldBe(venueId);
+        response.VenueId.ShouldBe(venueId);
     }
 
     [Fact]
@@ -606,17 +606,17 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             await Factory.AuthManager.CreateAndLoginUserAsync("b2b_checkin@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Checkin Co", "chk@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Checkin Co", "chk@example.com"))).Id;
 
-        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
                 ApiRoutes.B2B.Company.Venues(companyId),
                 new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, [])))
-            .Result
+
             .Id;
 
         var newPinCode = "1234";
-        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
+        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest>(
             ApiRoutes.B2B.Venue.Single(venueId),
             new PatchVenueRequest(
                 Latitude: null,
@@ -643,10 +643,10 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 3. Check in as B2C user
         var checkInRequest = new CheckInRequest(null, null, newPinCode);
-        var response = await Factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+        var response = await Factory.ApiClient.PostAsync<CheckInRequest, CheckInResponse>(
             ApiRoutes.Venue.QrCheckIn(venueId), checkInRequest);
 
-        response.Result.VenueId.ShouldBe(venueId);
+        response.VenueId.ShouldBe(venueId);
     }
 
     [Fact]
@@ -657,17 +657,17 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             await Factory.AuthManager.CreateAndLoginUserAsync("b2b_checkin@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Checkin Co", "chk@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Checkin Co", "chk@example.com"))).Id;
 
-        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
                 ApiRoutes.B2B.Company.Venues(companyId),
                 new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, [])))
-            .Result
+
             .Id;
 
         var newPinCode = "1234";
-        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
+        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest>(
             ApiRoutes.B2B.Venue.Single(venueId),
             new PatchVenueRequest(
                 Latitude: null,
@@ -712,17 +712,17 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             await Factory.AuthManager.CreateAndLoginUserAsync("b2b_checkin@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Checkin Co", "chk@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Checkin Co", "chk@example.com"))).Id;
 
-        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
                 ApiRoutes.B2B.Company.Venues(companyId),
                 new CreateVenueRequest(50, 50, "Checkin Venue", null, null, null, null, null, null, [])))
-            .Result
+
             .Id;
 
         var newPinCode = "1234";
-        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
+        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest>(
             ApiRoutes.B2B.Venue.Single(venueId),
             new PatchVenueRequest(
                 Latitude: null,
@@ -767,22 +767,22 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(b2BAuth);
 
         // 2. Create company and venue
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Promos Co", "promos@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Promos Co", "promos@example.com"))).Id;
 
-        var venueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var venueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(0, 0, "Promos Venue", null, null, null, null, null, null, []));
-        var venueId = venueResponse.Result.Id;
+        var venueId = venueResponse.Id;
 
         // 3. Add promotions
         var promo1 = new CreatePromotionRequest(PromoType.General, "Test Promotion 1");
         var promo2 = new CreatePromotionRequest(PromoType.HappyHours, "Test Promotion 2");
 
-        await Factory.ApiClient.PostAsync<CreatePromotionRequest, ApiResult<CreatePromotionResponse>>(
+        await Factory.ApiClient.PostAsync<CreatePromotionRequest, CreatePromotionResponse>(
             ApiRoutes.B2B.Venue.Promotions(venueId), promo1);
 
-        await Factory.ApiClient.PostAsync<CreatePromotionRequest, ApiResult<CreatePromotionResponse>>(
+        await Factory.ApiClient.PostAsync<CreatePromotionRequest, CreatePromotionResponse>(
             ApiRoutes.B2B.Venue.Promotions(venueId), promo2);
 
         // 4. Create B2C user
@@ -790,10 +790,10 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(b2CAuth);
 
         // 5. Get venue detail and check promotions
-        var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
+        var response = await Factory.ApiClient.GetAsync<GetVenueResponse>(
             ApiRoutes.Venue.Single(venueId));
 
-        var promos = response.Result.Venue.Promos;
+        var promos = response.Venue.Promos;
         promos.Length.ShouldBe(2);
         promos.ShouldContain(p => p.Type == promo1.Type && p.Body == promo1.Body);
         promos.ShouldContain(p => p.Type == promo2.Type && p.Body == promo2.Body);
@@ -832,15 +832,15 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 3. Disable 3rd loyalty level
         Factory.ApiClient.SetAuth(b2BAuth);
-        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyId),
             new UpdateLoyaltyLevelsRequest(new[] { new LoyaltyLevelDto(3, 4, false) }));
 
         // 4. Ensure Level 2 discount is applied
         Factory.ApiClient.SetAuth(b2CAuth);
-        var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
+        var response = await Factory.ApiClient.GetAsync<GetVenueResponse>(
             ApiRoutes.Venue.Single(venueId));
-        response.Result.LoyaltyLevel.Discount.ShouldBe(15);
+        response.LoyaltyLevel.Discount.ShouldBe(15);
     }
 
     [Fact]
@@ -868,11 +868,11 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 3. Ensure Level 2 discount is applied
         Factory.ApiClient.SetAuth(b2CAuth);
-        var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
+        var response = await Factory.ApiClient.GetAsync<GetVenueResponse>(
             ApiRoutes.Venue.Single(venueId));
-        response.Result.LoyaltyLevel.VisitsUpperBound.ShouldBeNull();
-        response.Result.LoyaltyLevel.UserLoyaltyLevel.ShouldBe(targetLevel);
-        response.Result.LoyaltyLevel.Discount.ShouldBe(0);
+        response.LoyaltyLevel.VisitsUpperBound.ShouldBeNull();
+        response.LoyaltyLevel.UserLoyaltyLevel.ShouldBe(targetLevel);
+        response.LoyaltyLevel.Discount.ShouldBe(0);
     }
 
     [Fact]
@@ -900,11 +900,11 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 3. Ensure Level 2 discount is applied
         Factory.ApiClient.SetAuth(b2CAuth);
-        var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
+        var response = await Factory.ApiClient.GetAsync<GetVenueResponse>(
             ApiRoutes.Venue.Single(venueId));
-        response.Result.LoyaltyLevel.VisitsUpperBound.ShouldBeNull();
-        response.Result.LoyaltyLevel.UserLoyaltyLevel.ShouldBe(0);
-        response.Result.LoyaltyLevel.Discount.ShouldBe(0);
+        response.LoyaltyLevel.VisitsUpperBound.ShouldBeNull();
+        response.LoyaltyLevel.UserLoyaltyLevel.ShouldBe(0);
+        response.LoyaltyLevel.Discount.ShouldBe(0);
     }
 
     [Fact]
@@ -933,11 +933,11 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 4. Verify user stays at level 0 with no next level to reach
         Factory.ApiClient.SetAuth(b2CAuth);
-        var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
+        var response = await Factory.ApiClient.GetAsync<GetVenueResponse>(
             ApiRoutes.Venue.Single(venueId));
-        response.Result.LoyaltyLevel.VisitsUpperBound.ShouldBeNull();
-        response.Result.LoyaltyLevel.UserLoyaltyLevel.ShouldBe(0);
-        response.Result.LoyaltyLevel.Discount.ShouldBe(0);
+        response.LoyaltyLevel.VisitsUpperBound.ShouldBeNull();
+        response.LoyaltyLevel.UserLoyaltyLevel.ShouldBe(0);
+        response.LoyaltyLevel.Discount.ShouldBe(0);
     }
 
     [Fact]
@@ -949,27 +949,27 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(b2BAuth);
 
         // 2. Create company and venue
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Detail Co", "det@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Detail Co", "det@example.com"))).Id;
 
         var venueRequest = new CreateVenueRequest(45, 13, "Detail Venue", "https://site.com", "https://google.com/mo",
             "https://instagram.com/some-venue", "123", "9-5", TestConfig.S3.PublicUrl + "/cover.jpg", []);
-        var venueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var venueResponse = await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId), venueRequest);
-        var venueId = venueResponse.Result.Id;
+        var venueId = venueResponse.Id;
 
         // 3. Create B2C user
         var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_detail@example.com", "Password123!");
         Factory.ApiClient.SetAuth(b2CAuth);
 
         // 4. Get venues and check data
-        var disabledResponse = await Factory.ApiClient.GetAsync<ApiResult<GetCheckInSettingsResponse>>(
+        var disabledResponse = await Factory.ApiClient.GetAsync<GetCheckInSettingsResponse>(
             ApiRoutes.Venue.CheckInSetting(venueId));
-        disabledResponse.Result.IsPinCheckInAllowed.ShouldBeFalse();
+        disabledResponse.IsPinCheckInAllowed.ShouldBeFalse();
 
         // 4. Update IsPinCheckInAllowed flag
         Factory.ApiClient.SetAuth(b2BAuth);
-        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
+        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest>(
             ApiRoutes.B2B.Venue.Single(venueId),
             new PatchVenueRequest(
                 Latitude: null,
@@ -990,9 +990,9 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 4. Get venues and check data
         Factory.ApiClient.SetAuth(b2CAuth);
-        var enabledResponse = await Factory.ApiClient.GetAsync<ApiResult<GetCheckInSettingsResponse>>(
+        var enabledResponse = await Factory.ApiClient.GetAsync<GetCheckInSettingsResponse>(
             ApiRoutes.Venue.CheckInSetting(venueId));
-        enabledResponse.Result.IsPinCheckInAllowed.ShouldBeTrue();
+        enabledResponse.IsPinCheckInAllowed.ShouldBeTrue();
     }
 
     [Fact]
@@ -1002,28 +1002,28 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .CreateAndLoginUserAsync("b2b_tags_order@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Tags Order Co", "tags_order@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Tags Order Co", "tags_order@example.com"))).Id;
 
         var priceBudgetId = "price_budget".ToDeterministicGuid();
         var nonAlcoholicId = "non_alcoholic".ToDeterministicGuid();
         var coworkingId = "coworking_friendly".ToDeterministicGuid();
 
-        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(0.05, 0.05, "Ordered Venue", null, null, null, null, null, null,
                 [coworkingId, nonAlcoholicId, priceBudgetId])
-        )).Result.Id;
+        )).Id;
 
         await _testUtils.VerifyVenueByIdAsync(venueId);
 
         var b2CAuth = await Factory.AuthManager.CreateAndLoginUserAsync("b2c_tags_order@example.com", "Password123!");
         Factory.ApiClient.SetAuth(b2CAuth);
 
-        var result = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<VenueListItemDto>>>(
+        var result = await Factory.ApiClient.GetAsync<PaginatedResponse<VenueListItemDto>>(
             $"{ApiRoutes.Venue.Root}?Latitude=0&Longitude=0&Offset=0&Limit=20");
 
-        var venue = result.Result.Data.First(v => v.Id == venueId.ToString());
+        var venue = result.Data.First(v => v.Id == venueId.ToString());
 
         venue.TagIds.Length.ShouldBe(3);
         venue.TagIds[0].ShouldBe(priceBudgetId.ToString());
@@ -1038,23 +1038,23 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .CreateAndLoginUserAsync("b2b_filter@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Filter Co", "filter@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Filter Co", "filter@example.com"))).Id;
 
         var petFriendlyId = "pet_friendly".ToDeterministicGuid();
         var kidsFriendlyId = "kids_friendly".ToDeterministicGuid();
 
-        var petVenueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var petVenueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(0.05, 0.05, "Pet Friendly Venue", null, null, null, null, null, null,
                 [petFriendlyId])
-        )).Result.Id;
+        )).Id;
 
-        var kidsVenueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var kidsVenueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(0.06, 0.06, "Kids Friendly Venue", null, null, null, null, null, null,
                 [kidsFriendlyId])
-        )).Result.Id;
+        )).Id;
 
         await _testUtils.VerifyVenueByIdAsync(petVenueId);
         await _testUtils.VerifyVenueByIdAsync(kidsVenueId);
@@ -1063,10 +1063,10 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(b2CAuth);
 
         var url = $"{ApiRoutes.Venue.Root}?Latitude=0&Longitude=0&Offset=0&Limit=20&Filter.TagIds={petFriendlyId}";
-        var result = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<VenueListItemDto>>>(url);
+        var result = await Factory.ApiClient.GetAsync<PaginatedResponse<VenueListItemDto>>(url);
 
-        result.Result.Data.Count.ShouldBe(1);
-        result.Result.Data.First().Address.ShouldBe("Pet Friendly Venue");
+        result.Data.Count.ShouldBe(1);
+        result.Data.First().Address.ShouldBe("Pet Friendly Venue");
     }
 
     [Fact]
@@ -1076,18 +1076,18 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .CreateAndLoginUserAsync("b2b_map_tags@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Map Tags Co", "map_tags@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Map Tags Co", "map_tags@example.com"))).Id;
 
         var priceBudgetId = "price_budget".ToDeterministicGuid();
         var beerRootId = "beer".ToDeterministicGuid();
         var petFriendlyId = "pet_friendly".ToDeterministicGuid();
 
-        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(44.8, 20.5, "Map Tagged Venue", null, null, null, null, null, null,
                 [priceBudgetId, beerRootId, petFriendlyId])
-        )).Result.Id;
+        )).Id;
 
         await _testUtils.VerifyVenueByIdAsync(venueId);
 
@@ -1095,9 +1095,9 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(b2CAuth);
 
         var mapUrl = $"{ApiRoutes.Venue.Map}?MinLat=44.7&MaxLat=44.9&MinLng=20.4&MaxLng=20.6";
-        var response = await Factory.ApiClient.GetAsync<ApiResult<VenueMapItemDto[]>>(mapUrl);
+        var response = await Factory.ApiClient.GetAsync<VenueMapItemDto[]>(mapUrl);
 
-        var mapVenue = response.Result.First(v => v.Id == venueId.ToString());
+        var mapVenue = response.First(v => v.Id == venueId.ToString());
 
         mapVenue.TagIds.ShouldContain(priceBudgetId.ToString());
         mapVenue.TagIds.ShouldContain(beerRootId.ToString());
@@ -1112,23 +1112,23 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .CreateAndLoginUserAsync("b2b_map_filter@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Map Filter Co", "map_filter@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Map Filter Co", "map_filter@example.com"))).Id;
 
         var petFriendlyId = "pet_friendly".ToDeterministicGuid();
         var kidsFriendlyId = "kids_friendly".ToDeterministicGuid();
 
-        var petVenueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var petVenueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(44.8, 20.5, "Pet Friendly Map", null, null, null, null, null, null,
                 [petFriendlyId])
-        )).Result.Id;
+        )).Id;
 
-        var kidsVenueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var kidsVenueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(44.8, 20.5, "Kids Friendly Map", null, null, null, null, null, null,
                 [kidsFriendlyId])
-        )).Result.Id;
+        )).Id;
 
         await _testUtils.VerifyVenueByIdAsync(petVenueId);
         await _testUtils.VerifyVenueByIdAsync(kidsVenueId);
@@ -1137,10 +1137,10 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(b2CAuth);
 
         var mapUrl = $"{ApiRoutes.Venue.Map}?MinLat=44.7&MaxLat=44.9&MinLng=20.4&MaxLng=20.6&Filter.TagIds={petFriendlyId}";
-        var result = await Factory.ApiClient.GetAsync<ApiResult<VenueMapItemDto[]>>(mapUrl);
+        var result = await Factory.ApiClient.GetAsync<VenueMapItemDto[]>(mapUrl);
 
-        result.Result.Length.ShouldBe(1);
-        result.Result[0].Address.ShouldBe("Pet Friendly Map");
+        result.Length.ShouldBe(1);
+        result[0].Address.ShouldBe("Pet Friendly Map");
     }
 
     [Fact]
@@ -1151,8 +1151,8 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .CreateAndLoginUserAsync("b2b_map@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Map Co", "map@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Map Co", "map@example.com"))).Id;
 
         // 2. Create venues in different locations
         // Bounds for search: Lat [44.7, 44.9], Lng [20.4, 20.6]
@@ -1170,12 +1170,12 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             MinLng: 20.4,
             MaxLng: 20.6);
 
-        var response = await Factory.ApiClient.GetAsync<GetVenuesMapRequest, ApiResult<VenueMapItemDto[]>>(
+        var response = await Factory.ApiClient.GetAsync<GetVenuesMapRequest, VenueMapItemDto[]>(
             ApiRoutes.Venue.Map, mapRequest);
 
-        response.Result.Length.ShouldBe(1);
-        response.Result[0].Address.ShouldBe("Inside Venue");
-        response.Result.ShouldNotContain(v => v.Address == "Outside Venue");
+        response.Length.ShouldBe(1);
+        response[0].Address.ShouldBe("Inside Venue");
+        response.ShouldNotContain(v => v.Address == "Outside Venue");
     }
 
     // ========================================
@@ -1189,8 +1189,8 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .CreateAndLoginUserAsync("b2b_anon_map@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Public Map Co", "pubmap@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Public Map Co", "pubmap@example.com"))).Id;
 
         await _testUtils.CreateVerifiedVenueAsync(companyId, 44.8, 20.5, "Public Venue");
         await _testUtils.CreateVerifiedVenueAsync(companyId, 45.0, 21.0, "Far Venue");
@@ -1203,11 +1203,11 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             MinLng: 20.4,
             MaxLng: 20.6);
 
-        var response = await Factory.ApiClient.GetAsync<GetVenuesMapRequest, ApiResult<VenueMapItemDto[]>>(
+        var response = await Factory.ApiClient.GetAsync<GetVenuesMapRequest, VenueMapItemDto[]>(
             ApiRoutes.Venue.Map, mapRequest);
 
-        response.Result.Length.ShouldBe(1);
-        response.Result[0].Address.ShouldBe("Public Venue");
+        response.Length.ShouldBe(1);
+        response[0].Address.ShouldBe("Public Venue");
     }
 
     [Fact]
@@ -1217,25 +1217,25 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .CreateAndLoginUserAsync("b2b_anon_detail@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Public Detail Co", "pubdetail@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Public Detail Co", "pubdetail@example.com"))).Id;
 
-        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var venueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(45, 13, "Public Detail Venue", "https://site.com", "https://google.com/mo",
-                "https://instagram.com/some-venue", "123", "9-5", TestConfig.S3.PublicUrl + "/cover.jpg", []))).Result.Id;
+                "https://instagram.com/some-venue", "123", "9-5", TestConfig.S3.PublicUrl + "/cover.jpg", []))).Id;
 
         await _testUtils.VerifyVenueByIdAsync(venueId);
 
         Factory.HttpClient.DefaultRequestHeaders.Authorization = null;
 
-        var response = await Factory.ApiClient.GetAsync<ApiResult<GetVenueResponse>>(
+        var response = await Factory.ApiClient.GetAsync<GetVenueResponse>(
             ApiRoutes.Venue.Single(venueId));
 
-        response.Result.Venue.ShouldNotBeNull();
-        response.Result.Venue.Address.ShouldBe("Public Detail Venue");
-        response.Result.Company.ShouldNotBeNull();
-        response.Result.LoyaltyLevel.ShouldBeNull();
+        response.Venue.ShouldNotBeNull();
+        response.Venue.Address.ShouldBe("Public Detail Venue");
+        response.Company.ShouldNotBeNull();
+        response.LoyaltyLevel.ShouldBeNull();
     }
 
     [Fact]
@@ -1245,14 +1245,14 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .CreateAndLoginUserAsync("b2b_anon_verified@example.com", "Password123!", UserType.B2B);
         Factory.ApiClient.SetAuth(b2BAuth);
 
-        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
-            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Verified Only Co", "vonl@example.com"))).Result.Id;
+        var companyId = (await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
+            ApiRoutes.B2B.Company.Root, new CreateCompanyRequest("Verified Only Co", "vonl@example.com"))).Id;
 
         await _testUtils.CreateVerifiedVenueAsync(companyId, 44.8, 20.5, "Verified One");
 
-        var unverifiedVenueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var unverifiedVenueId = (await Factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
-            new CreateVenueRequest(44.8, 20.5, "Unverified One", null, null, null, null, null, null, []))).Result.Id;
+            new CreateVenueRequest(44.8, 20.5, "Unverified One", null, null, null, null, null, null, []))).Id;
 
         Factory.HttpClient.DefaultRequestHeaders.Authorization = null;
 
@@ -1262,11 +1262,11 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             MinLng: 20.4,
             MaxLng: 20.6);
 
-        var response = await Factory.ApiClient.GetAsync<GetVenuesMapRequest, ApiResult<VenueMapItemDto[]>>(
+        var response = await Factory.ApiClient.GetAsync<GetVenuesMapRequest, VenueMapItemDto[]>(
             ApiRoutes.Venue.Map, mapRequest);
 
-        response.Result.Length.ShouldBe(1);
-        response.Result[0].Address.ShouldBe("Verified One");
+        response.Length.ShouldBe(1);
+        response[0].Address.ShouldBe("Verified One");
     }
 
     private async Task<(Guid CompanyId, Guid VenueId)> CreateVerifiedVenueAsync(
@@ -1284,7 +1284,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         if (pinCode != null || isPinCheckInAllowed)
         {
-            var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest, ApiResult.EmptyResult>(
+            var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest>(
                 ApiRoutes.B2B.Venue.Single(venueId),
                 new PatchVenueRequest(
                     Latitude: null,

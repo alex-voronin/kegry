@@ -1,11 +1,11 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Storage;
 using SharedCore.Api;
-using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 using UserProfileModule.API.Dto;
 using UserProfileModule.Contracts.Events;
@@ -36,7 +36,7 @@ public class UserProfileEndpoints : IEndpoints
         apiGroup.MapPost("/api/v1/user-profiles", GetUserProfilesBatch);
     }
 
-    private static async Task<ApiResult.EmptyResult> CreateUserProfile(
+    private static async Task<NoContent> CreateUserProfile(
         [FromBody] CreateUserProfileRequest request,
         ClaimsPrincipal user,
         IUserRepository repository,
@@ -68,10 +68,10 @@ public class UserProfileEndpoints : IEndpoints
         await repository.PublishEventAsync(@event);
         await repository.SaveChangesAndFlushMessagesAsync(ct);
 
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult.EmptyResult> PatchUserProfile(
+    private static async Task<NoContent> PatchUserProfile(
         [FromBody] PatchUserProfileRequest request,
         ClaimsPrincipal user,
         IUserRepository repository,
@@ -126,10 +126,10 @@ public class UserProfileEndpoints : IEndpoints
         await repository.PublishEventAsync(@event);
         await repository.SaveChangesAndFlushMessagesAsync(ct);
 
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult<GetUserProfileResponse>> GetUserProfile(
+    private static async Task<GetUserProfileResponse> GetUserProfile(
         [FromRoute] Guid? id,
         ClaimsPrincipal user,
         IUserRepository repository,
@@ -164,10 +164,10 @@ public class UserProfileEndpoints : IEndpoints
                 .ToArray()
         );
 
-        return ApiResult<GetUserProfileResponse>.Build(new GetUserProfileResponse(dto));
+        return new GetUserProfileResponse(dto);
     }
 
-    private static async Task<ApiResult<UserProfileDto[]>> GetUserProfilesBatch(
+    private static async Task<UserProfileDto[]> GetUserProfilesBatch(
         [FromBody] Guid[] ids,
         IUserRepository repository,
         IS3StorageService storageService,
@@ -191,10 +191,10 @@ public class UserProfileEndpoints : IEndpoints
                 .ToArray()
         )).ToArray();
 
-        return ApiResult<UserProfileDto[]>.Build(dtos);
+        return dtos;
     }
 
-    private static async Task<ApiResult.EmptyResult> UpdatePrivacy(
+    private static async Task<NoContent> UpdatePrivacy(
         [FromBody] UpdatePrivacyRequest request,
         ClaimsPrincipal user,
         IUserRepository repository,
@@ -210,10 +210,10 @@ public class UserProfileEndpoints : IEndpoints
         userProfile.IsPublic = request.IsPublic;
         await repository.SaveChangesAsync(ct);
 
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult<GetPresignedUrlResponse>> GetAvatarUploadUrl(
+    private static async Task<GetPresignedUrlResponse> GetAvatarUploadUrl(
         [FromBody] GetPresignedUrlRequest request,
         ClaimsPrincipal user,
         IProfileImageService imageService,
@@ -226,12 +226,10 @@ public class UserProfileEndpoints : IEndpoints
             contentType: request.ContentType,
             contentLength: request.ContentLength,
             ct: ct);
-        return ApiResult<GetPresignedUrlResponse>.Build(
-            new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl)
-        );
+        return new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl);
     }
 
-    private static async Task<ApiResult<GetPresignedUrlResponse>> GetCoverUploadUrl(
+    private static async Task<GetPresignedUrlResponse> GetCoverUploadUrl(
         [FromBody] GetPresignedUrlRequest request,
         ClaimsPrincipal user,
         IProfileImageService imageService,
@@ -243,9 +241,7 @@ public class UserProfileEndpoints : IEndpoints
             contentType: request.ContentType,
             contentLength: request.ContentLength,
             ct: ct);
-        return ApiResult<GetPresignedUrlResponse>.Build(
-            new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl)
-        );
+        return new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl);
     }
 
     private static UserProfileChangedEvent BuildUserChangedEvent(ClaimsPrincipal user,

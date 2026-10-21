@@ -1,12 +1,12 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using NetTopologySuite.Geometries;
 using Shared.Infrastructure.Storage;
 using SharedCore.Api;
-using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 using SharedCore.Policies;
 using VenueModule.API.B2B.Companies.Dto;
@@ -37,7 +37,7 @@ public class B2BVenueEndpoints : IEndpoints
         managementApiGroup.MapPost("/api/v1/b2b/venue/{id:guid}/cover/upload-url", GetCoverUploadUrl);
     }
 
-    private static async Task<ApiResult<CreateVenueResponse>> CreateVenue(
+    private static async Task<CreateVenueResponse> CreateVenue(
         [FromRoute] Guid companyId,
         [FromBody] CreateVenueRequest request,
         ClaimsPrincipal user,
@@ -91,12 +91,10 @@ public class B2BVenueEndpoints : IEndpoints
         await venueRepository.AddAsync(venue, ct);
         await venueRepository.SaveChangesAsync(ct);
 
-        return ApiResult<CreateVenueResponse>.Build(
-            new CreateVenueResponse(venue.Id)
-        );
+        return new CreateVenueResponse(venue.Id);
     }
 
-    private static async Task<ApiResult<GetVenuesResponse>> GetVenues(
+    private static async Task<GetVenuesResponse> GetVenues(
         ClaimsPrincipal user,
         IVenueRepository venueRepository,
         IS3StorageService storageService,
@@ -116,12 +114,10 @@ public class B2BVenueEndpoints : IEndpoints
                 IsPinCheckInAllowed: v.IsPinCheckInAllowed
             ))
             .ToArray();
-        return ApiResult<GetVenuesResponse>.Build(
-            new GetVenuesResponse(dtos)
-        );
+        return new GetVenuesResponse(dtos);
     }
 
-    private static async Task<ApiResult<GetVenueResponse>> GetVenue(
+    private static async Task<GetVenueResponse> GetVenue(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         IVenueRepository venueRepository,
@@ -135,12 +131,10 @@ public class B2BVenueEndpoints : IEndpoints
             throw VenueExceptions.VenueNotFound(id);
         }
 
-        return ApiResult<GetVenueResponse>.Build(
-            new GetVenueResponse(DomainVenueToDto(storageService, loyaltyService, venue))
-        );
+        return new GetVenueResponse(DomainVenueToDto(storageService, loyaltyService, venue));
     }
 
-    private static async Task<ApiResult.EmptyResult> PatchVenue(
+    private static async Task<NoContent> PatchVenue(
         [FromRoute] Guid id,
         [FromBody] PatchVenueRequest request,
         ClaimsPrincipal user,
@@ -187,10 +181,10 @@ public class B2BVenueEndpoints : IEndpoints
         venue.QrCode = request.QrCode ?? venue.QrCode;
         await venueRepository.SaveChangesAsync(ct);
 
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult.EmptyResult> DeleteVenue(
+    private static async Task<NoContent> DeleteVenue(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         ICompanyRepository companyRepository,
@@ -206,10 +200,10 @@ public class B2BVenueEndpoints : IEndpoints
             ct: ct);
         venue.IsDeleted = true;
         await venueRepository.SaveChangesAsync(ct);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult<GetPresignedUrlResponse>> GetCoverUploadUrl(
+    private static async Task<GetPresignedUrlResponse> GetCoverUploadUrl(
         [FromRoute] Guid id,
         [FromBody] GetPresignedUrlRequest request,
         IVenueRepository venueRepository,
@@ -233,9 +227,7 @@ public class B2BVenueEndpoints : IEndpoints
             contentType: request.ContentType,
             contentLength: request.ContentLength,
             ct: ct);
-        return ApiResult<GetPresignedUrlResponse>.Build(
-            new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl)
-        );
+        return new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl);
     }
 
     private static VenueDto DomainVenueToDto(

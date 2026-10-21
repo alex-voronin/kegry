@@ -1,7 +1,6 @@
 using IntegrationTests.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using SecurityModule.API.Dto;
-using SharedCore.Api.Dto;
 using VenueModule.API.B2B.Companies.Dto;
 using VenueModule.API.B2B.Deals.Dto;
 using VenueModule.API.B2B.Venues.Dto;
@@ -23,17 +22,17 @@ public class TestUtils
 
     public async Task<Guid> CreateCompanyAsync(string name, string email)
     {
-        var response = await _factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+        var response = await _factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
             ApiRoutes.B2B.Company.Root, new CreateCompanyRequest(name, email));
-        return response.Result.Id;
+        return response.Id;
     }
 
     public async Task<Guid> CreateVerifiedVenueAsync(Guid companyId, double lat, double lon, string address)
     {
-        var response = await _factory.ApiClient.PostAsync<CreateVenueRequest, ApiResult<CreateVenueResponse>>(
+        var response = await _factory.ApiClient.PostAsync<CreateVenueRequest, CreateVenueResponse>(
             ApiRoutes.B2B.Company.Venues(companyId),
             new CreateVenueRequest(lat, lon, address, null, null, null, null, null, null, []));
-        var venueId = response.Result.Id;
+        var venueId = response.Id;
 
         await VerifyVenueByIdAsync(venueId);
         return venueId;
@@ -50,12 +49,12 @@ public class TestUtils
 
     public async Task AddDiscountAsync(Guid venueId, Guid companyId, int? percent)
     {
-        var levels = await _factory.ApiClient.GetAsync<ApiResult<LoyaltyLevelDto[]>>(
+        var levels = await _factory.ApiClient.GetAsync<LoyaltyLevelDto[]>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyId));
 
-        await _factory.ApiClient.PostAsync<CreateDiscountRequest, ApiResult<CreateDiscountResponse>>(
+        await _factory.ApiClient.PostAsync<CreateDiscountRequest, CreateDiscountResponse>(
             ApiRoutes.B2B.Venue.Discounts(venueId),
-            new CreateDiscountRequest(levels.Result[0].Id, percent,
+            new CreateDiscountRequest(levels[0].Id, percent,
             [
                 DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday,
                 DayOfWeek.Saturday, DayOfWeek.Sunday
@@ -64,7 +63,7 @@ public class TestUtils
 
     public async Task AddPromotionAsync(Guid venueId, string body)
     {
-        await _factory.ApiClient.PostAsync<CreatePromotionRequest, ApiResult<CreatePromotionResponse>>(
+        await _factory.ApiClient.PostAsync<CreatePromotionRequest, CreatePromotionResponse>(
             ApiRoutes.B2B.Venue.Promotions(venueId),
             new CreatePromotionRequest(PromoType.General, body));
     }
@@ -77,7 +76,7 @@ public class TestUtils
 
         // 2. Configure Loyalty Levels
         await _factory.ApiClient
-            .PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
+            .PutAsync<UpdateLoyaltyLevelsRequest>(
                 ApiRoutes.B2B.Company.LoyaltyLevels(companyId),
                 new UpdateLoyaltyLevelsRequest(levels));
 
@@ -85,7 +84,7 @@ public class TestUtils
         foreach (var discount in discounts)
         {
             await _factory.ApiClient
-                .PostAsync<CreateDiscountRequest, ApiResult<CreateDiscountResponse>>(
+                .PostAsync<CreateDiscountRequest, CreateDiscountResponse>(
                     ApiRoutes.B2B.Venue.Discounts(venueId), discount);
         }
 
@@ -106,7 +105,7 @@ public class TestUtils
         var index = Math.Max(targetLevel - 1, 0);
         for (var i = 0; i < levels[index].VisitsUpperBound; i++)
         {
-            await _factory.ApiClient.PostAsync<CheckInRequest, ApiResult<CheckInResponse>>(
+            await _factory.ApiClient.PostAsync<CheckInRequest, CheckInResponse>(
                 ApiRoutes.Venue.QrCheckIn(venueId), new CheckInRequest(0, 0, null));
 
             // Advance time to allow next check-in

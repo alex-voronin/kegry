@@ -6,11 +6,11 @@ using ChatModule.Domain.Exceptions;
 using ChatModule.Domain.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Storage;
 using SharedCore.Api;
-using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 
 namespace ChatModule.API;
@@ -29,7 +29,7 @@ public class ChatEndpoints : IEndpoints
         group.MapDelete("/api/v1/chat", DeleteChat);
     }
 
-    private static async Task<ApiResult<GetChatResponse>> GetActiveChat(
+    private static async Task<GetChatResponse> GetActiveChat(
         ClaimsPrincipal user,
         IChatService chatService,
         IS3StorageService storageService,
@@ -56,32 +56,28 @@ public class ChatEndpoints : IEndpoints
             .Select(m => DomainMessageToDto(userId, m))
             .ToList();
 
-        return ApiResult<GetChatResponse>.Build(
-            new GetChatResponse(
-                Id: chat.Id,
-                CreatedAt: chat.CreatedAt,
-                ExpiresAt: chat.ExpiresAt,
-                MaxMessagesPerUser: ValidationParameters.MaxMessagesPerUser,
-                ParticipantsMet: chat.ParticipantsMet,
-                Participant: participantDto,
-                Messages: messageDtos
-            )
-        );
+        return new GetChatResponse(
+            Id: chat.Id,
+            CreatedAt: chat.CreatedAt,
+            ExpiresAt: chat.ExpiresAt,
+            MaxMessagesPerUser: ValidationParameters.MaxMessagesPerUser,
+            ParticipantsMet: chat.ParticipantsMet,
+            Participant: participantDto,
+            Messages: messageDtos
+            );
     }
 
-    private static async Task<ApiResult<GetChatStatusResponse>> GetChatStatus(
+    private static async Task<GetChatStatusResponse> GetChatStatus(
         ClaimsPrincipal user,
         IChatService chatService,
         CancellationToken ct)
     {
         var userId = user.GetId();
         var hasActiveChat = await chatService.HasActiveChatAsync(userId, ct);
-        return ApiResult<GetChatStatusResponse>.Build(
-            new GetChatStatusResponse(HasActiveChat: hasActiveChat)
-        );
+        return new GetChatStatusResponse(HasActiveChat: hasActiveChat);
     }
 
-    private static async Task<ApiResult.EmptyResult> SendMessage(
+    private static async Task<NoContent> SendMessage(
         [FromBody] SendMessageRequest request,
         ClaimsPrincipal user,
         IChatService chatService,
@@ -89,17 +85,17 @@ public class ChatEndpoints : IEndpoints
     {
         var userId = user.GetId();
         await chatService.AddNewMessageAsync(userId, request.MessageText, ct);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult.EmptyResult> DeleteChat(
+    private static async Task<NoContent> DeleteChat(
         ClaimsPrincipal user,
         IChatService chatService,
         CancellationToken ct)
     {
         var userId = user.GetId();
         await chatService.DeleteChatAsync(userId, ct);
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
     private static UserDto DomainUserToDto(User user, IS3StorageService storageService)

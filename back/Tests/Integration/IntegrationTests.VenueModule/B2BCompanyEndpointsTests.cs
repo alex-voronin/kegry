@@ -3,7 +3,6 @@ using System.Net.Http.Json;
 using IntegrationTests.Shared;
 using IntegrationTests.Shared.Extensions;
 using SecurityModule.Domain.ValueObjects;
-using SharedCore.Api.Dto;
 using SharedCore.Exceptions;
 using Shouldly;
 using VenueModule.API;
@@ -31,16 +30,16 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Create company
         var createRequest = new CreateCompanyRequest(Name: "Test Company", Email: "company@test.com");
-        var createResponse = await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+        var createResponse = await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
             ApiRoutes.B2B.Company.Root, createRequest);
 
-        var companyId = createResponse.Result.Id;
+        var companyId = createResponse.Id;
 
         // 3. Get company and verify
-        var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetCompanyResponse>>(
+        var getResponse = await Factory.ApiClient.GetAsync<GetCompanyResponse>(
             ApiRoutes.B2B.Company.Single(companyId));
 
-        getResponse.Result.Company.ShouldSatisfyAllConditions(
+        getResponse.Company.ShouldSatisfyAllConditions(
             c => c.Id.ShouldBe(companyId.ToString()),
             c => c.Name.ShouldBe(createRequest.Name),
             c => c.Email.ShouldBe(createRequest.Email)
@@ -62,9 +61,9 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
             if (i < Validation.MaxCompaniesPerUser)
             {
                 var createResponse =
-                    await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+                    await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
                         ApiRoutes.B2B.Company.Root, createRequest);
-                createResponse.Result.Id.ShouldNotBe(Guid.Empty);
+                createResponse.Id.ShouldNotBe(Guid.Empty);
             }
             else
             {
@@ -87,9 +86,9 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authResponse);
 
         var createRequest = new CreateCompanyRequest(Name: "Original Company", Email: "original@test.com");
-        var createResponse = await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+        var createResponse = await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
             ApiRoutes.B2B.Company.Root, createRequest);
-        var companyId = createResponse.Result.Id;
+        var companyId = createResponse.Id;
 
         // 2. Update company
         var patchRequest = new PatchCompanyRequest(
@@ -97,14 +96,14 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
             Email: "updated@test.com",
             AvatarImageUrl: TestConfig.S3.PublicUrl + "/company_avatar.jpg");
 
-        await Factory.ApiClient.PatchAsync<PatchCompanyRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PatchAsync<PatchCompanyRequest>(
             ApiRoutes.B2B.Company.Single(companyId), patchRequest);
 
         // 3. Get company and verify updates
-        var getResponse = await Factory.ApiClient.GetAsync<ApiResult<GetCompanyResponse>>(
+        var getResponse = await Factory.ApiClient.GetAsync<GetCompanyResponse>(
             ApiRoutes.B2B.Company.Single(companyId));
 
-        getResponse.Result.Company.ShouldSatisfyAllConditions(
+        getResponse.Company.ShouldSatisfyAllConditions(
             c => c.Name.ShouldBe(patchRequest.Name),
             c => c.Email.ShouldBe(patchRequest.Email),
             c => c.AvatarImageUrl!.ShouldBeNewerOrTheSameS3Url(patchRequest.AvatarImageUrl!)
@@ -120,12 +119,12 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authResponse);
 
         var createRequest = new CreateCompanyRequest(Name: "To Delete", Email: "delete@test.com");
-        var createResponse = await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+        var createResponse = await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
             ApiRoutes.B2B.Company.Root, createRequest);
-        var companyId = createResponse.Result.Id;
+        var companyId = createResponse.Id;
 
         // 2. Delete company
-        await Factory.ApiClient.DeleteAsync<ApiResult.EmptyResult>(
+        await Factory.ApiClient.DeleteAsync(
             ApiRoutes.B2B.Company.Single(companyId));
 
         // 3. Verify company is not found
@@ -147,20 +146,20 @@ public class B2BCompanyEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Create 2 companies
         var firstRequest = new CreateCompanyRequest(Name: "Company 1", Email: "c1@test.com");
-        await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+        await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
             ApiRoutes.B2B.Company.Root, firstRequest);
 
         var secondRequest = new CreateCompanyRequest(Name: "Company 2", Email: "c2@test.com");
-        await Factory.ApiClient.PostAsync<CreateCompanyRequest, ApiResult<CreateCompanyResponse>>(
+        await Factory.ApiClient.PostAsync<CreateCompanyRequest, CreateCompanyResponse>(
             ApiRoutes.B2B.Company.Root, secondRequest);
 
         // 3. Get companies list and verify both are present
-        var listResponse = await Factory.ApiClient.GetAsync<ApiResult<GetCompaniesResponse>>(
+        var listResponse = await Factory.ApiClient.GetAsync<GetCompaniesResponse>(
             ApiRoutes.B2B.Company.Root);
 
-        listResponse.Result.Companies.Length.ShouldBeGreaterThanOrEqualTo(2);
-        listResponse.Result.Companies.ShouldContain(c => c.Name == firstRequest.Name);
-        listResponse.Result.Companies.ShouldContain(c => c.Name == secondRequest.Name);
+        listResponse.Companies.Length.ShouldBeGreaterThanOrEqualTo(2);
+        listResponse.Companies.ShouldContain(c => c.Name == firstRequest.Name);
+        listResponse.Companies.ShouldContain(c => c.Name == secondRequest.Name);
     }
 
     [Fact]

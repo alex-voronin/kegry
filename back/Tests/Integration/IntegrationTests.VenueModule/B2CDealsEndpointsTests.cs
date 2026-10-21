@@ -34,7 +34,7 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // Venue A: Company "Company A", Dist 10 (approx), Percent 10
         var companyAId = await _testUtils.CreateCompanyAsync("Company A", "a@example.com");
-        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyAId),
             new UpdateLoyaltyLevelsRequest(new[] { new LoyaltyLevelDto(0, 1, true) }));
         var venueAId = await _testUtils.CreateVerifiedVenueAsync(companyAId, 0.1, 0.1, "Address A"); // ~15km
@@ -42,7 +42,7 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // Venue B: Company "Company B", Dist 5 (approx), Percent 10
         var companyBId = await _testUtils.CreateCompanyAsync("Company B", "b@example.com");
-        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyBId),
             new UpdateLoyaltyLevelsRequest(new[] { new LoyaltyLevelDto(0, 1, true) }));
         var venueBId = await _testUtils.CreateVerifiedVenueAsync(companyBId, 0.05, 0.05, "Address B"); // ~7.8km
@@ -50,7 +50,7 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // Venue C: Company "Company C", Dist 5 (approx), Percent 20
         var companyCId = await _testUtils.CreateCompanyAsync("Company C", "c@example.com");
-        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyCId),
             new UpdateLoyaltyLevelsRequest(new[] { new LoyaltyLevelDto(0, 1, true) }));
         var venueCId = await _testUtils.CreateVerifiedVenueAsync(companyCId, 0.051, 0.051, "Address C"); // ~8km
@@ -58,7 +58,7 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // Venue D: Company "Company D", Dist 5 (approx), Percent 10
         var companyDId = await _testUtils.CreateCompanyAsync("Company D", "d@example.com");
-        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyDId),
             new UpdateLoyaltyLevelsRequest(new[] { new LoyaltyLevelDto(0, 1, true) }));
         var venueDId = await _testUtils.CreateVerifiedVenueAsync(companyDId, 0.05, 0.05, "Address D"); // ~7.8km
@@ -66,7 +66,7 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // Venue E: Company "Company D", Custom
         var companyEId = await _testUtils.CreateCompanyAsync("Company E", "e@example.com");
-        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyEId),
             new UpdateLoyaltyLevelsRequest(new[] { new LoyaltyLevelDto(0, 1, true) }));
         var venueEId = await _testUtils.CreateVerifiedVenueAsync(companyEId, 0.05, 0.05, "Address E"); // ~7.8km
@@ -78,10 +78,10 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(b2CAuth);
 
         // 4. Get discounts list
-        var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<AvailableDiscountDto>>>(
+        var response = await Factory.ApiClient.GetAsync<PaginatedResponse<AvailableDiscountDto>>(
             $"{ApiRoutes.Deals.Discounts}?Latitude=0&Longitude=0&Offset=0&Limit=10");
 
-        var discounts = response.Result.Data.ToArray();
+        var discounts = response.Data.ToArray();
 
         // Expected Order:
         // 1. Venue C (20%)
@@ -148,10 +148,10 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(b2CAuth);
 
         // 4. Get promotions list
-        var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<AvailablePromotionDto>>>(
+        var response = await Factory.ApiClient.GetAsync<PaginatedResponse<AvailablePromotionDto>>(
             $"{ApiRoutes.Deals.Promotions}?Latitude=0&Longitude=0&Offset=0&Limit=10");
 
-        var promos = response.Result.Data.ToArray();
+        var promos = response.Data.ToArray();
 
         // Expected Order:
         // 1. Venue C (2 promos)
@@ -202,9 +202,9 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
             levels, 2, venueId);
 
         // Ensure Level 2 discount is applied
-        var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<AvailableDiscountDto>>>(
+        var response = await Factory.ApiClient.GetAsync<PaginatedResponse<AvailableDiscountDto>>(
             $"{ApiRoutes.Deals.Discounts}?Latitude=0&Longitude=0&Offset=0&Limit=10");
-        response.Result.Data.First().Percent.ShouldBe(15);
+        response.Data.First().Percent.ShouldBe(15);
     }
 
     [Fact]
@@ -236,15 +236,15 @@ public class B2CDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Disable 3rd loyalty level
         Factory.ApiClient.SetAuth(b2BAuth);
-        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyId),
             new UpdateLoyaltyLevelsRequest(new[] { new LoyaltyLevelDto(3, 4, false) }));
 
         // 3. Ensure Level 2 discount is applied
         Factory.ApiClient.SetAuth(b2CAuth);
-        var response = await Factory.ApiClient.GetAsync<ApiResult<PaginatedResponse<AvailableDiscountDto>>>(
+        var response = await Factory.ApiClient.GetAsync<PaginatedResponse<AvailableDiscountDto>>(
             $"{ApiRoutes.Deals.Discounts}?Latitude=0&Longitude=0&Offset=0&Limit=10");
-        response.Result.Data.First().Percent.ShouldBe(15);
+        response.Data.First().Percent.ShouldBe(15);
     }
 
     private async Task<AuthResponse> CreateB2BUser()

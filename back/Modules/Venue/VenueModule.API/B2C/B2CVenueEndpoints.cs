@@ -38,7 +38,7 @@ public class B2CVenueEndpoints : IEndpoints
         publicGroup.MapGet("/api/v1/venue/{id:guid}", GetVenue);
     }
 
-    private static async Task<ApiResult<CheckInResponse>> CheckInToVenue(
+    private static async Task<CheckInResponse> CheckInToVenue(
         [FromRoute] Guid qrCode,
         [FromBody] CheckInRequest request,
         ClaimsPrincipal user,
@@ -53,12 +53,10 @@ public class B2CVenueEndpoints : IEndpoints
             pinCode: request.PinCode,
             ct: ct);
 
-        return ApiResult<CheckInResponse>.Build(
-            result: new CheckInResponse(venueId)
-        );
+        return new CheckInResponse(venueId);
     }
 
-    private static async Task<ApiResult<GetCheckInSettingsResponse>> GetCheckInSettings(
+    private static async Task<GetCheckInSettingsResponse> GetCheckInSettings(
         [FromRoute] Guid qrCode,
         IVenueRepository venueRepository,
         CancellationToken ct)
@@ -69,12 +67,10 @@ public class B2CVenueEndpoints : IEndpoints
             throw VenueExceptions.VenueNotFoundByQr(qrCode);
         }
 
-        return ApiResult<GetCheckInSettingsResponse>.Build(
-            result: new GetCheckInSettingsResponse(venue.IsPinCheckInAllowed)
-        );
+        return new GetCheckInSettingsResponse(venue.IsPinCheckInAllowed);
     }
 
-    private static async Task<ApiResult<PaginatedResponse<VenueListItemDto>>> GetVenues(
+    private static async Task<PaginatedResponse<VenueListItemDto>> GetVenues(
         [AsParameters] GetVenuesRequest request,
         IVenueRepository repository,
         ITagRepository tagRepository,
@@ -105,12 +101,10 @@ public class B2CVenueEndpoints : IEndpoints
                 )
             )
             .ToArray();
-        return ApiResult<PaginatedResponse<VenueListItemDto>>.Build(
-            new PaginatedResponse<VenueListItemDto>(dtos, totalCount)
-        );
+        return new PaginatedResponse<VenueListItemDto>(dtos, totalCount);
     }
 
-    private static async Task<ApiResult<VenueMapItemDto[]>> GetVenuesMap(
+    private static async Task<VenueMapItemDto[]> GetVenuesMap(
         [AsParameters] GetVenuesMapRequest request,
         IVenueRepository repository,
         ITagRepository tagRepository,
@@ -137,10 +131,10 @@ public class B2CVenueEndpoints : IEndpoints
             TagIds: GetSortedTagIds(v)
         )).ToArray();
 
-        return ApiResult<VenueMapItemDto[]>.Build(dtos);
+        return dtos;
     }
 
-    private static async Task<ApiResult<GetVenueResponse>> GetVenue(
+    private static async Task<GetVenueResponse> GetVenue(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         IVenueRepository repository,
@@ -177,15 +171,13 @@ public class B2CVenueEndpoints : IEndpoints
             );
         }
 
-        return ApiResult<GetVenueResponse>.Build(
-            new GetVenueResponse(
-                Company: companyDto,
-                Venue: venueDto,
-                LoyaltyLevel: loyaltyLevelDto)
-        );
+        return new GetVenueResponse(
+            Company: companyDto,
+            Venue: venueDto,
+            LoyaltyLevel: loyaltyLevelDto);
     }
 
-    private static async Task<ApiResult<GetDiscountsByWeekdayResponse>> GetDiscountsByWeekday(
+    private static async Task<GetDiscountsByWeekdayResponse> GetDiscountsByWeekday(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         ILoyaltyService loyaltyService,
@@ -205,17 +197,15 @@ public class B2CVenueEndpoints : IEndpoints
             venueId: id,
             ct: ct);
 
-        return ApiResult<GetDiscountsByWeekdayResponse>.Build(
-            new GetDiscountsByWeekdayResponse(
-                Sunday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Sunday)),
-                Monday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Monday)),
-                Tuesday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Tuesday)),
-                Wednesday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Wednesday)),
-                Thursday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Thursday)),
-                Friday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Friday)),
-                Saturday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Saturday))
-            )
-        );
+        return new GetDiscountsByWeekdayResponse(
+            Sunday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Sunday)),
+            Monday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Monday)),
+            Tuesday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Tuesday)),
+            Wednesday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Wednesday)),
+            Thursday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Thursday)),
+            Friday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Friday)),
+            Saturday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Saturday))
+            );
     }
 
     private static string[] GetSortedTagIds(Venue venue)
@@ -263,14 +253,14 @@ public class B2CVenueEndpoints : IEndpoints
         );
     }
 
-    private static async Task<ApiResult<VenueBatchItemDto[]>> GetVenuesBatch(
+    private static async Task<VenueBatchItemDto[]> GetVenuesBatch(
         [FromBody] Guid[] ids,
         IVenueRepository repository,
         IS3StorageService storageService,
         CancellationToken ct)
     {
         if (ids.Length == 0)
-            return ApiResult<VenueBatchItemDto[]>.Build([]);
+            return [];
 
         var venues = await repository.GetByIdsAsync(ids, ct);
 
@@ -283,7 +273,7 @@ public class B2CVenueEndpoints : IEndpoints
             Address: v.Address
         )).ToArray();
 
-        return ApiResult<VenueBatchItemDto[]>.Build(dtos);
+        return dtos;
     }
 
     private static CompanyDto DomainCompanyToDto(IS3StorageService storageService, Company company)

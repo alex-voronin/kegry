@@ -30,7 +30,7 @@ public class ReferralsTests : IntegrationTestBase, IAsyncLifetime
         var deviceId = "device-123";
         var fcmToken = "fcm-token-123";
         var request = new UpdateFcmTokenRequest(deviceId, fcmToken);
-        await Factory.ApiClient.PostAsync<UpdateFcmTokenRequest, ApiResult.EmptyResult>(
+        await Factory.ApiClient.PostAsync<UpdateFcmTokenRequest>(
             ApiRoutes.Notifications.UpdateDeviceToken, request);
 
         // 2. Create referral user B
@@ -48,25 +48,25 @@ public class ReferralsTests : IntegrationTestBase, IAsyncLifetime
         // 3. Verify users are friends
         Factory.ApiClient.SetAuth(authA);
         var friendsA = await Factory.ApiClient
-            .GetAsync<ApiResult<PaginatedResponse<FriendUserDto>>>(ApiRoutes.Feed.GetFriends);
-        friendsA.Result.TotalCount.ShouldBe(1);
-        friendsA.Result.Data.First().Id.ShouldBe(userBId);
+            .GetAsync<PaginatedResponse<FriendUserDto>>(ApiRoutes.Feed.GetFriends);
+        friendsA.TotalCount.ShouldBe(1);
+        friendsA.Data.First().Id.ShouldBe(userBId);
 
         Factory.ApiClient.SetAuth(authB);
         var friendsB = await Factory.ApiClient
-            .GetAsync<ApiResult<PaginatedResponse<FriendUserDto>>>(ApiRoutes.Feed.GetFriends);
-        friendsB.Result.TotalCount.ShouldBe(1);
-        friendsB.Result.Data.First().Id.ShouldBe(userAId);
+            .GetAsync<PaginatedResponse<FriendUserDto>>(ApiRoutes.Feed.GetFriends);
+        friendsB.TotalCount.ShouldBe(1);
+        friendsB.Data.First().Id.ShouldBe(userAId);
 
         // 4. Verify user A has a secret npc and received a push
         Factory.ApiClient.SetAuth(authA);
-        var metNpcsA = await Factory.ApiClient.GetAsync<ApiResult<GetMetNpcsResponse>>(ApiRoutes.Npc.MetNpcs);
-        metNpcsA.Result.MetNpcs.Length.ShouldBe(1);
-        metNpcsA.Result.MetNpcs.First().IsSecret.ShouldBeTrue();
+        var metNpcsA = await Factory.ApiClient.GetAsync<GetMetNpcsResponse>(ApiRoutes.Npc.MetNpcs);
+        metNpcsA.MetNpcs.Length.ShouldBe(1);
+        metNpcsA.MetNpcs.First().IsSecret.ShouldBeTrue();
 
         // 4. Verify user B has no npcs
         Factory.ApiClient.SetAuth(authB);
-        var metNpcsB = await Factory.ApiClient.GetAsync<ApiResult<GetMetNpcsResponse>>(ApiRoutes.Npc.MetNpcs);
-        metNpcsB.Result.MetNpcs.Length.ShouldBe(0);
+        var metNpcsB = await Factory.ApiClient.GetAsync<GetMetNpcsResponse>(ApiRoutes.Npc.MetNpcs);
+        metNpcsB.MetNpcs.Length.ShouldBe(0);
     }
 }

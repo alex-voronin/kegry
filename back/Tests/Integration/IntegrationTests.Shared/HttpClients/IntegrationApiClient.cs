@@ -58,6 +58,30 @@ public class IntegrationApiClient
         return await ReadSuccessAsync<TResp>(response);
     }
 
+    public async Task<HttpResponseMessage> PostAsync<TReq>(string url, TReq data)
+    {
+        var response = await _apiHttpClient.PostAsJsonAsync(url, data, _options);
+        return await EnsureNoContentAsync(response);
+    }
+
+    public async Task<HttpResponseMessage> PutAsync<TReq>(string url, TReq data)
+    {
+        var response = await _apiHttpClient.PutAsJsonAsync(url, data, _options);
+        return await EnsureNoContentAsync(response);
+    }
+
+    public async Task<HttpResponseMessage> PatchAsync<TReq>(string url, TReq data)
+    {
+        var response = await _apiHttpClient.PatchAsJsonAsync(url, data, _options);
+        return await EnsureNoContentAsync(response);
+    }
+
+    public async Task<HttpResponseMessage> DeleteAsync(string url)
+    {
+        var response = await _apiHttpClient.DeleteAsync(url);
+        return await EnsureNoContentAsync(response);
+    }
+
     public async Task<ApiErrorResponse> GetProblemAsync(string url)
     {
         var response = await _apiHttpClient.GetAsync(url);
@@ -103,6 +127,23 @@ public class IntegrationApiClient
     {
         _apiHttpClient.DefaultRequestHeaders.AcceptLanguage.Clear();
         _apiHttpClient.DefaultRequestHeaders.AcceptLanguage.ParseAdd(locale);
+    }
+
+    private async Task<HttpResponseMessage> EnsureNoContentAsync(HttpResponseMessage response)
+    {
+        if (response.StatusCode == HttpStatusCode.NoContent)
+        {
+            return response;
+        }
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var problem = await ReadProblemAsync(response);
+            throw new ApiTestException(problem.StatusCode, problem.ProblemDetails);
+        }
+
+        throw new InvalidOperationException(
+            $"Expected HTTP 204 No Content, but got {(int)response.StatusCode} {response.StatusCode}.");
     }
 
     private async Task<TResp> ReadSuccessAsync<TResp>(HttpResponseMessage response)

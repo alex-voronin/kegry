@@ -1,11 +1,11 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Storage;
 using SharedCore.Api;
-using SharedCore.Api.Dto;
 using SharedCore.Extensions;
 using SharedCore.Policies;
 using VenueModule.API.B2B.Companies.Dto;
@@ -34,7 +34,7 @@ public class B2BCompanyEndpoints : IEndpoints
         managementApiGroup.MapPost("/api/v1/b2b/company/{id:guid}/avatar/upload-url", GetAvatarUploadUrl);
     }
 
-    private static async Task<ApiResult<CreateCompanyResponse>> CreateCompany(
+    private static async Task<CreateCompanyResponse> CreateCompany(
         [FromBody] CreateCompanyRequest request,
         ClaimsPrincipal user,
         ICompanyRepository repository,
@@ -62,10 +62,10 @@ public class B2BCompanyEndpoints : IEndpoints
         await repository.AddAsync(company, ct);
         await repository.SaveChangesAsync(ct);
 
-        return ApiResult<CreateCompanyResponse>.Build(new CreateCompanyResponse(company.Id));
+        return new CreateCompanyResponse(company.Id);
     }
 
-    private static async Task<ApiResult<GetCompaniesResponse>> GetCompanies(
+    private static async Task<GetCompaniesResponse> GetCompanies(
         ICompanyRepository repository,
         ClaimsPrincipal user,
         IS3StorageService storageService,
@@ -80,12 +80,10 @@ public class B2BCompanyEndpoints : IEndpoints
         var dtos = companies
             .Select(c => DomainCompanyToDto(storageService, c))
             .ToArray();
-        return ApiResult<GetCompaniesResponse>.Build(
-            new GetCompaniesResponse(Companies: dtos)
-        );
+        return new GetCompaniesResponse(Companies: dtos);
     }
 
-    private static async Task<ApiResult<GetCompanyResponse>> GetCompany(
+    private static async Task<GetCompanyResponse> GetCompany(
         [FromRoute] Guid id,
         ICompanyRepository repository,
         ClaimsPrincipal user,
@@ -111,14 +109,12 @@ public class B2BCompanyEndpoints : IEndpoints
             .Select(v => DomainVenueToListItemDto(storageService, loyaltyService, v))
             .ToArray();
 
-        return ApiResult<GetCompanyResponse>.Build(
-            new GetCompanyResponse(
-                Company: companyDto,
-                Venues: venuesDto)
-        );
+        return new GetCompanyResponse(
+            Company: companyDto,
+            Venues: venuesDto);
     }
 
-    private static async Task<ApiResult.EmptyResult> PatchCompany(
+    private static async Task<NoContent> PatchCompany(
         [FromRoute] Guid id,
         [FromBody] PatchCompanyRequest request,
         ClaimsPrincipal user,
@@ -147,10 +143,10 @@ public class B2BCompanyEndpoints : IEndpoints
 
         await repository.SaveChangesAsync(ct);
 
-        return ApiResult.Empty;
+        return TypedResults.NoContent();
     }
 
-    private static async Task<IResult> DeleteCompany(
+    private static async Task<NoContent> DeleteCompany(
         [FromRoute] Guid id,
         ClaimsPrincipal user,
         ICompanyRepository repository,
@@ -176,10 +172,10 @@ public class B2BCompanyEndpoints : IEndpoints
         company.IsDeleted = true;
         await repository.SaveChangesAsync(ct);
 
-        return Results.Ok(ApiResult.Empty);
+        return TypedResults.NoContent();
     }
 
-    private static async Task<ApiResult<GetPresignedUrlResponse>> GetAvatarUploadUrl(
+    private static async Task<GetPresignedUrlResponse> GetAvatarUploadUrl(
         [FromRoute] Guid id,
         [FromBody] GetPresignedUrlRequest request,
         ICompanyRepository repository,
@@ -204,9 +200,7 @@ public class B2BCompanyEndpoints : IEndpoints
             contentType: request.ContentType,
             contentLength: request.ContentLength,
             ct: ct);
-        return ApiResult<GetPresignedUrlResponse>.Build(
-            new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl)
-        );
+        return new GetPresignedUrlResponse(UploadUrl: urls.UploadUrl, PublicDownloadUrl: urls.PublicDownloadUrl);
     }
 
     private static VenueListItemDto DomainVenueToListItemDto(
