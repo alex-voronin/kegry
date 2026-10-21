@@ -18,6 +18,10 @@ interface CheckInResponse {
   venueId: string;
 }
 
+export interface GetCheckInSettingsResponse {
+  isPinCheckInAllowed: boolean;
+}
+
 type CheckInBody =
   | { latitude: number; longitude: number }
   | { pinCode: string };
@@ -67,9 +71,10 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
         toast.dismiss(toastId);
         // Location failed, verify if PIN check-in is allowed before showing popup
         try {
-          const settingsResponse = await apiClient.get<{
-            isPinCheckInAllowed: boolean;
-          }>(API_ENDPOINTS.VENUES.QR_CHECK_IN_SETTINGS(qrCode));
+          const settingsResponse =
+            await apiClient.get<GetCheckInSettingsResponse>(
+              API_ENDPOINTS.VENUES.QR_CHECK_IN_SETTINGS(qrCode),
+            );
 
           if (settingsResponse.data.isPinCheckInAllowed) {
             setPendingQrCode(qrCode);

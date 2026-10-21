@@ -1,5 +1,6 @@
 import axios from 'axios';
 import apiClient from '@/lib/api-client';
+import type { PresignedUrlResponse } from '@/lib/api-types';
 import imageCompression from 'browser-image-compression';
 
 const uploadClient = axios.create({
@@ -62,11 +63,6 @@ export async function uploadImage(
   blob: Blob,
   presignedUrlEndpoint: string,
 ): Promise<string> {
-  interface PresignedUrlResponse {
-    uploadUrl: string;
-    publicDownloadUrl: string;
-  }
-
   // Get presigned URL
   const presignedResponse = await apiClient.post<PresignedUrlResponse>(
     presignedUrlEndpoint,

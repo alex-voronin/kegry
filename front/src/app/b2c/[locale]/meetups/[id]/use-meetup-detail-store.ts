@@ -3,36 +3,7 @@ import { devtools } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS } from '@/lib/routes';
 import { rethrowApiError } from '@/lib/api-error';
-
-export interface EventContact {
-  id: string;
-  type: string;
-  value: string;
-  isPublic: boolean;
-}
-
-export interface EventDetail {
-  id: string;
-  coverImageUrl: string | null;
-  title: string;
-  description: string;
-  startDateTime: string;
-  type: 'Event' | 'Meetup';
-  venueId: string;
-  creatorId: string;
-  creatorAvatarUrl: string | null;
-  isVisibleOnMap: boolean;
-  maxParticipants: number | null;
-  requiresApproval: boolean;
-  participantsCount: number;
-  pendingApprovalsCount: number;
-  pendingParticipantIds: string[];
-  approvedParticipantIds: string[];
-  contacts: EventContact[];
-  hobbyIds: string[];
-  participationStatus?: string;
-  isCreator: boolean;
-}
+import type { EventDto } from '@/lib/event-types';
 
 export interface PendingUser {
   id: string;
@@ -48,8 +19,13 @@ export interface VenueInfo {
   name: string;
 }
 
+export interface VenueSummaryResponse {
+  company: { name: string };
+  venue: { address: string };
+}
+
 interface MeetupDetailState {
-  event: EventDetail | null;
+  event: EventDto | null;
   venue: VenueInfo | null;
   pendingUsers: PendingUser[];
   approvedUsers: PendingUser[];
@@ -77,16 +53,15 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
     fetchEvent: async (eventId: string) => {
       set({ isLoading: true });
       try {
-        const eventRes = await apiClient.get<EventDetail>(
+        const eventRes = await apiClient.get<EventDto>(
           API_ENDPOINTS.EVENTS.UPDATE(eventId),
         );
         const ev = eventRes.data;
         set({ event: ev });
 
-        const venueRes = await apiClient.get<{
-          company: { name: string };
-          venue: { address: string };
-        }>(API_ENDPOINTS.VENUES.DETAILS(ev.venueId));
+        const venueRes = await apiClient.get<VenueSummaryResponse>(
+          API_ENDPOINTS.VENUES.DETAILS(ev.venueId),
+        );
         const venueData = venueRes.data;
         set({
           venue: {
@@ -105,7 +80,7 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
       set({ isJoining: true });
       try {
         await apiClient.post<void>(API_ENDPOINTS.EVENTS.JOIN(eventId));
-        const eventRes = await apiClient.get<EventDetail>(
+        const eventRes = await apiClient.get<EventDto>(
           API_ENDPOINTS.EVENTS.UPDATE(eventId),
         );
         set({ event: eventRes.data, isJoining: false });

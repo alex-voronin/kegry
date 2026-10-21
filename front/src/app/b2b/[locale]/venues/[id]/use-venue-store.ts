@@ -49,6 +49,18 @@ export interface GetVenueResponse {
   venue: VenueDto;
 }
 
+export interface CreateVenueResponse {
+  id: string;
+}
+
+export interface CreatePromotionResponse {
+  id: string;
+}
+
+export interface CreateDiscountResponse {
+  id: string;
+}
+
 interface VenueState {
   currentVenue: VenueDto | null;
   isLoading: boolean;
@@ -145,7 +157,7 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
     });
 
     try {
-      const response = await apiClient.post<{ id: string }>(
+      const response = await apiClient.post<CreatePromotionResponse>(
         API_ENDPOINTS.B2B.VENUES.PROMOTIONS(venueId),
         { type, body },
       );
@@ -234,7 +246,7 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
     });
 
     try {
-      const response = await apiClient.post<{ id: string }>(
+      const response = await apiClient.post<CreateDiscountResponse>(
         API_ENDPOINTS.B2B.VENUES.DISCOUNTS(venueId),
         { percent, days, loyaltyLevelId },
       );
@@ -340,7 +352,7 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
   },
   createVenue: async (companyId: string, request: CreateVenueRequest) => {
     try {
-      const response = await apiClient.post<{ id: string }>(
+      const response = await apiClient.post<CreateVenueResponse>(
         API_ENDPOINTS.B2B.COMPANIES.VENUE(companyId),
         request,
       );

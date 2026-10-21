@@ -12,21 +12,7 @@ import { rethrowApiError } from '@/lib/api-error';
 import { uploadImage } from '@/lib/image-utils';
 import { EventForm } from '../../_components/event-form';
 import type { EventContactForm } from '@/components/ui/contact-section';
-
-interface EventDetailDto {
-  id: string;
-  title: string;
-  description: string;
-  startDateTime: string;
-  type: 'Event' | 'Meetup';
-  coverImageUrl: string | null;
-  isVisibleOnMap: boolean;
-  maxParticipants: number | null;
-  requiresApproval: boolean;
-  contacts: { id: string; type: string; value: string; isPublic: boolean }[];
-  hobbyIds: string[];
-  [key: string]: unknown;
-}
+import type { EventDto } from '@/lib/event-types';
 
 export default function EditEventPage() {
   const params = useParams();
@@ -34,14 +20,14 @@ export default function EditEventPage() {
   const { safeBack } = useSafeBack();
 
   const eventId = params.id as string;
-  const [event, setEvent] = useState<EventDetailDto | null>(null);
+  const [event, setEvent] = useState<EventDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const loadEvent = async () => {
       try {
-        const response = await apiClient.get<EventDetailDto>(
+        const response = await apiClient.get<EventDto>(
           API_ENDPOINTS.B2B.EVENTS.DETAILS(eventId),
         );
         setEvent(response.data);

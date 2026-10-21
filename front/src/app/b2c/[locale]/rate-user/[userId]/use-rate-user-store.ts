@@ -22,6 +22,10 @@ export interface UserProfileDto {
   hobbies: HobbyDto[];
 }
 
+export interface GetUserProfileResponse {
+  userProfile: UserProfileDto;
+}
+
 interface RateUserState {
   userProfile: UserProfileDto | null;
   isLoading: boolean;
@@ -40,7 +44,7 @@ export const useRateUserStore = create<RateUserState>((set) => ({
   fetchUserToRate: async (userId: string) => {
     set({ isLoading: true });
     try {
-      const response = await apiClient.get<{ userProfile: UserProfileDto }>(
+      const response = await apiClient.get<GetUserProfileResponse>(
         `${API_ENDPOINTS.USER_PROFILE.PROFILE}/${userId}`,
       );
 

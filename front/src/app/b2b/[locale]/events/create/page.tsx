@@ -8,6 +8,7 @@ import { useSafeBack } from '@/hooks/use-safe-back';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
+import type { EventDto } from '@/lib/event-types';
 import { uploadImage } from '@/lib/image-utils';
 import { EventForm } from '../_components/event-form';
 import type { EventContactForm } from '@/components/ui/contact-section';
@@ -34,7 +35,7 @@ export default function CreateEventPage() {
   }) => {
     setIsSubmitting(true);
     try {
-      const response = await apiClient.post<{ id: string }>(
+      const response = await apiClient.post<EventDto>(
         API_ENDPOINTS.B2B.EVENTS.BASE,
         {
           title: data.title,

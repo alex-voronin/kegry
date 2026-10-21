@@ -6,6 +6,10 @@ import { API_ENDPOINTS } from '@/lib/routes';
 
 const THROTTLE_MS = 10_000;
 
+export interface PendingApprovalsCountDto {
+  total: number;
+}
+
 interface PendingApprovalsState {
   total: number;
   isLoading: boolean;
@@ -25,7 +29,7 @@ export const usePendingApprovalsStore = create<PendingApprovalsState>(
 
       set({ isLoading: true });
       try {
-        const res = await apiClient.get<{ total: number }>(
+        const res = await apiClient.get<PendingApprovalsCountDto>(
           API_ENDPOINTS.EVENTS.PENDING_COUNT,
         );
         set({ total: res.data.total, lastFetchedAt: Date.now() });

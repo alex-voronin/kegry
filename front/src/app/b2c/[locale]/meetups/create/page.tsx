@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
+import type { EventDto } from '@/lib/event-types';
 import { uploadImage } from '@/lib/image-utils';
 import { useUserProfileStore } from '@/store/use-user-profile-store';
 import { useAuthStore } from '@/lib/auth/use-auth-store';
@@ -59,7 +60,7 @@ export default function CreateMeetupPage() {
     requireProfile(async () => {
       setIsSubmitting(true);
       try {
-        const response = await apiClient.post<{ id: string }>(
+        const response = await apiClient.post<EventDto>(
           API_ENDPOINTS.EVENTS.CREATE,
           {
             creatorAvatarUrl: avatarUrl,

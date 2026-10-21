@@ -15,6 +15,16 @@ export interface SettingsDto {
   locale: string;
 }
 
+export interface GetFeedSettingsResponse {
+  settings: { distanceUnits: DistanceUnits };
+}
+
+export interface GetNotificationSettingsResponse {
+  pushesEnabled: boolean;
+  emailsEnabled: boolean;
+  locale: string;
+}
+
 export enum SettingsFetchType {
   All = 'All',
   OnlyNotifications = 'OnlyNotifications',
@@ -54,15 +64,11 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 
       const [feedSettingsRes, notifSettingsRes] = await Promise.all([
         fetchFeed
-          ? apiClient.get<{
-              settings: { distanceUnits: DistanceUnits };
-            }>(API_ENDPOINTS.FEED.SETTINGS)
+          ? apiClient.get<GetFeedSettingsResponse>(API_ENDPOINTS.FEED.SETTINGS)
           : null,
-        apiClient.get<{
-          pushesEnabled: boolean;
-          emailsEnabled: boolean;
-          locale: string;
-        }>(API_ENDPOINTS.NOTIFICATIONS.SETTINGS),
+        apiClient.get<GetNotificationSettingsResponse>(
+          API_ENDPOINTS.NOTIFICATIONS.SETTINGS,
+        ),
       ]);
 
       const newState: Partial<SettingsState> = {};

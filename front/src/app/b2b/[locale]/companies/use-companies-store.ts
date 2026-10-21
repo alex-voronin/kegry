@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
 import { API_ENDPOINTS } from '@/lib/routes';
+import type { PresignedUrlResponse } from '@/lib/api-types';
 
 export interface LoyaltyLevelDto {
   id: number;
@@ -29,6 +30,19 @@ export interface VenueListItemDto {
 
 export interface CompanyDetailDto extends CompanyDto {
   venues: VenueListItemDto[];
+}
+
+export interface GetCompaniesResponse {
+  companies: CompanyDto[];
+}
+
+export interface GetCompanyResponse {
+  company: CompanyDto;
+  venues: VenueListItemDto[];
+}
+
+export interface CreateCompanyResponse {
+  id: string;
 }
 
 interface CompaniesState {
@@ -63,9 +77,9 @@ export const useCompaniesStore = create<CompaniesState>()(
       fetchCompanies: async () => {
         set({ isLoading: true });
         try {
-          const response = await apiClient.get<{
-            companies: CompanyDto[];
-          }>(API_ENDPOINTS.B2B.COMPANIES.BASE);
+          const response = await apiClient.get<GetCompaniesResponse>(
+            API_ENDPOINTS.B2B.COMPANIES.BASE,
+          );
           const { companies } = response.data;
 
           set({
@@ -80,10 +94,9 @@ export const useCompaniesStore = create<CompaniesState>()(
       fetchCompany: async (id: string) => {
         set({ isProfileLoading: true });
         try {
-          const response = await apiClient.get<{
-            company: CompanyDto;
-            venues: VenueListItemDto[];
-          }>(API_ENDPOINTS.B2B.COMPANIES.BY_ID(id));
+          const response = await apiClient.get<GetCompanyResponse>(
+            API_ENDPOINTS.B2B.COMPANIES.BY_ID(id),
+          );
           const { company, venues } = response.data;
 
           set({
@@ -97,7 +110,7 @@ export const useCompaniesStore = create<CompaniesState>()(
       },
       createCompany: async (name: string, email?: string) => {
         try {
-          const response = await apiClient.post<{ id: string }>(
+          const response = await apiClient.post<CreateCompanyResponse>(
             API_ENDPOINTS.B2B.COMPANIES.BASE,
             {
               name,
@@ -111,12 +124,10 @@ export const useCompaniesStore = create<CompaniesState>()(
       },
       getAvatarUploadUrl: async (id: string, contentLength: number) => {
         try {
-          const response = await apiClient.post<{
-            uploadUrl: string;
-            publicDownloadUrl: string;
-          }>(API_ENDPOINTS.B2B.COMPANIES.AVATAR_UPLOAD_URL(id), {
-            contentLength,
-          });
+          const response = await apiClient.post<PresignedUrlResponse>(
+            API_ENDPOINTS.B2B.COMPANIES.AVATAR_UPLOAD_URL(id),
+            { contentLength },
+          );
           return response.data;
         } catch (error) {
           rethrowApiError(error, 'Failed to get upload URL');

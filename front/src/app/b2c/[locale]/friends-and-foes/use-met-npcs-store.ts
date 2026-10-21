@@ -10,6 +10,10 @@ export interface MetNpcDto {
   coverUrl: string;
 }
 
+export interface GetMetNpcsResponse {
+  metNpcs: MetNpcDto[];
+}
+
 interface MetNpcsState {
   metNpcs: MetNpcDto[];
   isLoading: boolean;
@@ -30,7 +34,7 @@ export const useMetNpcsStore = create<MetNpcsState>()((set) => ({
     set({ isLoading: true });
 
     try {
-      const response = await apiClient.get<{ metNpcs: MetNpcDto[] }>(
+      const response = await apiClient.get<GetMetNpcsResponse>(
         API_ENDPOINTS.NPC.MET,
       );
 

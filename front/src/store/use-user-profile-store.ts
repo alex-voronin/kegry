@@ -25,6 +25,10 @@ export interface UserProfileDto {
   isPublic: boolean;
 }
 
+export interface GetUserProfileResponse {
+  userProfile: UserProfileDto;
+}
+
 export interface UserProfileState {
   // Local form state (for onboarding/editing)
   firstName: string;
@@ -112,7 +116,7 @@ export const useUserProfileStore = create<UserProfileState>()(
       fetchMyProfile: async () => {
         set({ isLoading: true });
         try {
-          const response = await apiClient.get<{ userProfile: UserProfileDto }>(
+          const response = await apiClient.get<GetUserProfileResponse>(
             API_ENDPOINTS.USER_PROFILE.PROFILE,
           );
 
@@ -127,7 +131,7 @@ export const useUserProfileStore = create<UserProfileState>()(
       },
 
       fetchUserProfile: async (userId: string) => {
-        const response = await apiClient.get<{ userProfile: UserProfileDto }>(
+        const response = await apiClient.get<GetUserProfileResponse>(
           `${API_ENDPOINTS.USER_PROFILE.PROFILE}/${userId}`,
         );
 

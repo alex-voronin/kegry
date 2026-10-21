@@ -4,6 +4,10 @@ import { rethrowApiError } from '@/lib/api-error';
 import { API_ENDPOINTS } from '@/lib/routes';
 import { VenueListItemDto } from '../companies/use-companies-store';
 
+export interface GetVenuesResponse {
+  venues: VenueListItemDto[];
+}
+
 interface VenuesState {
   venues: VenueListItemDto[];
   isLoading: boolean;
@@ -17,7 +21,7 @@ export const useVenuesStore = create<VenuesState>()((set) => ({
   fetchVenues: async () => {
     set({ isLoading: true });
     try {
-      const response = await apiClient.get<{ venues: VenueListItemDto[] }>(
+      const response = await apiClient.get<GetVenuesResponse>(
         API_ENDPOINTS.B2B.VENUES.BASE,
       );
       set({ venues: response.data.venues, isLoading: false });

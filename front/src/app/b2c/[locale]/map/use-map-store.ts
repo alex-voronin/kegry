@@ -9,6 +9,10 @@ import type { VenueEventsDto } from './_components/types';
 
 type FlyToCoord = { lat: number; lng: number; key: number };
 
+export interface GetChatStatusResponse {
+  hasActiveChat: boolean;
+}
+
 interface MapState {
   venues: VenueMapItem[];
   venueEvents: VenueEventsDto[];
@@ -139,7 +143,7 @@ export const useMapStore = create<MapState>()(
 
     fetchChatStatus: async () => {
       try {
-        const res = await apiClient.get<{ hasActiveChat: boolean }>(
+        const res = await apiClient.get<GetChatStatusResponse>(
           API_ENDPOINTS.CHAT.STATUS,
         );
         set({ hasActiveChat: res.data.hasActiveChat });

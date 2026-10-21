@@ -13,3 +13,8 @@ export interface PaginatedResponse<T> {
   data: T[];
   totalCount: number;
 }
+
+export interface PresignedUrlResponse {
+  uploadUrl: string;
+  publicDownloadUrl: string;
+}

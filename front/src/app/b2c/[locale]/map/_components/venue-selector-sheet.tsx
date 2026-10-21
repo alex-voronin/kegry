@@ -19,6 +19,7 @@ import type { PaginatedResponse } from '@/lib/api-types';
 import { useCitySelection } from '@/hooks/use-city-selection';
 import { BELGRADE_COORDS } from '@/lib/cities';
 import type { VenueMapItem } from './venue-map-internal';
+import type { VenueListItemDto } from '../../venues/use-venues-store';
 import styles from '../map.module.css';
 
 interface VenueSelectorSheetProps {
@@ -76,7 +77,7 @@ export function VenueSelectorSheet({
         const lon = selectedCity?.longitude ?? BELGRADE_COORDS.longitude;
 
         const response = await apiClient.get<
-          PaginatedResponse<VenueSearchItem>
+          PaginatedResponse<VenueListItemDto>
         >(
           API_ENDPOINTS.VENUES.LIST,
           paramsForReq({

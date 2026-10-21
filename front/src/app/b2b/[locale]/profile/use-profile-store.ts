@@ -2,13 +2,16 @@ import { create } from '@/lib/zustand-reset';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
 import { API_ENDPOINTS } from '@/lib/routes';
+import type { UserType } from '@/lib/auth/use-auth-store';
 
-export interface AccountDto {
+export interface GetAccountResponse {
+  id: string;
+  type: UserType;
   email: string;
 }
 
 interface ProfileState {
-  account: AccountDto | null;
+  account: GetAccountResponse | null;
   isLoading: boolean;
   fetchAccount: () => Promise<void>;
   reset: () => void;
@@ -20,7 +23,7 @@ export const useProfileStore = create<ProfileState>()((set) => ({
   fetchAccount: async () => {
     set({ isLoading: true });
     try {
-      const response = await apiClient.get<AccountDto>(
+      const response = await apiClient.get<GetAccountResponse>(
         API_ENDPOINTS.AUTH.GET_ACCOUNT,
       );
       set({ account: response.data, isLoading: false });

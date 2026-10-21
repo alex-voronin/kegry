@@ -26,6 +26,14 @@ export interface NpcDto {
   coverUrl: string;
 }
 
+export interface GetNpcResponse {
+  npc: NpcDto | null;
+}
+
+export interface InviteNpcResponse {
+  monolog: string;
+}
+
 interface NpcState {
   npc: NpcDto | null;
   monolog: string | null;
@@ -53,7 +61,7 @@ export const useNpcStore = create<NpcState>()((set) => ({
 
     set({ isLoading: true });
     try {
-      const response = await apiClient.get<{ npc: NpcDto | null }>(
+      const response = await apiClient.get<GetNpcResponse>(
         API_ENDPOINTS.NPC.GET,
       );
 
@@ -67,7 +75,7 @@ export const useNpcStore = create<NpcState>()((set) => ({
   inviteNpc: async (id: string) => {
     useFeedStore.getState().setIsPerformingAction(true);
     try {
-      const response = await apiClient.get<{ monolog: string }>(
+      const response = await apiClient.get<InviteNpcResponse>(
         API_ENDPOINTS.NPC.INVITE(id),
       );
 

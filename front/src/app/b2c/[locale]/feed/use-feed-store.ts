@@ -28,6 +28,14 @@ export interface FeedStatusResponse {
   availableInvitesCount: number;
 }
 
+export interface GetFeedResponse {
+  feed: UserProfileDto[];
+}
+
+export interface GetInviteExpirationResponse {
+  inviteExpiresAt: string | null;
+}
+
 interface FeedState {
   feed: UserProfileDto[];
   lastFetchedAt: number | null;
@@ -104,7 +112,7 @@ export const useFeedStore = create<FeedState>()(
         }
 
         try {
-          const response = await apiClient.get<{ feed: UserProfileDto[] }>(
+          const response = await apiClient.get<GetFeedResponse>(
             API_ENDPOINTS.FEED.LIST,
           );
 
@@ -157,7 +165,7 @@ export const useFeedStore = create<FeedState>()(
         set({ isFetching: true });
 
         try {
-          const response = await apiClient.get<{ feed: UserProfileDto[] }>(
+          const response = await apiClient.get<GetFeedResponse>(
             API_ENDPOINTS.FEED.LIST,
           );
 
@@ -194,9 +202,9 @@ export const useFeedStore = create<FeedState>()(
 
       getInviteExpiration: async (userId: string): Promise<string | null> => {
         try {
-          const response = await apiClient.get<{
-            inviteExpiresAt: string | null;
-          }>(API_ENDPOINTS.FEED.INVITE_EXPIRATION(userId));
+          const response = await apiClient.get<GetInviteExpirationResponse>(
+            API_ENDPOINTS.FEED.INVITE_EXPIRATION(userId),
+          );
           return response.data.inviteExpiresAt ?? null;
         } catch {
           return null;

@@ -14,26 +14,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { MeetupForm } from '../../_components/meetup-form';
 import type { EventContactForm } from '@/components/ui/contact-section';
 import { useSafeBack } from '@/hooks/use-safe-back';
-
-interface EventDetail {
-  id: string;
-  title: string;
-  description: string;
-  coverImageUrl: string | null;
-  startDateTime: string;
-  venueId: string;
-  maxParticipants: number | null;
-  requiresApproval: boolean;
-  contacts: {
-    id: string;
-    type: string;
-    value: string;
-    isPublic: boolean;
-  }[];
-  hobbyIds: string[];
-  creatorId: string;
-  isCreator: boolean;
-}
+import type { EventDto } from '@/lib/event-types';
 
 export default function EditMeetupPage() {
   const params = useParams();
@@ -46,14 +27,14 @@ export default function EditMeetupPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [event, setEvent] = useState<EventDetail | null>(null);
+  const [event, setEvent] = useState<EventDto | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!eventId || !isAuthenticated) return;
     const fetchEvent = async () => {
       try {
-        const response = await apiClient.get<EventDetail>(
+        const response = await apiClient.get<EventDto>(
           API_ENDPOINTS.EVENTS.UPDATE(eventId),
         );
         const ev = response.data;

@@ -2,6 +2,7 @@ import { create } from '@/lib/zustand-reset';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
 import { API_ENDPOINTS } from '@/lib/routes';
+import type { PaginatedResponse } from '@/lib/api-types';
 
 export interface B2BEventListItemDto {
   id: string;
@@ -31,10 +32,9 @@ export const useEventsStore = create<EventsState>()((set) => ({
     set({ isLoading: true });
     try {
       const params = venueId ? { venueId } : {};
-      const response = await apiClient.get<{
-        data: B2BEventListItemDto[];
-        totalCount: number;
-      }>(API_ENDPOINTS.B2B.EVENTS.BASE, { params });
+      const response = await apiClient.get<
+        PaginatedResponse<B2BEventListItemDto>
+      >(API_ENDPOINTS.B2B.EVENTS.BASE, { params });
       set({ events: response.data.data, isLoading: false });
     } catch (error) {
       set({ isLoading: false });
