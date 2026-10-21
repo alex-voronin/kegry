@@ -205,7 +205,7 @@ public class B2CVenueEndpoints : IEndpoints
             Thursday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Thursday)),
             Friday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Friday)),
             Saturday: discountToDto(weekdayToDiscountDict.GetValueOrDefault(DayOfWeek.Saturday))
-            );
+        );
     }
 
     private static string[] GetSortedTagIds(Venue venue)

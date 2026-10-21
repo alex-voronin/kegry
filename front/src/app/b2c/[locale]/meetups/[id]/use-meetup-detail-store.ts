@@ -148,7 +148,7 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
           API_ENDPOINTS.USER_PROFILE.PROFILES_BATCH,
           event.pendingParticipantIds,
         );
-        set({ pendingUsers: (res.data ?? []) as PendingUser[] });
+        set({ pendingUsers: res.data as PendingUser[] });
       } catch {
         set({ pendingUsers: [] });
       }
@@ -169,7 +169,7 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
           API_ENDPOINTS.USER_PROFILE.PROFILES_BATCH,
           ids,
         );
-        set({ approvedUsers: (res.data ?? []) as PendingUser[] });
+        set({ approvedUsers: res.data as PendingUser[] });
       } catch {
         set({ approvedUsers: [] });
       }

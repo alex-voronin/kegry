@@ -64,7 +64,7 @@ public class ChatEndpoints : IEndpoints
             ParticipantsMet: chat.ParticipantsMet,
             Participant: participantDto,
             Messages: messageDtos
-            );
+        );
     }
 
     private static async Task<GetChatStatusResponse> GetChatStatus(

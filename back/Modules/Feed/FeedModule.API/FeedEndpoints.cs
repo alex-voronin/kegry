@@ -243,7 +243,7 @@ public class FeedEndpoints : IEndpoints
         return new PaginatedResponse<BlockedUserDto>(
             Data: dtos,
             TotalCount: blockedUsersCount
-            );
+        );
     }
 
     private static async Task<GetSettingsResponse> GetSettings(
@@ -256,12 +256,12 @@ public class FeedEndpoints : IEndpoints
         {
             return new GetSettingsResponse(
                 new SettingsDto(Domain.ValueObjects.DistanceUnits.Kilometers)
-                );
+            );
         }
 
         return new GetSettingsResponse(
             new SettingsDto(settings.DistanceUnits)
-            );
+        );
     }
 
     private static async Task<NoContent> UpdateSettings(
@@ -306,7 +306,7 @@ public class FeedEndpoints : IEndpoints
         return new PaginatedResponse<FriendUserDto>(
             Data: dtos,
             TotalCount: friendsCount
-            );
+        );
     }
 
     private static async Task<NoContent> RemoveFriend(

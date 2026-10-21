@@ -136,7 +136,8 @@ public class IntegrationApiClient
             return response;
         }
 
-        if (!response.IsSuccessStatusCode)
+        if (!response.IsSuccessStatusCode &&
+            response.Content.Headers.ContentType?.MediaType == "application/problem+json")
         {
             var problem = await ReadProblemAsync(response);
             throw new ApiTestException(problem.StatusCode, problem.ProblemDetails);

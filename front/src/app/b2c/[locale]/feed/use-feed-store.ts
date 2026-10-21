@@ -197,7 +197,7 @@ export const useFeedStore = create<FeedState>()(
           const response = await apiClient.get<{
             inviteExpiresAt: string | null;
           }>(API_ENDPOINTS.FEED.INVITE_EXPIRATION(userId));
-          return response.data?.inviteExpiresAt ?? null;
+          return response.data.inviteExpiresAt ?? null;
         } catch {
           return null;
         }
