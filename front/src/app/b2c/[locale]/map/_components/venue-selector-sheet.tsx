@@ -15,6 +15,7 @@ import { useTranslations } from 'next-intl';
 import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS } from '@/lib/routes';
 import { paramsForReq } from '@/lib/query-params';
+import type { PaginatedResponse } from '@/lib/api-types';
 import { useCitySelection } from '@/hooks/use-city-selection';
 import { BELGRADE_COORDS } from '@/lib/cities';
 import type { VenueMapItem } from './venue-map-internal';
@@ -74,7 +75,9 @@ export function VenueSelectorSheet({
         const lat = selectedCity?.latitude ?? BELGRADE_COORDS.latitude;
         const lon = selectedCity?.longitude ?? BELGRADE_COORDS.longitude;
 
-        const response = await apiClient.get(
+        const response = await apiClient.get<
+          PaginatedResponse<VenueSearchItem>
+        >(
           API_ENDPOINTS.VENUES.LIST,
           paramsForReq({
             latitude: lat,
@@ -86,19 +89,12 @@ export function VenueSelectorSheet({
         );
 
         const { data, totalCount: total } = response.data;
-        const items: VenueSearchItem[] = data.map(
-          (d: {
-            id: string;
-            companyName: string;
-            companyAvatarImageUrl: string | null;
-            address: string;
-          }) => ({
-            id: d.id,
-            companyName: d.companyName,
-            companyAvatarImageUrl: d.companyAvatarImageUrl,
-            address: d.address,
-          }),
-        );
+        const items: VenueSearchItem[] = data.map((d) => ({
+          id: d.id,
+          companyName: d.companyName,
+          companyAvatarImageUrl: d.companyAvatarImageUrl,
+          address: d.address,
+        }));
 
         if (append) {
           setVenues((prev) => [...prev, ...items]);

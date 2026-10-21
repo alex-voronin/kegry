@@ -5,6 +5,7 @@ import { API_ENDPOINTS } from '@/lib/routes';
 import { PromoType } from '@/lib/promo-types';
 import { rethrowApiError } from '@/lib/api-error';
 import { paramsForReq } from '@/lib/query-params';
+import type { PaginatedResponse } from '@/lib/api-types';
 import type { EventListItem } from '../../map/_components/types';
 
 export interface CompanyDto {
@@ -99,7 +100,7 @@ export const useVenueStore = create<VenueState>()(
     fetchVenueEvents: async (venueId: string, offset: number) => {
       set({ isEventsLoading: true });
       try {
-        const response = await apiClient.get(
+        const response = await apiClient.get<PaginatedResponse<EventListItem>>(
           API_ENDPOINTS.VENUES.EVENTS(venueId),
           paramsForReq({ offset, limit: 20 }),
         );

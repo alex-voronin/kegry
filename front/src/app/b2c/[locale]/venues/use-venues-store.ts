@@ -3,6 +3,7 @@ import { devtools } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS } from '@/lib/routes';
 import { paramsForReq } from '@/lib/query-params';
+import type { PaginatedResponse } from '@/lib/api-types';
 
 export interface VenueListItemDto {
   id: string;
@@ -57,7 +58,7 @@ export const useVenuesStore = create<VenuesState>()((set) => ({
       if (tagIds?.length) params['Filter.TagIds'] = tagIds;
       if (companyName) params['Filter.CompanyName'] = companyName;
 
-      const response = await apiClient.get(
+      const response = await apiClient.get<PaginatedResponse<VenueListItemDto>>(
         API_ENDPOINTS.VENUES.LIST,
         paramsForReq(params),
       );

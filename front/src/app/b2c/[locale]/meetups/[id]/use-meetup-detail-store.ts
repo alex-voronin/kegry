@@ -77,15 +77,16 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
     fetchEvent: async (eventId: string) => {
       set({ isLoading: true });
       try {
-        const eventRes = await apiClient.get(
+        const eventRes = await apiClient.get<EventDetail>(
           API_ENDPOINTS.EVENTS.UPDATE(eventId),
         );
-        const ev = eventRes.data as EventDetail;
+        const ev = eventRes.data;
         set({ event: ev });
 
-        const venueRes = await apiClient.get(
-          API_ENDPOINTS.VENUES.DETAILS(ev.venueId),
-        );
+        const venueRes = await apiClient.get<{
+          company: { name: string };
+          venue: { address: string };
+        }>(API_ENDPOINTS.VENUES.DETAILS(ev.venueId));
         const venueData = venueRes.data;
         set({
           venue: {
@@ -104,10 +105,10 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
       set({ isJoining: true });
       try {
         await apiClient.post<void>(API_ENDPOINTS.EVENTS.JOIN(eventId));
-        const eventRes = await apiClient.get(
+        const eventRes = await apiClient.get<EventDetail>(
           API_ENDPOINTS.EVENTS.UPDATE(eventId),
         );
-        set({ event: eventRes.data as EventDetail, isJoining: false });
+        set({ event: eventRes.data, isJoining: false });
       } catch (error) {
         set({ isJoining: false });
         rethrowApiError(error, 'Failed to join');
@@ -144,11 +145,11 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
         return;
       }
       try {
-        const res = await apiClient.post(
+        const res = await apiClient.post<PendingUser[]>(
           API_ENDPOINTS.USER_PROFILE.PROFILES_BATCH,
           event.pendingParticipantIds,
         );
-        set({ pendingUsers: res.data as PendingUser[] });
+        set({ pendingUsers: res.data });
       } catch {
         set({ pendingUsers: [] });
       }
@@ -165,11 +166,11 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
         return;
       }
       try {
-        const res = await apiClient.post(
+        const res = await apiClient.post<PendingUser[]>(
           API_ENDPOINTS.USER_PROFILE.PROFILES_BATCH,
           ids,
         );
-        set({ approvedUsers: res.data as PendingUser[] });
+        set({ approvedUsers: res.data });
       } catch {
         set({ approvedUsers: [] });
       }

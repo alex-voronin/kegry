@@ -39,6 +39,7 @@ import { PAGE_ROUTES, API_ENDPOINTS } from '@/lib/routes';
 import { PromoIcon } from '@/lib/promo-types';
 import { parseInstagramHandle } from '@/lib/url-utils';
 import apiClient from '@/lib/api-client';
+import type { PaginatedResponse } from '@/lib/api-types';
 import type { B2BEventListItemDto } from '../../events/use-events-store';
 import { Badge } from '@/components/ui/badge';
 
@@ -106,7 +107,9 @@ export default function VenueDetailPage() {
     if (!venueId) return;
     setIsEventsLoading(true);
     try {
-      const response = await apiClient.get(API_ENDPOINTS.B2B.EVENTS.BASE, {
+      const response = await apiClient.get<
+        PaginatedResponse<B2BEventListItemDto>
+      >(API_ENDPOINTS.B2B.EVENTS.BASE, {
         params: { venueId, limit: 50 },
       });
       setVenueEvents(response.data.data ?? []);

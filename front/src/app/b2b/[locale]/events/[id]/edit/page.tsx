@@ -41,7 +41,7 @@ export default function EditEventPage() {
   useEffect(() => {
     const loadEvent = async () => {
       try {
-        const response = await apiClient.get(
+        const response = await apiClient.get<EventDetailDto>(
           API_ENDPOINTS.B2B.EVENTS.DETAILS(eventId),
         );
         setEvent(response.data);

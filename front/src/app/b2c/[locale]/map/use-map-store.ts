@@ -73,31 +73,37 @@ export const useMapStore = create<MapState>()(
         if (searchQuery) venueParams['Filter.CompanyName'] = searchQuery;
 
         if (hasFilters) {
-          const venuesRes = await apiClient.get(
+          const venuesRes = await apiClient.get<VenueMapItem[]>(
             API_ENDPOINTS.VENUES.MAP,
             paramsForReq(venueParams),
           );
           const venues: VenueMapItem[] = venuesRes.data;
           eventsBody.venueIds = venues.map((v) => v.id);
 
-          const eventsRes = await apiClient.post(
+          const eventsRes = await apiClient.post<VenueEventsDto[]>(
             API_ENDPOINTS.EVENTS.MAP,
             eventsBody,
           );
 
           set({
             venues,
-            venueEvents: eventsRes.data as VenueEventsDto[],
+            venueEvents: eventsRes.data,
           });
         } else {
           const [venuesRes, eventsRes] = await Promise.all([
-            apiClient.get(API_ENDPOINTS.VENUES.MAP, paramsForReq(venueParams)),
-            apiClient.post(API_ENDPOINTS.EVENTS.MAP, eventsBody),
+            apiClient.get<VenueMapItem[]>(
+              API_ENDPOINTS.VENUES.MAP,
+              paramsForReq(venueParams),
+            ),
+            apiClient.post<VenueEventsDto[]>(
+              API_ENDPOINTS.EVENTS.MAP,
+              eventsBody,
+            ),
           ]);
 
           set({
             venues: venuesRes.data,
-            venueEvents: eventsRes.data as VenueEventsDto[],
+            venueEvents: eventsRes.data,
           });
         }
       } finally {

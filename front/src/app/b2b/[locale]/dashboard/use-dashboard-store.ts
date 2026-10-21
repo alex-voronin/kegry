@@ -13,6 +13,10 @@ export interface VenueVisitsData {
   dataPoints: VisitsChartDataPoint[];
 }
 
+export interface VisitsChartResponseDto {
+  venues: VenueVisitsData[];
+}
+
 export type VisitsChartMode = 'Daily' | 'Weekly' | 'Monthly';
 
 interface DashboardState {
@@ -37,9 +41,12 @@ export const useDashboardStore = create<DashboardState>()((set) => ({
   fetchVisits: async (companyId, mode) => {
     set({ isLoading: true, hasError: false });
     try {
-      const response = await apiClient.get(API_ENDPOINTS.B2B.DASHBOARD.VISITS, {
-        params: { companyId, mode },
-      });
+      const response = await apiClient.get<VisitsChartResponseDto>(
+        API_ENDPOINTS.B2B.DASHBOARD.VISITS,
+        {
+          params: { companyId, mode },
+        },
+      );
       const { venues } = response.data;
       set({ venues, isLoading: false });
     } catch {

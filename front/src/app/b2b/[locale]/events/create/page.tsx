@@ -34,18 +34,21 @@ export default function CreateEventPage() {
   }) => {
     setIsSubmitting(true);
     try {
-      const response = await apiClient.post(API_ENDPOINTS.B2B.EVENTS.BASE, {
-        title: data.title,
-        description: data.description,
-        startDateTime: new Date(data.startDateTime).toISOString(),
-        venueId: venueId || undefined,
-        contacts: data.contacts.map((c) => ({
-          type: c.type,
-          value: c.value,
-          isPublic: c.isPublic,
-        })),
-        hobbyIds: data.hobbyIds,
-      });
+      const response = await apiClient.post<{ id: string }>(
+        API_ENDPOINTS.B2B.EVENTS.BASE,
+        {
+          title: data.title,
+          description: data.description,
+          startDateTime: new Date(data.startDateTime).toISOString(),
+          venueId: venueId || undefined,
+          contacts: data.contacts.map((c) => ({
+            type: c.type,
+            value: c.value,
+            isPublic: c.isPublic,
+          })),
+          hobbyIds: data.hobbyIds,
+        },
+      );
 
       const eventId = response.data.id;
 

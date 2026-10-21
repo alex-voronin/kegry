@@ -53,10 +53,10 @@ export default function EditMeetupPage() {
     if (!eventId || !isAuthenticated) return;
     const fetchEvent = async () => {
       try {
-        const response = await apiClient.get(
+        const response = await apiClient.get<EventDetail>(
           API_ENDPOINTS.EVENTS.UPDATE(eventId),
         );
-        const ev = response.data as EventDetail;
+        const ev = response.data;
         if (!ev.isCreator) {
           setError('You can only edit your own meetups');
           return;
