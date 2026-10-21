@@ -39,7 +39,3 @@ make set-version            Bump frontend version + git tag: version=X.X.X
 - Frontend checks: `cd front && npm run lint && npm test` (Vitest).
 - Follow Conventional Commits (e.g. `feat(front): ...`, `fix(back): ...`).
 - Keep changes consistent with the existing structure, naming, and patterns.
-
-## OpenCode config
-
-Local agents at `.opencode/agents/` and pipeline command at `.opencode/commands/pipeline.md` — uses `@planner → @plan-reviewer → @coder → @code-reviewer` flow.
