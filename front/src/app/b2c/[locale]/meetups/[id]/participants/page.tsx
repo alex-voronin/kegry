@@ -59,7 +59,7 @@ export default function ParticipantsPage() {
   const handleReject = useCallback(
     async (userId: string) => {
       try {
-        await apiClient.patch(
+        await apiClient.patch<void>(
           API_ENDPOINTS.EVENTS.REJECT_PARTICIPANT(eventId, userId),
         );
         removeApprovedUser(userId);

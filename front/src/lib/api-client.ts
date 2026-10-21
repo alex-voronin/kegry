@@ -160,8 +160,7 @@ apiClient.interceptors.response.use(
           { timeout: 10000 },
         );
 
-        const { accessToken, refreshToken: newRefreshToken } =
-          response.data.result;
+        const { accessToken, refreshToken: newRefreshToken } = response.data;
 
         if (!accessToken || !newRefreshToken) {
           throw new Error(

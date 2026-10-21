@@ -61,7 +61,7 @@ export const useVenuesStore = create<VenuesState>()((set) => ({
         API_ENDPOINTS.VENUES.LIST,
         paramsForReq(params),
       );
-      const { data, totalCount } = response.data.result;
+      const { data, totalCount } = response.data;
 
       set((state) => ({
         venues: offset === 0 ? data : [...state.venues, ...data],

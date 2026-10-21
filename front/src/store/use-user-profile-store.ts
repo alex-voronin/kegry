@@ -4,7 +4,6 @@ import { create } from '@/lib/zustand-reset';
 import { persist } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
-import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
 export type Gender = 'Male' | 'Female';
@@ -113,11 +112,11 @@ export const useUserProfileStore = create<UserProfileState>()(
       fetchMyProfile: async () => {
         set({ isLoading: true });
         try {
-          const response = await apiClient.get<
-            ApiResult<{ userProfile: UserProfileDto }>
-          >(API_ENDPOINTS.USER_PROFILE.PROFILE);
+          const response = await apiClient.get<{ userProfile: UserProfileDto }>(
+            API_ENDPOINTS.USER_PROFILE.PROFILE,
+          );
 
-          const profile = response.data.result.userProfile;
+          const profile = response.data.userProfile;
           set({ serverProfile: profile });
           get().discardLocalProfileChanges(profile);
           set({ isLoading: false });
@@ -128,28 +127,24 @@ export const useUserProfileStore = create<UserProfileState>()(
       },
 
       fetchUserProfile: async (userId: string) => {
-        const response = await apiClient.get<
-          ApiResult<{ userProfile: UserProfileDto }>
-        >(`${API_ENDPOINTS.USER_PROFILE.PROFILE}/${userId}`);
+        const response = await apiClient.get<{ userProfile: UserProfileDto }>(
+          `${API_ENDPOINTS.USER_PROFILE.PROFILE}/${userId}`,
+        );
 
-        return response.data.result.userProfile;
+        return response.data.userProfile;
       },
 
       patchProfile: async (data: Partial<PatchProfileRequest>) => {
-        const response = await apiClient.patch<ApiResult<void>>(
-          API_ENDPOINTS.USER_PROFILE.PROFILE,
-          data,
-        );
+        await apiClient.patch<void>(API_ENDPOINTS.USER_PROFILE.PROFILE, data);
 
         // Refresh profile after update
         await get().fetchMyProfile();
       },
 
       updatePrivacy: async (isPublic: boolean) => {
-        const response = await apiClient.post<ApiResult<void>>(
-          API_ENDPOINTS.USER_PROFILE.PRIVACY,
-          { isPublic },
-        );
+        await apiClient.post<void>(API_ENDPOINTS.USER_PROFILE.PRIVACY, {
+          isPublic,
+        });
 
         set((state) => ({
           isPublic,
@@ -181,7 +176,7 @@ export const useUserProfileStore = create<UserProfileState>()(
       },
 
       blockUser: async (userId: string, reportMessage?: string) => {
-        await apiClient.post(API_ENDPOINTS.FEED.BLOCK(userId), {
+        await apiClient.post<void>(API_ENDPOINTS.FEED.BLOCK(userId), {
           reportMessage,
         });
 

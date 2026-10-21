@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS } from '@/lib/routes';
-import { ApiResult } from '@/lib/api-types';
 import { rethrowApiError } from '@/lib/api-error';
 
 export interface CurrentAndNextLevelDiscountDto {
@@ -35,10 +34,10 @@ export const useVenueDiscountsStore = create<VenueDiscountsState>()((set) => ({
     set({ discounts: null, isLoading: true });
 
     try {
-      const response = await apiClient.get<
-        ApiResult<GetDiscountsByWeekdayResponse>
-      >(API_ENDPOINTS.VENUES.DISCOUNTS(venueId));
-      set({ discounts: response.data.result });
+      const response = await apiClient.get<GetDiscountsByWeekdayResponse>(
+        API_ENDPOINTS.VENUES.DISCOUNTS(venueId),
+      );
+      set({ discounts: response.data });
     } catch (error) {
       rethrowApiError(error, 'Failed to fetch discounts');
     } finally {

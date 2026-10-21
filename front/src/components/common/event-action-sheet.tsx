@@ -69,7 +69,7 @@ export function EventActionSheet({
     if (!event) return;
     requireProfile(async () => {
       try {
-        await apiClient.post(API_ENDPOINTS.EVENTS.JOIN(event.id));
+        await apiClient.post<void>(API_ENDPOINTS.EVENTS.JOIN(event.id));
         onJoined(event.id);
       } catch (error) {
         const [, code] = extractApiError(error);
@@ -87,7 +87,7 @@ export function EventActionSheet({
     if (!event) return;
     requireProfile(async () => {
       try {
-        await apiClient.post(API_ENDPOINTS.EVENTS.LEAVE(event.id));
+        await apiClient.post<void>(API_ENDPOINTS.EVENTS.LEAVE(event.id));
         onLeft(event.id);
       } catch {
         toast.error(t('toast.leaveFailed'));
@@ -112,7 +112,7 @@ export function EventActionSheet({
     if (!deleteEventId) return;
     setIsDeleting(true);
     try {
-      await apiClient.delete(API_ENDPOINTS.EVENTS.DELETE(deleteEventId));
+      await apiClient.delete<void>(API_ENDPOINTS.EVENTS.DELETE(deleteEventId));
       onDeleted(deleteEventId);
       setDeleteEventId(null);
       onClose();

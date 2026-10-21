@@ -1,7 +1,3 @@
-export interface ApiResult<T> {
-  result: T;
-}
-
 export interface ProblemDetails {
   type?: string;
   title?: string;

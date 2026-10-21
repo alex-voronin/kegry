@@ -40,7 +40,7 @@ export const useDashboardStore = create<DashboardState>()((set) => ({
       const response = await apiClient.get(API_ENDPOINTS.B2B.DASHBOARD.VISITS, {
         params: { companyId, mode },
       });
-      const { venues } = response.data.result;
+      const { venues } = response.data;
       set({ venues, isLoading: false });
     } catch {
       set({ hasError: true, isLoading: false });

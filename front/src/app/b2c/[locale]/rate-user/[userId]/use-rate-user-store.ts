@@ -1,7 +1,6 @@
 import { create } from '@/lib/zustand-reset';
 import apiClient from '@/lib/api-client';
 import { extractApiError, rethrowApiError } from '@/lib/api-error';
-import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
 export type Gender = 'male' | 'female';
@@ -41,11 +40,11 @@ export const useRateUserStore = create<RateUserState>((set) => ({
   fetchUserToRate: async (userId: string) => {
     set({ isLoading: true });
     try {
-      const response = await apiClient.get<
-        ApiResult<{ userProfile: UserProfileDto }>
-      >(`${API_ENDPOINTS.USER_PROFILE.PROFILE}/${userId}`);
+      const response = await apiClient.get<{ userProfile: UserProfileDto }>(
+        `${API_ENDPOINTS.USER_PROFILE.PROFILE}/${userId}`,
+      );
 
-      set({ userProfile: response.data.result.userProfile });
+      set({ userProfile: response.data.userProfile });
     } catch (error) {
       console.error(
         'Failed to fetch user profile to rate:',
@@ -59,7 +58,7 @@ export const useRateUserStore = create<RateUserState>((set) => ({
   submitRating: async (userId: string, rating: number | null) => {
     set({ isSubmitting: true });
     try {
-      await apiClient.post(API_ENDPOINTS.FEED.RATE(userId), {
+      await apiClient.post<void>(API_ENDPOINTS.FEED.RATE(userId), {
         rating: rating,
       });
     } catch (error) {

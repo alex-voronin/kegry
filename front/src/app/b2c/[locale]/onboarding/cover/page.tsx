@@ -79,7 +79,7 @@ export default function CoverPage() {
 
       const referrerId = getReferrerId();
 
-      await apiClient.post(API_ENDPOINTS.USER_PROFILE.PROFILE, {
+      await apiClient.post<void>(API_ENDPOINTS.USER_PROFILE.PROFILE, {
         firstName,
         lastName,
         bio,

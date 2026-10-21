@@ -125,7 +125,9 @@ export default function EventsPage() {
     if (!selectedEventId) return;
     setIsDeleting(true);
     try {
-      await apiClient.delete(API_ENDPOINTS.B2B.EVENTS.DETAILS(selectedEventId));
+      await apiClient.delete<void>(
+        API_ENDPOINTS.B2B.EVENTS.DETAILS(selectedEventId),
+      );
       fetchEvents();
     } catch (error) {
       rethrowApiError(error, t('toast.deleteFailed'));

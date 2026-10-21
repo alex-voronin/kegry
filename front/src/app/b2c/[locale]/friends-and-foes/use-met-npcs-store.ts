@@ -1,7 +1,6 @@
 import { create } from '@/lib/zustand-reset';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
-import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
 export interface MetNpcDto {
@@ -31,12 +30,12 @@ export const useMetNpcsStore = create<MetNpcsState>()((set) => ({
     set({ isLoading: true });
 
     try {
-      const response = await apiClient.get<ApiResult<{ metNpcs: MetNpcDto[] }>>(
+      const response = await apiClient.get<{ metNpcs: MetNpcDto[] }>(
         API_ENDPOINTS.NPC.MET,
       );
 
       set({
-        metNpcs: response.data.result.metNpcs,
+        metNpcs: response.data.metNpcs,
         isLoading: false,
       });
     } catch (error) {

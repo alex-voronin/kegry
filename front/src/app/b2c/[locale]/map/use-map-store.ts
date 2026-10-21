@@ -77,7 +77,7 @@ export const useMapStore = create<MapState>()(
             API_ENDPOINTS.VENUES.MAP,
             paramsForReq(venueParams),
           );
-          const venues: VenueMapItem[] = venuesRes.data.result;
+          const venues: VenueMapItem[] = venuesRes.data;
           eventsBody.venueIds = venues.map((v) => v.id);
 
           const eventsRes = await apiClient.post(
@@ -87,7 +87,7 @@ export const useMapStore = create<MapState>()(
 
           set({
             venues,
-            venueEvents: eventsRes.data.result as VenueEventsDto[],
+            venueEvents: eventsRes.data as VenueEventsDto[],
           });
         } else {
           const [venuesRes, eventsRes] = await Promise.all([
@@ -96,8 +96,8 @@ export const useMapStore = create<MapState>()(
           ]);
 
           set({
-            venues: venuesRes.data.result,
-            venueEvents: eventsRes.data.result as VenueEventsDto[],
+            venues: venuesRes.data,
+            venueEvents: eventsRes.data as VenueEventsDto[],
           });
         }
       } finally {
@@ -133,10 +133,10 @@ export const useMapStore = create<MapState>()(
 
     fetchChatStatus: async () => {
       try {
-        const res = await apiClient.get<{ result: { hasActiveChat: boolean } }>(
+        const res = await apiClient.get<{ hasActiveChat: boolean }>(
           API_ENDPOINTS.CHAT.STATUS,
         );
-        set({ hasActiveChat: res.data.result.hasActiveChat });
+        set({ hasActiveChat: res.data.hasActiveChat });
       } catch {
         set({ hasActiveChat: false });
       }
@@ -144,7 +144,7 @@ export const useMapStore = create<MapState>()(
 
     deleteEvent: async (eventId: string) => {
       try {
-        await apiClient.delete(API_ENDPOINTS.EVENTS.DELETE(eventId));
+        await apiClient.delete<void>(API_ENDPOINTS.EVENTS.DELETE(eventId));
         set((state) => ({
           venueEvents: state.venueEvents
             .map((v) => ({

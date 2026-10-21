@@ -85,7 +85,7 @@ export function VenueSelectorSheet({
           }),
         );
 
-        const { data, totalCount: total } = response.data.result;
+        const { data, totalCount: total } = response.data;
         const items: VenueSearchItem[] = data.map(
           (d: {
             id: string;

@@ -3,7 +3,6 @@
 import { create } from '@/lib/zustand-reset';
 import { persist } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
-import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
 export interface TagDto {
@@ -324,11 +323,11 @@ export const useVenueTagsStore = create<VenueTagsState>()(
         set({ isLoading: true });
 
         try {
-          const response = await apiClient.get<ApiResult<ApiTagCategoryDto[]>>(
+          const response = await apiClient.get<ApiTagCategoryDto[]>(
             endpoint ?? API_ENDPOINTS.TAGS.LIST,
           );
 
-          const categories = response.data.result.map((cat) => ({
+          const categories = response.data.map((cat) => ({
             category: cat.category,
             isSingleSelect: cat.isSingleSelect,
             tags: cat.tags.map((t) => ({

@@ -4,7 +4,6 @@ import { create } from '@/lib/zustand-reset';
 import { persist } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
-import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
 export interface FilterDto {
@@ -59,12 +58,12 @@ export const useFeedFiltersStore = create<FeedFiltersState>()(
         set({ isLoading: true });
 
         try {
-          const response = await apiClient.get<ApiResult<GetFilterResponse>>(
+          const response = await apiClient.get<GetFilterResponse>(
             API_ENDPOINTS.FEED.FILTER,
           );
 
           set({
-            filters: response.data.result.filter,
+            filters: response.data.filter,
             lastFetchedAt: now,
             isLoading: false,
           });
@@ -77,10 +76,9 @@ export const useFeedFiltersStore = create<FeedFiltersState>()(
       updateFilters: async (filters: FilterDto) => {
         set({ isLoading: true });
         try {
-          const response = await apiClient.put<ApiResult<void>>(
-            API_ENDPOINTS.FEED.FILTER,
-            { filter: filters },
-          );
+          await apiClient.put<void>(API_ENDPOINTS.FEED.FILTER, {
+            filter: filters,
+          });
 
           set({ filters, lastFetchedAt: Date.now(), isLoading: false });
         } catch (error) {

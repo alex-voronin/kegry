@@ -32,9 +32,10 @@ export const useEventsStore = create<EventsState>()((set) => ({
     try {
       const params = venueId ? { venueId } : {};
       const response = await apiClient.get<{
-        result: { data: B2BEventListItemDto[]; totalCount: number };
+        data: B2BEventListItemDto[];
+        totalCount: number;
       }>(API_ENDPOINTS.B2B.EVENTS.BASE, { params });
-      set({ events: response.data.result.data, isLoading: false });
+      set({ events: response.data.data, isLoading: false });
     } catch (error) {
       set({ isLoading: false });
       rethrowApiError(error, 'Failed to fetch events');

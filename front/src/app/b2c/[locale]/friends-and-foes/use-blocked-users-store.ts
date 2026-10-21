@@ -1,7 +1,7 @@
 import { create } from '@/lib/zustand-reset';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
-import { ApiResult, PaginatedResponse } from '@/lib/api-types';
+import { PaginatedResponse } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
 export interface BlockedUserDto {
@@ -37,11 +37,11 @@ export const useBlockedUsersStore = create<BlockedUsersState>()((set, get) => ({
   fetchBlockedUsers: async (offset = 0, limit = DEFAULT_LIMIT) => {
     set({ isLoading: true, hasError: false });
     try {
-      const response = await apiClient.get<
-        ApiResult<PaginatedResponse<BlockedUserDto>>
-      >(`${API_ENDPOINTS.FEED.BLOCKED_USERS}?offset=${offset}&limit=${limit}`);
+      const response = await apiClient.get<PaginatedResponse<BlockedUserDto>>(
+        `${API_ENDPOINTS.FEED.BLOCKED_USERS}?offset=${offset}&limit=${limit}`,
+      );
 
-      const { data, totalCount } = response.data.result;
+      const { data, totalCount } = response.data;
 
       if (offset === 0) {
         set({
@@ -65,7 +65,7 @@ export const useBlockedUsersStore = create<BlockedUsersState>()((set, get) => ({
   unblockUser: async (userId: string) => {
     set({ isLoading: true });
     try {
-      await apiClient.post(API_ENDPOINTS.FEED.UNBLOCK(userId));
+      await apiClient.post<void>(API_ENDPOINTS.FEED.UNBLOCK(userId));
 
       // Optimistic update
       set((state) => ({

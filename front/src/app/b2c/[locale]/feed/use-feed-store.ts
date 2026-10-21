@@ -4,7 +4,6 @@ import { create } from '@/lib/zustand-reset';
 import { persist } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
-import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 import { computeExpiresAt, InviteExpiration } from '@/lib/invite-utils';
 
@@ -73,15 +72,15 @@ export const useFeedStore = create<FeedState>()(
       ...initialState,
 
       fetchFeedStatus: async () => {
-        const response = await apiClient.get<ApiResult<FeedStatusResponse>>(
+        const response = await apiClient.get<FeedStatusResponse>(
           API_ENDPOINTS.FEED.STATUS,
         );
 
         set({
-          isInMeeting: response.data.result.isInMeeting,
-          availableInvitesCount: response.data.result.availableInvitesCount,
+          isInMeeting: response.data.isInMeeting,
+          availableInvitesCount: response.data.availableInvitesCount,
         });
-        return response.data.result;
+        return response.data;
       },
 
       fetchFeed: async () => {
@@ -105,11 +104,11 @@ export const useFeedStore = create<FeedState>()(
         }
 
         try {
-          const response = await apiClient.get<
-            ApiResult<{ feed: UserProfileDto[] }>
-          >(API_ENDPOINTS.FEED.LIST);
+          const response = await apiClient.get<{ feed: UserProfileDto[] }>(
+            API_ENDPOINTS.FEED.LIST,
+          );
 
-          const newFeed = response.data.result.feed;
+          const newFeed = response.data.feed;
 
           if (hasStaleData) {
             const currentProfile = state.feed[0];
@@ -158,11 +157,11 @@ export const useFeedStore = create<FeedState>()(
         set({ isFetching: true });
 
         try {
-          const response = await apiClient.get<
-            ApiResult<{ feed: UserProfileDto[] }>
-          >(API_ENDPOINTS.FEED.LIST);
+          const response = await apiClient.get<{ feed: UserProfileDto[] }>(
+            API_ENDPOINTS.FEED.LIST,
+          );
 
-          const newFeed = response.data.result.feed;
+          const newFeed = response.data.feed;
           const existingIds = new Set(state.feed.map((p) => p.id));
           const itemsToAdd = newFeed.filter((p) => !existingIds.has(p.id));
 
@@ -180,7 +179,7 @@ export const useFeedStore = create<FeedState>()(
       inviteUser: async (userId: string, when: InviteExpiration) => {
         set({ isPerformingAction: true });
         try {
-          await apiClient.post(API_ENDPOINTS.FEED.INVITE(userId), {
+          await apiClient.post<void>(API_ENDPOINTS.FEED.INVITE(userId), {
             expiresAt: computeExpiresAt(when),
           });
           set((state) => ({
@@ -195,10 +194,10 @@ export const useFeedStore = create<FeedState>()(
 
       getInviteExpiration: async (userId: string): Promise<string | null> => {
         try {
-          const response = await apiClient.get<
-            ApiResult<{ inviteExpiresAt: string | null }>
-          >(API_ENDPOINTS.FEED.INVITE_EXPIRATION(userId));
-          return response.data.result?.inviteExpiresAt ?? null;
+          const response = await apiClient.get<{
+            inviteExpiresAt: string | null;
+          }>(API_ENDPOINTS.FEED.INVITE_EXPIRATION(userId));
+          return response.data?.inviteExpiresAt ?? null;
         } catch {
           return null;
         }
@@ -207,7 +206,7 @@ export const useFeedStore = create<FeedState>()(
       skipUser: async (userId: string) => {
         set({ isPerformingAction: true });
         try {
-          await apiClient.post(API_ENDPOINTS.FEED.SKIP(userId));
+          await apiClient.post<void>(API_ENDPOINTS.FEED.SKIP(userId));
           get().nextProfile();
           get().refreshFeedIfNeeded();
         } finally {
@@ -218,7 +217,7 @@ export const useFeedStore = create<FeedState>()(
       ignoreUser: async (userId: string) => {
         set({ isPerformingAction: true });
         try {
-          await apiClient.post(API_ENDPOINTS.FEED.IGNORE(userId));
+          await apiClient.post<void>(API_ENDPOINTS.FEED.IGNORE(userId));
           get().nextProfile();
           get().refreshFeedIfNeeded();
         } finally {

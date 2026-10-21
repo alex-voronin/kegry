@@ -3,7 +3,7 @@
 import { create } from '@/lib/zustand-reset';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
-import { ApiResult, PaginatedResponse } from '@/lib/api-types';
+import { PaginatedResponse } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
 export interface NotificationDto {
@@ -49,12 +49,12 @@ export const useNotificationsStore = create<NotificationsState>()(
       set({ isLoading: true, hasError: false });
       try {
         const response = await apiClient.get<
-          ApiResult<PaginatedResponse<NotificationDto>>
+          PaginatedResponse<NotificationDto>
         >(
           `${API_ENDPOINTS.NOTIFICATIONS.LIST}?offset=${offset}&limit=${limit}`,
         );
 
-        const { data, totalCount } = response.data.result;
+        const { data, totalCount } = response.data;
 
         if (offset === 0) {
           set({
@@ -79,14 +79,14 @@ export const useNotificationsStore = create<NotificationsState>()(
 
     acceptInvite: async (userId: string) => {
       try {
-        await apiClient.post(API_ENDPOINTS.FEED.ACCEPT_INVITE(userId));
+        await apiClient.post<void>(API_ENDPOINTS.FEED.ACCEPT_INVITE(userId));
       } catch (error) {
         rethrowApiError(error, 'Failed to accept invite');
       }
     },
 
     deleteNotification: async (notificationId: string) => {
-      await apiClient.delete(
+      await apiClient.delete<void>(
         API_ENDPOINTS.NOTIFICATIONS.DELETE(notificationId),
       );
       set((state) => ({
@@ -97,7 +97,9 @@ export const useNotificationsStore = create<NotificationsState>()(
     },
 
     blockUser: async (userId: string, reportMessage?: string) => {
-      await apiClient.post(API_ENDPOINTS.FEED.BLOCK(userId), { reportMessage });
+      await apiClient.post<void>(API_ENDPOINTS.FEED.BLOCK(userId), {
+        reportMessage,
+      });
     },
 
     reset: () => set(initialState),

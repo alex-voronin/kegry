@@ -157,13 +157,13 @@ function FcmGlobalHandler() {
     // Register API callbacks
     setApiCallbacks({
       onTokenRegister: async (deviceId, fcmToken) => {
-        await apiClient.post(API_ENDPOINTS.NOTIFICATIONS.FCM_TOKEN, {
+        await apiClient.post<void>(API_ENDPOINTS.NOTIFICATIONS.FCM_TOKEN, {
           deviceId,
           fcmToken,
         });
       },
       onTokenUnregister: async (deviceId) => {
-        await apiClient.delete(API_ENDPOINTS.NOTIFICATIONS.FCM_TOKEN, {
+        await apiClient.delete<void>(API_ENDPOINTS.NOTIFICATIONS.FCM_TOKEN, {
           params: { deviceId },
         });
       },

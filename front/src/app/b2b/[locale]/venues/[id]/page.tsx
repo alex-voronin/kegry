@@ -109,8 +109,8 @@ export default function VenueDetailPage() {
       const response = await apiClient.get(API_ENDPOINTS.B2B.EVENTS.BASE, {
         params: { venueId, limit: 50 },
       });
-      setVenueEvents(response.data.result.data ?? []);
-      setVenueEventTotalCount(response.data.result.totalCount ?? 0);
+      setVenueEvents(response.data.data ?? []);
+      setVenueEventTotalCount(response.data.totalCount ?? 0);
     } catch {
       // silently fail
     } finally {
@@ -292,7 +292,7 @@ export default function VenueDetailPage() {
     if (!selectedVenueEventId) return;
     setIsVenueEventDeleting(true);
     try {
-      await apiClient.delete(
+      await apiClient.delete<void>(
         API_ENDPOINTS.B2B.EVENTS.DETAILS(selectedVenueEventId),
       );
       loadVenueEvents();

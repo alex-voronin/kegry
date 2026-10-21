@@ -3,7 +3,7 @@
 import { create } from '@/lib/zustand-reset';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
-import { ApiResult, PaginatedResponse } from '@/lib/api-types';
+import { PaginatedResponse } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
 export interface MyEventItem {
@@ -78,11 +78,11 @@ export const useMyEventsStore = create<MyEventsState>()((set, get) => ({
           ? API_ENDPOINTS.EVENTS.MY_CREATED
           : API_ENDPOINTS.EVENTS.MY_PARTICIPATED;
 
-      const response = await apiClient.get<
-        ApiResult<PaginatedResponse<MyEventItem>>
-      >(`${endpoint}?offset=${offset}&limit=${limit}`);
+      const response = await apiClient.get<PaginatedResponse<MyEventItem>>(
+        `${endpoint}?offset=${offset}&limit=${limit}`,
+      );
 
-      const { data, totalCount } = response.data.result;
+      const { data, totalCount } = response.data;
 
       set((state) => {
         const current = state[tab];
@@ -119,12 +119,12 @@ export const useMyEventsStore = create<MyEventsState>()((set, get) => ({
 
   loadVenues: async (venueIds) => {
     try {
-      const response = await apiClient.post<ApiResult<VenueInfo[]>>(
+      const response = await apiClient.post<VenueInfo[]>(
         API_ENDPOINTS.VENUES.BATCH,
         venueIds,
       );
 
-      const venues = response.data.result;
+      const venues = response.data;
       const cache: Record<string, VenueInfo> = {};
       for (const v of venues) {
         cache[v.id] = v;

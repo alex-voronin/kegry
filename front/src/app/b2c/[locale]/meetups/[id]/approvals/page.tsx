@@ -57,7 +57,7 @@ export default function ApprovalsPage() {
   const handleApprove = useCallback(
     async (userId: string) => {
       try {
-        await apiClient.patch(
+        await apiClient.patch<void>(
           API_ENDPOINTS.EVENTS.APPROVE_PARTICIPANT(eventId, userId),
         );
         removePendingUser(userId);
@@ -72,7 +72,7 @@ export default function ApprovalsPage() {
   const handleReject = useCallback(
     async (userId: string) => {
       try {
-        await apiClient.patch(
+        await apiClient.patch<void>(
           API_ENDPOINTS.EVENTS.REJECT_PARTICIPANT(eventId, userId),
         );
         removePendingUser(userId);

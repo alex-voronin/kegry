@@ -160,7 +160,7 @@ export default function LoyaltyLevelsManagePage() {
         visitsUpperBound: getLevelBound(i),
       }));
 
-      await apiClient.put(
+      await apiClient.put<void>(
         API_ENDPOINTS.B2B.LOYALTY_LEVELS.BY_COMPANY_ID(companyId),
         { loyaltyLevels: levels },
       );

@@ -3,7 +3,6 @@
 import { create } from '@/lib/zustand-reset';
 import { useEffect } from 'react';
 import apiClient from '@/lib/api-client';
-import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 import { useFcmStore } from '@/lib/fcm/store';
 import { NotificationType, FcmPayload } from '@/lib/fcm/types';
@@ -25,10 +24,10 @@ export const useNotificationCountStore = create<NotificationCountState>()(
 
     fetch: async () => {
       try {
-        const response = await apiClient.get<ApiResult<number>>(
+        const response = await apiClient.get<number>(
           API_ENDPOINTS.NOTIFICATIONS.UNSEEN_COUNT,
         );
-        set({ unseenCount: response.data.result });
+        set({ unseenCount: response.data });
       } catch {
         // Silent failure for notification count
       }

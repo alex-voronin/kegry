@@ -1,6 +1,5 @@
 import axios from 'axios';
 import apiClient from '@/lib/api-client';
-import type { ApiResult } from '@/lib/api-types';
 import imageCompression from 'browser-image-compression';
 
 const uploadClient = axios.create({
@@ -69,14 +68,15 @@ export async function uploadImage(
   }
 
   // Get presigned URL
-  const presignedResponse = await apiClient.post<
-    ApiResult<PresignedUrlResponse>
-  >(presignedUrlEndpoint, {
-    ContentType: blob.type === 'image/jpeg' ? 'ImageJpeg' : 'ImageWebp',
-    ContentLength: blob.size,
-  });
+  const presignedResponse = await apiClient.post<PresignedUrlResponse>(
+    presignedUrlEndpoint,
+    {
+      ContentType: blob.type === 'image/jpeg' ? 'ImageJpeg' : 'ImageWebp',
+      ContentLength: blob.size,
+    },
+  );
 
-  const { uploadUrl, publicDownloadUrl } = presignedResponse.data.result;
+  const { uploadUrl, publicDownloadUrl } = presignedResponse.data;
 
   // Upload to S3
   await uploadClient.put(uploadUrl, blob, {

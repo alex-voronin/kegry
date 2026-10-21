@@ -158,7 +158,7 @@ export default function NotificationsScreen() {
   const handleApproveJoinRequest = async (notif: NotificationDto) => {
     if (!notif.linkedEntityId || !notif.fromUserId) return;
     try {
-      await apiClient.patch(
+      await apiClient.patch<void>(
         API_ENDPOINTS.EVENTS.APPROVE_PARTICIPANT(
           notif.linkedEntityId,
           notif.fromUserId,

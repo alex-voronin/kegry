@@ -3,7 +3,6 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS } from '@/lib/routes';
-import { ApiResult } from '@/lib/api-types';
 import { extractApiError } from '@/lib/api-error';
 import { extractQrCode } from '@/lib/qr-utils';
 import { getHighAccuracyLocation } from '@/lib/geo-utils';
@@ -39,12 +38,12 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
       body: CheckInBody,
       onSuccessCallback?: (venueId: string) => Promise<void> | void,
     ): Promise<boolean> => {
-      const response = await apiClient.post<ApiResult<CheckInResponse>>(
+      const response = await apiClient.post<CheckInResponse>(
         API_ENDPOINTS.VENUES.QR_CHECK_IN(qrCode),
         body,
       );
 
-      const { venueId } = response.data.result;
+      const { venueId } = response.data;
 
       setShowCheckIn(true);
       await onSuccessCallback?.(venueId);
@@ -68,11 +67,11 @@ export function useQrCheckIn({ onSuccess, onError }: UseQrCheckInOptions = {}) {
         toast.dismiss(toastId);
         // Location failed, verify if PIN check-in is allowed before showing popup
         try {
-          const settingsResponse = await apiClient.get<
-            ApiResult<{ isPinCheckInAllowed: boolean }>
-          >(API_ENDPOINTS.VENUES.QR_CHECK_IN_SETTINGS(qrCode));
+          const settingsResponse = await apiClient.get<{
+            isPinCheckInAllowed: boolean;
+          }>(API_ENDPOINTS.VENUES.QR_CHECK_IN_SETTINGS(qrCode));
 
-          if (settingsResponse.data.result.isPinCheckInAllowed) {
+          if (settingsResponse.data.isPinCheckInAllowed) {
             setPendingQrCode(qrCode);
             setCodeDescription(undefined);
             setIsCodePopupOpen(true);

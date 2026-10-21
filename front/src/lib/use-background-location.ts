@@ -68,7 +68,7 @@ export function SendLocationWithRateLimit(
             // Double-check rate limit (could have been updated by another tab)
             if (!isRateLimited()) {
               try {
-                await apiClient.post(API_ENDPOINTS.LOCATION.UPDATE, {
+                await apiClient.post<void>(API_ENDPOINTS.LOCATION.UPDATE, {
                   latitude: position.coords.latitude,
                   longitude: position.coords.longitude,
                 });

@@ -4,7 +4,6 @@ import { create } from '@/lib/zustand-reset';
 import { persist } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
-import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
 export interface HobbyOption {
@@ -76,11 +75,11 @@ export const useHobbiesStore = create<HobbiesState>()(
         set({ isLoading: true });
 
         try {
-          const response = await apiClient.get<ApiResult<GetHobbyListResponse>>(
+          const response = await apiClient.get<GetHobbyListResponse>(
             API_ENDPOINTS.HOBBIES.LIST,
           );
 
-          const hobbies = response.data.result.hobbies.map((h) => ({
+          const hobbies = response.data.hobbies.map((h) => ({
             id: h.id,
             name: h.name,
           }));

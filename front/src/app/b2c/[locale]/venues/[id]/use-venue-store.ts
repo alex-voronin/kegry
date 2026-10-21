@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
 import { API_ENDPOINTS } from '@/lib/routes';
-import { ApiResult } from '@/lib/api-types';
 import { PromoType } from '@/lib/promo-types';
 import { rethrowApiError } from '@/lib/api-error';
 import { paramsForReq } from '@/lib/query-params';
@@ -85,11 +84,11 @@ export const useVenueStore = create<VenueState>()(
     fetchVenue: async (id: string) => {
       set({ isLoading: true });
       try {
-        const response = await apiClient.get<ApiResult<GetVenueResponse>>(
+        const response = await apiClient.get<GetVenueResponse>(
           API_ENDPOINTS.VENUES.DETAILS(id),
         );
 
-        set({ currentVenue: response.data.result });
+        set({ currentVenue: response.data });
       } catch (error) {
         rethrowApiError(error, 'Failed to fetch venue');
       } finally {
@@ -104,8 +103,8 @@ export const useVenueStore = create<VenueState>()(
           API_ENDPOINTS.VENUES.EVENTS(venueId),
           paramsForReq({ offset, limit: 20 }),
         );
-        const data: EventListItem[] = response.data.result.data ?? [];
-        const total: number = response.data.result.totalCount ?? 0;
+        const data: EventListItem[] = response.data.data ?? [];
+        const total: number = response.data.totalCount ?? 0;
         set((state) => ({
           venueEvents: offset === 0 ? data : [...state.venueEvents, ...data],
           totalEventCount: total,

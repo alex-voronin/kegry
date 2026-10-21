@@ -66,7 +66,7 @@ export const useCompaniesStore = create<CompaniesState>()(
           const response = await apiClient.get(
             API_ENDPOINTS.B2B.COMPANIES.BASE,
           );
-          const { companies } = response.data.result;
+          const { companies } = response.data;
 
           set({
             companies,
@@ -83,7 +83,7 @@ export const useCompaniesStore = create<CompaniesState>()(
           const response = await apiClient.get(
             API_ENDPOINTS.B2B.COMPANIES.BY_ID(id),
           );
-          const { company, venues } = response.data.result;
+          const { company, venues } = response.data;
 
           set({
             selectedCompany: { ...company, venues },
@@ -103,7 +103,7 @@ export const useCompaniesStore = create<CompaniesState>()(
               email,
             },
           );
-          return response.data.result;
+          return response.data;
         } catch (error) {
           rethrowApiError(error, 'Failed to create company');
         }
@@ -114,14 +114,17 @@ export const useCompaniesStore = create<CompaniesState>()(
             API_ENDPOINTS.B2B.COMPANIES.AVATAR_UPLOAD_URL(id),
             { contentLength },
           );
-          return response.data.result;
+          return response.data;
         } catch (error) {
           rethrowApiError(error, 'Failed to get upload URL');
         }
       },
       patchCompany: async (id, patch) => {
         try {
-          await apiClient.patch(API_ENDPOINTS.B2B.COMPANIES.BY_ID(id), patch);
+          await apiClient.patch<void>(
+            API_ENDPOINTS.B2B.COMPANIES.BY_ID(id),
+            patch,
+          );
           set((state) => ({
             companies: state.companies.map((c) =>
               c.id === id ? { ...c, ...patch } : c,
@@ -137,7 +140,7 @@ export const useCompaniesStore = create<CompaniesState>()(
       },
       deleteCompany: async (id: string) => {
         try {
-          await apiClient.delete(API_ENDPOINTS.B2B.COMPANIES.BY_ID(id));
+          await apiClient.delete<void>(API_ENDPOINTS.B2B.COMPANIES.BY_ID(id));
           set((state) => ({
             companies: state.companies.filter((c) => c.id !== id),
             selectedCompany:

@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
 import { API_ENDPOINTS } from '@/lib/routes';
-import { ApiResult } from '@/lib/api-types';
 import { PromoType } from '@/lib/promo-types';
 
 export interface TagDto {
@@ -124,10 +123,10 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
   fetchVenue: async (id: string) => {
     set({ isLoading: true });
     try {
-      const response = await apiClient.get<ApiResult<GetVenueResponse>>(
+      const response = await apiClient.get<GetVenueResponse>(
         API_ENDPOINTS.B2B.VENUES.DETAILS(id),
       );
-      set({ currentVenue: response.data.result.venue });
+      set({ currentVenue: response.data.venue });
     } catch (error) {
       rethrowApiError(error, 'Failed to fetch venue');
     } finally {
@@ -146,11 +145,11 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
     });
 
     try {
-      const response = await apiClient.post<ApiResult<{ id: string }>>(
+      const response = await apiClient.post<{ id: string }>(
         API_ENDPOINTS.B2B.VENUES.PROMOTIONS(venueId),
         { type, body },
       );
-      const newId = response.data.result.id;
+      const newId = response.data.id;
       set((state) => ({
         currentVenue: state.currentVenue
           ? addNewPromoToStore(state.currentVenue, newId, type, body)
@@ -179,7 +178,7 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
     });
 
     try {
-      await apiClient.put(
+      await apiClient.put<void>(
         API_ENDPOINTS.B2B.VENUES.PROMOTION(venueId, promoId),
         { type, body },
       );
@@ -202,7 +201,7 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
     });
 
     try {
-      await apiClient.delete(
+      await apiClient.delete<void>(
         API_ENDPOINTS.B2B.VENUES.PROMOTION(venueId, promoId),
       );
       set((state) => ({
@@ -235,11 +234,11 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
     });
 
     try {
-      const response = await apiClient.post<ApiResult<{ id: string }>>(
+      const response = await apiClient.post<{ id: string }>(
         API_ENDPOINTS.B2B.VENUES.DISCOUNTS(venueId),
         { percent, days, loyaltyLevelId },
       );
-      const newId = response.data.result.id;
+      const newId = response.data.id;
       set((state) => ({
         currentVenue: state.currentVenue
           ? addNewDiscountToStore(
@@ -276,7 +275,7 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
     });
 
     try {
-      await apiClient.put(
+      await apiClient.put<void>(
         API_ENDPOINTS.B2B.VENUES.DISCOUNT(venueId, discountId),
         {
           percent,
@@ -309,7 +308,7 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
     });
 
     try {
-      await apiClient.delete(
+      await apiClient.delete<void>(
         API_ENDPOINTS.B2B.VENUES.DISCOUNT(venueId, discountId),
       );
       set((state) => ({
@@ -323,14 +322,17 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
   },
   deleteVenue: async (id: string) => {
     try {
-      await apiClient.delete(API_ENDPOINTS.B2B.VENUES.DETAILS(id));
+      await apiClient.delete<void>(API_ENDPOINTS.B2B.VENUES.DETAILS(id));
     } catch (error) {
       rethrowApiError(error, 'Failed to delete venue');
     }
   },
   patchVenue: async (id: string, request: PatchVenueRequest) => {
     try {
-      await apiClient.patch(API_ENDPOINTS.B2B.VENUES.DETAILS(id), request);
+      await apiClient.patch<void>(
+        API_ENDPOINTS.B2B.VENUES.DETAILS(id),
+        request,
+      );
       await get().fetchVenue(id);
     } catch (error) {
       rethrowApiError(error, 'Failed to update venue');
@@ -338,11 +340,11 @@ export const useVenueStore = create<VenueState>()((set, get) => ({
   },
   createVenue: async (companyId: string, request: CreateVenueRequest) => {
     try {
-      const response = await apiClient.post<ApiResult<{ id: string }>>(
+      const response = await apiClient.post<{ id: string }>(
         API_ENDPOINTS.B2B.COMPANIES.VENUE(companyId),
         request,
       );
-      return response.data.result;
+      return response.data;
     } catch (error) {
       rethrowApiError(error, 'Failed to create venue');
     }

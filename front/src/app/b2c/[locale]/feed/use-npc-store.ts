@@ -2,7 +2,6 @@
 
 import { create } from '@/lib/zustand-reset';
 import apiClient from '@/lib/api-client';
-import { ApiResult } from '@/lib/api-types';
 import { useFeedStore } from './use-feed-store';
 import { API_ENDPOINTS } from '@/lib/routes';
 
@@ -54,11 +53,11 @@ export const useNpcStore = create<NpcState>()((set) => ({
 
     set({ isLoading: true });
     try {
-      const response = await apiClient.get<ApiResult<{ npc: NpcDto | null }>>(
+      const response = await apiClient.get<{ npc: NpcDto | null }>(
         API_ENDPOINTS.NPC.GET,
       );
 
-      set({ npc: response.data.result.npc, isLoading: false });
+      set({ npc: response.data.npc, isLoading: false });
       updateRequestSentAt();
     } catch {
       set({ isLoading: false });
@@ -68,11 +67,11 @@ export const useNpcStore = create<NpcState>()((set) => ({
   inviteNpc: async (id: string) => {
     useFeedStore.getState().setIsPerformingAction(true);
     try {
-      const response = await apiClient.get<ApiResult<{ monolog: string }>>(
+      const response = await apiClient.get<{ monolog: string }>(
         API_ENDPOINTS.NPC.INVITE(id),
       );
 
-      set({ monolog: response.data.result.monolog });
+      set({ monolog: response.data.monolog });
     } catch (error) {
       console.error('Failed to invite NPC', error);
     } finally {

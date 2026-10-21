@@ -3,7 +3,6 @@
 import { create } from '@/lib/zustand-reset';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
-import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
 export interface ChatParticipantDto {
@@ -56,11 +55,9 @@ export const useChatStore = create<ChatState>()((set, get) => ({
   fetchChat: async () => {
     set({ isLoading: true });
     try {
-      const response = await apiClient.get<ApiResult<ChatDto>>(
-        API_ENDPOINTS.CHAT.GET,
-      );
+      const response = await apiClient.get<ChatDto>(API_ENDPOINTS.CHAT.GET);
 
-      set({ chat: response.data.result, isLoading: false });
+      set({ chat: response.data, isLoading: false });
     } catch (error) {
       set({ isLoading: false });
       rethrowApiError(error, 'Failed to fetch chat');
@@ -68,15 +65,13 @@ export const useChatStore = create<ChatState>()((set, get) => ({
   },
 
   refreshChat: async () => {
-    const response = await apiClient.get<ApiResult<ChatDto>>(
-      API_ENDPOINTS.CHAT.GET,
-    );
+    const response = await apiClient.get<ChatDto>(API_ENDPOINTS.CHAT.GET);
 
-    set({ chat: response.data.result });
+    set({ chat: response.data });
   },
 
   sendMessage: async (text: string) => {
-    await apiClient.post(API_ENDPOINTS.CHAT.SEND_MESSAGE, {
+    await apiClient.post<void>(API_ENDPOINTS.CHAT.SEND_MESSAGE, {
       messageText: text,
     });
 
@@ -112,7 +107,7 @@ export const useChatStore = create<ChatState>()((set, get) => ({
   },
 
   deleteChat: async () => {
-    await apiClient.delete(API_ENDPOINTS.CHAT.DELETE);
+    await apiClient.delete<void>(API_ENDPOINTS.CHAT.DELETE);
     set({ chat: null });
   },
 

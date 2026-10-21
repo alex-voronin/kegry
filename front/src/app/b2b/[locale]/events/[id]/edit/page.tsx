@@ -44,7 +44,7 @@ export default function EditEventPage() {
         const response = await apiClient.get(
           API_ENDPOINTS.B2B.EVENTS.DETAILS(eventId),
         );
-        setEvent(response.data.result);
+        setEvent(response.data);
       } catch (error) {
         rethrowApiError(error, 'Failed to load event');
       } finally {

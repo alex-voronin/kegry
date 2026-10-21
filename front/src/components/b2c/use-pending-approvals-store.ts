@@ -25,10 +25,10 @@ export const usePendingApprovalsStore = create<PendingApprovalsState>(
 
       set({ isLoading: true });
       try {
-        const res = await apiClient.get<{ result: { total: number } }>(
+        const res = await apiClient.get<{ total: number }>(
           API_ENDPOINTS.EVENTS.PENDING_COUNT,
         );
-        set({ total: res.data.result.total, lastFetchedAt: Date.now() });
+        set({ total: res.data.total, lastFetchedAt: Date.now() });
       } catch {
         // silently fail
       } finally {

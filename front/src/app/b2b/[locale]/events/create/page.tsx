@@ -47,7 +47,7 @@ export default function CreateEventPage() {
         hobbyIds: data.hobbyIds,
       });
 
-      const eventId = response.data.result.id;
+      const eventId = response.data.id;
 
       if (data.coverBlob) {
         const publicUrl = await uploadImage(

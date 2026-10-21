@@ -80,13 +80,13 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
         const eventRes = await apiClient.get(
           API_ENDPOINTS.EVENTS.UPDATE(eventId),
         );
-        const ev = eventRes.data.result as EventDetail;
+        const ev = eventRes.data as EventDetail;
         set({ event: ev });
 
         const venueRes = await apiClient.get(
           API_ENDPOINTS.VENUES.DETAILS(ev.venueId),
         );
-        const venueData = venueRes.data.result;
+        const venueData = venueRes.data;
         set({
           venue: {
             name: venueData.company.name,
@@ -103,11 +103,11 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
     joinEvent: async (eventId: string) => {
       set({ isJoining: true });
       try {
-        await apiClient.post(API_ENDPOINTS.EVENTS.JOIN(eventId));
+        await apiClient.post<void>(API_ENDPOINTS.EVENTS.JOIN(eventId));
         const eventRes = await apiClient.get(
           API_ENDPOINTS.EVENTS.UPDATE(eventId),
         );
-        set({ event: eventRes.data.result as EventDetail, isJoining: false });
+        set({ event: eventRes.data as EventDetail, isJoining: false });
       } catch (error) {
         set({ isJoining: false });
         rethrowApiError(error, 'Failed to join');
@@ -117,7 +117,7 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
     leaveEvent: async (eventId: string) => {
       set({ isJoining: true });
       try {
-        await apiClient.post(API_ENDPOINTS.EVENTS.LEAVE(eventId));
+        await apiClient.post<void>(API_ENDPOINTS.EVENTS.LEAVE(eventId));
         set((state) => ({
           event: state.event
             ? {
@@ -148,7 +148,7 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
           API_ENDPOINTS.USER_PROFILE.PROFILES_BATCH,
           event.pendingParticipantIds,
         );
-        set({ pendingUsers: (res.data.result ?? []) as PendingUser[] });
+        set({ pendingUsers: (res.data ?? []) as PendingUser[] });
       } catch {
         set({ pendingUsers: [] });
       }
@@ -169,7 +169,7 @@ export const useMeetupDetailStore = create<MeetupDetailState>()(
           API_ENDPOINTS.USER_PROFILE.PROFILES_BATCH,
           ids,
         );
-        set({ approvedUsers: (res.data.result ?? []) as PendingUser[] });
+        set({ approvedUsers: (res.data ?? []) as PendingUser[] });
       } catch {
         set({ approvedUsers: [] });
       }

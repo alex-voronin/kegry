@@ -1,7 +1,7 @@
 import { create } from '@/lib/zustand-reset';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
-import { ApiResult, PaginatedResponse } from '@/lib/api-types';
+import { PaginatedResponse } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 import { InviteExpiration, computeExpiresAt } from '@/lib/invite-utils';
 
@@ -41,11 +41,11 @@ export const useFriendsStore = create<FriendsState>()((set, get) => ({
     set({ isLoading: true, hasError: false });
 
     try {
-      const response = await apiClient.get<
-        ApiResult<PaginatedResponse<FriendUserDto>>
-      >(`${API_ENDPOINTS.FEED.FRIENDS}?offset=${offset}&limit=${limit}`);
+      const response = await apiClient.get<PaginatedResponse<FriendUserDto>>(
+        `${API_ENDPOINTS.FEED.FRIENDS}?offset=${offset}&limit=${limit}`,
+      );
 
-      const { data, totalCount } = response.data.result;
+      const { data, totalCount } = response.data;
 
       if (offset === 0) {
         set({
@@ -69,7 +69,7 @@ export const useFriendsStore = create<FriendsState>()((set, get) => ({
   removeFriend: async (userId: string) => {
     set({ isLoading: true });
     try {
-      await apiClient.post(API_ENDPOINTS.FEED.REMOVE_FRIEND(userId));
+      await apiClient.post<void>(API_ENDPOINTS.FEED.REMOVE_FRIEND(userId));
 
       set((state) => ({
         friends: state.friends.filter((user) => user.id !== userId),
@@ -83,8 +83,8 @@ export const useFriendsStore = create<FriendsState>()((set, get) => ({
   blockFriend: async (userId: string, reportMessage?: string) => {
     set({ isLoading: true });
     try {
-      await apiClient.post(API_ENDPOINTS.FEED.REMOVE_FRIEND(userId));
-      await apiClient.post(API_ENDPOINTS.FEED.BLOCK(userId), {
+      await apiClient.post<void>(API_ENDPOINTS.FEED.REMOVE_FRIEND(userId));
+      await apiClient.post<void>(API_ENDPOINTS.FEED.BLOCK(userId), {
         reportMessage: reportMessage || null,
       });
 
@@ -98,7 +98,7 @@ export const useFriendsStore = create<FriendsState>()((set, get) => ({
   },
 
   inviteFriend: async (userId: string, when: InviteExpiration) => {
-    await apiClient.post(API_ENDPOINTS.FEED.INVITE_FRIEND(userId), {
+    await apiClient.post<void>(API_ENDPOINTS.FEED.INVITE_FRIEND(userId), {
       expiresAt: computeExpiresAt(when),
     });
   },

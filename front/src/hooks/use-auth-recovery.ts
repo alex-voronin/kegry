@@ -43,7 +43,7 @@ export function useAuthRecovery(source: string) {
           refreshToken: state.refreshToken,
         });
         const { accessToken: recoveredAccess, refreshToken: recoveredRefresh } =
-          res.data.result;
+          res.data;
 
         if (!recoveredAccess || !recoveredRefresh) {
           router.push(PAGE_ROUTES.LOGIN());

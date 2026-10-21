@@ -1,7 +1,6 @@
 import { create } from '@/lib/zustand-reset';
 import apiClient from '@/lib/api-client';
 import { rethrowApiError } from '@/lib/api-error';
-import { ApiResult } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 
 export enum DistanceUnits {
@@ -55,19 +54,15 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 
       const [feedSettingsRes, notifSettingsRes] = await Promise.all([
         fetchFeed
-          ? apiClient.get<
-              ApiResult<{
-                settings: { distanceUnits: DistanceUnits };
-              }>
-            >(API_ENDPOINTS.FEED.SETTINGS)
+          ? apiClient.get<{
+              settings: { distanceUnits: DistanceUnits };
+            }>(API_ENDPOINTS.FEED.SETTINGS)
           : null,
-        apiClient.get<
-          ApiResult<{
-            pushesEnabled: boolean;
-            emailsEnabled: boolean;
-            locale: string;
-          }>
-        >(API_ENDPOINTS.NOTIFICATIONS.SETTINGS),
+        apiClient.get<{
+          pushesEnabled: boolean;
+          emailsEnabled: boolean;
+          locale: string;
+        }>(API_ENDPOINTS.NOTIFICATIONS.SETTINGS),
       ]);
 
       const newState: Partial<SettingsState> = {};
@@ -75,19 +70,18 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
         ...get().serverSettings,
       };
 
-      if (feedSettingsRes?.data?.result) {
-        const distanceUnits =
-          feedSettingsRes.data.result.settings.distanceUnits;
+      if (feedSettingsRes?.data) {
+        const distanceUnits = feedSettingsRes.data.settings.distanceUnits;
         newState.distanceUnits = distanceUnits;
         newServerSettings.distanceUnits = distanceUnits;
       }
 
-      if (notifSettingsRes?.data?.result) {
+      if (notifSettingsRes?.data) {
         const {
           pushesEnabled,
           emailsEnabled,
           locale: serverLocale,
-        } = notifSettingsRes.data.result;
+        } = notifSettingsRes.data;
         const locale = serverLocale || 'en';
 
         newState.pushesEnabled = pushesEnabled;
@@ -134,11 +128,11 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       const promises = [];
 
       promises.push(
-        apiClient.put(API_ENDPOINTS.FEED.SETTINGS, { distanceUnits }),
+        apiClient.put<void>(API_ENDPOINTS.FEED.SETTINGS, { distanceUnits }),
       );
 
       promises.push(
-        apiClient.put(API_ENDPOINTS.NOTIFICATIONS.SETTINGS, {
+        apiClient.put<void>(API_ENDPOINTS.NOTIFICATIONS.SETTINGS, {
           pushesEnabled,
           emailsEnabled,
           locale,

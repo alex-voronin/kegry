@@ -6,7 +6,6 @@ import authClient from '../auth-client';
 import { API_ENDPOINTS, PAGE_ROUTES } from '../routes';
 import { rethrowApiError, ApiRequestError } from '../api-error';
 import { reRegisterServiceWorker } from '../service-worker';
-import type { ApiResult } from '../api-types';
 
 // Note: Auth endpoints use raw axios to avoid token interceptor issues during login/signup.
 // For other API calls, use apiClient from '../api-client' for automatic token handling and retries.
@@ -139,12 +138,12 @@ export const useAuthStore = create<AuthState>()(
 
       signin: async (email, password, allowedUserTypes) => {
         try {
-          const signinRes = await authClient.post<ApiResult<SigninResponse>>(
+          const signinRes = await authClient.post<SigninResponse>(
             API_ENDPOINTS.AUTH.SIGNIN,
             { email, password },
           );
 
-          const { isSignupRequired, auth } = signinRes.data.result;
+          const { isSignupRequired, auth } = signinRes.data;
 
           if (isSignupRequired) {
             throw new ApiRequestError(
@@ -172,12 +171,12 @@ export const useAuthStore = create<AuthState>()(
 
       signup: async (email, password, userType) => {
         try {
-          const signupRes = await authClient.post<ApiResult<AuthResponse>>(
+          const signupRes = await authClient.post<AuthResponse>(
             API_ENDPOINTS.AUTH.SIGNUP,
             { email, password, userType },
           );
 
-          const auth = signupRes.data.result;
+          const auth = signupRes.data;
           await reRegisterServiceWorker().catch((err) =>
             console.error('[auth] SW re-registration failed:', err),
           );
@@ -190,12 +189,12 @@ export const useAuthStore = create<AuthState>()(
 
       signinWithGoogle: async (idToken, userType, allowedUserTypes) => {
         try {
-          const res = await authClient.post<ApiResult<AuthResponse>>(
+          const res = await authClient.post<AuthResponse>(
             API_ENDPOINTS.AUTH.GOOGLE,
             { idToken, userType },
           );
 
-          const auth = res.data.result;
+          const auth = res.data;
 
           if (allowedUserTypes.includes(auth.userType)) {
             await reRegisterServiceWorker().catch((err) =>
@@ -212,13 +211,13 @@ export const useAuthStore = create<AuthState>()(
 
       confirmEmail: async (userId, token) => {
         try {
-          const res = await authClient.post<ApiResult<AuthResponse>>(
+          const res = await authClient.post<AuthResponse>(
             API_ENDPOINTS.AUTH.CONFIRM_EMAIL,
             { userId, token },
           );
 
-          get().setAuth(res.data.result);
-          return res.data.result;
+          get().setAuth(res.data);
+          return res.data;
         } catch (error) {
           rethrowApiError(error, 'Email verification failed');
         }
@@ -231,7 +230,7 @@ export const useAuthStore = create<AuthState>()(
         }
 
         try {
-          await authClient.post<ApiResult<unknown>>(
+          await authClient.post<void>(
             API_ENDPOINTS.AUTH.RESEND_CONFIRMATION_EMAIL,
             { userId },
           );
@@ -244,7 +243,7 @@ export const useAuthStore = create<AuthState>()(
 
       logout: async (deviceId?: string) => {
         try {
-          await authClient.post(
+          await authClient.post<void>(
             API_ENDPOINTS.AUTH.LOGOUT,
             deviceId ? { deviceId } : {},
           );
@@ -258,7 +257,7 @@ export const useAuthStore = create<AuthState>()(
 
       requestPasswordReset: async (email) => {
         try {
-          await authClient.post<ApiResult<unknown>>(
+          await authClient.post<void>(
             API_ENDPOINTS.AUTH.REQUEST_PASSWORD_RESET,
             { email },
           );
@@ -269,7 +268,7 @@ export const useAuthStore = create<AuthState>()(
 
       confirmPasswordReset: async (encodedEmail, encodedToken, newPassword) => {
         try {
-          await authClient.post<ApiResult<unknown>>(
+          await authClient.post<void>(
             API_ENDPOINTS.AUTH.CONFIRM_PASSWORD_RESET,
             {
               encodedEmail,
@@ -284,7 +283,7 @@ export const useAuthStore = create<AuthState>()(
 
       deleteAccount: async () => {
         try {
-          await authClient.delete(API_ENDPOINTS.AUTH.DELETE_ACCOUNT);
+          await authClient.delete<void>(API_ENDPOINTS.AUTH.DELETE_ACCOUNT);
         } catch (error) {
           rethrowApiError(error, 'Account deletion failed');
         }
@@ -383,13 +382,13 @@ authClient.interceptors.response.use(
       }
 
       try {
-        const response = await authClient.post<ApiResult<AuthResponse>>(
+        const response = await authClient.post<AuthResponse>(
           API_ENDPOINTS.AUTH.RENEW_TOKENS,
           { refreshToken },
         );
 
-        if (response.data.result.accessToken) {
-          const newAuth = response.data.result;
+        if (response.data.accessToken) {
+          const newAuth = response.data;
           setAuth(newAuth);
 
           originalRequest.headers['Authorization'] =

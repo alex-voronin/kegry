@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import apiClient from '@/lib/api-client';
-import { ApiResult, PaginatedResponse } from '@/lib/api-types';
+import { PaginatedResponse } from '@/lib/api-types';
 import { API_ENDPOINTS } from '@/lib/routes';
 import { PromoType } from '@/lib/promo-types';
 import { rethrowApiError } from '@/lib/api-error';
@@ -52,12 +52,12 @@ export const usePromotionsStore = create<PromotionsState>()(
       set({ isLoading: true });
       try {
         const response = await apiClient.get<
-          ApiResult<PaginatedResponse<AvailablePromotionDto>>
+          PaginatedResponse<AvailablePromotionDto>
         >(
           `${API_ENDPOINTS.DEALS.PROMOTIONS}?latitude=${latitude}&longitude=${longitude}&offset=${offset}&limit=${limit}`,
         );
 
-        const { data, totalCount } = response.data.result;
+        const { data, totalCount } = response.data;
 
         if (offset === 0) {
           set({

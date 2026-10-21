@@ -20,10 +20,10 @@ export const useProfileStore = create<ProfileState>()((set) => ({
   fetchAccount: async () => {
     set({ isLoading: true });
     try {
-      const response = await apiClient.get<{ result: AccountDto }>(
+      const response = await apiClient.get<AccountDto>(
         API_ENDPOINTS.AUTH.GET_ACCOUNT,
       );
-      set({ account: response.data.result, isLoading: false });
+      set({ account: response.data, isLoading: false });
     } catch (error) {
       set({ isLoading: false });
       rethrowApiError(error, 'Failed to fetch account details');
