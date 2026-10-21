@@ -722,7 +722,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .Id;
 
         var newPinCode = "1234";
-        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest>(
+        await Factory.ApiClient.PatchAsync<PatchVenueRequest>(
             ApiRoutes.B2B.Venue.Single(venueId),
             new PatchVenueRequest(
                 Latitude: null,
@@ -969,7 +969,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 4. Update IsPinCheckInAllowed flag
         Factory.ApiClient.SetAuth(b2BAuth);
-        var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest>(
+        await Factory.ApiClient.PatchAsync<PatchVenueRequest>(
             ApiRoutes.B2B.Venue.Single(venueId),
             new PatchVenueRequest(
                 Latitude: null,
@@ -1284,7 +1284,7 @@ public class B2CVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         if (pinCode != null || isPinCheckInAllowed)
         {
-            var patchResponse = await Factory.ApiClient.PatchAsync<PatchVenueRequest>(
+            await Factory.ApiClient.PatchAsync<PatchVenueRequest>(
                 ApiRoutes.B2B.Venue.Single(venueId),
                 new PatchVenueRequest(
                     Latitude: null,

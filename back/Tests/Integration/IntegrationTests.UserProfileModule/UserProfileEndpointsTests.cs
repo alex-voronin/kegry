@@ -49,7 +49,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
             ]
         );
 
-        var response = await Factory.ApiClient.PostAsync<CreateUserProfileRequest>(
+        await Factory.ApiClient.PostAsync<CreateUserProfileRequest>(
             ApiRoutes.UserProfile.Profile, request);
 
 
@@ -236,7 +236,7 @@ public class UserProfileEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 3. Update privacy
         var request = new UpdatePrivacyRequest(IsPublic: false);
-        var response = await Factory.ApiClient.PostAsync<UpdatePrivacyRequest>(
+        await Factory.ApiClient.PostAsync<UpdatePrivacyRequest>(
             ApiRoutes.UserProfile.Privacy, request);
 
         // 4. Check profile publicity

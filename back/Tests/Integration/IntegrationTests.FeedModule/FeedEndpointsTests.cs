@@ -72,7 +72,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 3. User B makes the account non-public
         Factory.ApiClient.SetAuth(authB);
         var request = new UpdatePrivacyRequest(IsPublic: false);
-        var updatePrivacyResponse = await Factory.ApiClient.PostAsync<UpdatePrivacyRequest>(
+        await Factory.ApiClient.PostAsync<UpdatePrivacyRequest>(
             ApiRoutes.UserProfile.Privacy, request);
 
         // 4. User A can't see User B in feed
@@ -195,7 +195,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         firstFeedId.ShouldBe(Guid.Parse(userBId));
 
         // 3. User A ignore User B
-        var response = await Factory.ApiClient.PostAsync<object?>(
+        await Factory.ApiClient.PostAsync<object?>(
             ApiRoutes.Feed.IgnoreUser(userBId), null);
 
         // 4. User B goes to the end of the feed
@@ -259,7 +259,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 3. User A invites User B with a known expiration
         var expiresAt = DateTimeOffset.UtcNow.AddHours(24);
         Factory.ApiClient.SetAuth(authA);
-        var inviteResponse = await Factory.ApiClient.PostAsync<InviteUserRequest>(
+        await Factory.ApiClient.PostAsync<InviteUserRequest>(
             ApiRoutes.Feed.InviteUser(userBId), new InviteUserRequest(expiresAt));
 
         // 4. User B checks invite expiration from User A — should return expiration date
@@ -571,7 +571,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Main invites A
         Factory.ApiClient.SetAuth(authMain);
-        var response = await Factory.ApiClient.PostAsync<InviteUserRequest>(
+        await Factory.ApiClient.PostAsync<InviteUserRequest>(
             ApiRoutes.Feed.InviteUser(authA.UserId),
             new InviteUserRequest(ComputeExpiresAtForNowOption())
         );
@@ -617,7 +617,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. A invites B
         Factory.ApiClient.SetAuth(authA);
-        var response = await Factory.ApiClient.PostAsync<InviteUserRequest>(
+        await Factory.ApiClient.PostAsync<InviteUserRequest>(
             ApiRoutes.Feed.InviteUser(authB.UserId),
             new InviteUserRequest(ComputeExpiresAtForNowOption())
         );
@@ -705,7 +705,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authB);
         foreach (var candidateId in candidateIds)
         {
-            var response = await Factory.ApiClient.PostAsync<InviteUserRequest>(
+            await Factory.ApiClient.PostAsync<InviteUserRequest>(
                 ApiRoutes.Feed.InviteUser(candidateId),
                 new InviteUserRequest(ComputeExpiresAtForNowOption()));
         }
@@ -757,7 +757,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 2. User A invites User B
         Factory.ApiClient.SetAuth(authA);
         var expiresAt = ComputeExpiresAtForNowOption();
-        var inviteResponse = await Factory.ApiClient.PostAsync<InviteUserRequest>(
+        await Factory.ApiClient.PostAsync<InviteUserRequest>(
             ApiRoutes.Feed.InviteUser(userBId),
             new InviteUserRequest(expiresAt));
 
@@ -882,7 +882,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authB);
         foreach (var candidateId in candidateIds)
         {
-            var response = await Factory.ApiClient.PostAsync<InviteUserRequest>(
+            await Factory.ApiClient.PostAsync<InviteUserRequest>(
                 ApiRoutes.Feed.InviteUser(candidateId),
                 new InviteUserRequest(ComputeExpiresAtForNowOption()));
         }
@@ -895,7 +895,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         await Factory.Host.ExecuteAndWaitAsync(async () =>
         {
             Factory.ApiClient.SetAuth(authB);
-            var inviteResponse = await Factory.ApiClient.PostAsync<InviteUserRequest>(
+            await Factory.ApiClient.PostAsync<InviteUserRequest>(
                 ApiRoutes.Feed.InviteFriend(userAId),
                 new InviteUserRequest(ComputeExpiresAtForNowOption()));
         });
@@ -960,7 +960,7 @@ public class FeedEndpointsTests : IntegrationTestBase, IAsyncLifetime
         // 3. User A blocks User B
         Factory.ApiClient.SetAuth(authA);
         var blockRequest = new BlockUserRequest(null);
-        var response = await Factory.ApiClient.PostAsync<BlockUserRequest>(
+        await Factory.ApiClient.PostAsync<BlockUserRequest>(
             ApiRoutes.Feed.BlockUser(authB.UserId), blockRequest);
 
         // 4. User B invites User A

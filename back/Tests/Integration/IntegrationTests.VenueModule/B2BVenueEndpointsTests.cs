@@ -202,7 +202,7 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var venueId = createVenueResponse.Id;
 
         // 2. Delete venue
-        var deleteResponse = await Factory.ApiClient.DeleteAsync(
+        await Factory.ApiClient.DeleteAsync(
             ApiRoutes.B2B.Venue.Single(venueId));
 
         // 3. Verify venue is not found
@@ -270,7 +270,7 @@ public class B2BVenueEndpointsTests : IntegrationTestBase, IAsyncLifetime
             new CreateVenueRequest(2, 2, "Venue 2", null, null, null, null, null, null, []));
 
         // 3. Delete company
-        var deleteResponse = await Factory.ApiClient.DeleteAsync(
+        await Factory.ApiClient.DeleteAsync(
             ApiRoutes.B2B.Company.Single(companyId));
 
         // 4. Get venues list and verify

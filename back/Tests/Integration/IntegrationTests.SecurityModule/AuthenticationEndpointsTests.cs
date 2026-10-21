@@ -324,7 +324,7 @@ public class AuthenticationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(auth);
 
         // 2. Delete account
-        var deleteResponse = await Factory.ApiClient.DeleteAsync(ApiRoutes.Auth.Account);
+        await Factory.ApiClient.DeleteAsync(ApiRoutes.Auth.Account);
 
         // 3. Sign in again
         var signinRequest = new SignInRequest(email, password);

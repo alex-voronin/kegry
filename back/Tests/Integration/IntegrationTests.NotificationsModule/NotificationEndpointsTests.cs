@@ -185,9 +185,8 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
             Locale: SupportedLocales.Serbian,
             PushesEnabled: true,
             EmailsEnabled: true);
-        var enableAllResponse =
-            await Factory.ApiClient.PutAsync<PutNotificationSettingsRequest>(
-                ApiRoutes.Notifications.Settings, enableAllRequest);
+        await Factory.ApiClient.PutAsync<PutNotificationSettingsRequest>(
+            ApiRoutes.Notifications.Settings, enableAllRequest);
 
         var allEnabledResponse = await Factory.ApiClient
             .GetAsync<GetNotificationSettingsResponse>(ApiRoutes.Notifications.Settings);
@@ -222,7 +221,7 @@ public class NotificationEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var fcmToken = "fcm-token-123";
         var request = new UpdateFcmTokenRequest(deviceId, fcmToken);
 
-        var response = await Factory.ApiClient.PostAsync<UpdateFcmTokenRequest>(
+        await Factory.ApiClient.PostAsync<UpdateFcmTokenRequest>(
             ApiRoutes.Notifications.UpdateDeviceToken, request);
 
         // 3. Verify response and database

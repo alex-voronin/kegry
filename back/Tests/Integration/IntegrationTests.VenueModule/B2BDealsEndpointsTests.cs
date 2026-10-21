@@ -43,7 +43,7 @@ public class B2BDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var updateRequest = new UpdateLoyaltyLevelsRequest(
             new[] { new LoyaltyLevelDto(firstLevel.Id, 15, true) });
 
-        var updateResponse = await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest>(
+        await Factory.ApiClient.PutAsync<UpdateLoyaltyLevelsRequest>(
             ApiRoutes.B2B.Company.LoyaltyLevels(companyId), updateRequest);
 
         // 4. Verify update
@@ -108,7 +108,7 @@ public class B2BDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Update promotion
         var updateRequest = new UpdatePromotionRequest(PromoType.Event, "New Promo Name");
-        var updateResponse = await Factory.ApiClient.PutAsync<UpdatePromotionRequest>(
+        await Factory.ApiClient.PutAsync<UpdatePromotionRequest>(
             ApiRoutes.B2B.Venue.Promotion(venueId, promoId), updateRequest);
 
         // 3. Verify update
@@ -139,7 +139,7 @@ public class B2BDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .Id;
 
         // 2. Delete promotion
-        var deleteResponse = await Factory.ApiClient.DeleteAsync(
+        await Factory.ApiClient.DeleteAsync(
             ApiRoutes.B2B.Venue.Promotion(venueId, promoId));
 
         // 3. Verify deleted
@@ -232,7 +232,7 @@ public class B2BDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
 
         // 2. Update discount
         var updateRequest = new UpdateDiscountRequest(levelId, 15, [DayOfWeek.Saturday, DayOfWeek.Sunday]);
-        var updateResponse = await Factory.ApiClient.PutAsync<UpdateDiscountRequest>(
+        await Factory.ApiClient.PutAsync<UpdateDiscountRequest>(
             ApiRoutes.B2B.Venue.Discount(venueId, discountId), updateRequest);
 
         // 3. Verify update
@@ -266,7 +266,7 @@ public class B2BDealsEndpointsTests : IntegrationTestBase, IAsyncLifetime
             .Id;
 
         // 2. Delete discount
-        var deleteResponse = await Factory.ApiClient.DeleteAsync(
+        await Factory.ApiClient.DeleteAsync(
             ApiRoutes.B2B.Venue.Discount(venueId, discountId));
 
         // 3. Verify deleted

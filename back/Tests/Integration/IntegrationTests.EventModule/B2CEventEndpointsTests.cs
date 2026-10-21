@@ -605,7 +605,7 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var joiner = await CreateUserAsync();
         Factory.ApiClient.SetAuth(joiner);
 
-        var response = await Factory.ApiClient.PostAsync<object>(
+        await Factory.ApiClient.PostAsync<object>(
             ApiRoutes.Event.Join(eventId), new { });
 
 
@@ -623,7 +623,7 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var joiner = await CreateUserAsync();
         Factory.ApiClient.SetAuth(joiner);
 
-        var response = await Factory.ApiClient.PostAsync<object>(
+        await Factory.ApiClient.PostAsync<object>(
             ApiRoutes.Event.Join(eventId), new { });
 
 
@@ -1234,7 +1234,7 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
             codeToRun: async () =>
             {
                 Factory.ApiClient.SetAuth(joinerAuth);
-                var joinResponse = await Factory.ApiClient.PostAsync<object>(
+                await Factory.ApiClient.PostAsync<object>(
                     ApiRoutes.Event.Join(eventId), new { });
             },
             expectedCount: 1,
@@ -1287,7 +1287,7 @@ public class B2CEventEndpointsTests : IntegrationTestBase, IAsyncLifetime
         var eventId = Guid.Parse(createResponse.Id);
 
         Factory.ApiClient.SetAuth(joinerAuth);
-        var joinResponse = await Factory.ApiClient.PostAsync<object>(
+        await Factory.ApiClient.PostAsync<object>(
             ApiRoutes.Event.Join(eventId), new { });
 
         await Factory.NotificationManager.AwaitPushNotifications(

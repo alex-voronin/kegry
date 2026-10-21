@@ -283,7 +283,7 @@ public class ChatEndpointsTests : IntegrationTestBase, IAsyncLifetime
         Factory.ApiClient.SetAuth(authB);
         await Factory.Host.ExecuteAndWaitAsync(async () =>
         {
-            var deleteResponse = await Factory.ApiClient.DeleteAsync(ApiRoutes.Auth.Account);
+            await Factory.ApiClient.DeleteAsync(ApiRoutes.Auth.Account);
         });
 
         // 3. Create account C
